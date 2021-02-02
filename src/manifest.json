@@ -1,0 +1,10 @@
+{
+  "name": "OL",
+  "version": "0.0.1",
+  "web": {
+    "script": "index.js"
+  },
+  "background": {
+    "script": "background.js"
+  }
+}
