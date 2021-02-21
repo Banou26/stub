@@ -39,74 +39,7 @@ tr=wss%3A%2F%2Ftracker.openwebtorrent.com\
 //   torrentSubscription.unsubscribe()
 // }, 25000)
 
-// const setGoogleLanguageToEnglish = (headers = {}) =>
-//   fetch("https://www.google.com/setprefs?x", {
-//     "headers": {
-//       "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-//       "accept-language": "en-US,en;q=0.9",
-//       "cache-control": "no-cache",
-//       "pragma": "no-cache",
-//       "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"",
-//       "sec-ch-ua-mobile": "?0",
-//       "sec-fetch-dest": "document",
-//       "sec-fetch-mode": "navigate",
-//       "sec-fetch-site": "same-origin",
-//       "sec-fetch-user": "?1",
-//       "upgrade-insecure-requests": "1"
-//     },
-//     "referrer": "https://www.google.com/",
-//     "referrerPolicy": "origin",
-//     "body": null,
-//     "method": "GET",
-//     "mode": "cors",
-//     "credentials": "include",
-//     ...headers
-//   });
-
-// const fetchGoogleLatestMoviesPage = (headers = {}) =>
-//   fetch(
-//     'https://www.google.com/search?q=latest+movies',
-//     {
-//       headers: {
-//         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-//         "accept-encoding": "gzip, deflate, br",
-//         "accept-language": "en-US,en;q=0.9",
-//         "cache-control": "no-cache",
-//         "dnt": "1",
-//         "pragma": "no-cache",
-//         "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"",
-//         "sec-ch-ua-mobile": "?0",
-//         "sec-fetch-dest": "document",
-//         "sec-fetch-mode": "navigate",
-//         "sec-fetch-site": "same-origin",
-//         "sec-fetch-user": "?1",
-//         "upgrade-insecure-requests": "1",
-//         "user-agent": navigator.userAgent
-//       }
-//     }
-//   )
-// https://www.google.com/search?q=latest+movies
-// https://encrypted.google.com/search?q=latest+movies&hl=en&gl=en#safe=active&hl=en&gl=en&q=%s
-// const setGoogleLanguageToEnglish = (headers = {}) =>
-//   fetch('https://www.google.com/setprefs?x', {
-    // fetch('https://www.google.com/setprefs?x', {
-//     headers: {
-//       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-//       'accept-language': 'en-US,en;q=0.9',
-//       'cache-control': 'no-cache',
-//       'pragma': 'no-cache',
-//       'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
-//       'sec-ch-ua-mobile': '?0',
-//       'sec-fetch-dest': 'document',
-//       'sec-fetch-mode': 'navigate',
-//       'sec-fetch-site': 'same-origin',
-//       'sec-fetch-user': '?1',
-//       'upgrade-insecure-requests': '1',
-//       ...headers
-//     }
-//   })
-
-const fetchGoogleLatestMoviesPage = (headers = {}) =>
+const latestMoviesGoogle =
   fetch(
     'https://encrypted.google.com/search?q=latest+movies&hl=en&gl=en#safe=active&hl=en&gl=en&q=%s',
     {
@@ -124,62 +57,11 @@ const fetchGoogleLatestMoviesPage = (headers = {}) =>
         'sec-fetch-site': 'same-origin',
         'sec-fetch-user': '?1',
         'upgrade-insecure-requests': '1',
-        'user-agent': navigator.userAgent,
-        ...headers
+        'user-agent': navigator.userAgent
       },
       "referrer": "https://www.google.com/"
     }
   )
-
-// const getSetCookies = (cookies: [string, string][]) =>
-//   cookies
-//     .filter(([name]) => name === 'setcookie')
-//     .map(([_, value]) => value)
-
-// const getCookieNameValue = (cookie: string) =>
-//   cookie
-//     .slice(0, cookie.indexOf(';'))
-
-// const getCookiesValues = (cookies: string[]) =>
-//   [
-//     ...new Set(
-//       cookies
-//         .flatMap(cookie => cookie.split(','))
-//         .map(getCookieNameValue)
-//         .filter(cookie => cookie.includes('='))
-//     )
-//   ]
-
-// const getCookieEntries = (cookies: string[]) =>
-//   cookies
-//     .map(cookie =>
-//       [
-//         cookie.slice(0, cookie.indexOf('=')),
-//         cookie.slice(cookie.indexOf('=') + 1)
-//       ]
-//     )
-
-const latestMoviesGoogle =
-  // fetchGoogleLatestMoviesPage({ cookie: 'x' })
-  fetchGoogleLatestMoviesPage()
-    // .then(async res => {
-    //   const setCookies = getSetCookies([...res.headers.entries()])
-    //   const cookie = getCookiesValues(setCookies).join(';')
-    //   console.log('cookie', cookie)
-    //   return [setCookies, await setGoogleLanguageToEnglish({ cookie })]
-    // })
-    // .then(([_setCookies, res]: [string[], Response]) => {
-
-    //   const setCookies2 = {
-    //     ...Object.fromEntries(getCookieEntries(getCookiesValues(_setCookies))),
-    //     ...Object.fromEntries(getCookieEntries(getCookiesValues(getSetCookies([...res.headers.entries()]))))
-    //   }// [...new Set([..._setCookies, ...getCookiesValues(getSetCookies([...res.headers.entries()]))])]
-    //   const setCookies = Object.entries(setCookies2).map(([name, value]) => `${name}=${value}`)
-    //   console.log('OOF', setCookies)
-    //   const cookie = setCookies.join(';')
-    //   console.log('cookie', cookie)
-    //   return fetchGoogleLatestMoviesPage({ cookie })
-    // })
     .then(async res => {
       const doc = new DOMParser().parseFromString(await res.text(), 'text/html')
       const movieElements = [...doc.querySelectorAll('[data-item-card="true"]')]
@@ -201,8 +83,6 @@ const latestMoviesGoogle =
             ]
           )
           .map(elem => elem.textContent?.trim())
-          // .filter(doc => doc.querySelector('[data-item-card="true"]'))
-          // .map(doc => doc.querySelectorAll('[data-item-card="true"]'))
 
       console.log('movieNames', movieNames)
       console.log(results)
