@@ -16,7 +16,7 @@ yarn-error.log
 .env.production
 env
 dist
-lib
+# lib
 mongo.conf
 external
 
