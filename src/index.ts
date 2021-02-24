@@ -1,4 +1,5 @@
 import { fetch, torrent } from '@oz/package-api'
+import './lib'
 
 fetch(
   'https://webtoon-phinf.pstatic.net/20200407_127/1586210898798HCxEY_PNG/158621089877210933325.png?type=opti',

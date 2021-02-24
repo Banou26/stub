@@ -1,4 +1,5 @@
-import type { Category, Genre } from '../index'
+import Category from '../category'
+import Genre from '../genre'
 
 import * as google from './google'
 import * as rarbg from './rarbg'
@@ -6,18 +7,25 @@ import * as rarbg from './rarbg'
 export * as google from './google'
 export * as rarbg from './rarbg'
 
+export type Search = (
+  { search, categories, genres }:
+  { search: string, categories?: Category[], genres?: Genre[] }
+) => Promise<SearchResult[]>
+
 export interface Target {
-  search?: Function
+  search?: Search
   getLatest?: Function
   categories?: Category[]
   genres?: Genre[]
 }
 
 export interface SearchResult {
-  target: Target
-  category: Category
-  genre: Genre
-  url: string
+  target?: Target
+  category?: Category
+  genre?: Genre
+  url?: string
+  image?: string
+  name: string
 }
 
 const targets: Target[] = [
@@ -25,35 +33,54 @@ const targets: Target[] = [
   rarbg
 ]
 
-export const search = (
-  { search, categories, genres }:
-  { search: string, categories?: Category[], genres?: Genre[] }
-) => {
-  const filteredTargets =
-    targets
-      .filter(target => target.search)
-      .filter(target =>
-        categories?.some(category => target.categories?.includes(category) )
-      )
+const filterTagets =
+  func =>
+    (
+      { categories, genres }:
+      { categories?: Category[], genres?: Genre[] }
+    ) =>
+  targets
+    .filter(func)
+    .filter(target =>
+      categories?.some(category => target.categories?.includes(category) )
+    )
+    // .filter(target =>
+    //   genres?.some(category => target.genres?.includes(category) )
+    // )
 
-  const results =
-    filteredTargets
-      .map(target => target.search?.(search))
+const filterSearch = filterTagets(({ search }) => search)
+const filterGetLatest = filterTagets(({ getLatest }) => getLatest)
+
+export const search: Search = ({ search, categories, genres }) => {
+  const filteredTargets = filterSearch({ categories, genres })
+  const results = filteredTargets.map(target => target.search!({ search, categories, genres }))
 
   return (
     Promise
     .allSettled(results)
-    .then(results => 
-      results.filter(result => result.status === 'fulfilled')
+    .then(results =>
+      results
+        .filter(result => result.status === 'fulfilled')
+        .flatMap((result) => (result as unknown as PromiseFulfilledResult<SearchResult>).value)
     )
   )
 }
 
-export const latest = (
+export const getLatest = (
   { categories, genres }:
-  { categories?: Category[], genres?: Genre[] }
+  { categories?: Category[], genres?: Genre[] } =
+  { categories: Object.values(Category), genres: Object.values(Genre) }
 ) => {
+  const filteredTargets = filterGetLatest({ categories, genres })
+  const results = filteredTargets.map(target => target.getLatest?.({ categories, genres }))
 
-
-  
+  return (
+    Promise
+    .allSettled(results)
+    .then(results =>
+      results
+        .filter(result => result.status === 'fulfilled')
+        .flatMap((result) => (result as unknown as PromiseFulfilledResult<SearchResult>).value)
+    )
+  )
 }

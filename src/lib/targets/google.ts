@@ -1,15 +1,18 @@
+
+import type { Search, SearchResult } from '.'
+
+import Category from '../category'
 import { fetch } from '@oz/package-api'
 import { makeUniqueArrayFilter } from '../utils'
 
-const findUniqueGoogleResults = makeUniqueArrayFilter(({ title }) => title)
-
+const findUniqueGoogleResults = makeUniqueArrayFilter<SearchResult>(({ name }) => name)
 
 const getGoogleCardInfos = (elem: HTMLElement) => ({
   image: (<HTMLElement>elem.querySelector('img'))?.dataset.src,
-  title: elem.querySelector('[role="heading"]')?.textContent?.trim()
+  name: elem.querySelector('[role="heading"]')?.textContent?.trim()
 })
 
-export const getLatest = () =>
+export const getLatest: Search = () =>
   fetch(
     'https://encrypted.google.com/search?q=latest+movies&hl=en&gl=en#safe=active&hl=en&gl=en&q=%s',
     {
@@ -39,11 +42,15 @@ export const getLatest = () =>
 
       const scriptElements = [...doc.querySelectorAll('script')]
       const moviesScriptElement = scriptElements.find(elem => elem.textContent?.includes('window.jsl.dh'))
-      const movieScript = moviesScriptElement?.innerText
 
       const results =
         Array
-          .from(movieScript?.matchAll(/window\.jsl\.dh\('.*?','(.*?)'\);/gm) ?? [])
+          .from(
+            moviesScriptElement
+              ?.innerText
+              ?.matchAll(/window\.jsl\.dh\('.*?','(.*?)'\);/gm)
+            ?? []
+          )
           .map(escapedString =>
             escapedString[1].replaceAll(
               /\\x../gm,
@@ -56,14 +63,15 @@ export const getLatest = () =>
                 )
             )
           )
-          .flatMap(str =>
-            [
-              ...new DOMParser()
-                .parseFromString(str, 'text/html')
-                .querySelectorAll('[data-item-card="true"]')
-            ]
-          )
+          .flatMap(str => [
+            ...new DOMParser()
+              .parseFromString(str, 'text/html')
+              .querySelectorAll('[data-item-card="true"]')
+          ])
           .map(getGoogleCardInfos)
+          .filter(({ name }) => name)
 
-      return findUniqueGoogleResults([...movieNames, ...results])
+      return findUniqueGoogleResults([...movieNames, ...results] as unknown as SearchResult[])
   })
+
+export const categories = [Category.MOVIE]
