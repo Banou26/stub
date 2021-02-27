@@ -11,8 +11,15 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "bundle": "parcel --no-hmr src/index.ts src/background.ts -p 4560",
+    "bundle": "parcel --no-hmr src/index.tsx src/background.ts -p 4560",
     "manifest": "nodemon --watch src\\manifest.json --exec \"copy src\\manifest.json dist\\manifest.json\"",
     "dev": "concurrently \"yarn bundle\" \"yarn manifest\""
+  },
+  "dependencies": {
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.1.5",
+    "raviger": "^2.0.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   }
 }

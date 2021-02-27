@@ -3,9 +3,13 @@ import Genre from '../genre'
 
 import * as google from './google'
 import * as rarbg from './rarbg'
+import * as myanimelist from './myanimelist'
+// import * as livechart from './livechart'
 
 export * as google from './google'
 export * as rarbg from './rarbg'
+export * as myanimelist from './myanimelist'
+// export * as livechart from './livechart'
 
 export type Search = (
   { search, categories, genres }:
@@ -42,7 +46,7 @@ const filterTagets =
   targets
     .filter(func)
     .filter(target =>
-      categories?.some(category => target.categories?.includes(category) )
+      categories?.some(category => target.categories?.includes(category))
     )
     // .filter(target =>
     //   genres?.some(category => target.genres?.includes(category) )

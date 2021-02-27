@@ -1,4 +1,3 @@
-
 import type { Search, SearchResult } from '.'
 
 import Category from '../category'
@@ -7,7 +6,7 @@ import { makeUniqueArrayFilter } from '../utils'
 
 const findUniqueGoogleResults = makeUniqueArrayFilter<SearchResult>(({ name }) => name)
 
-const getGoogleCardInfos = (elem: HTMLElement) => ({
+const getCardInfos = (elem: HTMLElement) => ({
   image: (<HTMLElement>elem.querySelector('img'))?.dataset.src,
   name: elem.querySelector('[role="heading"]')?.textContent?.trim()
 })
@@ -38,7 +37,7 @@ export const getLatest: Search = () =>
     .then(async res => {
       const doc = new DOMParser().parseFromString(await res.text(), 'text/html')
       const movieElements = [...doc.querySelectorAll('[data-item-card="true"]')]
-      const movieNames = movieElements.map(getGoogleCardInfos)
+      const movieNames = movieElements.map(getCardInfos)
 
       const scriptElements = [...doc.querySelectorAll('script')]
       const moviesScriptElement = scriptElements.find(elem => elem.textContent?.includes('window.jsl.dh'))
@@ -68,7 +67,7 @@ export const getLatest: Search = () =>
               .parseFromString(str, 'text/html')
               .querySelectorAll('[data-item-card="true"]')
           ])
-          .map(getGoogleCardInfos)
+          .map(getCardInfos)
           .filter(({ name }) => name)
 
       return findUniqueGoogleResults([...movieNames, ...results] as unknown as SearchResult[])
