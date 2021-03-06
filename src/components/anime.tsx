@@ -6,6 +6,7 @@ import { torrent as downloadTorrent } from '@oz/package-api'
 
 import { getAnimeSeason } from '../lib/targets/myanimelist'
 import { getAnimeTorrents } from '../lib/targets/nyaasi'
+import { filterWords } from '../lib/utils'
 
 const style = css`
   display: flex;
@@ -27,13 +28,17 @@ export default ({ name }) => {
   useEffect(() => {
     getAnimeSeason()
       .then(animes => {
-        const anime = animes.filter(({ name: _name }) => decodeURIComponent(_name) === decodeURIComponent(name))[0]
+        console.log('animes', animes)
+        const _anime = animes.filter(({ name: _name }) => decodeURIComponent(_name) === decodeURIComponent(name))[0]
+        const anime = { ..._anime, name: _anime?.name && filterWords(_anime?.name) }
+        console.log('anime', anime)
         setAnime(anime)
         getAnimeTorrents({ search: anime.name })
-          .then(async res =>{
-            const mostSeeded = res.sort(({ seeders }, { seeders: seeders2 }) => seeders - seeders2)[0]
+          .then(async res => {
+            console.log('res', res)
+            const mostSeeded = res.sort(({ seeders }, { seeders: seeders2 }) => seeders - seeders2).slice(-1)[0]
             console.log('mostSeeded', mostSeeded)
-            const groupSearched = await getAnimeTorrents({ search: `[${mostSeeded.name?.match(/\[(.*?)\]/)?.[1]}] ${decodeURIComponent(name)}` })
+            const groupSearched = await getAnimeTorrents({ search: `[${mostSeeded.name?.match(/\[(.*?)\]/)?.[1]}] ${filterWords(decodeURIComponent(name))}` })
             console.log('groupSearched', groupSearched)
             setTorrents(groupSearched)
           })
@@ -57,7 +62,7 @@ export default ({ name }) => {
               {/* <div>{torrent.magnet}</div> */}
               <div>{torrent.size}</div>
               {/* <div>{torrent.torrentUrl}</div> */}
-            </div>  
+            </div>
           )
         }
       </div>
