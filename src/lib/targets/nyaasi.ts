@@ -61,7 +61,7 @@ const getRowInfo = (elem: HTMLElement) => ({
 })
 
 export const getAnimeTorrents = ({ search = '' }: { search: string }) =>
-  fetch(`https://nyaa.si/?f=2&c=1_2&q=${encodeURIComponent(search)}`)
+  fetch(`https://nyaa.si/?f=0&c=1_2&q=${encodeURIComponent(search)}`)
     .then(async res =>
       [
         ...new DOMParser()

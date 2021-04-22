@@ -35,6 +35,8 @@ export default ({ name }) => {
         setAnime(anime)
         getAnimeTorrents({ search: anime.name })
           .then(async res => {
+            setTorrents(res)
+            return
             console.log('res', res)
             const mostSeeded = res.sort(({ seeders }, { seeders: seeders2 }) => seeders - seeders2).slice(-1)[0]
             console.log('mostSeeded', mostSeeded)
