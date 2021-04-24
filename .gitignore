@@ -1,30 +1,3 @@
-# Node
 node_modules
-
-# Yarn
-.yarn
-.pnp.js
-yarn-error.log
-
-# Parcel
 .parcel-cache
-.cache
-
-
-# Oz
-.env
-.env.production
-env
 dist
-# lib
-mongo.conf
-external
-
-.terraform
-*.tfstate*
-*.tfvars
-
-# .vscode
-packages/asar/
-packages/ffmpeg/
-packages/ffmpeg.wasm-core/
