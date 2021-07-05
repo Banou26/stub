@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { css, jsx, Global } from '@emotion/react'
 
-import { torrent as downloadTorrent } from '@oz/package-api'
+import { torrent as downloadTorrent } from '@banou26/oz-lib'
 
 import { getAnimeSeason } from '../lib/targets/myanimelist'
 import { getAnimeTorrents } from '../lib/targets/nyaasi'

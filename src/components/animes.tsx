@@ -25,7 +25,6 @@ export default () => {
   useEffect(() => {
     getAnimeSeason().then(setAnimes)
   }, [])
-  console.log('Animes', animes)
 
   return (
     <Fragment>

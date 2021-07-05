@@ -5,7 +5,6 @@ import { css, jsx } from '@emotion/react'
 import Router from '../router'
 
 const Mount = () => {
-  console.log('Mount')
   return (
     <Fragment>
       <Router/>

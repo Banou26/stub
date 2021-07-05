@@ -1,7 +1,7 @@
 import type { Search, SearchResult } from '.'
 
 import Category from '../category'
-import { fetch } from '@oz/package-api'
+import { fetch } from '@banou26/oz-lib'
 import { makeUniqueArrayFilter } from '../utils'
 
 const getRowInfo = (elem: HTMLElement) => ({
