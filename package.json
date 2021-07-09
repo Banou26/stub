@@ -1,7 +1,6 @@
 {
   "name": "@banou26/ol",
   "version": "0.0.1",
-  "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.13.16",
@@ -9,23 +8,25 @@
     "@parcel/reporter-bundle-buddy": "^2.0.0-nightly.1902",
     "concurrently": "^6.0.2",
     "nodemon": "^2.0.7",
-    "parcel": "^2.0.0-nightly.643",
+    "parcel": "2.0.0-nightly.650",
     "parcel-reporter-asar": "^0.0.2",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.5"
   },
   "scripts": {
     "bundle": "parcel --no-hmr src/index.tsx src/background.ts -p 4560",
     "manifest": "nodemon --watch src\\manifest.json --exec \"copy src\\manifest.json dist\\manifest.json\"",
-    "dev": "concurrently \"yarn bundle\" \"yarn manifest\""
+    "dev": "concurrently \"yarn bundle\" \"yarn manifest\"",
+    "build": "parcel build  src/index.tsx && copy src\\manifest.json dist\\manifest.json & cp src/manifest.json dist/manifest.json & echo copied manifest"
   },
   "dependencies": {
+    "@banou26/oz-lib": "*",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
-  "alias": {
+  "_alias": {
     "@banou26/oz-lib": "../lib"
   }
 }

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["dom", "esnext"],
+    "noImplicitAny": false,
+    "outDir": "./lib",
+    "sourceMap": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@banou26/oz-lib": ["../lib/lib/lib/src/index.d.ts"],
+      "@banou26/oz-lib/*": ["../lib/lib/lib/src/*"]
+    },
+    "skipLibCheck": true,
+    "types": [],
+
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+  "targets": {
+    "types": false
+  }
+}
