@@ -64,7 +64,7 @@ jobs:
     name: "Release"
     needs: [build]
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'Banou26'
+    # if: github.repository_owner == 'Banou26'
     steps:
     - name: Download dist folder artifacts
       uses: actions/download-artifact@v2
@@ -96,8 +96,9 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
+        tag_name: untagged-${{ steps.short-sha.outputs.sha }}
+        body: test
         files: |
-          dist/manifest.json
-          dist/package.asar
+          dist/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
