@@ -66,11 +66,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'Banou26'
     steps:
-    - name: test
-      run: |
-        cd dist
-        pwd
-        ls
     - name: Download dist folder artifacts
       uses: actions/download-artifact@v2
       with:
