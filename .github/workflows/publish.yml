@@ -66,22 +66,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'Banou26'
     steps:
-    - run: pwd
-    - run: ls
-
+    - name: test
+      run: |
+        cd dist
+        pwd
+        ls
     - name: Download dist folder artifacts
       uses: actions/download-artifact@v2
       with:
           name: dist
           path: dist
 
-    - run: pwd
-    - run: ls
-
-    - run: cd dist
-
-    - run: pwd
-    - run: ls
+    - name: test
+      run: |
+        cd dist
+        pwd
+        ls
 
     - uses: actions/setup-node@v2
       with:
@@ -89,8 +89,13 @@ jobs:
         registry-url: https://npm.pkg.github.com/
         scope: "@Banou26"
 
-    - run: pwd
-    - run: ls
+    - name: test
+      run: |
+        cd dist
+        pwd
+        ls
+
+    - run: ls dist
 
     - name: Release
       uses: softprops/action-gh-release@v1
