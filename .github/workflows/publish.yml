@@ -94,12 +94,9 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v1
-      working-directory: dist
       if: startsWith(github.ref, 'refs/tags/')
       with:
         body: test
-        files: |
-          package.asar
-          manifest.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        INPUT_FILES: dist/*
