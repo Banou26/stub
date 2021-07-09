@@ -23,23 +23,42 @@ jobs:
     - run: rm .parcelrc
     - run: mv action.parcelrc .parcelrc
 
-    - run: npm run build
+    - run: mkdir dist
+    - run: mkdir release
+    
+    - name: test
+      run: |
+        cd dist
+        pwd
+        ls
+
+    - run: npm run build-parcel
+    - run: npm run copy-manifest
+    - run: npm run package-asar
+
+    - name: test
+      run: |
+        cd release
+        pwd
+        ls
 
     - run: npm -v
 
     - run: pwd
     - run: ls
 
-    - run: cd dist
+    - name: test
+      run: |
+        cd release
+        pwd
+        ls
 
-    - run: pwd
-    - run: ls
 
     - name: Upload dist folder artifacts
       uses: actions/upload-artifact@v2
       with:
           name: dist
-          path: "dist/*"
+          path: "release/*"
 
   release:
     name: "Release"

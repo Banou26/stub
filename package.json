@@ -16,7 +16,9 @@
     "bundle": "parcel --no-hmr src/index.tsx src/background.ts -p 4560",
     "manifest": "nodemon --watch src\\manifest.json --exec \"copy src\\manifest.json dist\\manifest.json\"",
     "dev": "concurrently \"yarn bundle\" \"yarn manifest\"",
-    "build": "parcel build src/index.tsx && copy src\\manifest.json dist\\manifest.json & cp src/manifest.json dist/manifest.json & echo copied manifest && npx asar pack dist package.asar && mv package.asar dist/package.asar & echo copied package.asar"
+    "build-parcel": "parcel build src/index.tsx",
+    "copy-manifest": "cp src/manifest.json dist/manifest.json && cp src/manifest.json release/manifest.json",
+    "package-asar": "npx asar pack dist release/package.asar"
   },
   "dependencies": {
     "@banou26/oz-lib": "0.0.2-ci-1013547440.0",
