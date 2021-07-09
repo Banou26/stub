@@ -14,12 +14,15 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
-    - run: npm ci
-    
-    - uses: satackey/action-docker-layer-caching@v0.0.11
-      continue-on-error: true
 
-    - run: sudo npm run build
+    - name: Setup .npmrc auth
+      run: |
+        echo -e "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGE_TOKEN }}\n@banou26:registry=https://npm.pkg.github.com" > .npmrc
+        npm ci --ignore-scripts
+
+    - run: npm ci
+
+    - run: npm run build
 
     - name: Upload dist folder artifacts
       uses: actions/upload-artifact@v2
@@ -27,41 +30,17 @@ jobs:
           name: dist
           path: "dist/*"
 
-  package:
+  release:
+    name: "Release"
     needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-
-      - name: Download dist folder artifacts
-        uses: actions/download-artifact@v2
-        with:
-            name: dist
-            path: ./dist
-
-      - run: npm version prerelease --preid=ci-$GITHUB_RUN_ID --no-git-tag-version
-      - run: npm pack
-
-      - name: Upload
-        uses: actions/upload-artifact@v2
-        with:
-            name: package
-            path: "*.tgz"
-
-  publish:
-    name: "Publish to GitHub Packages"
-    needs: [package]
     runs-on: ubuntu-latest
     if: github.repository_owner == 'Banou26'
     steps:
-    - name: Download package artifact
+    - name: Download dist folder artifacts
       uses: actions/download-artifact@v2
       with:
-          name: package
+          name: dist
+          path: ./dist
     - uses: actions/setup-node@v2
       with:
         node-version: 16.x
@@ -72,7 +51,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          manifest.json
-          package.asar
+          dist/manifest.json
+          dist/package.asar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
