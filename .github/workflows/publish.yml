@@ -15,19 +15,25 @@ jobs:
       with:
         node-version: 16.x
 
+    - name: Setup .npmrc auth
+      run: |
+        echo -e "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGE_TOKEN }}\n@banou26:registry=https://npm.pkg.github.com" > .npmrc
+        npm ci --ignore-scripts
+
+    - run: rm .parcelrc
+    - run: mv action.parcelrc .parcelrc
+
+    - run: npm run build
+
     - run: npm -v
 
     - run: pwd
     - run: ls
 
-    - name: Setup .npmrc auth
-      run: |
-        echo -e "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGE_TOKEN }}\n@banou26:registry=https://npm.pkg.github.com" > .npmrc
-        pwd
-        ls
-        npm ci --ignore-scripts
+    - run: cd dist
 
-    - run: npm run build
+    - run: pwd
+    - run: ls
 
     - name: Upload dist folder artifacts
       uses: actions/upload-artifact@v2
