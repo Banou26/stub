@@ -15,12 +15,17 @@ jobs:
       with:
         node-version: 16.x
 
+    - run: npm -v
+
+    - run: pwd
+    - run: ls
+
     - name: Setup .npmrc auth
       run: |
         echo -e "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGE_TOKEN }}\n@banou26:registry=https://npm.pkg.github.com" > .npmrc
+        pwd
+        ls
         npm ci --ignore-scripts
-
-    - run: npm ci
 
     - run: npm run build
 

@@ -19,7 +19,7 @@
     "build": "parcel build  src/index.tsx && copy src\\manifest.json dist\\manifest.json & cp src/manifest.json dist/manifest.json & echo copied manifest"
   },
   "dependencies": {
-    "@banou26/oz-lib": "*",
+    "@banou26/oz-lib": "0.0.2-ci-1013547440.0",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "raviger": "^2.0.1",
