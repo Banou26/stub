@@ -1,6 +1,9 @@
 name: Create and publish a package
 
-on: push
+on:
+  push:
+    tags:
+      - v*
 
 jobs:
   build:
