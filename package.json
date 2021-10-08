@@ -3,32 +3,43 @@
   "version": "0.0.1",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.13.16",
-    "@parcel/reporter-bundle-analyzer": "^2.0.0-nightly.1694",
-    "@parcel/reporter-bundle-buddy": "^2.0.0-nightly.1902",
-    "concurrently": "^6.0.2",
-    "nodemon": "^2.0.7",
-    "parcel": "2.0.0-nightly.650",
-    "parcel-reporter-asar": "^0.0.2",
-    "typescript": "^4.3.5"
+    "concurrently": "^6.3.0",
+    "esbuild": "^0.13.3",
+    "http-server": "^13.0.2",
+    "nodemon": "^2.0.13",
+    "typescript": "^4.4.3"
   },
   "scripts": {
     "bundle": "parcel --no-hmr src/index.tsx src/background.ts -p 4560",
-    "manifest": "nodemon --watch src\\manifest.json --exec \"copy src\\manifest.json dist\\manifest.json\"",
-    "dev": "concurrently \"yarn bundle\" \"yarn manifest\"",
+    "dev2": "concurrently \"npm run bundle\" \"npm run manifest\" \"npm run readme\"",
+    "build2": "npm run build-parcel && npm run manifest && npm run readme && npm run package-asar",
     "build-parcel": "parcel build src/index.tsx",
+    "copy-oz-folder": "nodemon -e * --watch \".oz/**/*\" --exec \"xcopy /e /v /S /Y /D .oz dist\"",
+    "manifest": "nodemon --watch src\\manifest.json --exec \"npm run copy-manifest & npm run copy-manifest-windows\"",
+    "readme": "nodemon --watch .\\readme.json --exec \"npm run copy-readme & npm run copy-readme-windows\"",
     "copy-manifest": "cp src/manifest.json dist/manifest.json && cp src/manifest.json release/manifest.json",
-    "package-asar": "npx asar pack dist release/package.asar"
+    "copy-manifest-windows": "copy src\\manifest.json dist\\manifest.json && copy src\\manifest.json release\\manifest.json",
+    "copy-images": "cp src/images/logo.jpg dist/logo.jpg && cp src/images/logo.jpg release/logo.jpg",
+    "copy-images-windows": "copy src\\images\\logo.jpg dist\\logo.jpg && copy src\\images\\logo.jpg release\\logo.jpg",
+    "copy-readme": "cp ./README.md dist/README.md && cp ./README.md release/README.md",
+    "copy-readme-windows": "copy .\\README.md dist\\README.md && copy .\\README.md release\\README.md",
+    "package-asar": "Del /F /Q \".\\dist\\package.asar\" & npx asar pack dist tmp/package.asar && move \"tmp\\package.asar\" \"dist\\package.asar\"",
+    "serve": "http-server --cors -p 4560 ./dist",
+    "type-check": "tsc --incremental",
+    "type-check-watch": "tsc --watch --incremental",
+    "build": "esbuild ./src/index.tsx  --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js && npm run package-asar && npm run type-check",
+    "build-watch": "esbuild ./src/index.tsx --watch --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js",
+    "package-watch": "nodemon --watch src --watch ../lib/lib -e js,ts,tsx --exec \"npm run package-asar\"",
+    "watch": "concurrently \"npm run build-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
+    "dev": "concurrently \"npm run serve\" \"npm run watch\""
   },
   "dependencies": {
-    "@banou26/oz-lib": "0.0.2-ci-1013547440.0",
+    "@banou26/oz-lib": "../lib",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@types/react": "^17.0.27",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
-  },
-  "_alias": {
-    "@banou26/oz-lib": "../lib"
   }
 }

@@ -5,6 +5,7 @@ import { fetch } from '@banou26/oz-lib'
 import { makeUniqueArrayFilter } from '../utils'
 
 const getCardInfo = (elem: HTMLElement) => ({
+  MALId: Number(elem.querySelector('[id]').id),
   image: (<HTMLElement>elem.querySelector('img'))?.dataset.src ?? (<HTMLElement>elem.querySelector('img'))?.getAttribute('src'),
   name: elem.querySelector('.h2_anime_title')?.textContent?.trim()
 })

@@ -1,8 +1,6 @@
-/** @jsx jsx */
-import { css, jsx, Global } from '@emotion/react'
-import { Fragment } from 'react'
+/// <reference types="@emotion/react/types/css-prop" />
+import { css, Global } from '@emotion/react'
 import { render } from 'react-dom'
-
 // import './test'
 import Mount from './components'
 
@@ -55,9 +53,9 @@ const style = css`
 `
 
 render(
-  <Fragment>
+  <>
     <Global styles={style}/>
     <Mount/>
-  </Fragment>,
+  </>,
   document.body.appendChild(document.createElement('div'))
 )

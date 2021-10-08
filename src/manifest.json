@@ -1,6 +1,7 @@
 {
-  "name": "OL",
+  "name": "Stub",
   "version": "0.0.1",
+  "types": ["APP"],
   "web": {
     "script": "index.js"
   },

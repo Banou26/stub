@@ -1,9 +1,9 @@
-/** @jsx jsx */
-import React, { Fragment, useEffect, useState } from 'react'
-import { css, jsx, Global } from '@emotion/react'
+import type { SearchResult } from 'src/lib/targets'
 
-import { getAnimeSeason } from '../lib/targets/myanimelist'
-import { getAnimeTorrents } from '../lib/targets/nyaasi'
+import { Fragment, useEffect, useState } from 'react'
+import { css } from '@emotion/react'
+
+import { getAnimeSeason } from '../../lib/targets/myanimelist'
 import { Link } from 'raviger'
 
 const style = css`
@@ -20,11 +20,9 @@ const style = css`
 `
 
 export default () => {
-  const [animes, setAnimes] = useState()
+  const [animes, setAnimes] = useState<SearchResult[]>()
   
-  useEffect(() => {
-    getAnimeSeason().then(setAnimes)
-  }, [])
+  useEffect(() => void getAnimeSeason().then(setAnimes), [])
 
   return (
     <Fragment>

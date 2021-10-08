@@ -2,23 +2,20 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "noImplicitAny": false,
     "outDir": "./lib",
     "sourceMap": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@banou26/oz-lib": ["../lib/lib/lib/src/index.d.ts"],
-      "@banou26/oz-lib/*": ["../lib/lib/lib/src/*"]
+      "@banou26/oz-lib": ["../lib/lib/index.js"],
+      "@banou26/oz-lib/*": ["../lib/lib/*"]
     },
-    "skipLibCheck": true,
-    "types": [],
-
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],

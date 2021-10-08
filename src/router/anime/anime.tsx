@@ -1,12 +1,13 @@
-/** @jsx jsx */
-import React, { Fragment, useEffect, useState } from 'react'
-import { css, jsx, Global } from '@emotion/react'
+import type { SearchResult } from 'src/lib/targets'
+
+import { Fragment, useEffect, useState } from 'react'
+import { css } from '@emotion/react'
 
 import { torrent as downloadTorrent } from '@banou26/oz-lib'
 
-import { getAnimeSeason } from '../lib/targets/myanimelist'
-import { getAnimeTorrents } from '../lib/targets/nyaasi'
-import { filterWords } from '../lib/utils'
+import { getAnimeSeason } from '../../lib/targets/myanimelist'
+import { getAnimeTorrents } from '../../lib/targets/nyaasi'
+import { filterWords } from '../../lib/utils'
 
 const style = css`
   display: flex;
@@ -22,8 +23,8 @@ const style = css`
 `
 
 export default ({ name }) => {
-  const [anime, setAnime] = useState()
-  const [torrents, setTorrents] = useState()
+  const [anime, setAnime] = useState<SearchResult>()
+  const [torrents, setTorrents] = useState<any>()
   
   useEffect(() => {
     getAnimeSeason()
@@ -36,13 +37,13 @@ export default ({ name }) => {
         getAnimeTorrents({ search: anime.name })
           .then(async res => {
             setTorrents(res)
-            return
-            console.log('res', res)
-            const mostSeeded = res.sort(({ seeders }, { seeders: seeders2 }) => seeders - seeders2).slice(-1)[0]
-            console.log('mostSeeded', mostSeeded)
-            const groupSearched = await getAnimeTorrents({ search: `[${mostSeeded.name?.match(/\[(.*?)\]/)?.[1]}] ${filterWords(decodeURIComponent(name))}` })
-            console.log('groupSearched', groupSearched)
-            setTorrents(groupSearched)
+            // return
+            // console.log('res', res)
+            // const mostSeeded = res.sort(({ seeders }, { seeders: seeders2 }) => seeders - seeders2).slice(-1)[0]
+            // console.log('mostSeeded', mostSeeded)
+            // const groupSearched = await getAnimeTorrents({ search: `[${mostSeeded.name?.match(/\[(.*?)\]/)?.[1]}] ${filterWords(decodeURIComponent(name))}` })
+            // console.log('groupSearched', groupSearched)
+            // setTorrents(groupSearched)
           })
       })
   }, [])
