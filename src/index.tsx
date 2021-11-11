@@ -1,7 +1,6 @@
 /// <reference types="@emotion/react/types/css-prop" />
 import { css, Global } from '@emotion/react'
 import { render } from 'react-dom'
-// import './test'
 import Mount from './components'
 
 const style = css`

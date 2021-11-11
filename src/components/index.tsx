@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import { Fragment } from 'react'
-import { css, jsx } from '@emotion/react'
 
 import Router from '../router'
 

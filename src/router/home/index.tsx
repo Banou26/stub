@@ -44,6 +44,7 @@ export default () => {
   console.log('animes', animes)
   console.log('movies', movies)
   console.log('shows', shows)
+
   useEffect(() => void getAnimeSeason().then(setAnimes), [])
   // @ts-ignore
   useEffect(() => void getLatestMovies().then(setMovies), [])

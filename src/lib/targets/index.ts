@@ -34,7 +34,7 @@ export interface SearchResult {
 
 const targets: Target[] = [
   google,
-  rarbg
+  // rarbg
 ]
 
 const filterTagets =

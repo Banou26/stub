@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "esnext.array"],
     "noImplicitAny": false,
     "outDir": "./lib",
     "sourceMap": true,
@@ -12,8 +12,8 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@banou26/oz-lib": ["../lib/lib/index.js"],
-      "@banou26/oz-lib/*": ["../lib/lib/*"]
+      "@banou26/oz-lib": ["../lib/lib/lib/src/index"],
+      "@banou26/oz-lib/*": ["../lib/lib/lib/src/*"]
     },
     "skipLibCheck": true
   },

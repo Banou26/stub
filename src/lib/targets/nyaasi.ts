@@ -60,16 +60,25 @@ const getRowInfo = (elem: HTMLElement) => ({
     )
 })
 
-export const getAnimeTorrents = ({ search = '' }: { search: string }) =>
-  fetch(`https://nyaa.si/?f=0&c=1_2&q=${encodeURIComponent(search)}`)
-    .then(async res =>
-      [
-        ...new DOMParser()
-          .parseFromString(await res.text(), 'text/html')
-          .querySelectorAll('tr')
-      ]
-        .slice(1)
-        .map(getRowInfo)
-    )
+export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
+  const pageHtml = await (await fetch(`https://nyaa.si/?f=0&c=1_2&q=${encodeURIComponent(search)}`)).text()
+  const dom =
+    new DOMParser()
+      .parseFromString(pageHtml, 'text/html')
+  const cards =
+    [...dom.querySelectorAll('tr')]
+      .slice(1)
+      .map(getRowInfo)
+  const [, count] =
+    dom
+      .querySelector('.pagination-page-info')
+      .textContent
+      .split(' ')
+      .reverse()
+  return {
+    count: Number(count),
+    items: cards
+  }
+}
 
 export const categories = [Category.ANIME]

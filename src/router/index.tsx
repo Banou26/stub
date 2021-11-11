@@ -12,4 +12,4 @@ export const routes = {
   '/anime/:name': ({ name }) => <Anime name={name}/>
 }
 
-export default () => useRoutes(routes, { basePath: '/index.html' })
+export default () => useRoutes(routes)

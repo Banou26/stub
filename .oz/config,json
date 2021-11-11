@@ -1,0 +1,13 @@
+{
+  "name": "Stub",
+  "header": ["en-US"],
+  "description": [{ language: "en-US", value: "Video watching and tracking app"}],
+  "shortDescription": [{ language: "en-US", value: "Video watching and tracking app"}],
+  "permissions": [
+    { "type": "http", "value": "https://myanimelist.net/anime/season" },
+    { "type": "http", "value": "https://nyaa.si/*" },
+    { "type": "torrent" },
+    { "type": "localStorage" },
+    { "type": "cloudStorage" }
+  ]
+}
