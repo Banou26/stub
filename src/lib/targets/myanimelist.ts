@@ -11,7 +11,7 @@ const getCardInfo = (elem: HTMLElement) => ({
 })
 
 export const getAnimeSeason = () =>
-  fetch('https://myanimelist.net/anime/season')
+  fetch('https://myanimelist.net/anime/season', { proxyCache: (1000 * 60 * 60 * 5).toString() })
     .then(async res =>
       [
         ...new DOMParser()

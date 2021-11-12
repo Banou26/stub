@@ -31,7 +31,8 @@ export const getLatestMovies: Search = () =>
         'upgrade-insecure-requests': '1',
         'user-agent': navigator.userAgent
       },
-      "referrer": "https://www.google.com/"
+      "referrer": "https://www.google.com/",
+      proxyCache: (1000 * 60 * 60 * 5).toString()
     }
   )
     .then(async res => {
@@ -61,7 +62,8 @@ export const getLatestShows: Search = () =>
         'upgrade-insecure-requests': '1',
         'user-agent': navigator.userAgent
       },
-      "referrer": "https://www.google.com/"
+      "referrer": "https://www.google.com/",
+      proxyCache: (1000 * 60 * 60 * 5).toString()
     }
   )
     .then(async res => {
