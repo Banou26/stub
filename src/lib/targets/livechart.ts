@@ -1,7 +1,7 @@
 import type { Search, SearchResult } from '.'
 
 import Category from '../category'
-import { fetch } from '@banou26/oz-lib'
+import { fetch } from '@mfkn/fkn-lib'
 import { makeUniqueArrayFilter } from '../utils'
 
 

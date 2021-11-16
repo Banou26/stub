@@ -3,7 +3,7 @@ import type { SearchResult } from 'src/lib/targets'
 import { Fragment, useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 
-import { torrent as downloadTorrent } from '@banou26/oz-lib'
+import { torrent as downloadTorrent } from '@mfkn/fkn-lib'
 
 import { getAnimeSeason } from '../../lib/targets/myanimelist'
 import { getAnimeTorrents } from '../../lib/targets/nyaasi'
@@ -55,7 +55,7 @@ export default ({ name }) => {
       <div css={style}>
         {anime?.name}
         {
-          torrents?.map(torrent =>
+          torrents?.items.map(torrent =>
             <div key={torrent.link} onClick={() => downloadTorrent({ uri: torrent.magnet })}>
               <div>{torrent.name}</div>
               <div>{torrent.link}</div>

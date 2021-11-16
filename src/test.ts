@@ -1,4 +1,4 @@
-// import { fetch, torrent } from '@banou26/oz-lib'
+// import { fetch, torrent } from '@mfkn/fkn-lib'
 // import './lib'
 
 // fetch(
@@ -59,7 +59,7 @@
 // //   torrentSubscription.unsubscribe()
 // // }, 25000)
 
-// import { registerServiceWorker } from '@banou26/oz-lib'
+// import { registerServiceWorker } from '@mfkn/fkn-lib'
 
 // registerServiceWorker()
   

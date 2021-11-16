@@ -1,7 +1,7 @@
 import type { Search, SearchResult } from '.'
 
 import Category from '../category'
-import { fetch, evalFetch } from '@banou26/oz-lib'
+import { fetch, evalFetch } from '@mfkn/fkn-lib'
 import { makeUniqueArrayFilter } from '../utils'
 
 const getCardInfo = (elem: HTMLElement) => ({

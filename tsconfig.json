@@ -9,11 +9,12 @@
     "noEmit": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@banou26/oz-lib": ["../lib/lib/lib/src/index"],
-      "@banou26/oz-lib/*": ["../lib/lib/lib/src/*"]
+      "@mfkn/fkn-lib": ["../lib/lib/lib/src/index"],
+      "@mfkn/fkn-lib/*": ["../lib/lib/lib/src/*"]
     },
     "skipLibCheck": true
   },

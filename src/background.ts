@@ -1,2 +1,2 @@
-import '@banou26/oz-lib'
+import '@mfkn/fkn-lib'
 console.log('background')

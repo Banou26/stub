@@ -36,9 +36,9 @@
     "dev": "npm run watch"
   },
   "dependencies": {
-    "@banou26/oz-lib": "file:../lib",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@mfkn/fkn-lib": "file:../lib",
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.27",
     "raviger": "^2.0.1",

@@ -60,25 +60,26 @@ const getRowInfo = (elem: HTMLElement) => ({
     )
 })
 
+const baseURL = 'https://gogoanime.vc/'
+
 export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
-  const pageHtml = await (await fetch(`https://nyaa.si/?f=0&c=1_2&q=${encodeURIComponent(search)}`)).text()
-  const dom =
+  const searchJson = await (await fetch(`https://ajax.gogo-load.com/site/loadAjaxSearch?${new URLSearchParams({ keyword: search.trim(), id: '-1' }).toString()}`)).json()
+  const animeURI =
     new DOMParser()
-      .parseFromString(pageHtml, 'text/html')
-  const cards =
-    [...dom.querySelectorAll('tr')]
-      .slice(1)
-      .map(getRowInfo)
-  const [, count] =
-    dom
-      .querySelector('.pagination-page-info')
-      .textContent
-      .split(' ')
-      .reverse()
+      .parseFromString(decodeURI(searchJson.content), 'text/html')
+      .querySelector('a')
+      .href
+      .replace('category/', '')
+  const [firstElem, ...rest] =
+    new DOMParser()
+      .parseFromString(await (await fetch(`${baseURL}${animeURI}-episode-1`)).text(), 'text/html')
+      .querySelectorAll('.episode_page li a')
+  const count = Number((rest.at(-1) ?? firstElem).getAttribute('ep_end'))
+
   return {
-    count: Number(count),
-    items: cards
+    count
   }
 }
 
 export const categories = [Category.ANIME]
+
