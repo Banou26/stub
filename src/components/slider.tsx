@@ -3,8 +3,7 @@ import { css } from '@emotion/react'
 const style = css`
 position: relative;
 display: grid;
-clip-path: polygon(0 0%, 100% 0%, 100% calc(100% - 1.4rem), 0% calc(100% - 1.4rem));
-
+/* clip-path: polygon(0 0%, 100% 0%, 100% calc(100% - 1.75rem), 0% calc(100% - 1.75rem)); */
 .list {
   display: grid;
   grid-auto-columns: 22.5rem;
@@ -13,11 +12,15 @@ clip-path: polygon(0 0%, 100% 0%, 100% calc(100% - 1.4rem), 0% calc(100% - 1.4re
   height: 31.8rem;
   overflow: auto;
   scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 
   & > * {
     scroll-snap-align: start;
   }
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .action {
