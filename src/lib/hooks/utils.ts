@@ -20,6 +20,7 @@ type Fetch<T = Response> = ((...args: Parameters<typeof fetch>) => Promise<T>)
 interface UseFetchOptionsInterface<T extends RequestType> {
   type?: T
   fetch?: Fetch
+  skip?: boolean
 }
 
 interface UseFetchReturn<T = undefined, T2 extends Function | Parameters<Fetch>[0] | undefined = Function | Parameters<Fetch>[0] | undefined, T3 extends RequestType = undefined> {
@@ -40,7 +41,15 @@ interface UseFetchReturn<T = undefined, T2 extends Function | Parameters<Fetch>[
 export const useFetch =
   <T = undefined, T2 extends Function | Parameters<Fetch>[0] | undefined = undefined | Function | Parameters<Fetch>[0], T3 extends RequestType = undefined>(
     input: T2,
-    { type, fetch = defaultFetch, ...rest }: UseFetchOptionsInterface<T3> & Parameters<typeof fetch>[1] = { fetch: defaultFetch }
+    {
+      type,
+      skip = false,
+      fetch = typeof input === 'function' ? input : defaultFetch,
+      ...rest
+    } : UseFetchOptionsInterface<T3> & Parameters<typeof fetch>[1] = {
+      fetch: typeof input === 'function' ? input as Fetch : defaultFetch,
+      skip: false
+    }
   ): UseFetchReturn<T, T2, T3> => {
     const [request, setRequest] = useState(undefined)
     const [data, setData] = useState(undefined)
@@ -51,7 +60,7 @@ export const useFetch =
       (
         type
           ? fetch(type)(input, rest)
-          : fetch(input, rest)
+          : fetch(rest)
       )
         .then(setData)
         .catch(setError)
@@ -60,8 +69,9 @@ export const useFetch =
     const refetch = makeRequest
 
     useEffect(() => {
+      if (skip || loading || data) return
       setRequest(makeRequest)
-    }, [])
+    }, [skip])
 
     return {
       loading,
@@ -70,12 +80,3 @@ export const useFetch =
       refetch
     }
   }
-
-// const { data } = useFetch('foobar')
-// const dataOk: ReadableStream<Uint8Array> | undefined = data
-// const { data: data2 } = useFetch('foobar', { type: 'text' })
-// const data2Ok: string | undefined = data2
-// const { data: data3 } = useFetch(() => new Promise<boolean>(() => {}))
-// const data3Ok: boolean | undefined = data3
-// const { data: data4 } = useFetch<{ foo: string }>('foobar')
-// const data4Ok: { foo: string } | undefined = data4
