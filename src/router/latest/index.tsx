@@ -20,6 +20,13 @@ padding: 5rem;
   font-size: 5rem;
 }
 
+.items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22.5rem, 1fr));
+  grid-auto-rows: 31.8rem;
+  grid-gap: 2.5rem;
+}
+
 .item {
   align-items: center;
   background-repeat: no-repeat;
@@ -28,33 +35,31 @@ padding: 5rem;
   display: grid;
   grid-template-rows: auto auto;
   align-content: end;
-  h3 {
+  span {
     text-align: center;
     text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
     padding-top: 1rem;
     background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) calc(100% - 1rem), rgba(0,0,0,0) 100%);
+    font-size: 1.9rem;
+    font-weight: 700;
   }
 }
 `
 
 export default ({ category }: { category?: Category }) => {
-  // const { loading, data, error } = useFetch('foobar', {  })
-  
-  // const [categoryItems, setCategoryItems] = useState<SearchResult[]>()
-
-  // useEffect(() => void getLatest({ categories: [category as Category] }).then(setCategoryItems), [])
+  const { loading, data: categoryItems, error } = useFetch(() => getLatest({ categories: [category!.toUpperCase() as Category] }), { skip: !category })
 
   return (
     <div css={style}>
       <div className="items">
-        {/* {
+        {
           categoryItems
-            .map(movie =>
-              <Link key={movie.name} href={`/movie/${movie.name}`} className="item" style={{ backgroundImage: `url(${movie.image})` }}>
-                <h3 style={{ color: 'white' }}>{movie.name}</h3>
+            ?.map(result =>
+              <Link key={result.name} href={`/result/${result.name}`} className="item" style={{ backgroundImage: `url(${result.image})` }}>
+                <span style={{ color: 'white' }}>{result.name}</span>
               </Link>
             )
-        } */}
+        }
       </div>
     </div>
   )
