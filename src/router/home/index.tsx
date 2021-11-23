@@ -54,39 +54,39 @@ export default () => {
   return (
     <div css={style}>
       <div className="anime">
-        <Link href="/movies" className="category">Movies</Link>
+        <Link href="/category/movies" className="category">Movies</Link>
         <Slider>
           {
             movies
               ?.slice(0, 20)
               .map(movie =>
-                <Link key={movie.name} href={`/movie/${movie.name}`} className="item" style={{ backgroundImage: `url(${movie.image})` }}>
+                <Link key={movie.name} href={`/watch/${movie.name}`} className="item" style={{ backgroundImage: `url(${movie.image})` }}>
                   <h3 style={{ color: 'white' }}>{movie.name}</h3>
                 </Link>
               )
           }
         </Slider>
 
-        <Link href="/shows" className="category">Shows</Link>
+        <Link href="/category/shows" className="category">Shows</Link>
         <Slider>
           {
             shows
               ?.slice(0, 20)
               .map(movie =>
-                <Link key={movie.name} href={`/movie/${movie.name}`} className="item" style={{ backgroundImage: `url(${movie.image})` }}>
+                <Link key={movie.name} href={`/watch/${movie.name}`} className="item" style={{ backgroundImage: `url(${movie.image})` }}>
                   <h3 style={{ color: 'white' }}>{movie.name}</h3>
                 </Link>
               )
           }
         </Slider>
 
-        <Link href="/animes" className="category">Animes</Link>
+        <Link href="/category/animes" className="category">Animes</Link>
         <Slider>
           {
             animes
               ?.slice(0, 20)
               .map(anime =>
-                <Link key={anime.name} href={`/anime/${anime.name}`} className="item" style={{ backgroundImage: `url(${anime.image})` }}>
+                <Link key={anime.name} href={`/watch/${anime.name}`} className="item" style={{ backgroundImage: `url(${anime.image})` }}>
                   <h3 style={{ color: 'white' }}>{anime.name}</h3>
                 </Link>
               )

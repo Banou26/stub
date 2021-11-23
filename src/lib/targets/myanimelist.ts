@@ -21,4 +21,6 @@ export const getAnimeSeason = () =>
         .map(getCardInfo)
     )
 
+export const getLatest = getAnimeSeason
+
 export const categories = [Category.ANIME]

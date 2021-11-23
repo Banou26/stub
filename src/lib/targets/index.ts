@@ -34,6 +34,7 @@ export interface SearchResult {
 
 const targets: Target[] = [
   google,
+  myanimelist
   // rarbg
 ]
 
@@ -77,7 +78,6 @@ export const getLatest = (
 ) => {
   const filteredTargets = filterGetLatest({ categories, genres })
   const results = filteredTargets.map(target => target.getLatest?.({ categories, genres }))
-
   return (
     Promise
     .allSettled(results)

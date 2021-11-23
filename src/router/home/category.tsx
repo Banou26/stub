@@ -55,7 +55,7 @@ export default ({ category }: { category?: Category }) => {
         {
           categoryItems
             ?.map(result =>
-              <Link key={result.name} href={`/result/${result.name}`} className="item" style={{ backgroundImage: `url(${result.image})` }}>
+              <Link key={result.name} href={`/watch/${result.name}`} className="item" style={{ backgroundImage: `url(${result.image})` }}>
                 <span style={{ color: 'white' }}>{result.name}</span>
               </Link>
             )
