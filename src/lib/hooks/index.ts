@@ -1,1 +1,1 @@
-export { default as useLatest } from 'use-latest'
+export { default as useLatest } from './use-latest'
