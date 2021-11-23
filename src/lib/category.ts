@@ -1,11 +1,12 @@
 
 export enum Category {
   MOVIE = 'MOVIE',
-  TV = 'TV',
+  SHOW = 'SHOW',
   ANIME = 'ANIME',
   CARTOON = 'CARTOON',
   DOCUMENTARY = 'DOCUMENTARY',
   PORNOGRAPHY = 'PORNOGRAPHY',
+  TV = 'TV',
   OTHER = 'OTHER'
 }
 
