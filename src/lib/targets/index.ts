@@ -11,6 +11,34 @@ export * as rarbg from './rarbg'
 export * as myanimelist from './myanimelist'
 // export * as livechart from './livechart'
 
+interface TitleHandle {
+  protocol: string
+  id: string
+  url: string
+  images: string[]
+  synopsis?: string
+  relatedTitles: TitleHandle[]
+}
+
+interface EpisodeHandle {
+  protocol: string
+  id: string
+  url: string
+  images: string[]
+  synopsis?: string
+  relatedEpisodes: EpisodeHandle[]
+}
+
+interface Title {
+  name: string
+  handles: TitleHandle[]
+}
+
+interface Episode {
+  name: string
+  handles: EpisodeHandle[]
+}
+
 export type Search = (
   { search, categories, genres }:
   { search: string, categories?: Category[], genres?: Genre[] }
@@ -78,6 +106,7 @@ export const getLatest = (
 ) => {
   const filteredTargets = filterGetLatest({ categories, genres })
   const results = filteredTargets.map(target => target.getLatest?.({ categories, genres }))
+  console.log('categories', categories)
   return (
     Promise
     .allSettled(results)

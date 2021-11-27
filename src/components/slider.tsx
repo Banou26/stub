@@ -49,6 +49,6 @@ export default ({ children }) =>
     <div className="list">
       {children}
     </div>
-    <div onClick={(ev) => (ev.target as HTMLDivElement).parentElement.querySelector('.list').scrollBy({ left: -225 * 5, behavior: 'smooth' })} className="action">{'<'}</div>
-    <div onClick={(ev) => (ev.target as HTMLDivElement).parentElement.querySelector('.list').scrollBy({ left: 225 * 5, behavior: 'smooth' })} className="action">{'>'}</div>
+    <div onClick={(ev) => (ev.target as HTMLDivElement).parentElement!.querySelector('.list')!.scrollBy({ left: -225 * 5, behavior: 'smooth' })} className="action">{'<'}</div>
+    <div onClick={(ev) => (ev.target as HTMLDivElement).parentElement!.querySelector('.list')!.scrollBy({ left: 225 * 5, behavior: 'smooth' })} className="action">{'>'}</div>
   </div>

@@ -67,7 +67,7 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
   const animeURI =
     new DOMParser()
       .parseFromString(decodeURI(searchJson.content), 'text/html')
-      .querySelector('a')
+      .querySelector('a')!
       .href
       .replace('category/', '')
   const [firstElem, ...rest] =

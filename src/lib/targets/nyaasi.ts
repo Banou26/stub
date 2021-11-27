@@ -71,8 +71,8 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
       .map(getRowInfo)
   const [, count] =
     dom
-      .querySelector('.pagination-page-info')
-      .textContent
+      .querySelector('.pagination-page-info')!
+      .textContent!
       .split(' ')
       .reverse()
   return {

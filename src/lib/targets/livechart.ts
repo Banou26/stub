@@ -11,7 +11,7 @@ const getAnimeSeason = () =>
 // getAnimeSeason().then(v => console.log(v))
 
 const getLCCardInfo = (elem: HTMLElement) => ({
-  MALId: Number(elem.querySelector('[id]').id),
+  MALId: Number(elem.querySelector('[id]')!.id),
   image: (<HTMLElement>elem.querySelector('poster-container img'))?.dataset.src ?? (<HTMLElement>elem.querySelector('img'))?.getAttribute('src'),
   name: elem.querySelector('.main-title')?.textContent?.trim()
 })

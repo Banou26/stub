@@ -3,14 +3,18 @@ import { useRoutes } from 'raviger'
 import { Category } from 'src/lib'
 import Home from './home'
 import CategoryComponent from './home/category'
+import Title from './home/title'
 import Watch from './home/watch'
+import Search from './home/search'
 
 export const routes = {
   '/': () => <Home/>,
   '/category/movies': () => <CategoryComponent category={Category.MOVIE}/>,
   '/category/shows': () => <CategoryComponent category={Category.SHOW}/>,
   '/category/animes': () => <CategoryComponent category={Category.ANIME}/>,
-  '/watch/:name': ({ name }) => <Watch name={name}/>
+  '/title/:name': ({ name }) => <Title name={decodeURI(name)}/>,
+  '/watch/:name': ({ name }) => <Watch name={decodeURI(name)}/>,
+  '/search': () => <Search/>
 }
 
 export default () => useRoutes(routes)
