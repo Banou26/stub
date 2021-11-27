@@ -10,39 +10,6 @@ export interface Image {
   url: string
 }
 
-export interface TitleHandle {
-  names: TitleName[]
-  protocol: string
-  id: string
-  url: string
-  images: Image[]
-  synopses: TitleSynopsis[]
-  related: TitleHandle[]
-}
-
-export interface TitleHandleApolloCache extends TitleHandle, StoreObject {
-  __typename: 'TitleHandle'
-  names: TitleNameApolloCache[]
-  images: ImageApolloCache[]
-  synopses: TitleSynopsisApolloCache[]
-  related: TitleHandleApolloCache[]
-}
-
-export interface EpisodeHandle {
-  protocol: string
-  id: string
-  url: string
-  images: Image[]
-  synopses: TitleSynopsis[]
-  related: EpisodeHandle[]
-}
-
-export interface EpisodeHandleApolloCache extends EpisodeHandle, StoreObject {
-  __typename: 'EpisodeHandle'
-  images: ImageApolloCache[]
-  related: EpisodeHandleApolloCache[]
-}
-
 export interface TitleNameApolloCache extends TitleName, StoreObject {
   __typename: 'TitleName'
 }
@@ -81,6 +48,24 @@ export interface TitleApolloCache extends Title, StoreObject {
   recommended: TitleApolloCache[]
 }
 
+export interface TitleHandle {
+  names: TitleName[]
+  protocol: string
+  id: string
+  url: string
+  images: Image[]
+  synopses: TitleSynopsis[]
+  related: TitleHandle[]
+}
+
+export interface TitleHandleApolloCache extends TitleHandle, StoreObject {
+  __typename: 'TitleHandle'
+  names: TitleNameApolloCache[]
+  images: ImageApolloCache[]
+  synopses: TitleSynopsisApolloCache[]
+  related: TitleHandleApolloCache[]
+}
+
 export interface Episode {
   names: TitleName[]
   images: Image[]
@@ -92,4 +77,19 @@ export interface EpisodeApolloCache extends Episode, StoreObject {
   names: TitleNameApolloCache[]
   images: ImageApolloCache[]
   handles: EpisodeHandleApolloCache[]
+}
+
+export interface EpisodeHandle {
+  protocol: string
+  id: string
+  url: string
+  images: Image[]
+  synopses: TitleSynopsis[]
+  related: EpisodeHandle[]
+}
+
+export interface EpisodeHandleApolloCache extends EpisodeHandle, StoreObject {
+  __typename: 'EpisodeHandle'
+  images: ImageApolloCache[]
+  related: EpisodeHandleApolloCache[]
 }

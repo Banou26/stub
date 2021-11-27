@@ -22,6 +22,39 @@ export const TITLE_SYNOPSIS_FRAGMENT = gql`
   }
 `
 
+export const TITLE_FRAGMENT = gql`
+  ${IMAGE_FRAGMENT}
+  ${TITLE_NAME_FRAGMENT}
+  ${TITLE_SYNOPSIS_FRAGMENT}
+  fragment TitleFragment on Title {
+    names {
+      ...TitleNameFragment
+    }
+    images {
+      ...ImageFragment
+    }
+    synopses {
+      ...TitleSynopsisFragment
+    }
+    related {
+      protocol
+      id
+    }
+    handles {
+      protocol
+      id
+    }
+    episodes {
+      protocol
+      id
+    }
+    recommended {
+      protocol
+      id
+    }
+  }
+`
+
 export const TITLE_HANDLE_FRAGMENT = gql`
   ${IMAGE_FRAGMENT}
   ${TITLE_NAME_FRAGMENT}
@@ -45,24 +78,24 @@ export const TITLE_HANDLE_FRAGMENT = gql`
   }
 `
 
-export const TITLE_FRAGMENT = gql`
-  ${TITLE_HANDLE_FRAGMENT}
-  fragment TitleFragment on Title {
+export const EPISODE_FRAGMENT = gql`
+  ${IMAGE_FRAGMENT}
+  ${TITLE_NAME_FRAGMENT}
+  ${TITLE_SYNOPSIS_FRAGMENT}
+  fragment EpisodeFragment on Episode {
     names {
       ...TitleNameFragment
     }
     images {
       ...ImageFragment
     }
-    synopses {
-      ...TitleSynopsisFragment
-    }
     handles {
       protocol
       id
     }
-    episodes {
-      
+    related {
+      protocol
+      id
     }
   }
 `
@@ -70,27 +103,17 @@ export const TITLE_FRAGMENT = gql`
 export const EPISODE_HANDLE_FRAGMENT = gql`
   ${IMAGE_FRAGMENT}
   fragment EpisodeHandleFragment on EpisodeHandle {
-    episode {
-      id
-    }
     protocol
     id
     url
     images {
       ...ImageFragment
     }
-    synopsis
-    relatedEpisodes {
-      id
+    synopses {
+      ...TitleSynopsisFragment
     }
-  }
-`
-
-export const EPISODE_FRAGMENT = gql`
-  ${EPISODE_HANDLE_FRAGMENT}
-  fragment EpisodeFragment on Episode {
-    name
-    handles {
+    related {
+      protocol
       id
     }
   }
