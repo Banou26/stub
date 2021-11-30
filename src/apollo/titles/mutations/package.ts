@@ -1,22 +1,22 @@
-import type { Package } from '..'
+// import type { Package } from '..'
 
 import { gql } from '@apollo/client'
 
-import { PACKAGE_FRAGMENT } from '..'
+// import { PACKAGE_FRAGMENT } from '..'
 
-export const UPDATE_PACKAGE = gql`
-  ${PACKAGE_FRAGMENT}
-  mutation UpdatePackage($input: UpdatePackageInput!) {
-    updatePackage(input: $input) {
-      package {
-        ...PackageFragment
-      }
-    }
-  }
-`
+// export const UPDATE_PACKAGE = gql`
+//   ${PACKAGE_FRAGMENT}
+//   mutation UpdatePackage($input: UpdatePackageInput!) {
+//     updatePackage(input: $input) {
+//       package {
+//         ...PackageFragment
+//       }
+//     }
+//   }
+// `
 
 export interface UpdatePackagePayload {
-  package: Package
+  // package: Package
 }
 
 export interface CropInput {
@@ -26,33 +26,33 @@ export interface CropInput {
   width: number
 }
 
-export interface UpdatePackageInput {
-  input: {
-    id: string
-    packageProperties: Partial<Package> & {
-      headerFile?: {
-        language: string
-        file: File | Blob
-        crop: CropInput
-      }
-    }
-  }
-}
+// export interface UpdatePackageInput {
+//   input: {
+//     id: string
+//     packageProperties: Partial<Package> & {
+//       headerFile?: {
+//         language: string
+//         file: File | Blob
+//         crop: CropInput
+//       }
+//     }
+//   }
+// }
 
 
-export const CREATE_PACKAGE = gql`
-  ${PACKAGE_FRAGMENT}
-  mutation CreatePackage($input: CreatePackageInput!) {
-    createPackage(input: $input) {
-      package {
-        ...PackageFragment
-      }
-    }
-  }
-`
+// export const CREATE_PACKAGE = gql`
+//   ${PACKAGE_FRAGMENT}
+//   mutation CreatePackage($input: CreatePackageInput!) {
+//     createPackage(input: $input) {
+//       package {
+//         ...PackageFragment
+//       }
+//     }
+//   }
+// `
 
 export interface CreatePackagePayload {
-  package: Package
+  // package: Package
 }
 
 export interface CreatePackageInput {

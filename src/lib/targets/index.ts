@@ -1,43 +1,16 @@
 import Category from '../category'
 import Genre from '../genre'
 
-import * as google from './google'
-import * as rarbg from './rarbg'
-import * as myanimelist from './myanimelist'
-// import * as livechart from './livechart'
+import * as MyAnimeList from './myanimelist'
+import * as Google from './google'
+import * as GogoAnime from './gogoanime'
 
-export * as google from './google'
-export * as rarbg from './rarbg'
-export * as myanimelist from './myanimelist'
-// export * as livechart from './livechart'
+export default [
+  MyAnimeList,
+  Google,
+  GogoAnime
+]
 
-interface TitleHandle {
-  protocol: string
-  id: string
-  url: string
-  images: string[]
-  synopsis?: string
-  relatedTitles: TitleHandle[]
-}
-
-interface EpisodeHandle {
-  protocol: string
-  id: string
-  url: string
-  images: string[]
-  synopsis?: string
-  relatedEpisodes: EpisodeHandle[]
-}
-
-interface Title {
-  name: string
-  handles: TitleHandle[]
-}
-
-interface Episode {
-  name: string
-  handles: EpisodeHandle[]
-}
 
 export type Search = (
   { search, categories, genres }:
@@ -84,7 +57,7 @@ const filterTagets =
 const filterSearch = filterTagets(({ search }) => search)
 const filterGetLatest = filterTagets(({ getLatest }) => getLatest)
 
-export const search: Search = ({ search, categories, genres }) => {
+export const search = ({ search, categories, genres }) => {
   const filteredTargets = filterSearch({ categories, genres })
   const results = filteredTargets.map(target => target.search!({ search, categories, genres }))
 

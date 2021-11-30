@@ -22,7 +22,17 @@ export const TITLE_SYNOPSIS_FRAGMENT = gql`
   }
 `
 
+export const HANDLE_FRAGMENT = gql`
+  fragment HandleFragment on Handle {
+    scheme
+    id
+    uri
+    url
+  }
+`
+
 export const TITLE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${TITLE_NAME_FRAGMENT}
   ${TITLE_SYNOPSIS_FRAGMENT}
@@ -37,34 +47,29 @@ export const TITLE_FRAGMENT = gql`
       ...TitleSynopsisFragment
     }
     related {
-      protocol
-      id
+      ...HandleFragment
     }
     handles {
-      protocol
-      id
+      ...HandleFragment
     }
     episodes {
-      protocol
-      id
+      ...HandleFragment
     }
     recommended {
-      protocol
-      id
+      ...HandleFragment
     }
   }
 `
 
 export const TITLE_HANDLE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${TITLE_NAME_FRAGMENT}
   fragment TitleHandleFragment on TitleHandle {
+    ...HandleFragment
     names {
       ...TitleNameFragment
     }
-    protocol
-    id
-    url
     images {
       ...ImageFragment
     }
@@ -72,13 +77,13 @@ export const TITLE_HANDLE_FRAGMENT = gql`
       ...TitleSynopsisFragment
     }
     related {
-      protocol
-      id
+      ...HandleFragment
     }
   }
 `
 
 export const EPISODE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${TITLE_NAME_FRAGMENT}
   ${TITLE_SYNOPSIS_FRAGMENT}
@@ -90,22 +95,19 @@ export const EPISODE_FRAGMENT = gql`
       ...ImageFragment
     }
     handles {
-      protocol
-      id
+      ...HandleFragment
     }
     related {
-      protocol
-      id
+      ...HandleFragment
     }
   }
 `
 
 export const EPISODE_HANDLE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   fragment EpisodeHandleFragment on EpisodeHandle {
-    protocol
-    id
-    url
+    ...HandleFragment
     images {
       ...ImageFragment
     }
@@ -113,8 +115,7 @@ export const EPISODE_HANDLE_FRAGMENT = gql`
       ...TitleSynopsisFragment
     }
     related {
-      protocol
-      id
+      ...HandleFragment
     }
   }
 `

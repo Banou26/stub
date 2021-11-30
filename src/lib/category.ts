@@ -5,7 +5,6 @@ export enum Category {
   ANIME = 'ANIME',
   CARTOON = 'CARTOON',
   DOCUMENTARY = 'DOCUMENTARY',
-  PORNOGRAPHY = 'PORNOGRAPHY',
   TV = 'TV',
   OTHER = 'OTHER'
 }
