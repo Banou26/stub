@@ -1,8 +1,27 @@
-import type { Search, SearchResult } from '.'
-
 import Category from '../category'
-import { fetch, evalFetch } from '@mfkn/fkn-lib'
-import { makeUniqueArrayFilter } from '../utils'
+import { fetch } from '@mfkn/fkn-lib'
+
+export const name = 'MyAnimeList'
+
+export const getGenres = () =>
+  fetch('https://myanimelist.net/anime.php', { proxyCache: (1000 * 60 * 60 * 5).toString() })
+    .then(res => res.text())
+    .then(text =>
+      [
+        ...new DOMParser()
+        .parseFromString(text, 'text/html')
+        .querySelectorAll('.genre-link')
+      ]
+        .slice(0, 2)
+        .flatMap((elem, i) =>
+          [...elem.querySelectorAll<HTMLAnchorElement>('.genre-name-link')]
+            .map(({ href, textContent }) => ({
+              adult: !!i,
+              href,
+              name: textContent?.replace(/(.*) \(.*\)/, '$1')
+            }))
+        )
+    )
 
 const getCardInfo = (elem: HTMLElement) => ({
   protocol: 'mal',
