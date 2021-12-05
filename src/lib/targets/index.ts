@@ -4,18 +4,14 @@ import Genre from '../genre'
 import * as MyAnimeList from './myanimelist'
 import * as Google from './google'
 import * as GogoAnime from './gogoanime'
+import { filterTagets } from '../utils'
+import { Search } from '../types'
 
 export default [
   MyAnimeList,
   Google,
   GogoAnime
 ]
-
-
-export type Search = (
-  { search, categories, genres }:
-  { search: string, categories?: Category[], genres?: Genre[] }
-) => Promise<SearchResult[]>
 
 export interface Target {
   search?: Search
@@ -24,35 +20,11 @@ export interface Target {
   genres?: Genre[]
 }
 
-export interface SearchResult {
-  target?: Target
-  category?: Category
-  genre?: Genre
-  url?: string
-  image?: string
-  name: string
-}
-
 const targets: Target[] = [
   google,
   myanimelist
   // rarbg
 ]
-
-const filterTagets =
-  func =>
-    (
-      { categories, genres }:
-      { categories?: Category[], genres?: Genre[] }
-    ) =>
-  targets
-    .filter(func)
-    .filter(target =>
-      categories?.some(category => target.categories?.includes(category))
-    )
-    // .filter(target =>
-    //   genres?.some(category => target.genres?.includes(category) )
-    // )
 
 const filterSearch = filterTagets(({ search }) => search)
 const filterGetLatest = filterTagets(({ getLatest }) => getLatest)
@@ -89,4 +61,8 @@ export const getLatest = (
         .flatMap((result) => (result as unknown as PromiseFulfilledResult<SearchResult>).value)
     )
   )
+}
+
+export const getGenres = () => {
+
 }
