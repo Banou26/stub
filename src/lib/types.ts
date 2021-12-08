@@ -1,85 +1,110 @@
 import { Category } from './category'
 
 export interface Image {
-  type: 'POSTER' | 'IMAGE'
-  size: 'LARGE' | 'MEDIUM' | 'SMALL'
+  type: 'poster' | 'image'
+  size: 'large' | 'medium' | 'small'
   url: string
-  handle: Handle
 }
 
 export interface TitleName {
   language: string
   name: string
-  handle: Handle
 }
 
 export interface TitleSynopsis {
   language: string
   synopsis: string
-  handle: Handle
 }
 
-export interface Handle {
+export interface Genre<T = false> {
+  name: string
+  adult?: boolean
+  amount?: number
+  categories: Category[]
+  handles?: GenreHandle<T>[]
+}
+
+export interface GenreHandleInterface<T = false> extends Genre<T> {}
+
+export type GenreHandle<T = false> =
+  Omit<GenreHandleInterface<T>, 'handles'>
+  & Handle<T>
+
+export interface HandleInterface {
   scheme: string
   id: string
   uri: string
   url: string
 }
 
+export type Handle<T = false> =
+  T extends true
+    ? Omit<HandleInterface, 'uri' | 'scheme'> & Partial<Pick<HandleInterface, 'uri' | 'scheme'>>
+    : HandleInterface
+
 export interface Tag {
-  type: 'release'
+  type: 'release' | 'score' | 'tag' | 'genre'
   value?: string
   extra?: any
 }
 
-export interface Title {
+export interface Title<T = false> {
   names: TitleName[]
   releaseDates: Date[]
   images: Image[]
   synopses: TitleSynopsis[]
-  related: Title[]
-  handles: TitleHandle[]
-  episodes: Episode[]
-  recommended: Title[]
+  related: Title<T>[]
+  handles: TitleHandle<T>[]
+  episodes: Episode<T>[]
+  recommended: Title<T>[]
   tags: Tag[]
+  genres: Genre[]
 }
 
-export interface TitleHandle
+export interface TitleHandleInterface<T = false>
   extends
-    Omit<Title, 'releaseDates' | 'related' | 'handles' | 'episodes' | 'recommended'>,
-    Handle {
+    Omit<
+      Title,
+      'releaseDates' | 'related' | 'handles' | 'episodes' | 'recommended' | 'genres'
+    > {
   releaseDate: Date[]
-  related: TitleHandle[]
-  episodes: EpisodeHandle[]
-  recommended: TitleHandle[]
+  related: TitleHandle<T>[]
+  episodes: EpisodeHandle<T>[]
+  recommended: TitleHandle<T>[]
+  genres: GenreHandle<T>[]
 }
 
-export interface Episode {
+export type TitleHandle<T = false> =
+  Omit<TitleHandleInterface<T>, 'related' | 'episodes' | 'recommended'>
+  & Handle<T>
+  & {
+    related: TitleHandle<T>[]
+    episodes: EpisodeHandle<T>[]
+    recommended: TitleHandle<T>[]
+  }
+
+export interface Episode<T = false> {
   names: TitleName[]
   releaseDates: Date[]
   images: Image[]
-  handles: EpisodeHandle[]
+  handles: EpisodeHandle<T>[]
   tags: Tag[]
 }
 
-export interface EpisodeHandle
+export interface EpisodeHandleInterface<T = false>
   extends
-    Omit<Episode, 'releaseDates' | 'handles'>,
-    Handle {
+    Omit<Episode<T>, 'releaseDates' | 'handles'> {
   releaseDate: Date[]
   synopses: TitleSynopsis[]
-  related: EpisodeHandle[]
+  related: EpisodeHandle<T>[]
 }
 
-export interface Genre {
-  name: string
-  amount?: number
-  categories: Category[]
-  handles: GenreHandle[]
-}
-
-export interface GenreHandle extends Genre, Handle {
-}
+export type EpisodeHandle<T = false> =
+  Omit<EpisodeHandleInterface<T>, 'related'>
+  & Handle<T>
+  & {
+    related: EpisodeHandle<T>[]
+  }
 
 export interface SearchFilter {
   categories?: Category[]
@@ -89,19 +114,30 @@ export interface SearchFilter {
   episode?: boolean
 }
 
-export type Search = (
+export type GetGenres<T = false> = (
+  options: SearchFilter
+) => Promise<GenreHandle<T>[]>
+
+export type Search<T = false> = (
   target:
     { search: string } & SearchFilter
     | { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
     | { uri: Handle['uri'] } & SearchFilter
     | { url: Handle['url'] } & SearchFilter
-) => Promise<Title[]>
+) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
 
-export type GetLatest = (
+export type GetLatest<T = false> = (
   target:
     SearchFilter
     | { search: string } & SearchFilter
     | { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
     | { uri: Handle['uri'] } & SearchFilter
     | { url: Handle['url'] } & SearchFilter
-) => Promise<Title[]>
+) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
+
+export type Get<T = false> = (
+  target:
+    { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
+    | { uri: Handle['uri'] } & SearchFilter
+    | { url: Handle['url'] } & SearchFilter
+) => Promise<TitleHandle<T> | EpisodeHandle<T>>

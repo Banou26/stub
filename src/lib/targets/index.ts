@@ -1,30 +1,27 @@
 import Category from '../category'
-import Genre from '../genre'
 
 import * as MyAnimeList from './myanimelist'
 import * as Google from './google'
 import * as GogoAnime from './gogoanime'
 import { filterTagets } from '../utils'
-import { Search } from '../types'
-
-export default [
-  MyAnimeList,
-  Google,
-  GogoAnime
-]
-
-export interface Target {
-  search?: Search
-  getLatest?: Function
-  categories?: Category[]
-  genres?: Genre[]
-}
+import { Search, GetLatest } from '../types'
 
 const targets: Target[] = [
-  google,
-  myanimelist
-  // rarbg
+  MyAnimeList,
+  // Google,
+  // GogoAnime
 ]
+
+export default targets
+
+export interface Target {
+  name: string
+  search?: Search
+  getLatest?: GetLatest
+  categories?: Category[]
+}
+
+
 
 const filterSearch = filterTagets(({ search }) => search)
 const filterGetLatest = filterTagets(({ getLatest }) => getLatest)
