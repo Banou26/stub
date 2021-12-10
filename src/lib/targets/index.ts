@@ -3,7 +3,7 @@ import Category from '../category'
 import * as MyAnimeList from './myanimelist'
 import * as Google from './google'
 import * as GogoAnime from './gogoanime'
-import { filterTagets } from '../utils'
+// import { filterTagets } from '../utils'
 import { Search, GetLatest } from '../types'
 
 const targets: Target[] = [
@@ -17,14 +17,21 @@ export default targets
 export interface Target {
   name: string
   search?: Search
-  getLatest?: GetLatest
+  getLatest?: GetLatest<true>
   categories?: Category[]
 }
 
+const filterTargets =
+  (targets: Target[], func: (target: Target) => boolean) =>
+    ({ categories }: { categories?: Category[] }) =>
+      targets
+        .filter(func)
+        .filter(target =>
+          categories?.some(category => target.categories?.includes(category))
+        )
 
-
-const filterSearch = filterTagets(({ search }) => search)
-const filterGetLatest = filterTagets(({ getLatest }) => getLatest)
+const filterSearch = filterTargets(targets, ({ search }) => !!search)
+const filterGetLatest = filterTargets(targets, ({ getLatest }) => !!getLatest)
 
 export const search = ({ search, categories, genres }) => {
   const filteredTargets = filterSearch({ categories, genres })
@@ -41,10 +48,9 @@ export const search = ({ search, categories, genres }) => {
   )
 }
 
-export const getLatest = (
-  { categories, genres }:
-  { categories?: Category[], genres?: Genre[] } =
-  { categories: Object.values(Category), genres: Object.values(Genre) }
+export const getLatest: GetLatest<false> = (
+  { categories, genres }: Parameters<GetLatest<false>>[0] =
+  { categories: Object.values(Category) }
 ) => {
   const filteredTargets = filterGetLatest({ categories, genres })
   const results = filteredTargets.map(target => target.getLatest?.({ categories, genres }))
