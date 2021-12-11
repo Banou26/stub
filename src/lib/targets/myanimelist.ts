@@ -1,6 +1,6 @@
 import Category from '../category'
 import { fetch } from '@mfkn/fkn-lib'
-import { GetGenres, GenreHandle, GetLatest, TitleHandle } from '../types'
+import { GetGenres, GenreHandle, GetLatest, TitleHandle, GetLatestOptions } from '../types'
 
 export const name = 'MyAnimeList'
 export const scheme = 'mal'
@@ -114,13 +114,15 @@ const getLatestEpisodes = () =>
         .map(getEpisodeCardInfo)
     )
 
-export const getLatestOptions = {
+export const getLatestOptions: GetLatestOptions = {
   title: {
+    pagination: true,
     title: true,
-    genres: true
+    genres: true,
+    score: true
   },
   episode: {
-    title: true
+    pagination: false
   }
 }
 

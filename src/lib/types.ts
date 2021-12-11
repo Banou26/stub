@@ -126,6 +126,22 @@ export type Search<T = false> = (
     | { url: Handle['url'] } & SearchFilter
 ) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
 
+export interface GetLatestOptions {
+  title?:
+    false
+    | {
+      pagination: boolean,
+      title: boolean,
+      genres: boolean,
+      score: boolean
+    },
+  episode?:
+    false
+    | {
+      pagination: boolean
+    }
+}
+
 export type GetLatest<T = false> = (
   target:
     SearchFilter
