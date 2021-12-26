@@ -29,13 +29,13 @@ export const getGenres: GetGenres<true> = () =>
         )
     )
 
-const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
+const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => void console.log(elem) || ({
   id: elem.querySelector<HTMLElement>('[id]')!.id.trim(),
-  url: elem.querySelector('link-title')!.textContent!.trim(),
+  url: elem.querySelector('.link-title')!.textContent!.trim(),
   images: [{
     type: 'poster',
     size: 'medium',
-    url: elem.querySelector<HTMLImageElement>('img')!.src
+    url: elem.querySelector<HTMLImageElement>('img')!.src || elem.querySelector<HTMLImageElement>('img')!.dataset.src!
   }],
   names: [{
     language: 'en',
@@ -115,6 +115,7 @@ const getLatestEpisodes = () =>
     )
 
 export const getLatestOptions: GetLatestOptions = {
+  categories: [Category.ANIME],
   title: {
     pagination: true,
     title: true,
@@ -122,6 +123,9 @@ export const getLatestOptions: GetLatestOptions = {
     score: true
   },
   episode: {
+    pagination: false
+  },
+  genre: {
     pagination: false
   }
 }

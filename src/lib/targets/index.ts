@@ -34,43 +34,63 @@ const filterSearch = filterTargets(targets, ({ search }) => !!search)
 const filterGetLatest = filterTargets(targets, ({ getLatest }) => !!getLatest)
 
 export const search = ({ search, categories, genres }) => {
-  const filteredTargets = filterSearch({ categories, genres })
-  const results = filteredTargets.map(target => target.search!({ search, categories, genres }))
+  // const filteredTargets = filterSearch({ categories, genres })
+  // const results = filteredTargets.map(target => target.search!({ search, categories, genres }))
 
-  return (
-    Promise
-    .allSettled(results)
-    .then(results =>
-      results
-        .filter(result => result.status === 'fulfilled')
-        .flatMap((result) => (result as unknown as PromiseFulfilledResult<SearchResult>).value)
-    )
-  )
+  // return (
+  //   Promise
+  //   .allSettled(results)
+  //   .then(results =>
+  //     results
+  //       .filter(result => result.status === 'fulfilled')
+  //       .flatMap((result) => (result as unknown as PromiseFulfilledResult<SearchResult>).value)
+  //   )
+  // )
 }
 
 const targetGenres = new Map<Target, GenreHandle<true>[]>()
 
-const getGenres = async (target: Target, options?: SearchFilter) => {
-  if (targetGenres.has(target)) return targetGenres.get(target)!
-  if (!target.getGenres) return []
-  const genres = await target.getGenres(options)
-  targetGenres.set(target, genres)
-  return genres
-}
+// const getGenres = async (target: Target, options?: SearchFilter) => {
+//   if (targetGenres.has(target)) return targetGenres.get(target)!
+//   if (!target.getGenres) return []
+//   const genres = await target.getGenres(options)
+//   targetGenres.set(target, genres)
+//   return genres
+// }
 
 export const getLatest: GetLatest = (
-  { categories, genres }: Parameters<GetLatest<false>>[0] =
+  { categories, ...rest }: Parameters<GetLatest<false>>[0] =
   { categories: Object.values(Category) }
 ) => {
-  const filteredTargets = filterGetLatest(({ getLatestOptions }) => { categories, genres })
-  const results = filteredTargets.map(target => target.getLatest?.({ categories, genres }))
   console.log('categories', categories)
+  console.log('targets', targets)
+  const filteredTargets =
+    targets
+      .filter(({ getLatest }) => !!getLatest)
+      .filter(({ categories: targetCategories }) =>
+        categories
+          ? categories.some(category => targetCategories?.includes(category))
+          : true
+      )
+      .filter(target =>
+        Object
+          .entries(rest)
+          .every(([key, val]) => target.getLatestOptions?.[key])
+      )
+  console.log('filteredTargets', filteredTargets)
+  const results = filteredTargets.map(target => target.getLatest?.({ categories, ...rest }))
+  console.log('results', results)
   return (
     Promise
       .allSettled(results)
       .then(results =>
         results
-          .filter(result => result.status === 'fulfilled')
+          .filter(result => {
+            if (result.status === 'fulfilled') return true
+            else {
+              console.error(result.reason)
+            }
+          })
           .flatMap((result) => (result as unknown as PromiseFulfilledResult<Awaited<ReturnType<GetLatest>>>).value)
       )
   )

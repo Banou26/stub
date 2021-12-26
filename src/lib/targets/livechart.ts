@@ -1,9 +1,6 @@
-import type { Search, SearchResult } from '.'
+import { fetch } from '@mfkn/fkn-lib'
 
 import Category from '../category'
-import { fetch } from '@mfkn/fkn-lib'
-import { makeUniqueArrayFilter } from '../utils'
-
 
 const getAnimeSeason = () =>
   fetch('https://www.livechart.me/winter-2021/tv')

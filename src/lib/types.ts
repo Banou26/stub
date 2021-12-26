@@ -115,7 +115,7 @@ export interface SearchFilter {
 }
 
 export type GetGenres<T = false> = (
-  options: SearchFilter
+  options?: SearchFilter
 ) => Promise<GenreHandle<T>[]>
 
 export type Search<T = false> = (
@@ -127,6 +127,7 @@ export type Search<T = false> = (
 ) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
 
 export interface GetLatestOptions {
+  categories: Category[]
   title?:
     false
     | {
@@ -134,8 +135,13 @@ export interface GetLatestOptions {
       title: boolean,
       genres: boolean,
       score: boolean
-    },
+    }
   episode?:
+    false
+    | {
+      pagination: boolean
+    }
+  genre?:
     false
     | {
       pagination: boolean

@@ -1,11 +1,11 @@
-import type { SearchResult } from 'src/lib/targets'
 
 import { useState, useEffect } from 'react'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
 
-import { getLatest, Category } from 'src/lib'
+import { getLatest, Category, TitleHandle } from 'src/lib'
 import Slider from 'src/components/slider'
+import Title from 'src/components/title'
 import { useFetch } from 'src/lib/hooks/utils'
 
 const style = css`
@@ -26,39 +26,15 @@ padding: 5rem;
   grid-auto-rows: 31.8rem;
   grid-gap: 2.5rem;
 }
-
-.item {
-  align-items: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-
-  display: grid;
-  grid-template-rows: auto auto;
-  align-content: end;
-  span {
-    text-align: center;
-    text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
-    padding-top: 1rem;
-    background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) calc(100% - 1rem), rgba(0,0,0,0) 100%);
-    font-size: 1.9rem;
-    font-weight: 700;
-  }
-}
 `
 
 export default ({ category }: { category?: Category }) => {
-  const { loading, data: categoryItems, error } = useFetch(() => getLatest({ categories: [category!.toUpperCase() as Category] }), { skip: !category })
-
+  const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => getLatest({ categories: [category!], title: true }), { skip: !category })
   return (
     <div css={style}>
       <div className="items">
         {
-          categoryItems
-            ?.map(result =>
-              <Link key={result.id} href={`/watch/${result.id}`} className="item" style={{ backgroundImage: `url(${result.image})` }}>
-                <span style={{ color: 'white' }}>{result.name}</span>
-              </Link>
-            )
+          categoryItems?.map(item => <Title title={item}/>)
         }
       </div>
     </div>

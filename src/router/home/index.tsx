@@ -1,13 +1,8 @@
-import type { SearchResult } from 'src/lib/targets'
-
-import { useState, useEffect } from 'react'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
 
-import { Category, getLatest } from 'src/lib'
-import { getLatestMovies, getLatestShows } from 'src/lib/targets/google'
-import { getAnimeSeason } from 'src/lib/targets/myanimelist'
 import Slider from 'src/components/slider'
+import { Category, getLatest, TitleHandle } from 'src/lib'
 import { useFetch } from 'src/lib/hooks/utils'
 
 const style = css`
@@ -40,9 +35,9 @@ padding: 5rem;
 `
 
 export default () => {
-  const { data: movies } = useFetch(() => getLatest({ categories: [Category.MOVIE] }))
-  const { data: shows } = useFetch(() => getLatest({ categories: [Category.SHOW] }))
-  const { data: animes } = useFetch(() => getLatest({ categories: [Category.ANIME] }))
+  const { data: movies } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.MOVIE], title: true }))
+  const { data: shows } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.SHOW], title: true }))
+  const { data: animes } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.ANIME], title: true }))
 
   return (
     <div css={style}>
@@ -53,8 +48,8 @@ export default () => {
             movies
               ?.slice(0, 20)
               .map(item =>
-                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.image})` }}>
-                  <h3 style={{ color: 'white' }}>{item.name}</h3>
+                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.images.at(0)?.url})` }}>
+                  <h3 style={{ color: 'white' }}>{item.names.at(0)?.name}</h3>
                 </Link>
               )
           }
@@ -66,8 +61,8 @@ export default () => {
             shows
               ?.slice(0, 20)
               .map(item =>
-                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.image})` }}>
-                  <h3 style={{ color: 'white' }}>{item.name}</h3>
+                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.images.at(0)?.url})` }}>
+                  <h3 style={{ color: 'white' }}>{item.names.at(0)?.name}</h3>
                 </Link>
               )
           }
@@ -79,8 +74,8 @@ export default () => {
             animes
               ?.slice(0, 20)
               .map(item =>
-                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.image})` }}>
-                  <h3 style={{ color: 'white' }}>{item.name}</h3>
+                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.images.at(0)?.url})` }}>
+                  <h3 style={{ color: 'white' }}>{item.names.at(0)?.name}</h3>
                 </Link>
               )
           }

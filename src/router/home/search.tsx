@@ -30,7 +30,7 @@ export default () => {
   return (
     <div css={style}>
       <div>{search}</div>
-      {
+      {/* {
         items?.map(torrent =>
           <div key={torrent.link} onClick={() => downloadTorrent({ uri: torrent.magnet })}>
             <div>{torrent.name}</div>
@@ -43,7 +43,7 @@ export default () => {
             <div>{torrent.torrentUrl}</div>
           </div>
         )
-      }
+      } */}
     </div>
   )
 }
