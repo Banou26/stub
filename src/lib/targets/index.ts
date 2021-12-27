@@ -5,7 +5,7 @@ import * as Google from './google'
 import * as GogoAnime from './gogoanime'
 // import { filterTagets } from '../utils'
 import { Search, GetLatest, GetLatestOptions, GenreHandle, GetGenres, SearchFilter } from '../types'
-import { EpisodeHandle, Get, GetOptions, Handle, TitleHandle } from '..'
+import { EpisodeHandle, Get, GetOptions, Handle, Title, TitleHandle } from '..'
 
 const targets: Target[] = [
   MyAnimeList,
@@ -62,25 +62,30 @@ const targetGenres = new Map<Target, GenreHandle<true>[]>()
 //   return genres
 // }
 
-const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(target: Target, handle: T):
-  T extends TitleHandle<true>
-    ? TitleHandle<false>
-    : (T extends EpisodeHandle<true>
-      ? EpisodeHandle<false>
-      : never) => {
-  console.log('populateHandle', target, handle)
+type PopulateHandleReturn<T> =
+  T extends TitleHandle<true> ? TitleHandle<false> :
+  T extends EpisodeHandle<true> ? EpisodeHandle<false> :
+  never
+
+const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(target: Target, handle: T): PopulateHandleReturn<T> => {
   return {
     ...handle,
     scheme: target.scheme,
     uri: `${target.scheme}:${handle.id}`
-  } as (
-    T extends TitleHandle<true>
-      ? TitleHandle<false>
-      : (T extends EpisodeHandle<true>
-        ? EpisodeHandle<false>
-        : never)
-  )
+  } as PopulateHandleReturn<T>
 }
+
+// const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true> | undefined>(target: Target, handle: T):
+//   T extends undefined ? <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) => PopulateHandleReturn<T> :
+//   PopulateHandleReturn<T> => {
+//     if (handle === undefined) return <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) => _populateHandle<T>(target, handle)
+//     return _populateHandle<Exclude<T, undefined>>(target, handle as Exclude<T, undefined>)
+//   }
+
+const curryPopulateHandle =
+  (target: Target) =>
+    <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) =>
+      populateHandle<T>(target, handle)
 
 const fromUri = (uri: string) => ({ scheme: uri.split(':')[0], id: uri.split(':')[1] })
 
@@ -90,7 +95,7 @@ export const get: Get = ({ scheme, id, uri }: Parameters<Get<false>>[0]) => {
   console.log('filteredTargets', filteredTargets)
   const results =
     filteredTargets
-      .map<Promise<[Target, (TitleHandle<true> | EpisodeHandle<true>)[]]>>(async target => [target, (await target.get?.({ categories, ...rest })) ?? []])
+      .map(target => target.get?.({ categories, ...rest }).then(handles => handles.map(curryPopulateHandle(target))))
   // populateHandle(target, res)
   console.log('results', results)
   return (
@@ -105,7 +110,7 @@ export const get: Get = ({ scheme, id, uri }: Parameters<Get<false>>[0]) => {
             }
           })
           .map<[Target, (TitleHandle<true> | EpisodeHandle<true>)[]]>((result) => (result as unknown as PromiseFulfilledResult<[Target, Awaited<ReturnType<GetLatest<true>>>]>).value)
-          .flatMap(([target, handles]) => handles.map(handle => populateHandle(target, handle)))
+          .flatMap(([target, handles]) => handles.map(curryPopulateHandle(target)))
       )
   )
 }
@@ -132,8 +137,10 @@ export const getLatest: GetLatest = (
   console.log('filteredTargets', filteredTargets)
   const results =
     filteredTargets
-      .map<Promise<[Target, (TitleHandle<true> | EpisodeHandle<true>)[]]>>(async target => [target, (await target.getLatest?.({ categories, ...rest })) ?? []])
-  // populateHandle(target, res)
+      .map(target =>
+        target
+          .getLatest?.({ categories, ...rest })
+          .then(handles => handles.map(curryPopulateHandle(target))))
   console.log('results', results)
   return (
     Promise
@@ -146,8 +153,7 @@ export const getLatest: GetLatest = (
               console.error(result.reason)
             }
           })
-          .map<[Target, (TitleHandle<true> | EpisodeHandle<true>)[]]>((result) => (result as unknown as PromiseFulfilledResult<[Target, Awaited<ReturnType<GetLatest<true>>>]>).value)
-          .flatMap(([target, handles]) => handles.map(handle => populateHandle(target, handle)))
+          .flatMap((result) => (result as unknown as PromiseFulfilledResult<Awaited<ReturnType<GetLatest>>>).value)
       )
   )
 }

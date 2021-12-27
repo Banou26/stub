@@ -30,17 +30,18 @@ export type GenreHandle<T = false> =
   Omit<GenreHandleInterface<T>, 'handles'>
   & Handle<T>
 
-export interface HandleInterface {
+export interface HandleInterface<T = false> {
   scheme: string
   id: string
   uri: string
   url: string
+  handles?: Handle<T>[]
 }
 
 export type Handle<T = false> =
   T extends true
-    ? Omit<HandleInterface, 'uri' | 'scheme'> & Partial<Pick<HandleInterface, 'uri' | 'scheme'>>
-    : HandleInterface
+    ? Omit<HandleInterface<T>, 'uri' | 'scheme'> & Partial<Pick<HandleInterface<T>, 'uri' | 'scheme'>>
+    : HandleInterface<T>
 
 export interface Tag {
   type: 'release' | 'score' | 'tag' | 'genre'
