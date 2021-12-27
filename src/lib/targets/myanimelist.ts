@@ -31,7 +31,8 @@ export const getGenres: GetGenres<true> = () =>
 
 const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => void console.log(elem) || ({
   id: elem.querySelector<HTMLElement>('[id]')!.id.trim(),
-  url: elem.querySelector('.link-title')!.textContent!.trim(),
+  url: elem.querySelector<HTMLAnchorElement>('.link-title')!.href,
+  // url: elem.querySelector('.link-title')!.textContent!.trim(),
   images: [{
     type: 'poster',
     size: 'medium',

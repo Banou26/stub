@@ -26,7 +26,7 @@ span {
 `
 
 export default ({ title }: { title: TitleHandle }) => (
-  <Link css={style} key={title.id} href={`/title/${title.id}`} className="title" style={{ backgroundImage: `url(${title.images.at(0)?.url})` }}>
+  <Link css={style} key={title.id} href={`/title/${title.uri}`} className="title" style={{ backgroundImage: `url(${title.images.at(0)?.url})` }}>
     <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
   </Link>
 )

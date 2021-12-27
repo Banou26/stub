@@ -12,7 +12,7 @@ export const routes = {
   '/category/movies': () => <CategoryComponent category={Category.MOVIE}/>,
   '/category/shows': () => <CategoryComponent category={Category.SHOW}/>,
   '/category/animes': () => <CategoryComponent category={Category.ANIME}/>,
-  '/title/:name': ({ name }) => <Title name={decodeURI(name)}/>,
+  '/title/:uri': ({ uri }) => <Title uri={uri}/>,
   '/watch/:name': ({ name }) => <Watch name={decodeURI(name)}/>,
   '/search': () => <Search/>
 }

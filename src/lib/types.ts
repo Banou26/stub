@@ -131,9 +131,9 @@ export interface GetLatestOptions {
   title?:
     false
     | {
-      pagination: boolean,
-      title: boolean,
-      genres: boolean,
+      pagination: boolean
+      title: boolean
+      genres: boolean
       score: boolean
     }
   episode?:
@@ -156,6 +156,20 @@ export type GetLatest<T = false> = (
     | { uri: Handle['uri'] } & SearchFilter
     | { url: Handle['url'] } & SearchFilter
 ) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
+
+export interface GetOptions {
+  title?:
+    false
+    | {}
+  episode?:
+    false
+    | {}
+}
+
+export interface GetId {
+  title?: boolean
+  episode?: boolean
+}
 
 export type Get<T = false> = (
   target:
