@@ -71,7 +71,8 @@ const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(targe
   return {
     ...handle,
     scheme: target.scheme,
-    uri: `${target.scheme}:${handle.id}`
+    uri: `${target.scheme}:${handle.id}`,
+    handles: handle.handles?.map(curryPopulateHandle(target))
   } as PopulateHandleReturn<T>
 }
 
@@ -87,20 +88,23 @@ const curryPopulateHandle =
     <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) =>
       populateHandle<T>(target, handle)
 
-const fromUri = (uri: string) => ({ scheme: uri.split(':')[0], id: uri.split(':')[1] })
+export const fromUri = (uri: string) => ({ scheme: uri.split(':')[0], id: uri.split(':')[1] })
 
-export const get: Get = ({ scheme, id, uri }: Parameters<Get<false>>[0]) => {
-  console.log('scheme, id, uri', scheme, id, uri)
-  const filteredTargets = targets.filter(({ scheme, get }) => (scheme === scheme || scheme === fromUri(uri).scheme) && !!get)
-  console.log('filteredTargets', filteredTargets)
+
+// todo: implemement url get
+export const get: Get = (params: Parameters<Get>[0]): ReturnType<Get> => {
+  const filteredTargets = targets.filter(({ scheme, get }) => (scheme === scheme || scheme === fromUri(params.uri).scheme) && !!get)
+  console.log('GETTTTTTTTTT filteredTargets', filteredTargets)
   const results =
-    filteredTargets
-      .map(target => target.get?.({ categories, ...rest }).then(handles => handles.map(curryPopulateHandle(target))))
-  // populateHandle(target, res)
-  console.log('results', results)
-  return (
     Promise
-      .allSettled(results)
+      .allSettled(
+        filteredTargets
+          .map(target =>
+            target
+              .get?.(params)
+              .then(curryPopulateHandle(target))
+          )
+      )
       .then(results =>
         results
           .filter(result => {
@@ -109,10 +113,14 @@ export const get: Get = ({ scheme, id, uri }: Parameters<Get<false>>[0]) => {
               console.error(result.reason)
             }
           })
-          .map<[Target, (TitleHandle<true> | EpisodeHandle<true>)[]]>((result) => (result as unknown as PromiseFulfilledResult<[Target, Awaited<ReturnType<GetLatest<true>>>]>).value)
-          .flatMap(([target, handles]) => handles.map(curryPopulateHandle(target)))
+          .flatMap((result) => (result as unknown as PromiseFulfilledResult<Awaited<ReturnType<Get>>>).value)
       )
-  )
+
+  // return results
+
+  return {
+    
+  }
 }
 
 export const getLatest: GetLatest = (
@@ -140,7 +148,8 @@ export const getLatest: GetLatest = (
       .map(target =>
         target
           .getLatest?.({ categories, ...rest })
-          .then(handles => handles.map(curryPopulateHandle(target))))
+          .then(handles => handles.map(curryPopulateHandle(target)))
+      )
   console.log('results', results)
   return (
     Promise

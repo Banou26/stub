@@ -1,87 +1,126 @@
-// import type { FieldFunctionOptions, Reference } from '@apollo/client'
+import { FieldFunctionOptions, makeVar } from '@apollo/client'
+import { Episode, EpisodeHandle, Image, Name, Relation, Relationship, ReleaseDate, Synopsis, Title, TitleHandle } from 'src/lib'
+import { EpisodeApolloCache, EpisodeHandleApolloCache, GET_TITLE, ImageApolloCache, NameApolloCache, RelationApolloCache, ReleaseDateApolloCache, SynopsisApolloCache, TitleApolloCache, TitleHandleApolloCache } from '.'
+import { get } from '../../lib/targets'
+import cache from '../cache'
 
-// import type { InstalledPackage } from '../user'
+export const asyncRead = (fn, query) => {
+  return (_, args) => {
+      if (!args.storage.var) {
+          args.storage.var = makeVar(undefined)
+          fn(_, args).then(
+              data => {
+                  args.storage.var(data)
+                  args.cache.writeQuery({
+                      query,
+                      data: { [args.fieldName]: data }
+                  })
+              }
+          )
+      }
+      return args.storage.var()
+  }
+}
 
-// import '../settings/type-policy'
-// import cache from '../cache'
-// import { PackageArtifacts, Package } from './types'
+const nameToNameApolloCache = (name: Name): NameApolloCache => ({
+  __typename: 'Name',
+  ...name
+})
 
-// import getSupportedImageFormat from '../../utils/image-format'
-// import { PackageHeaderApolloCache, PACKAGE_HEADER_FRAGMENT } from '.'
+const imageToImageApolloCache = (image: Image): ImageApolloCache => ({
+  __typename: 'Image',
+  ...image
+})
 
+const synopsisToSynopsisApolloCache = (synopsis: Synopsis): SynopsisApolloCache => ({
+  __typename: 'Synopsis',
+  ...synopsis
+})
 
-// export const archives =
-//   cache.makeVar
-//     <(
-//       Pick<PackageArtifacts, 'archive'>
-//       & { ref: string, archive: Buffer }
-//     )[]>([])
+// todo: try to fix this mess of type casting
+const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>): RelationApolloCache<T> => ({
+  __typename: 'Relation',
+  relation: relation.relation as any,
+  reference: relation.reference as unknown as T
+})
 
-// export const getArchiveFromRef = ref =>
-//   archives()
-//     .find(({ ref: _ref }) => _ref === ref)
-//     ?.archive
+const releaseDateToReleaseDateApolloCache = <T>(releaseDate: ReleaseDate): ReleaseDateApolloCache => ({
+  __typename: 'ReleaseDate',
+  ...releaseDate
+})
 
-// // setInterval(() => console.log(archives()), 5000)
+const episodeHandleToEpisodeHandleApolloCache = (episode: EpisodeHandle): EpisodeHandleApolloCache => ({
+  __typename: 'EpisodeHandle',
+  ...episode,
+  names: episode.names.map(nameToNameApolloCache),
+  related: episode.related.map(relation => relationToRelationApolloCache<EpisodeHandleApolloCache>(relation)),
+  releaseDates: episode.releaseDates.map(releaseDateToReleaseDateApolloCache),
+  images: episode.images.map(imageToImageApolloCache),
+  synopses: episode.synopses.map(synopsisToSynopsisApolloCache),
+  handles: episode.handles?.map(episodeHandleToEpisodeHandleApolloCache)
+})
 
-// // todo: replace this archive string ref with the real archive when https://github.com/apollographql/apollo-client/issues/6813 is fixed
-// // todo: try using "keyFields: false" https://www.apollographql.com/docs/react/caching/cache-configuration/#disabling-normalization
-// cache.policies.addTypePolicies({
-//   // PackageArtifacts: {
-//   //   keyFields: ['package', ['id'], 'version'],
-//   //   fields: {
-//   //     archive: {
-//   //       read: (_, { readField, toReference }) =>
-//   //         toReference({
-//   //           __typename: 'PackageArtifacts',
-//   //           package: {
-//   //             id: readField('id', readField('package'))
-//   //           },
-//   //           version: readField('version')
-//   //         })?.__ref,
-//   //       merge: (_, incoming, { toReference, args }) => {
-//   //         if (!args) return
-//   //         const ref =
-//   //           toReference({
-//   //             __typename: 'PackageArtifacts',
-//   //             package: {
-//   //               id: args.id
-//   //             },
-//   //             version: args.version
-//   //           })?.__ref
-//   //         if (!ref) return
-//   //         archives([
-//   //           ...archives()
-//   //             .filter(({ ref: _ref }) => _ref === ref),
-//   //           {
-//   //             ref,
-//   //             archive: incoming
-//   //           }
-//   //         ])
-//   //         return ref
-//   //       }
-//   //     }
-//   //   }
-//   // },
-//   Package: {
-//     fields: {
-//       headerUrl: {
-//         read: (_, { readField }) =>
-//           readField<PackageHeaderApolloCache[]>('headers')?.[0]
-//             ? `${process.env.CDN_ORIGIN}/packages/${readField('id')}/header/${readField<PackageHeaderApolloCache[]>('headers')![0]?.value}.${getSupportedImageFormat()}`
-//             : null
-//       }
-//     }
-//   },
-//   // Query: {
-//   //   fields: {
-//   //     package: (_, { toReference, args: { id } }: FieldFunctionOptions & { args: { id: string } }) =>
-//   //       toReference({
-//   //         __typename: 'Package',
-//   //         id
-//   //       })
-//   //   }
-//   // }
-// })
+const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache => ({
+  __typename: 'Episode',
+  ...episode,
+  names: episode.names.map(nameToNameApolloCache),
+  related: episode.related.map(relation => relationToRelationApolloCache<EpisodeApolloCache>(relation)),
+  releaseDates: episode.releaseDates.map(releaseDateToReleaseDateApolloCache),
+  images: episode.images.map(imageToImageApolloCache),
+  synopses: episode.synopses.map(synopsisToSynopsisApolloCache),
+  handles: episode.handles.map(episodeHandleToEpisodeHandleApolloCache)
+})
+
+const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHandleApolloCache => ({
+  __typename: 'TitleHandle',
+  ...titleHandle,
+  names: titleHandle.names.map(nameToNameApolloCache),
+  related: titleHandle.related.map(relation => relationToRelationApolloCache<TitleHandleApolloCache>(relation)),
+  releaseDates: titleHandle.releaseDates.map(releaseDateToReleaseDateApolloCache),
+  images: titleHandle.images.map(imageToImageApolloCache),
+  synopses: titleHandle.synopses.map(synopsisToSynopsisApolloCache),
+  handles: titleHandle.handles?.map(titleHandleToTitleHandleApolloCache)
+})
+
+const titleToTitleApolloCache = (title: Title): TitleApolloCache => ({
+  __typename: 'Title',
+  ...title,
+  names: title.names.map(nameToNameApolloCache),
+  related: title.related.map(relation => relationToRelationApolloCache<TitleApolloCache>(relation)),
+  recommended: title.recommended.map(titleToTitleApolloCache),
+  releaseDates: title.releaseDates.map(releaseDateToReleaseDateApolloCache),
+  images: title.images.map(imageToImageApolloCache),
+  synopses: title.synopses.map(synopsisToSynopsisApolloCache),
+  handles: title.handles.map(titleHandleToTitleHandleApolloCache),
+  episodes: title.episodes.map(episodeToEpisodeApolloCache)
+})
+
+cache.policies.addTypePolicies({
+  Query: {
+    fields: {
+      title: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
+        const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
+        console.log('GET TITLE ARGS', args)
+        if (!storage.var) {
+          args.storage.var = makeVar(undefined)
+          get({ title: true, uri, scheme, id }).then((data) => {
+            const title = titleHandleToTitleHandleApolloCache(data[0] as TitleHandle)
+            console.log('data res', title)
+            storage.var(title)
+            cache.writeQuery({ query: GET_TITLE, data: { [fieldName]: title } })
+          })
+        }
+        console.log('GET TITLE', storage.var())
+        return storage.var()
+        // toReference({ __typename: 'Title', id })
+      },
+      titles: (_, { toReference, args: { id } }: FieldFunctionOptions & { args: { id: string } }) =>
+        toReference({
+          __typename: 'Title',
+          id
+        })
+    }
+  }
+})
 
 export const foo = undefined

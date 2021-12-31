@@ -1,4 +1,5 @@
-import { Title, TitleHandle, TitleApolloCache, TitleHandleApolloCache } from '../types'
+import { Title, TitleHandle } from '../../../lib/types'
+import { TitleApolloCache, TitleHandleApolloCache } from '../types'
 
 import { gql } from '@apollo/client'
 
@@ -6,8 +7,8 @@ import { TITLE_FRAGMENT, TITLE_HANDLE_FRAGMENT } from '../fragments'
 
 export const GET_TITLE = gql`
   ${TITLE_FRAGMENT}
-  query GetTitle($id: ID!) {
-    title(id: $id) {
+  query GetTitle($uri: String, $scheme: String, $id: ID) {
+    title(uri: $uri, scheme: $scheme, id: $id) @client {
       ...TitleFragment
     }
   }
@@ -22,18 +23,18 @@ export const GET_TITLE_HANDLE = gql`
   }
 `
 
-export interface GetTitlePayload {
+export interface GetTitle {
   title: Title
 }
 
-export interface GetTitlePayloadApolloCache extends GetTitlePayload {
+export interface GetTitleApolloCache extends GetTitle {
   title: TitleApolloCache
 }
 
-export interface GetTitleHandlePayload {
+export interface GetTitleHandle {
   titleHandle: TitleHandle
 }
 
-export interface GetTitleHandlePayloadApolloCache extends GetTitleHandlePayload {
+export interface GetTitleHandleApolloCache extends GetTitleHandle {
   titleHandle: TitleHandleApolloCache
 }

@@ -6,14 +6,33 @@ export interface Image {
   url: string
 }
 
-export interface TitleName {
+export interface Name {
   language: string
   name: string
 }
 
-export interface TitleSynopsis {
+export interface Synopsis {
   language: string
   synopsis: string
+}
+
+export interface ReleaseDate {
+  language: string
+  date: Date
+}
+
+export type TitleRelation = 'spinoff' | 'adaptation' | 'prequel' | 'sequel'
+export type EpisodeRelation = 'previous' | 'next'
+export type Relationship = TitleRelation | EpisodeRelation
+
+export interface Relation<T> {
+  relation:
+    T extends Title ? TitleRelation :
+    T extends TitleHandle ? TitleRelation :
+    T extends Episode ? EpisodeRelation :
+    T extends EpisodeHandle ? EpisodeRelation :
+    Relationship
+  reference: T
 }
 
 export interface Genre<T = false> {
@@ -50,11 +69,11 @@ export interface Tag {
 }
 
 export interface Title<T = false> {
-  names: TitleName[]
-  releaseDates: Date[]
+  names: Name[]
+  releaseDates: ReleaseDate[]
   images: Image[]
-  synopses: TitleSynopsis[]
-  related: Title<T>[]
+  synopses: Synopsis[]
+  related: Relation<Title<T>>[]
   handles: TitleHandle<T>[]
   episodes: Episode<T>[]
   recommended: Title<T>[]
@@ -66,46 +85,33 @@ export interface TitleHandleInterface<T = false>
   extends
     Omit<
       Title,
-      'releaseDates' | 'related' | 'handles' | 'episodes' | 'recommended' | 'genres'
+      'related' | 'handles' | 'episodes' | 'recommended' | 'genres'
     > {
-  releaseDate: Date[]
-  related: TitleHandle<T>[]
+  related: Relation<TitleHandle<T>>[]
   episodes: EpisodeHandle<T>[]
   recommended: TitleHandle<T>[]
   genres: GenreHandle<T>[]
 }
 
-export type TitleHandle<T = false> =
-  Omit<TitleHandleInterface<T>, 'related' | 'episodes' | 'recommended'>
-  & Handle<T>
-  & {
-    related: TitleHandle<T>[]
-    episodes: EpisodeHandle<T>[]
-    recommended: TitleHandle<T>[]
-  }
+export type TitleHandle<T = false> = TitleHandleInterface<T> & Handle<T>
 
 export interface Episode<T = false> {
-  names: TitleName[]
-  releaseDates: Date[]
+  names: Name[]
   images: Image[]
+  releaseDates: ReleaseDate[]
+  synopses: Synopsis[]
   handles: EpisodeHandle<T>[]
   tags: Tag[]
+  related: Relation<Episode<T>>[]
 }
 
 export interface EpisodeHandleInterface<T = false>
   extends
-    Omit<Episode<T>, 'releaseDates' | 'handles'> {
-  releaseDate: Date[]
-  synopses: TitleSynopsis[]
-  related: EpisodeHandle<T>[]
+    Omit<Episode<T>, 'related'> {
+  related: Relation<EpisodeHandle<T>>[]
 }
 
-export type EpisodeHandle<T = false> =
-  Omit<EpisodeHandleInterface<T>, 'related'>
-  & Handle<T>
-  & {
-    related: EpisodeHandle<T>[]
-  }
+export type EpisodeHandle<T = false> = EpisodeHandleInterface<T> & Handle<T>
 
 export interface SearchFilter {
   categories?: Category[]
@@ -172,9 +178,87 @@ export interface GetId {
   episode?: boolean
 }
 
-export type Get<T = false> = (
-  target:
-    { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
-    | { uri: Handle['uri'] } & SearchFilter
-    | { url: Handle['url'] } & SearchFilter
-) => Promise<TitleHandle<T> | EpisodeHandle<T>>
+export interface SearchFilter2 {
+  categories?: Category[]
+  genres?: Genre[]
+  tags?: Tag[]
+  title?: boolean
+  episode?: boolean
+}
+interface GetParametersInterfaceUri {
+  uri: string
+  scheme?: never
+  id?: never
+  url?: never
+}
+
+interface GetParametersInterfaceUrl {
+  uri?: never
+  scheme?: never
+  id?: never
+  url: string
+}
+
+interface GetParametersInterfaceSchemeId {
+  uri?: never
+  url?: never
+  scheme: string
+  id: string
+}
+
+interface GetParametersInterfaceTitle {
+  title: true
+  episode?: false
+}
+
+interface GetParametersInterfaceEpisode {
+  title?: false
+  episode: true
+}
+
+type GetParametersTitleOrEpisode = GetParametersInterfaceTitle | GetParametersInterfaceEpisode
+
+type GetParameters<T extends GetParametersTitleOrEpisode> =
+  (GetParametersInterfaceUri | GetParametersInterfaceUrl | GetParametersInterfaceSchemeId)
+  & T
+
+// export type Get
+//   <
+//     _T extends GetParametersTitleOrEpisode = GetParametersTitleOrEpisode,
+//     _T2 extends boolean = false
+//   > =
+//   <
+//     T extends GetParametersTitleOrEpisode = (_T extends never ? GetParametersTitleOrEpisode : _T),
+//     T2 extends boolean = (_T2 extends never ? false : _T2)
+//   >(args: GetParameters<T>) =>
+//   Promise<
+//     T extends GetParametersInterfaceTitle
+//       ? TitleHandle<T2>
+//       : EpisodeHandle<T2>
+//   >
+
+type GetTitle = (params: GetParameters<GetParametersInterfaceTitle>) => Promise<TitleHandle>
+type GetEpisode = (params: GetParameters<GetParametersInterfaceEpisode>) => Promise<EpisodeHandle>
+type Get = GetTitle | GetEpisode
+
+const ree: Get = async (params) => {
+  if (params.title) return {} as TitleHandle
+  else return {} as EpisodeHandle
+}
+
+const foo: Get =
+// @ts-ignore
+() => {}
+
+const bar: Get<GetParametersInterfaceTitle, true> =
+// @ts-ignore
+() => {}
+
+const c = ree({ uri: '', title: true }) // Promise<TitleHandle<false>>
+const c2 = ree({ uri: '', episode: true }) // Promise<EpisodeHandle<false>>
+
+const a = foo({ uri: '', title: true }) // Promise<TitleHandle<false>>
+const a2 = foo({ uri: '', episode: true }) // Promise<EpisodeHandle<false>>
+
+const b = bar({ uri: '', title: true }) // Promise<TitleHandle<true>>
+const b2 = bar({ uri: '', episode: true }) // Promise<EpisodeHandle<true>>

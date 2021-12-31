@@ -8,6 +8,9 @@ import { torrent as downloadTorrent } from '@mfkn/fkn-lib'
 import { getAnimeSeason } from '../../lib/targets/myanimelist'
 import { getAnimeTorrents } from '../../lib/targets/nyaasi'
 import { filterWords } from '../../lib/utils'
+import { GET_TITLE } from 'src/apollo'
+import { useQuery, gql, useMutation } from '@apollo/client'
+import { GetTitle } from 'src/apollo'
 
 const style = css`
   display: flex;
@@ -22,8 +25,19 @@ const style = css`
   }
 `
 
-export default ({ uri }) => {
+export default ({ uri }: { uri: string }) => {
   console.log('uri', uri)
+  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
+  console.log('title', title)
+
+  return (
+    <Fragment>
+      <div css={style}>
+        {title?.names?.at(0)}
+      </div>
+    </Fragment>
+  )
+  
   const [anime, setAnime] = useState<SearchResult>()
   const [torrents, setTorrents] = useState<any>()
   
