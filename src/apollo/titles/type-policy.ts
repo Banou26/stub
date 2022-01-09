@@ -1,7 +1,7 @@
 import { FieldFunctionOptions, makeVar } from '@apollo/client'
-import { Episode, EpisodeHandle, Image, Name, Relation, Relationship, ReleaseDate, Synopsis, Title, TitleHandle } from 'src/lib'
-import { EpisodeApolloCache, EpisodeHandleApolloCache, GET_TITLE, ImageApolloCache, NameApolloCache, RelationApolloCache, ReleaseDateApolloCache, SynopsisApolloCache, TitleApolloCache, TitleHandleApolloCache } from '.'
-import { get } from '../../lib/targets'
+import { Episode, EpisodeHandle, Handle, Image, Name, Relation, Relationship, ReleaseDate, Synopsis, Title, TitleHandle } from 'src/lib'
+import { EpisodeApolloCache, EpisodeHandleApolloCache, GET_TITLE, ImageApolloCache, NameApolloCache, RelationApolloCache, ReleaseDateApolloCache, SEARCH_TITLE, SynopsisApolloCache, TitleApolloCache, TitleHandleApolloCache } from '.'
+import { get, searchTitle, getTitle } from '../../lib/targets'
 import cache from '../cache'
 
 export const asyncRead = (fn, query) => {
@@ -46,6 +46,9 @@ const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>): Rel
 
 const releaseDateToReleaseDateApolloCache = <T>(releaseDate: ReleaseDate): ReleaseDateApolloCache => ({
   __typename: 'ReleaseDate',
+  date: null,
+  start: null,
+  end: null,
   ...releaseDate
 })
 
@@ -71,7 +74,7 @@ const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache => ({
   handles: episode.handles.map(episodeHandleToEpisodeHandleApolloCache)
 })
 
-const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHandleApolloCache => ({
+const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHandleApolloCache => void console.log('-----------------', titleHandle) || ({
   __typename: 'TitleHandle',
   ...titleHandle,
   names: titleHandle.names.map(nameToNameApolloCache),
@@ -98,14 +101,32 @@ const titleToTitleApolloCache = (title: Title): TitleApolloCache => ({
 cache.policies.addTypePolicies({
   Query: {
     fields: {
+      searchTitle: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
+        const { toReference, args: arrrrg, storage, cache, fieldName } = args
+        console.log('SEARCHTITLE ARGS', arrrrg)
+        if (!storage.var) {
+          args.storage.var = makeVar(undefined)
+          searchTitle(arrrrg).then((data) => {
+            console.log('SEARCHTITLE data res', data)
+            const titles = data.map(titleToTitleApolloCache)
+            console.log('data res', titles)
+            storage.var(titles)
+            cache.writeQuery({ query: SEARCH_TITLE, data: { [fieldName]: titles } })
+          })
+        }
+        console.log('SEARCH TITLE', storage.var())
+        return storage.var()
+        // toReference({ __typename: 'Title', id })
+      },
       title: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
         console.log('GET TITLE ARGS', args)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
-          get({ title: true, uri, scheme, id }).then((data) => {
-            const title = titleHandleToTitleHandleApolloCache(data[0] as TitleHandle)
-            console.log('data res', title)
+          getTitle({ uri, scheme, id }).then((_title) => {
+            console.log('GET TITLE data res', _title)
+            const title = titleToTitleApolloCache(_title)
+            console.log('GET TITLE data title', title)
             storage.var(title)
             cache.writeQuery({ query: GET_TITLE, data: { [fieldName]: title } })
           })

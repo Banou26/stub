@@ -10,8 +10,11 @@ export interface NameApolloCache extends Name, StoreObject {
   __typename: 'Name'
 }
 
-export interface ReleaseDateApolloCache extends ReleaseDate, StoreObject {
+export interface ReleaseDateApolloCache extends Pick<ReleaseDate, 'language'>, StoreObject {
   __typename: 'ReleaseDate'
+  date: ReleaseDate['date'] | null
+  start: ReleaseDate['start'] | null
+  end: ReleaseDate['end'] | null
 }
 
 export interface SynopsisApolloCache extends Synopsis, StoreObject {

@@ -26,6 +26,8 @@ export const RELEASE_DATE_FRAGMENT = gql`
   fragment ReleaseDateFragment on ReleaseDate {
     language
     date
+    start
+    end
   }
 `
 
@@ -69,48 +71,6 @@ export const TAG_FRAGMENT = gql`
   }
 `
 
-export const TITLE_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
-  ${IMAGE_FRAGMENT}
-  ${NAME_FRAGMENT}
-  ${RELEASE_DATE_FRAGMENT}
-  ${SYNOPSIS_FRAGMENT}
-  ${GENRE_FRAGMENT}
-  ${TAG_FRAGMENT}
-  fragment TitleFragment on Title {
-    names {
-      ...NameFragment
-    }
-    releaseDates {
-      ...ReleaseDateFragment
-    }
-    images {
-      ...ImageFragment
-    }
-    synopses {
-      ...SynopsisFragment
-    }
-    related {
-      ...HandleFragment
-    }
-    handles {
-      ...HandleFragment
-    }
-    episodes {
-      ...HandleFragment
-    }
-    recommended {
-      ...HandleFragment
-    }
-    tags {
-      ...TagFragment
-    }
-    genres {
-      ...GenreFragment
-    }
-  }
-`
-
 export const TITLE_HANDLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
@@ -132,12 +92,58 @@ export const TITLE_HANDLE_FRAGMENT = gql`
   }
 `
 
+export const TITLE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  ${IMAGE_FRAGMENT}
+  ${NAME_FRAGMENT}
+  ${RELEASE_DATE_FRAGMENT}
+  ${SYNOPSIS_FRAGMENT}
+  ${GENRE_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${TITLE_HANDLE_FRAGMENT}
+  fragment TitleFragment on Title {
+    categories
+    uri
+    names {
+      ...NameFragment
+    }
+    releaseDates {
+      ...ReleaseDateFragment
+    }
+    images {
+      ...ImageFragment
+    }
+    synopses {
+      ...SynopsisFragment
+    }
+    related {
+      ...HandleFragment
+    }
+    handles {
+      ...TitleHandleFragment
+    }
+    episodes {
+      ...HandleFragment
+    }
+    recommended {
+      ...HandleFragment
+    }
+    tags {
+      ...TagFragment
+    }
+    genres {
+      ...GenreFragment
+    }
+  }
+`
+
 export const EPISODE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
   fragment EpisodeFragment on Episode {
+    categories
     names {
       ...NameFragment
     }

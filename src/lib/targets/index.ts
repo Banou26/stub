@@ -5,7 +5,7 @@ import * as Google from './google'
 import * as GogoAnime from './gogoanime'
 // import { filterTagets } from '../utils'
 import { Search, GetLatest, GetLatestOptions, GenreHandle, GetGenres, SearchFilter } from '../types'
-import { EpisodeHandle, Get, GetOptions, Handle, Title, TitleHandle } from '..'
+import { EpisodeHandle, Get, GetEpisode, GetGenre, GetOptions, GetTitle, Handle, SearchEpisode, SearchGenre, SearchTitle, Title, TitleHandle } from '..'
 
 const targets: Target[] = [
   MyAnimeList,
@@ -16,26 +16,29 @@ const targets: Target[] = [
 export default targets
 
 export interface Target {
+  categories?: Category[]
   scheme: string
   name: string
-  search?: Search
-  getOptions?: GetOptions
-  get?: Get<true>
-  getLatestOptions?: GetLatestOptions
-  getLatest?: GetLatest<true>
-  getGenres?: GetGenres<true>
-  categories?: Category[]
+  searchTitle?: SearchTitle
+  searchEpisode?: SearchEpisode
+  searchGenre?: SearchGenre
+  getTitle?: GetTitle
+  getEpisode?: GetEpisode
+  getGenre?: GetGenre
 }
 
-const filterTargets =
-  (targets: Target[], func: (target: Target) => boolean) =>
-    (func2: (target: Target) => boolean) =>
-      targets
-        .filter(func)
-        .filter(func2)
+type TargetCallable =
+  Omit<Target, 'categories' | 'scheme' | 'name'>
 
-const filterSearch = filterTargets(targets, ({ search }) => !!search)
-const filterGetLatest = filterTargets(targets, ({ getLatest }) => !!getLatest)
+// const filterTargets =
+//   (targets: Target[], func: (target: Target) => boolean) =>
+//     (func2: (target: Target) => boolean) =>
+//       targets
+//         .filter(func)
+//         .filter(func2)
+
+// const filterSearch = filterTargets(targets, ({ search }) => !!search)
+// const filterGetLatest = filterTargets(targets, ({ getLatest }) => !!getLatest)
 
 export const search = ({ search, categories, genres }) => {
   // const filteredTargets = filterSearch({ categories, genres })
@@ -70,10 +73,11 @@ type PopulateHandleReturn<T> =
 const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(target: Target, handle: T): PopulateHandleReturn<T> => {
   return {
     ...handle,
+    categories: target.categories,
     scheme: target.scheme,
     uri: `${target.scheme}:${handle.id}`,
     handles: handle.handles?.map(curryPopulateHandle(target))
-  } as PopulateHandleReturn<T>
+  } as unknown as PopulateHandleReturn<T>
 }
 
 // const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true> | undefined>(target: Target, handle: T):
@@ -169,4 +173,131 @@ export const getLatest: GetLatest = (
 
 export const getGenres = () => {
 
+}
+
+const filterTargets = <T extends keyof Target>(
+  { targets, categories, method, params }:
+  { targets: Target[], categories?: Category[], method: T, params: Omit<Target[T], 'function'> }
+) =>
+  targets
+    .filter(target => !!target[method])
+    .filter(({ categories: targetCategories }) =>
+      categories
+        ? categories.some(category => targetCategories?.includes(category))
+        : true
+    )
+    .filter(target =>
+      Object
+        .keys(params ?? {})
+        .every(key => target[method]?.[key])
+    )
+
+// todo: try to fix the typing issues
+const filterTargetResponses = <T extends keyof TargetCallable>(
+  { targets, categories, method, params, injectCategories }:
+  { targets: Target[], categories?: Category[], method: T, params: Parameters<Exclude<Target[T], undefined>['function']>[0], injectCategories?: boolean }
+): ReturnType<Exclude<Target[T], undefined>['function']> =>
+  // @ts-ignore
+  Promise
+    .allSettled(
+      targets
+        .filter(target =>
+          categories
+            ? target[method]
+            : true
+        )
+        .map(target =>
+          void console.log('target[method]', target[method].function) ||
+          target[method]
+            // @ts-ignore
+            ?.function({ categories, ...params })
+            ?.then(handles =>
+              void console.log('ASDASDASDA target[method]', handles) ||
+              Array.isArray(handles)
+                ? handles.map(curryPopulateHandle(target))
+                : curryPopulateHandle(target)(handles)
+            )
+        )
+    )
+    .then(results =>
+      results
+        .filter(result => {
+          if (result.status === 'fulfilled') return true
+          else console.error(result.reason)
+        })
+        // @ts-ignore
+        .flatMap((result) => (result as unknown as PromiseFulfilledResult<Awaited<ReturnType<Exclude<Target[T], undefined>['function']>>>).value)
+    )
+
+const makeTitleFromTitleHandles = (titleHandles: TitleHandle<true>[]): Title => ({
+  __typename: 'Title',
+  categories: [...new Set(titleHandles.flatMap(({ categories }) => categories))],
+  uri: titleHandles.map(({ uri }) => uri).join(','),
+  names: titleHandles.flatMap(({ names }) => names),
+  releaseDates: titleHandles.flatMap(({ releaseDates }) => releaseDates),
+  images: titleHandles.flatMap(({ images }) => images),
+  synopses: titleHandles.flatMap(({ synopses }) => synopses),
+  related: [],
+  handles: titleHandles,
+  episodes: [],
+  recommended: [],
+  tags: [],
+  genres: []
+})
+
+const handles: Handle<true>[] = []
+
+export const searchTitle: SearchTitle['function'] = async ({ categories, ...rest }) => {
+  const _targets = filterTargets({
+    targets,
+    method: 'searchTitle',
+    categories,
+    params:
+      Object.fromEntries(
+        Object
+          .entries({ ...rest, categories })
+          .filter(([key, val])  => val !== undefined)
+      )
+  })
+  console.log('REEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', targets)
+  console.log('mhmm', { ...rest, categories })
+  console.log('_targets', _targets)
+
+  const titleHandles = await filterTargetResponses({
+    targets: _targets,
+    categories,
+    method: 'searchTitle',
+    params: { ...rest, categories }
+  }) as unknown as TitleHandle<true>[]
+  console.log('titleHandles', titleHandles)
+
+  for (const handle of titleHandles) handles.push(handle)
+
+  return titleHandles.map(titleHandle => makeTitleFromTitleHandles([titleHandle]))
+}
+
+export const getTitle: GetTitle['function'] = async (args) => {
+  const _targets = filterTargets({
+    targets,
+    method: 'getTitle',
+    params: {}
+  })
+  console.log('getTitle REEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', targets)
+  console.log('getTitle mhmm', args)
+  console.log('getTitle _targets', _targets)
+
+  const titleHandles = await filterTargetResponses({
+    targets: _targets,
+    method: 'getTitle',
+    params: args
+  }) as unknown as TitleHandle<true>[]
+  console.log('getTitle titleHandles', titleHandles)
+
+  for (const handle of titleHandles) handles.push(handle)
+
+  const title = makeTitleFromTitleHandles(titleHandles)
+
+  console.log('getTitle title', title)
+
+  return title
 }

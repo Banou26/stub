@@ -16,9 +16,23 @@ export interface Synopsis {
   synopsis: string
 }
 
-export interface ReleaseDate {
+export type ReleaseDate = {
   language: string
-  date: Date
+  date?: Date
+  start?: Date
+  end?: Date
+}
+
+
+const releaseDate: ReleaseDate = {
+  language: '',
+  date: new Date()
+}
+
+const releaseDate2: ReleaseDate = {
+  language: '',
+  start: new Date(),
+  end: new Date()
 }
 
 export type TitleRelation = 'spinoff' | 'adaptation' | 'prequel' | 'sequel'
@@ -63,12 +77,14 @@ export type Handle<T = false> =
     : HandleInterface<T>
 
 export interface Tag {
-  type: 'release' | 'score' | 'tag' | 'genre'
+  type: 'score' | 'tag' | 'genre' | 'type' | 'theme' | 'demographic' | 'status' | 'producer' | 'rated'
   value?: string
   extra?: any
 }
 
 export interface Title<T = false> {
+  categories: Category[]
+  uri: string
   names: Name[]
   releaseDates: ReleaseDate[]
   images: Image[]
@@ -96,6 +112,7 @@ export interface TitleHandleInterface<T = false>
 export type TitleHandle<T = false> = TitleHandleInterface<T> & Handle<T>
 
 export interface Episode<T = false> {
+  categories: Category[]
   names: Name[]
   images: Image[]
   releaseDates: ReleaseDate[]
@@ -125,13 +142,13 @@ export type GetGenres<T = false> = (
   options?: SearchFilter
 ) => Promise<GenreHandle<T>[]>
 
-export type Search<T = false> = (
-  target:
-    { search: string } & SearchFilter
-    | { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
-    | { uri: Handle['uri'] } & SearchFilter
-    | { url: Handle['url'] } & SearchFilter
-) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
+// export type Search<T = false> = (
+//   target:
+//     { search: string } & SearchFilter
+//     | { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
+//     | { uri: Handle['uri'] } & SearchFilter
+//     | { url: Handle['url'] } & SearchFilter
+// ) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
 
 export interface GetLatestOptions {
   categories: Category[]
@@ -155,110 +172,135 @@ export interface GetLatestOptions {
     }
 }
 
-export type GetLatest<T = false> = (
-  target:
-    SearchFilter
-    | { search: string } & SearchFilter
-    | { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
-    | { uri: Handle['uri'] } & SearchFilter
-    | { url: Handle['url'] } & SearchFilter
-) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
-
-export interface GetOptions {
-  title?:
-    false
-    | {}
-  episode?:
-    false
-    | {}
+export interface GetTitleOptions {
+  categories: Category[]
+  pagination: boolean
+  genres: boolean
+  score: boolean
+  // title?:
+  //   false
+  //   | {
+  //     pagination: boolean
+  //     title: boolean
+  //     genres: boolean
+  //     score: boolean
+  //   }
+  // episode?:
+  //   false
+  //   | {
+  //     pagination: boolean
+  //   }
+  // genre?:
+  //   false
+  //   | {
+  //     pagination: boolean
+  //   }
 }
 
-export interface GetId {
-  title?: boolean
-  episode?: boolean
+export interface GetEpisodeOptions {
+  categories: Category[]
+  pagination: boolean
+  genres: boolean
+  score: boolean
 }
 
-export interface SearchFilter2 {
-  categories?: Category[]
-  genres?: Genre[]
-  tags?: Tag[]
-  title?: boolean
-  episode?: boolean
-}
-interface GetParametersInterfaceUri {
+interface QueryResourceInterfaceUri {
   uri: string
   scheme?: never
   id?: never
   url?: never
 }
 
-interface GetParametersInterfaceUrl {
+interface QueryResourceInterfaceUrl {
   uri?: never
   scheme?: never
   id?: never
   url: string
 }
 
-interface GetParametersInterfaceSchemeId {
+interface QueryResourceInterfaceSchemeId {
   uri?: never
   url?: never
   scheme: string
   id: string
 }
 
-interface GetParametersInterfaceTitle {
-  title: true
-  episode?: false
+interface QueryEpisodeInterface {
+  episodeId: string
 }
 
-interface GetParametersInterfaceEpisode {
-  title?: false
-  episode: true
+interface QueryGenreInterface {
+  
 }
 
-type GetParametersTitleOrEpisode = GetParametersInterfaceTitle | GetParametersInterfaceEpisode
+type QueryResource =
+  QueryResourceInterfaceUri |
+  QueryResourceInterfaceUrl |
+  QueryResourceInterfaceSchemeId
 
-type GetParameters<T extends GetParametersTitleOrEpisode> =
-  (GetParametersInterfaceUri | GetParametersInterfaceUrl | GetParametersInterfaceSchemeId)
-  & T
-
-// export type Get
-//   <
-//     _T extends GetParametersTitleOrEpisode = GetParametersTitleOrEpisode,
-//     _T2 extends boolean = false
-//   > =
-//   <
-//     T extends GetParametersTitleOrEpisode = (_T extends never ? GetParametersTitleOrEpisode : _T),
-//     T2 extends boolean = (_T2 extends never ? false : _T2)
-//   >(args: GetParameters<T>) =>
-//   Promise<
-//     T extends GetParametersInterfaceTitle
-//       ? TitleHandle<T2>
-//       : EpisodeHandle<T2>
-//   >
-
-type GetTitle = (params: GetParameters<GetParametersInterfaceTitle>) => Promise<TitleHandle>
-type GetEpisode = (params: GetParameters<GetParametersInterfaceEpisode>) => Promise<EpisodeHandle>
-type Get = GetTitle | GetEpisode
-
-const ree: Get = async (params) => {
-  if (params.title) return {} as TitleHandle
-  else return {} as EpisodeHandle
+interface SearchResource {
+  search?: string
+  categories: Category[]
+  latest?: boolean
+  pagination?: string
+  genres?: Genre[]
+  score?: string
+  tags?: Tag[]
 }
 
-const foo: Get =
-// @ts-ignore
-() => {}
+export interface TargetEndpoint {
+  function: (...args) => any
+}
 
-const bar: Get<GetParametersInterfaceTitle, true> =
-// @ts-ignore
-() => {}
+export interface Search extends TargetEndpoint {
+  search?: string
+  categories: Category[]
+  latest?: boolean
+  pagination?: boolean
+  genres?: boolean
+  score?: boolean
+  tags?: boolean
+}
 
-const c = ree({ uri: '', title: true }) // Promise<TitleHandle<false>>
-const c2 = ree({ uri: '', episode: true }) // Promise<EpisodeHandle<false>>
+export interface SearchTitle<T = false> extends Search {
+  function: (
+    args:
+      Pick<QueryResource, 'scheme'> &
+      Partial<QueryResource> &
+      SearchResource
+  ) => Promise<T extends true ? TitleHandle<T>[] : Title[]>
+}
 
-const a = foo({ uri: '', title: true }) // Promise<TitleHandle<false>>
-const a2 = foo({ uri: '', episode: true }) // Promise<EpisodeHandle<false>>
+export interface SearchEpisode<T = false> extends Search  {
+  function: (
+    args:
+      QueryResource &
+      QueryEpisodeInterface &
+      SearchResource
+  ) => Promise<Episode<T>[]>
+}
 
-const b = bar({ uri: '', title: true }) // Promise<TitleHandle<true>>
-const b2 = bar({ uri: '', episode: true }) // Promise<EpisodeHandle<true>>
+export interface SearchGenre<T = false> extends Search  {
+  function: (
+    args:
+      QueryResource &
+      QueryGenreInterface &
+      SearchResource
+  ) => Promise<Episode<T>[]>
+}
+
+export interface Get extends TargetEndpoint {
+
+}
+
+export interface GetTitle<T = false> extends Get {
+  function: (params: QueryResource) => Promise<Title<T>>
+}
+
+export interface GetEpisode<T = false> extends Get {
+  function: (params: QueryResource & QueryEpisodeInterface) => Promise<Episode<T>>
+}
+
+export interface GetGenre<T = false> extends Get {
+  function: (params: QueryResource & QueryGenreInterface) => Promise<Genre<T>>
+}

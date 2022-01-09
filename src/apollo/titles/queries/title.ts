@@ -23,6 +23,45 @@ export const GET_TITLE_HANDLE = gql`
   }
 `
 
+export const SEARCH_TITLE = gql`
+  ${TITLE_FRAGMENT}
+  query SearchTitle(
+    $uri: String,
+    $scheme: String,
+    $id: ID,
+    $search: String,
+    $categories: [String],
+    $latest: Bool,
+    $pagination: String,
+    $genres: [String],
+    $score: string,
+    $tags: [String]
+  ) {
+    searchTitle(
+      uri: $uri,
+      scheme: $scheme,
+      id: $id,
+      search: $search,
+      categories: $categories,
+      latest: $latest,
+      pagination: $pagination,
+      genres: $genres,
+      score: $score,
+      tags: $tags
+    ) @client {
+      ...TitleFragment
+    }
+  }
+`
+
+export interface SearchTitle {
+  searchTitle: Title[]
+}
+
+export interface SearchTitleApolloCache extends SearchTitle {
+  searchTitle: TitleApolloCache[]
+}
+
 export interface GetTitle {
   title: Title
 }

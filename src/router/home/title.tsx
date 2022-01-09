@@ -11,31 +11,73 @@ import { filterWords } from '../../lib/utils'
 import { GET_TITLE } from 'src/apollo'
 import { useQuery, gql, useMutation } from '@apollo/client'
 import { GetTitle } from 'src/apollo'
+import { Category } from 'src/lib'
 
 const style = css`
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 40rem 1fr;
+  grid-template-rows: 50rem 1fr;
+  padding: 10rem;
 
-  > div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    width: 30rem;
+  .poster {
+    height: 100%;
   }
+
+  h1 {
+    margin-bottom: 2.5rem;
+  }
+
+  h1 + div {
+    font-weight: 500;
+    margin-bottom: 2.5rem;
+  }
+
+  .synopsis {
+    font-weight: 500;
+    line-height: 2.5rem;
+    white-space: pre-wrap;
+  }
+
+  /* .title, .synopsis {
+    width: 100%;
+  } */
 `
 
 export default ({ uri }: { uri: string }) => {
   console.log('uri', uri)
-  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
-  console.log('title', title)
+  const { error, data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
+
+  console.log('error :(', error)
+  console.log('title :)', title)
+
+  const release =
+    title?.releaseDates.at(0)
+      ? (
+        title.releaseDates.at(0)?.date
+          ? (
+            title.categories.includes(Category.MOVIE)
+              ? `${title.releaseDates.at(0)!.date!.getFullYear()}`
+              : `${title.releaseDates.at(0)!.date!.toDateString().slice(4).trim()}`
+          )
+          : `${title.releaseDates.at(0)!.start!.toDateString().slice(4).trim()} to ${title.releaseDates.at(0)!.end!.toDateString().slice(4).trim()}`
+      )
+      : ''
 
   return (
-    <Fragment>
-      <div css={style}>
-        {title?.names?.at(0)}
+    <div css={style}>
+      <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
+      <div>
+        <div>
+          <h1>{title?.names?.at(0)?.name}</h1>
+          <div>
+            <span>{release}</span>
+          </div>
+        </div>
+        <div className="synopsis">
+          {title?.synopses?.at(0)?.synopsis}
+        </div>
       </div>
-    </Fragment>
+    </div>
   )
   
   const [anime, setAnime] = useState<SearchResult>()

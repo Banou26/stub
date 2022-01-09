@@ -1,9 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
+import { SearchTitle, SEARCH_TITLE } from 'src/apollo'
 
 import Slider from 'src/components/slider'
-import { Category, getLatest, TitleHandle } from 'src/lib'
+import { Category, getLatest, TitleHandle, searchTitle } from 'src/lib'
 import { useFetch } from 'src/lib/hooks/utils'
 
 const style = css`
@@ -38,8 +39,11 @@ padding: 5rem;
 export default () => {
   const { data: movies } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.MOVIE], title: true }))
   const { data: shows } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.SHOW], title: true }))
-  const { data: animes } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.ANIME], title: true }))
-
+  // const { data: animes } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.ANIME], title: true }))
+  // const { data: animes } = useFetch(() => searchTitle({ latest: true, categories: [Category.ANIME]  }))
+  const { error, data: { searchTitle: animes } = {} } = useQuery<SearchTitle>(SEARCH_TITLE, { variables: { latest: true, categories: [Category.ANIME]  } })
+  console.log('animes error', error)
+  console.log('animes', animes)
   return (
     <div css={style}>
       <div className="anime">
@@ -75,7 +79,7 @@ export default () => {
             animes
               ?.slice(0, 20)
               .map(item =>
-                <Link key={item.id} href={`/title/${item.id}`} className="item" style={{ backgroundImage: `url(${item.images.at(0)?.url})` }}>
+                <Link key={item.uri} href={`/title/${item.uri}`} className="item" style={{ backgroundImage: `url(${item.images.at(0)?.url})` }}>
                   <h3 style={{ color: 'white' }}>{item.names.at(0)?.name}</h3>
                 </Link>
               )
