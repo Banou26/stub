@@ -100,6 +100,7 @@ export interface TitleHandleInterface<T = false>
 export type TitleHandle<T = false> = TitleHandleInterface<T> & Handle<T>
 
 export interface Episode<T = false> {
+  uri: string
   categories: Category[]
   names: Name[]
   images: Image[]

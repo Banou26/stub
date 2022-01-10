@@ -38,6 +38,21 @@ const style = css`
     white-space: pre-wrap;
   }
 
+  .episodes {
+    grid-column-start: 1;
+    grid-column-end: 3;
+
+    display: grid;
+    grid-auto-rows: 10rem;
+    grid-gap: 1rem;
+    padding: 10rem;
+  }
+
+  .episode {
+    padding: 2.5rem;
+    background-color: rgb(35, 35, 35);
+  }
+
   /* .title, .synopsis {
     width: 100%;
   } */
@@ -63,6 +78,8 @@ export default ({ uri }: { uri: string }) => {
       )
       : ''
 
+  console.log('episodessssssssssss', title?.episodes)
+
   return (
     <div css={style}>
       <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
@@ -76,6 +93,13 @@ export default ({ uri }: { uri: string }) => {
         <div className="synopsis">
           {title?.synopses?.at(0)?.synopsis}
         </div>
+      </div>
+      <div className="episodes">
+        {
+          title?.episodes.map((episode, i) => (
+            <div key={episode.uri} className="episode">Episode {i}: {episode.names?.at(0)?.name}</div>
+          ))
+        }
       </div>
     </div>
   )

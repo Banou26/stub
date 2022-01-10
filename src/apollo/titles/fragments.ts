@@ -92,8 +92,32 @@ export const TITLE_HANDLE_FRAGMENT = gql`
   }
 `
 
+export const EPISODE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  ${IMAGE_FRAGMENT}
+  ${NAME_FRAGMENT}
+  ${SYNOPSIS_FRAGMENT}
+  fragment EpisodeFragment on Episode {
+    uri
+    categories
+    names {
+      ...NameFragment
+    }
+    images {
+      ...ImageFragment
+    }
+    handles {
+      ...HandleFragment
+    }
+    related {
+      ...HandleFragment
+    }
+  }
+`
+
 export const TITLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
+  ${EPISODE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
   ${RELEASE_DATE_FRAGMENT}
@@ -123,7 +147,7 @@ export const TITLE_FRAGMENT = gql`
       ...TitleHandleFragment
     }
     episodes {
-      ...HandleFragment
+      ...EpisodeFragment
     }
     recommended {
       ...HandleFragment
@@ -133,28 +157,6 @@ export const TITLE_FRAGMENT = gql`
     }
     genres {
       ...GenreFragment
-    }
-  }
-`
-
-export const EPISODE_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
-  ${IMAGE_FRAGMENT}
-  ${NAME_FRAGMENT}
-  ${SYNOPSIS_FRAGMENT}
-  fragment EpisodeFragment on Episode {
-    categories
-    names {
-      ...NameFragment
-    }
-    images {
-      ...ImageFragment
-    }
-    handles {
-      ...HandleFragment
-    }
-    related {
-      ...HandleFragment
     }
   }
 `

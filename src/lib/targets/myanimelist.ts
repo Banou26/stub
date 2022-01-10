@@ -178,11 +178,19 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
   const episodes =
     [...elem.querySelectorAll('.episode_list.ascend .episode-list-data')]
       .map(elem => {
-        const englishTitle = elem.querySelector('.episode-title > a')?.textContent
-        const [japaneseEnglishTitle, _japaneseTitle] = elem.querySelector('.episode-title > span')?.textContent?.split(String.fromCharCode(160)) ?? []
+        const url = elem.querySelector<HTMLAnchorElement>('.episode-title > a')!.href
+        const englishTitle = elem.querySelector<HTMLAnchorElement>('.episode-title > a')!.textContent
+        const [japaneseEnglishTitle, _japaneseTitle] =
+          elem
+            .querySelector<HTMLSpanElement>('.episode-title > span')
+            ?.textContent
+            ?.split(String.fromCharCode(160))
+          ?? []
         const japaneseTitle = _japaneseTitle?.slice(1, -1)
 
         return ({
+          id: url.split('/')[7]!,
+          url,
           names: [
             {
               language: 'English',
