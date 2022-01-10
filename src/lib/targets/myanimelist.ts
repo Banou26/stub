@@ -2,7 +2,7 @@ import Category from '../category'
 import { fetch } from '@mfkn/fkn-lib'
 import { GetGenres, GenreHandle, Get, GetLatest, TitleHandle, GetLatestOptions } from '../types'
 import { fromUri } from '.'
-import { SearchTitle, GetTitle, ReleaseDate } from '..'
+import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle } from '..'
 
 export const name = 'MyAnimeList'
 export const scheme = 'mal'
@@ -143,12 +143,98 @@ export const getLatest: GetLatest<true> = ({ title, episode }) =>
   : episode ? getLatestEpisodes()
   : Promise.resolve([])
 
-const getTitleInfo = (elem: Document): TitleHandle<true> => {
-  const dateText =
-    [...elem.querySelectorAll('.spaceit_pad > .dark_text')]
-      .find(({ textContent }) => textContent === 'Aired:')
-      ?.nextSibling
-      ?.textContent!
+enum MALInformation {
+  TYPE = 'type',
+  EPISODES = 'episodes',
+  STATUS = 'status',
+  AIRED = 'aired',
+  PREMIERED = 'premiered',
+  BROADCAST = 'broadcast',
+  PRODUCERS = 'producers',
+  LICENSORS = 'licensors',
+  STUDIOS = 'studios',
+  SOURCE = 'source',
+  GENRES = 'genres',
+  DURATION = 'duration',
+  RATING = 'rating'
+}
+
+type Informations = {
+  [key in MALInformation]: string
+}
+
+const infoMap =
+  Object
+    .values(MALInformation)
+    .map(key => [
+      key,
+      `${key.charAt(0).toUpperCase()}${key.slice(1)}:`
+    ])
+
+
+const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
+  console.log('getTitleEpisodesInfo elem', elem)
+  
+  const episodes =
+    [...elem.querySelectorAll('.episode_list.ascend .episode-list-data')]
+      .map(elem => {
+        const englishTitle = elem.querySelector('.episode-title > a')?.textContent
+        const [japaneseEnglishTitle, _japaneseTitle] = elem.querySelector('.episode-title > span')?.textContent?.split(String.fromCharCode(160)) ?? []
+        const japaneseTitle = _japaneseTitle?.slice(1, -1)
+
+        return ({
+          names: [
+            {
+              language: 'English',
+              name: englishTitle
+            },
+            ...japaneseEnglishTitle
+              ? [{
+                language: 'Japanese-English',
+                name: japaneseEnglishTitle
+              }]
+              : [],
+            ...japaneseTitle
+              ? [{
+                language: 'Japanese',
+                name: japaneseTitle
+              }]
+              : []
+          ],
+          images: [],
+          releaseDates: [],
+          synopses: [],
+          handles: [],
+          tags: [],
+          related: []
+        })
+      })
+
+  return episodes
+}
+
+
+const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
+  const url =
+    elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
+    elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
+
+  const informations: Informations =
+    Object.fromEntries(
+      [...elem.querySelectorAll('.js-sns-icon-container ~ h2 ~ h2 ~ .spaceit_pad:not(.js-sns-icon-container ~ h2 ~ h2 ~ h2 ~ .spaceit_pad)')]
+        .map(elem => [
+          infoMap.find(([, val]) => val === elem.childNodes[1].textContent)?.[0]!,
+          elem.childNodes[2].textContent?.trim().length
+            ? elem.childNodes[2].textContent?.trim()!
+            : elem.childNodes[3].textContent?.trim()!
+        ])
+        .filter(([key]) => infoMap.some(([_key]) => key === _key))
+    )
+
+  console.log('informations', informations)
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', url)
+
+  const dateText = informations.aired
 
   const startDate =
     new Date(
@@ -180,19 +266,39 @@ const getTitleInfo = (elem: Document): TitleHandle<true> => {
       }
   }
 
+  console.log('uhm episodes ??????????????? ', informations.episodes, informations.episodes === 'Unknown')
 
+  const episodes =
+    informations.episodes === 'Unknown'
+      ? []
+      : await (
+        fetch(`${url}/episode`, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+          .then(async res =>
+            getTitleEpisodesInfo(
+              new DOMParser()
+                .parseFromString(await res.text(), 'text/html')
+            )
+          )
+      )
 
+  console.log('ALRIGHT episodes !!!!!!!!!!!!!!!!!!!!! ', episodes)
 
   return {
-    id: elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href.split('/')[4],
-    url: elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href,
+    categories: [
+      Category.ANIME
+    ],
+    id: url.split('/')[4],
+    url: url,
     images: [{
       type: 'poster',
       size: 'medium',
       url: elem.querySelector<HTMLImageElement>('#content > table > tbody > tr > td.borderClass a img')!.dataset.src!
     }],
     names:
-      [elem.querySelector('.title-name')!, ...elem.querySelectorAll<HTMLDivElement>('.js-sns-icon-container + br + h2 ~ div:not(.js-sns-icon-container + br + h2 ~ h2 ~ *):not(.js-alternative-titles), .js-alternative-titles > div')]
+      [
+        elem.querySelector('.title-name')!,
+        ...elem.querySelectorAll<HTMLDivElement>('.js-sns-icon-container + br + h2 ~ div:not(.js-sns-icon-container + br + h2 ~ h2 ~ *):not(.js-alternative-titles), .js-alternative-titles > div')
+      ]
         .map((elem, i) =>
           i
             ? {
@@ -211,7 +317,7 @@ const getTitleInfo = (elem: Document): TitleHandle<true> => {
     genres: [],
     releaseDates: [date],
     related: [],
-    episodes: [],
+    episodes,
     recommended: [],
     tags: [],
     handles: []

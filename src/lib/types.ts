@@ -23,18 +23,6 @@ export type ReleaseDate = {
   end?: Date
 }
 
-
-const releaseDate: ReleaseDate = {
-  language: '',
-  date: new Date()
-}
-
-const releaseDate2: ReleaseDate = {
-  language: '',
-  start: new Date(),
-  end: new Date()
-}
-
 export type TitleRelation = 'spinoff' | 'adaptation' | 'prequel' | 'sequel'
 export type EpisodeRelation = 'previous' | 'next'
 export type Relationship = TitleRelation | EpisodeRelation
@@ -101,7 +89,7 @@ export interface TitleHandleInterface<T = false>
   extends
     Omit<
       Title,
-      'related' | 'handles' | 'episodes' | 'recommended' | 'genres'
+      'uri' | 'related' | 'handles' | 'episodes' | 'recommended' | 'genres'
     > {
   related: Relation<TitleHandle<T>>[]
   episodes: EpisodeHandle<T>[]
@@ -124,7 +112,7 @@ export interface Episode<T = false> {
 
 export interface EpisodeHandleInterface<T = false>
   extends
-    Omit<Episode<T>, 'related'> {
+    Omit<Episode<T>, 'uri' | 'related'> {
   related: Relation<EpisodeHandle<T>>[]
 }
 
