@@ -49,6 +49,9 @@ const style = css`
       display: inline-block;
       width: 5rem;
     }
+    .date {
+      margin-left: auto;
+    }
   }
 
   /* .title, .synopsis {
@@ -99,6 +102,7 @@ export default ({ uri }: { uri: string }) => {
             <div key={episode.uri} className="episode">
               <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
               <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
+              <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
             </div>
           ))
         }

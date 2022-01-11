@@ -75,7 +75,7 @@ const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(targe
     ...handle,
     categories: target.categories,
     scheme: target.scheme,
-    uri: `${target.scheme}:${title?.id ? `${title.id}(${handle.id})` : handle.id}`,
+    uri: `${target.scheme}:${title?.id ? `${title.id}(${(<EpisodeHandle>handle).season}-${(<EpisodeHandle>handle).number})` : handle.id}`,
     handles: handle.handles?.map(curryPopulateHandle(target))
   } as unknown as PopulateHandleReturn<T>
 }
@@ -236,10 +236,10 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
 
 const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle<true>[]): Episode => ({
   __typename: 'Episode',
+  uri: episodeHandles.map(({ uri }) => uri).join(','),
   season: findMostCommon(episodeHandles.map(({ season }) => season))[0],
   number: findMostCommon(episodeHandles.map(({ number }) => number))[0],
   categories: [...new Set(episodeHandles.flatMap(({ categories }) => categories))],
-  uri: episodeHandles.map(({ uri }) => uri).join(','),
   names: episodeHandles.flatMap(({ names }) => names),
   images: episodeHandles.flatMap(({ images }) => images),
   releaseDates: episodeHandles.flatMap(({ releaseDates }) => releaseDates),

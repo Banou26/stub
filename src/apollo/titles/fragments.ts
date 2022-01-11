@@ -97,6 +97,7 @@ export const EPISODE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
+  ${RELEASE_DATE_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
   ${EPISODE_HANDLE_FRAGMENT}
   fragment EpisodeFragment on Episode {
@@ -106,6 +107,9 @@ export const EPISODE_FRAGMENT = gql`
     categories
     names {
       ...NameFragment
+    }
+    releaseDates {
+      ...ReleaseDateFragment
     }
     images {
       ...ImageFragment
