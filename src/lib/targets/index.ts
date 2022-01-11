@@ -236,6 +236,8 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
 
 const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle<true>[]): Episode => ({
   __typename: 'Episode',
+  season: findMostCommon(episodeHandles.map(({ season }) => season))[0],
+  number: findMostCommon(episodeHandles.map(({ number }) => number))[0],
   categories: [...new Set(episodeHandles.flatMap(({ categories }) => categories))],
   uri: episodeHandles.map(({ uri }) => uri).join(','),
   names: episodeHandles.flatMap(({ names }) => names),
@@ -246,6 +248,19 @@ const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle<true>[]): E
   tags: [],
   related: []
 })
+
+const findMostCommon = (arr) => {
+  const instances = [
+    ...arr
+      .reduce(
+        (map, val) => map.set(val, (map.get(val) ?? 0) + 1),
+        new Map()
+      )
+      .entries()
+  ]
+  const max = Math.max(...instances.map(([, instances]) => instances))
+  return instances.filter(([, instances]) => instances === max).map(([num]) => num)
+}
 
 const makeTitleFromTitleHandles = (titleHandles: TitleHandle<true>[]): Title => ({
   __typename: 'Title',

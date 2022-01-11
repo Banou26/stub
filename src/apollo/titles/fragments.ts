@@ -71,12 +71,13 @@ export const TAG_FRAGMENT = gql`
   }
 `
 
-export const TITLE_HANDLE_FRAGMENT = gql`
+export const EPISODE_HANDLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
-  ${NAME_FRAGMENT}
-  fragment TitleHandleFragment on TitleHandle {
+  fragment EpisodeHandleFragment on EpisodeHandle {
     ...HandleFragment
+    season
+    number
     names {
       ...NameFragment
     }
@@ -97,8 +98,11 @@ export const EPISODE_FRAGMENT = gql`
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
+  ${EPISODE_HANDLE_FRAGMENT}
   fragment EpisodeFragment on Episode {
     uri
+    season
+    number
     categories
     names {
       ...NameFragment
@@ -107,7 +111,28 @@ export const EPISODE_FRAGMENT = gql`
       ...ImageFragment
     }
     handles {
+      ...EpisodeHandleFragment
+    }
+    related {
       ...HandleFragment
+    }
+  }
+`
+
+export const TITLE_HANDLE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  ${IMAGE_FRAGMENT}
+  ${NAME_FRAGMENT}
+  fragment TitleHandleFragment on TitleHandle {
+    ...HandleFragment
+    names {
+      ...NameFragment
+    }
+    images {
+      ...ImageFragment
+    }
+    synopses {
+      ...SynopsisFragment
     }
     related {
       ...HandleFragment
@@ -157,23 +182,6 @@ export const TITLE_FRAGMENT = gql`
     }
     genres {
       ...GenreFragment
-    }
-  }
-`
-
-export const EPISODE_HANDLE_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
-  ${IMAGE_FRAGMENT}
-  fragment EpisodeHandleFragment on EpisodeHandle {
-    ...HandleFragment
-    images {
-      ...ImageFragment
-    }
-    synopses {
-      ...SynopsisFragment
-    }
-    related {
-      ...HandleFragment
     }
   }
 `

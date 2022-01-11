@@ -171,9 +171,22 @@ const infoMap =
       `${key.charAt(0).toUpperCase()}${key.slice(1)}:`
     ])
 
+const getSideInformations = (elem: Document): Informations =>
+  Object.fromEntries(
+    [...elem.querySelectorAll('.js-sns-icon-container ~ h2 ~ h2 ~ .spaceit_pad:not(.js-sns-icon-container ~ h2 ~ h2 ~ h2 ~ .spaceit_pad)')]
+      .map(elem => [
+        infoMap.find(([, val]) => val === elem.childNodes[1].textContent)?.[0]!,
+        elem.childNodes[2].textContent?.trim().length
+          ? elem.childNodes[2].textContent?.trim()!
+          : elem.childNodes[3].textContent?.trim()!
+      ])
+      .filter(([key]) => infoMap.some(([_key]) => key === _key))
+  )
 
 const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
   console.log('getTitleEpisodesInfo elem', elem)
+  const informations = getSideInformations(elem)
+
   
   const episodes =
     [...elem.querySelectorAll('.episode_list.ascend .episode-list-data')]
@@ -188,13 +201,21 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
           ?? []
         const japaneseTitle = _japaneseTitle?.slice(1, -1)
 
+        const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
+
         return ({
+          categories: [
+            Category.ANIME,
+            ...informations.type.includes('TV') ? [Category.SHOW] : []
+          ],
           id: url.split('/')[7]!,
+          season: 1,
+          number: Number(elem.querySelector<HTMLTableCellElement>('.episode-number')?.textContent),
           url,
           names: [
             {
               language: 'English',
-              name: englishTitle
+              name: englishTitle!
             },
             ...japaneseEnglishTitle
               ? [{
@@ -210,7 +231,14 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
               : []
           ],
           images: [],
-          releaseDates: [],
+          releaseDates:
+            dateElem &&
+            !isNaN(Date.parse(dateElem.textContent!))
+              ? [{
+                language: 'Japanese',
+                date: new Date(dateElem.textContent!)
+              }]
+              : [],
           synopses: [],
           handles: [],
           tags: [],
@@ -221,23 +249,12 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
   return episodes
 }
 
-
 const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
   const url =
     elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
     elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
 
-  const informations: Informations =
-    Object.fromEntries(
-      [...elem.querySelectorAll('.js-sns-icon-container ~ h2 ~ h2 ~ .spaceit_pad:not(.js-sns-icon-container ~ h2 ~ h2 ~ h2 ~ .spaceit_pad)')]
-        .map(elem => [
-          infoMap.find(([, val]) => val === elem.childNodes[1].textContent)?.[0]!,
-          elem.childNodes[2].textContent?.trim().length
-            ? elem.childNodes[2].textContent?.trim()!
-            : elem.childNodes[3].textContent?.trim()!
-        ])
-        .filter(([key]) => infoMap.some(([_key]) => key === _key))
-    )
+  const informations = getSideInformations(elem)
 
   console.log('informations', informations)
   console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', url)

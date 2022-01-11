@@ -1,15 +1,7 @@
-// import type { SearchResult } from 'src/lib/targets'
-
-import { Fragment, useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 
-import { torrent as downloadTorrent } from '@mfkn/fkn-lib'
-
-import { getAnimeSeason } from '../../lib/targets/myanimelist'
-import { getAnimeTorrents } from '../../lib/targets/nyaasi'
-import { filterWords } from '../../lib/utils'
 import { GET_TITLE } from 'src/apollo'
-import { useQuery, gql, useMutation } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { GetTitle } from 'src/apollo'
 import { Category } from 'src/lib'
 
@@ -43,14 +35,20 @@ const style = css`
     grid-column-end: 3;
 
     display: grid;
-    grid-auto-rows: 10rem;
+    grid-auto-rows: 7.5rem;
     grid-gap: 1rem;
     padding: 10rem;
   }
 
   .episode {
+    display: flex;
+    align-items: center;
     padding: 2.5rem;
     background-color: rgb(35, 35, 35);
+    .number {
+      display: inline-block;
+      width: 5rem;
+    }
   }
 
   /* .title, .synopsis {
@@ -96,60 +94,15 @@ export default ({ uri }: { uri: string }) => {
       </div>
       <div className="episodes">
         {
-          title?.episodes.map((episode, i) => (
-            <div key={episode.uri} className="episode">Episode {i}: {episode.names?.at(0)?.name}</div>
+          title?.episodes.map(episode => (
+            // todo: replace the episode number with a real number
+            <div key={episode.uri} className="episode">
+              <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
+              <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
+            </div>
           ))
         }
       </div>
     </div>
-  )
-  
-  const [anime, setAnime] = useState<SearchResult>()
-  const [torrents, setTorrents] = useState<any>()
-  
-  useEffect(() => {
-    getAnimeSeason()
-      .then(animes => {
-        console.log('animes', animes)
-        const _anime = animes.filter(({ name: _name }) => decodeURIComponent(_name) === decodeURIComponent(name))[0]
-        const anime = { ..._anime, name: _anime?.name && filterWords(_anime?.name) }
-        console.log('anime', anime)
-        setAnime(anime)
-        getAnimeTorrents({ search: anime.name })
-          .then(async res => {
-            setTorrents(res)
-            // return
-            // console.log('res', res)
-            // const mostSeeded = res.sort(({ seeders }, { seeders: seeders2 }) => seeders - seeders2).slice(-1)[0]
-            // console.log('mostSeeded', mostSeeded)
-            // const groupSearched = await getAnimeTorrents({ search: `[${mostSeeded.name?.match(/\[(.*?)\]/)?.[1]}] ${filterWords(decodeURIComponent(name))}` })
-            // console.log('groupSearched', groupSearched)
-            // setTorrents(groupSearched)
-          })
-      })
-  }, [])
-  console.log('Anime', anime, decodeURIComponent(name))
-  console.log('torrents', torrents)
-
-  return (
-    <Fragment>
-      <div css={style}>
-        {anime?.name}
-        {
-          torrents?.items.map(torrent =>
-            <div key={torrent.link} onClick={() => downloadTorrent({ uri: torrent.magnet })}>
-              <div>{torrent.name}</div>
-              <div>{torrent.link}</div>
-              <div>{torrent.seeders}</div>
-              <div>{torrent.leechers}</div>
-              <div>{torrent.downloads}</div>
-              {/* <div>{torrent.magnet}</div> */}
-              <div>{torrent.size}</div>
-              {/* <div>{torrent.torrentUrl}</div> */}
-            </div>
-          )
-        }
-      </div>
-    </Fragment>
   )
 }
