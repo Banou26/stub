@@ -1,9 +1,10 @@
 import { css } from '@emotion/react'
 
-import { GET_TITLE } from 'src/apollo'
+import { EpisodeApolloCache, GET_TITLE } from 'src/apollo'
 import { useQuery } from '@apollo/client'
 import { GetTitle } from 'src/apollo'
-import { Category } from 'src/lib'
+import { Category, Episode } from 'src/lib'
+import { useMemo, useState } from 'react'
 
 const style = css`
   display: grid;
@@ -31,26 +32,34 @@ const style = css`
   }
 
   .episodes {
-    grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column: 1 / 3;
 
     display: grid;
-    grid-auto-rows: 7.5rem;
-    grid-gap: 1rem;
-    padding: 10rem;
-  }
+    grid-template-columns: 1fr 1fr;
 
-  .episode {
-    display: flex;
-    align-items: center;
-    padding: 2.5rem;
-    background-color: rgb(35, 35, 35);
-    .number {
-      display: inline-block;
-      width: 5rem;
+    .list {
+      display: grid;
+      grid-auto-rows: 7.5rem;
+      grid-gap: 1rem;
+      padding: 10rem;
     }
-    .date {
-      margin-left: auto;
+
+    .episode {
+      display: flex;
+      align-items: center;
+      padding: 2.5rem;
+      background-color: rgb(35, 35, 35);
+      .number {
+        display: inline-block;
+        width: 5rem;
+      }
+      .date {
+        margin-left: auto;
+      }
+    }
+
+    .episode-info {
+      background-color: rgb(35, 35, 35);
     }
   }
 
@@ -62,6 +71,20 @@ const style = css`
 export default ({ uri }: { uri: string }) => {
   console.log('uri', uri)
   const { error, data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
+  const [seasonNumber, setSeasonNumber] = useState(1)
+  const [episodeNumber, setEpisodeNumber] = useState(1)
+  const episode = useMemo(
+    () =>
+      title
+        ?.episodes
+        ?.find(({ season, number }) =>
+          season === seasonNumber &&
+          number === episodeNumber
+        ),
+    [title, seasonNumber, episodeNumber]
+  )
+
+  console.log('episode', episode)
 
   console.log('error :(', error)
   console.log('title :)', title)
@@ -96,16 +119,21 @@ export default ({ uri }: { uri: string }) => {
         </div>
       </div>
       <div className="episodes">
-        {
-          title?.episodes.map(episode => (
-            // todo: replace the episode number with a real number
-            <div key={episode.uri} className="episode">
-              <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
-              <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
-              <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
-            </div>
-          ))
-        }
+        <div className="list">
+          {
+            title?.episodes.map(episode => (
+              // todo: replace the episode number with a real number
+              <div key={episode.uri} className="episode">
+                <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
+                <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
+                <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
+              </div>
+            ))
+          }
+        </div>
+        <div className="episode-info">
+          {episode?.names?.at(0)?.name}
+        </div>
       </div>
     </div>
   )

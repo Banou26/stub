@@ -60,7 +60,7 @@ const episodeHandleToEpisodeHandleApolloCache = (episode: EpisodeHandle): Episod
   releaseDates: episode.releaseDates.map(releaseDateToReleaseDateApolloCache),
   images: episode.images.map(imageToImageApolloCache),
   synopses: episode.synopses.map(synopsisToSynopsisApolloCache),
-  handles: episode.handles?.map(episodeHandleToEpisodeHandleApolloCache)
+  handles: episode.handles?.map(episodeHandleToEpisodeHandleApolloCache) ?? null
 })
 
 const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache => ({
@@ -74,7 +74,7 @@ const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache => ({
   handles: episode.handles.map(episodeHandleToEpisodeHandleApolloCache)
 })
 
-const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHandleApolloCache => void console.log('-----------------', titleHandle) || ({
+const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHandleApolloCache => ({
   __typename: 'TitleHandle',
   ...titleHandle,
   names: titleHandle.names.map(nameToNameApolloCache),
@@ -82,7 +82,7 @@ const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHan
   releaseDates: titleHandle.releaseDates.map(releaseDateToReleaseDateApolloCache),
   images: titleHandle.images.map(imageToImageApolloCache),
   synopses: titleHandle.synopses.map(synopsisToSynopsisApolloCache),
-  handles: titleHandle.handles?.map(titleHandleToTitleHandleApolloCache)
+  handles: titleHandle.handles?.map(titleHandleToTitleHandleApolloCache) ?? null
 })
 
 const titleToTitleApolloCache = (title: Title): TitleApolloCache => ({

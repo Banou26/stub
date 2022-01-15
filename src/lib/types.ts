@@ -1,17 +1,17 @@
 import { Category } from './category'
 
-export interface Image {
+export type Image = {
   type: 'poster' | 'image'
   size: 'large' | 'medium' | 'small'
   url: string
 }
 
-export interface Name {
+export type Name = {
   language: string
   name: string
 }
 
-export interface Synopsis {
+export type Synopsis = {
   language: string
   synopsis: string
 }
@@ -27,7 +27,7 @@ export type TitleRelation = 'spinoff' | 'adaptation' | 'prequel' | 'sequel'
 export type EpisodeRelation = 'previous' | 'next'
 export type Relationship = TitleRelation | EpisodeRelation
 
-export interface Relation<T> {
+export type Relation<T> =  {
   relation:
     T extends Title ? TitleRelation :
     T extends TitleHandle ? TitleRelation :
@@ -37,7 +37,7 @@ export interface Relation<T> {
   reference: T
 }
 
-export interface Genre<T = false> {
+export type Genre<T = false> = {
   name: string
   adult?: boolean
   amount?: number
@@ -45,10 +45,8 @@ export interface Genre<T = false> {
   handles?: GenreHandle<T>[]
 }
 
-export interface GenreHandleInterface<T = false> extends Genre<T> {}
-
 export type GenreHandle<T = false> =
-  Omit<GenreHandleInterface<T>, 'handles'>
+  Omit<Genre<T>, 'handles'>
   & Handle<T>
 
 export interface HandleInterface<T = false> {
@@ -61,16 +59,21 @@ export interface HandleInterface<T = false> {
 
 export type Handle<T = false> =
   T extends true
-    ? Omit<HandleInterface<T>, 'uri' | 'scheme'> & Partial<Pick<HandleInterface<T>, 'uri' | 'scheme'>>
+    ? (
+      Omit<HandleInterface<T>, 'uri' | 'scheme'> &
+      Partial<Pick<HandleInterface<T>, 'uri' | 'scheme'>>
+    )
     : HandleInterface<T>
 
-export interface Tag {
-  type: 'score' | 'tag' | 'genre' | 'type' | 'theme' | 'demographic' | 'status' | 'producer' | 'rated'
+export type Tag = {
+  type:
+    'score' | 'tag' | 'genre' | 'type' | 'theme' |
+    'demographic' | 'status' | 'producer' | 'rated'
   value?: string
   extra?: any
 }
 
-export interface Title<T = false> {
+export type Title<T = false> = {
   categories: Category[]
   uri: string
   names: Name[]
@@ -85,21 +88,20 @@ export interface Title<T = false> {
   genres: Genre[]
 }
 
-export interface TitleHandleInterface<T = false>
-  extends
-    Omit<
-      Title,
-      'uri' | 'related' | 'handles' | 'episodes' | 'recommended' | 'genres'
-    > {
-  related: Relation<TitleHandle<T>>[]
-  episodes: EpisodeHandle<T>[]
-  recommended: TitleHandle<T>[]
-  genres: GenreHandle<T>[]
-}
+export type TitleHandle<T = false> =
+  Omit<
+    Title,
+    'uri' | 'related' | 'handles' | 'episodes' |
+    'recommended' | 'genres'
+  > &
+  Handle<T> & {
+    related: Relation<TitleHandle<T>>[]
+    episodes: EpisodeHandle<T>[]
+    recommended: TitleHandle<T>[]
+    genres: GenreHandle<T>[]
+  }
 
-export type TitleHandle<T = false> = TitleHandleInterface<T> & Handle<T>
-
-export interface Episode<T = false> {
+export type Episode<T = false> = {
   uri: string
   season: number
   number: number
@@ -113,15 +115,13 @@ export interface Episode<T = false> {
   related: Relation<Episode<T>>[]
 }
 
-export interface EpisodeHandleInterface<T = false>
-  extends
-    Omit<Episode<T>, 'uri' | 'related'> {
-  related: Relation<EpisodeHandle<T>>[]
-}
+export type EpisodeHandle<T = false> =
+  Omit<Episode<T>, 'uri' | 'related'> &
+  Handle<T> & {
+    related: Relation<EpisodeHandle<T>>[]
+  }
 
-export type EpisodeHandle<T = false> = EpisodeHandleInterface<T> & Handle<T>
-
-export interface SearchFilter {
+export type SearchFilter = {
   categories?: Category[]
   genres?: Genre[]
   tags?: Tag[]
