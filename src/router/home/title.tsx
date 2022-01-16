@@ -72,6 +72,11 @@ const style = css`
 
     .episode-info {
       background-color: rgb(35, 35, 35);
+      padding: 2.5rem;
+
+      h2 {
+        margin-bottom: 2.5rem;
+      }
     }
   }
 `
@@ -107,6 +112,8 @@ export default ({ uri }: { uri: string }) => {
       )
       : ''
 
+  console.log('episode', episode)
+
   return (
     <div css={style}>
       <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
@@ -135,8 +142,8 @@ export default ({ uri }: { uri: string }) => {
           }
         </div>
         <div className="episode-info">
-          <h3>{episode?.names?.at(0)?.name}</h3>
-          <div>
+          <h2>{episode?.names?.at(0)?.name}</h2>
+          <div className="synopsis">
             {episode?.synopses?.at(0)?.synopsis}
           </div>
         </div>
