@@ -221,12 +221,10 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
             : true
         )
         .map(target =>
-          void console.log('target[method]', target[method].function) ||
           target[method]
             // @ts-ignore
             ?.function({ categories, ...params })
             ?.then(handles =>
-              void console.log('ASDASDASDA target[method]', handles) ||
               Array.isArray(handles)
                 ? handles.map(curryPopulateHandle(target))
                 : curryPopulateHandle(target)(handles)
@@ -301,9 +299,6 @@ export const searchTitle: SearchTitle['function'] = async ({ categories, ...rest
           .filter(([key, val])  => val !== undefined)
       )
   })
-  console.log('REEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', targets)
-  console.log('mhmm', { ...rest, categories })
-  console.log('_targets', _targets)
 
   const titleHandles = await filterTargetResponses({
     targets: _targets,
@@ -311,7 +306,6 @@ export const searchTitle: SearchTitle['function'] = async ({ categories, ...rest
     method: 'searchTitle',
     params: { ...rest, categories }
   }) as unknown as TitleHandle<true>[]
-  console.log('titleHandles', titleHandles)
 
   for (const handle of titleHandles) handles.push(handle)
 
@@ -324,24 +318,16 @@ export const getTitle: GetTitle['function'] = async (args) => {
     method: 'getTitle',
     params: {}
   })
-  console.log('getTitle REEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', targets)
-  console.log('getTitle mhmm', args)
-  console.log('getTitle _targets', _targets)
 
   const titleHandles = await filterTargetResponses({
     targets: _targets,
     method: 'getTitle',
     params: args
   }) as unknown as TitleHandle<true>[]
-  console.log('getTitle titleHandles', titleHandles)
 
   for (const handle of titleHandles) handles.push(handle)
 
-  const title = makeTitleFromTitleHandles(titleHandles)
-
-  console.log('getTitle title', title)
-
-  return title
+  return makeTitleFromTitleHandles(titleHandles)
 }
 
 export const getEpisode: GetEpisode['function'] = async (args) => {
@@ -350,23 +336,15 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
     method: 'getEpisode',
     params: {}
   })
-  console.log('getEpisode REEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', targets)
-  console.log('getEpisode mhmm', args)
-  console.log('getEpisode _targets', _targets)
 
   const episodeHandles = await filterTargetResponses({
     targets: _targets,
     method: 'getEpisode',
     params: args
   }) as unknown as EpisodeHandle<true>[]
-  console.log('getEpisode episodeHandles', episodeHandles)
 
   for (const handle of episodeHandles) handles.push(handle)
 
-  const episode = makeEpisodeFromEpisodeHandles(episodeHandles)
-
-  console.log('getEpisode episode', episode)
-
-  return episode
+  return makeEpisodeFromEpisodeHandles(episodeHandles)
 }
 

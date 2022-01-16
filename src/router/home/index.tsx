@@ -41,9 +41,7 @@ export default () => {
   const { data: shows } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.SHOW], title: true }))
   // const { data: animes } = useFetch<TitleHandle[]>(() => getLatest({ categories: [Category.ANIME], title: true }))
   // const { data: animes } = useFetch(() => searchTitle({ latest: true, categories: [Category.ANIME]  }))
-  const { error, data: { searchTitle: animes } = {} } = useQuery<SearchTitle>(SEARCH_TITLE, { variables: { latest: true, categories: [Category.ANIME]  } })
-  console.log('animes error', error)
-  console.log('animes', animes)
+  const { data: { searchTitle: animes } = {} } = useQuery<SearchTitle>(SEARCH_TITLE, { variables: { latest: true, categories: [Category.ANIME]  } })
   return (
     <div css={style}>
       <div className="anime">

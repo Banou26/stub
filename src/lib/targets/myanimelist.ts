@@ -140,7 +140,6 @@ export const getTitle: GetTitle<true> = {
 export const getEpisode: GetEpisode<true> = {
   // categories: [Category.ANIME],
   function: ({ uri }) =>
-    void console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', uri, Number(fromUri(uri!).meta.slice('1-'.length))) ||
     getAnimeEpisode(fromUri(uri!).id, Number(fromUri(uri!).meta.slice('1-'.length)))
 }
 
@@ -190,7 +189,6 @@ const getSideInformations = (elem: Document): Informations =>
   )
 
 const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
-  console.log('getTitleEpisodesInfo elem', elem)
   const informations = getSideInformations(elem)
   const url =
     elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
@@ -205,10 +203,8 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
   const japaneseTitle = _japaneseTitle?.slice(1, -1)
 
   const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
-  console.log('aaaaaaaaaaaaa', elem.querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8'))
   const synopsis = elem.querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8')?.textContent?.slice('Synopsis'.length) ?? ''
 
-  console.log('EP NUMBER WRONGGGGGGGGGGGGGGGGGGGGGGGGGG', elem.querySelector<HTMLTableCellElement>('.fs18.lh11 .fw-n')?.textContent, Number(elem.querySelector<HTMLTableCellElement>('.fs18.lh11 .fw-n')?.textContent))
 
   return ({
     categories: [
@@ -257,9 +253,7 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
 }
 
 const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
-  console.log('getTitleEpisodesInfo elem', elem)
   const informations = getSideInformations(elem)
-
   
   const episodes =
     [...elem.querySelectorAll('.episode_list.ascend .episode-list-data')]
@@ -328,10 +322,6 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
     elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
 
   const informations = getSideInformations(elem)
-
-  console.log('informations', informations)
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', url)
-
   const dateText = informations.aired
 
   const startDate =
@@ -364,8 +354,6 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
       }
   }
 
-  console.log('uhm episodes ??????????????? ', informations.episodes, informations.episodes === 'Unknown')
-
   const episodes =
     informations.episodes === 'Unknown'
       ? []
@@ -378,8 +366,6 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
             )
           )
       )
-
-  console.log('ALRIGHT episodes !!!!!!!!!!!!!!!!!!!!! ', episodes)
 
   return {
     categories: [

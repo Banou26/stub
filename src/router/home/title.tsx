@@ -2,9 +2,9 @@ import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
 
-import { EpisodeApolloCache, GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
-import { Category, Episode } from 'src/lib'
-import { useEffect, useMemo, useState } from 'react'
+import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
+import { Category, fromUri } from 'src/lib'
+import { useMemo } from 'react'
 import { getRoutePath, Route } from '../path'
 
 const style = css`
@@ -50,6 +50,11 @@ const style = css`
         padding: 2.5rem;
         background-color: rgb(35, 35, 35);
         cursor: pointer;
+        color: #fff;
+
+        &:hover {
+          text-decoration: none;
+        }
 
         &.selected {
           background-color: rgb(75, 75, 75);
@@ -69,23 +74,13 @@ const style = css`
       background-color: rgb(35, 35, 35);
     }
   }
-
-  /* .title, .synopsis {
-    width: 100%;
-  } */
 `
 
 export default ({ uri }: { uri: string }) => {
-  console.log('uri', uri)
-  const [seasonNumber, setSeasonNumber] = useState(1)
-  const [episodeNumber, setEpisodeNumber] = useState(1)
-  const { error, data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
-  const { error: error2, data: { episode: _episode } = {}, refetch } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri } })
-  console.log('_episode', _episode)
-
-  useEffect(() => {
-    refetch({ uri })
-  }, [seasonNumber, episodeNumber])
+  const { meta } = fromUri(uri)
+  const [seasonNumber, episodeNumber] = meta.split('-').map(Number)
+  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
+  const { data: { episode: _episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri } })
 
   const episode = useMemo(
     () =>
@@ -99,11 +94,6 @@ export default ({ uri }: { uri: string }) => {
     [_episode?.uri, title, seasonNumber, episodeNumber]
   )
 
-  console.log('episode', episode)
-
-  console.log('error :(', error)
-  console.log('title :)', title)
-
   const release =
     title?.releaseDates.at(0)
       ? (
@@ -116,13 +106,6 @@ export default ({ uri }: { uri: string }) => {
           : `${title.releaseDates.at(0)!.start!.toDateString().slice(4).trim()} to ${title.releaseDates.at(0)!.end!.toDateString().slice(4).trim()}`
       )
       : ''
-
-  console.log('episodessssssssssss', title?.episodes)
-
-  const selectEpisode = (episode) => {
-    setSeasonNumber(episode.season)
-    setEpisodeNumber(episode.number)
-  }
 
   return (
     <div css={style}>

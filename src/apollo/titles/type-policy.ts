@@ -103,37 +103,27 @@ cache.policies.addTypePolicies({
     fields: {
       searchTitle: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
         const { toReference, args: arrrrg, storage, cache, fieldName } = args
-        console.log('SEARCHTITLE ARGS', arrrrg)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
           searchTitle(arrrrg).then((data) => {
-            console.log('SEARCHTITLE data res', data)
             const titles = data.map(titleToTitleApolloCache)
-            console.log('data res', titles)
             storage.var(titles)
             cache.writeQuery({ query: SEARCH_TITLE, data: { [fieldName]: titles } })
           })
         }
-        console.log('SEARCH TITLE', storage.var())
         return storage.var()
-        // toReference({ __typename: 'Title', id })
       },
       title: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
-        console.log('GET TITLE ARGS', args)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
           getTitle({ uri, scheme, id }).then((_title) => {
-            console.log('GET TITLE data res', _title)
             const title = titleToTitleApolloCache(_title)
-            console.log('GET TITLE data title', title)
             storage.var(title)
             cache.writeQuery({ query: GET_TITLE, data: { [fieldName]: title } })
           })
         }
-        console.log('GET TITLE', storage.var())
         return storage.var()
-        // toReference({ __typename: 'Title', id })
       },
       titles: (_, { toReference, args: { id } }: FieldFunctionOptions & { args: { id: string } }) =>
         toReference({
@@ -142,20 +132,15 @@ cache.policies.addTypePolicies({
         }),
       episode: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
-        console.log('GET EPISODE ARGS', args)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
           getEpisode({ uri, scheme, id }).then((_episode) => {
-            console.log('GET EPISODE data res', _episode)
             const episode = episodeToEpisodeApolloCache(_episode)
-            console.log('GET EPISODE data episode', episode)
             storage.var(episode)
             cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
           })
         }
-        console.log('GET EPISODE', storage.var())
         return storage.var()
-        // toReference({ __typename: 'Title', id })
       }
     }
   }
