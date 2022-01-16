@@ -203,7 +203,14 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
   const japaneseTitle = _japaneseTitle?.slice(1, -1)
 
   const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
-  const synopsis = elem.querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8')?.textContent?.slice('Synopsis'.length) ?? ''
+  const synopsis =
+    elem
+      .querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8')
+      ?.innerHTML
+      ?.slice(42 + 22)
+      .replaceAll('<br>', '\n')
+      .replaceAll('\n\n\n\n', '\n\n')! ??
+    ''
 
 
   return ({
@@ -242,10 +249,10 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
           date: new Date(dateElem.textContent!)
         }]
         : [],
-    synopses: [{
-      language: 'English',
-      synopsis
-    }],
+    synopses: 
+      elem.querySelector('.di-t.w100.mb8 ~ .pt8.pb8 .badresult')
+        ? []
+        : [{ language: 'English', synopsis }],
     handles: [],
     tags: [],
     related: []
@@ -396,7 +403,12 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
         ),
     synopses: [{
       language: 'English',
-      synopsis: elem.querySelector('[itemprop=description]')?.innerHTML.replaceAll('<br>', '\n').replaceAll('\n\n\n\n', '\n\n')!
+      synopsis:
+        elem
+          .querySelector('[itemprop=description]')
+          ?.innerHTML
+          .replaceAll('<br>', '\n')
+          .replaceAll('\n\n\n\n', '\n\n')!
     }],
     genres: [],
     releaseDates: [date],
