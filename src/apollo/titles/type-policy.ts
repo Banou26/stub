@@ -1,7 +1,7 @@
 import { FieldFunctionOptions, makeVar } from '@apollo/client'
 import { Episode, EpisodeHandle, Handle, Image, Name, Relation, Relationship, ReleaseDate, Synopsis, Title, TitleHandle } from 'src/lib'
-import { EpisodeApolloCache, EpisodeHandleApolloCache, GET_TITLE, ImageApolloCache, NameApolloCache, RelationApolloCache, ReleaseDateApolloCache, SEARCH_TITLE, SynopsisApolloCache, TitleApolloCache, TitleHandleApolloCache } from '.'
-import { get, searchTitle, getTitle } from '../../lib/targets'
+import { EpisodeApolloCache, EpisodeHandleApolloCache, GET_EPISODE, GET_TITLE, ImageApolloCache, NameApolloCache, RelationApolloCache, ReleaseDateApolloCache, SEARCH_TITLE, SynopsisApolloCache, TitleApolloCache, TitleHandleApolloCache } from '.'
+import { get, searchTitle, getTitle, getEpisode } from '../../lib/targets'
 import cache from '../cache'
 
 export const asyncRead = (fn, query) => {
@@ -90,7 +90,7 @@ const titleToTitleApolloCache = (title: Title): TitleApolloCache => ({
   ...title,
   names: title.names.map(nameToNameApolloCache),
   related: title.related.map(relation => relationToRelationApolloCache<TitleApolloCache>(relation)),
-  recommended: title.recommended.map(titleToTitleApolloCache),
+  recommended: title.recommended?.map(titleToTitleApolloCache),
   releaseDates: title.releaseDates.map(releaseDateToReleaseDateApolloCache),
   images: title.images.map(imageToImageApolloCache),
   synopses: title.synopses.map(synopsisToSynopsisApolloCache),
@@ -139,7 +139,24 @@ cache.policies.addTypePolicies({
         toReference({
           __typename: 'Title',
           id
-        })
+        }),
+      episode: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
+        const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
+        console.log('GET EPISODE ARGS', args)
+        if (!storage.var) {
+          args.storage.var = makeVar(undefined)
+          getEpisode({ uri, scheme, id }).then((_episode) => {
+            console.log('GET EPISODE data res', _episode)
+            const episode = episodeToEpisodeApolloCache(_episode)
+            console.log('GET EPISODE data episode', episode)
+            storage.var(episode)
+            cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
+          })
+        }
+        console.log('GET EPISODE', storage.var())
+        return storage.var()
+        // toReference({ __typename: 'Title', id })
+      }
     }
   }
 })

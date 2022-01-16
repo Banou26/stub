@@ -97,8 +97,17 @@ const curryPopulateHandle =
         }
       }, title)
 
-export const fromUri = (uri: string) => ({ scheme: uri.split(':')[0], id: uri.split(':')[1] })
+export const uriRegex = /(?<scheme>\w*):(?<id>\w*)(?:\((?<meta>.*?)\))?,?/
+export const uriRegexGlobal = /(?<scheme>\w*):(?<id>\w*)(?:\((?<meta>.*?)\))?,?/g
 
+export const fromUri = (uri: string) => {
+  const match = uri.match(uriRegex)!
+  return {
+    scheme: match[1],
+    id: match[2],
+    meta: match[3],
+  }
+}
 
 // todo: implemement url get
 export const get: Get = (params: Parameters<Get>[0]): ReturnType<Get> => {
@@ -334,3 +343,30 @@ export const getTitle: GetTitle['function'] = async (args) => {
 
   return title
 }
+
+export const getEpisode: GetEpisode['function'] = async (args) => {
+  const _targets = filterTargets({
+    targets,
+    method: 'getEpisode',
+    params: {}
+  })
+  console.log('getEpisode REEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', targets)
+  console.log('getEpisode mhmm', args)
+  console.log('getEpisode _targets', _targets)
+
+  const episodeHandles = await filterTargetResponses({
+    targets: _targets,
+    method: 'getEpisode',
+    params: args
+  }) as unknown as EpisodeHandle<true>[]
+  console.log('getEpisode episodeHandles', episodeHandles)
+
+  for (const handle of episodeHandles) handles.push(handle)
+
+  const episode = makeEpisodeFromEpisodeHandles(episodeHandles)
+
+  console.log('getEpisode episode', episode)
+
+  return episode
+}
+

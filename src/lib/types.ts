@@ -285,11 +285,21 @@ export interface Get extends TargetEndpoint {
 }
 
 export interface GetTitle<T = false> extends Get {
-  function: (params: QueryResource) => Promise<Title<T>>
+  function: (params: QueryResource) =>
+    Promise<
+      T extends true
+        ? TitleHandle<T>
+        : Title<T>
+    >
 }
 
 export interface GetEpisode<T = false> extends Get {
-  function: (params: QueryResource & QueryEpisodeInterface) => Promise<Episode<T>>
+  function: (params: QueryResource & QueryEpisodeInterface) =>
+    Promise<
+      T extends true
+        ? EpisodeHandle<T>
+        : Episode<T>
+    >
 }
 
 export interface GetGenre<T = false> extends Get {

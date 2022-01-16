@@ -114,6 +114,9 @@ export const EPISODE_FRAGMENT = gql`
     images {
       ...ImageFragment
     }
+    synopses {
+      ...SynopsisFragment
+    }
     handles {
       ...EpisodeHandleFragment
     }

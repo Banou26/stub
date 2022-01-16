@@ -1,10 +1,11 @@
 import { css } from '@emotion/react'
-
-import { EpisodeApolloCache, GET_TITLE } from 'src/apollo'
 import { useQuery } from '@apollo/client'
-import { GetTitle } from 'src/apollo'
+import { Link } from 'raviger'
+
+import { EpisodeApolloCache, GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
 import { Category, Episode } from 'src/lib'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { getRoutePath, Route } from '../path'
 
 const style = css`
   display: grid;
@@ -42,19 +43,25 @@ const style = css`
       grid-auto-rows: 7.5rem;
       grid-gap: 1rem;
       padding: 10rem;
-    }
 
-    .episode {
-      display: flex;
-      align-items: center;
-      padding: 2.5rem;
-      background-color: rgb(35, 35, 35);
-      .number {
-        display: inline-block;
-        width: 5rem;
-      }
-      .date {
-        margin-left: auto;
+      .episode {
+        display: flex;
+        align-items: center;
+        padding: 2.5rem;
+        background-color: rgb(35, 35, 35);
+        cursor: pointer;
+
+        &.selected {
+          background-color: rgb(75, 75, 75);
+        }
+
+        .number {
+          display: inline-block;
+          width: 5rem;
+        }
+        .date {
+          margin-left: auto;
+        }
       }
     }
 
@@ -70,18 +77,26 @@ const style = css`
 
 export default ({ uri }: { uri: string }) => {
   console.log('uri', uri)
-  const { error, data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
   const [seasonNumber, setSeasonNumber] = useState(1)
   const [episodeNumber, setEpisodeNumber] = useState(1)
+  const { error, data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
+  const { error: error2, data: { episode: _episode } = {}, refetch } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri } })
+  console.log('_episode', _episode)
+
+  useEffect(() => {
+    refetch({ uri })
+  }, [seasonNumber, episodeNumber])
+
   const episode = useMemo(
     () =>
-      title
+      _episode
+      ?? title
         ?.episodes
         ?.find(({ season, number }) =>
           season === seasonNumber &&
           number === episodeNumber
         ),
-    [title, seasonNumber, episodeNumber]
+    [_episode?.uri, title, seasonNumber, episodeNumber]
   )
 
   console.log('episode', episode)
@@ -104,13 +119,18 @@ export default ({ uri }: { uri: string }) => {
 
   console.log('episodessssssssssss', title?.episodes)
 
+  const selectEpisode = (episode) => {
+    setSeasonNumber(episode.season)
+    setEpisodeNumber(episode.number)
+  }
+
   return (
     <div css={style}>
       <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
       <div>
         <div>
           <h1>{title?.names?.at(0)?.name}</h1>
-          <div>
+          <div> 
             <span>{release}</span>
           </div>
         </div>
@@ -123,16 +143,19 @@ export default ({ uri }: { uri: string }) => {
           {
             title?.episodes.map(episode => (
               // todo: replace the episode number with a real number
-              <div key={episode.uri} className="episode">
+              <Link key={episode.uri} className={`episode ${episode.number === episodeNumber ? 'selected' : ''}`} href={getRoutePath(Route.TITLE, { uri: episode.uri })}>
                 <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
                 <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
                 <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
-              </div>
+              </Link>
             ))
           }
         </div>
         <div className="episode-info">
-          {episode?.names?.at(0)?.name}
+          <h3>{episode?.names?.at(0)?.name}</h3>
+          <div>
+            {episode?.synopses?.at(0)?.synopsis}
+          </div>
         </div>
       </div>
     </div>

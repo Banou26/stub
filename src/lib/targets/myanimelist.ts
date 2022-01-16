@@ -2,7 +2,7 @@ import Category from '../category'
 import { fetch } from '@mfkn/fkn-lib'
 import { GetGenres, GenreHandle, Get, GetLatest, TitleHandle, GetLatestOptions } from '../types'
 import { fromUri } from '.'
-import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle } from '..'
+import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle, GetEpisode } from '..'
 
 export const name = 'MyAnimeList'
 export const scheme = 'mal'
@@ -132,10 +132,16 @@ export const searchTitle: SearchTitle<true> = {
 }
 
 export const getTitle: GetTitle<true> = {
-  categories: [Category.ANIME],
+  // categories: [Category.ANIME],
   function: ({ uri, id }) =>
-    void console.log('getAnimeTitle uri', uri) ||
     getAnimeTitle(id ?? fromUri(uri).id)
+}
+
+export const getEpisode: GetEpisode<true> = {
+  // categories: [Category.ANIME],
+  function: ({ uri }) =>
+    void console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', uri, Number(fromUri(uri!).meta.slice('1-'.length))) ||
+    getAnimeEpisode(fromUri(uri!).id, Number(fromUri(uri!).meta.slice('1-'.length)))
 }
 
 export const getLatest: GetLatest<true> = ({ title, episode }) =>
@@ -182,6 +188,73 @@ const getSideInformations = (elem: Document): Informations =>
       ])
       .filter(([key]) => infoMap.some(([_key]) => key === _key))
   )
+
+const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
+  console.log('getTitleEpisodesInfo elem', elem)
+  const informations = getSideInformations(elem)
+  const url =
+    elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
+    elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
+  const englishTitle = elem.querySelector<HTMLAnchorElement>('.fs18.lh11')?.childNodes[2]!.textContent
+  const [japaneseEnglishTitle, _japaneseTitle] =
+    elem
+      .querySelector<HTMLParagraphElement>('.fs18.lh11 ~ .fn-grey2')
+      ?.textContent
+      ?.split(String.fromCharCode(160))
+    ?? []
+  const japaneseTitle = _japaneseTitle?.slice(1, -1)
+
+  const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
+  console.log('aaaaaaaaaaaaa', elem.querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8'))
+  const synopsis = elem.querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8')?.textContent?.slice('Synopsis'.length) ?? ''
+
+  console.log('EP NUMBER WRONGGGGGGGGGGGGGGGGGGGGGGGGGG', elem.querySelector<HTMLTableCellElement>('.fs18.lh11 .fw-n')?.textContent, Number(elem.querySelector<HTMLTableCellElement>('.fs18.lh11 .fw-n')?.textContent))
+
+  return ({
+    categories: [
+      Category.ANIME,
+      ...informations.type.includes('TV') ? [Category.SHOW] : []
+    ],
+    id: url.split('/')[7]!,
+    season: 1,
+    number: Number(elem.querySelector<HTMLTableCellElement>('.fs18.lh11 .fw-n')?.textContent?.split('-')[0].slice(1)),
+    url,
+    names: [
+      {
+        language: 'English',
+        name: englishTitle!
+      },
+      ...japaneseEnglishTitle
+        ? [{
+          language: 'Japanese-English',
+          name: japaneseEnglishTitle
+        }]
+        : [],
+      ...japaneseTitle
+        ? [{
+          language: 'Japanese',
+          name: japaneseTitle
+        }]
+        : []
+    ],
+    images: [],
+    releaseDates:
+      dateElem &&
+      !isNaN(Date.parse(dateElem.textContent!))
+        ? [{
+          language: 'Japanese',
+          date: new Date(dateElem.textContent!)
+        }]
+        : [],
+    synopses: [{
+      language: 'English',
+      synopsis
+    }],
+    handles: [],
+    tags: [],
+    related: []
+  })
+}
 
 const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
   console.log('getTitleEpisodesInfo elem', elem)
@@ -353,6 +426,15 @@ export const getAnimeTitle = (id: string) =>
   fetch(`https://myanimelist.net/anime/${id}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })
     .then(async res =>
       getTitleInfo(
+        new DOMParser()
+          .parseFromString(await res.text(), 'text/html')
+      )
+    )
+
+export const getAnimeEpisode = (id: string, episode: number) =>
+  fetch(`https://myanimelist.net/anime/${id}/${id}/episode/${episode}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+    .then(async res =>
+      getTitleEpisodeInfo(
         new DOMParser()
           .parseFromString(await res.text(), 'text/html')
       )
