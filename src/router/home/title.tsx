@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
 
 import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
-import { Category, fromUri } from 'src/lib'
+import { Category, fromUri, toUri } from 'src/lib'
 import { useMemo } from 'react'
 import { getRoutePath, Route } from '../path'
 
@@ -77,9 +77,9 @@ const style = css`
 `
 
 export default ({ uri }: { uri: string }) => {
-  const { meta } = fromUri(uri)
+  const { meta, ...uriRest } = fromUri(uri)
   const [seasonNumber, episodeNumber] = meta.split('-').map(Number)
-  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri } })
+  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: toUri(uriRest) } })
   const { data: { episode: _episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri } })
 
   const episode = useMemo(

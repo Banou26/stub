@@ -1,6 +1,6 @@
 import { useRoutes } from 'raviger'
 
-import { Category } from 'src/lib'
+import { Category, fromUri } from 'src/lib'
 import Home from './home'
 import CategoryComponent from './home/category'
 import Title from './home/title'

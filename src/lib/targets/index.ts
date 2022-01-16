@@ -109,6 +109,8 @@ export const fromUri = (uri: string) => {
   }
 }
 
+export const toUri = ({ scheme, id, meta }: { scheme: string, id: string, meta?: string }) => `${scheme}:${id}${meta ? `(${meta})` : ''}`
+
 // todo: implemement url get
 export const get: Get = (params: Parameters<Get>[0]): ReturnType<Get> => {
   const filteredTargets = targets.filter(({ scheme, get }) => (scheme === scheme || scheme === fromUri(params.uri).scheme) && !!get)
