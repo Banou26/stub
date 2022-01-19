@@ -1,12 +1,13 @@
 import Category from '../category'
 import { fetch } from '@mfkn/fkn-lib'
-import { GetGenres, GenreHandle, Get, GetLatest, TitleHandle, GetLatestOptions } from '../types'
+import { GetGenres, GenreHandle, TitleHandle } from '../types'
 import { fromUri } from '.'
 import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle, GetEpisode } from '..'
 
 export const name = 'MyAnimeList'
 export const scheme = 'mal'
 export const categories = [Category.ANIME]
+// export const icon = 
 
 const fixOrigin = (url: string) => url.replace(document.location.origin, 'https://myanimelist.net')
 
@@ -34,6 +35,7 @@ export const getGenres: GetGenres<true> = () =>
     )
 
 const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
+  categories: [Category.ANIME],
   id: elem.querySelector<HTMLElement>('[id]')!.id.trim(),
   url: elem.querySelector<HTMLAnchorElement>('.link-title')!.href,
   images: [{
@@ -80,6 +82,7 @@ export const getAnimeSeason = () =>
     )
 
 const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
+  categories: [Category.ANIME],
   id: elem.querySelector<HTMLElement>('[data-anime-id]')!.dataset.animeId!,
   url: elem.querySelector<HTMLAnchorElement>('.video-info-title a:last-of-type')!.href,
   images: [{
@@ -93,19 +96,24 @@ const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
   }],
   synopses: [],
   genres: [],
-  releaseDate: [],
+  releaseDates: [],
   related: [],
   episodes:
     [...elem.querySelectorAll<HTMLAnchorElement>('.title a')]
       .map(elem => ({
+        categories: [Category.ANIME],
         id: `${elem.href.split('/')[4]}-${elem.href.split('/')[7]}`,
+        releaseDates: [],
+        season: 1,
+        number: Number(elem.href.split('/')[7]),
         url: elem.href,
         names: [],
         images: [],
         synopses: [],
         related: [],
         tags: [],
-        releaseDate: []
+        releaseDate: [],
+        handles: []
       })),
   recommended: [],
   tags: []
@@ -132,15 +140,15 @@ export const searchTitle: SearchTitle<true> = {
 }
 
 export const getTitle: GetTitle<true> = {
-  // categories: [Category.ANIME],
+  categories: [Category.ANIME],
   function: ({ uri, id }) =>
-    getAnimeTitle(id ?? fromUri(uri).id)
+    getAnimeTitle(id ?? fromUri(uri!).id)
 }
 
 export const getEpisode: GetEpisode<true> = {
-  // categories: [Category.ANIME],
+  categories: [Category.ANIME],
   function: ({ uri }) =>
-    getAnimeEpisode(fromUri(uri!).id, Number(fromUri(uri!).meta.slice('1-'.length)))
+    getAnimeEpisode(fromUri(uri!).id.split('-')[0], Number(fromUri(uri!).id.split('-')[1]))
 }
 
 export const getLatest: GetLatest<true> = ({ title, episode }) =>
@@ -194,23 +202,27 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
     elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
     elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
   const englishTitle = elem.querySelector<HTMLAnchorElement>('.fs18.lh11')?.childNodes[2]!.textContent
-  const [japaneseEnglishTitle, _japaneseTitle] =
+  const [japaneseEnglishTitle, japaneseTitle] =
     elem
       .querySelector<HTMLParagraphElement>('.fs18.lh11 ~ .fn-grey2')
       ?.textContent
-      ?.split(String.fromCharCode(160))
+      ?.trim()
+      .slice(0, -1)
+      .split('(')
+      .map(str => str.trim())
     ?? []
-  const japaneseTitle = _japaneseTitle?.slice(1, -1)
+
+  console.log('AAAAAAAAAAAAAAAAAAAAAA', japaneseEnglishTitle, '|', japaneseTitle)
 
   const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
   const synopsis =
     elem
       .querySelector<HTMLDivElement>('.di-t.w100.mb8 ~ .pt8.pb8')
-      ?.innerHTML
-      ?.slice(42 + 22)
-      .replaceAll('<br>', '\n')
-      .replaceAll('\n\n\n\n', '\n\n')! ??
-    ''
+      ?.textContent
+      ?.trim()
+      .slice('Synopsis'.length)
+      .trim()
+      .replaceAll('\n\n\n\n', '\n\n')!
 
 
   return ({
@@ -218,7 +230,7 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
       Category.ANIME,
       ...informations.type.includes('TV') ? [Category.SHOW] : []
     ],
-    id: url.split('/')[7]!,
+    id: `${url.split('/')[4]!}-${url.split('/')[7]!}`,
     season: 1,
     number: Number(elem.querySelector<HTMLTableCellElement>('.fs18.lh11 .fw-n')?.textContent?.split('-')[0].slice(1)),
     url,
@@ -274,6 +286,7 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
             ?.split(String.fromCharCode(160))
           ?? []
         const japaneseTitle = _japaneseTitle?.slice(1, -1)
+        console.log('BBBBBBBBBBBBBBBBBBBBBBB', japaneseEnglishTitle, '|', japaneseTitle)
 
         const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
 
@@ -282,7 +295,7 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
             Category.ANIME,
             ...informations.type.includes('TV') ? [Category.SHOW] : []
           ],
-          id: url.split('/')[7]!,
+          id: `${url.split('/')[4]!}-${url.split('/')[7]!}`, // url.split('/')[7]!,
           season: 1,
           number: Number(elem.querySelector<HTMLTableCellElement>('.episode-number')?.textContent),
           url,
@@ -405,10 +418,9 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
       language: 'English',
       synopsis:
         elem
-          .querySelector('[itemprop=description]')
-          ?.innerHTML
-          .replaceAll('<br>', '\n')
-          .replaceAll('\n\n\n\n', '\n\n')!
+          .querySelector<HTMLParagraphElement>('[itemprop=description]')
+          ?.textContent
+          ?.replaceAll('\n\n\n\n', '\n\n')!
     }],
     genres: [],
     releaseDates: [date],
@@ -438,8 +450,8 @@ export const getAnimeEpisode = (id: string, episode: number) =>
       )
     )
 
-export const get: Get<true> = ({ uri, id, title, episode }) =>
-  void console.log('get uri', uri) ||
-  title ? getAnimeTitle(id ?? fromUri(uri).id)
-  : episode ? Promise.resolve(undefined)
-  : Promise.resolve(undefined)
+// export const get: Get<true> = ({ uri, id, title, episode }) =>
+//   void console.log('get uri', uri) ||
+//   title ? getAnimeTitle(id ?? fromUri(uri).id)
+//   : episode ? Promise.resolve(undefined)
+//   : Promise.resolve(undefined)

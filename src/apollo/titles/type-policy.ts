@@ -99,6 +99,18 @@ const titleToTitleApolloCache = (title: Title): TitleApolloCache => ({
 })
 
 cache.policies.addTypePolicies({
+  Title: {
+    keyFields: ['uri'],
+  },
+  TitleHandle: {
+    keyFields: ['uri'],
+  },
+  Episode: {
+    keyFields: ['uri'],
+  },
+  EpisodeHandle: {
+    keyFields: ['uri'],
+  },
   Query: {
     fields: {
       searchTitle: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
@@ -132,9 +144,12 @@ cache.policies.addTypePolicies({
         }),
       episode: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
+        console.log('episode type policy read, uri:', uri, ', scheme', scheme, ', id', id)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
+          console.log('EPISODE LOADING')
           getEpisode({ uri, scheme, id }).then((_episode) => {
+            console.log('EPISODE LOADED')
             const episode = episodeToEpisodeApolloCache(_episode)
             storage.var(episode)
             cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
@@ -145,5 +160,3 @@ cache.policies.addTypePolicies({
     }
   }
 })
-
-export const foo = undefined

@@ -254,6 +254,7 @@ export interface Search extends TargetEndpoint {
 }
 
 export interface SearchTitle<T = false> extends Search {
+  categories: Category[]
   function: (
     args:
       Pick<QueryResource, 'scheme'> &
@@ -263,6 +264,7 @@ export interface SearchTitle<T = false> extends Search {
 }
 
 export interface SearchEpisode<T = false> extends Search  {
+  categories: Category[]
   function: (
     args:
       QueryResource &
@@ -272,6 +274,7 @@ export interface SearchEpisode<T = false> extends Search  {
 }
 
 export interface SearchGenre<T = false> extends Search  {
+  categories: Category[]
   function: (
     args:
       QueryResource &
@@ -285,6 +288,7 @@ export interface Get extends TargetEndpoint {
 }
 
 export interface GetTitle<T = false> extends Get {
+  categories: Category[]
   function: (params: QueryResource) =>
     Promise<
       T extends true
@@ -294,6 +298,7 @@ export interface GetTitle<T = false> extends Get {
 }
 
 export interface GetEpisode<T = false> extends Get {
+  categories: Category[]
   function: (params: QueryResource & QueryEpisodeInterface) =>
     Promise<
       T extends true
@@ -303,5 +308,6 @@ export interface GetEpisode<T = false> extends Get {
 }
 
 export interface GetGenre<T = false> extends Get {
+  categories: Category[]
   function: (params: QueryResource & QueryGenreInterface) => Promise<Genre<T>>
 }

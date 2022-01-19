@@ -23,7 +23,8 @@ import { getRouterRoutePath, Route } from './path'
 
 export const routes = {
   [getRouterRoutePath(Route.HOME)]: () => <Home/>,
-  [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>
+  [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
+  [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, episodeUri }) => <Title uri={uri} episodeUri={episodeUri}/>
 }
 
 export default () => useRoutes(routes)

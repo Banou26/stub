@@ -4,16 +4,19 @@ import { useCallback, useState } from 'react'
 export enum Route {
   HOME = 'HOME',
   TITLE = 'TITLE',
+  TITLE_EPISODE = 'TITLE_EPISODE',
 }
 
 const Routes = {
   [Route.HOME]: () => '/',
-  [Route.TITLE]: ({ uri }) => `/title/${uri}`,
+  [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
+  [Route.TITLE_EPISODE]: ({ uri, episodeUri }: { uri: string, episodeUri: string }) => `/title/${uri}/${episodeUri}`,
 }
 
 const RouterRoutes = {
   [Route.HOME]: '/',
   [Route.TITLE]: '/title/:uri',
+  [Route.TITLE_EPISODE]: '/title/:uri/:episodeUri',
 }
 
 export const getRouterRoutePath =

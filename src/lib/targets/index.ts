@@ -75,7 +75,7 @@ const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(targe
     ...handle,
     categories: target.categories,
     scheme: target.scheme,
-    uri: `${target.scheme}:${title?.id ? `${title.id}(${(<EpisodeHandle>handle).season}-${(<EpisodeHandle>handle).number})` : handle.id}`,
+    uri: `${target.scheme}:${handle.id}`,
     handles: handle.handles?.map(curryPopulateHandle(target))
   } as unknown as PopulateHandleReturn<T>
 }
@@ -97,19 +97,12 @@ const curryPopulateHandle =
         }
       }, title)
 
-export const uriRegex = /(?<scheme>\w*):(?<id>\w*)(?:\((?<meta>.*?)\))?,?/
-export const uriRegexGlobal = /(?<scheme>\w*):(?<id>\w*)(?:\((?<meta>.*?)\))?,?/g
-
 export const fromUri = (uri: string) => {
-  const match = uri.match(uriRegex)!
-  return {
-    scheme: match[1],
-    id: match[2],
-    meta: match[3],
-  }
+  const [scheme, id] = uri.split(':')
+  return { scheme, id }
 }
 
-export const toUri = ({ scheme, id, meta }: { scheme: string, id: string, meta?: string }) => `${scheme}:${id}${meta ? `(${meta})` : ''}`
+export const toUri = ({ scheme, id }: { scheme: string, id: string }) => `${scheme}:${id}`
 
 // todo: implemement url get
 export const get: Get = (params: Parameters<Get>[0]): ReturnType<Get> => {

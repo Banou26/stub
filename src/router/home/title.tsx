@@ -81,23 +81,23 @@ const style = css`
   }
 `
 
-export default ({ uri }: { uri: string }) => {
-  const { meta, ...uriRest } = fromUri(uri)
-  const [seasonNumber, episodeNumber] = meta.split('-').map(Number)
-  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: toUri(uriRest) } })
-  const { data: { episode: _episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri } })
+export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
+  const firstUri = uri.split(',')?.at(0)!
+  const { scheme, id } = fromUri(firstUri)
+  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
+  const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri } })
 
-  const episode = useMemo(
-    () =>
-      _episode
-      ?? title
-        ?.episodes
-        ?.find(({ season, number }) =>
-          season === seasonNumber &&
-          number === episodeNumber
-        ),
-    [_episode?.uri, title, seasonNumber, episodeNumber]
-  )
+  // const episode = useMemo(
+  //   () =>
+  //     _episode ??
+  //     title
+  //       ?.episodes
+  //       ?.find(({ season, number }) =>
+  //         season === seasonNumber &&
+  //         number === episodeNumber
+  //       ),
+  //   [_episode?.uri, title, seasonNumber, episodeNumber]
+  // )
 
   const release =
     title?.releaseDates.at(0)
@@ -113,6 +113,7 @@ export default ({ uri }: { uri: string }) => {
       : ''
 
   console.log('episode', episode)
+  console.log('episodeLoading', episodeLoading)
 
   return (
     <div css={style}>
@@ -133,7 +134,7 @@ export default ({ uri }: { uri: string }) => {
           {
             title?.episodes.map(episode => (
               // todo: replace the episode number with a real number
-              <Link key={episode.uri} className={`episode ${episode.number === episodeNumber ? 'selected' : ''}`} href={getRoutePath(Route.TITLE, { uri: episode.uri })}>
+              <Link key={episode.uri} className={`episode ${episode.uri === episodeUri ? 'selected' : ''}`} href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}>
                 <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
                 <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
                 <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
@@ -144,7 +145,12 @@ export default ({ uri }: { uri: string }) => {
         <div className="episode-info">
           <h2>{episode?.names?.at(0)?.name}</h2>
           <div className="synopsis">
-            {episode?.synopses?.at(0)?.synopsis}
+            {/* { episodeLoading ? 'LOADING' : 'NOT LOADING' }
+            { episode?.synopses?.at(0)?.synopsis ? 'CONTENT' : 'NO CONTENT' } */}
+            {
+              episodeLoading ? 'Loading...' :
+              episode?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
+            }
           </div>
         </div>
       </div>
