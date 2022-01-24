@@ -112,6 +112,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       )
       : ''
 
+  console.log('title', title)
   console.log('episode', episode)
   console.log('episodeLoading', episodeLoading)
 

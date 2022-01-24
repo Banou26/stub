@@ -1,16 +1,11 @@
 import Category from '../category'
 
 import * as MyAnimeList from './myanimelist'
-import * as Google from './google'
-import * as GogoAnime from './gogoanime'
-// import { filterTagets } from '../utils'
-import { Search, GetLatest, GetLatestOptions, GenreHandle, GetGenres, SearchFilter } from '../types'
-import { Episode, EpisodeHandle, Get, GetEpisode, GetGenre, GetOptions, GetTitle, Handle, SearchEpisode, SearchGenre, SearchTitle, Title, TitleHandle } from '..'
+
+import { _Title, _Episode, Episode, EpisodeHandle, Get, GetEpisode, GetGenre, GetTitle, Handle, SearchEpisode, SearchGenre, SearchTitle, Title, TitleHandle } from '..'
 
 const targets: Target[] = [
-  MyAnimeList,
-  // Google,
-  // GogoAnime
+  MyAnimeList
 ]
 
 export default targets
@@ -30,72 +25,11 @@ export interface Target {
 type TargetCallable =
   Omit<Target, 'categories' | 'scheme' | 'name'>
 
-// const filterTargets =
-//   (targets: Target[], func: (target: Target) => boolean) =>
-//     (func2: (target: Target) => boolean) =>
-//       targets
-//         .filter(func)
-//         .filter(func2)
-
-// const filterSearch = filterTargets(targets, ({ search }) => !!search)
-// const filterGetLatest = filterTargets(targets, ({ getLatest }) => !!getLatest)
-
-export const search = ({ search, categories, genres }) => {
-  // const filteredTargets = filterSearch({ categories, genres })
-  // const results = filteredTargets.map(target => target.search!({ search, categories, genres }))
-
-  // return (
-  //   Promise
-  //   .allSettled(results)
-  //   .then(results =>
-  //     results
-  //       .filter(result => result.status === 'fulfilled')
-  //       .flatMap((result) => (result as unknown as PromiseFulfilledResult<SearchResult>).value)
-  //   )
-  // )
-}
-
-const targetGenres = new Map<Target, GenreHandle<true>[]>()
-
-// const getGenres = async (target: Target, options?: SearchFilter) => {
-//   if (targetGenres.has(target)) return targetGenres.get(target)!
-//   if (!target.getGenres) return []
-//   const genres = await target.getGenres(options)
-//   targetGenres.set(target, genres)
-//   return genres
-// }
-
-type PopulateHandleReturn<T> =
-  T extends TitleHandle<true> ? TitleHandle<false> :
-  T extends EpisodeHandle<true> ? EpisodeHandle<false> :
-  never
-
-const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true>>(target: Target, handle: T, title?: TitleHandle<true>): PopulateHandleReturn<T> => {
-  return {
-    ...handle,
-    categories: target.categories,
-    scheme: target.scheme,
-    uri: `${target.scheme}:${handle.id}`,
-    handles: handle.handles?.map(curryPopulateHandle(target))
-  } as unknown as PopulateHandleReturn<T>
-}
-
-// const populateHandle = <T extends TitleHandle<true> | EpisodeHandle<true> | undefined>(target: Target, handle: T):
-//   T extends undefined ? <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) => PopulateHandleReturn<T> :
-//   PopulateHandleReturn<T> => {
-//     if (handle === undefined) return <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) => _populateHandle<T>(target, handle)
-//     return _populateHandle<Exclude<T, undefined>>(target, handle as Exclude<T, undefined>)
-//   }
-
-const curryPopulateHandle =
-  (target: Target, title?: TitleHandle<true>) =>
-    <T extends TitleHandle<true> | EpisodeHandle<true>>(handle: T) =>
-      populateHandle<T>(target, {
-        ...handle,
-        ...'episodes' in handle && {
-          episodes: handle.episodes.map(curryPopulateHandle(target, handle))
-        }
-      }, title)
+const populateHandle = <T extends TitleHandle | EpisodeHandle>(handle: T): T & { uri: string } => ({
+  ...handle,
+  uri: `${handle.scheme}:${handle.id}`,
+  handles: handle.handles?.map(populateHandle)
+}) as T & { uri: string }
 
 export const fromUri = (uri: string) => {
   const [scheme, id] = uri.split(':')
@@ -115,7 +49,7 @@ export const get: Get = (params: Parameters<Get>[0]): ReturnType<Get> => {
           .map(target =>
             target
               .get?.(params)
-              .then(curryPopulateHandle(target))
+              .then(populateHandle)
           )
       )
       .then(results =>
@@ -161,7 +95,7 @@ export const getLatest: GetLatest = (
       .map(target =>
         target
           .getLatest?.({ categories, ...rest })
-          .then(handles => handles.map(curryPopulateHandle(target)))
+          .then(handles => handles.map(populateHandle))
       )
   console.log('results', results)
   return (
@@ -221,8 +155,8 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
             ?.function({ categories, ...params })
             ?.then(handles =>
               Array.isArray(handles)
-                ? handles.map(curryPopulateHandle(target))
-                : curryPopulateHandle(target)(handles)
+                ? handles.map(populateHandle)
+                : populateHandle(handles)
             )
         )
     )
@@ -236,16 +170,187 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
         .flatMap((result) => (result as unknown as PromiseFulfilledResult<Awaited<ReturnType<Exclude<Target[T], undefined>['function']>>>).value)
     )
 
-const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle<true>[]): Episode => ({
-  __typename: 'Episode',
+// const handleToHandleProperty =
+//   <T extends keyof (TitleHandle & EpisodeHandle)>(props: T[]) =>
+//     <T2 extends Parameters<typeof populateHandle>[0]>({ uri, scheme, id, ...rest }: T2) => ({
+//       ...Object.fromEntries(
+//         Object
+//         .entries(rest)
+//         .filter(([key]: [T, any]) => props.includes(key))
+//       ) as Pick<(TitleHandle & EpisodeHandle) & { uri: string }, T>,
+//       uri,
+//       scheme,
+//       id
+//     })
+
+// const handleToHandleProperty =
+//   <T extends keyof (TitleHandle & EpisodeHandle)>(props: T[]) =>
+//     <T2 extends Parameters<typeof populateHandle>[0]>({ uri, scheme, id, ...rest }: T2) => ({
+//       ...Object.fromEntries(
+//         Object
+//         .entries(rest)
+//         .filter(([key]: [T, any]) => props.includes(key))
+//       ),
+//       uri,
+//       scheme,
+//       id
+//     }) as Pick<(TitleHandle & EpisodeHandle), T> & Handle & { uri: string }
+
+// const handleToHandleProperty =
+//   <T extends keyof (TitleHandle & EpisodeHandle)>(prop: T) =>
+//     <T2 extends ReturnType<typeof populateHandle>>(handle: T2) => ({
+//       ...handle[prop],
+//       uri: handle.uri,
+//       scheme: handle.scheme,
+//       id: handle.id
+//     }) as Pick<(TitleHandle & EpisodeHandle), T> & Handle & { uri: string }
+
+// const handleToHandleProperty =
+//   <T extends Handle = (TitleHandle | EpisodeHandle), T2 extends keyof T = keyof T>(prop: T2) =>
+//     (handle: T): Handle & Pick<T, T2>[T2] => ({
+//       ...handle[prop],
+//       uri: handle.uri,
+//       scheme: handle.scheme,
+//       id: handle.id
+//     })
+
+// const handleToHandleProperty =
+//   <T extends _Episode, T2 extends keyof T>(prop: T2) =>
+//     (handle: T): T[T2] => handle[prop]
+
+// const handleToHandleProperty = <T extends Handle, T2 extends keyof T = keyof T>(handle: T, prop: T2) => handle[prop]
+
+// const foo = handleToHandleProperty<EpisodeHandle>({
+//   scheme: '',
+//   id: '',
+//   season: 0,
+//   number: 0,
+//   names: [{ language: '', name: '' }],
+//   releaseDates: [],
+//   categories: [],
+//   handles: [],
+//   images: [],
+//   related: [],
+//   synopses: [],
+//   tags: []
+// }, 'names')
+
+// todo: try to fix the type issue here
+// const handleToHandleProperty =
+//   <T2 extends keyof (Handle & { uri: string })>(prop: T2) =>
+//     (handle: )
+//     Pick<T, T2>[T2] extends Pick<T, T2>[T2][]
+//       ? (Handle & { uri: string } & Pick<T, T2>[T2][number])
+//       : (Handle & { uri: string } & Pick<T, T2>[T2]) => {
+//       => {
+
+//         const value = handle[prop]
+
+//         if (Array.isArray(value)) {
+//           return (
+//             value
+//               .map(val => ({
+//                 ...val,
+//                 uri: handle.uri,
+//                 scheme: handle.scheme,
+//                 id: handle.id
+//               }))
+//           )
+//         }
+
+//         return ({
+//           [prop]: value,
+//           uri: handle.uri,
+//           scheme: handle.scheme,
+//           id: handle.id
+//         })
+
+//         // return (
+//         //   Array.isArray(value)
+//         //     ? (
+//         //       value
+//         //         .map(val => ({
+//         //           ...val,
+//         //           uri: handle.uri,
+//         //           scheme: handle.scheme,
+//         //           id: handle.id
+//         //         }))
+//         //     )
+//         //     :  ({
+//         //       [prop]: value,
+//         //       uri: handle.uri,
+//         //       scheme: handle.scheme,
+//         //       id: handle.id
+//         //     })
+//         )
+//       }
+
+// const foo = handleToHandleProperty({
+//   scheme: '',
+//   id: '',
+//   season: 0,
+//   number: 0,
+//   names: [{ language: '', name: '' }],
+//   releaseDates: [],
+//   categories: [],
+//   handles: [],
+//   images: [],
+//   related: [],
+//   synopses: [],
+//   tags: []
+// }, 'names')
+
+// const foo = handleToHandleProperty({
+//   scheme: '',
+//   id: '',
+//   season: 0,
+//   number: 0,
+//   names: [{ language: '', name: '' }],
+//   releaseDates: [],
+//   categories: [],
+//   handles: [],
+//   images: [],
+//   related: [],
+//   synopses: [],
+//   tags: []
+// }, 'names')
+// const bar = foo.
+
+// todo: try to make this shit curryiable and fix the ts ignore once TS is finally good
+const handleToHandleProperty =
+  <T extends Handle, T2 extends keyof T = keyof T>(prop: T2, handle: T):
+    Pick<T, T2>[T2] extends any[]
+      ? (Handle & { uri: string } & Pick<T, T2>[T2][number])
+      : (Handle & { uri: string } & Pick<T, T2>[T2]) =>
+      Array.isArray(handle[prop])
+        ? (
+          handle[prop]
+            // @ts-ignore
+            .map(val => populateHandle({
+              ...val,
+              uri: handle.uri,
+              scheme: handle.scheme,
+              id: handle.id
+            }))
+        )
+        // @ts-ignore
+        : populateHandle({
+          [prop]: handle[prop],
+          uri: handle.uri,
+          scheme: handle.scheme,
+          id: handle.id
+        })
+
+const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode => ({
   uri: episodeHandles.map(({ uri }) => uri).join(','),
   season: findMostCommon(episodeHandles.map(({ season }) => season))[0],
   number: findMostCommon(episodeHandles.map(({ number }) => number))[0],
-  categories: [...new Set(episodeHandles.flatMap(({ categories }) => categories))],
-  names: episodeHandles.flatMap(({ names }) => names),
-  images: episodeHandles.flatMap(({ images }) => images),
-  releaseDates: episodeHandles.flatMap(({ releaseDates }) => releaseDates),
-  synopses: episodeHandles.flatMap(({ synopses }) => synopses),
+  uris: episodeHandles.flatMap(({ uri, scheme, id }) => ({ uri: uri!, scheme, id })),
+  categories: [...new Set(episodeHandles.flatMap(handle => handleToHandleProperty('categories', handle)))],
+  names: episodeHandles.flatMap(handle => handleToHandleProperty('names', handle)),
+  images: episodeHandles.flatMap(handle => handleToHandleProperty('images', handle)),
+  releaseDates: episodeHandles.flatMap(handle => handleToHandleProperty('releaseDates', handle)),
+  synopses: episodeHandles.flatMap(handle => handleToHandleProperty('synopses', handle)),
   handles: episodeHandles.flatMap(({ handles }) => handles),
   tags: [],
   related: []
@@ -264,23 +369,24 @@ const findMostCommon = (arr) => {
   return instances.filter(([, instances]) => instances === max).map(([num]) => num)
 }
 
-const makeTitleFromTitleHandles = (titleHandles: TitleHandle<true>[]): Title => ({
-  __typename: 'Title',
-  categories: [...new Set(titleHandles.flatMap(({ categories }) => categories))],
+const makeTitleFromTitleHandles = (titleHandles: TitleHandle[]): Title => ({
   uri: titleHandles.map(({ uri }) => uri).join(','),
-  names: titleHandles.flatMap(({ names }) => names),
-  releaseDates: titleHandles.flatMap(({ releaseDates }) => releaseDates),
-  images: titleHandles.flatMap(({ images }) => images),
-  synopses: titleHandles.flatMap(({ synopses }) => synopses),
+  categories: [...new Set(titleHandles.flatMap(handle => handleToHandleProperty('categories', handle)))],
+  uris: titleHandles.flatMap(({ uri, scheme, id }) => ({ uri: uri!, scheme, id })),
+  names: titleHandles.flatMap(handle => handleToHandleProperty('names', handle)),
+  releaseDates: titleHandles.flatMap(handle => handleToHandleProperty('releaseDates', handle)),
+  images: titleHandles.flatMap(handle => handleToHandleProperty('images', handle)),
+  synopses: titleHandles.flatMap(handle => handleToHandleProperty('synopses', handle)),
   related: [],
   handles: titleHandles,
+  // episodes: titleHandles.map(makeEpisodeFromEpisodeHandles).map(handleToHandleProperty(['episodes'])),
   episodes: titleHandles.flatMap(({ episodes }) => episodes.map(handle => makeEpisodeFromEpisodeHandles([handle]))),
   recommended: [],
   tags: [],
   genres: []
 })
 
-const handles: Handle<true>[] = []
+const handles: Handle[] = []
 
 export const searchTitle: SearchTitle['function'] = async ({ categories, ...rest }) => {
   const _targets = filterTargets({
@@ -300,7 +406,7 @@ export const searchTitle: SearchTitle['function'] = async ({ categories, ...rest
     categories,
     method: 'searchTitle',
     params: { ...rest, categories }
-  }) as unknown as TitleHandle<true>[]
+  }) as unknown as TitleHandle[]
 
   for (const handle of titleHandles) handles.push(handle)
 
@@ -318,7 +424,7 @@ export const getTitle: GetTitle['function'] = async (args) => {
     targets: _targets,
     method: 'getTitle',
     params: args
-  }) as unknown as TitleHandle<true>[]
+  }) as unknown as TitleHandle[]
 
   for (const handle of titleHandles) handles.push(handle)
 
@@ -336,7 +442,7 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
     targets: _targets,
     method: 'getEpisode',
     params: args
-  }) as unknown as EpisodeHandle<true>[]
+  }) as unknown as EpisodeHandle[]
 
   for (const handle of episodeHandles) handles.push(handle)
 

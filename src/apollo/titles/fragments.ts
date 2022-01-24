@@ -1,36 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const IMAGE_FRAGMENT = gql`
-  fragment ImageFragment on Image {
-    type
-    size
-    url
-  }
-`
-
-export const NAME_FRAGMENT = gql`
-  fragment NameFragment on Name {
-    language
-    name
-  }
-`
-
-export const SYNOPSIS_FRAGMENT = gql`
-  fragment SynopsisFragment on Synopsis {
-    language
-    synopsis
-  }
-`
-
-export const RELEASE_DATE_FRAGMENT = gql`
-  fragment ReleaseDateFragment on ReleaseDate {
-    language
-    date
-    start
-    end
-  }
-`
-
 export const SHALLOW_HANDLE_FRAGMENT = gql`
   fragment ShallowHandleFragment on Handle {
     scheme
@@ -50,21 +19,60 @@ export const HANDLE_FRAGMENT = gql`
   }
 `
 
+export const IMAGE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  fragment ImageFragment on Image {
+    ...HandleFragment
+    type
+    size
+    url
+  }
+`
+
+export const NAME_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  fragment NameFragment on Name {
+    ...HandleFragment
+    language
+    name
+  }
+`
+
+export const SYNOPSIS_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  fragment SynopsisFragment on Synopsis {
+    ...HandleFragment
+    language
+    synopsis
+  }
+`
+
+export const RELEASE_DATE_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
+  fragment ReleaseDateFragment on ReleaseDate {
+    ...HandleFragment
+    language
+    date
+    start
+    end
+  }
+`
+
 export const GENRE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   fragment GenreFragment on Genre {
+    ...HandleFragment
     name
     adult
     amount
     categories
-    handles {
-      ...HandleFragment
-    }
   }
 `
 
 export const TAG_FRAGMENT = gql`
+  ${HANDLE_FRAGMENT}
   fragment TagFragment on Tag {
+    ...HandleFragment
     type
     values
     extra

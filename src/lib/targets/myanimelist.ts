@@ -11,30 +11,31 @@ export const categories = [Category.ANIME]
 
 const fixOrigin = (url: string) => url.replace(document.location.origin, 'https://myanimelist.net')
 
-export const getGenres: GetGenres<true> = () =>
-  fetch('https://myanimelist.net/anime.php', { proxyCache: (1000 * 60 * 60 * 5).toString() })
-    .then(res => res.text())
-    .then(text =>
-      [
-        ...new DOMParser()
-        .parseFromString(text, 'text/html')
-        .querySelectorAll('.genre-link')
-      ]
-        .slice(0, 2)
-        .flatMap((elem, i) =>
-          [...elem.querySelectorAll<HTMLAnchorElement>('.genre-name-link')]
-            .map(({ href, textContent }): GenreHandle<true> => ({
-              id: href!.split('/').at(5)!,
-              url: href,
-              adult: !!i,
-              name: textContent!.replace(/(.*) \(.*\)/, '$1')!,
-              categories: [Category.ANIME]
-            }))
-            .filter(({ name }) => name)
-        )
-    )
+// export const getGenres: GetGenres<true> = () =>
+//   fetch('https://myanimelist.net/anime.php', { proxyCache: (1000 * 60 * 60 * 5).toString() })
+//     .then(res => res.text())
+//     .then(text =>
+//       [
+//         ...new DOMParser()
+//         .parseFromString(text, 'text/html')
+//         .querySelectorAll('.genre-link')
+//       ]
+//         .slice(0, 2)
+//         .flatMap((elem, i) =>
+//           [...elem.querySelectorAll<HTMLAnchorElement>('.genre-name-link')]
+//             .map(({ href, textContent }): GenreHandle<true> => ({
+//               id: href!.split('/').at(5)!,
+//               url: href,
+//               adult: !!i,
+//               name: textContent!.replace(/(.*) \(.*\)/, '$1')!,
+//               categories: [Category.ANIME]
+//             }))
+//             .filter(({ name }) => name)
+//         )
+//     )
 
-const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
+const getSeasonCardInfo = (elem: HTMLElement): TitleHandle => ({
+  scheme: 'mal',
   categories: [Category.ANIME],
   id: elem.querySelector<HTMLElement>('[id]')!.id.trim(),
   url: elem.querySelector<HTMLAnchorElement>('.link-title')!.href,
@@ -54,6 +55,7 @@ const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
   genres:
     [...elem.querySelectorAll<HTMLAnchorElement>('.genre a')]
       .map(({ textContent, href, parentElement }) => ({
+        scheme: 'mal',
         id: href!.split('/').at(5)!,
         adult: parentElement?.classList.contains('explicit'),
         url: fixOrigin(href),
@@ -67,7 +69,8 @@ const getSeasonCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
   related: [],
   episodes: [],
   recommended: [],
-  tags: []
+  tags: [],
+  handles: []
 })
 
 export const getAnimeSeason = () =>
@@ -81,7 +84,8 @@ export const getAnimeSeason = () =>
         .map(getSeasonCardInfo)
     )
 
-const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
+const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle => ({
+  scheme: 'mal',
   categories: [Category.ANIME],
   id: elem.querySelector<HTMLElement>('[data-anime-id]')!.dataset.animeId!,
   url: elem.querySelector<HTMLAnchorElement>('.video-info-title a:last-of-type')!.href,
@@ -101,6 +105,7 @@ const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
   episodes:
     [...elem.querySelectorAll<HTMLAnchorElement>('.title a')]
       .map(elem => ({
+        scheme: 'mal',
         categories: [Category.ANIME],
         id: `${elem.href.split('/')[4]}-${elem.href.split('/')[7]}`,
         releaseDates: [],
@@ -116,7 +121,8 @@ const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle<true> => ({
         handles: []
       })),
   recommended: [],
-  tags: []
+  tags: [],
+  handles: []
 })
 
 const getLatestEpisodes = () =>
@@ -196,13 +202,13 @@ const getSideInformations = (elem: Document): Informations =>
       .filter(([key]) => infoMap.some(([_key]) => key === _key))
   )
 
-const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
+const getTitleEpisodeInfo = (elem: Document): EpisodeHandle => {
   const informations = getSideInformations(elem)
   const url =
     elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
     elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
   const englishTitle = elem.querySelector<HTMLAnchorElement>('.fs18.lh11')?.childNodes[2]!.textContent
-  const [japaneseEnglishTitle, japaneseTitle] =
+  const [japaneseenTitle, japaneseTitle] =
     elem
       .querySelector<HTMLParagraphElement>('.fs18.lh11 ~ .fn-grey2')
       ?.textContent
@@ -212,7 +218,7 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
       .map(str => str.trim())
     ?? []
 
-  console.log('AAAAAAAAAAAAAAAAAAAAAA', japaneseEnglishTitle, '|', japaneseTitle)
+  console.log('AAAAAAAAAAAAAAAAAAAAAA', japaneseenTitle, '|', japaneseTitle)
 
   const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
   const synopsis =
@@ -224,8 +230,8 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
       .trim()
       .replaceAll('\n\n\n\n', '\n\n')!
 
-
   return ({
+    scheme: 'mal',
     categories: [
       Category.ANIME,
       ...informations.type.includes('TV') ? [Category.SHOW] : []
@@ -236,18 +242,18 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
     url,
     names: [
       {
-        language: 'English',
+        language: 'en',
         name: englishTitle!
       },
-      ...japaneseEnglishTitle
+      ...japaneseenTitle
         ? [{
-          language: 'Japanese-English',
-          name: japaneseEnglishTitle
+          language: 'jp-en',
+          name: japaneseenTitle
         }]
         : [],
       ...japaneseTitle
         ? [{
-          language: 'Japanese',
+          language: 'jp',
           name: japaneseTitle
         }]
         : []
@@ -257,21 +263,21 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle<true> => {
       dateElem &&
       !isNaN(Date.parse(dateElem.textContent!))
         ? [{
-          language: 'Japanese',
+          language: 'jp',
           date: new Date(dateElem.textContent!)
         }]
         : [],
-    synopses: 
+    synopses:
       elem.querySelector('.di-t.w100.mb8 ~ .pt8.pb8 .badresult')
         ? []
-        : [{ language: 'English', synopsis }],
+        : [{ language: 'en', synopsis }],
     handles: [],
     tags: [],
     related: []
   })
 }
 
-const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
+const getTitleEpisodesInfo = (elem: Document): EpisodeHandle[] => {
   const informations = getSideInformations(elem)
   
   const episodes =
@@ -279,18 +285,19 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
       .map(elem => {
         const url = elem.querySelector<HTMLAnchorElement>('.episode-title > a')!.href
         const englishTitle = elem.querySelector<HTMLAnchorElement>('.episode-title > a')!.textContent
-        const [japaneseEnglishTitle, _japaneseTitle] =
+        const [japaneseenTitle, _japaneseTitle] =
           elem
             .querySelector<HTMLSpanElement>('.episode-title > span')
             ?.textContent
             ?.split(String.fromCharCode(160))
           ?? []
         const japaneseTitle = _japaneseTitle?.slice(1, -1)
-        console.log('BBBBBBBBBBBBBBBBBBBBBBB', japaneseEnglishTitle, '|', japaneseTitle)
+        console.log('BBBBBBBBBBBBBBBBBBBBBBB', japaneseenTitle, '|', japaneseTitle)
 
         const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
 
         return ({
+          scheme: 'mal',
           categories: [
             Category.ANIME,
             ...informations.type.includes('TV') ? [Category.SHOW] : []
@@ -301,18 +308,18 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
           url,
           names: [
             {
-              language: 'English',
+              language: 'en',
               name: englishTitle!
             },
-            ...japaneseEnglishTitle
+            ...japaneseenTitle
               ? [{
-                language: 'Japanese-English',
-                name: japaneseEnglishTitle
+                language: 'jp-en',
+                name: japaneseenTitle
               }]
               : [],
             ...japaneseTitle
               ? [{
-                language: 'Japanese',
+                language: 'jp',
                 name: japaneseTitle
               }]
               : []
@@ -322,7 +329,7 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
             dateElem &&
             !isNaN(Date.parse(dateElem.textContent!))
               ? [{
-                language: 'Japanese',
+                language: 'jp',
                 date: new Date(dateElem.textContent!)
               }]
               : [],
@@ -336,7 +343,7 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle<true>[] => {
   return episodes
 }
 
-const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
+const getTitleInfo = async (elem: Document): Promise<TitleHandle> => {
   const url =
     elem.querySelector<HTMLLinkElement>('head > link[rel="canonical"]')!.href ||
     elem.querySelector<HTMLLinkElement>('head > meta[property="og:url"]')!.getAttribute('content')!
@@ -363,7 +370,7 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
       : undefined
 
   const date: ReleaseDate = {
-    language: 'English',
+    language: 'en',
     ...endDate
       ? {
         start: startDate,
@@ -388,6 +395,7 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
       )
 
   return {
+    scheme: 'mal',
     categories: [
       Category.ANIME
     ],
@@ -410,12 +418,12 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle<true>> => {
               name: elem?.childNodes[2].textContent?.trim()!
             }
             : {
-              language: 'Japanese-English',
+              language: 'jp-en',
               name: elem?.textContent?.trim()!
             }
         ),
     synopses: [{
-      language: 'English',
+      language: 'en',
       synopsis:
         elem
           .querySelector<HTMLParagraphElement>('[itemprop=description]')

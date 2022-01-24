@@ -1,5 +1,18 @@
 import { Category } from './category'
 
+export type Handle = {
+  scheme: string
+  id: string
+  uri?: string
+  url?: string
+  handles?: Handle[]
+}
+
+export type PropertyToHandleProperty<T, T2 extends keyof T> =
+  T[T2] extends any[]
+    ? (Handle & { uri: string } & T[T2][number])[]
+    : (Handle & { uri: string } & T[T2])[]
+
 export type Image = {
   type: 'poster' | 'image'
   size: 'large' | 'medium' | 'small'
@@ -37,33 +50,17 @@ export type Relation<T> =  {
   reference: T
 }
 
-export type Genre<T = false> = {
+export type Genre = {
   name: string
   adult?: boolean
   amount?: number
   categories: Category[]
-  handles?: GenreHandle<T>[]
+  handles?: GenreHandle[]
 }
 
-export type GenreHandle<T = false> =
-  Omit<Genre<T>, 'handles'>
-  & Handle<T>
-
-export interface HandleInterface<T = false> {
-  scheme: string
-  id: string
-  uri: string
-  url: string
-  handles?: Handle<T>[]
-}
-
-export type Handle<T = false> =
-  T extends true
-    ? (
-      Omit<HandleInterface<T>, 'uri' | 'scheme'> &
-      Partial<Pick<HandleInterface<T>, 'uri' | 'scheme'>>
-    )
-    : HandleInterface<T>
+export type GenreHandle =
+  Omit<Genre, 'handles'>
+  & Handle
 
 export type Tag = {
   type:
@@ -73,36 +70,49 @@ export type Tag = {
   extra?: any
 }
 
-export type Title<T = false> = {
+export type _Title = {
   categories: Category[]
-  uri: string
   names: Name[]
   releaseDates: ReleaseDate[]
   images: Image[]
   synopses: Synopsis[]
-  related: Relation<Title<T>>[]
-  handles: TitleHandle<T>[]
-  episodes: Episode<T>[]
-  recommended: Title<T>[]
+  related: Relation<Title>[]
+  recommended: Title[]
   tags: Tag[]
   genres: Genre[]
 }
 
-export type TitleHandle<T = false> =
-  Omit<
-    Title,
-    'uri' | 'related' | 'handles' | 'episodes' |
-    'recommended' | 'genres'
-  > &
-  Handle<T> & {
-    related: Relation<TitleHandle<T>>[]
-    episodes: EpisodeHandle<T>[]
-    recommended: TitleHandle<T>[]
-    genres: GenreHandle<T>[]
+export type Title =
+  {
+    uri: string
+    uris: (Handle & { uri: string })[]
+    episodes: Episode[]
+    handles: TitleHandle[]
+  } & {
+    // [key in keyof _Title]: (Handle & { uri: string } & _Title[key][number])[]
+    // [key in keyof _Title]:
+    // _Title[key] extends any[]
+    //     ? (Handle & { uri: string } & _Title[key][number])[]
+    //     : (Handle & { uri: string } & _Title[key])[]
+    [key in keyof _Title]: PropertyToHandleProperty<_Title, key>
   }
 
-export type Episode<T = false> = {
-  uri: string
+export type TitleHandle =
+  Handle & {
+    categories: Category[]
+    names: Name[]
+    releaseDates: ReleaseDate[]
+    images: Image[]
+    synopses: Synopsis[]
+    related: Relation<TitleHandle>[]
+    handles: TitleHandle[]
+    episodes: EpisodeHandle[]
+    recommended: TitleHandle[]
+    tags: Tag[]
+    genres: GenreHandle[]
+  }
+
+export type _Episode = {
   season: number
   number: number
   categories: Category[]
@@ -110,15 +120,36 @@ export type Episode<T = false> = {
   images: Image[]
   releaseDates: ReleaseDate[]
   synopses: Synopsis[]
-  handles: EpisodeHandle<T>[]
   tags: Tag[]
-  related: Relation<Episode<T>>[]
+  related: Relation<Episode>[]
 }
 
-export type EpisodeHandle<T = false> =
-  Omit<Episode<T>, 'uri' | 'related'> &
-  Handle<T> & {
-    related: Relation<EpisodeHandle<T>>[]
+export type Episode =
+  {
+    uri: string
+    uris: (Handle & { uri: string })[]
+    handles: EpisodeHandle[]
+  } & {
+    [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key>
+
+    // [key in keyof _Episode]:
+    //   _Episode[key] extends any[]
+    //     ? (Handle & { uri: string } & _Episode[key][number])[]
+    //     : (Handle & { uri: string } & _Episode[key])[]
+  }
+
+export type EpisodeHandle =
+  Handle & {
+    season: number
+    number: number
+    categories: Category[]
+    names: Name[]
+    images: Image[]
+    releaseDates: ReleaseDate[]
+    synopses: Synopsis[]
+    handles: EpisodeHandle[]
+    tags: Tag[]
+    related: Relation<EpisodeHandle>[]
   }
 
 export type SearchFilter = {
@@ -129,17 +160,17 @@ export type SearchFilter = {
   episode?: boolean
 }
 
-export type GetGenres<T = false> = (
+export type GetGenres = (
   options?: SearchFilter
-) => Promise<GenreHandle<T>[]>
+) => Promise<GenreHandle[]>
 
-// export type Search<T = false> = (
+// export type Search = (
 //   target:
 //     { search: string } & SearchFilter
 //     | { scheme: Handle['scheme'], id: Handle['id'] } & SearchFilter
 //     | { uri: Handle['uri'] } & SearchFilter
 //     | { url: Handle['url'] } & SearchFilter
-// ) => Promise<TitleHandle<T>[] | EpisodeHandle<T>[]>
+// ) => Promise<TitleHandle[] | EpisodeHandle[]>
 
 export interface GetLatestOptions {
   categories: Category[]
@@ -260,27 +291,27 @@ export interface SearchTitle<T = false> extends Search {
       Pick<QueryResource, 'scheme'> &
       Partial<QueryResource> &
       SearchResource
-  ) => Promise<T extends true ? TitleHandle<T>[] : Title[]>
+  ) => Promise<T extends true ? TitleHandle[] : Title[]>
 }
 
-export interface SearchEpisode<T = false> extends Search  {
+export interface SearchEpisode extends Search  {
   categories: Category[]
   function: (
     args:
       QueryResource &
       QueryEpisodeInterface &
       SearchResource
-  ) => Promise<Episode<T>[]>
+  ) => Promise<Episode[]>
 }
 
-export interface SearchGenre<T = false> extends Search  {
+export interface SearchGenre extends Search  {
   categories: Category[]
   function: (
     args:
       QueryResource &
       QueryGenreInterface &
       SearchResource
-  ) => Promise<Episode<T>[]>
+  ) => Promise<Episode[]>
 }
 
 export interface Get extends TargetEndpoint {
@@ -292,8 +323,8 @@ export interface GetTitle<T = false> extends Get {
   function: (params: QueryResource) =>
     Promise<
       T extends true
-        ? TitleHandle<T>
-        : Title<T>
+        ? TitleHandle
+        : Title
     >
 }
 
@@ -302,12 +333,12 @@ export interface GetEpisode<T = false> extends Get {
   function: (params: QueryResource & QueryEpisodeInterface) =>
     Promise<
       T extends true
-        ? EpisodeHandle<T>
-        : Episode<T>
+        ? EpisodeHandle
+        : Episode
     >
 }
 
-export interface GetGenre<T = false> extends Get {
+export interface GetGenre extends Get {
   categories: Category[]
-  function: (params: QueryResource & QueryGenreInterface) => Promise<Genre<T>>
+  function: (params: QueryResource & QueryGenreInterface) => Promise<Genre>
 }
