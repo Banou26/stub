@@ -28,7 +28,8 @@ type TargetCallable =
 const populateHandle = <T extends TitleHandle | EpisodeHandle>(handle: T): T & { uri: string } => ({
   ...handle,
   uri: `${handle.scheme}:${handle.id}`,
-  handles: handle.handles?.map(populateHandle)
+  handles: handle.handles?.map(populateHandle),
+  ...(<TitleHandle>handle).episodes && { episodes: (<TitleHandle>handle).episodes.map(populateHandle) }
 }) as T & { uri: string }
 
 export const fromUri = (uri: string) => {
@@ -380,7 +381,7 @@ const makeTitleFromTitleHandles = (titleHandles: TitleHandle[]): Title => ({
   related: [],
   handles: titleHandles,
   // episodes: titleHandles.map(makeEpisodeFromEpisodeHandles).map(handleToHandleProperty(['episodes'])),
-  episodes: titleHandles.flatMap(({ episodes }) => episodes.map(handle => makeEpisodeFromEpisodeHandles([handle]))),
+  episodes: titleHandles.map(populateHandle).flatMap(({ episodes }) => episodes.map(handle => makeEpisodeFromEpisodeHandles([handle]))),
   recommended: [],
   tags: [],
   genres: []
@@ -428,7 +429,10 @@ export const getTitle: GetTitle['function'] = async (args) => {
 
   for (const handle of titleHandles) handles.push(handle)
 
-  return makeTitleFromTitleHandles(titleHandles)
+  console.log('titleHandles', titleHandles)
+  const title = makeTitleFromTitleHandles(titleHandles)
+  console.log('AAAAAAAAAAAAAAAAAAAAFFFFFFFFFFFFFFFFFFFFFFFFFFFF', title)
+  return title
 }
 
 export const getEpisode: GetEpisode['function'] = async (args) => {

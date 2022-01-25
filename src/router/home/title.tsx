@@ -86,7 +86,6 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const { scheme, id } = fromUri(firstUri)
   const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri } })
-
   // const episode = useMemo(
   //   () =>
   //     _episode ??
@@ -146,8 +145,6 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
         <div className="episode-info">
           <h2>{episode?.names?.at(0)?.name}</h2>
           <div className="synopsis">
-            {/* { episodeLoading ? 'LOADING' : 'NOT LOADING' }
-            { episode?.synopses?.at(0)?.synopsis ? 'CONTENT' : 'NO CONTENT' } */}
             {
               episodeLoading ? 'Loading...' :
               episode?.synopses?.at(0)?.synopsis ?? 'No synopsis found'

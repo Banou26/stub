@@ -26,8 +26,11 @@ export const asyncRead = (fn, query) => {
 // todo: try to type this function
 const handleToHandleApolloCache = (handle) => ({
   url: null,
-  handles: null,
-  ...handle
+  uri: handle.uri ?? null,
+  id: handle.id ?? null,
+  scheme: handle.scheme ?? null,
+  ...handle,
+  ...!handle.handles && { handles: null }
 })
 
 const nameToNameApolloCache = (name: Title['names'][number]): TitleApolloCache['names'][number] =>
@@ -127,6 +130,18 @@ cache.policies.addTypePolicies({
   EpisodeHandle: {
     keyFields: ['uri'],
   },
+  Name: {
+    keyFields: ['uri'],
+  },
+  ReleaseDate: {
+    keyFields: ['uri'],
+  },
+  Image: {
+    keyFields: ['uri'],
+  },
+  Synopsis: {
+    keyFields: ['uri'],
+  },
   Query: {
     fields: {
       searchTitle: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
@@ -160,12 +175,9 @@ cache.policies.addTypePolicies({
         }),
       episode: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
-        console.log('episode type policy read, uri:', uri, ', scheme', scheme, ', id', id)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
-          console.log('EPISODE LOADING')
           getEpisode({ uri, scheme, id }).then((_episode) => {
-            console.log('EPISODE LOADED')
             const episode = episodeToEpisodeApolloCache(_episode)
             storage.var(episode)
             cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })

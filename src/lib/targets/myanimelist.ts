@@ -292,8 +292,6 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle[] => {
             ?.split(String.fromCharCode(160))
           ?? []
         const japaneseTitle = _japaneseTitle?.slice(1, -1)
-        console.log('BBBBBBBBBBBBBBBBBBBBBBB', japaneseenTitle, '|', japaneseTitle)
-
         const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
 
         return ({
