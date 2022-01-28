@@ -3,6 +3,7 @@ import { fetch } from '@mfkn/fkn-lib'
 import { GetGenres, GenreHandle, TitleHandle } from '../types'
 import { fromUri } from '.'
 import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle, GetEpisode } from '..'
+import { languageToTag } from '../languages'
 
 export const name = 'MyAnimeList'
 export const scheme = 'mal'
@@ -412,7 +413,9 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle> => {
         .map((elem, i) =>
           i
             ? {
-              language: elem?.childNodes[1].textContent?.slice(0, -1)!,
+              language:
+                elem?.childNodes[1].textContent?.slice(0, -1) === 'Synonyms' ? 'en' :
+                languageToTag(elem?.childNodes[1].textContent?.slice(0, -1)!.split('-').at(0)!) || elem?.childNodes[1].textContent?.slice(0, -1)!,
               name: elem?.childNodes[2].textContent?.trim()!
             }
             : {
