@@ -1,11 +1,13 @@
 import Category from '../category'
 
 import * as MyAnimeList from './myanimelist'
+import * as Nyaasi from './nyaasi'
 
 import { _Title, _Episode, Episode, EpisodeHandle, Get, GetEpisode, GetGenre, GetTitle, Handle, SearchEpisode, SearchGenre, SearchTitle, Title, TitleHandle } from '..'
 
 const targets: Target[] = [
-  MyAnimeList
+  MyAnimeList,
+  Nyaasi
 ]
 
 export default targets
@@ -14,11 +16,11 @@ export interface Target {
   categories?: Category[]
   scheme: string
   name: string
-  searchTitle?: SearchTitle
+  searchTitle?: SearchTitle<true>
   searchEpisode?: SearchEpisode
   searchGenre?: SearchGenre
-  getTitle?: GetTitle
-  getEpisode?: GetEpisode
+  getTitle?: GetTitle<true>
+  getEpisode?: GetEpisode<true>
   getGenre?: GetGenre
 }
 
@@ -133,13 +135,13 @@ const filterTargets = <T extends keyof Target>(
     .filter(target =>
       Object
         .keys(params ?? {})
-        .every(key => target[method]?.[key])
+        .every(key => target[method]?.[key] === params[key])
     )
 
 // todo: try to fix the typing issues
 const filterTargetResponses = <T extends keyof TargetCallable>(
-  { targets, categories, method, params, injectCategories }:
-  { targets: Target[], categories?: Category[], method: T, params: Parameters<Exclude<Target[T], undefined>['function']>[0], injectCategories?: boolean }
+  { targets, scheme, categories, method, params, injectCategories }:
+  { targets: Target[], scheme?: string, categories?: Category[], method: T, params: Parameters<Exclude<Target[T], undefined>['function']>[0], injectCategories?: boolean }
 ): ReturnType<Exclude<Target[T], undefined>['function']> =>
   // @ts-ignore
   Promise
@@ -352,7 +354,7 @@ const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode
   images: episodeHandles.flatMap(handle => handleToHandleProperty('images', handle)),
   releaseDates: episodeHandles.flatMap(handle => handleToHandleProperty('releaseDates', handle)),
   synopses: episodeHandles.flatMap(handle => handleToHandleProperty('synopses', handle)),
-  handles: episodeHandles.flatMap(({ handles }) => handles),
+  handles: [...episodeHandles, ...episodeHandles.flatMap(({ handles }) => handles)],
   tags: [],
   related: []
 })
@@ -418,7 +420,9 @@ export const getTitle: GetTitle['function'] = async (args) => {
   const _targets = filterTargets({
     targets,
     method: 'getTitle',
-    params: {}
+    params: {
+      ...args.uri && { scheme: fromUri(args.uri).scheme }
+    }
   })
 
   const titleHandles = await filterTargetResponses({
@@ -436,10 +440,13 @@ export const getTitle: GetTitle['function'] = async (args) => {
 }
 
 export const getEpisode: GetEpisode['function'] = async (args) => {
+  console.log('getEpisode', args)
   const _targets = filterTargets({
     targets,
     method: 'getEpisode',
-    params: {}
+    params: {
+      ...args.uri && { scheme: fromUri(args.uri).scheme }
+    }
   })
 
   const episodeHandles = await filterTargetResponses({
@@ -450,6 +457,51 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
 
   for (const handle of episodeHandles) handles.push(handle)
 
-  return makeEpisodeFromEpisodeHandles(episodeHandles)
+  const episodePreSearch = makeEpisodeFromEpisodeHandles(episodeHandles)
+
+  console.log('episodePreSearch', episodePreSearch)
+
+  console.log('SSSSSSSEAAAAAAARCH', `${args.title.names.find((name) => name.language === 'ja-en')?.name} "${episodePreSearch.number.toString().padStart(2, '0')}"`)
+
+  // @ts-ignore
+  const _searchedEpisodeHandles = await searchEpisode({
+    // categories: [Category.ANIME],
+    search: `${args.title.names.find((name) => name.language === 'ja-en')?.name} "${episodePreSearch.number.toString().padStart(2, '0')}"`,
+    // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
+    // title: args.title
+  })
+
+  console.log('_searchedEpisodeHandles', _searchedEpisodeHandles)
+
+  const searchedEpisodeHandles = _searchedEpisodeHandles[0]?.handles ?? []
+
+  console.log('searchedEpisodeHandles', searchedEpisodeHandles)
+
+  const postSearchHandles = [...episodeHandles, ...searchedEpisodeHandles]
+  console.log('postSearchHandles', postSearchHandles)
+  const postSearchEpisode = makeEpisodeFromEpisodeHandles(postSearchHandles)
+
+  console.log('postSearchEpisode', postSearchEpisode)
+  return postSearchEpisode
 }
 
+export const searchEpisode: SearchEpisode['function'] = async (args) => {
+  const _targets = filterTargets({
+    targets,
+    method: 'searchEpisode',
+    params: {
+      // ...args.uri && { scheme: fromUri(args.uri).scheme }
+    }
+  })
+
+  const episodeHandles = await filterTargetResponses({
+    targets: _targets,
+    method: 'searchEpisode',
+    params: args
+  }) as unknown as EpisodeHandle[]
+  console.log('episodeHandles', episodeHandles)
+
+  for (const handle of episodeHandles) handles.push(handle)
+
+  return [makeEpisodeFromEpisodeHandles(episodeHandles)]
+}

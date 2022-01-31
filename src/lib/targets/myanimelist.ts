@@ -138,6 +138,7 @@ const getLatestEpisodes = () =>
     )
 
 export const searchTitle: SearchTitle<true> = {
+  scheme: 'mal',
   categories: [Category.ANIME],
   latest: true,
   pagination: true,
@@ -147,12 +148,14 @@ export const searchTitle: SearchTitle<true> = {
 }
 
 export const getTitle: GetTitle<true> = {
+  scheme: 'mal',
   categories: [Category.ANIME],
   function: ({ uri, id }) =>
     getAnimeTitle(id ?? fromUri(uri!).id)
 }
 
 export const getEpisode: GetEpisode<true> = {
+  scheme: 'mal',
   categories: [Category.ANIME],
   function: ({ uri }) =>
     getAnimeEpisode(fromUri(uri!).id.split('-')[0], Number(fromUri(uri!).id.split('-')[1]))
@@ -248,13 +251,13 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle => {
       },
       ...japaneseenTitle
         ? [{
-          language: 'jp-en',
+          language: 'ja-en',
           name: japaneseenTitle
         }]
         : [],
       ...japaneseTitle
         ? [{
-          language: 'jp',
+          language: 'ja',
           name: japaneseTitle
         }]
         : []
@@ -264,7 +267,7 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle => {
       dateElem &&
       !isNaN(Date.parse(dateElem.textContent!))
         ? [{
-          language: 'jp',
+          language: 'ja',
           date: new Date(dateElem.textContent!)
         }]
         : [],
@@ -312,13 +315,13 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle[] => {
             },
             ...japaneseenTitle
               ? [{
-                language: 'jp-en',
+                language: 'ja-en',
                 name: japaneseenTitle
               }]
               : [],
             ...japaneseTitle
               ? [{
-                language: 'jp',
+                language: 'ja',
                 name: japaneseTitle
               }]
               : []
@@ -328,7 +331,7 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle[] => {
             dateElem &&
             !isNaN(Date.parse(dateElem.textContent!))
               ? [{
-                language: 'jp',
+                language: 'ja',
                 date: new Date(dateElem.textContent!)
               }]
               : [],
@@ -410,6 +413,29 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle> => {
         elem.querySelector('.title-name')!,
         ...elem.querySelectorAll<HTMLDivElement>('.js-sns-icon-container + br + h2 ~ div:not(.js-sns-icon-container + br + h2 ~ h2 ~ *):not(.js-alternative-titles), .js-alternative-titles > div')
       ]
+        // todo: improve synonyms handling, e.g there can be multiple synonyms on the same line, separated by `,`, e.g: https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood
+        // todo: also implement and give titles a lower score than the the original names
+        // .flatMap((elem, i) => {
+        //   if (i === 0) {
+        //     return ({
+        //       language: 'ja-en',
+        //       name: elem?.textContent?.trim()!
+        //     })
+        //   }
+
+
+
+        //   if (elem?.childNodes[1].textContent?.slice(0, -1) === 'Synonyms') {
+        //     return 
+        //   }
+
+        //   return ({
+        //     language:
+        //       elem?.childNodes[1].textContent?.slice(0, -1) === 'Synonyms' ? 'en' :
+        //       languageToTag(elem?.childNodes[1].textContent?.slice(0, -1)!.split('-').at(0)!) || elem?.childNodes[1].textContent?.slice(0, -1)!,
+        //     name: elem?.childNodes[2].textContent?.trim()!
+        //   })
+        // }),
         .map((elem, i) =>
           i
             ? {
@@ -419,7 +445,7 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle> => {
               name: elem?.childNodes[2].textContent?.trim()!
             }
             : {
-              language: 'jp-en',
+              language: 'ja-en',
               name: elem?.textContent?.trim()!
             }
         ),

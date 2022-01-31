@@ -71,7 +71,6 @@ export type Tag = {
 }
 
 export type _Title = {
-  categories: Category[]
   names: Name[]
   releaseDates: ReleaseDate[]
   images: Image[]
@@ -84,6 +83,7 @@ export type _Title = {
 
 export type Title =
   {
+    categories: (Handle & { category: Category })[]
     uri: string
     uris: (Handle & { uri: string })[]
     episodes: Episode[]
@@ -115,7 +115,6 @@ export type TitleHandle =
 export type _Episode = {
   season: number
   number: number
-  categories: Category[]
   names: Name[]
   images: Image[]
   releaseDates: ReleaseDate[]
@@ -126,6 +125,7 @@ export type _Episode = {
 
 export type Episode =
   {
+    categories: (Handle & { category: Category })[]
     uri: string
     uris: (Handle & { uri: string })[]
     handles: EpisodeHandle[]
@@ -285,6 +285,7 @@ export interface Search extends TargetEndpoint {
 }
 
 export interface SearchTitle<T = false> extends Search {
+  scheme?: string
   categories: Category[]
   function: (
     args:
@@ -294,17 +295,23 @@ export interface SearchTitle<T = false> extends Search {
   ) => Promise<T extends true ? TitleHandle[] : Title[]>
 }
 
-export interface SearchEpisode extends Search  {
+export interface SearchEpisode<T> extends Search  {
+  scheme?: string
   categories: Category[]
   function: (
     args:
       QueryResource &
       QueryEpisodeInterface &
       SearchResource
-  ) => Promise<Episode[]>
+  ) => Promise<
+    (T extends true
+      ? EpisodeHandle
+      : Episode)[]
+  >
 }
 
 export interface SearchGenre extends Search  {
+  scheme?: string
   categories: Category[]
   function: (
     args:
@@ -319,6 +326,7 @@ export interface Get extends TargetEndpoint {
 }
 
 export interface GetTitle<T = false> extends Get {
+  scheme?: string
   categories: Category[]
   function: (params: QueryResource) =>
     Promise<
@@ -329,6 +337,7 @@ export interface GetTitle<T = false> extends Get {
 }
 
 export interface GetEpisode<T = false> extends Get {
+  scheme?: string
   categories: Category[]
   function: (params: QueryResource & QueryEpisodeInterface) =>
     Promise<
@@ -339,6 +348,7 @@ export interface GetEpisode<T = false> extends Get {
 }
 
 export interface GetGenre extends Get {
+  scheme?: string
   categories: Category[]
   function: (params: QueryResource & QueryGenreInterface) => Promise<Genre>
 }

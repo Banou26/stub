@@ -7,8 +7,8 @@ import { EPISODE_FRAGMENT, EPISODE_HANDLE_FRAGMENT } from '../fragments'
 
 export const GET_EPISODE = gql`
   ${EPISODE_FRAGMENT}
-  query GetEpisode($uri: String, $scheme: String, $id: ID) {
-    episode(uri: $uri, scheme: $scheme, id: $id) @client {
+  query GetEpisode($uri: String, $scheme: String, $id: ID, $title: Title) {
+    episode(uri: $uri, scheme: $scheme, id: $id, title: $title) @client {
       ...EpisodeFragment
     }
   }

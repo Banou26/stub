@@ -45,6 +45,7 @@
     "graphql": "^16.0.1",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "seqalign": "^1.0.6"
   }
 }

@@ -83,27 +83,16 @@ const style = css`
 
 export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
-  const { scheme, id } = fromUri(firstUri)
   const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
-  const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri } })
-  // const episode = useMemo(
-  //   () =>
-  //     _episode ??
-  //     title
-  //       ?.episodes
-  //       ?.find(({ season, number }) =>
-  //         season === seasonNumber &&
-  //         number === episodeNumber
-  //       ),
-  //   [_episode?.uri, title, seasonNumber, episodeNumber]
-  // )
+  const firstEpisodeUri = title?.episodes.at(0)?.uri
+  const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
 
   const release =
     title?.releaseDates.at(0)
       ? (
         title.releaseDates.at(0)?.date
           ? (
-            title.categories.includes(Category.MOVIE)
+            title.categories.some(categoryHandle => categoryHandle.category === Category.MOVIE)
               ? `${title.releaseDates.at(0)!.date!.getFullYear()}`
               : `${title.releaseDates.at(0)!.date!.toDateString().slice(4).trim()}`
           )
@@ -113,7 +102,6 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   console.log('title', title)
   console.log('episode', episode)
-  console.log('episodeLoading', episodeLoading)
 
   return (
     <div css={style}>
@@ -149,6 +137,22 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
               episodeLoading ? 'Loading...' :
               episode?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
             }
+          </div>
+          <div>
+            <br />
+            <br />
+            <br />
+            <div>Episodes found:</div>
+            <br />
+            <div>
+              {
+                episode?.names.map(name => (
+                  <div>
+                    <a key={name.uri} href={episode?.handles.find(handle => handle.uri === name.uri)?.url}>{name.name}</a>
+                  </div>
+                ))
+              }
+            </div>
           </div>
         </div>
       </div>

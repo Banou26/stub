@@ -173,11 +173,13 @@ cache.policies.addTypePolicies({
           __typename: 'Title',
           id
         }),
-      episode: (_, args: FieldFunctionOptions & { args: { uri: string } | { scheme: string, id: string } }) => {
+      episode: (_, args: FieldFunctionOptions & { args: { uri: string, title: any } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
+        console.log('TP getEpisode', args)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
-          getEpisode({ uri, scheme, id }).then((_episode) => {
+          console.log('TP getEpisode 2', args)
+          getEpisode({ uri, scheme, id, title: args.args.title }).then((_episode) => {
             const episode = episodeToEpisodeApolloCache(_episode)
             storage.var(episode)
             cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
