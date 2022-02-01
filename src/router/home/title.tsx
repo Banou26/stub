@@ -2,8 +2,8 @@ import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
 
-import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
-import { Category, fromUri, toUri } from 'src/lib'
+import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_EPISODE_HANDLE, cache } from 'src/apollo'
+import { Category, EpisodeHandle, fromUri, toUri } from 'src/lib'
 import { useMemo } from 'react'
 import { getRoutePath, Route } from '../path'
 
@@ -102,6 +102,11 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   console.log('title', title)
   console.log('episode', episode)
+  console.log('EPISODEEEEEE', JSON.stringify(episode?.names.at(0)?.handles?.at(0)?.names))
+  
+  console.log('cache', cache)
+
+  console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', episode?.names.at(0)?.uri && cache.readQuery({ query: GET_EPISODE_HANDLE, variables: { uri: episode?.names.at(0).uri } }))
 
   return (
     <div css={style}>
@@ -122,7 +127,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
           {
             title?.episodes.map(episode => (
               // todo: replace the episode number with a real number
-              <Link key={episode.uri} className={`episode ${episode.uri === episodeUri ? 'selected' : ''}`} href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}>
+              <Link key={episode.uri} className={`episode ${episode.uri === (episodeUri ?? firstEpisodeUri) ? 'selected' : ''}`} href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}>
                 <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
                 <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
                 <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
@@ -148,7 +153,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
               {
                 episode?.names.map(name => (
                   <div>
-                    <a key={name.uri} href={episode?.handles.find(handle => handle.uri === name.uri)?.url}>{name.name}</a>
+                    <a key={name.uri} href={episode?.handles.find(handle => handle.uri === name.uri)?.url}>{name.name}()</a>
                   </div>
                 ))
               }

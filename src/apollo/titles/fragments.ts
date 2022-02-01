@@ -20,37 +20,57 @@ export const HANDLE_FRAGMENT = gql`
 `
 
 export const IMAGE_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
   fragment ImageFragment on Image {
-    ...HandleFragment
     type
     size
     url
   }
 `
 
+export const HANDLE_IMAGE_FRAGMENT = gql`
+  fragment HandleImageFragment on Handle {
+    images {
+      type
+      size
+      url
+    }
+  }
+`
+
 export const NAME_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
   fragment NameFragment on Name {
-    ...HandleFragment
     language
     name
   }
 `
 
+export const HANDLE_NAME_FRAGMENT = gql`
+  fragment HandleNameFragment on Handle {
+    names {
+      language
+      name
+    }
+  }
+`
+
 export const SYNOPSIS_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
   fragment SynopsisFragment on Synopsis {
-    ...HandleFragment
     language
     synopsis
   }
 `
 
+export const HANDLE_SYNOPSIS_FRAGMENT = gql`
+  fragment HandleSynopsisFragment on Handle {
+    synopses {
+      language
+      synopsis
+    }
+  }
+`
+
 export const RELEASE_DATE_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
   fragment ReleaseDateFragment on ReleaseDate {
-    ...HandleFragment
     language
     date
     start
@@ -58,10 +78,19 @@ export const RELEASE_DATE_FRAGMENT = gql`
   }
 `
 
+export const HANDLE_RELEASE_DATE_FRAGMENT = gql`
+  fragment HandleReleaseDateFragment on Handle {
+    releaseDates {
+      language
+      date
+      start
+      end
+    }
+  }
+`
+
 export const GENRE_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
   fragment GenreFragment on Genre {
-    ...HandleFragment
     name
     adult
     amount
@@ -70,9 +99,7 @@ export const GENRE_FRAGMENT = gql`
 `
 
 export const TAG_FRAGMENT = gql`
-  ${HANDLE_FRAGMENT}
   fragment TagFragment on Tag {
-    ...HandleFragment
     type
     values
     extra
@@ -82,19 +109,20 @@ export const TAG_FRAGMENT = gql`
 export const EPISODE_HANDLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
+  ${NAME_FRAGMENT}
+  ${RELEASE_DATE_FRAGMENT}
+  ${SYNOPSIS_FRAGMENT}
+  ${HANDLE_IMAGE_FRAGMENT}
+  ${HANDLE_NAME_FRAGMENT}
+  ${HANDLE_SYNOPSIS_FRAGMENT}
+  ${HANDLE_RELEASE_DATE_FRAGMENT}
   fragment EpisodeHandleFragment on EpisodeHandle {
     ...HandleFragment
     season
     number
-    names {
-      ...NameFragment
-    }
-    images {
-      ...ImageFragment
-    }
-    synopses {
-      ...SynopsisFragment
-    }
+    ...HandleNameFragment
+    ...HandleImageFragment
+    ...HandleSynopsisFragment
     related {
       ...HandleFragment
     }
@@ -114,22 +142,42 @@ export const EPISODE_FRAGMENT = gql`
     number
     categories
     names {
+      ...HandleFragment
       ...NameFragment
+      handles {
+        ...EpisodeHandleFragment
+      }
     }
     releaseDates {
+      ...HandleFragment
       ...ReleaseDateFragment
+      handles {
+        ...EpisodeHandleFragment
+      }
     }
     images {
+      ...HandleFragment
       ...ImageFragment
+      handles {
+        ...EpisodeHandleFragment
+      }
     }
     synopses {
+      ...HandleFragment
       ...SynopsisFragment
+      handles {
+        ...EpisodeHandleFragment
+      }
     }
     handles {
+      ...HandleFragment
       ...EpisodeHandleFragment
     }
     related {
       ...HandleFragment
+      handles {
+        ...EpisodeHandleFragment
+      }
     }
   }
 `
@@ -169,15 +217,19 @@ export const TITLE_FRAGMENT = gql`
     categories
     uri
     names {
+      ...HandleFragment
       ...NameFragment
     }
     releaseDates {
+      ...HandleFragment
       ...ReleaseDateFragment
     }
     images {
+      ...HandleFragment
       ...ImageFragment
     }
     synopses {
+      ...HandleFragment
       ...SynopsisFragment
     }
     related {

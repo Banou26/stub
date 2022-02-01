@@ -330,19 +330,27 @@ const handleToHandleProperty =
           handle[prop]
             // @ts-ignore
             .map(val => populateHandle({
+              // @ts-ignore
+              // __typename: handle.__typename,
               ...val,
               uri: handle.uri,
               scheme: handle.scheme,
-              id: handle.id
+              id: handle.id,
+              handles: [handle]
             }))
         )
         // @ts-ignore
         : populateHandle({
+          // __typename: handle.__typename,
           [prop]: handle[prop],
           uri: handle.uri,
           scheme: handle.scheme,
-          id: handle.id
+          id: handle.id,
+          // @ts-ignore
+          handles: [handle]
         })
+
+
 
 const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode => ({
   uri: episodeHandles.map(({ uri }) => uri).join(','),
@@ -466,7 +474,7 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   // @ts-ignore
   const _searchedEpisodeHandles = await searchEpisode({
     // categories: [Category.ANIME],
-    search: `${args.title.names.find((name) => name.language === 'ja-en')?.name} "${episodePreSearch.number.toString().padStart(2, '0')}"`,
+    search: `${args.title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.toString().padStart(2, '0')}`,
     // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
     // title: args.title
   })

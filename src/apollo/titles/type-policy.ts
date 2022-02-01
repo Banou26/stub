@@ -24,58 +24,72 @@ export const asyncRead = (fn, query) => {
 }
 
 // todo: try to type this function
-const handleToHandleApolloCache = (handle) => ({
-  url: null,
-  uri: handle.uri ?? null,
-  id: handle.id ?? null,
-  scheme: handle.scheme ?? null,
-  ...handle,
-  ...!handle.handles && { handles: null }
-})
+const handleToHandleApolloCache = (handle) => {
+  return ({
+    url: handle.url ?? null,
+    uri: handle.uri ?? null,
+    id: handle.id ?? null,
+    scheme: handle.scheme ?? null,
+    ...handle,
+    ...!handle.handles && { handles: null }
+  })
+}
 
-const nameToNameApolloCache = (name: Title['names'][number]): TitleApolloCache['names'][number] =>
-  handleToHandleApolloCache(({
+const propertyToHandleProperty = (handle: any, __typename?: string) => {
+  if (!__typename) return handleToHandleApolloCache(handle)
+  return ({
+    url: handle.url ?? null,
+    uri: handle.uri ?? null,
+    id: handle.id ?? null,
+    scheme: handle.scheme ?? null,
+    ...handle,
+    handles: [handleToHandleApolloCache({ ...handle.handles[0], __typename })]
+  })
+}
+
+const nameToNameApolloCache = (name: Title['names'][number], __typename?: string): TitleApolloCache['names'][number] =>
+  propertyToHandleProperty(({
     __typename: 'Name',
     ...name
-  }))
+  }), __typename)
 
-const imageToImageApolloCache = (image: Title['images'][number]): TitleApolloCache['images'][number] =>
-  handleToHandleApolloCache(({
+const imageToImageApolloCache = (image: Title['images'][number], __typename?: string): TitleApolloCache['images'][number] =>
+  propertyToHandleProperty(({
     __typename: 'Image',
     ...image
-  }))
+  }), __typename)
 
-const synopsisToSynopsisApolloCache = (synopsis: Title['synopses'][number]): TitleApolloCache['synopses'][number] =>
-  handleToHandleApolloCache(({
+const synopsisToSynopsisApolloCache = (synopsis: Title['synopses'][number], __typename?: string): TitleApolloCache['synopses'][number] =>
+  propertyToHandleProperty(({
     __typename: 'Synopsis',
     ...synopsis
-  }))
+  }), __typename)
 
 // todo: try to fix this mess of type casting
-const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>): RelationApolloCache<T> => ({
+const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>, __typename?: string): RelationApolloCache<T> => ({
   __typename: 'Relation',
   relation: relation.relation as any,
   reference: relation.reference as unknown as T
 })
 
-const releaseDateToReleaseDateApolloCache = <T>(releaseDate: Title['releaseDates'][number]): TitleApolloCache['releaseDates'][number] =>
-  handleToHandleApolloCache(({
+const releaseDateToReleaseDateApolloCache = <T>(releaseDate: Title['releaseDates'][number], __typename?: string): TitleApolloCache['releaseDates'][number] =>
+  propertyToHandleProperty(({
     __typename: 'ReleaseDate',
     date: null,
     start: null,
     end: null,
     ...releaseDate
-  }))
+  }), __typename)
 
 const episodeHandleToEpisodeHandleApolloCache = (episode: EpisodeHandle): EpisodeHandleApolloCache =>
   handleToHandleApolloCache(({
     __typename: 'EpisodeHandle',
     ...episode,
-    names: episode.names.map(nameToNameApolloCache),
+    names: episode.names.map(name => nameToNameApolloCache(name)),
     related: episode.related.map(relation => relationToRelationApolloCache<EpisodeHandleApolloCache>(relation)),
-    releaseDates: episode.releaseDates.map(releaseDateToReleaseDateApolloCache),
-    images: episode.images.map(imageToImageApolloCache),
-    synopses: episode.synopses.map(synopsisToSynopsisApolloCache),
+    releaseDates: episode.releaseDates.map(releaseDate => releaseDateToReleaseDateApolloCache(releaseDate)),
+    images: episode.images.map(image => imageToImageApolloCache(image)),
+    synopses: episode.synopses.map(synopsis => synopsisToSynopsisApolloCache(synopsis)),
     handles: episode.handles?.map(episodeHandleToEpisodeHandleApolloCache) ?? null
   }))
 
@@ -83,11 +97,11 @@ const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache =>
   handleToHandleApolloCache(({
     __typename: 'Episode',
     ...episode,
-    names: episode.names.map(nameToNameApolloCache),
-    related: episode.related.map(relation => relationToRelationApolloCache<EpisodeApolloCache>(relation)),
-    releaseDates: episode.releaseDates.map(releaseDateToReleaseDateApolloCache),
-    images: episode.images.map(imageToImageApolloCache),
-    synopses: episode.synopses.map(synopsisToSynopsisApolloCache),
+    names: episode.names.map(name => nameToNameApolloCache(name, 'EpisodeHandle')),
+    related: episode.related.map(relation => relationToRelationApolloCache<EpisodeApolloCache>(relation, 'EpisodeHandle')),
+    releaseDates: episode.releaseDates.map(releaseDate => releaseDateToReleaseDateApolloCache(releaseDate, 'EpisodeHandle')),
+    images: episode.images.map(image => imageToImageApolloCache(image, 'EpisodeHandle')),
+    synopses: episode.synopses.map(synopsis => synopsisToSynopsisApolloCache(synopsis, 'EpisodeHandle')),
     handles: episode.handles.map(episodeHandleToEpisodeHandleApolloCache)
   }))
 
@@ -95,11 +109,11 @@ const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHan
   handleToHandleApolloCache(({
     __typename: 'TitleHandle',
     ...titleHandle,
-    names: titleHandle.names.map(nameToNameApolloCache),
-    related: titleHandle.related.map(relation => relationToRelationApolloCache<TitleHandleApolloCache>(relation)),
-    releaseDates: titleHandle.releaseDates.map(releaseDateToReleaseDateApolloCache),
-    images: titleHandle.images.map(imageToImageApolloCache),
-    synopses: titleHandle.synopses.map(synopsisToSynopsisApolloCache),
+    names: titleHandle.names.map(name => nameToNameApolloCache(name)),
+    related: titleHandle.related.map(relation => relationToRelationApolloCache<TitleHandleApolloCache>( relation)),
+    releaseDates: titleHandle.releaseDates.map(releaseDate => releaseDateToReleaseDateApolloCache(releaseDate)),
+    images: titleHandle.images.map(image => imageToImageApolloCache(image)),
+    synopses: titleHandle.synopses.map(synopsis => synopsisToSynopsisApolloCache(synopsis)),
     handles: titleHandle.handles?.map(titleHandleToTitleHandleApolloCache) ?? null
   }))
 
@@ -107,17 +121,20 @@ const titleToTitleApolloCache = (title: Title): TitleApolloCache =>
   handleToHandleApolloCache(({
     __typename: 'Title',
     ...title,
-    names: title.names.map(nameToNameApolloCache),
-    related: title.related.map(relation => relationToRelationApolloCache<TitleApolloCache>(relation)),
+    names: title.names.map(name => nameToNameApolloCache(name, 'TitleHandle')),
+    related: title.related.map(relation => relationToRelationApolloCache<TitleApolloCache>(relation, 'TitleHandle')),
     recommended: title.recommended?.map(titleToTitleApolloCache),
-    releaseDates: title.releaseDates.map(releaseDateToReleaseDateApolloCache),
-    images: title.images.map(imageToImageApolloCache),
-    synopses: title.synopses.map(synopsisToSynopsisApolloCache),
+    releaseDates: title.releaseDates.map(releaseDate => releaseDateToReleaseDateApolloCache(releaseDate, 'TitleHandle')),
+    images: title.images.map(image => imageToImageApolloCache(image, 'TitleHandle')),
+    synopses: title.synopses.map(synopsis => synopsisToSynopsisApolloCache(synopsis, 'TitleHandle')),
     handles: title.handles.map(titleHandleToTitleHandleApolloCache),
     episodes: title.episodes.map(episodeToEpisodeApolloCache)
   }))
 
 cache.policies.addTypePolicies({
+  Handle: {
+    keyFields: ['uri'],
+  },
   Title: {
     keyFields: ['uri'],
   },
@@ -186,6 +203,23 @@ cache.policies.addTypePolicies({
           })
         }
         return storage.var()
+      },
+      episodeHandle: (_, args: FieldFunctionOptions & { args: { uri: string, title: any } | { scheme: string, id: string } }) => {
+        const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
+        console.log('episodeHandle', uri)
+        console.log('episodeHandle toReference(uri)', toReference(`EpisodeHandle:{"uri":"${uri}"}`))
+        return toReference(`EpisodeHandle:{"uri":"${uri}"}`)
+        // console.log('TP getEpisode', args)
+        // if (!storage.var) {
+        //   args.storage.var = makeVar(undefined)
+        //   console.log('TP getEpisode 2', args)
+        //   getEpisode({ uri, scheme, id, title: args.args.title }).then((_episode) => {
+        //     const episode = episodeToEpisodeApolloCache(_episode)
+        //     storage.var(episode)
+        //     cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
+        //   })
+        // }
+        // return storage.var()
       }
     }
   }

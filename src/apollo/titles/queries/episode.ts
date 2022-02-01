@@ -16,8 +16,8 @@ export const GET_EPISODE = gql`
 
 export const GET_EPISODE_HANDLE = gql`
   ${EPISODE_HANDLE_FRAGMENT}
-  query GetEpisodeHandle($scheme: String!, $id: ID!) {
-    episode(scheme: $scheme, id: $id) {
+  query GetEpisodeHandle($uri: String, $scheme: String!, $id: ID!) {
+    episodeHandle(uri: $uri, scheme: $scheme, id: $id) @client {
       ...EpisodeHandleFragment
     }
   }

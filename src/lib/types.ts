@@ -65,7 +65,8 @@ export type GenreHandle =
 export type Tag = {
   type:
     'score' | 'tag' | 'genre' | 'type' | 'theme' |
-    'demographic' | 'status' | 'producer' | 'rated'
+    'demographic' | 'status' | 'producer' | 'rated' |
+    'size' | 'resolution'
   value?: string
   extra?: any
 }
