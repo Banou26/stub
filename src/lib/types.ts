@@ -8,10 +8,16 @@ export type Handle = {
   handles?: Handle[]
 }
 
-export type PropertyToHandleProperty<T, T2 extends keyof T> =
+export type ShallowHandle =
+  Pick<
+    Handle,
+    'scheme' | 'id' | 'uri' | 'url'
+  >
+
+export type PropertyToHandleProperty<T, T2 extends keyof T, T3 extends Handle> =
   T[T2] extends any[]
-    ? (Handle & { uri: string } & T[T2][number])[]
-    : (Handle & { uri: string } & T[T2])[]
+    ? (ShallowHandle & { uri: string, handle: T3 } & T[T2][number])[]
+    : (ShallowHandle & { uri: string, handle: T3 } & T[T2])[]
 
 export type Image = {
   type: 'poster' | 'image'
@@ -95,7 +101,7 @@ export type Title =
     // _Title[key] extends any[]
     //     ? (Handle & { uri: string } & _Title[key][number])[]
     //     : (Handle & { uri: string } & _Title[key])[]
-    [key in keyof _Title]: PropertyToHandleProperty<_Title, key>
+    [key in keyof _Title]: PropertyToHandleProperty<_Title, key, TitleHandle>
   }
 
 export type TitleHandle =
@@ -131,7 +137,7 @@ export type Episode =
     uris: (Handle & { uri: string })[]
     handles: EpisodeHandle[]
   } & {
-    [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key>
+    [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key, EpisodeHandle>
 
     // [key in keyof _Episode]:
     //   _Episode[key] extends any[]

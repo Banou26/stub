@@ -336,7 +336,7 @@ const handleToHandleProperty =
               uri: handle.uri,
               scheme: handle.scheme,
               id: handle.id,
-              handles: [handle]
+              handle: handle
             }))
         )
         // @ts-ignore
@@ -347,7 +347,7 @@ const handleToHandleProperty =
           scheme: handle.scheme,
           id: handle.id,
           // @ts-ignore
-          handles: [handle]
+          handle: handle
         })
 
 

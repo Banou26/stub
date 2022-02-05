@@ -20,15 +20,7 @@ export const HANDLE_FRAGMENT = gql`
 `
 
 export const IMAGE_FRAGMENT = gql`
-  fragment ImageFragment on Image {
-    type
-    size
-    url
-  }
-`
-
-export const HANDLE_IMAGE_FRAGMENT = gql`
-  fragment HandleImageFragment on Handle {
+  fragment ImageFragment on Handle {
     images {
       type
       size
@@ -38,14 +30,7 @@ export const HANDLE_IMAGE_FRAGMENT = gql`
 `
 
 export const NAME_FRAGMENT = gql`
-  fragment NameFragment on Name {
-    language
-    name
-  }
-`
-
-export const HANDLE_NAME_FRAGMENT = gql`
-  fragment HandleNameFragment on Handle {
+  fragment NameFragment on Handle {
     names {
       language
       name
@@ -54,14 +39,7 @@ export const HANDLE_NAME_FRAGMENT = gql`
 `
 
 export const SYNOPSIS_FRAGMENT = gql`
-  fragment SynopsisFragment on Synopsis {
-    language
-    synopsis
-  }
-`
-
-export const HANDLE_SYNOPSIS_FRAGMENT = gql`
-  fragment HandleSynopsisFragment on Handle {
+  fragment SynopsisFragment on Handle {
     synopses {
       language
       synopsis
@@ -70,16 +48,7 @@ export const HANDLE_SYNOPSIS_FRAGMENT = gql`
 `
 
 export const RELEASE_DATE_FRAGMENT = gql`
-  fragment ReleaseDateFragment on ReleaseDate {
-    language
-    date
-    start
-    end
-  }
-`
-
-export const HANDLE_RELEASE_DATE_FRAGMENT = gql`
-  fragment HandleReleaseDateFragment on Handle {
+  fragment ReleaseDateFragment on Handle {
     releaseDates {
       language
       date
@@ -110,19 +79,15 @@ export const EPISODE_HANDLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
-  ${RELEASE_DATE_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
-  ${HANDLE_IMAGE_FRAGMENT}
-  ${HANDLE_NAME_FRAGMENT}
-  ${HANDLE_SYNOPSIS_FRAGMENT}
-  ${HANDLE_RELEASE_DATE_FRAGMENT}
+  ${RELEASE_DATE_FRAGMENT}
   fragment EpisodeHandleFragment on EpisodeHandle {
     ...HandleFragment
     season
     number
-    ...HandleNameFragment
-    ...HandleImageFragment
-    ...HandleSynopsisFragment
+    ...NameFragment
+    ...ImageFragment
+    ...SynopsisFragment
     related {
       ...HandleFragment
     }
@@ -131,41 +96,37 @@ export const EPISODE_HANDLE_FRAGMENT = gql`
 
 export const EPISODE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
+  ${EPISODE_HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
   ${RELEASE_DATE_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
-  ${EPISODE_HANDLE_FRAGMENT}
   fragment EpisodeFragment on Episode {
     uri
     season
     number
     categories
+    ...NameFragment
     names {
-      ...HandleFragment
-      ...NameFragment
-      handles {
+      handle {
         ...EpisodeHandleFragment
       }
     }
+    ...ReleaseDateFragment
     releaseDates {
-      ...HandleFragment
-      ...ReleaseDateFragment
-      handles {
+      handle {
         ...EpisodeHandleFragment
       }
     }
+    ...ImageFragment
     images {
-      ...HandleFragment
-      ...ImageFragment
-      handles {
+      handle {
         ...EpisodeHandleFragment
       }
     }
+    ...SynopsisFragment
     synopses {
-      ...HandleFragment
-      ...SynopsisFragment
-      handles {
+      handle {
         ...EpisodeHandleFragment
       }
     }
@@ -174,8 +135,7 @@ export const EPISODE_FRAGMENT = gql`
       ...EpisodeHandleFragment
     }
     related {
-      ...HandleFragment
-      handles {
+      handle {
         ...EpisodeHandleFragment
       }
     }
@@ -186,17 +146,14 @@ export const TITLE_HANDLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
+  ${RELEASE_DATE_FRAGMENT}
+  ${SYNOPSIS_FRAGMENT}
   fragment TitleHandleFragment on TitleHandle {
     ...HandleFragment
-    names {
-      ...NameFragment
-    }
-    images {
-      ...ImageFragment
-    }
-    synopses {
-      ...SynopsisFragment
-    }
+    ...NameFragment
+    ...ReleaseDateFragment
+    ...ImageFragment
+    ...SynopsisFragment
     related {
       ...HandleFragment
     }
@@ -206,31 +163,39 @@ export const TITLE_HANDLE_FRAGMENT = gql`
 export const TITLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${EPISODE_FRAGMENT}
+  ${GENRE_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${TITLE_HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
   ${RELEASE_DATE_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
-  ${GENRE_FRAGMENT}
-  ${TAG_FRAGMENT}
-  ${TITLE_HANDLE_FRAGMENT}
   fragment TitleFragment on Title {
     categories
     uri
+    ...NameFragment
     names {
-      ...HandleFragment
-      ...NameFragment
+      handle {
+        ...EpisodeHandleFragment
+      }
     }
+    ...ReleaseDateFragment
     releaseDates {
-      ...HandleFragment
-      ...ReleaseDateFragment
+      handle {
+        ...EpisodeHandleFragment
+      }
     }
+    ...ImageFragment
     images {
-      ...HandleFragment
-      ...ImageFragment
+      handle {
+        ...EpisodeHandleFragment
+      }
     }
+    ...SynopsisFragment
     synopses {
-      ...HandleFragment
-      ...SynopsisFragment
+      handle {
+        ...EpisodeHandleFragment
+      }
     }
     related {
       ...HandleFragment

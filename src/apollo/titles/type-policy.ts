@@ -43,25 +43,22 @@ const propertyToHandleProperty = (handle: any, __typename?: string) => {
     id: handle.id ?? null,
     scheme: handle.scheme ?? null,
     ...handle,
-    handles: [handleToHandleApolloCache({ ...handle.handles[0], __typename })]
+    handle: handleToHandleApolloCache({ ...handle.handle, __typename })
   })
 }
 
 const nameToNameApolloCache = (name: Title['names'][number], __typename?: string): TitleApolloCache['names'][number] =>
   propertyToHandleProperty(({
-    __typename: 'Name',
     ...name
   }), __typename)
 
 const imageToImageApolloCache = (image: Title['images'][number], __typename?: string): TitleApolloCache['images'][number] =>
   propertyToHandleProperty(({
-    __typename: 'Image',
     ...image
   }), __typename)
 
 const synopsisToSynopsisApolloCache = (synopsis: Title['synopses'][number], __typename?: string): TitleApolloCache['synopses'][number] =>
   propertyToHandleProperty(({
-    __typename: 'Synopsis',
     ...synopsis
   }), __typename)
 
@@ -74,7 +71,6 @@ const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>, __ty
 
 const releaseDateToReleaseDateApolloCache = <T>(releaseDate: Title['releaseDates'][number], __typename?: string): TitleApolloCache['releaseDates'][number] =>
   propertyToHandleProperty(({
-    __typename: 'ReleaseDate',
     date: null,
     start: null,
     end: null,
@@ -145,18 +141,6 @@ cache.policies.addTypePolicies({
     keyFields: ['uri'],
   },
   EpisodeHandle: {
-    keyFields: ['uri'],
-  },
-  Name: {
-    keyFields: ['uri'],
-  },
-  ReleaseDate: {
-    keyFields: ['uri'],
-  },
-  Image: {
-    keyFields: ['uri'],
-  },
-  Synopsis: {
     keyFields: ['uri'],
   },
   Query: {

@@ -102,11 +102,11 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   console.log('title', title)
   console.log('episode', episode)
-  console.log('EPISODEEEEEE', JSON.stringify(episode?.names.at(0)?.handles?.at(0)?.names))
+  // console.log('EPISODEEEEEE', JSON.stringify(episode?.names.at(0)?.handles?.at(0)?.names))
   
   console.log('cache', cache)
 
-  console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', episode?.names.at(0)?.uri && cache.readQuery({ query: GET_EPISODE_HANDLE, variables: { uri: episode?.names.at(0).uri } }))
+  // console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', episode?.names.at(0)?.uri && cache.readQuery({ query: GET_EPISODE_HANDLE, variables: { uri: episode?.names.at(0).uri } }))
 
   return (
     <div css={style}>
@@ -152,8 +152,8 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             <div>
               {
                 episode?.names.map(name => (
-                  <div>
-                    <a key={name.uri} href={episode?.handles.find(handle => handle.uri === name.uri)?.url}>{name.name}()</a>
+                  <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+                    <a href={name.handle.url}>{name.name}()</a>
                   </div>
                 ))
               }
