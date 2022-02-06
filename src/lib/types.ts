@@ -18,16 +18,8 @@ export type PropertyToHandleProperty<
   T3 extends Handle = T extends { episodes: any } ? TitleHandle : EpisodeHandle
 > =
   T[T2] extends any[]
-    ? (ShallowHandle & { uri: string, handle: T3 } & T[T2][number])[]
-    : (ShallowHandle & { uri: string, handle: T3 } & T[T2])[]
-
-// export type PropertiesToHandleProperties =
-//   <T extends Title | Episode, T2 extends keyof T>
-//     (handle: T, properties: T2) =>
-//       Omit<T, T2>
-//       & {
-//         [key in keyof Pick<T, T2>]: PropertyToHandleProperty<T, key>
-//       }
+    ? ({ handle: T3 } & T[T2][number])[]
+    : ({ handle: T3 } & T[T2])[]
 
 export type PropertiesToHandleProperties
   <T, T2 extends keyof T> =
@@ -35,6 +27,26 @@ export type PropertiesToHandleProperties
     & {
       [key in keyof Pick<T, T2>]: PropertyToHandleProperty<T, key>
     }
+
+export type HandleTypeToType
+  <
+    T,
+    T2 extends keyof T,
+    T3,
+  > =
+    {
+      uri: string
+      uris: (Handle & { uri: string })[]
+      handles: (T extends { episodes: any } ? TitleHandle : EpisodeHandle)[]
+    } &
+    Omit<
+      Omit<
+        PropertiesToHandleProperties<T, T2>,
+        keyof Handle
+      >,
+      keyof T3
+    > &
+    T3
 
 export type Image = {
   type: 'poster' | 'image'
@@ -94,54 +106,17 @@ export type Tag = {
   extra?: any
 }
 
-// export type _Title = {
-//   names: Name[]
-//   releaseDates: ReleaseDate[]
-//   images: Image[]
-//   synopses: Synopsis[]
-//   related: Relation<Title>[]
-//   recommended: Title[]
-//   tags: Tag[]
-//   genres: Genre[]
-// }
-
-// export type Title =
-//   {
-//     categories: (Handle & { category: Category })[]
-//     uri: string
-//     uris: (Handle & { uri: string })[]
-//     episodes: Episode[]
-//     handles: TitleHandle[]
-//   } & {
-//     [key in keyof _Title]: PropertyToHandleProperty<_Title, key>
-//   }
-
 export type Title =
-  PropertiesToHandleProperties<
+  HandleTypeToType<
+    TitleHandle,
+    'names' | 'releaseDates' | 'images' | 'synopses' |
+    'related' | 'recommended' | 'tags' | 'genres',
     {
       categories: (Handle & { category: Category })[]
-      uri: string
-      uris: (Handle & { uri: string })[]
-      episodes: Episode[]
-      handles: TitleHandle[]
-      
-      names: Name[]
-      releaseDates: ReleaseDate[]
-      images: Image[]
-      synopses: Synopsis[]
       related: Relation<Title>[]
-      recommended: Title[]
-      tags: Tag[]
-      genres: Genre[]
-    },
-    'names' | 'releaseDates' | 'images' | 'synopses' | 'related' | 'recommended' | 'tags' | 'genres'
+      episodes: Episode[]
+    }
   >
-
-// const title: Title = {
-//   names: [{
-//     handle: 
-//   }]
-// }
 
 export type TitleHandle =
   Handle & {
@@ -158,58 +133,28 @@ export type TitleHandle =
     genres: GenreHandle[]
   }
 
-// export type _Episode = {
-//   season: number
-//   number: number
-//   names: Name[]
-//   images: Image[]
-//   releaseDates: ReleaseDate[]
-//   synopses: Synopsis[]
-//   tags: Tag[]
-//   related: Relation<Episode>[]
-// }
-
-// export type Episode =
-//   {
-//     categories: (Handle & { category: Category })[]
-//     uri: string
-//     uris: (Handle & { uri: string })[]
-//     handles: EpisodeHandle[]
-//   } & {
-//     [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key>
-//   }
-
 export type Episode =
-  PropertiesToHandleProperties<
+  HandleTypeToType<
+    EpisodeHandle,
+    'season' | 'number' | 'names' | 'images' |
+    'releaseDates' | 'synopses' | 'tags',
     {
       categories: (Handle & { category: Category })[]
-      uri: string
-      uris: (Handle & { uri: string })[]
-      handles: EpisodeHandle[]
-
-      season: number
-      number: number
-      names: Name[]
-      images: Image[]
-      releaseDates: ReleaseDate[]
-      synopses: Synopsis[]
-      tags: Tag[]
       related: Relation<Episode>[]
-    },
-    'season' | 'number' | 'names' | 'images' | 'releaseDates' | 'synopses' | 'tags' | 'related'
+    }
   >
 
 export type EpisodeHandle =
   Handle & {
     season: number
     number: number
-    categories: Category[]
     names: Name[]
     images: Image[]
     releaseDates: ReleaseDate[]
     synopses: Synopsis[]
-    handles: EpisodeHandle[]
     tags: Tag[]
+    handles: EpisodeHandle[]
+    categories: Category[]
     related: Relation<EpisodeHandle>[]
   }
 
