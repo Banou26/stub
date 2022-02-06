@@ -1,27 +1,40 @@
 import { Category } from './category'
 
-export type Handle = {
+export type ShallowHandle = {
   scheme: string
   id: string
   uri?: string
   url?: string
-  handles?: Handle[]
 }
 
-export type ShallowHandle =
-  Pick<
-    Handle,
-    'scheme' | 'id' | 'uri' | 'url'
-  >
+export type Handle =
+  ShallowHandle & {
+    handles?: Handle[]
+  }
 
 export type PropertyToHandleProperty<
   T,
   T2 extends keyof T,
-  T3 extends Handle = T extends _Episode ? EpisodeHandle : TitleHandle
+  T3 extends Handle = T extends { episodes: any } ? TitleHandle : EpisodeHandle
 > =
   T[T2] extends any[]
     ? (ShallowHandle & { uri: string, handle: T3 } & T[T2][number])[]
     : (ShallowHandle & { uri: string, handle: T3 } & T[T2])[]
+
+// export type PropertiesToHandleProperties =
+//   <T extends Title | Episode, T2 extends keyof T>
+//     (handle: T, properties: T2) =>
+//       Omit<T, T2>
+//       & {
+//         [key in keyof Pick<T, T2>]: PropertyToHandleProperty<T, key>
+//       }
+
+export type PropertiesToHandleProperties
+  <T, T2 extends keyof T> =
+    Omit<T, T2>
+    & {
+      [key in keyof Pick<T, T2>]: PropertyToHandleProperty<T, key>
+    }
 
 export type Image = {
   type: 'poster' | 'image'
@@ -81,27 +94,54 @@ export type Tag = {
   extra?: any
 }
 
-export type _Title = {
-  names: Name[]
-  releaseDates: ReleaseDate[]
-  images: Image[]
-  synopses: Synopsis[]
-  related: Relation<Title>[]
-  recommended: Title[]
-  tags: Tag[]
-  genres: Genre[]
-}
+// export type _Title = {
+//   names: Name[]
+//   releaseDates: ReleaseDate[]
+//   images: Image[]
+//   synopses: Synopsis[]
+//   related: Relation<Title>[]
+//   recommended: Title[]
+//   tags: Tag[]
+//   genres: Genre[]
+// }
+
+// export type Title =
+//   {
+//     categories: (Handle & { category: Category })[]
+//     uri: string
+//     uris: (Handle & { uri: string })[]
+//     episodes: Episode[]
+//     handles: TitleHandle[]
+//   } & {
+//     [key in keyof _Title]: PropertyToHandleProperty<_Title, key>
+//   }
 
 export type Title =
-  {
-    categories: (Handle & { category: Category })[]
-    uri: string
-    uris: (Handle & { uri: string })[]
-    episodes: Episode[]
-    handles: TitleHandle[]
-  } & {
-    [key in keyof _Title]: PropertyToHandleProperty<_Title, key>
-  }
+  PropertiesToHandleProperties<
+    {
+      categories: (Handle & { category: Category })[]
+      uri: string
+      uris: (Handle & { uri: string })[]
+      episodes: Episode[]
+      handles: TitleHandle[]
+      
+      names: Name[]
+      releaseDates: ReleaseDate[]
+      images: Image[]
+      synopses: Synopsis[]
+      related: Relation<Title>[]
+      recommended: Title[]
+      tags: Tag[]
+      genres: Genre[]
+    },
+    'names' | 'releaseDates' | 'images' | 'synopses' | 'related' | 'recommended' | 'tags' | 'genres'
+  >
+
+// const title: Title = {
+//   names: [{
+//     handle: 
+//   }]
+// }
 
 export type TitleHandle =
   Handle & {
@@ -118,26 +158,46 @@ export type TitleHandle =
     genres: GenreHandle[]
   }
 
-export type _Episode = {
-  season: number
-  number: number
-  names: Name[]
-  images: Image[]
-  releaseDates: ReleaseDate[]
-  synopses: Synopsis[]
-  tags: Tag[]
-  related: Relation<Episode>[]
-}
+// export type _Episode = {
+//   season: number
+//   number: number
+//   names: Name[]
+//   images: Image[]
+//   releaseDates: ReleaseDate[]
+//   synopses: Synopsis[]
+//   tags: Tag[]
+//   related: Relation<Episode>[]
+// }
+
+// export type Episode =
+//   {
+//     categories: (Handle & { category: Category })[]
+//     uri: string
+//     uris: (Handle & { uri: string })[]
+//     handles: EpisodeHandle[]
+//   } & {
+//     [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key>
+//   }
 
 export type Episode =
-  {
-    categories: (Handle & { category: Category })[]
-    uri: string
-    uris: (Handle & { uri: string })[]
-    handles: EpisodeHandle[]
-  } & {
-    [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key>
-  }
+  PropertiesToHandleProperties<
+    {
+      categories: (Handle & { category: Category })[]
+      uri: string
+      uris: (Handle & { uri: string })[]
+      handles: EpisodeHandle[]
+
+      season: number
+      number: number
+      names: Name[]
+      images: Image[]
+      releaseDates: ReleaseDate[]
+      synopses: Synopsis[]
+      tags: Tag[]
+      related: Relation<Episode>[]
+    },
+    'season' | 'number' | 'names' | 'images' | 'releaseDates' | 'synopses' | 'tags' | 'related'
+  >
 
 export type EpisodeHandle =
   Handle & {
