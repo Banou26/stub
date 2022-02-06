@@ -1,14 +1,10 @@
 import Category from '../category'
 import { fetch } from '@mfkn/fkn-lib'
 import { GetGenres, GenreHandle, TitleHandle } from '../types'
-import { fromUri } from '.'
+import { addTarget } from '.'
+import { fromUri } from '../utils'
 import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle, GetEpisode } from '..'
 import { languageToTag } from '../languages'
-
-export const name = 'MyAnimeList'
-export const scheme = 'mal'
-export const categories = [Category.ANIME]
-// export const icon = 
 
 const fixOrigin = (url: string) => url.replace(document.location.origin, 'https://myanimelist.net')
 
@@ -125,46 +121,6 @@ const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle => ({
   tags: [],
   handles: []
 })
-
-const getLatestEpisodes = () =>
-  fetch('https://myanimelist.net/watch/episode')
-    .then(async res =>
-      [
-        ...new DOMParser()
-          .parseFromString(await res.text(), 'text/html')
-          .querySelectorAll('.video-list-outer-vertical')
-      ]
-        .map(getEpisodeCardInfo)
-    )
-
-export const searchTitle: SearchTitle<true> = {
-  scheme: 'mal',
-  categories: [Category.ANIME],
-  latest: true,
-  pagination: true,
-  genres: true,
-  score: true,
-  function: () => getAnimeSeason()
-}
-
-export const getTitle: GetTitle<true> = {
-  scheme: 'mal',
-  categories: [Category.ANIME],
-  function: ({ uri, id }) =>
-    getAnimeTitle(id ?? fromUri(uri!).id)
-}
-
-export const getEpisode: GetEpisode<true> = {
-  scheme: 'mal',
-  categories: [Category.ANIME],
-  function: ({ uri }) =>
-    getAnimeEpisode(fromUri(uri!).id.split('-')[0], Number(fromUri(uri!).id.split('-')[1]))
-}
-
-export const getLatest: GetLatest<true> = ({ title, episode }) =>
-  title ? getAnimeSeason()
-  : episode ? getLatestEpisodes()
-  : Promise.resolve([])
 
 enum MALInformation {
   TYPE = 'type',
@@ -490,3 +446,55 @@ export const getAnimeEpisode = (id: string, episode: number) =>
 //   title ? getAnimeTitle(id ?? fromUri(uri).id)
 //   : episode ? Promise.resolve(undefined)
 //   : Promise.resolve(undefined)
+
+const getLatestEpisodes = () =>
+  fetch('https://myanimelist.net/watch/episode')
+    .then(async res =>
+      [
+        ...new DOMParser()
+          .parseFromString(await res.text(), 'text/html')
+          .querySelectorAll('.video-list-outer-vertical')
+      ]
+        .map(getEpisodeCardInfo)
+    )
+
+// export const getLatest: GetLatest<true> = ({ title, episode }) =>
+//   title ? getAnimeSeason()
+//   : episode ? getLatestEpisodes()
+//   : Promise.resolve([])
+
+addTarget({
+  name: 'MyAnimeList',
+  scheme: 'mal',
+  categories: [Category.ANIME],
+  getTitle: {
+    scheme: 'mal',
+    categories: [Category.ANIME],
+    function: ({ uri, id }) =>
+      getAnimeTitle(id ?? fromUri(uri!).id)
+  },
+  getEpisode: {
+    scheme: 'mal',
+    categories: [Category.ANIME],
+    function: ({ uri }) =>
+      getAnimeEpisode(fromUri(uri!).id.split('-')[0], Number(fromUri(uri!).id.split('-')[1]))
+  },
+  searchTitle: {
+    scheme: 'mal',
+    categories: [Category.ANIME],
+    latest: true,
+    pagination: true,
+    genres: true,
+    score: true,
+    function: () => getAnimeSeason()
+  },
+  searchEpisode: {
+    scheme: 'mal',
+    categories: [Category.ANIME],
+    latest: true,
+    pagination: true,
+    genres: true,
+    score: true,
+    function: async () => [] ?? getLatestEpisodes()
+  }
+})

@@ -14,7 +14,11 @@ export type ShallowHandle =
     'scheme' | 'id' | 'uri' | 'url'
   >
 
-export type PropertyToHandleProperty<T, T2 extends keyof T, T3 extends Handle> =
+export type PropertyToHandleProperty<
+  T,
+  T2 extends keyof T,
+  T3 extends Handle = T extends _Episode ? EpisodeHandle : TitleHandle
+> =
   T[T2] extends any[]
     ? (ShallowHandle & { uri: string, handle: T3 } & T[T2][number])[]
     : (ShallowHandle & { uri: string, handle: T3 } & T[T2])[]
@@ -96,12 +100,7 @@ export type Title =
     episodes: Episode[]
     handles: TitleHandle[]
   } & {
-    // [key in keyof _Title]: (Handle & { uri: string } & _Title[key][number])[]
-    // [key in keyof _Title]:
-    // _Title[key] extends any[]
-    //     ? (Handle & { uri: string } & _Title[key][number])[]
-    //     : (Handle & { uri: string } & _Title[key])[]
-    [key in keyof _Title]: PropertyToHandleProperty<_Title, key, TitleHandle>
+    [key in keyof _Title]: PropertyToHandleProperty<_Title, key>
   }
 
 export type TitleHandle =
@@ -137,12 +136,7 @@ export type Episode =
     uris: (Handle & { uri: string })[]
     handles: EpisodeHandle[]
   } & {
-    [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key, EpisodeHandle>
-
-    // [key in keyof _Episode]:
-    //   _Episode[key] extends any[]
-    //     ? (Handle & { uri: string } & _Episode[key][number])[]
-    //     : (Handle & { uri: string } & _Episode[key])[]
+    [key in keyof _Episode]: PropertyToHandleProperty<_Episode, key>
   }
 
 export type EpisodeHandle =

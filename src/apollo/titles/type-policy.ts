@@ -36,15 +36,17 @@ const handleToHandleApolloCache = (handle) => {
 }
 
 const propertyToHandleProperty = (handle: any, __typename?: string) => {
-  if (!__typename) return handleToHandleApolloCache(handle)
-  return ({
-    url: handle.url ?? null,
-    uri: handle.uri ?? null,
-    id: handle.id ?? null,
-    scheme: handle.scheme ?? null,
-    ...handle,
-    handle: handleToHandleApolloCache({ ...handle.handle, __typename })
-  })
+  if (__typename) {
+    return ({
+      url: handle.url ?? null,
+      uri: handle.uri ?? null,
+      id: handle.id ?? null,
+      scheme: handle.scheme ?? null,
+      ...handle,
+      handle: handleToHandleApolloCache({ ...handle.handle, __typename })
+    })
+  }
+  return handleToHandleApolloCache(handle)
 }
 
 const nameToNameApolloCache = (name: Title['names'][number], __typename?: string): TitleApolloCache['names'][number] =>
@@ -176,10 +178,8 @@ cache.policies.addTypePolicies({
         }),
       episode: (_, args: FieldFunctionOptions & { args: { uri: string, title: any } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
-        console.log('TP getEpisode', args)
         if (!storage.var) {
           args.storage.var = makeVar(undefined)
-          console.log('TP getEpisode 2', args)
           getEpisode({ uri, scheme, id, title: args.args.title }).then((_episode) => {
             const episode = episodeToEpisodeApolloCache(_episode)
             storage.var(episode)
@@ -190,20 +190,7 @@ cache.policies.addTypePolicies({
       },
       episodeHandle: (_, args: FieldFunctionOptions & { args: { uri: string, title: any } | { scheme: string, id: string } }) => {
         const { toReference, args: { uri, scheme, id }, storage, cache, fieldName } = args
-        console.log('episodeHandle', uri)
-        console.log('episodeHandle toReference(uri)', toReference(`EpisodeHandle:{"uri":"${uri}"}`))
         return toReference(`EpisodeHandle:{"uri":"${uri}"}`)
-        // console.log('TP getEpisode', args)
-        // if (!storage.var) {
-        //   args.storage.var = makeVar(undefined)
-        //   console.log('TP getEpisode 2', args)
-        //   getEpisode({ uri, scheme, id, title: args.args.title }).then((_episode) => {
-        //     const episode = episodeToEpisodeApolloCache(_episode)
-        //     storage.var(episode)
-        //     cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
-        //   })
-        // }
-        // return storage.var()
       }
     }
   }

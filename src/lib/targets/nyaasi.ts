@@ -2,6 +2,7 @@ import { fetch } from '@mfkn/fkn-lib'
 
 import Category from '../category'
 import { Episode, EpisodeHandle, SearchEpisode } from '../types'
+import { addTarget } from '.'
 
 export const getBytesFromBiByteString = (s: string) => {
   const [_number, [_unit]] = s.split(' ')
@@ -248,12 +249,17 @@ export const categories = [Category.ANIME]
 //     // getAnimeEpisode(fromUri(uri!).id.split('-')[0], Number(fromUri(uri!).id.split('-')[1]))
 // }
 
-export const searchEpisode: SearchEpisode<true> = {
-  scheme: 'mal',
+addTarget({
+  name: 'Nyaa.si',
+  scheme: 'nyaa',
   categories: [Category.ANIME],
-  latest: true,
-  pagination: true,
-  genres: true,
-  score: true,
-  function: (args) => _searchEpisode(args)
-}
+  searchEpisode: {
+    scheme: 'nyaa',
+    categories: [Category.ANIME],
+    latest: true,
+    pagination: true,
+    genres: true,
+    score: true,
+    function: (args) => _searchEpisode(args)
+  }
+})

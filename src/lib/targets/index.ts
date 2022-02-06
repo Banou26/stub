@@ -1,14 +1,13 @@
+import { targets } from './targets'
 import Category from '../category'
-
-import * as MyAnimeList from './myanimelist'
-import * as Nyaasi from './nyaasi'
 
 import { _Title, _Episode, Episode, EpisodeHandle, Get, GetEpisode, GetGenre, GetTitle, Handle, SearchEpisode, SearchGenre, SearchTitle, Title, TitleHandle } from '..'
 
-const targets: Target[] = [
-  MyAnimeList,
-  Nyaasi
-]
+import './myanimelist'
+import './nyaasi'
+import { fromUri, populateHandle } from '../utils'
+
+export * from './targets'
 
 export default targets
 
@@ -27,24 +26,9 @@ export interface Target {
 type TargetCallable =
   Omit<Target, 'categories' | 'scheme' | 'name'>
 
-const populateHandle = <T extends TitleHandle | EpisodeHandle>(handle: T): T & { uri: string } => ({
-  ...handle,
-  uri: `${handle.scheme}:${handle.id}`,
-  handles: handle.handles?.map(populateHandle),
-  ...(<TitleHandle>handle).episodes && { episodes: (<TitleHandle>handle).episodes.map(populateHandle) }
-}) as T & { uri: string }
-
-export const fromUri = (uri: string) => {
-  const [scheme, id] = uri.split(':')
-  return { scheme, id }
-}
-
-export const toUri = ({ scheme, id }: { scheme: string, id: string }) => `${scheme}:${id}`
-
 // todo: implemement url get
 export const get: Get = (params: Parameters<Get>[0]): ReturnType<Get> => {
   const filteredTargets = targets.filter(({ scheme, get }) => (scheme === scheme || scheme === fromUri(params.uri).scheme) && !!get)
-  console.log('GETTTTTTTTTT filteredTargets', filteredTargets)
   const results =
     Promise
       .allSettled(
@@ -77,8 +61,6 @@ export const getLatest: GetLatest = (
   { categories, ...rest }: Parameters<GetLatest<false>>[0] =
   { categories: Object.values(Category) }
 ) => {
-  console.log('categories', categories)
-  console.log('targets', targets)
   const filteredTargets =
     targets
       .filter(({ getLatest }) => !!getLatest)
@@ -92,7 +74,6 @@ export const getLatest: GetLatest = (
           .entries(rest)
           .every(([key, val]) => target.getLatestOptions?.[key])
       )
-  console.log('filteredTargets', filteredTargets)
   const results =
     filteredTargets
       .map(target =>
@@ -100,7 +81,6 @@ export const getLatest: GetLatest = (
           .getLatest?.({ categories, ...rest })
           .then(handles => handles.map(populateHandle))
       )
-  console.log('results', results)
   return (
     Promise
       .allSettled(results)
@@ -173,152 +153,6 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
         .flatMap((result) => (result as unknown as PromiseFulfilledResult<Awaited<ReturnType<Exclude<Target[T], undefined>['function']>>>).value)
     )
 
-// const handleToHandleProperty =
-//   <T extends keyof (TitleHandle & EpisodeHandle)>(props: T[]) =>
-//     <T2 extends Parameters<typeof populateHandle>[0]>({ uri, scheme, id, ...rest }: T2) => ({
-//       ...Object.fromEntries(
-//         Object
-//         .entries(rest)
-//         .filter(([key]: [T, any]) => props.includes(key))
-//       ) as Pick<(TitleHandle & EpisodeHandle) & { uri: string }, T>,
-//       uri,
-//       scheme,
-//       id
-//     })
-
-// const handleToHandleProperty =
-//   <T extends keyof (TitleHandle & EpisodeHandle)>(props: T[]) =>
-//     <T2 extends Parameters<typeof populateHandle>[0]>({ uri, scheme, id, ...rest }: T2) => ({
-//       ...Object.fromEntries(
-//         Object
-//         .entries(rest)
-//         .filter(([key]: [T, any]) => props.includes(key))
-//       ),
-//       uri,
-//       scheme,
-//       id
-//     }) as Pick<(TitleHandle & EpisodeHandle), T> & Handle & { uri: string }
-
-// const handleToHandleProperty =
-//   <T extends keyof (TitleHandle & EpisodeHandle)>(prop: T) =>
-//     <T2 extends ReturnType<typeof populateHandle>>(handle: T2) => ({
-//       ...handle[prop],
-//       uri: handle.uri,
-//       scheme: handle.scheme,
-//       id: handle.id
-//     }) as Pick<(TitleHandle & EpisodeHandle), T> & Handle & { uri: string }
-
-// const handleToHandleProperty =
-//   <T extends Handle = (TitleHandle | EpisodeHandle), T2 extends keyof T = keyof T>(prop: T2) =>
-//     (handle: T): Handle & Pick<T, T2>[T2] => ({
-//       ...handle[prop],
-//       uri: handle.uri,
-//       scheme: handle.scheme,
-//       id: handle.id
-//     })
-
-// const handleToHandleProperty =
-//   <T extends _Episode, T2 extends keyof T>(prop: T2) =>
-//     (handle: T): T[T2] => handle[prop]
-
-// const handleToHandleProperty = <T extends Handle, T2 extends keyof T = keyof T>(handle: T, prop: T2) => handle[prop]
-
-// const foo = handleToHandleProperty<EpisodeHandle>({
-//   scheme: '',
-//   id: '',
-//   season: 0,
-//   number: 0,
-//   names: [{ language: '', name: '' }],
-//   releaseDates: [],
-//   categories: [],
-//   handles: [],
-//   images: [],
-//   related: [],
-//   synopses: [],
-//   tags: []
-// }, 'names')
-
-// todo: try to fix the type issue here
-// const handleToHandleProperty =
-//   <T2 extends keyof (Handle & { uri: string })>(prop: T2) =>
-//     (handle: )
-//     Pick<T, T2>[T2] extends Pick<T, T2>[T2][]
-//       ? (Handle & { uri: string } & Pick<T, T2>[T2][number])
-//       : (Handle & { uri: string } & Pick<T, T2>[T2]) => {
-//       => {
-
-//         const value = handle[prop]
-
-//         if (Array.isArray(value)) {
-//           return (
-//             value
-//               .map(val => ({
-//                 ...val,
-//                 uri: handle.uri,
-//                 scheme: handle.scheme,
-//                 id: handle.id
-//               }))
-//           )
-//         }
-
-//         return ({
-//           [prop]: value,
-//           uri: handle.uri,
-//           scheme: handle.scheme,
-//           id: handle.id
-//         })
-
-//         // return (
-//         //   Array.isArray(value)
-//         //     ? (
-//         //       value
-//         //         .map(val => ({
-//         //           ...val,
-//         //           uri: handle.uri,
-//         //           scheme: handle.scheme,
-//         //           id: handle.id
-//         //         }))
-//         //     )
-//         //     :  ({
-//         //       [prop]: value,
-//         //       uri: handle.uri,
-//         //       scheme: handle.scheme,
-//         //       id: handle.id
-//         //     })
-//         )
-//       }
-
-// const foo = handleToHandleProperty({
-//   scheme: '',
-//   id: '',
-//   season: 0,
-//   number: 0,
-//   names: [{ language: '', name: '' }],
-//   releaseDates: [],
-//   categories: [],
-//   handles: [],
-//   images: [],
-//   related: [],
-//   synopses: [],
-//   tags: []
-// }, 'names')
-
-// const foo = handleToHandleProperty({
-//   scheme: '',
-//   id: '',
-//   season: 0,
-//   number: 0,
-//   names: [{ language: '', name: '' }],
-//   releaseDates: [],
-//   categories: [],
-//   handles: [],
-//   images: [],
-//   related: [],
-//   synopses: [],
-//   tags: []
-// }, 'names')
-// const bar = foo.
-
 // todo: try to make this shit curryiable and fix the ts ignore once TS is finally good
 const handleToHandleProperty =
   <T extends Handle, T2 extends keyof T = keyof T>(prop: T2, handle: T):
@@ -330,8 +164,6 @@ const handleToHandleProperty =
           handle[prop]
             // @ts-ignore
             .map(val => populateHandle({
-              // @ts-ignore
-              // __typename: handle.__typename,
               ...val,
               uri: handle.uri,
               scheme: handle.scheme,
@@ -341,7 +173,6 @@ const handleToHandleProperty =
         )
         // @ts-ignore
         : populateHandle({
-          // __typename: handle.__typename,
           [prop]: handle[prop],
           uri: handle.uri,
           scheme: handle.scheme,
@@ -441,9 +272,7 @@ export const getTitle: GetTitle['function'] = async (args) => {
 
   for (const handle of titleHandles) handles.push(handle)
 
-  console.log('titleHandles', titleHandles)
   const title = makeTitleFromTitleHandles(titleHandles)
-  console.log('AAAAAAAAAAAAAAAAAAAAFFFFFFFFFFFFFFFFFFFFFFFFFFFF', title)
   return title
 }
 
@@ -467,10 +296,6 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
 
   const episodePreSearch = makeEpisodeFromEpisodeHandles(episodeHandles)
 
-  console.log('episodePreSearch', episodePreSearch)
-
-  console.log('SSSSSSSEAAAAAAARCH', `${args.title.names.find((name) => name.language === 'ja-en')?.name} "${episodePreSearch.number.toString().padStart(2, '0')}"`)
-
   // @ts-ignore
   const _searchedEpisodeHandles = await searchEpisode({
     // categories: [Category.ANIME],
@@ -478,18 +303,9 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
     // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
     // title: args.title
   })
-
-  console.log('_searchedEpisodeHandles', _searchedEpisodeHandles)
-
   const searchedEpisodeHandles = _searchedEpisodeHandles[0]?.handles ?? []
-
-  console.log('searchedEpisodeHandles', searchedEpisodeHandles)
-
   const postSearchHandles = [...episodeHandles, ...searchedEpisodeHandles]
-  console.log('postSearchHandles', postSearchHandles)
   const postSearchEpisode = makeEpisodeFromEpisodeHandles(postSearchHandles)
-
-  console.log('postSearchEpisode', postSearchEpisode)
   return postSearchEpisode
 }
 
@@ -507,7 +323,6 @@ export const searchEpisode: SearchEpisode['function'] = async (args) => {
     method: 'searchEpisode',
     params: args
   }) as unknown as EpisodeHandle[]
-  console.log('episodeHandles', episodeHandles)
 
   for (const handle of episodeHandles) handles.push(handle)
 
