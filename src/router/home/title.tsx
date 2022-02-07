@@ -123,8 +123,8 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             title?.episodes.map(episode => (
               // todo: replace the episode number with a real number
               <Link key={episode.uri} className={`episode ${episode.uri === (episodeUri ?? firstEpisodeUri) ? 'selected' : ''}`} href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}>
-                <span className="number">{episode.names?.at(0)?.name ? episode.number ?? '' : ''}</span>
-                <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number}`}</span>
+                <span className="number">{episode.names?.at(0)?.name ? episode.number?.at(0).number ?? '' : ''}</span>
+                <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number?.at(0).number}`}</span>
                 <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
               </Link>
             ))

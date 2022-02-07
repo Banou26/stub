@@ -35,16 +35,10 @@ const handleToHandleApolloCache = (handle) => {
   })
 }
 
-const propertyToHandleProperty = (handle: any, __typename: string) => {
-  return ({
-    url: handle.url ?? null,
-    uri: handle.uri ?? null,
-    id: handle.id ?? null,
-    scheme: handle.scheme ?? null,
-    ...handle,
-    handle: handleToHandleApolloCache({ ...handle.handle, __typename })
-  })
-}
+const propertyToHandleProperty = (property: any, __typename: string) => ({
+  ...property,
+  handle: handleToHandleApolloCache({ ...property.handle, __typename })
+})
 
 // todo: try to fix this mess of type casting
 const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>, __typename?: string): RelationApolloCache<T> => ({
@@ -52,6 +46,10 @@ const relationToRelationApolloCache = <T, T2 = any>(relation: Relation<T2>, __ty
   relation: relation.relation as any,
   reference: relation.reference as unknown as T
 })
+
+const propertiesToHandleProperties = () => {
+  
+}
 
 const episodeHandleToEpisodeHandleApolloCache = (episode: EpisodeHandle): EpisodeHandleApolloCache =>
   handleToHandleApolloCache(({

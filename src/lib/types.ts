@@ -3,7 +3,7 @@ import { Category } from './category'
 export type ShallowHandle = {
   scheme: string
   id: string
-  uri?: string
+  uri: string
   url?: string
 }
 

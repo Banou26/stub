@@ -155,48 +155,62 @@ const filterTargetResponses = <T extends keyof TargetCallable>(
 
 // todo: try to make this shit curryiable and fix the ts ignore once TS is finally good
 const handleToHandleProperty =
-  <T extends Handle, T2 extends keyof T = keyof T>(prop: T2, handle: T):
+  <
+    T extends Handle,
+    T2 extends keyof T = keyof T,
+    T3 extends Handle = T extends { episodes: any } ? TitleHandle : EpisodeHandle
+  >(handle: T, prop: T2):
     Pick<T, T2>[T2] extends any[]
-      ? (Handle & { uri: string } & Pick<T, T2>[T2][number])
-      : (Handle & { uri: string } & Pick<T, T2>[T2]) =>
+      ? ({ handle: T3 } & Pick<T, T2>[T2][number])
+      : ({ handle: T3 } & Pick<T, T2>[T2]) =>
       Array.isArray(handle[prop])
         ? (
           handle[prop]
             // @ts-ignore
-            .map(val => populateHandle({
+            .map(val => ({
               ...val,
-              uri: handle.uri,
-              scheme: handle.scheme,
-              id: handle.id,
               handle: handle
             }))
         )
-        // @ts-ignore
-        : populateHandle({
+        : ({
           [prop]: handle[prop],
-          uri: handle.uri,
-          scheme: handle.scheme,
-          id: handle.id,
-          // @ts-ignore
-          handle: handle
+          handle
         })
 
+// todo: fix typing issues
+const handlesToHandleProperties =
+  <T extends TitleHandle | EpisodeHandle, T2 extends keyof T>(handles: T[], props: T2[]): Pick<T, T2> =>
+    Object.fromEntries(
+      props
+        .map(prop => [
+          prop,
+          handles.flatMap(handle => handleToHandleProperty(handle, prop))
+        ])
+    ) as unknown as Pick<T, T2>
 
+// todo: fix typing issues
+const handlesToType = <
+  T extends TitleHandle | EpisodeHandle,
+  T2 extends keyof T,
+  T3 = T extends { episodes: any } ? Title : Episode,
+>(handles: T[], properties: T2[], override: Partial<T3>): T3 => ({
+  uri: handles.map(({ uri }) => uri).join(','),
+  uris: handles.flatMap(({ uri, scheme, id }) => ({ uri: uri!, scheme, id })),
+  // @ts-ignore
+  handles: [...handles, ...handles.flatMap(({ handles }) => handles)],
+  ...handlesToHandleProperties(handles, properties),
+  ...override
+}) as unknown as T3
 
-const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode => ({
-  uri: episodeHandles.map(({ uri }) => uri).join(','),
-  season: findMostCommon(episodeHandles.map(({ season }) => season))[0],
-  number: findMostCommon(episodeHandles.map(({ number }) => number))[0],
-  uris: episodeHandles.flatMap(({ uri, scheme, id }) => ({ uri: uri!, scheme, id })),
-  categories: [...new Set(episodeHandles.flatMap(handle => handleToHandleProperty('categories', handle)))],
-  names: episodeHandles.flatMap(handle => handleToHandleProperty('names', handle)),
-  images: episodeHandles.flatMap(handle => handleToHandleProperty('images', handle)),
-  releaseDates: episodeHandles.flatMap(handle => handleToHandleProperty('releaseDates', handle)),
-  synopses: episodeHandles.flatMap(handle => handleToHandleProperty('synopses', handle)),
-  handles: [...episodeHandles, ...episodeHandles.flatMap(({ handles }) => handles)],
-  tags: [],
-  related: []
-})
+const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode =>
+  handlesToType(
+    episodeHandles,
+    ['season', 'number', 'names', 'images', 'releaseDates', 'synopses', 'tags'],
+    {
+      categories: episodeHandles.map(handle => handle.categories.map(category => ({ handle, categories: category }))),
+      related: []
+    }
+  ) as unknown as Episode
 
 const findMostCommon = (arr) => {
   const instances = [
@@ -211,22 +225,18 @@ const findMostCommon = (arr) => {
   return instances.filter(([, instances]) => instances === max).map(([num]) => num)
 }
 
-const makeTitleFromTitleHandles = (titleHandles: TitleHandle[]): Title => ({
-  uri: titleHandles.map(({ uri }) => uri).join(','),
-  categories: [...new Set(titleHandles.flatMap(handle => handleToHandleProperty('categories', handle)))],
-  uris: titleHandles.flatMap(({ uri, scheme, id }) => ({ uri: uri!, scheme, id })),
-  names: titleHandles.flatMap(handle => handleToHandleProperty('names', handle)),
-  releaseDates: titleHandles.flatMap(handle => handleToHandleProperty('releaseDates', handle)),
-  images: titleHandles.flatMap(handle => handleToHandleProperty('images', handle)),
-  synopses: titleHandles.flatMap(handle => handleToHandleProperty('synopses', handle)),
-  related: [],
-  handles: titleHandles,
-  // episodes: titleHandles.map(makeEpisodeFromEpisodeHandles).map(handleToHandleProperty(['episodes'])),
-  episodes: titleHandles.map(populateHandle).flatMap(({ episodes }) => episodes.map(handle => makeEpisodeFromEpisodeHandles([handle]))),
-  recommended: [],
-  tags: [],
-  genres: []
-})
+const makeTitleFromTitleHandles = (titleHandles: TitleHandle[]): Title =>
+  handlesToType(
+    titleHandles,
+    ['names', 'images', 'releaseDates', 'synopses', 'tags'],
+    {
+      categories: titleHandles.map(handle => handle.categories.map(category => ({ handle, categories: category }))),
+      episodes: titleHandles.map(populateHandle).flatMap(({ episodes }) => episodes.map(handle => makeEpisodeFromEpisodeHandles([handle]))),
+      related: [],
+      recommended: [],
+      genres: []
+    }
+  ) as unknown as Title
 
 const handles: Handle[] = []
 
@@ -299,7 +309,7 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   // @ts-ignore
   const _searchedEpisodeHandles = await searchEpisode({
     // categories: [Category.ANIME],
-    search: `${args.title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.toString().padStart(2, '0')}`,
+    search: `${args.title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
     // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
     // title: args.title
   })
