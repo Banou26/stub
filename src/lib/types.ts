@@ -33,11 +33,12 @@ export type HandleTypeToType
     T,
     T2 extends keyof T,
     T3,
+    T4 = (T extends { episodes: any } ? TitleHandle : EpisodeHandle)[]
   > =
     {
       uri: string
-      uris: (Handle & { uri: string })[]
-      handles: (T extends { episodes: any } ? TitleHandle : EpisodeHandle)[]
+      uris: ({ uri: string, handle: T4 })[]
+      handles: T4
     } &
     Omit<
       Omit<

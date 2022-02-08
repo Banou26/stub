@@ -179,7 +179,7 @@ const handleToHandleProperty =
 
 // todo: fix typing issues
 const handlesToHandleProperties =
-  <T extends TitleHandle | EpisodeHandle, T2 extends keyof T>(handles: T[], props: T2[]): Pick<T, T2> =>
+  <T extends (TitleHandle | EpisodeHandle), T2 extends keyof T>(handles: T[], props: T2[]): Pick<T, T2> =>
     Object.fromEntries(
       props
         .map(prop => [
@@ -190,7 +190,7 @@ const handlesToHandleProperties =
 
 // todo: fix typing issues
 const handlesToType = <
-  T extends TitleHandle | EpisodeHandle,
+  T extends (TitleHandle | EpisodeHandle),
   T2 extends keyof T,
   T3 = T extends { episodes: any } ? Title : Episode,
 >(handles: T[], properties: T2[], override: Partial<T3>): T3 => ({
