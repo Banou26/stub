@@ -178,7 +178,7 @@ export const getRowAsEpisode = (elem: HTMLElement): EpisodeHandle => {
 
 export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
   const trustedSources = true
-  const pageHtml = await (await fetch(`https://nyaa.si/?f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`)).text()
+  const pageHtml = await (await fetch(`https://nyaa.si/?f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const dom =
     new DOMParser()
       .parseFromString(pageHtml, 'text/html')
@@ -203,7 +203,7 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
 export const _searchEpisode = async ({ search = '', ...rest }: { search: string }): Promise<EpisodeHandle[]> => {
   console.log('nya searchEpisode', search, rest)
   const trustedSources = true
-  const pageHtml = await (await fetch(`https://nyaa.si/?f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`)).text()
+  const pageHtml = await (await fetch(`https://nyaa.si/?f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const dom =
     new DOMParser()
       .parseFromString(pageHtml, 'text/html')
