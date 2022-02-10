@@ -202,9 +202,56 @@ const handlesToType = <
   ...override
 }) as unknown as T3
 
+const normalizeEpisodeHandle = ({
+  categories, handles, id, images, names, number,
+  related, releaseDates, scheme, season, synopses,
+  tags, uri, url
+}: EpisodeHandle): EpisodeHandle => {
+  if (!id || typeof id !== 'string') throw new Error('Episode handle "id" property must be a non empty string')
+  if (!scheme || typeof scheme !== 'string') throw new Error('Episode handle "scheme" property must be a non empty string')
+
+  return ({
+    categories: categories?.filter(category => Object.values(Category).includes(category)) ?? [],
+    handles: handles?.map(normalizeEpisodeHandle) ?? [],
+    id,
+    images: images?.map(({ size, type, url }) => ({
+      size,
+      type,
+      url
+    })) ?? [],
+    names: names?.map(({ language, name }) => ({
+      language, name
+    })) ?? [],
+    number,
+    related: related?.map(({ reference, relation }) => ({
+      reference,
+      relation
+    })) ?? [],
+    releaseDates: releaseDates?.map(({ language, date, end, start }) => ({
+      language,
+      date,
+      end,
+      start
+    })) ?? [],
+    scheme,
+    season,
+    synopses: synopses?.map(({ language, synopsis }) => ({
+      language,
+      synopsis
+    })) ?? [],
+    tags: tags?.map(({ type, extra, value }) => ({
+      type,
+      extra,
+      value
+    })) ?? [],
+    uri,
+    url
+  })
+}
+
 const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode =>
   handlesToType(
-    episodeHandles,
+    episodeHandles.map(normalizeEpisodeHandle),
     ['season', 'number', 'names', 'images', 'releaseDates', 'synopses', 'tags'],
     {
       categories: episodeHandles.map(handle => handle.categories.map(category => ({ handle, categories: category }))),
@@ -225,9 +272,67 @@ const findMostCommon = (arr) => {
   return instances.filter(([, instances]) => instances === max).map(([num]) => num)
 }
 
+const normalizeTitleHandle = ({
+  categories, episodes, genres, handles, id, images, names,
+  recommended, related, releaseDates, scheme, synopses, tags,
+  uri, url
+}: TitleHandle): TitleHandle => {
+  if (!id || typeof id !== 'string') throw new Error('Title handle "id" property must be a non empty string')
+  if (!scheme || typeof scheme !== 'string') throw new Error('Title handle "scheme" property must be a non empty string')
+
+  return ({
+    categories: categories?.filter(category => Object.values(Category).includes(category)) ?? [],
+    episodes: episodes?.map(normalizeEpisodeHandle) ?? [],
+    genres: genres?.map(({ categories, id, name, scheme, uri, adult, amount, handles, url }) => ({
+      categories,
+      id,
+      name,
+      scheme,
+      uri,
+      adult,
+      amount,
+      handles,
+      url
+    })) ?? [],
+    handles: handles?.map(normalizeTitleHandle) ?? [],
+    id,
+    images: images?.map(({ size, type, url }) => ({
+      size,
+      type,
+      url
+    })) ?? [],
+    names: names?.map(({ language, name }) => ({
+      language, name
+    })) ?? [],
+    recommended: recommended?.map(normalizeTitleHandle) ?? [],
+    related: related?.map(({ reference, relation }) => ({
+      reference,
+      relation
+    })) ?? [],
+    releaseDates: releaseDates?.map(({ language, date, end, start }) => ({
+      language,
+      date,
+      end,
+      start
+    })) ?? [],
+    scheme,
+    synopses: synopses?.map(({ language, synopsis }) => ({
+      language,
+      synopsis
+    })) ?? [],
+    tags: tags?.map(({ type, extra, value }) => ({
+      type,
+      extra,
+      value
+    })) ?? [],
+    uri,
+    url,
+  })
+}
+
 const makeTitleFromTitleHandles = (titleHandles: TitleHandle[]): Title =>
   handlesToType(
-    titleHandles,
+    titleHandles.map(normalizeTitleHandle),
     ['names', 'images', 'releaseDates', 'synopses', 'tags'],
     {
       categories: titleHandles.map(handle => handle.categories.map(category => ({ handle, categories: category }))),

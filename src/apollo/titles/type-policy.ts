@@ -50,6 +50,17 @@ const handlePropertiesToHandlePropertiesApolloCache =
         .map(([key, val]) => [key, propertyToHandleProperty(val, __typename)])
     )
 
+const nullToUndefined = (object: any) =>
+  Array.isArray(object)
+    ? object.map(nullToUndefined)
+    : (
+      Object.fromEntries(
+        Object
+          .entries(object)
+          .map(([key, val]) => [key, val === undefined ? null : val])
+      )
+    )
+
 const typeToTypeApolloCache = <
   T extends (Title | Episode),
   T2 extends keyof T,
