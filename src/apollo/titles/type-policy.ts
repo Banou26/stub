@@ -23,10 +23,10 @@ export const asyncRead = (fn, query) => {
   }
 }
 
-const nullToUndefined = <T>(object: T): OptionalToNullable<T> =>
+const undefinedToNull = <T>(object: T): OptionalToNullable<T> =>
   // @ts-ignore
   Array.isArray(object)
-    ? object.map(nullToUndefined)
+    ? object.map(undefinedToNull)
     : (
       Object.fromEntries(
         Object
@@ -34,8 +34,8 @@ const nullToUndefined = <T>(object: T): OptionalToNullable<T> =>
           .map(([key, val]) => [
             key,
             val === undefined ? null :
-            Array.isArray(val) ? val.map(nullToUndefined) :
-            typeof val === 'object' && val !== null && Object.getPrototypeOf(val) === Object.getPrototypeOf({}) ? nullToUndefined(val) :
+            Array.isArray(val) ? val.map(undefinedToNull) :
+            typeof val === 'object' && val !== null && Object.getPrototypeOf(val) === Object.getPrototypeOf({}) ? undefinedToNull(val) :
             val
           ])
       )
@@ -62,7 +62,7 @@ const defineTypename = (object: any, typename: string, setTypename = false) =>
 
 const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache =>
   defineTypename(
-    nullToUndefined({
+    undefinedToNull({
       __typename: 'Episode',
       ...episode,
     }),
@@ -71,7 +71,7 @@ const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache =>
 
 const titleToTitleApolloCache = (title: Title): TitleApolloCache =>
   defineTypename(
-    nullToUndefined(({
+    undefinedToNull(({
       __typename: 'Title',
       ...title,
       episodes: title.episodes.map(episodeToEpisodeApolloCache)
