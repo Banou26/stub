@@ -1,9 +1,9 @@
 import { FieldFunctionOptions, makeVar } from '@apollo/client'
-import { Episode, EpisodeHandle, Handle, Image, Name, NameHandle, Relation, Relationship, ReleaseDate, Synopsis, Title, TitleHandle } from 'src/lib'
-import { EpisodeApolloCache, EpisodeHandleApolloCache, GET_EPISODE, GET_TITLE, ImageApolloCache, NameApolloCache, RelationApolloCache, ReleaseDateApolloCache, SEARCH_TITLE, SynopsisApolloCache, TitleApolloCache, TitleHandleApolloCache } from '.'
+import { Episode, Title } from 'src/lib'
+import { EpisodeApolloCache, GET_EPISODE, GET_TITLE, SEARCH_TITLE, TitleApolloCache } from '.'
 import { get, searchTitle, getTitle, getEpisode } from '../../lib/targets'
 import cache from '../cache'
-import { HandleApolloCache } from './types'
+import { OptionalToNullable } from './types'
 
 export const asyncRead = (fn, query) => {
   return (_, args) => {
@@ -23,97 +23,61 @@ export const asyncRead = (fn, query) => {
   }
 }
 
-// todo: try to type this function
-const handleToHandleApolloCache = (handle) => {
-  return ({
-    url: handle.url ?? null,
-    uri: handle.uri ?? null,
-    id: handle.id ?? null,
-    scheme: handle.scheme ?? null,
-    ...handle,
-    ...!handle.handles && { handles: null }
-  })
-}
-
-const propertyToHandleProperty = (property: any, __typename: string) => ({
-  ...property,
-  handle: handleToHandleApolloCache({ ...property.handle, __typename })
-})
-
-// todo: fix typing issues
-const handlePropertiesToHandlePropertiesApolloCache =
-  <T extends (Title | Episode), T2 extends keyof T>(type: T, props: T2[], __typename: string): Pick<T, T2> =>
-    Object.fromEntries(
-      Object
-        .entries(type)
-        .filter(([key]) => props.includes(key))
-        .map(([key, val]) => [key, propertyToHandleProperty(val, __typename)])
-    )
-
-const nullToUndefined = (object: any) =>
+const nullToUndefined = <T>(object: T): OptionalToNullable<T> =>
+  // @ts-ignore
   Array.isArray(object)
     ? object.map(nullToUndefined)
     : (
       Object.fromEntries(
         Object
           .entries(object)
-          .map(([key, val]) => [key, val === undefined ? null : val])
+          .map(([key, val]) => [
+            key,
+            val === undefined ? null :
+            Array.isArray(val) ? val.map(nullToUndefined) :
+            typeof val === 'object' && val !== null && Object.getPrototypeOf(val) === Object.getPrototypeOf({}) ? nullToUndefined(val) :
+            val
+          ])
       )
     )
 
-const typeToTypeApolloCache = <
-  T extends (Title | Episode),
-  T2 extends keyof T,
->(handles: T[], properties: T2[], override: Partial<T3>): T3 => ({
-  uri: handles.map(({ uri }) => uri).join(','),
-  uris: handles.flatMap(({ uri, scheme, id }) => ({ uri: uri!, scheme, id })),
-  // @ts-ignore
-  handles: [...handles, ...handles.flatMap(({ handles }) => handles)],
-  ...handlesToHandleProperties(handles, properties),
-  ...override
-}) as unknown as T3
-
-const episodeHandleToEpisodeHandleApolloCache = (episode: EpisodeHandle): EpisodeHandleApolloCache =>
-  handleToHandleApolloCache(({
-    __typename: 'EpisodeHandle',
-    ...episode,
-    releaseDates: episode.releaseDates.map(releaseDate => handleToHandleApolloCache({ date: null, start: null, end: null, ...releaseDate })),
-    handles: episode.handles?.map(episodeHandleToEpisodeHandleApolloCache) ?? null
-  }))
+const defineTypename = (object: any, typename: string, setTypename = false) =>
+  Array.isArray(object)
+    ? object.map(obj => defineTypename(obj, typename, setTypename))
+    : ({
+      ...setTypename && { __typename: typename },
+      // keep the original typename if it exists, we only want to set it if its not defined
+      // as this algorithm goes down the tree, we don't want Titles to override Episodes typenames
+      ...Object.fromEntries(
+        Object
+          .entries(object)
+          .map(([key, val]) => [
+            key,
+            Array.isArray(val) ? val.map(_val => defineTypename(_val, typename, key === 'handle' || key === 'handles' ? true : false)) :
+            typeof val === 'object' && val !== null && Object.getPrototypeOf(val) === Object.getPrototypeOf({}) ? defineTypename(val, typename, key === 'handle' || key === 'handles' ? true : false) :
+            val
+          ])
+      ) 
+    })
 
 const episodeToEpisodeApolloCache = (episode: Episode): EpisodeApolloCache =>
-  handleToHandleApolloCache(({
-    __typename: 'Episode',
-    ...episode,
-    names: episode.names.map(name => propertyToHandleProperty(name, 'EpisodeHandle')),
-    related: episode.related.map(relation => propertyToHandleProperty<EpisodeApolloCache>(relation, 'EpisodeHandle')),
-    releaseDates: episode.releaseDates.map(releaseDate => propertyToHandleProperty({ date: null, start: null, end: null, ...releaseDate }, 'EpisodeHandle')),
-    images: episode.images.map(image => propertyToHandleProperty(image, 'EpisodeHandle')),
-    synopses: episode.synopses.map(synopsis => propertyToHandleProperty(synopsis, 'EpisodeHandle')),
-    handles: episode.handles.map(episodeHandleToEpisodeHandleApolloCache)
-  }))
-
-const titleHandleToTitleHandleApolloCache = (titleHandle: TitleHandle): TitleHandleApolloCache =>
-  handleToHandleApolloCache(({
-    __typename: 'TitleHandle',
-    ...titleHandle,
-    releaseDates: titleHandle.releaseDates.map(releaseDate => handleToHandleApolloCache({ date: null, start: null, end: null, ...releaseDate })),
-    handles: titleHandle.handles?.map(titleHandleToTitleHandleApolloCache) ?? null
-  }))
+  defineTypename(
+    nullToUndefined({
+      __typename: 'Episode',
+      ...episode,
+    }),
+    'EpisodeHandle'
+  )
 
 const titleToTitleApolloCache = (title: Title): TitleApolloCache =>
-  handleToHandleApolloCache(({
-    __typename: 'Title',
-    ...title,
-    names: title.names.map(name => propertyToHandleProperty(name, 'TitleHandle')),
-    related: title.related.map(relation => propertyToHandleProperty<TitleApolloCache>(relation, 'TitleHandle')),
-    recommended: title.recommended?.map(titleToTitleApolloCache),
-    releaseDates: title.releaseDates.map(releaseDate => propertyToHandleProperty({ date: null, start: null, end: null, ...releaseDate }, 'TitleHandle')),
-    images: title.images.map(image => propertyToHandleProperty(image, 'TitleHandle')),
-    synopses: title.synopses.map(synopsis => propertyToHandleProperty(synopsis, 'TitleHandle')),
-    handles: title.handles.map(titleHandleToTitleHandleApolloCache),
-    episodes: title.episodes.map(episodeToEpisodeApolloCache)
-  }))
+  defineTypename(
+    nullToUndefined(({
+      __typename: 'Title',
+      ...title,
+      episodes: title.episodes.map(episodeToEpisodeApolloCache)
+    })),
+    'TitleHandle'
+  )
 
 cache.policies.addTypePolicies({
   Handle: {

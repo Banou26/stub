@@ -335,7 +335,7 @@ const makeTitleFromTitleHandles = (titleHandles: TitleHandle[]): Title =>
     titleHandles.map(normalizeTitleHandle),
     ['names', 'images', 'releaseDates', 'synopses', 'tags'],
     {
-      categories: titleHandles.map(handle => handle.categories.map(category => ({ handle, categories: category }))),
+      categories: titleHandles.flatMap(handle => handle.categories.map(category => ({ handle, categories: category }))),
       episodes: titleHandles.map(populateHandle).flatMap(({ episodes }) => episodes.map(handle => makeEpisodeFromEpisodeHandles([handle]))),
       related: [],
       recommended: [],
