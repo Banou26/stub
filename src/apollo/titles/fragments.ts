@@ -176,25 +176,25 @@ export const TITLE_FRAGMENT = gql`
     ...NameFragment
     names {
       handle {
-        ...EpisodeHandleFragment
+        ...TitleHandleFragment
       }
     }
     ...ReleaseDateFragment
     releaseDates {
       handle {
-        ...EpisodeHandleFragment
+        ...TitleHandleFragment
       }
     }
     ...ImageFragment
     images {
       handle {
-        ...EpisodeHandleFragment
+        ...TitleHandleFragment
       }
     }
     ...SynopsisFragment
     synopses {
       handle {
-        ...EpisodeHandleFragment
+        ...TitleHandleFragment
       }
     }
     related {
