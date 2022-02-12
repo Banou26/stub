@@ -42,6 +42,8 @@
     "@mfkn/fkn-lib": "file:../lib",
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.27",
+    "fp-ts": "^2.11.8",
+    "fp-ts-std": "^0.13.1",
     "graphql": "^16.0.1",
     "raviger": "^2.0.1",
     "react": "^17.0.1",

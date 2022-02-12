@@ -1,10 +1,14 @@
 import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
+import { groupBy, NonEmptyArray, sort } from 'fp-ts/NonEmptyArray'
+import { toArray } from 'fp-ts/lib/Record'
+import { reverse, contramap } from 'fp-ts/ord'
+import { pipe } from 'fp-ts/function'
+import * as N from 'fp-ts/number'
 
-import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_EPISODE_HANDLE, cache, GET_TARGETS, GetTargets } from 'src/apollo'
-import { Category, EpisodeHandle, fromUri, toUri } from 'src/lib'
-import { useMemo } from 'react'
+import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_TARGETS, GetTargets } from 'src/apollo'
+import { Category } from 'src/lib'
 import { getRoutePath, Route } from '../path'
 
 const style = css`
@@ -105,7 +109,28 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   console.log('episode', episode)
   console.log('targets', targets)
 
-  const getSchemeTarget = (scheme: string) => targets?.find(({ scheme: _scheme }) => _scheme === scheme)
+  const getSchemeTarget = (scheme: string) =>
+    targets
+      ?.find(({ scheme: _scheme }) => _scheme === scheme)
+
+  const mediaEpisodes =
+    episode
+      ?.names
+      .filter(name => name.handle.type)
+    ?? []
+
+  const byResolution = pipe(
+    reverse(N.Ord),
+    contramap(([resolution]: [string, NonEmptyArray<GetEpisode['episode']['names'][number]>]) => Number(resolution))
+  )
+
+  const mediaEpisodesNameByResolution =
+    pipe(
+      mediaEpisodes,
+      groupBy(name => name.handle.resolution!.toString()),
+      toArray,
+      sort(byResolution)
+    )
 
   return (
     <div css={style}>
@@ -150,23 +175,30 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             <br />
             <div>
               {
-                episode
-                  ?.names
-                  .filter(name => name.handle.type)
-                  .map(name => (
-                    <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+                mediaEpisodesNameByResolution.map(([resolution, episodeNames]) =>
+                  <div key={resolution}>
+                    <div>{resolution ? `${resolution}p` : 'Unknown resolution'}</div>
+                    <div>
                       {
-                        getSchemeTarget(name.handle.scheme)
-                        && (
-                          <img
-                            src={getSchemeTarget(name.handle.scheme)!.icon}
-                            alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
-                          />
-                        )
+                        episodeNames
+                          .map(name => (
+                            <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+                              {
+                                !loadingTargets
+                                && (
+                                  <img
+                                    src={getSchemeTarget(name.handle.scheme)!.icon}
+                                    alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
+                                  />
+                                )
+                              }
+                              <a href={name.handle.url}>{name.name}</a>
+                            </div>
+                          ))
                       }
-                      <a href={name.handle.url}>{name.name}({name.handle.resolution})</a>
                     </div>
-                  ))
+                  </div>
+                )
               }
             </div>
           </div>
