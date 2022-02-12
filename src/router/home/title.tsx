@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
 
-import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_EPISODE_HANDLE, cache } from 'src/apollo'
+import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_EPISODE_HANDLE, cache, GET_TARGETS, GetTargets } from 'src/apollo'
 import { Category, EpisodeHandle, fromUri, toUri } from 'src/lib'
 import { useMemo } from 'react'
 import { getRoutePath, Route } from '../path'
@@ -86,6 +86,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const firstEpisodeUri = title?.episodes.at(0)?.uri
   const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
+  const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
 
   const release =
     title?.releaseDates.at(0)
@@ -102,6 +103,9 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   console.log('title', title)
   console.log('episode', episode)
+  console.log('targets', targets)
+
+  const getSchemeTarget = (scheme: string) => targets?.find(({ scheme: _scheme }) => _scheme === scheme)
 
   return (
     <div css={style}>
@@ -146,11 +150,23 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             <br />
             <div>
               {
-                episode?.names.map(name => (
-                  <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
-                    <a href={name.handle.url}>{name.name}()</a>
-                  </div>
-                ))
+                episode
+                  ?.names
+                  .filter(name => name.handle.type)
+                  .map(name => (
+                    <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+                      {
+                        getSchemeTarget(name.handle.scheme)
+                        && (
+                          <img
+                            src={getSchemeTarget(name.handle.scheme)!.icon}
+                            alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
+                          />
+                        )
+                      }
+                      <a href={name.handle.url}>{name.name}({name.handle.resolution})</a>
+                    </div>
+                  ))
               }
             </div>
           </div>

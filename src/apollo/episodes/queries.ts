@@ -1,9 +1,9 @@
-import { Episode, EpisodeHandle } from '../../../lib/types'
-import { EpisodeApolloCache, EpisodeHandleApolloCache } from '../types'
+import type { Episode, EpisodeHandle } from 'src/lib'
+import type { EpisodeApolloCache, EpisodeHandleApolloCache } from '../types'
 
 import { gql } from '@apollo/client'
 
-import { EPISODE_FRAGMENT, EPISODE_HANDLE_FRAGMENT } from '../fragments'
+import { EPISODE_FRAGMENT, EPISODE_HANDLE_FRAGMENT } from './fragments'
 
 export const GET_EPISODE = gql`
   ${EPISODE_FRAGMENT}

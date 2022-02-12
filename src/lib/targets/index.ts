@@ -15,6 +15,7 @@ export interface Target {
   categories?: Category[]
   scheme: string
   name: string
+  icon?: string
   searchTitle?: SearchTitle<true>
   searchEpisode?: SearchEpisode
   searchGenre?: SearchGenre
@@ -205,7 +206,7 @@ const handlesToType = <
 const normalizeEpisodeHandle = ({
   categories, handles, id, images, names, number,
   related, releaseDates, scheme, season, synopses,
-  tags, uri, url
+  tags, uri, url, type, resolution
 }: EpisodeHandle): EpisodeHandle => {
   if (!id || typeof id !== 'string') throw new Error('Episode handle "id" property must be a non empty string')
   if (!scheme || typeof scheme !== 'string') throw new Error('Episode handle "scheme" property must be a non empty string')
@@ -245,14 +246,16 @@ const normalizeEpisodeHandle = ({
       value
     })) ?? [],
     uri,
-    url
+    url,
+    type,
+    resolution
   })
 }
 
 const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode =>
   handlesToType(
     episodeHandles.map(normalizeEpisodeHandle),
-    ['season', 'number', 'names', 'images', 'releaseDates', 'synopses', 'tags'],
+    ['season', 'number', 'names', 'images', 'releaseDates', 'synopses', 'tags', 'resolution'],
     {
       categories: episodeHandles.map(handle => handle.categories.map(category => ({ handle, categories: category }))),
       related: []
@@ -388,6 +391,7 @@ export const getTitle: GetTitle['function'] = async (args) => {
   for (const handle of titleHandles) handles.push(handle)
 
   const title = makeTitleFromTitleHandles(titleHandles)
+  console.log('title', title)
   return title
 }
 
@@ -421,6 +425,7 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   const searchedEpisodeHandles = _searchedEpisodeHandles[0]?.handles ?? []
   const postSearchHandles = [...episodeHandles, ...searchedEpisodeHandles]
   const postSearchEpisode = makeEpisodeFromEpisodeHandles(postSearchHandles)
+  console.log('postSearchEpisode', postSearchEpisode)
   return postSearchEpisode
 }
 

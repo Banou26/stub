@@ -1,9 +1,9 @@
-import { Title, TitleHandle } from '../../../lib/types'
-import { TitleApolloCache, TitleHandleApolloCache } from '../types'
+import type { Title, TitleHandle } from 'src/lib'
+import type { TitleApolloCache, TitleHandleApolloCache } from '../types'
 
 import { gql } from '@apollo/client'
 
-import { TITLE_FRAGMENT, TITLE_HANDLE_FRAGMENT } from '../fragments'
+import { TITLE_FRAGMENT, TITLE_HANDLE_FRAGMENT } from './fragments'
 
 export const GET_TITLE = gql`
   ${TITLE_FRAGMENT}

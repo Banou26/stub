@@ -1,7 +1,7 @@
 import { fetch } from '@mfkn/fkn-lib'
 
 import Category from '../category'
-import { Episode, EpisodeHandle, SearchEpisode } from '../types'
+import { Episode, EpisodeHandle, Impl, SearchEpisode } from '../types'
 import { addTarget } from '.'
 
 export const getBytesFromBiByteString = (s: string) => {
@@ -149,7 +149,7 @@ const getTitleFromTrustedTorrentName = (s: string): TitleMetadata => {
   }
 }
 
-export const getRowAsEpisode = (elem: HTMLElement): EpisodeHandle => {
+export const getRowAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
   const row = getRow(elem)
 
   const { name, group, meta, batch, resolution, type } = getTitleFromTrustedTorrentName(row.name)
@@ -170,7 +170,9 @@ export const getRowAsEpisode = (elem: HTMLElement): EpisodeHandle => {
     handles: [],
     tags: [],
     related: [],
-    url: row.link
+    url: row.link,
+    type: 'torrent',
+    resolution
     // type: getReleaseType(row.name),
     // meta
   }
@@ -261,5 +263,6 @@ addTarget({
     genres: true,
     score: true,
     function: (args) => _searchEpisode(args)
-  }
+  },
+  icon: 'https://nyaa.si/static/favicon.png'
 })

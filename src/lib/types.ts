@@ -1,5 +1,9 @@
 import { Category } from './category'
 
+export type Impl<T extends ShallowHandle> =
+  Partial<Pick<T, 'uri'>> &
+  Omit<T, 'uri'>
+
 export type ShallowHandle = {
   scheme: string
   id: string
@@ -72,6 +76,8 @@ export type ReleaseDate = {
   end?: Date
 }
 
+export type Resolution = 480 | 540 | 720 | 1080 | 1440 | 2160 | 4320
+
 export type TitleRelation = 'spinoff' | 'adaptation' | 'prequel' | 'sequel'
 export type EpisodeRelation = 'previous' | 'next'
 export type Relationship = TitleRelation | EpisodeRelation
@@ -93,6 +99,8 @@ export type Genre = {
   categories: Category[]
   handles?: GenreHandle[]
 }
+
+export type EpisodeType = 'iframe' | 'torrent' | 'custom'
 
 export type GenreHandle =
   Omit<Genre, 'handles'>
@@ -138,7 +146,7 @@ export type Episode =
   HandleTypeToType<
     EpisodeHandle,
     'season' | 'number' | 'names' | 'images' |
-    'releaseDates' | 'synopses' | 'tags',
+    'releaseDates' | 'synopses' | 'tags' | 'number',
     {
       categories: (Handle & { category: Category })[]
       related: Relation<Episode>[]
@@ -157,6 +165,8 @@ export type EpisodeHandle =
     handles: EpisodeHandle[]
     categories: Category[]
     related: Relation<EpisodeHandle>[]
+    type?: EpisodeType
+    resolution?: Resolution
   }
 
 export type SearchFilter = {

@@ -5,6 +5,7 @@ import { addTarget } from '.'
 import { fromUri } from '../utils'
 import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle, GetEpisode } from '..'
 import { languageToTag } from '../languages'
+import iconUrl from './mal-favicon.png'
 
 const fixOrigin = (url: string) => url.replace(document.location.origin, 'https://myanimelist.net')
 
@@ -462,11 +463,13 @@ const getLatestEpisodes = () =>
 //   title ? getAnimeSeason()
 //   : episode ? getLatestEpisodes()
 //   : Promise.resolve([])
-
+console.log(iconUrl)
+globalThis.fetch(iconUrl)
 addTarget({
   name: 'MyAnimeList',
   scheme: 'mal',
   categories: [Category.ANIME],
+  icon: iconUrl,
   getTitle: {
     scheme: 'mal',
     categories: [Category.ANIME],
