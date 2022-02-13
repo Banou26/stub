@@ -206,7 +206,7 @@ const handlesToType = <
 const normalizeEpisodeHandle = ({
   categories, handles, id, images, names, number,
   related, releaseDates, scheme, season, synopses,
-  tags, uri, url, type, resolution
+  tags, uri, url, type, resolution, size
 }: EpisodeHandle): EpisodeHandle => {
   if (!id || typeof id !== 'string') throw new Error('Episode handle "id" property must be a non empty string')
   if (!scheme || typeof scheme !== 'string') throw new Error('Episode handle "scheme" property must be a non empty string')
@@ -248,7 +248,8 @@ const normalizeEpisodeHandle = ({
     uri,
     url,
     type,
-    resolution
+    resolution,
+    size
   })
 }
 

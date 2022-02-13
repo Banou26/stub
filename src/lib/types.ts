@@ -167,6 +167,7 @@ export type EpisodeHandle =
     related: Relation<EpisodeHandle>[]
     type?: EpisodeType
     resolution?: Resolution
+    size?: number
   }
 
 export type SearchFilter = {

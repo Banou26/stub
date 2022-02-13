@@ -14,6 +14,7 @@ export const EPISODE_HANDLE_FRAGMENT = gql`
     number
     resolution
     type
+    size
     ...NameFragment
     ...ImageFragment
     ...SynopsisFragment

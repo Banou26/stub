@@ -3,11 +3,7 @@ import { fetch } from '@mfkn/fkn-lib'
 import Category from '../category'
 import { Episode, EpisodeHandle, Impl, SearchEpisode } from '../types'
 import { addTarget } from '.'
-
-export const getBytesFromBiByteString = (s: string) => {
-  const [_number, [_unit]] = s.split(' ')
-  return Number(_number) * (2 ** ('bkmgt'.indexOf(_unit.toLowerCase()) * 10))
-}
+import { getBytesFromBiByteString } from '../utils/bytes'
 
 type Item = {
   category: NyaaCategory
@@ -165,7 +161,8 @@ export const getItemAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
     related: [],
     url: row.link,
     type: 'torrent',
-    resolution
+    resolution,
+    size: row.size
     // type: getReleaseType(row.name),
     // meta
   }

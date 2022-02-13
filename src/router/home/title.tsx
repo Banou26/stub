@@ -11,6 +11,7 @@ import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_TARGETS, GetTargets }
 import { Category, diceCompare } from 'src/lib'
 import { getRoutePath, Route } from '../path'
 import { filter } from 'fp-ts/lib/Array'
+import { getHumanReadableByteString } from 'src/lib/utils/bytes'
 
 const style = css`
   display: grid;
@@ -110,7 +111,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
     targets
       ?.find(({ scheme: _scheme }) => _scheme === scheme)
 
-  const mediaEpisodes = episode?.names ?? []
+  const episodesByNames = episode?.names ?? []
 
   const byResolution =
     pipe(
@@ -126,7 +127,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   const mediaEpisodesNameByResolution =
     pipe(
-      mediaEpisodes,
+      episodesByNames,
       filter(name => !!name.handle.type),
       sort(byTitleSimilarity),
       groupBy(name => name.handle.resolution!.toString()),
@@ -196,10 +197,11 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
                                   <img
                                     src={getSchemeTarget(name.handle.scheme)!.icon}
                                     alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
+                                    title={getSchemeTarget(name.handle.scheme)!.name}
                                   />
                                 )
                               }
-                              <a href={name.handle.url}>{name.name}</a>
+                              <a href={name.handle.url}>{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
                             </div>
                           ))
                       }
