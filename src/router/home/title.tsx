@@ -1,15 +1,16 @@
 import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
-import { groupBy, NonEmptyArray, sort } from 'fp-ts/NonEmptyArray'
+import { groupBy, NonEmptyArray, sort, sortBy } from 'fp-ts/NonEmptyArray'
 import { toArray } from 'fp-ts/lib/Record'
 import { reverse, contramap } from 'fp-ts/ord'
 import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
 
 import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_TARGETS, GetTargets } from 'src/apollo'
-import { Category } from 'src/lib'
+import { Category, diceCompare } from 'src/lib'
 import { getRoutePath, Route } from '../path'
+import { filter } from 'fp-ts/lib/Array'
 
 const style = css`
   display: grid;
@@ -105,32 +106,38 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       )
       : ''
 
-  console.log('title', title)
-  console.log('episode', episode)
-  console.log('targets', targets)
-
   const getSchemeTarget = (scheme: string) =>
     targets
       ?.find(({ scheme: _scheme }) => _scheme === scheme)
 
-  const mediaEpisodes =
-    episode
-      ?.names
-      .filter(name => name.handle.type)
-    ?? []
+  const mediaEpisodes = episode?.names ?? []
 
-  const byResolution = pipe(
-    reverse(N.Ord),
-    contramap(([resolution]: [string, NonEmptyArray<GetEpisode['episode']['names'][number]>]) => Number(resolution))
-  )
+  const byResolution =
+    pipe(
+      reverse(N.Ord),
+      contramap(([resolution]: [string, NonEmptyArray<GetEpisode['episode']['names'][number]>]) => Number(resolution))
+    )
+
+  const byTitleSimilarity =
+    pipe(
+      reverse(N.Ord),
+      contramap((_title: GetEpisode['episode']['names'][number]) => diceCompare(title?.names.at(0)?.name!, _title.name))
+    )
 
   const mediaEpisodesNameByResolution =
     pipe(
       mediaEpisodes,
+      filter(name => !!name.handle.type),
+      sort(byTitleSimilarity),
       groupBy(name => name.handle.resolution!.toString()),
       toArray,
       sort(byResolution)
     )
+
+  console.log('title', title)
+  console.log('episode', episode)
+  console.log('targets', targets)
+  console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
 
   return (
     <div css={style}>
