@@ -9,13 +9,13 @@ export const getBytesFromBiByteString = (s: string) => {
   return Number(_number) * (2 ** ('bkmgt'.indexOf(_unit.toLowerCase()) * 10))
 }
 
-type Row = {
+type Item = {
   category: NyaaCategory
   english: boolean
   name: string
   link: string
   torrentUrl: string
-  magnet: string
+  magnet?: string
   size: number
   uploadDate: Date
   seeders: number
@@ -34,71 +34,64 @@ const stringToNyaaCategory =
       .trim()
       .toLocaleLowerCase() as NyaaCategory
 
-const getRow = (elem: HTMLElement): Row => ({
+const getItem = (elem: HTMLElement): Item => ({
   category:
     stringToNyaaCategory(
       elem
-        .querySelector('td:nth-child(1)')
+        .querySelector('category')
         ?.textContent!
     ),
   english:
     elem
-      .querySelector('td:nth-child(1) a')
-      ?.getAttribute('title')
+      .querySelector('category')
+      ?.textContent
       ?.trim()
       .includes('English-translated')!,
-  link: 
-    new URL(
-      elem
-        .querySelector('td:nth-child(2)')
-        ?.querySelector('a')
-        ?.getAttribute('href')
-        ?.replace('#comments', '')!,
-      'https://nyaa.si'
-    ).href,
+  link:
+    elem
+      .querySelector('guid')
+      ?.textContent!,
   name:
-    (
-      elem.querySelector('td:nth-child(2)')?.querySelector('a:nth-child(2)')
-      ?? elem.querySelector('td:nth-child(2)')?.querySelector('a')
-    )?.getAttribute('title')!,
+    elem
+      .querySelector('title')
+      ?.textContent!,
   torrentUrl:
     elem
-      .querySelector('td:nth-child(3)')
-      ?.querySelector('a:nth-child(1)')
-      ?.getAttribute('href')!,
-  magnet:
-    elem
-      .querySelector('td:nth-child(3)')
-      ?.querySelector('a:nth-child(2)')
-      ?.getAttribute('href')!,
+      .querySelector('link')
+      ?.textContent!,
+  // magnet:
+  //   elem
+  //     .querySelector('td:nth-child(3)')
+  //     ?.querySelector('a:nth-child(2)')
+  //     ?.getAttribute('href')!,
   size:
     getBytesFromBiByteString(
       elem
-        .querySelector('td:nth-child(4)')
+        .querySelector('size')
         ?.textContent!
     ),
   uploadDate:
     new Date(
       elem
-        .querySelector('td:nth-child(5)')
+        .querySelector('pubDate')
         ?.textContent!
     ),
   seeders:
     Number(
       elem
-        .querySelector('td:nth-child(6)')
+        .querySelector('seeders')
         ?.textContent!
     ),
   leechers:
     Number(
       elem
-        .querySelector('td:nth-child(7)')
+        .querySelector('leechers')
         ?.textContent!
     ),
   downloads:
     Number(
       elem
-        .querySelector('td:nth-child(8)')
+        .querySelector('downloads')
         ?.textContent!
     )
 })
@@ -149,12 +142,12 @@ const getTitleFromTrustedTorrentName = (s: string): TitleMetadata => {
   }
 }
 
-export const getRowAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
-  const row = getRow(elem)
-
+export const getItemAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
+  const row = getItem(elem)
+  console.log(row)
   const { name, group, meta, batch, resolution, type } = getTitleFromTrustedTorrentName(row.name)
   const number = Number(/((0\d)|(\d{2,}))/.exec(name)?.[1] ?? 1)
-  console.log('getRowAsEpisode', group, '||', name, '||', meta, '||', batch, '||', resolution, '||', type, '||', number)
+  console.log('getItemAsEpisode', group, '||', name, '||', meta, '||', batch, '||', resolution, '||', type, '||', number)
 
 
   return {
@@ -180,14 +173,13 @@ export const getRowAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
 
 export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
   const trustedSources = true
-  const pageHtml = await (await fetch(`https://nyaa.si/?f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
+  const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const dom =
     new DOMParser()
-      .parseFromString(pageHtml, 'text/html')
+      .parseFromString(pageHtml, 'text/xml')
   const cards =
-    [...dom.querySelectorAll('tr')]
-      .slice(1)
-      .map(getRowAsEpisode)
+    [...dom.querySelectorAll('item')]
+      .map(getItemAsEpisode)
   const [, count] =
     dom
       .querySelector('.pagination-page-info')!
@@ -205,14 +197,13 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
 export const _searchEpisode = async ({ search = '', ...rest }: { search: string }): Promise<EpisodeHandle[]> => {
   console.log('nya searchEpisode', search, rest)
   const trustedSources = true
-  const pageHtml = await (await fetch(`https://nyaa.si/?f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
+  const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const dom =
     new DOMParser()
-      .parseFromString(pageHtml, 'text/html')
+      .parseFromString(pageHtml, 'text/xml')
   const cards =
-    [...dom.querySelectorAll('tr')]
-      .slice(1)
-      .map(getRowAsEpisode)
+    [...dom.querySelectorAll('item')]
+      .map(getItemAsEpisode)
   console.log('dom.querySelectorAll(asdasd)', [...dom.querySelectorAll('tr')].slice(1))
   // const [, count] =
   //   dom
