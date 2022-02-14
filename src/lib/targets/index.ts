@@ -462,14 +462,14 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
         .filter(([val, val2]) => val === val2)
         .map(([val]) => val)
         .filter(val => val.trim().length)
-    )[1]
+    )[0]
 
   console.log('mostCommonSubnames', mostCommonSubnames)
 
   // @ts-ignore
   const _searchedEpisodeHandles = await searchEpisode({
     // categories: [Category.ANIME],
-    search: `${title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
+    search: `${mostCommonSubnames ? mostCommonSubnames : title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
     // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
     // title: args.title
   })
