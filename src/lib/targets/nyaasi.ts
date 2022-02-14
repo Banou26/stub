@@ -149,12 +149,14 @@ const getTitleFromTrustedTorrentName = (s: string): TitleMetadata => {
 }
 
 const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisode, Team]> => {
+  console.log('getTorrentAsEpisodeAndTeam, tag, url', tag, url)
   const teamPromise = new Promise<[TeamEpisode['url'], Team]>(async resolve => {
     const pageHtml = await (await fetch(url, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
     const doc =
       new DOMParser()
         .parseFromString(pageHtml, 'text/html')
     const informationUrl = doc.querySelector<HTMLAnchorElement>('[rel="noopener noreferrer nofollow"]')?.href
+    console.log('getTorrentAsEpisodeAndTeam, informationUrl', informationUrl)
     const informationPageFavicon =
       await (
         informationUrl
@@ -165,15 +167,23 @@ const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisod
                 const doc =
                   new DOMParser()
                     .parseFromString(informationPageHtml, 'text/html')
-                return doc.querySelector<HTMLLinkElement>('link[rel="icon"]')?.href!
+                const iconPath = doc.querySelector<HTMLLinkElement>('link[rel*="icon"]')?.href
+                if (!iconPath) return undefined
+                console.log('getTorrentAsEpisodeAndTeam, iconPath', iconPath)
+                const faviconUrl = new URL(new URL(iconPath).pathname, new URL(informationUrl).origin).href
+                console.log('getTorrentAsEpisodeAndTeam, faviconUrl', faviconUrl)
+                if (!faviconUrl) return undefined
+                return (
+                  fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+                    .then(res => res.blob())
+                    .then(blob => URL.createObjectURL(blob))
+                )
               })
-              .then(faviconUrl => fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() }))
-              .then(res => res.blob())
-              .then(blob => URL.createObjectURL(blob))
           )
           : Promise.resolve(undefined)
       )
     const team = {
+      tag,
       url: informationUrl ? new URL(informationUrl).origin : undefined,
       icon: informationPageFavicon,
       name: doc.querySelector<HTMLAnchorElement>('body > div > div.panel.panel-success > div.panel-body > div:nth-child(2) > div:nth-child(2) > a')?.textContent ?? undefined
@@ -253,8 +263,8 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
 }
 
 export const _searchEpisode = async ({ search = '', ...rest }: { search: string }): Promise<EpisodeHandle[]> => {
-  // console.log('nya searchEpisode', search, rest)
   const trustedSources = true
+  console.log('nya searchEpisode', `https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, search, rest)
   const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const doc =
     new DOMParser()
@@ -285,7 +295,7 @@ export const _searchEpisode = async ({ search = '', ...rest }: { search: string 
   // const newTeams = findNewTeams(episodes)(await Promise.all(teams.values()))
   // console.log('newTeams', newTeams)
 
-  // console.log('episodes', episodes)
+  console.log('nyaa _searchEpisode episodes', episodes)
   return episodes
 }
 
