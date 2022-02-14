@@ -201,10 +201,10 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
                                   />
                                 )
                               }
-                              <a href={name.handle.url}>{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
+                              <a href={name.handle.url}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
                               {
                                 !loadingTargets
-                                && name.handle.teamEpisode
+                                && name.handle.teamEpisode?.team.icon
                                 && (
                                   <img
                                     src={name.handle.teamEpisode.team.icon}
