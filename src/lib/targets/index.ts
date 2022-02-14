@@ -1,3 +1,6 @@
+import * as A from 'fp-ts/lib/Array'
+
+
 import { targets } from './targets'
 import Category from '../category'
 
@@ -5,7 +8,9 @@ import { _Title, _Episode, Episode, EpisodeHandle, Get, GetEpisode, GetGenre, Ge
 
 import './myanimelist'
 import './nyaasi'
-import { fromUri, populateHandle } from '../utils'
+import { findMostCommon, fromUri, getAlignedStringParts, populateHandle } from '../utils'
+import { Name } from '../types'
+import { pipe } from 'fp-ts/lib/function'
 
 export * from './targets'
 
@@ -206,7 +211,7 @@ const handlesToType = <
 const normalizeEpisodeHandle = ({
   categories, handles, id, images, names, number,
   related, releaseDates, scheme, season, synopses,
-  tags, uri, url, type, resolution, size
+  tags, uri, url, type, resolution, size, teamEpisode
 }: EpisodeHandle): EpisodeHandle => {
   if (!id || typeof id !== 'string') throw new Error('Episode handle "id" property must be a non empty string')
   if (!scheme || typeof scheme !== 'string') throw new Error('Episode handle "scheme" property must be a non empty string')
@@ -249,7 +254,21 @@ const normalizeEpisodeHandle = ({
     url,
     type,
     resolution,
-    size
+    size,
+    teamEpisode:
+      teamEpisode
+        ? {
+          url: teamEpisode.url,
+          team:
+            teamEpisode.team
+            && {
+              name: teamEpisode.team.name,
+              tag: teamEpisode.team.tag,
+              url: teamEpisode.team.url,
+              icon: teamEpisode.team.icon
+            }
+        }
+        : undefined
   })
 }
 
@@ -262,19 +281,6 @@ const makeEpisodeFromEpisodeHandles = (episodeHandles: EpisodeHandle[]): Episode
       related: []
     }
   ) as unknown as Episode
-
-const findMostCommon = (arr) => {
-  const instances = [
-    ...arr
-      .reduce(
-        (map, val) => map.set(val, (map.get(val) ?? 0) + 1),
-        new Map()
-      )
-      .entries()
-  ]
-  const max = Math.max(...instances.map(([, instances]) => instances))
-  return instances.filter(([, instances]) => instances === max).map(([num]) => num)
-}
 
 const normalizeTitleHandle = ({
   categories, episodes, genres, handles, id, images, names,
@@ -414,12 +420,56 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
 
   for (const handle of episodeHandles) handles.push(handle)
 
+  const title: Title = args.title
+
   const episodePreSearch = makeEpisodeFromEpisodeHandles(episodeHandles)
+
+  const Name = {
+    EqByName: {
+      equals: (name: Name, name2: Name) => name.name === name2.name
+    }
+  }
+  
+  // const findNewTeams =
+  //   (episodes: Impl<EpisodeHandle>[]) =>
+  //     (teams: Team[]) =>
+  //       pipe(
+  //         episodes,
+  //         A.filter<Impl<EpisodeHandle> & { teamEpisode: TeamEpisode }>((ep: Impl<EpisodeHandle>) => !!ep.teamEpisode.team),
+  //         A.filter((ep) => !A.elem(Team.EqByTag)(ep.teamEpisode.team)(teams)),
+  //         A.map(ep => ep.teamEpisode.team),
+  //         A.uniq(Team.EqByTag)
+  //       )
+
+  console.log(
+    'pipe test',
+    pipe(
+      title.names,
+      A.uniq(Name.EqByName)
+    )
+  )
+
+  const mostCommonSubnames =
+    findMostCommon(
+      pipe(
+        title.names,
+        A.uniq(Name.EqByName)
+      )
+        .flatMap(name =>
+          title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
+        )
+        .map(alignment => alignment.alignedSequences)
+        .filter(([val, val2]) => val === val2)
+        .map(([val]) => val)
+        .filter(val => val.trim().length)
+    )[1]
+
+  console.log('mostCommonSubnames', mostCommonSubnames)
 
   // @ts-ignore
   const _searchedEpisodeHandles = await searchEpisode({
     // categories: [Category.ANIME],
-    search: `${args.title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
+    search: `${title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
     // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
     // title: args.title
   })
@@ -446,6 +496,8 @@ export const searchEpisode: SearchEpisode['function'] = async (args) => {
   }) as unknown as EpisodeHandle[]
 
   for (const handle of episodeHandles) handles.push(handle)
+
+  console.log('makeEpisodeFromEpisodeHandles(episodeHandles)', makeEpisodeFromEpisodeHandles(episodeHandles))
 
   return [makeEpisodeFromEpisodeHandles(episodeHandles)]
 }

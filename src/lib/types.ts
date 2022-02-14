@@ -115,6 +115,18 @@ export type Tag = {
   extra?: any
 }
 
+export type Team = {
+  name?: string
+  tag?: string
+  url?: string
+  icon?: string
+}
+
+export type TeamEpisode = {
+  url?: string
+  team: Team
+}
+
 export type Title =
   HandleTypeToType<
     TitleHandle,
@@ -168,6 +180,7 @@ export type EpisodeHandle =
     type?: EpisodeType
     resolution?: Resolution
     size?: number
+    teamEpisode?: TeamEpisode
   }
 
 export type SearchFilter = {

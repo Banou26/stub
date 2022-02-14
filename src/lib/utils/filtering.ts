@@ -77,3 +77,16 @@ const filterWordList = [
 export const filterWords = (str: string) =>
   void filterWordList.forEach(word => str = str.replaceAll(word, ''))
   || str.trim()
+
+export const findMostCommon = (arr) => {
+  const instances = [
+    ...arr
+      .reduce(
+        (map, val) => map.set(val, (map.get(val) ?? 0) + 1),
+        new Map()
+      )
+      .entries()
+  ]
+  const max = Math.max(...instances.map(([, instances]) => instances))
+  return instances.filter(([, instances]) => instances === max).map(([num]) => num)
+}

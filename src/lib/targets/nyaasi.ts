@@ -1,9 +1,11 @@
 import { fetch } from '@mfkn/fkn-lib'
 
 import Category from '../category'
-import { Episode, EpisodeHandle, Impl, SearchEpisode } from '../types'
+import { Episode, EpisodeHandle, Impl, SearchEpisode, Team, TeamEpisode } from '../types'
 import { addTarget } from '.'
 import { getBytesFromBiByteString } from '../utils/bytes'
+import { flow, pipe } from 'fp-ts/lib/function'
+import * as A from 'fp-ts/lib/Array'
 
 type Item = {
   category: NyaaCategory
@@ -21,6 +23,14 @@ type Item = {
 
 const nyaaCategories = ['anime', 'audio', 'literature', 'live action', 'pictures', 'software'] as const
 type NyaaCategory = typeof nyaaCategories[number]
+
+const teams: Map<string, Promise<Team>> = new Map()
+
+const addTeam = (tag: string, team: Promise<Team>) => teams.set(tag, team).get(tag)
+
+const removeTeam = (tag) => teams.delete(tag)
+
+const getTeam = (tag: string) => teams.get(tag)
 
 const stringToNyaaCategory =
   (s: string): NyaaCategory =>
@@ -124,7 +134,7 @@ type TitleMetadata = {
 
 const getTitleFromTrustedTorrentName = (s: string): TitleMetadata => {
   const regex = /^(\[.*?\])?\s*?(.*?)(?:\s*?(\(.*\))|(\[.*\])|(?:\s*?))*?\s*?(\.\w+)?$/
-  const [, group, name] = regex.exec(s)
+  const [, group, name] = regex.exec(s) ?? []
   const meta = s.replace(group, '').replace(name, '')
   const batch = s.toLocaleLowerCase().includes('batch')
   const resolution = resolutions.find(resolution => s.includes(resolution.toString()))
@@ -138,13 +148,57 @@ const getTitleFromTrustedTorrentName = (s: string): TitleMetadata => {
   }
 }
 
-export const getItemAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
-  const row = getItem(elem)
-  console.log(row)
-  const { name, group, meta, batch, resolution, type } = getTitleFromTrustedTorrentName(row.name)
-  const number = Number(/((0\d)|(\d{2,}))/.exec(name)?.[1] ?? 1)
-  console.log('getItemAsEpisode', group, '||', name, '||', meta, '||', batch, '||', resolution, '||', type, '||', number)
+const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisode, Team]> => {
+  const teamPromise = new Promise<[TeamEpisode['url'], Team]>(async resolve => {
+    const pageHtml = await (await fetch(url, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
+    const doc =
+      new DOMParser()
+        .parseFromString(pageHtml, 'text/html')
+    const informationUrl = doc.querySelector<HTMLAnchorElement>('[rel="noopener noreferrer nofollow"]')?.href
+    const informationPageFavicon =
+      await (
+        informationUrl
+          ? (
+            fetch(informationUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+              .then(res => res.text())
+              .then(informationPageHtml => {
+                const doc =
+                  new DOMParser()
+                    .parseFromString(informationPageHtml, 'text/html')
+                return doc.querySelector<HTMLLinkElement>('link[rel="icon"]')?.href!
+              })
+              .then(faviconUrl => fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() }))
+              .then(res => res.blob())
+              .then(blob => URL.createObjectURL(blob))
+          )
+          : Promise.resolve(undefined)
+      )
+    const team = {
+      url: informationUrl ? new URL(informationUrl).origin : undefined,
+      icon: informationPageFavicon,
+      name: doc.querySelector<HTMLAnchorElement>('body > div > div.panel.panel-success > div.panel-body > div:nth-child(2) > div:nth-child(2) > a')?.textContent ?? undefined
+    }
+    resolve([informationUrl, team])
+  })
+  addTeam(tag, teamPromise.then(res => res[1]))
+  const [informationUrl, team] = await teamPromise
+  return [
+    {
+      url: informationUrl
+    },
+    team
+  ] as [TeamEpisode, Team]
+}
 
+export const getItemAsEpisode = async (elem: HTMLElement): Impl<EpisodeHandle> => {
+  const row = getItem(elem)
+  // console.log(row)
+  const { name, group: groupTag, meta, batch, resolution, type } = getTitleFromTrustedTorrentName(row.name)
+  const number = Number(/((0\d)|(\d{2,}))/.exec(name)?.[1] ?? 1)
+  console.log('getItemAsEpisode', groupTag, '||', name, '||', meta, '||', batch, '||', resolution, '||', type, '||', number)
+
+  const existingTeam = groupTag ? getTeam(groupTag) : undefined
+  const [teamEpisode, team] = existingTeam ? [undefined, await existingTeam] : await getTorrentAsEpisodeAndTeam(groupTag, row.link)
 
   return {
     id: row.link.split('/').at(4)!,
@@ -162,7 +216,12 @@ export const getItemAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
     url: row.link,
     type: 'torrent',
     resolution,
-    size: row.size
+    size: row.size,
+    teamEpisode: {
+      url: undefined,
+      ...teamEpisode,
+      team: (await team)!
+    }
     // type: getReleaseType(row.name),
     // meta
   }
@@ -171,14 +230,16 @@ export const getItemAsEpisode = (elem: HTMLElement): Impl<EpisodeHandle> => {
 export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
   const trustedSources = true
   const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
-  const dom =
+  const doc =
     new DOMParser()
       .parseFromString(pageHtml, 'text/xml')
   const cards =
-    [...dom.querySelectorAll('item')]
-      .map(getItemAsEpisode)
+    Promise.all(
+      [...doc.querySelectorAll('item')]
+        .map(getItemAsEpisode)
+    )
   const [, count] =
-    dom
+    doc
       .querySelector('.pagination-page-info')!
       .textContent!
       .split(' ')
@@ -192,32 +253,40 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
 }
 
 export const _searchEpisode = async ({ search = '', ...rest }: { search: string }): Promise<EpisodeHandle[]> => {
-  console.log('nya searchEpisode', search, rest)
+  // console.log('nya searchEpisode', search, rest)
   const trustedSources = true
   const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
-  const dom =
+  const doc =
     new DOMParser()
       .parseFromString(pageHtml, 'text/xml')
-  const cards =
-    [...dom.querySelectorAll('item')]
-      .map(getItemAsEpisode)
-  console.log('dom.querySelectorAll(asdasd)', [...dom.querySelectorAll('tr')].slice(1))
-  // const [, count] =
-  //   dom
-  //     .querySelector('.pagination-page-info')!
-  //     .childNodes[0]
-  //     .textContent!
-  //     .split(' ')
-  //     .reverse()
+  const episodes =
+    await Promise.all(
+      [...doc.querySelectorAll('item')]
+        .map(getItemAsEpisode)
+    )
 
-  
-
-  // return {
-  //   count: Number(count),
-  //   items: cards
+  // const Team = {
+  //   EqByTag: {
+  //     equals: (teamX: Team, teamY: Team) => teamX.tag === teamY.tag
+  //   }
   // }
-  console.log('cards', cards)
-  return cards
+  
+  // const findNewTeams =
+  //   (episodes: Impl<EpisodeHandle>[]) =>
+  //     (teams: Team[]) =>
+  //       pipe(
+  //         episodes,
+  //         A.filter<Impl<EpisodeHandle> & { teamEpisode: TeamEpisode }>((ep: Impl<EpisodeHandle>) => !!ep.teamEpisode.team),
+  //         A.filter((ep) => !A.elem(Team.EqByTag)(ep.teamEpisode.team)(teams)),
+  //         A.map(ep => ep.teamEpisode.team),
+  //         A.uniq(Team.EqByTag)
+  //       )
+
+  // const newTeams = findNewTeams(episodes)(await Promise.all(teams.values()))
+  // console.log('newTeams', newTeams)
+
+  // console.log('episodes', episodes)
+  return episodes
 }
 
 export const categories = [Category.ANIME]

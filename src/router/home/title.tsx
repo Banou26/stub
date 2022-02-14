@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'raviger'
 import { groupBy, NonEmptyArray, sort, sortBy } from 'fp-ts/NonEmptyArray'
-import { toArray } from 'fp-ts/lib/Record'
+import * as R from 'fp-ts/lib/Record'
 import { reverse, contramap } from 'fp-ts/ord'
 import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
@@ -10,7 +10,7 @@ import * as N from 'fp-ts/number'
 import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_TARGETS, GetTargets } from 'src/apollo'
 import { Category, diceCompare } from 'src/lib'
 import { getRoutePath, Route } from '../path'
-import { filter } from 'fp-ts/lib/Array'
+import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from 'src/lib/utils/bytes'
 
 const style = css`
@@ -128,11 +128,11 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const mediaEpisodesNameByResolution =
     pipe(
       episodesByNames,
-      filter(name => !!name.handle.type),
-      sort(byTitleSimilarity),
+      A.filter(name => !!name.handle.type),
+      A.sort(byTitleSimilarity),
       groupBy(name => name.handle.resolution!.toString()),
-      toArray,
-      sort(byResolution)
+      R.toArray,
+      A.sort(byResolution)
     )
 
   console.log('title', title)
@@ -202,6 +202,17 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
                                 )
                               }
                               <a href={name.handle.url}>{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
+                              {
+                                !loadingTargets
+                                && name.handle.teamEpisode
+                                && (
+                                  <img
+                                    src={name.handle.teamEpisode.team.icon}
+                                    alt={`${name.handle.teamEpisode.team.name} favicon`}
+                                    title={name.handle.teamEpisode.team.name}
+                                  />
+                                )
+                              }
                             </div>
                           ))
                       }

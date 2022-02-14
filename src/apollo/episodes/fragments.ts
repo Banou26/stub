@@ -2,12 +2,55 @@ import { gql } from '@apollo/client'
 
 import { HANDLE_FRAGMENT, IMAGE_FRAGMENT, NAME_FRAGMENT, RELEASE_DATE_FRAGMENT, SYNOPSIS_FRAGMENT } from '../fragments'
 
+// export const TEAM_FRAGMENT = gql`
+//   fragment TeamFragment on Team {
+//     name
+//     tag
+//     url
+//     icon
+//   }
+// `
+
+// export const TEAM_EPISODE_FRAGMENT = gql`
+//   ${TEAM_FRAGMENT}
+//   fragment TeamEpisodeFragment on TeamEpisode {
+//     url
+//     team {
+//       ...TeamFragment
+//     }
+//   }
+// `
+
+export const TEAM_FRAGMENT = gql`
+  fragment TeamFragment on Handle {
+    teamEpisode {
+      team {
+        name
+        tag
+        url
+        icon
+      }
+    }
+  }
+`
+
+export const TEAM_EPISODE_FRAGMENT = gql`
+  ${TEAM_FRAGMENT}
+  fragment TeamEpisodeFragment on Handle {
+    teamEpisode {
+      url
+    }
+    ...TeamFragment
+  }
+`
+
 export const EPISODE_HANDLE_FRAGMENT = gql`
   ${HANDLE_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${NAME_FRAGMENT}
   ${SYNOPSIS_FRAGMENT}
   ${RELEASE_DATE_FRAGMENT}
+  ${TEAM_EPISODE_FRAGMENT}
   fragment EpisodeHandleFragment on EpisodeHandle {
     ...HandleFragment
     season
@@ -18,6 +61,7 @@ export const EPISODE_HANDLE_FRAGMENT = gql`
     ...NameFragment
     ...ImageFragment
     ...SynopsisFragment
+    ...TeamEpisodeFragment
     related {
       ...HandleFragment
     }
