@@ -43,7 +43,8 @@ const getSeasonCardInfo = (elem: HTMLElement): TitleHandle => ({
     url: elem.querySelector<HTMLImageElement>('img')!.src || elem.querySelector<HTMLImageElement>('img')!.dataset.src!
   }],
   names: [{
-    language: 'en',
+    search: true,
+    language: 'ja-en',
     name: elem.querySelector('.h2_anime_title')!.textContent!.trim()!
   }],
   synopses: [{
@@ -93,7 +94,8 @@ const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle => ({
     url: elem.querySelector<HTMLImageElement>('img')!.src
   }],
   names: [{
-    language: 'en',
+    search: true,
+    language: 'ja-en',
     name: elem.querySelector('.mr4')!.textContent!.trim()
   }],
   synopses: [],
@@ -208,6 +210,7 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle => {
       },
       ...japaneseenTitle
         ? [{
+          search: true,
           language: 'ja-en',
           name: japaneseenTitle
         }]
@@ -272,6 +275,7 @@ const getTitleEpisodesInfo = (elem: Document): EpisodeHandle[] => {
             },
             ...japaneseenTitle
               ? [{
+                search: true,
                 language: 'ja-en',
                 name: japaneseenTitle
               }]
@@ -375,6 +379,7 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle> => {
         // .flatMap((elem, i) => {
         //   if (i === 0) {
         //     return ({
+        //       search: true,
         //       language: 'ja-en',
         //       name: elem?.textContent?.trim()!
         //     })
@@ -402,6 +407,7 @@ const getTitleInfo = async (elem: Document): Promise<TitleHandle> => {
               name: elem?.childNodes[2].textContent?.trim()!
             }
             : {
+              search: true,
               language: 'ja-en',
               name: elem?.textContent?.trim()!
             }

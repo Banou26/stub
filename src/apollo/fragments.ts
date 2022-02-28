@@ -32,6 +32,7 @@ export const IMAGE_FRAGMENT = gql`
 export const NAME_FRAGMENT = gql`
   fragment NameFragment on Handle {
     names {
+      search
       language
       name
     }

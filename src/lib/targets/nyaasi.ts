@@ -1,11 +1,12 @@
 import { fetch } from '@mfkn/fkn-lib'
 
 import Category from '../category'
-import { Episode, EpisodeHandle, Impl, SearchEpisode, Team, TeamEpisode } from '../types'
+import { Episode, EpisodeHandle, Impl, Name, SearchEpisode, Team, TeamEpisode } from '../types'
 import { addTarget } from '.'
 import { getBytesFromBiByteString } from '../utils/bytes'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as A from 'fp-ts/lib/Array'
+import { join } from 'fp-ts-std/Array'
 
 type Item = {
   category: NyaaCategory
@@ -173,15 +174,17 @@ const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisod
                 const faviconUrl = new URL(new URL(iconPath).pathname, new URL(informationUrl).origin).href
                 console.log('getTorrentAsEpisodeAndTeam, faviconUrl', faviconUrl)
                 if (!faviconUrl) return undefined
-                return (
-                  fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() })
-                    .then(res => res.blob())
-                    .then(blob => URL.createObjectURL(blob))
-                )
+                // todo: check if this causes any issues or if we cant just keep doing that (mostly in terms of image format support)
+                return faviconUrl
+                // return (
+                //   fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+                //     .then(res => res.blob())
+                //     .then(blob => URL.createObjectURL(blob))
+                // )
               })
           )
           : Promise.resolve(undefined)
-      )
+      ).catch(() => undefined)
     const team = {
       tag,
       url: informationUrl ? new URL(informationUrl).origin : undefined,
@@ -231,7 +234,8 @@ export const getItemAsEpisode = async (elem: HTMLElement): Impl<EpisodeHandle> =
       url: undefined,
       ...teamEpisode,
       team: (await team)!
-    }
+    },
+    batch
     // type: getReleaseType(row.name),
     // meta
   }
@@ -262,8 +266,24 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
   // return cards
 }
 
-export const _searchEpisode = async ({ search = '', ...rest }: { search: string }): Promise<EpisodeHandle[]> => {
+export const _searchEpisode = async ({ titles, season, number, ...rest }: { titles: Name[], season?: number, number?: number, batch?: boolean }): Promise<EpisodeHandle[]> => {
   const trustedSources = true
+
+  console.log('titles', titles)
+
+  // todo: check if names containing parenthesis will cause problems with nyaa.si search engine
+  const search =
+    pipe(
+      titles,
+      A.filter(({ search }) => Boolean(search)),
+      A.map(({ name }) => name),
+      A.map((name) => `${name} ${number ? number.toString().padStart(2, '0') : ''}`),
+      A.map((episodeName) => `(${episodeName})`),
+      join('|')
+    )
+
+  // const search = `${mostCommonSubnames ? mostCommonSubnames : title.names.find((name) => name.language === 'ja-en')?.name} ${number ? number.toString().padStart(2, '0') : ''}`
+
   console.log('nya searchEpisode', `https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, search, rest)
   const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const doc =

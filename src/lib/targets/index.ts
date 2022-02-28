@@ -211,7 +211,8 @@ const handlesToType = <
 const normalizeEpisodeHandle = ({
   categories, handles, id, images, names, number,
   related, releaseDates, scheme, season, synopses,
-  tags, uri, url, type, resolution, size, teamEpisode
+  tags, uri, url, type, resolution, size, teamEpisode,
+  batch
 }: EpisodeHandle): EpisodeHandle => {
   if (!id || typeof id !== 'string') throw new Error('Episode handle "id" property must be a non empty string')
   if (!scheme || typeof scheme !== 'string') throw new Error('Episode handle "scheme" property must be a non empty string')
@@ -225,8 +226,10 @@ const normalizeEpisodeHandle = ({
       type,
       url
     })) ?? [],
-    names: names?.map(({ language, name }) => ({
-      language, name
+    names: names?.map(({ search, language, name }) => ({
+      search,
+      language,
+      name
     })) ?? [],
     number,
     related: related?.map(({ reference, relation }) => ({
@@ -255,6 +258,7 @@ const normalizeEpisodeHandle = ({
     type,
     resolution,
     size,
+    batch,
     teamEpisode:
       teamEpisode
         ? {
@@ -311,8 +315,10 @@ const normalizeTitleHandle = ({
       type,
       url
     })) ?? [],
-    names: names?.map(({ language, name }) => ({
-      language, name
+    names: names?.map(({ search, language, name }) => ({
+      search,
+      language,
+      name
     })) ?? [],
     recommended: recommended?.map(normalizeTitleHandle) ?? [],
     related: related?.map(({ reference, relation }) => ({
@@ -441,6 +447,14 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   //         A.uniq(Team.EqByTag)
   //       )
 
+  const searchNames =
+    pipe(
+      title.names,
+      A.filter(({ search }) => Boolean(search))
+    )
+
+  console.log('names', title.names)
+
   console.log(
     'pipe test',
     pipe(
@@ -463,13 +477,41 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
         .map(([val]) => val)
         .filter(val => val.trim().length)
     )[0]
+    .replace(/^[\s:\-\!]*?(.*?)[\s:\-\!]*?$/, '$1')
 
   console.log('mostCommonSubnames', mostCommonSubnames)
+
+  const mostCommonSubnames2 =
+      pipe(
+        title.names,
+        A.uniq(Name.EqByName)
+      )
+        .flatMap(name =>
+          title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
+        )
+        .map(alignment => alignment)
+
+  console.log('mostCommonSubnames2', mostCommonSubnames2)
+
+  // console.log('mostCommonSubnames', mostCommonSubnames)
+
+  
+
+  const titles = []
 
   // @ts-ignore
   const _searchedEpisodeHandles = await searchEpisode({
     // categories: [Category.ANIME],
-    search: `${mostCommonSubnames ? mostCommonSubnames : title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
+    titles:
+      [
+        ...title.names.filter((name) => name.language === 'ja-en'),
+        { handle: undefined, search: true, name: mostCommonSubnames, language: '' },
+        ...title.names.filter((name) => name.language !== 'ja-en'),
+      ],
+    season: episodePreSearch.season.at(0)?.season,
+    number: episodePreSearch.number.at(0)?.number,
+    // batch: 
+    // search: `${mostCommonSubnames ? mostCommonSubnames : title.names.find((name) => name.language === 'ja-en')?.name} ${episodePreSearch.number.at(0)?.number.toString().padStart(2, '0')}`,
     // search: episodePreSearch.names.find((name) => name.language === 'ja-en')?.name,
     // title: args.title
   })

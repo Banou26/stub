@@ -54,9 +54,9 @@ export const getAlignedStringParts = (str: string, str2: string): string[] => {
 	return customResult
 }
 
-console.clear()
-console.log(getAlignedStringParts(
-	'Mushoku Tensei: Isekai Ittara Honki Dasu',
-	'Mushoku Tensei: Jobless Reincarnation'
-))
+// console.clear()
+// console.log(getAlignedStringParts(
+// 	'Mushoku Tensei: Isekai Ittara Honki Dasu',
+// 	'Mushoku Tensei: Jobless Reincarnation'
+// ))
 // console.log(getAlignedStringParts('Mushoku Tensei: Isekai Ittara Honki Dasu', 'Mushoku Tensei: Jobless Reincarnation'))

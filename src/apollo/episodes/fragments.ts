@@ -62,6 +62,7 @@ export const EPISODE_HANDLE_FRAGMENT = gql`
     ...ImageFragment
     ...SynopsisFragment
     ...TeamEpisodeFragment
+    batch
     related {
       ...HandleFragment
     }

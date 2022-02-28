@@ -62,6 +62,7 @@ export type Image = {
 export type Name = {
   language: string
   name: string
+  search?: boolean
 }
 
 export type Synopsis = {
@@ -181,6 +182,7 @@ export type EpisodeHandle =
     resolution?: Resolution
     size?: number
     teamEpisode?: TeamEpisode
+    batch?: boolean
   }
 
 export type SearchFilter = {
@@ -292,7 +294,9 @@ type QueryResource =
   QueryResourceInterfaceSchemeId
 
 interface SearchResource {
-  search?: string
+  titles: string[]
+  season?: number
+  number?: number
   categories: Category[]
   latest?: boolean
   pagination?: string

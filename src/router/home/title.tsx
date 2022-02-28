@@ -12,6 +12,7 @@ import { Category, diceCompare } from 'src/lib'
 import { getRoutePath, Route } from '../path'
 import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from 'src/lib/utils/bytes'
+import { useEffect, useState } from 'react'
 
 const style = css`
   display: grid;
@@ -83,12 +84,27 @@ const style = css`
       h2 {
         margin-bottom: 2.5rem;
       }
+
+      .resolutions {
+        display: grid;
+        grid-auto-flow: column;
+        grid-gap: 1rem;
+        span {
+          cursor: pointer;
+          padding: 1rem;
+          text-align: center;
+        }
+        .selected {
+          background-color: rgb(75, 75, 75);
+        }
+      }
     }
   }
 `
 
 export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
+  const [selectedResolution, setResolution] = useState(1080)
   const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const firstEpisodeUri = title?.episodes.at(0)?.uri
   const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
@@ -135,11 +151,18 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       A.sort(byResolution)
     )
 
+  const resolutions = mediaEpisodesNameByResolution.map(([resolution]) => Number(resolution))
+
+  useEffect(() => {
+    if(!resolutions.length) return
+    if(!resolutions.includes(1080)) setResolution(Math.max(...resolutions))
+  }, [resolutions.join(',')])
+
   console.log('title', title)
   console.log('episode', episode)
   console.log('targets', targets)
   console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
-
+  console.log('selectedResolution', selectedResolution)
   return (
     <div css={style}>
       <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
@@ -181,44 +204,58 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             <br />
             <div>Episodes found:</div>
             <br />
+            <div className='resolutions'>
+              {
+                mediaEpisodesNameByResolution.map(([resolution]) =>
+                  <span key={resolution} className={Number(resolution) === selectedResolution ? 'selected' : ''} onClick={() => setResolution(Number(resolution))}>{resolution ? `${resolution}p` : 'Unknown resolution'}</span>
+                )
+              }
+            </div>
+            <br />
             <div>
               {
-                mediaEpisodesNameByResolution.map(([resolution, episodeNames]) =>
-                  <div key={resolution}>
-                    <div>{resolution ? `${resolution}p` : 'Unknown resolution'}</div>
-                    <div>
-                      {
-                        episodeNames
-                          .map(name => (
-                            <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
-                              {
-                                !loadingTargets
-                                && (
-                                  <img
-                                    src={getSchemeTarget(name.handle.scheme)!.icon}
-                                    alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
-                                    title={getSchemeTarget(name.handle.scheme)!.name}
-                                  />
-                                )
-                              }
-                              <a href={name.handle.url}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
-                              {
-                                !loadingTargets
-                                && name.handle.teamEpisode?.team.icon
-                                && (
-                                  <img
-                                    src={name.handle.teamEpisode.team.icon}
-                                    alt={`${name.handle.teamEpisode.team.name} favicon`}
-                                    title={name.handle.teamEpisode.team.name}
-                                  />
-                                )
-                              }
-                            </div>
-                          ))
-                      }
+                mediaEpisodesNameByResolution
+                  .filter(([resolution]) => Number(resolution) === selectedResolution)
+                  .map(([resolution, episodeNames]) =>
+                    <div key={resolution}>
+                      <div>
+                        {
+                          episodeNames
+                            .map(name => (
+                              <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+                                {
+                                  name.handle.batch
+                                    ? '[BATCH]'
+                                    : ''
+                                }
+                                {
+                                  !loadingTargets
+                                  && (
+                                    <img
+                                      src={getSchemeTarget(name.handle.scheme)!.icon}
+                                      alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
+                                      title={getSchemeTarget(name.handle.scheme)!.name}
+                                    />
+                                  )
+                                }
+                                <a href={name.handle.url}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
+                                {
+                                  !loadingTargets
+                                  && name.handle.teamEpisode?.team.icon
+                                  && (
+                                    <img
+                                      src={name.handle.teamEpisode.team.icon}
+                                      alt={`${name.handle.teamEpisode.team.name} favicon`}
+                                      title={name.handle.teamEpisode.team.name}
+                                    />
+                                  )
+                                }
+                              </div>
+                            ))
+                        }
+                      </div>
                     </div>
-                  </div>
-                )
+                  )
               }
             </div>
           </div>
