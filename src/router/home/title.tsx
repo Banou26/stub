@@ -13,6 +13,7 @@ import { getRoutePath, Route } from '../path'
 import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from 'src/lib/utils/bytes'
 import { useEffect, useState } from 'react'
+import { option } from 'fp-ts'
 
 const style = css`
   display: grid;
@@ -31,12 +32,16 @@ const style = css`
   h1 + div {
     font-weight: 500;
     margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.1rem solid rgb(75, 75, 75);
   }
 
   .synopsis {
     font-weight: 500;
     line-height: 2.5rem;
     white-space: pre-wrap;
+    padding-bottom: 1rem;
+    border-bottom: 0.1rem solid rgb(75, 75, 75);
   }
 
   .episodes {
@@ -50,6 +55,7 @@ const style = css`
       grid-auto-rows: 7.5rem;
       grid-gap: 1rem;
       padding: 10rem;
+      padding-top: 5rem;
 
       .episode {
         display: flex;
@@ -78,17 +84,21 @@ const style = css`
     }
 
     .episode-info {
+      height: 90rem;
       background-color: rgb(35, 35, 35);
       padding: 2.5rem;
 
       h2 {
         margin-bottom: 2.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 0.1rem solid rgb(75, 75, 75);
       }
 
       .resolutions {
         display: grid;
         grid-auto-flow: column;
         grid-gap: 1rem;
+
         span {
           cursor: pointer;
           padding: 1rem;
@@ -101,6 +111,8 @@ const style = css`
     }
   }
 `
+
+type EpisodeHandleName = GetEpisode['episode']['names'][number]
 
 export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
@@ -132,13 +144,13 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const byResolution =
     pipe(
       reverse(N.Ord),
-      contramap(([resolution]: [string, NonEmptyArray<GetEpisode['episode']['names'][number]>]) => Number(resolution))
+      contramap(([resolution]: [number, NonEmptyArray<EpisodeHandleName>]) => resolution)
     )
 
   const byTitleSimilarity =
     pipe(
       reverse(N.Ord),
-      contramap((_title: GetEpisode['episode']['names'][number]) => diceCompare(title?.names.at(0)?.name!, _title.name))
+      contramap((_title: EpisodeHandleName) => diceCompare(title?.names.at(0)?.name!, _title.name))
     )
 
   const mediaEpisodesNameByResolution =
@@ -148,21 +160,73 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       A.sort(byTitleSimilarity),
       groupBy(name => name.handle.resolution!.toString()),
       R.toArray,
+      A.map(([resolution, name]) => [Number(resolution), name] as const),
       A.sort(byResolution)
     )
 
-  const resolutions = mediaEpisodesNameByResolution.map(([resolution]) => Number(resolution))
+  const resolutions =
+    pipe(
+      mediaEpisodesNameByResolution,
+      A.map(([resolution]) => resolution)
+    )
 
   useEffect(() => {
     if(!resolutions.length) return
     if(!resolutions.includes(1080)) setResolution(Math.max(...resolutions))
   }, [resolutions.join(',')])
 
+  const selectedResolutionEpisodes =
+    pipe(
+      mediaEpisodesNameByResolution,
+      A.filter(([resolution]) => resolution === selectedResolution),
+      A.map(([, names]) => names),
+      A.flatten
+    )
+
+  const { left: singularEpisodes, right: batchEpisodes } =
+    pipe(
+      selectedResolutionEpisodes,
+      A.partition((name) => Boolean(name.handle.batch))
+    )
+
   console.log('title', title)
   console.log('episode', episode)
   console.log('targets', targets)
   console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
   console.log('selectedResolution', selectedResolution)
+
+  const renderEpisodeHandleName = (name: EpisodeHandleName) => (
+    <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+      {
+        name.handle.batch
+          ? '[BATCH]'
+          : ''
+      }
+      {
+        !loadingTargets
+        && (
+          <img
+            src={getSchemeTarget(name.handle.scheme)!.icon}
+            alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
+            title={getSchemeTarget(name.handle.scheme)!.name}
+          />
+        )
+      }
+      <a href={name.handle.url}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
+      {
+        !loadingTargets
+        && name.handle.teamEpisode?.team.icon
+        && (
+          <img
+            src={name.handle.teamEpisode.team.icon}
+            alt={`${name.handle.teamEpisode.team.name} favicon`}
+            title={name.handle.teamEpisode.team.name}
+          />
+        )
+      }
+    </div>
+  )
+
   return (
     <div css={style}>
       <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
@@ -201,9 +265,6 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
           <div>
             <br />
             <br />
-            <br />
-            <div>Episodes found:</div>
-            <br />
             <div className='resolutions'>
               {
                 mediaEpisodesNameByResolution.map(([resolution]) =>
@@ -213,50 +274,9 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             </div>
             <br />
             <div>
-              {
-                mediaEpisodesNameByResolution
-                  .filter(([resolution]) => Number(resolution) === selectedResolution)
-                  .map(([resolution, episodeNames]) =>
-                    <div key={resolution}>
-                      <div>
-                        {
-                          episodeNames
-                            .map(name => (
-                              <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
-                                {
-                                  name.handle.batch
-                                    ? '[BATCH]'
-                                    : ''
-                                }
-                                {
-                                  !loadingTargets
-                                  && (
-                                    <img
-                                      src={getSchemeTarget(name.handle.scheme)!.icon}
-                                      alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
-                                      title={getSchemeTarget(name.handle.scheme)!.name}
-                                    />
-                                  )
-                                }
-                                <a href={name.handle.url}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a>
-                                {
-                                  !loadingTargets
-                                  && name.handle.teamEpisode?.team.icon
-                                  && (
-                                    <img
-                                      src={name.handle.teamEpisode.team.icon}
-                                      alt={`${name.handle.teamEpisode.team.name} favicon`}
-                                      title={name.handle.teamEpisode.team.name}
-                                    />
-                                  )
-                                }
-                              </div>
-                            ))
-                        }
-                      </div>
-                    </div>
-                  )
-              }
+              {batchEpisodes.map(renderEpisodeHandleName)}
+              <br />
+              {singularEpisodes.map(renderEpisodeHandleName)}
             </div>
           </div>
         </div>
