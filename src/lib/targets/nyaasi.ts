@@ -175,12 +175,12 @@ const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisod
                 console.log('getTorrentAsEpisodeAndTeam, faviconUrl', faviconUrl)
                 if (!faviconUrl) return undefined
                 // todo: check if this causes any issues or if we cant just keep doing that (mostly in terms of image format support)
-                return faviconUrl
-                // return (
-                //   fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() })
-                //     .then(res => res.blob())
-                //     .then(blob => URL.createObjectURL(blob))
-                // )
+                // return faviconUrl
+                return (
+                  fetch(faviconUrl, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+                    .then(res => res.blob())
+                    .then(blob => URL.createObjectURL(blob))
+                )
               })
           )
           : Promise.resolve(undefined)
