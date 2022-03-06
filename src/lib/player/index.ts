@@ -10,7 +10,7 @@ import SimplePeer from 'simple-peer'
 import { SubtitleParser } from 'matroska-subtitles'
 import SubtitlesOctopus from 'libass-wasm'
 
-import { client as apolloClient, makeDownload, HTTP_TORRENT_SEED, HYBRID_TORRENT_SEED, HYBRID_TORRENT_SEED_SIGNAL } from '../../apollo'
+import { client as apolloClient } from '../../apollo'
 import { default as IDBChunkStore } from './idb-store'
 
 import { remux } from '@banou26/oz-libav'
@@ -530,7 +530,7 @@ const playFile = async (file: ReadableStream, fileSize: number) => {
   await appendChunk(chunks[0])
 }
 
-const makeHttpTorrent = ({ torrent, download }: { torrent: Torrent, download: any }) => {
+const makeHttpTorrent = ({ torrent }: { torrent: Torrent }) => {
   console.log(torrent)
   torrent.on('ready', () => {
     console.log('torrent ready')
@@ -781,10 +781,10 @@ export const torrent = async ({ data: { magnet: { uri } }, installedPackage, por
         // @ts-ignore
         { store: function (chunkLength, opts) { return new IDBChunkStore(chunkLength, opts) } }
       ),
-    download: makeDownload({
-      uri,
-      filename
-    })
+    // download: makeDownload({
+    //   uri,
+    //   filename
+    // })
   })
 
   // makeTorrent({

@@ -4,6 +4,8 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
+    "@types/bittorrent-protocol": "^3.1.2",
+    "@types/simple-peer": "^9.11.4",
     "concurrently": "^6.3.0",
     "esbuild": "^0.13.3",
     "esbuild-plugin-alias": "^0.2.0",
@@ -43,6 +45,12 @@
     "@mfkn/fkn-lib": "file:../lib",
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.27",
+    "assert": "^2.0.0",
+    "browserify-fs": "^1.0.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "events": "^3.3.0",
     "fp-ts": "^2.11.8",
     "fp-ts-std": "^0.13.1",
     "graphql": "^16.0.1",
@@ -50,11 +58,16 @@
     "libass-wasm": "^4.0.0",
     "matroska-subtitles": "^3.3.2",
     "mp4box": "^0.4.9",
+    "path": "^0.12.7",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "seqalign": "^1.0.6",
     "simple-peer": "^9.11.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.0",
+    "util": "^0.12.4",
     "webtorrent": "^1.8.4"
   }
 }
