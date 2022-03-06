@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
+    "@banou26/oz-libav": "^0.0.2-ci-1324798297.0",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@mfkn/fkn-lib": "file:../lib",
@@ -45,9 +46,15 @@
     "fp-ts": "^2.11.8",
     "fp-ts-std": "^0.13.1",
     "graphql": "^16.0.1",
+    "idb": "^7.0.0",
+    "libass-wasm": "^4.0.0",
+    "matroska-subtitles": "^3.3.2",
+    "mp4box": "^0.4.9",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "seqalign": "^1.0.6"
+    "seqalign": "^1.0.6",
+    "simple-peer": "^9.11.1",
+    "webtorrent": "^1.8.4"
   }
 }
