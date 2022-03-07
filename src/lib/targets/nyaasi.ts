@@ -203,7 +203,7 @@ const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisod
   ] as [TeamEpisode, Team]
 }
 
-export const getItemAsEpisode = async (elem: HTMLElement): Impl<EpisodeHandle> => {
+export const getItemAsEpisode = async (elem: HTMLElement): Promise<Impl<EpisodeHandle>> => {
   const row = getItem(elem)
   // console.log(row)
   const { name, group: groupTag, meta, batch, resolution, type } = getTitleFromTrustedTorrentName(row.name)

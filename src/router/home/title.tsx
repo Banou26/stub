@@ -13,7 +13,6 @@ import { getRoutePath, Route } from '../path'
 import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from 'src/lib/utils/bytes'
 import { useEffect, useState } from 'react'
-import { option } from 'fp-ts'
 
 const style = css`
   display: grid;

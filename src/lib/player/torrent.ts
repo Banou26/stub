@@ -9,6 +9,8 @@ import { openDB, DBSchema } from 'idb'
 import SimplePeer from 'simple-peer'
 import { SubtitleParser } from 'matroska-subtitles'
 import SubtitlesOctopus from 'libass-wasm'
+import parseTorrent, { toMagnetURI } from 'parse-torrent'
+
 
 import { client as apolloClient } from '../../apollo'
 import { default as IDBChunkStore } from './idb-store'
@@ -112,7 +114,7 @@ const downloadArrayBuffer = buffer => {
 
 // todo: transform this code into a stream based transmuxer
 // todo: use available file systems(IDB, NativeFileSystem, ect...) to save the buffers to reduce the memory usage
-const playFile = async (file: ReadableStream, fileSize: number) => {
+const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoElement, file: ReadableStream, fileSize: number }) => {
   console.log('playFile', file, fileSize)
   // const fileStream: Readable = file.createReadStream()
 
@@ -346,7 +348,7 @@ const playFile = async (file: ReadableStream, fileSize: number) => {
   const duration = getInfo().input.duration / 1_000_000
   console.log('duration', duration)
 
-  const video = document.createElement('video')
+  const video = _video ?? document.createElement('video')
   video.autoplay = true
   video.controls = true
   video.volume = 0
@@ -354,7 +356,7 @@ const playFile = async (file: ReadableStream, fileSize: number) => {
     // @ts-ignore
     console.error(ev.target.error)
   })
-  document.body.appendChild(video)
+  if (!_video) document.body.appendChild(video)
 
   if (header) {
     subtitlesOctopusInstance = new SubtitlesOctopus({
@@ -530,7 +532,7 @@ const playFile = async (file: ReadableStream, fileSize: number) => {
   await appendChunk(chunks[0])
 }
 
-const makeHttpTorrent = ({ torrent }: { torrent: Torrent }) => {
+const makeHttpTorrent = ({ video, torrent }: { video: HTMLVideoElement, torrent: Torrent }) => {
   console.log(torrent)
   torrent.on('ready', () => {
     console.log('torrent ready')
@@ -592,7 +594,7 @@ const makeHttpTorrent = ({ torrent }: { torrent: Torrent }) => {
       console.log('fileStream err')
     })
 
-    playFile(stream, file.length)
+    playFile({ video, file: stream, fileSize: file.length})
     // file.appendTo('body')
     console.log('file', file)
   })
@@ -764,17 +766,30 @@ const makeTorrent = ({ torrent, download }) => {
 // }, 1000)
 
 // todo: move the webtorrent client to its own out of process iframe
-export const torrent = async ({ data: { magnet: { uri } }, installedPackage, port }) => {
+export const torrent = async ({ video, torrentFile }: { video: HTMLVideoElement, torrentFile: ArrayBuffer }) => {
+  const buffer = Buffer.from(torrentFile)
   // const { send, events } = makeEventChannel(port)
   if (!client) client = new WebTorrent()
-  const searchParams = new URLSearchParams(uri)
-  const filename = searchParams.get('dn') ?? <string>searchParams.get('xt')
+  // const searchParams = new URLSearchParams(uri)
+  // const filename = searchParams.get('dn') ?? <string>searchParams.get('xt')
   // console.log(`torrent ${filename} added`)
   // console.log(uri + '&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com')
-
-  const res = await (await fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
+  const _torrent = parseTorrent(buffer)
+  const torrent = {
+    ..._torrent,
+    announce: [
+      ..._torrent.announce ?? [],
+      'wss://tracker.btorrent.xyz',
+      'wss://tracker.openwebtorrent.com'
+    ]
+  }
+  console.log('torrent', torrent)
+  const uri = toMagnetURI(torrent)
+  console.log('torrent uri', uri)
+  const res = await (await fetch(`http://localhost:4001/v0/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
 
   makeHttpTorrent({
+    video,
     torrent:
       client.add(
         Buffer.from(res),
