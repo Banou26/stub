@@ -39,7 +39,12 @@ esbuild.build({
       'assert': path.resolve('./node_modules/assert/build/assert.js'),
       'path': path.resolve('./node_modules/path/path.js'),
     }),
-  ]
+  ],
+  define: {
+    'process.platform': '"web"',
+    'process.env.WEB_ORIGIN': '"http://localhost:1234"',
+    'process.env.WEB_SANDBOX_ORIGIN': '"http://localhost:2345"'
+  }
 })
 
 if (process.argv.includes('-s') || process.argv.includes('--serve')) {
