@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import { useQuery } from '@apollo/client'
-import { Link } from 'raviger'
+import { Link, navigate } from 'raviger'
 import { groupBy, NonEmptyArray, sort, sortBy } from 'fp-ts/NonEmptyArray'
 import * as R from 'fp-ts/lib/Record'
 import { reverse, contramap } from 'fp-ts/ord'
@@ -246,7 +246,15 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
           {
             title?.episodes.map(episode => (
               // todo: replace the episode number with a real number
-              <Link key={episode.uri} className={`episode ${episode.uri === (episodeUri ?? firstEpisodeUri) ? 'selected' : ''}`} href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}>
+              <Link
+                key={episode.uri}
+                className={`episode ${episode.uri === (episodeUri ?? firstEpisodeUri) ? 'selected' : ''}`}
+                href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}
+                onClick={(ev) => {
+                  ev.preventDefault()
+                  navigate(getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri }), true)
+                }}
+              >
                 <span className="number">{episode.names?.at(0)?.name ? episode.number?.at(0).number ?? '' : ''}</span>
                 <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number?.at(0).number}`}</span>
                 <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>

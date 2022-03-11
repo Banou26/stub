@@ -121,7 +121,11 @@ const filterTargets = <T extends keyof Target>(
     .filter(target =>
       Object
         .keys(params ?? {})
-        .every(key => target[method]?.[key] === params[key])
+        .every(key =>
+          Array.isArray(params[key])
+            ? target[method]?.[key].filter(item => params[key].includes(item)).length === params[key].length
+            : target[method]?.[key] === params[key]
+        )
     )
 
 // todo: try to fix the typing issues
@@ -512,7 +516,6 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   const searchedEpisodeHandles = _searchedEpisodeHandles[0]?.handles ?? []
   const postSearchHandles = [...episodeHandles, ...searchedEpisodeHandles]
   const postSearchEpisode = makeEpisodeFromEpisodeHandles(postSearchHandles)
-  console.log('postSearchEpisode', postSearchEpisode)
   return postSearchEpisode
 }
 

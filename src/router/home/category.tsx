@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
 
-import { getLatest, Category, TitleHandle } from 'src/lib'
+import { getLatest, Category, TitleHandle, searchTitle } from 'src/lib'
 import Slider from 'src/components/slider'
 import Title from 'src/components/title'
 import { useFetch } from 'src/lib/hooks/utils'
@@ -29,7 +29,7 @@ padding: 5rem;
 `
 
 export default ({ category }: { category?: Category }) => {
-  const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => getLatest({ categories: [category!], title: true }), { skip: !category })
+  const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], latest: true }), { skip: !category })
 
   return (
     <div css={style}>

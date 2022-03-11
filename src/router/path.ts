@@ -5,7 +5,8 @@ export enum Route {
   HOME = 'HOME',
   TITLE = 'TITLE',
   TITLE_EPISODE = 'TITLE_EPISODE',
-  WATCH = 'WATCH'
+  WATCH = 'WATCH',
+  CATEGORY = 'CATEGORY'
 }
 
 const Routes = {
@@ -13,6 +14,7 @@ const Routes = {
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, episodeUri }: { uri: string, episodeUri: string }) => `/title/${uri}/${episodeUri}`,
   [Route.WATCH]: ({ uri, episodeUri, source }: { uri: string, episodeUri: string, source: string }) => `/watch/${uri}/${episodeUri}/${source}`,
+  [Route.CATEGORY]: ({ category }: { category: string }) => `/category/${category}`,
 }
 
 const RouterRoutes = {
@@ -20,6 +22,7 @@ const RouterRoutes = {
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:episodeUri',
   [Route.WATCH]: '/watch/:uri/:episodeUri/:source',
+  [Route.CATEGORY]: '/category/:category',
 }
 
 export const getRouterRoutePath =

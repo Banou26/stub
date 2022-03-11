@@ -294,7 +294,7 @@ type QueryResource =
   QueryResourceInterfaceSchemeId
 
 interface SearchResource {
-  titles: string[]
+  titles?: string[]
   season?: number
   number?: number
   categories: Category[]

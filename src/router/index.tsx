@@ -27,7 +27,10 @@ export const routes = {
   [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
   [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, episodeUri }) => <Title uri={uri} episodeUri={episodeUri}/>,
   [getRouterRoutePath(Route.WATCH)]: ({ uri, episodeUri, source }) => <Watch uri={uri} episodeUri={episodeUri} source={source}/>,
-
+  // [getRouterRoutePath(Route.CATEGORY)]: ({ category }) => <CategoryComponent category={Category[category.toLowerString()]}/>,
+  '/category/movies': () => <CategoryComponent category={Category.MOVIE}/>,
+  '/category/shows': () => <CategoryComponent category={Category.SHOW}/>,
+  '/category/animes': () => <CategoryComponent category={Category.ANIME}/>,
 }
 
 export default () => useRoutes(routes)
