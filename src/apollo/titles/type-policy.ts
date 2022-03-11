@@ -48,7 +48,6 @@ cache.policies.addTypePolicies({
           args.storage.var = makeVar(undefined)
           getTitle({ uri, scheme, id }).then((_title) => {
             const title = titleToTitleApolloCache(_title)
-            console.log('tp title', title)
             storage.var(title)
             cache.writeQuery({ query: GET_TITLE, data: { [fieldName]: title } })
           })

@@ -30,7 +30,7 @@ padding: 5rem;
 
 export default ({ category }: { category?: Category }) => {
   const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => getLatest({ categories: [category!], title: true }), { skip: !category })
-  console.log(categoryItems)
+
   return (
     <div css={style}>
       <div className="items">

@@ -181,8 +181,6 @@ const getTitleEpisodeInfo = (elem: Document): EpisodeHandle => {
       .map(str => str.trim())
     ?? []
 
-  console.log('AAAAAAAAAAAAAAAAAAAAAA', japaneseenTitle, '|', japaneseTitle)
-
   const dateElem = elem.querySelector<HTMLTableCellElement>('.episode-aired')
   const synopsis =
     elem
@@ -469,7 +467,6 @@ const getLatestEpisodes = () =>
 //   title ? getAnimeSeason()
 //   : episode ? getLatestEpisodes()
 //   : Promise.resolve([])
-console.log(iconUrl)
 globalThis.fetch(iconUrl)
 addTarget({
   name: 'MyAnimeList',

@@ -150,14 +150,12 @@ const getTitleFromTrustedTorrentName = (s: string): TitleMetadata => {
 }
 
 const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisode, Team]> => {
-  console.log('getTorrentAsEpisodeAndTeam, tag, url', tag, url)
   const teamPromise = new Promise<[TeamEpisode['url'], Team]>(async resolve => {
     const pageHtml = await (await fetch(url, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
     const doc =
       new DOMParser()
         .parseFromString(pageHtml, 'text/html')
     const informationUrl = doc.querySelector<HTMLAnchorElement>('[rel="noopener noreferrer nofollow"]')?.href
-    console.log('getTorrentAsEpisodeAndTeam, informationUrl', informationUrl)
     const informationPageFavicon =
       await (
         informationUrl
@@ -170,9 +168,7 @@ const getTorrentAsEpisodeAndTeam = async (tag, url: string): Promise<[TeamEpisod
                     .parseFromString(informationPageHtml, 'text/html')
                 const iconPath = doc.querySelector<HTMLLinkElement>('link[rel*="icon"]')?.href
                 if (!iconPath) return undefined
-                console.log('getTorrentAsEpisodeAndTeam, iconPath', iconPath)
                 const faviconUrl = new URL(new URL(iconPath).pathname, new URL(informationUrl).origin).href
-                console.log('getTorrentAsEpisodeAndTeam, faviconUrl', faviconUrl)
                 if (!faviconUrl) return undefined
                 // todo: check if this causes any issues or if we cant just keep doing that (mostly in terms of image format support)
                 // return faviconUrl
@@ -208,7 +204,6 @@ export const getItemAsEpisode = async (elem: HTMLElement): Promise<Impl<EpisodeH
   // console.log(row)
   const { name, group: groupTag, meta, batch, resolution, type } = getTitleFromTrustedTorrentName(row.name)
   const number = Number(/((0\d)|(\d{2,}))/.exec(name)?.[1] ?? 1)
-  console.log('getItemAsEpisode', groupTag, '||', name, '||', meta, '||', batch, '||', resolution, '||', type, '||', number)
 
   const existingTeam = groupTag ? getTeam(groupTag) : undefined
   const [teamEpisode, team] = existingTeam ? [undefined, await existingTeam] : await getTorrentAsEpisodeAndTeam(groupTag, row.link)
@@ -269,8 +264,6 @@ export const getAnimeTorrents = async ({ search = '' }: { search: string }) => {
 export const _searchEpisode = async ({ titles, season, number, ...rest }: { titles: Name[], season?: number, number?: number, batch?: boolean }): Promise<EpisodeHandle[]> => {
   const trustedSources = true
 
-  console.log('titles', titles)
-
   // todo: check if names containing parenthesis will cause problems with nyaa.si search engine
   const search =
     pipe(
@@ -284,7 +277,6 @@ export const _searchEpisode = async ({ titles, season, number, ...rest }: { titl
 
   // const search = `${mostCommonSubnames ? mostCommonSubnames : title.names.find((name) => name.language === 'ja-en')?.name} ${number ? number.toString().padStart(2, '0') : ''}`
 
-  console.log('nya searchEpisode', `https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, search, rest)
   const pageHtml = await (await fetch(`https://nyaa.si/?page=rss&f=${trustedSources ? 2 : 0}&c=1_2&q=${encodeURIComponent(search)}`, { proxyCache: (1000 * 60 * 60 * 5).toString() })).text()
   const doc =
     new DOMParser()
@@ -315,7 +307,6 @@ export const _searchEpisode = async ({ titles, season, number, ...rest }: { titl
   // const newTeams = findNewTeams(episodes)(await Promise.all(teams.values()))
   // console.log('newTeams', newTeams)
 
-  console.log('nyaa _searchEpisode episodes', episodes)
   return episodes
 }
 

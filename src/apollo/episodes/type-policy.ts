@@ -34,7 +34,6 @@ cache.policies.addTypePolicies({
           args.storage.var = makeVar(undefined)
           getEpisode({ uri, scheme, id, title: args.args.title }).then((_episode) => {
             const episode = episodeToEpisodeApolloCache(_episode)
-            console.log('tp episode', episode)
             storage.var(episode)
             cache.writeQuery({ query: GET_EPISODE, data: { [fieldName]: episode } })
           })

@@ -188,11 +188,11 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       A.partition((name) => Boolean(name.handle.batch))
     )
 
-  console.log('title', title)
-  console.log('episode', episode)
-  console.log('targets', targets)
-  console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
-  console.log('selectedResolution', selectedResolution)
+  // console.log('title', title)
+  // console.log('episode', episode)
+  // console.log('targets', targets)
+  // console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
+  // console.log('selectedResolution', selectedResolution)
 
   const renderEpisodeHandleName = (name: EpisodeHandleName) => (
     <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>

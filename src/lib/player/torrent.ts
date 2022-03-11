@@ -292,11 +292,9 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   }
 
   const mp4InfosPromise = new Promise<[string, any]>(resolve => {
-    console.log('REEEEEEEEEEEEEEEEEEEEEEEEEEEE')
     let mime = 'video/mp4; codecs=\"'
     let info
     mp4boxfile.onReady = (_info) => {
-      console.log('mp4boxfile.onReady AAAAAAAAAAAAAAAAAAAAAAAAAAAAA', _info)
       info = _info
       for (let i = 0; i < info.tracks.length; i++) {
         if (i !== 0) mime += ','
@@ -313,7 +311,6 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   let second = false
   const read = async () => {
     const { value: arrayBuffer, done } = await reader.read()
-    console.log('reader.read', arrayBuffer, done)
     if (done || !arrayBuffer) {
       resultBuffer = resultBuffer.slice(0, processedBytes)
       mp4boxfile.flush()
@@ -326,7 +323,6 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
       // @ts-ignore
       buffer.fileStart = processedBytes
       mp4boxfile.appendBuffer(buffer)
-      console.log('buffer', buffer)
     // }
 
     resultBuffer.set(arrayBuffer, processedBytes)
@@ -340,13 +336,10 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   }
 
   await read()
-  console.log('read after')
 
   const [ mime, info ] = await mp4InfosPromise
-  console.log('mp4InfosPromise', mime)
 
   const duration = getInfo().input.duration / 1_000_000
-  console.log('duration', duration)
 
   const video = _video ?? document.createElement('video')
   video.autoplay = true
@@ -366,7 +359,6 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
       workerUrl: '/subtitles-octopus-worker.js', // Link to WebAssembly-based file "libassjs-worker.js"
       legacyWorkerUrl: '/subtitles-octopus-worker-legacy.js' // Link to non-WebAssembly worker
     })
-    console.log('SubtitlesOctopus', SubtitlesOctopus)
   }
 
   const mediaSource = new MediaSource()
@@ -440,7 +432,6 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
 
   const abort = () =>
     new Promise(resolve => {
-      console.log('abort')
       abortResolve = resolve
       sourceBuffer.abort()
     })
@@ -535,14 +526,11 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
 const makeHttpTorrent = ({ video, torrent }: { video: HTMLVideoElement, torrent: Torrent }) => {
   console.log(torrent)
   torrent.on('ready', () => {
-    console.log('torrent ready')
     const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
     
     // file.appendTo('body')
-    console.log('file', file)
   })
   torrent.on('metadata', () => {
-    console.log('torrent metadata')
   })
   torrent.on('done', (...args) => console.log('done', ...args))
   // torrent.on('download', (...args) => console.log('download', ...args))
@@ -552,7 +540,6 @@ const makeHttpTorrent = ({ video, torrent }: { video: HTMLVideoElement, torrent:
   torrent.on('noPeers', (...args) => console.log('noPeers', ...args))
   torrent.on('ready', (...args) => console.log('ready', ...args))
   torrent.on('ready', async () => {
-    console.log('torrent ready')
     const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
 
     if (!file) return
@@ -582,21 +569,17 @@ const makeHttpTorrent = ({ video, torrent }: { video: HTMLVideoElement, torrent:
     fileStream.addListener('end', () => {
       if (!closed) controller.close()
       closed = true
-      console.log('fileStream end')
     })
     fileStream.addListener('close', () => {
       if (!closed) controller.close()
       closed = true
-      console.log('fileStream close')
     })
     fileStream.addListener('error', err => {
       controller.error(err)
-      console.log('fileStream err')
     })
 
     playFile({ video, file: stream, fileSize: file.length})
     // file.appendTo('body')
-    console.log('file', file)
   })
   // torrent.on('upload', (...args) => console.log('upload', ...args))
   torrent.on('warning', (...args) => console.log('warning', ...args))
@@ -641,24 +624,19 @@ const makeTorrent = ({ torrent, download }) => {
 
   })
   torrent.on('ready', () => {
-    console.log('torrent ready')
     const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
     playFile(torrent, file)
     // file.appendTo('body')
-    console.log('file', file)
   })
   // torrent.on('warning', err => console.log('torrent warning', err))
   torrent.on('error', err => console.log('torrent err', err))
   torrent.on('infoHash', () => console.log('torrent infoHash'))
   torrent.on('metadata', () => {
-    console.log('torrent metadata')
   })
   torrent.on('wire', (wire, address) => {
-    console.log('torrent wire new peer', wire, address)
     peers.push({ wire, address })
   })
   torrent.on('done', () => {
-    console.log('torrent done')
     completed = true
     download.update({ completed })
   })
@@ -783,9 +761,7 @@ export const torrent = async ({ video, torrentFile }: { video: HTMLVideoElement,
       'wss://tracker.openwebtorrent.com'
     ]
   }
-  console.log('torrent', torrent)
   const uri = toMagnetURI(torrent)
-  console.log('torrent uri', uri)
   const res = await (await fetch(`http://localhost:4001/v0/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
 
   makeHttpTorrent({

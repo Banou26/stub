@@ -404,12 +404,10 @@ export const getTitle: GetTitle['function'] = async (args) => {
   for (const handle of titleHandles) handles.push(handle)
 
   const title = makeTitleFromTitleHandles(titleHandles)
-  console.log('title', title)
   return title
 }
 
 export const getEpisode: GetEpisode['function'] = async (args) => {
-  console.log('getEpisode', args)
   const _targets = filterTargets({
     targets,
     method: 'getEpisode',
@@ -453,15 +451,15 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
       A.filter(({ search }) => Boolean(search))
     )
 
-  console.log('names', title.names)
+  // console.log('names', title.names)
 
-  console.log(
-    'pipe test',
-    pipe(
-      title.names,
-      A.uniq(Name.EqByName)
-    )
-  )
+  // console.log(
+  //   'pipe test',
+  //   pipe(
+  //     title.names,
+  //     A.uniq(Name.EqByName)
+  //   )
+  // )
 
   const mostCommonSubnames =
     findMostCommon(
@@ -479,19 +477,15 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
     )[0]
     .replace(/^[\s:\-\!]*?(.*?)[\s:\-\!]*?$/, '$1')
 
-  console.log('mostCommonSubnames', mostCommonSubnames)
-
-  const mostCommonSubnames2 =
-      pipe(
-        title.names,
-        A.uniq(Name.EqByName)
-      )
-        .flatMap(name =>
-          title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
-        )
-        .map(alignment => alignment)
-
-  console.log('mostCommonSubnames2', mostCommonSubnames2)
+  // const mostCommonSubnames2 =
+  //     pipe(
+  //       title.names,
+  //       A.uniq(Name.EqByName)
+  //     )
+  //       .flatMap(name =>
+  //         title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
+  //       )
+  //       .map(alignment => alignment)
 
   // console.log('mostCommonSubnames', mostCommonSubnames)
 
@@ -538,8 +532,6 @@ export const searchEpisode: SearchEpisode['function'] = async (args) => {
   }) as unknown as EpisodeHandle[]
 
   for (const handle of episodeHandles) handles.push(handle)
-
-  console.log('makeEpisodeFromEpisodeHandles(episodeHandles)', makeEpisodeFromEpisodeHandles(episodeHandles))
 
   return [makeEpisodeFromEpisodeHandles(episodeHandles)]
 }
