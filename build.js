@@ -9,6 +9,7 @@ import mime from 'mime'
 esbuild.build({
   watch: process.argv.includes('-w') || process.argv.includes('--watch'),
   entryPoints: ['./src/index.tsx'],
+  format: 'esm',
   bundle: true,
   inject: ['./src/react-shim.ts'],
   outfile: './dist/index.js',

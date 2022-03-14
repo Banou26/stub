@@ -16,6 +16,7 @@
   },
   "scripts": {
     "copy-libass": "npx --yes copyfiles -u 4 ./node_modules/libass-wasm/dist/js/* dist",
+    "copy-seal": "npx --yes copyfiles -u 3 ./node_modules/seal-wasm/build/*.wasm dist",
     "dev2": "concurrently \"npm run bundle\" \"npm run manifest\" \"npm run readme\"",
     "copy-oz-folder": "nodemon -e * --watch \".oz/**/*\" --exec \"xcopy /e /v /S /Y /D .oz dist\"",
     "manifest": "nodemon --watch src\\manifest.json --exec \"npm run copy-manifest & npm run copy-manifest-windows\"",
@@ -30,12 +31,14 @@
     "serve": "http-server --cors -p 4560 ./dist",
     "type-check": "tsc --incremental",
     "type-check-watch": "tsc --watch --incremental",
-    "build": "esbuild ./src/index.tsx  --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js && npm run copy-libass && npm run package-asar && npm run type-check",
+    "_build": "esbuild ./src/index.tsx  --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js && npm run copy-libass && npm run package-asar && npm run type-check",
     "build-watch": "esbuild ./src/index.tsx --watch --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js",
     "package-watch": "nodemon --watch src --watch ../lib/lib -e js,ts,tsx --exec \"npm run package-asar\"",
-    "build-index": "node ./build.js",
+    "build-index": "node ./build.js -m",
     "build-index-watch": "node ./build.js -w -s",
-    "watch": "concurrently \"npm run copy-libass\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
+    "build": "npm run copy-libass && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
+    "build-bypass-ts": "npm run copy-libass && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar",
+    "watch": "concurrently \"npm run copy-libass\" \"npm run copy-seal\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
     "dev": "npm run watch"
   },
   "dependencies": {

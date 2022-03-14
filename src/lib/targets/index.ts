@@ -1,5 +1,5 @@
 import * as A from 'fp-ts/lib/Array'
-
+import { swAlign } from 'seal-wasm'
 
 import { targets } from './targets'
 import Category from '../category'
@@ -465,6 +465,22 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   //   )
   // )
 
+  // const mostCommonSubnames =
+  //   findMostCommon(
+  //     pipe(
+  //       title.names,
+  //       A.uniq(Name.EqByName)
+  //     )
+  //       .flatMap(name =>
+  //         title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
+  //       )
+  //       .map(alignment => alignment.alignedSequences)
+  //       .filter(([val, val2]) => val === val2)
+  //       .map(([val]) => val)
+  //       .filter(val => val.trim().length)
+  //   )[0]
+  //   .replace(/^[\s:\-\!]*?(.*?)[\s:\-\!]*?$/, '$1')
+
   const mostCommonSubnames =
     findMostCommon(
       pipe(
@@ -472,9 +488,11 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
         A.uniq(Name.EqByName)
       )
         .flatMap(name =>
-          title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
+          // title.names.flatMap(_name => getAlignedStringParts(name.name, _name.name))
+          title.names.flatMap(_name => swAlign(name.name, _name.name, { alignment: 'local', equal: 2, align: -1, insert: -1, delete: -1 }))
         )
-        .map(alignment => alignment.alignedSequences)
+        .map(alignment => [alignment.alignedLeft, alignment.alignedRight])
+        // .map(alignment => alignment.alignedSequences)
         .filter(([val, val2]) => val === val2)
         .map(([val]) => val)
         .filter(val => val.trim().length)
