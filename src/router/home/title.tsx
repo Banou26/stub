@@ -115,7 +115,7 @@ type EpisodeHandleName = GetEpisode['episode']['names'][number]
 
 export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
-  const [selectedResolution, setResolution] = useState(1080)
+  const [selectedResolution, setResolution] = useState<number | undefined>(1080)
   const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const firstEpisodeUri = title?.episodes.at(0)?.uri
   const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
@@ -157,9 +157,10 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       episodesByNames,
       A.filter(name => !!name.handle.type),
       A.sort(byTitleSimilarity),
-      groupBy(name => name.handle.resolution!.toString()),
+      // @ts-ignore
+      groupBy(name => name.handle.resolution?.toString()),
       R.toArray,
-      A.map(([resolution, name]) => [Number(resolution), name] as const),
+      A.map(([resolution, name]) => [resolution ? Number(resolution) : undefined, name] as const),
       A.sort(byResolution)
     )
 
@@ -276,7 +277,17 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             <div className='resolutions'>
               {
                 mediaEpisodesNameByResolution.map(([resolution]) =>
-                  <span key={resolution} className={Number(resolution) === selectedResolution ? 'selected' : ''} onClick={() => setResolution(Number(resolution))}>{resolution ? `${resolution}p` : 'Unknown resolution'}</span>
+                  <span
+                    key={resolution}
+                    className={((resolution ? Number(resolution) : undefined) === selectedResolution) ? 'selected' : ''}
+                    onClick={() => setResolution(resolution ? Number(resolution) : undefined)}
+                  >
+                    {
+                      resolution
+                        ? `${resolution}p`
+                        : 'Unknown resolution'
+                    }
+                  </span>
                 )
               }
             </div>
