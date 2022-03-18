@@ -15,7 +15,7 @@
     "typescript": "^4.6.0-beta"
   },
   "scripts": {
-    "copy-libass": "npx --yes copyfiles -u 4 ./node_modules/libass-wasm/dist/js/* dist",
+    "copy-libass": "npx --yes copyfiles -u 4 ./node_modules/libass-wasm/dist/js/subtitles-octopus-worker.* ./node_modules/libass-wasm/dist/js/subtitles-octopus.js dist",
     "copy-seal": "npx --yes copyfiles -u 3 ./node_modules/seal-wasm/build/*.wasm dist",
     "dev2": "concurrently \"npm run bundle\" \"npm run manifest\" \"npm run readme\"",
     "copy-oz-folder": "nodemon -e * --watch \".oz/**/*\" --exec \"xcopy /e /v /S /Y /D .oz dist\"",
