@@ -32,10 +32,7 @@ const HeaderPage = ({ children, category }: { children: React.ReactNode, categor
   </Fragment>
 
 export const routes = {
-  [getRouterRoutePath(Route.HOME)]: () =>
-    <HeaderPage>
-      <Home/>
-    </HeaderPage>,
+  [getRouterRoutePath(Route.HOME)]: () => <Home/>,
   [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
   [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, episodeUri }) => <Title uri={uri} episodeUri={episodeUri}/>,
   [getRouterRoutePath(Route.WATCH)]: ({ uri, episodeUri, source }) => <Watch uri={uri} episodeUri={episodeUri} source={source}/>,
