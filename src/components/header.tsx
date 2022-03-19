@@ -67,9 +67,7 @@ const Header = ({ category }: { category?: Category }) => {
   const { register, watch, handleSubmit, getFieldState } = useForm()
   const search = watch('search')
   const [searchValue, setSearchValue] = useState(undefined)
-  const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => {
-    return searchTitle({ categories: [category!], search: searchValue })
-  }, { skip: !searchValue })
+  const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], search: searchValue }), { skip: !searchValue })
 
 
   useDebounce(() => {

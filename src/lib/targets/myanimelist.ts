@@ -534,7 +534,6 @@ addTarget({
     score: true,
     search: true,
     function: ({ latest, search }) =>
-      console.log('searchTitle', latest, search) ||
       latest ? getAnimeSeason()
       : search ? searchAnime({ search })
       : Promise.resolve([])
