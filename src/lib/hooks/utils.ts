@@ -35,7 +35,17 @@ interface UseFetchReturn<T = undefined, T2 extends Function | Parameters<Fetch>[
         : never
       )
       : T
-  refetch: Fetch
+  refetch: () =>
+    Promise<
+      T extends undefined
+        ? (
+          T2 extends (...args: any) => infer R ? Awaited<R>
+          : T3 extends RequestType ? RequestTypeResponse<T3>
+          : T2 extends RequestType ? RequestTypeResponse<T2>
+          : never
+        )
+        : T
+    >
 }
 
 export const useFetch =

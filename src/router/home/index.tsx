@@ -45,7 +45,7 @@ export default () => {
   return (
     <div css={style}>
       <div className="anime">
-        <Link href="/category/movies" className="category">Movies</Link>
+        <Link href="/category/movies" className="category">Movies[PLANNED]</Link>
         <Slider>
           {
             movies
@@ -58,7 +58,7 @@ export default () => {
           }
         </Slider>
 
-        <Link href="/category/shows" className="category">Shows</Link>
+        <Link href="/category/shows" className="category">Shows[PLANNED]</Link>
         <Slider>
           {
             shows

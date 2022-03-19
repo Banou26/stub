@@ -1,6 +1,6 @@
 import Category from '../category'
 import { fetch } from '@mfkn/fkn-lib'
-import { GetGenres, GenreHandle, TitleHandle } from '../types'
+import { GetGenres, GenreHandle, TitleHandle, Impl } from '../types'
 import { addTarget } from '.'
 import { fromUri } from '../utils'
 import { SearchTitle, GetTitle, ReleaseDate, EpisodeHandle, GetEpisode } from '..'
@@ -32,7 +32,7 @@ const fixOrigin = (url: string) => url.replace(document.location.origin, 'https:
 //         )
 //     )
 
-const getSeasonCardInfo = (elem: HTMLElement): TitleHandle => ({
+const getSeasonCardInfo = (elem: HTMLElement): Impl<TitleHandle> => ({
   scheme: 'mal',
   categories: [Category.ANIME],
   id: elem.querySelector<HTMLElement>('[id]')!.id.trim(),
@@ -81,6 +81,46 @@ export const getAnimeSeason = () =>
           .querySelectorAll('.seasonal-anime.js-seasonal-anime')
       ]
         .map(getSeasonCardInfo)
+    )
+
+const getSearchCardInfo = (elem: HTMLElement): Impl<TitleHandle> => ({
+  scheme: 'mal',
+  categories: [Category.ANIME],
+  id: elem.querySelector<HTMLAnchorElement>('.hoverinfo_trigger.fw-b.fl-l')!.id.trim().replace('sinfo', ''),
+  url: elem.querySelector<HTMLAnchorElement>('.hoverinfo_trigger.fw-b.fl-l')!.href,
+  images: [{
+    type: 'poster',
+    size: 'medium',
+    url: (elem.querySelector<HTMLImageElement>('.picSurround img')!.src || elem.querySelector<HTMLImageElement>('.picSurround img')!.dataset.src!).replace('r/50x70/', '')
+  }],
+  names: [{
+    search: true,
+    language: 'ja-en',
+    name: elem.querySelector('.title strong')!.textContent!.trim()!
+  }],
+  synopses: [{
+    language: 'en',
+    synopsis: elem.querySelector('.pt4')!.textContent!.trim()!
+  }],
+  genres: [],
+  releaseDates: [],
+  related: [],
+  episodes: [],
+  recommended: [],
+  tags: [],
+  handles: []
+})
+
+export const searchAnime = ({ search }: { search: string }) =>
+  fetch(`https://myanimelist.net/anime.php?${new URLSearchParams(`q=${search}`).toString()}&cat=anime`, { proxyCache: (1000 * 60 * 60 * 5).toString() })
+    .then(async res =>
+      [
+        ...new DOMParser()
+          .parseFromString(await res.text(), 'text/html')
+          .querySelectorAll('#content > div.js-categories-seasonal.js-block-list.list > table > tbody > tr')
+      ]
+        .slice(1)
+        .map(getSearchCardInfo)
     )
 
 const getEpisodeCardInfo = (elem: HTMLElement): TitleHandle => ({
@@ -492,7 +532,12 @@ addTarget({
     pagination: true,
     genres: true,
     score: true,
-    function: () => getAnimeSeason()
+    search: true,
+    function: ({ latest, search }) =>
+      console.log('searchTitle', latest, search) ||
+      latest ? getAnimeSeason()
+      : search ? searchAnime({ search })
+      : Promise.resolve([])
   },
   searchEpisode: {
     scheme: 'mal',

@@ -124,7 +124,7 @@ const filterTargets = <T extends keyof Target>(
         .every(key =>
           Array.isArray(params[key])
             ? target[method]?.[key].filter(item => params[key].includes(item)).length === params[key].length
-            : target[method]?.[key] === params[key]
+            : Boolean(target[method]?.[key]) === Boolean(params[key])
         )
     )
 
