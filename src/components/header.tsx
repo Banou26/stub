@@ -1,7 +1,7 @@
 
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
-import { Fragment, useEffect, useState } from 'react'
+import { FocusEventHandler, Fragment, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
 import { Category, searchTitle, TitleHandle } from 'src/lib'
@@ -84,7 +84,10 @@ const Header = ({ category }: { category?: Category }) => {
 
   const _showSearchResults = () => setShowSearchResults(true)
 
-  const hideSearchResults = () => setShowSearchResults(false)
+  const hideSearchResults = (ev: FocusEventHandler<HTMLInputElement>) => {
+    if (ev.relatedTarget.tagName === 'A') return
+    setShowSearchResults(false)
+  }
 
   return (
     <Fragment>
