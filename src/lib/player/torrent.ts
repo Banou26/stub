@@ -111,6 +111,7 @@ const downloadArrayBuffer = buffer => {
   };
   xhr.send();
 }
+// todo: impl performant indexedDB lib https://nolanlawson.com/2021/08/22/speeding-up-indexeddb-reads-and-writes/
 
 // todo: transform this code into a stream based transmuxer
 // todo: use available file systems(IDB, NativeFileSystem, ect...) to save the buffers to reduce the memory usage
@@ -152,6 +153,7 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   parser.on('file', file => {
     if (file.mimetype !== 'application/x-truetype-font') return
     files = [...files, file]
+    console.log('file:', file)
   })
 
   const toHHMMSSMS = (time: number) => {
@@ -453,26 +455,25 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   const initializationBuffer = resultBuffer.buffer.slice(0, mp4boxfile.moov.start + mp4boxfile.moov.size)
   await appendBuffer(initializationBuffer)
 
-
   const throttle = (func, limit) => {
     let inThrottle
-    return function() {
-      const args = arguments
-      const context = this
+    return (...args: any[]) => {
       if (!inThrottle) {
-        func.apply(context, args)
+        func(...args)
         inThrottle = true
-        setTimeout(() => inThrottle = false, limit)
+        setTimeout(() => {
+          inThrottle = false
+        }, limit)
       }
     }
   }
 
   const PRE_SEEK_NEEDED_BUFFERS_IN_SECONDS = 15
   const POST_SEEK_NEEDED_BUFFERS_IN_SECONDS = 30
+  const updateBufferTime = 250
 
   let currentSeek
-  const myEfficientFn = throttle(async (...args) => {
-    // console.log('myEfficientFn', args)
+  const myEfficientFn = throttle(async () => {
     const { currentTime } = video
     currentSeek = currentTime
     const neededChunks =
@@ -481,11 +482,10 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
           currentTime - PRE_SEEK_NEEDED_BUFFERS_IN_SECONDS < start
           && currentTime + POST_SEEK_NEEDED_BUFFERS_IN_SECONDS > end
         )
-    // console.log('neededChunks', neededChunks)
+
     const shouldUnbufferChunks =
       chunks
         .filter(chunk => !neededChunks.includes(chunk))
-    // console.log('shouldUnbufferChunks', shouldUnbufferChunks)
 
     if (sourceBuffer.updating) await abort()
     for (const chunk of shouldUnbufferChunks) {
@@ -512,25 +512,33 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
         break
       }
     }
-    // }
-  }, 10)
+  }, updateBufferTime)
+
+  video.addEventListener('waiting', (...args) => {
+    console.log('waiting')
+    setTimeout(() => {
+      myEfficientFn(...args)
+    }, updateBufferTime)
+  })
 
   video.addEventListener('seeking', (...args) => {
-    // console.log('\n\n\n\n\n\n\n\n\nseeking', video.currentTime)
-    // @ts-ignore
     myEfficientFn(...args)
   })
 
   video.addEventListener('timeupdate', (...args) => {
-    // console.log('\n\n\n\n\n\n\n\n\ntimeupdate', video.currentTime)
-    // @ts-ignore
     myEfficientFn(...args)
   })
 
   await appendChunk(chunks[0])
 }
 
-const makeHttpTorrent = ({ video, torrent }: { video: HTMLVideoElement, torrent: Torrent }) => {
+const makeHttpTorrent = async ({ uri, video, torrent }: { uri: string, video: HTMLVideoElement, torrent: Torrent }) => {
+  console.log('makeHttpTorrent', uri, video, torrent)
+  const { headers, body: stream } = await (await fetch(`http://localhost:4001/v0/torrent/${encodeURIComponent(uri)}`))
+  const fileSize = Number(headers.get('Content-Length'))
+  if (!stream || !fileSize) throw new Error('no stream or Content-Length returned from the response')
+  playFile({ video, file: stream, fileSize })
+  return
   console.log(torrent)
   torrent.on('ready', () => {
     const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
@@ -594,75 +602,75 @@ const makeHttpTorrent = ({ video, torrent }: { video: HTMLVideoElement, torrent:
 }
 
 
-const makeTorrent = ({ torrent, download }) => {
-  console.log(torrent)
-  let completed = false
-  const peers: Peer[] = []
-  download.update({
-    pause: () => {
-      download.update({ paused: true })
-      torrent.destroy()
-    },
-    resume: () => {
-      makeTorrent({ torrent: client.add(torrent.magnetURI, { store: torrent.store }), download })
-      download.update({ paused: false })
-    }
-  })
-  torrent.on('noPeers', () => {
-    var peer = new SimplePeer({ initiator: true })
-    let closed = false
-    peer.on('connect', () => console.log('peer connected'))
-    const subscription = apolloClient.subscribe({
-      query: HYBRID_TORRENT_SEED,
-      variables: { input: { magnetURI: torrent.magnetURI } }
-    })
-    subscription.subscribe(res => {
-      if (!res.data?.hybridTorrentSeed?.signal || closed || peer.destroyed) return
-      console.log('res.data?.hybridTorrentSeed?.signal', res.data?.hybridTorrentSeed?.signal)
-      peer.signal(res.data?.hybridTorrentSeed?.signal)
-    })
-    peer.on('close', () => {
-      closed = true
-    })
-    peer.on('signal', signal => apolloClient.mutate({ mutation: HYBRID_TORRENT_SEED_SIGNAL, variables: { input: { magnetURI: torrent.magnetURI, signal } } }))
-    torrent.addPeer(peer)
-    void console.log('torrent noPeers :)')
-    download.update({ peers })
+// const makeTorrent = ({ torrent, download }) => {
+//   console.log(torrent)
+//   let completed = false
+//   const peers: Peer[] = []
+//   download.update({
+//     pause: () => {
+//       download.update({ paused: true })
+//       torrent.destroy()
+//     },
+//     resume: () => {
+//       makeTorrent({ torrent: client.add(torrent.magnetURI, { store: torrent.store }), download })
+//       download.update({ paused: false })
+//     }
+//   })
+//   torrent.on('noPeers', () => {
+//     var peer = new SimplePeer({ initiator: true })
+//     let closed = false
+//     peer.on('connect', () => console.log('peer connected'))
+//     const subscription = apolloClient.subscribe({
+//       query: HYBRID_TORRENT_SEED,
+//       variables: { input: { magnetURI: torrent.magnetURI } }
+//     })
+//     subscription.subscribe(res => {
+//       if (!res.data?.hybridTorrentSeed?.signal || closed || peer.destroyed) return
+//       console.log('res.data?.hybridTorrentSeed?.signal', res.data?.hybridTorrentSeed?.signal)
+//       peer.signal(res.data?.hybridTorrentSeed?.signal)
+//     })
+//     peer.on('close', () => {
+//       closed = true
+//     })
+//     peer.on('signal', signal => apolloClient.mutate({ mutation: HYBRID_TORRENT_SEED_SIGNAL, variables: { input: { magnetURI: torrent.magnetURI, signal } } }))
+//     torrent.addPeer(peer)
+//     void console.log('torrent noPeers :)')
+//     download.update({ peers })
 
-  })
-  torrent.on('ready', () => {
-    const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
-    playFile(torrent, file)
-    // file.appendTo('body')
-  })
-  // torrent.on('warning', err => console.log('torrent warning', err))
-  torrent.on('error', err => console.log('torrent err', err))
-  torrent.on('infoHash', () => console.log('torrent infoHash'))
-  torrent.on('metadata', () => {
-  })
-  torrent.on('wire', (wire, address) => {
-    peers.push({ wire, address })
-  })
-  torrent.on('done', () => {
-    completed = true
-    download.update({ completed })
-  })
-  let lastDownloadUpdate = Date.now()
-  torrent.on('download', () => {
-    if (Date.now() - lastDownloadUpdate < 100) return
-    lastDownloadUpdate = Date.now()
-    download.update({
-      paused: torrent.paused,
-      bytes: torrent.downloaded,
-      totalBytes: torrent.length,
-      uploadedBytes: torrent.uploaded,
-      downloadBandwith: torrent.downloadSpeed,
-      uploadBandwith: torrent.uploadSpeed,
-      remainingTime: torrent.timeRemaining,
-      completed
-    })
-  })
-}
+//   })
+//   torrent.on('ready', () => {
+//     const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
+//     playFile(torrent, file)
+//     // file.appendTo('body')
+//   })
+//   // torrent.on('warning', err => console.log('torrent warning', err))
+//   torrent.on('error', err => console.log('torrent err', err))
+//   torrent.on('infoHash', () => console.log('torrent infoHash'))
+//   torrent.on('metadata', () => {
+//   })
+//   torrent.on('wire', (wire, address) => {
+//     peers.push({ wire, address })
+//   })
+//   torrent.on('done', () => {
+//     completed = true
+//     download.update({ completed })
+//   })
+//   let lastDownloadUpdate = Date.now()
+//   torrent.on('download', () => {
+//     if (Date.now() - lastDownloadUpdate < 100) return
+//     lastDownloadUpdate = Date.now()
+//     download.update({
+//       paused: torrent.paused,
+//       bytes: torrent.downloaded,
+//       totalBytes: torrent.length,
+//       uploadedBytes: torrent.uploaded,
+//       downloadBandwith: torrent.downloadSpeed,
+//       uploadBandwith: torrent.uploadSpeed,
+//       remainingTime: torrent.timeRemaining,
+//       completed
+//     })
+//   })
+// }
 
 // setTimeout(() => {
 //   const video = document.createElement('video')
@@ -772,6 +780,7 @@ export const torrent = async ({ video, torrentFile }: { video: HTMLVideoElement,
   const res = await (await fetch(`http://localhost:4001/v0/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
 
   makeHttpTorrent({
+    uri,
     video,
     torrent:
       client.add(
