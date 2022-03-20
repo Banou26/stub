@@ -141,13 +141,18 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   let header
   const events: string[] = []
 
+  let files: { filename: string, mimetype: string, data: Uint8Array }[] = []
+
   // first an array of subtitle track information is emitted
   parser.once('tracks', (tracks, chunk) => {
     header = tracks[0].header
     console.log(tracks, chunk)
   })
   
-  parser.on('file', file => console.log('file:', file))
+  parser.on('file', file => {
+    if (file.mimetype !== 'application/x-truetype-font') return
+    files = [...files, file]
+  })
 
   const toHHMMSSMS = (time: number) => {
     const ms = time % 1000 / 10
@@ -178,8 +183,8 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
 
     const line = `Dialogue: ${source}`
     events.push(line)
-    console.log('Track ' + trackNumber + ':', subtitle, chunk)
-    console.log('Track source: ', source)
+    // console.log('Track ' + trackNumber + ':', subtitle, chunk)
+    // console.log('Track source: ', source)
 
     // console.log('header + events', header, events)
     if (subtitlesOctopusInstance) {
@@ -352,12 +357,14 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   if (!_video) document.body.appendChild(video)
 
   if (header) {
+    const fonts = files.map(({ filename, data }) => [filename, URL.createObjectURL(new Blob([data], {type : 'application/javascript'} ))])
+    console.log('fonts', fonts)
     subtitlesOctopusInstance = new SubtitlesOctopus({
       video,
       subContent: generateSubtitles(),
-      // fonts: ['/test/font-1.ttf', '/test/font-2.ttf'], // Links to fonts (not required, default font already included in build)
+      fonts: fonts.map(([,filename]) => filename),
+      availableFonts:  Object.fromEntries(fonts),
       workerUrl: '/subtitles-octopus-worker.js', // Link to WebAssembly-based file "libassjs-worker.js"
-      legacyWorkerUrl: '/subtitles-octopus-worker-legacy.js' // Link to non-WebAssembly worker
     })
   }
 
