@@ -5,7 +5,7 @@ import { fetch } from '@mfkn/fkn-lib'
 
 import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
 
-import Player from '../../lib/player'
+import Player from '../lib/player'
 
 const style = css`
   display: grid;

@@ -9,7 +9,7 @@ import * as N from 'fp-ts/number'
 
 import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_TARGETS, GetTargets } from 'src/apollo'
 import { Category, diceCompare } from 'src/lib'
-import { getRoutePath, Route } from '../path'
+import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from 'src/lib/utils/bytes'
 import { useEffect, useState } from 'react'
