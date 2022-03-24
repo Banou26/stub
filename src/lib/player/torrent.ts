@@ -534,71 +534,71 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
 
 const makeHttpTorrent = async ({ uri, video, torrent }: { uri: string, video: HTMLVideoElement, torrent: Torrent }) => {
   console.log('makeHttpTorrent', uri, video, torrent)
-  const { headers, body: stream } = await (await fetch(`http://localhost:4001/v0/torrent/${encodeURIComponent(uri)}`))
+  const { headers, body: stream } = await fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent/${encodeURIComponent(uri)}`)
+  // const { headers, body: stream } = await (await fetch(`http://localhost:4001/v0/torrent/${encodeURIComponent(uri)}`))
   const fileSize = Number(headers.get('Content-Length'))
   if (!stream || !fileSize) throw new Error('no stream or Content-Length returned from the response')
   playFile({ video, file: stream, fileSize })
-  return
-  console.log(torrent)
-  torrent.on('ready', () => {
-    const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
+  // console.log(torrent)
+  // torrent.on('ready', () => {
+  //   const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
     
-    // file.appendTo('body')
-  })
-  torrent.on('metadata', () => {
-  })
-  torrent.on('done', (...args) => console.log('done', ...args))
-  // torrent.on('download', (...args) => console.log('download', ...args))
-  torrent.on('error', (...args) => console.log('error', ...args))
-  torrent.on('infoHash', (...args) => console.log('infoHash', ...args))
-  torrent.on('metadata', (...args) => console.log('metadata', ...args))
-  torrent.on('noPeers', (...args) => console.log('noPeers', ...args))
-  torrent.on('ready', (...args) => console.log('ready', ...args))
-  torrent.on('ready', async () => {
-    const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
+  //   // file.appendTo('body')
+  // })
+  // torrent.on('metadata', () => {
+  // })
+  // torrent.on('done', (...args) => console.log('done', ...args))
+  // // torrent.on('download', (...args) => console.log('download', ...args))
+  // torrent.on('error', (...args) => console.log('error', ...args))
+  // torrent.on('infoHash', (...args) => console.log('infoHash', ...args))
+  // torrent.on('metadata', (...args) => console.log('metadata', ...args))
+  // torrent.on('noPeers', (...args) => console.log('noPeers', ...args))
+  // torrent.on('ready', (...args) => console.log('ready', ...args))
+  // torrent.on('ready', async () => {
+  //   const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))
 
-    if (!file) return
+  //   if (!file) return
 
-    const [stream, controller] = await new Promise<[ReadableStream<Uint8Array>, ReadableStreamDefaultController<any>]>(resolve => {
-      let controller
-      resolve([
-        new ReadableStream({
-          start: _controller => {
-            controller = _controller
-          }
-        }),
-        controller
-      ])
-    })
+  //   const [stream, controller] = await new Promise<[ReadableStream<Uint8Array>, ReadableStreamDefaultController<any>]>(resolve => {
+  //     let controller
+  //     resolve([
+  //       new ReadableStream({
+  //         start: _controller => {
+  //           controller = _controller
+  //         }
+  //       }),
+  //       controller
+  //     ])
+  //   })
 
 
-    const fileStream = file.createReadStream()
-    // let i = 0
-    let closed = false
-    fileStream.addListener('data', chunk => {
-      controller.enqueue(chunk)
-      // i += chunk.length
-      // console.log('i', i)
-    })
-    // fileStream.addListener('data', chunk => console.log('chunk', chunk) || controller.enqueue(chunk))
-    fileStream.addListener('end', () => {
-      if (!closed) controller.close()
-      closed = true
-    })
-    fileStream.addListener('close', () => {
-      if (!closed) controller.close()
-      closed = true
-    })
-    fileStream.addListener('error', err => {
-      controller.error(err)
-    })
+  //   const fileStream = file.createReadStream()
+  //   // let i = 0
+  //   let closed = false
+  //   fileStream.addListener('data', chunk => {
+  //     controller.enqueue(chunk)
+  //     // i += chunk.length
+  //     // console.log('i', i)
+  //   })
+  //   // fileStream.addListener('data', chunk => console.log('chunk', chunk) || controller.enqueue(chunk))
+  //   fileStream.addListener('end', () => {
+  //     if (!closed) controller.close()
+  //     closed = true
+  //   })
+  //   fileStream.addListener('close', () => {
+  //     if (!closed) controller.close()
+  //     closed = true
+  //   })
+  //   fileStream.addListener('error', err => {
+  //     controller.error(err)
+  //   })
 
-    playFile({ video, file: stream, fileSize: file.length})
-    // file.appendTo('body')
-  })
-  // torrent.on('upload', (...args) => console.log('upload', ...args))
-  torrent.on('warning', (...args) => console.log('warning', ...args))
-  // torrent.on('wire', (...args) => console.log('wire', ...args))
+  //   playFile({ video, file: stream, fileSize: file.length})
+  //   // file.appendTo('body')
+  // })
+  // // torrent.on('upload', (...args) => console.log('upload', ...args))
+  // torrent.on('warning', (...args) => console.log('warning', ...args))
+  // // torrent.on('wire', (...args) => console.log('wire', ...args))
 }
 
 
@@ -777,7 +777,8 @@ export const torrent = async ({ video, torrentFile }: { video: HTMLVideoElement,
     ]
   }
   const uri = toMagnetURI(torrent)
-  const res = await (await fetch(`http://localhost:4001/v0/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
+  const res = await (await fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
+  // const res = await (await fetch(`http://localhost:4001/v0/torrent-file?magnet=${encodeURIComponent(uri)}`)).arrayBuffer()
 
   makeHttpTorrent({
     uri,

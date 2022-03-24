@@ -16,11 +16,10 @@ const style = css`
 `
 
 export default ({ torrentFile, ...rest }: { torrentFile?: ArrayBuffer } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
-  const videoRef = useRef(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     if (!torrentFile || !videoRef.current) return
-    console.log('DOWNLOAD TORRENT')
     downloadTorrent({ video: videoRef.current, torrentFile })
   }, [torrentFile])
 
