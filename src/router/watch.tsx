@@ -25,11 +25,11 @@ export default ({ uri, episodeUri, source }: { uri: string, episodeUri: string, 
 
   useEffect(() => {
     if (!episode) return
-    const episodeHandle = episode.handles.find(({ uri }) => uri === source)!
-    const torrentFileUrl = `https://nyaa.si/download/${episodeHandle.id}.torrent`
-    fetch(torrentFileUrl)
-      .then(res => res.arrayBuffer())
-      .then(setTorrentFile)
+    // const episodeHandle = episode.handles.find(({ uri }) => uri === source)!
+    // const torrentFileUrl = `https://nyaa.si/download/${episodeHandle.id}.torrent`
+    // fetch(torrentFileUrl)
+    //   .then(res => res.arrayBuffer())
+    //   .then(setTorrentFile)
   }, [episode])
 
   return (

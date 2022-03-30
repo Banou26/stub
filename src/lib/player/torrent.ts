@@ -1,4 +1,5 @@
 import type { Wire } from 'bittorrent-protocol'
+import type { Resolvers as WorkerResolvers } from '../../worker'
 import { Instance } from 'webtorrent'
 
 import { Readable } from 'stream'
@@ -10,6 +11,7 @@ import SimplePeer from 'simple-peer'
 import { SubtitleParser } from 'matroska-subtitles'
 import SubtitlesOctopus from 'libass-wasm'
 import parseTorrent, { toMagnetURI } from 'parse-torrent'
+import { call } from 'osra'
 
 
 import { client as apolloClient } from '../../apollo'
@@ -70,30 +72,30 @@ interface Chunk {
   buffered: boolean
 }
 
-export const call = <T = any>(worker, type: Api, data?: any, transfer: Transferable[] = []): Promise<T> =>
-  new Promise(resolve => {
-    const { port1, port2 } = new MessageChannel()
+// export const call = <T = any>(worker, type: Api, data?: any, transfer: Transferable[] = []): Promise<T> =>
+//   new Promise(resolve => {
+//     const { port1, port2 } = new MessageChannel()
 
-    port1.addEventListener(
-      'message',
-      ({ data }) => {
-        resolve(data)
-        port1.close()
-        port2.close()
-      },
-      { once: true }
-    )
-    port1.start()
+//     port1.addEventListener(
+//       'message',
+//       ({ data }) => {
+//         resolve(data)
+//         port1.close()
+//         port2.close()
+//       },
+//       { once: true }
+//     )
+//     port1.start()
 
-    worker.postMessage(
-      {
-        type,
-        data,
-        port: port2
-      },
-      [port2, ...transfer ?? []]
-    )
-  })
+//     worker.postMessage(
+//       {
+//         type,
+//         data,
+//         port: port2
+//       },
+//       [port2, ...transfer ?? []]
+//     )
+//   })
 
 const downloadArrayBuffer = buffer => {
   const videoBlob = new Blob([new Uint8Array(buffer, 0, buffer.length)], { type: 'video/mp4' });
@@ -111,12 +113,15 @@ const downloadArrayBuffer = buffer => {
   };
   xhr.send();
 }
+
+const worker = new Worker('/worker.js')
+
 // todo: impl performant indexedDB lib https://nolanlawson.com/2021/08/22/speeding-up-indexeddb-reads-and-writes/
 
 // todo: transform this code into a stream based transmuxer
 // todo: use available file systems(IDB, NativeFileSystem, ect...) to save the buffers to reduce the memory usage
-const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoElement, file: ReadableStream, fileSize: number }) => {
-  console.log('playFile', file, fileSize)
+export const playFile = async ({ video: _video, file, fileSize: _fileSize, url }: { video: HTMLVideoElement, file?: ReadableStream, fileSize?: number, url: string }) => {
+  console.log('playFile', file, _fileSize, url)
   // const fileStream: Readable = file.createReadStream()
 
   // const [body, body2] = file.tee()
@@ -235,7 +240,7 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
     }
   }
 
-  const bodyStream = file.pipeThrough(new Passthrough())
+  // const bodyStream = file.pipeThrough(new Passthrough())
 
   // fileStream.addListener('data', chunk => {
   //   parser.write(chunk)
@@ -257,7 +262,17 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
   // }
   // readSubtitles()
 
-  const { stream, getInfo } = await remux({ size: fileSize, stream: bodyStream, autoStart: true })
+  // myWorker.postMessage({
+  //   type: 'test',
+  //   data: {
+  //     foo: 'bar'
+  //   }
+  // })
+  // const { stream, getInfo } = await remux({ size: fileSize, stream: bodyStream, autoStart: true })
+
+  const { fileSize, stream, getInfo } = await call<WorkerResolvers>(worker)('REMUX', { autoStart: true, url })
+
+  // const { stream, getInfo } = await remux({ size: fileSize, stream: bodyStream, autoStart: true })
   const reader = stream.getReader()
   let resultBuffer = new Uint8Array(fileSize + (fileSize * 0.01) + 1_000_000)
   let processedBytes = 0
@@ -346,8 +361,11 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
 
   const [ mime, info ] = await mp4InfosPromise
 
-  const duration = getInfo().input.duration / 1_000_000
-
+  console.log('duration call')
+  const infoRes = await getInfo('foo')
+  console.log('duration call info', infoRes)
+  const duration = (infoRes).input.duration / 1_000_000
+  console.log('duration', duration)
   const video = _video ?? document.createElement('video')
   video.autoplay = true
   video.controls = true
@@ -533,12 +551,15 @@ const playFile = async ({ video: _video, file, fileSize }: { video: HTMLVideoEle
 }
 
 const makeHttpTorrent = async ({ uri, video, torrent }: { uri: string, video: HTMLVideoElement, torrent: Torrent }) => {
-  console.log('makeHttpTorrent', uri, video, torrent)
+  // console.log('makeHttpTorrent', uri, video, torrent)
+  // playFile({ video, url: `${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent/${encodeURIComponent(uri)}` })
+
   const { headers, body: stream } = await fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent/${encodeURIComponent(uri)}`)
   // const { headers, body: stream } = await (await fetch(`http://localhost:4001/v0/torrent/${encodeURIComponent(uri)}`))
   const fileSize = Number(headers.get('Content-Length'))
   if (!stream || !fileSize) throw new Error('no stream or Content-Length returned from the response')
   playFile({ video, file: stream, fileSize })
+
   // console.log(torrent)
   // torrent.on('ready', () => {
   //   const file = torrent.files.find(file => file.name.endsWith('.mkv') || file.name.endsWith('.mp4'))

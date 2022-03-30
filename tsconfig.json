@@ -17,7 +17,8 @@
       "@mfkn/fkn-lib": ["../lib/lib/lib/src/index"],
       "@mfkn/fkn-lib/*": ["../lib/lib/lib/src/*"]
     },
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["../../osra/build"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],
