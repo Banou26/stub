@@ -481,6 +481,8 @@ export const getEpisode: GetEpisode['function'] = async (args) => {
   //   )[0]
   //   .replace(/^[\s:\-\!]*?(.*?)[\s:\-\!]*?$/, '$1')
 
+  // todo: add https://github.com/skiptirengu/anitomyscript integration
+
   const mostCommonSubnames =
     findMostCommon(
       pipe(
