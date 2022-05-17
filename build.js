@@ -19,6 +19,10 @@ const polyfills = alias({
   'url': path.resolve('./node_modules/url/url.js'),
   'assert': path.resolve('./node_modules/assert/build/assert.js'),
   'path': path.resolve('./node_modules/path/path.js'),
+
+  'react': path.resolve('./node_modules/react/index.js'),
+  '@emotion/react': path.resolve('./node_modules/@emotion/react/dist/emotion-react.cjs.js'),
+  'react-dom': path.resolve('./node_modules/react-dom/index.js')
 })
 
 const config = {
@@ -55,12 +59,6 @@ esbuild.build({
   entryPoints: ['./src/index.tsx'],
   outfile: './dist/index.js',
   inject: ['./src/react-shim.ts']
-})
-
-esbuild.build({
-  ...config,
-  entryPoints: ['./src/worker/index.ts'],
-  outfile: './dist/worker.js'
 })
 
 if (process.argv.includes('-s') || process.argv.includes('--serve')) {

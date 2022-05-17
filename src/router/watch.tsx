@@ -1,11 +1,12 @@
 import { css } from '@emotion/react'
 import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
+import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { fetch } from '@mfkn/fkn-lib'
+import FKNMediaPlayer from 'fkn-media-player'
 
-import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from 'src/apollo'
+import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode } from '../apollo'
 
-import Player from '../lib/player'
 
 const style = css`
   display: grid;
@@ -23,18 +24,33 @@ export default ({ uri, episodeUri, source }: { uri: string, episodeUri: string, 
   const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
   const [torrentFile, setTorrentFile] = useState<ArrayBuffer>()
 
+  const [size, setSize] = useState<number>()
+  const [stream, setStream] = useState<ReadableStream<Uint8Array>>()
+
   useEffect(() => {
     if (!episode) return
-    // const episodeHandle = episode.handles.find(({ uri }) => uri === source)!
-    // const torrentFileUrl = `https://nyaa.si/download/${episodeHandle.id}.torrent`
-    // fetch(torrentFileUrl)
-    //   .then(res => res.arrayBuffer())
-    //   .then(setTorrentFile)
+    const episodeHandle = episode.handles.find(({ uri }) => uri === source)!
+    const torrentFileUrl = `https://nyaa.si/download/${episodeHandle.id}.torrent`
+    fetch(torrentFileUrl)
+      .then(res => res.arrayBuffer())
+      .then(res => console.log('parsed torrent', ParseTorrent(Buffer.from(res))) || ParseTorrent(Buffer.from(res)))
+      .then(toMagnetURI)
+      .then(uri => console.log('uri', uri) || uri.length > 'magnet:?'.length ? uri : Promise.reject('invalid torrent URI'))
+      .then(uri => window.fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent/${encodeURIComponent(uri)}`))
+      .then((res) => {
+        console.log('res', res)
+        const { headers, body } = res
+        console.log('body', body)
+        console.log('Content-Length', headers.get('Content-Length'))
+        if (!body || !headers.get('Content-Length')) throw new Error('no stream or Content-Length returned from the response')
+        setSize(Number(headers.get('Content-Length')))
+        setStream(body)
+      })
   }, [episode])
 
   return (
     <div css={style}>
-      <Player className="player" torrentFile={torrentFile}/>
+      <FKNMediaPlayer id={'test'} size={size} stream={stream}/>
     </div>
   )
 }
