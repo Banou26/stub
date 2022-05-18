@@ -22,7 +22,12 @@ export default ({ uri, episodeUri, source }: { uri: string, episodeUri: string, 
   const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const firstEpisodeUri = title?.episodes.at(0)?.uri
   const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
-  const [torrentFile, setTorrentFile] = useState<ArrayBuffer>()
+  const [torrent, setTorrent] = useState<ParseTorrent.Instance>()
+
+  const mediaId =
+    torrent
+      ? `${torrent?.infoHash}-${torrent?.name}`
+      : undefined
 
   const [size, setSize] = useState<number>()
   const [stream, setStream] = useState<ReadableStream<Uint8Array>>()
@@ -33,15 +38,15 @@ export default ({ uri, episodeUri, source }: { uri: string, episodeUri: string, 
     const torrentFileUrl = `https://nyaa.si/download/${episodeHandle.id}.torrent`
     fetch(torrentFileUrl)
       .then(res => res.arrayBuffer())
-      .then(res => console.log('parsed torrent', ParseTorrent(Buffer.from(res))) || ParseTorrent(Buffer.from(res)))
+      .then(res => {
+        const torrent = ParseTorrent(Buffer.from(res))
+        setTorrent(torrent)
+        return torrent
+      })
       .then(toMagnetURI)
-      .then(uri => console.log('uri', uri) || uri.length > 'magnet:?'.length ? uri : Promise.reject('invalid torrent URI'))
       .then(uri => window.fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent/${encodeURIComponent(uri)}`))
       .then((res) => {
-        console.log('res', res)
         const { headers, body } = res
-        console.log('body', body)
-        console.log('Content-Length', headers.get('Content-Length'))
         if (!body || !headers.get('Content-Length')) throw new Error('no stream or Content-Length returned from the response')
         setSize(Number(headers.get('Content-Length')))
         setStream(body)
@@ -50,7 +55,7 @@ export default ({ uri, episodeUri, source }: { uri: string, episodeUri: string, 
 
   return (
     <div css={style}>
-      <FKNMediaPlayer id={'test'} size={size} stream={stream}/>
+      <FKNMediaPlayer id={mediaId} size={size} stream={stream}/>
     </div>
   )
 }
