@@ -13,7 +13,6 @@
     "http-server": "^13.0.2",
     "mime": "^3.0.0",
     "nodemon": "^2.0.13",
-    "osra": "file:../../osra",
     "typescript": "^4.6.0-beta"
   },
   "scripts": {
@@ -69,6 +68,7 @@
     "libass-wasm": "^4.0.0",
     "matroska-subtitles": "^3.3.2",
     "mp4box": "^0.4.9",
+    "osra": "^0.0.3",
     "parse-torrent": "^9.1.4",
     "path": "^0.12.7",
     "raviger": "^2.0.1",
