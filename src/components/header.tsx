@@ -1,11 +1,11 @@
-
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
 import { FocusEvent, FocusEventHandler, Fragment, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
-import { Category, searchTitle, TitleHandle } from 'src/lib'
-import { useFetch } from 'src/lib/hooks/utils'
+import type { Category, TitleHandle } from '../../../../scannarr/src'
+import { searchTitles } from '../../../../scannarr/src'
+import { useFetch } from '../utils/use-fetch'
 
 import Input from './inputs'
 

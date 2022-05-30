@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
 
-import { getLatest, Category, TitleHandle, searchTitle } from 'src/lib'
+import type { Category, TitleHandle } from '../../../../scannarr/src'
+import { getLatest, searchTitles } from '../../../../scannarr/src'
 import Slider from 'src/components/slider'
 import Title from 'src/components/title'
-import { useFetch } from 'src/lib/hooks/utils'
+import { useFetch } from '../utils/use-fetch'
 
 const style = css`
 

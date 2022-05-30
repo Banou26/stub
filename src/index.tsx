@@ -1,10 +1,10 @@
 /// <reference types="@emotion/react/types/css-prop" />
 import { css, Global } from '@emotion/react'
 import { render } from 'react-dom'
-import { ApolloProvider } from '@apollo/client'
+import { targets } from '../../../laserr/src'
+import { addTarget } from '../../../scannarr/src'
 
 import Mount from './components'
-import { client } from './apollo'
 
 const style = css`
   @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
@@ -54,10 +54,14 @@ const style = css`
   }
 `
 
+for (const target of targets) {
+  addTarget(target)
+}
+
 render(
-  <ApolloProvider client={client}>
+  <>
     <Global styles={style}/>
     <Mount/>
-  </ApolloProvider>,
+  </>,
   document.body.appendChild(document.createElement('div'))
 )

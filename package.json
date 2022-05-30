@@ -1,6 +1,6 @@
 {
   "name": "@banou26/ol",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "type": "module",
   "devDependencies": {
@@ -35,19 +35,17 @@
     "serve": "http-server --cors -p 4560 ./dist",
     "type-check": "tsc --incremental",
     "type-check-watch": "tsc --watch --incremental",
-    "_build": "esbuild ./src/index.tsx  --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js && npm run copy-libass && npm run package-asar && npm run type-check",
     "build-watch": "esbuild ./src/index.tsx --watch --jsx-factory=jsx --inject:./src/react-shim.ts --format=esm --bundle --outfile=dist/index.js",
     "package-watch": "nodemon --watch src --watch ../lib/lib -e js,ts,tsx --exec \"npm run package-asar\"",
     "build-index": "node ./build.js -m",
     "build-index-watch": "node --preserve-symlinks ./build.js -w -s",
     "build": "npm run copy-libass && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
     "build-bypass-ts": "npm run copy-libass && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar",
-    "watch": "concurrently \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
+    "watch": "concurrently \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
+    "_watch": "concurrently \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
     "dev": "npm run watch"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.8",
-    "@banou26/oz-libav": "^0.0.2-ci-1942837549.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.1.5",
     "@mfkn/fkn-lib": "file:../lib",
@@ -65,9 +63,7 @@
     "fp-ts-std": "^0.13.1",
     "graphql": "^16.0.1",
     "idb": "^7.0.0",
-    "libass-wasm": "^4.0.0",
-    "matroska-subtitles": "^3.3.2",
-    "mp4box": "^0.4.9",
+    "laserr": "file:../../laserr",
     "osra": "^0.0.3",
     "parse-torrent": "^9.1.4",
     "path": "^0.12.7",
@@ -75,14 +71,11 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.1",
     "react-hook-form": "^7.28.0",
-    "react-use": "^17.3.2",
-    "seal-wasm": "^0.0.1",
-    "seqalign": "^1.0.6",
-    "simple-peer": "^9.11.1",
+    "react-use": "^17.4.0",
+    "scannar": "file:../../scannarr",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "url": "^0.11.0",
-    "util": "^0.12.4",
-    "webtorrent": "^1.8.4"
+    "util": "^0.12.4"
   }
 }

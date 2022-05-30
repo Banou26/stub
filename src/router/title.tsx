@@ -1,5 +1,4 @@
 import { css } from '@emotion/react'
-import { useQuery } from '@apollo/client'
 import { Link, navigate } from 'raviger'
 import { groupBy, NonEmptyArray, sort, sortBy } from 'fp-ts/NonEmptyArray'
 import * as R from 'fp-ts/lib/Record'
@@ -7,12 +6,12 @@ import { reverse, contramap } from 'fp-ts/ord'
 import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
 
-import { GET_TITLE, GET_EPISODE, GetTitle, GetEpisode, GET_TARGETS, GetTargets } from 'src/apollo'
-import { Category, diceCompare } from 'src/lib'
 import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
-import { getHumanReadableByteString } from 'src/lib/utils/bytes'
+import { getHumanReadableByteString } from '../utils/bytes'
 import { useEffect, useState } from 'react'
+
+import type { Category } from '../../../../scannarr/src'
 
 const style = css`
   display: grid;
@@ -111,15 +110,20 @@ const style = css`
   }
 `
 
-type EpisodeHandleName = GetEpisode['episode']['names'][number]
+// type EpisodeHandleName = GetEpisode['episode']['names'][number]
 
 export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
-  const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
+  // const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const firstEpisodeUri = title?.episodes.at(0)?.uri
-  const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
-  const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
+  // const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
+  // const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
+
+  const title = undefined
+  const episode = undefined
+  const episodeLoading = true
+  const loadingTargets = true
 
   const release =
     title?.releaseDates.at(0)
@@ -189,11 +193,11 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
       A.partition((name) => Boolean(name.handle.batch))
     )
 
-  // console.log('title', title)
-  // console.log('episode', episode)
-  // console.log('targets', targets)
-  // console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
-  // console.log('selectedResolution', selectedResolution)
+  console.log('title', title)
+  console.log('episode', episode)
+  console.log('targets', targets)
+  console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
+  console.log('selectedResolution', selectedResolution)
 
   const renderEpisodeHandleName = (name: EpisodeHandleName) => (
     <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
