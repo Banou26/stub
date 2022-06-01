@@ -1,13 +1,14 @@
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
 
 import type { Category, TitleHandle } from '../../../../scannarr/src'
-import { getLatest, searchTitles } from '../../../../scannarr/src'
+import { searchSeries } from '../../../../scannarr/src'
 import Slider from 'src/components/slider'
 import Title from 'src/components/title'
 import { useFetch } from '../utils/use-fetch'
+import { useObservable } from 'react-use'
 
 const style = css`
 
@@ -30,7 +31,10 @@ padding: 5rem;
 `
 
 export default ({ category }: { category?: Category }) => {
-  const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], latest: true }), { skip: !category })
+  const categoryItems$ = useMemo(() => searchSeries({ categories: [category!], latest: true }), [])
+  const categoryItems = useObservable(categoryItems$)
+
+  // const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], latest: true }), { skip: !category })
 
   return (
     <div css={style}>
