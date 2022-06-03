@@ -130,32 +130,33 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const loadingTargets = true
   const dateData = series?.dates.at(0)
 
+  const releaseDate =
+    series && dateData && 'date' in dateData &&
+    (series.categories.some(category => category === 'MOVIE')
+      ? `${dateData.date.getFullYear()}`
+      : `${dateData.date.toDateString().slice(4).trim()}`)
+
+  const dateStart =
+    dateData &&
+    !('date' in dateData) &&
+    dateData.start.toDateString().slice(4).trim()
+  const dateEnd =
+    dateData &&
+    !('date' in dateData) &&
+    dateData.end?.toDateString().slice(4).trim()
+
+  const airingDate =
+    series && dateData && !('date' in dateData) &&
+    dateData.end
+      ? `${dateStart} to ${dateEnd}`
+      : `Started ${dateStart}`
+
   const release =
     series && dateData
       ? (
         'date' in dateData
-          ? (
-            series.categories.some(category => category === 'MOVIE')
-              ? `${dateData.date.getFullYear()}`
-              : `${dateData.date.toDateString().slice(4).trim()}`
-          )
-          : `${
-            dateData
-              .start
-              .toDateString()
-              .slice(4)
-              .trim()
-          } to ${
-            dateData.end
-            ? (
-              dateData
-                .end
-                .toDateString()
-                .slice(4)
-                .trim()
-            )
-            : 'unknown'
-          }`
+          ? releaseDate
+          : airingDate
       )
       : ''
 
