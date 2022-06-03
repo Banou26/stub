@@ -9,9 +9,10 @@ import * as N from 'fp-ts/number'
 import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from '../utils/bytes'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import type { Category } from '../../../../scannarr/src'
+import { getSeries } from '../../../../scannarr/src'
+import { useFetch } from 'src/utils/use-fetch'
 
 const style = css`
   display: grid;
@@ -115,12 +116,13 @@ const style = css`
 export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
+  const { data: title } = useFetch(() => getSeries({ uri }))
   // const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   const firstEpisodeUri = title?.episodes.at(0)?.uri
   // const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
   // const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
 
-  const title = undefined
+  // const title = undefined
   const episode = undefined
   const episodeLoading = true
   const loadingTargets = true
