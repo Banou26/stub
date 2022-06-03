@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { getSeries } from '../../../../scannarr/src'
 import { useFetch } from 'src/utils/use-fetch'
+import { fetch } from '@mfkn/fkn-lib'
 
 const style = css`
   display: grid;
@@ -43,7 +44,7 @@ const style = css`
     border-bottom: 0.1rem solid rgb(75, 75, 75);
   }
 
-  .episodes {
+  .titles {
     grid-column: 1 / 3;
 
     display: grid;
@@ -56,7 +57,7 @@ const style = css`
       padding: 10rem;
       padding-top: 5rem;
 
-      .episode {
+      .title {
         display: flex;
         align-items: center;
         padding: 2.5rem;
@@ -82,7 +83,7 @@ const style = css`
       }
     }
 
-    .episode-info {
+    .title-info {
       height: 90rem;
       background-color: rgb(35, 35, 35);
       padding: 2.5rem;
@@ -111,32 +112,50 @@ const style = css`
   }
 `
 
-// type EpisodeHandleName = GetEpisode['episode']['names'][number]
+// type TitleHandleName = GetTitle['title']['names'][number]
 
-export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
+export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
-  const { data: title } = useFetch(() => getSeries({ uri }))
-  // const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
-  const firstEpisodeUri = title?.episodes.at(0)?.uri
-  // const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
+  const { data: series } = useFetch(() => getSeries({ uri }, { fetch }))
+  console.log('YEEEEEEEEEEEEET', series)
+  // const { data: { series } = {} } = useQuery<GetSeries>(GET_TITLE, { variables: { uri: firstUri } })
+  const firstTitleUri = series?.titles.at(0)?.uri
+  // const { loading: titleLoading, data: { title } = {} } = useQuery<GetTitle>(GET_EPISODE, { variables: { uri: titleUri ?? firstTitleUri, series }, skip: !firstTitleUri || !series })
   // const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
 
-  // const title = undefined
-  const episode = undefined
-  const episodeLoading = true
+  // const series = undefined
+  const title = undefined
+  const titleLoading = true
   const loadingTargets = true
+  const dateData = series?.dates.at(0)
 
   const release =
-    title?.releaseDates.at(0)
+    series && dateData
       ? (
-        title.releaseDates.at(0)?.date
+        'date' in dateData
           ? (
-            title.categories.some(categoryHandle => categoryHandle.category === Category.MOVIE)
-              ? `${title.releaseDates.at(0)!.date!.getFullYear()}`
-              : `${title.releaseDates.at(0)!.date!.toDateString().slice(4).trim()}`
+            series.categories.some(category => category === 'MOVIE')
+              ? `${dateData.date.getFullYear()}`
+              : `${dateData.date.toDateString().slice(4).trim()}`
           )
-          : `${title.releaseDates.at(0)!.start!.toDateString().slice(4).trim()} to ${title.releaseDates.at(0)!.end!.toDateString().slice(4).trim()}`
+          : `${
+            dateData
+              .start
+              .toDateString()
+              .slice(4)
+              .trim()
+          } to ${
+            dateData.end
+            ? (
+              dateData
+                .end
+                .toDateString()
+                .slice(4)
+                .trim()
+            )
+            : 'unknown'
+          }`
       )
       : ''
 
@@ -144,25 +163,25 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
     targets
       ?.find(({ scheme: _scheme }) => _scheme === scheme)
 
-  const episodesByNames = episode?.names ?? []
+  const titlesByNames = title?.names ?? []
 
   const byResolution =
     pipe(
       reverse(N.Ord),
-      contramap(([resolution]: [number, NonEmptyArray<EpisodeHandleName>]) => resolution)
+      contramap(([resolution]: [number, NonEmptyArray<TitleHandleName>]) => resolution)
     )
 
-  const byTitleSimilarity =
+  const bySeriesSimilarity =
     pipe(
       reverse(N.Ord),
-      contramap((_title: EpisodeHandleName) => diceCompare(title?.names.at(0)?.name!, _title.name))
+      contramap((_series: TitleHandleName) => diceCompare(series?.names.at(0)?.name!, _series.name))
     )
 
-  const mediaEpisodesNameByResolution =
+  const mediaTitlesNameByResolution =
     pipe(
-      episodesByNames,
+      titlesByNames,
       A.filter(name => !!name.handle.type),
-      A.sort(byTitleSimilarity),
+      A.sort(bySeriesSimilarity),
       // @ts-ignore
       groupBy(name => name.handle.resolution?.toString()),
       R.toArray,
@@ -172,7 +191,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   const resolutions =
     pipe(
-      mediaEpisodesNameByResolution,
+      mediaTitlesNameByResolution,
       A.map(([resolution]) => resolution)
     )
 
@@ -181,27 +200,27 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
     if(!resolutions.includes(1080)) setResolution(Math.max(...resolutions))
   }, [resolutions.join(',')])
 
-  const selectedResolutionEpisodes =
+  const selectedResolutionTitles =
     pipe(
-      mediaEpisodesNameByResolution,
+      mediaTitlesNameByResolution,
       A.filter(([resolution]) => resolution === selectedResolution),
       A.map(([, names]) => names),
       A.flatten
     )
 
-  const { left: singularEpisodes, right: batchEpisodes } =
+  const { left: singularTitles, right: batchTitles } =
     pipe(
-      selectedResolutionEpisodes,
+      selectedResolutionTitles,
       A.partition((name) => Boolean(name.handle.batch))
     )
 
-  console.log('title', title)
-  console.log('episode', episode)
-  console.log('targets', targets)
-  console.log('mediaEpisodesNameByResolution', mediaEpisodesNameByResolution)
-  console.log('selectedResolution', selectedResolution)
+  // console.log('series', series)
+  // console.log('title', title)
+  // console.log('targets', targets)
+  // console.log('mediaTitlesNameByResolution', mediaTitlesNameByResolution)
+  // console.log('selectedResolution', selectedResolution)
 
-  const renderEpisodeHandleName = (name: EpisodeHandleName) => (
+  const renderTitleHandleName = (name: TitleHandleName) => (
     <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
       {
         name.handle.batch
@@ -218,16 +237,16 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
           />
         )
       }
-      <Link href={getRoutePath(Route.WATCH, { uri, episodeUri: episodeUri ?? firstEpisodeUri, source: name.handle.uri })}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</Link>
-      {/* <a href={name.handle.url}>{name.handle.teamEpisode?.team.tag ? `[${name.handle.teamEpisode?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a> */}
+      <Link href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: name.handle.uri })}>{name.handle.teamTitle?.team.tag ? `[${name.handle.teamTitle?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</Link>
+      {/* <a href={name.handle.url}>{name.handle.teamTitle?.team.tag ? `[${name.handle.teamTitle?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a> */}
       {
         !loadingTargets
-        && name.handle.teamEpisode?.team.icon
+        && name.handle.teamTitle?.team.icon
         && (
           <img
-            src={name.handle.teamEpisode.team.icon}
-            alt={`${name.handle.teamEpisode.team.name} favicon`}
-            title={name.handle.teamEpisode.team.name}
+            src={name.handle.teamTitle.team.icon}
+            alt={`${name.handle.teamTitle.team.name} favicon`}
+            title={name.handle.teamTitle.team.name}
           />
         )
       }
@@ -236,45 +255,45 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
 
   return (
     <div css={style}>
-      <img src={title?.images.at(0)?.url} alt={`${title?.names?.at(0)?.name} poster`} className="poster" />
+      <img src={series?.images.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" />
       <div>
         <div>
-          <h1>{title?.names?.at(0)?.name}</h1>
+          <h1>{series?.names?.at(0)?.name}</h1>
           <div> 
             <span>{release}</span>
           </div>
         </div>
         <div className="synopsis">
-          {title?.synopses?.at(0)?.synopsis}
+          {series?.synopses?.at(0)?.synopsis}
         </div>
       </div>
-      <div className="episodes">
+      <div className="titles">
         <div className="list">
           {
-            title?.episodes.map(episode => (
-              // todo: replace the episode number with a real number
+            series?.titles.map(title => (
+              // todo: replace the title number with a real number
               <Link
-                key={episode.uri}
-                className={`episode ${episode.uri === (episodeUri ?? firstEpisodeUri) ? 'selected' : ''}`}
-                href={getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri })}
+                key={title.uri}
+                className={`title ${title.uri === (titleUri ?? firstTitleUri) ? 'selected' : ''}`}
+                href={getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri })}
                 onClick={(ev) => {
                   ev.preventDefault()
-                  navigate(getRoutePath(Route.TITLE_EPISODE, { uri, episodeUri: episode.uri }), true)
+                  navigate(getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri }), true)
                 }}
               >
-                <span className="number">{episode.names?.at(0)?.name ? episode.number?.at(0).number ?? '' : ''}</span>
-                <span className="name">{episode.names?.at(0)?.name ?? `Episode ${episode.number?.at(0).number}`}</span>
-                <span className="date">{episode.releaseDates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
+                <span className="number">{title.names?.at(0)?.name ? title.number?.at(0).number ?? '' : ''}</span>
+                <span className="name">{title.names?.at(0)?.name ?? `Title ${title.number?.at(0).number}`}</span>
+                <span className="date">{title.dates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
               </Link>
             ))
           }
         </div>
-        <div className="episode-info">
-          <h2>{episode?.names?.at(0)?.name}</h2>
+        <div className="title-info">
+          <h2>{title?.names?.at(0)?.name}</h2>
           <div className="synopsis">
             {
-              episodeLoading ? 'Loading...' :
-              episode?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
+              titleLoading ? 'Loading...' :
+              title?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
             }
           </div>
           <div>
@@ -282,7 +301,7 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             <br />
             <div className='resolutions'>
               {
-                mediaEpisodesNameByResolution.map(([resolution]) =>
+                mediaTitlesNameByResolution.map(([resolution]) =>
                   <span
                     key={resolution}
                     className={((resolution ? Number(resolution) : undefined) === selectedResolution) ? 'selected' : ''}
@@ -299,9 +318,9 @@ export default ({ uri, episodeUri }: { uri: string, episodeUri?: string }) => {
             </div>
             <br />
             <div>
-              {batchEpisodes.map(renderEpisodeHandleName)}
+              {batchTitles.map(renderTitleHandleName)}
               <br />
-              {singularEpisodes.map(renderEpisodeHandleName)}
+              {singularTitles.map(renderTitleHandleName)}
             </div>
           </div>
         </div>
