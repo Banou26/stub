@@ -14,7 +14,7 @@ const style = css`
   }
 `
 
-export default ({ uri, episodeUri, source }: { uri: string, episodeUri: string, source: string }) => {
+export default ({ uri, titleUri, source }: { uri: string, titleUri: string, source: string }) => {
   const firstUri = uri.split(',')?.at(0)!
   // const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
   // const firstEpisodeUri = title?.episodes.at(0)?.uri

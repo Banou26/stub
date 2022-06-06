@@ -5,15 +5,19 @@ import * as R from 'fp-ts/lib/Record'
 import { reverse, contramap } from 'fp-ts/ord'
 import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
+import { filter, from, map } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 
 import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
 import { getHumanReadableByteString } from '../utils/bytes'
 import { useEffect, useMemo, useState } from 'react'
 
-import { getSeries } from '../../../../scannarr/src'
-import { useFetch } from 'src/utils/use-fetch'
+import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
+import { useFetch } from '../utils/use-fetch'
 import { fetch } from '@mfkn/fkn-lib'
+import { useObservable } from 'react-use'
+import { diceCompare } from '../utils/string'
 
 const style = css`
   display: grid;
@@ -117,15 +121,37 @@ const style = css`
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const firstUri = uri.split(',')?.at(0)!
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
-  const { data: series } = useFetch(() => getSeries({ uri }, { fetch }))
-  console.log('YEEEEEEEEEEEEET', series)
+  const series$ = useMemo(() => from(getSeries({ uri }, { fetch })), [])
+  const series = useObservable(series$)
+  const titles$ = useMemo(() =>
+    series$
+      .pipe(
+        filter(Boolean),
+        mergeMap(series => searchTitles({ series }, { fetch }))
+      ),
+    [series]
+  )
+  const title$ = useMemo(() =>
+    titles$
+      .pipe(
+        map(titles => titles.find(({ uri }) => uri === titleUri)),
+        filter(Boolean),
+        mergeMap(title => searchTitles({ series, search: title }, { fetch }))
+      ),
+    [titles$]
+  )
+  const title = useObservable(title$)
+  const titles = useObservable(titles$)
+  console.log('series', series)
+  console.log('titles', titles)
+  console.log('title', title)
   // const { data: { series } = {} } = useQuery<GetSeries>(GET_TITLE, { variables: { uri: firstUri } })
   const firstTitleUri = series?.titles.at(0)?.uri
   // const { loading: titleLoading, data: { title } = {} } = useQuery<GetTitle>(GET_EPISODE, { variables: { uri: titleUri ?? firstTitleUri, series }, skip: !firstTitleUri || !series })
   // const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
 
   // const series = undefined
-  const title = undefined
+  // const title = undefined
   const titleLoading = true
   const loadingTargets = true
   const dateData = series?.dates.at(0)
@@ -164,37 +190,43 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     targets
       ?.find(({ scheme: _scheme }) => _scheme === scheme)
 
-  const titlesByNames = title?.names ?? []
+  const titleHandles = title?.handles ?? []
+
+  console.log('titleHandles', titleHandles)
 
   const byResolution =
     pipe(
       reverse(N.Ord),
-      contramap(([resolution]: [number, NonEmptyArray<TitleHandleName>]) => resolution)
+      contramap(([resolution]: [number, NonEmptyArray<TitleHandle>]) => resolution)
     )
 
   const bySeriesSimilarity =
     pipe(
       reverse(N.Ord),
-      contramap((_series: TitleHandleName) => diceCompare(series?.names.at(0)?.name!, _series.name))
+      contramap((_series: TitleHandle) => diceCompare(series?.names.at(0)?.name!, _series.name))
     )
 
-  const mediaTitlesNameByResolution =
+  const mediaTitleHandlesByResolution =
     pipe(
-      titlesByNames,
-      A.filter(name => !!name.handle.type),
-      A.sort(bySeriesSimilarity),
+      titleHandles,
+      A.filter(handle => !!handle.tags.find(({ type }) => type === 'protocol-type')?.value),
+      // A.sort(bySeriesSimilarity),
       // @ts-ignore
-      groupBy(name => name.handle.resolution?.toString()),
+      groupBy(handle => handle.tags.find(({ type }) => type === 'resolution').value?.toString()),
       R.toArray,
-      A.map(([resolution, name]) => [resolution ? Number(resolution) : undefined, name] as const),
+      A.map(([resolution, handle]) => [resolution ? Number(resolution) : undefined, handle] as const),
       A.sort(byResolution)
     )
 
+  console.log('mediaTitleHandlesByResolution', mediaTitleHandlesByResolution)
+
   const resolutions =
     pipe(
-      mediaTitlesNameByResolution,
+      mediaTitleHandlesByResolution,
       A.map(([resolution]) => resolution)
     )
+    
+  console.log('resolutions', resolutions)
 
   useEffect(() => {
     if(!resolutions.length) return
@@ -203,28 +235,27 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   const selectedResolutionTitles =
     pipe(
-      mediaTitlesNameByResolution,
+      mediaTitleHandlesByResolution,
       A.filter(([resolution]) => resolution === selectedResolution),
-      A.map(([, names]) => names),
+      A.map(([, handle]) => handle),
       A.flatten
     )
 
   const { left: singularTitles, right: batchTitles } =
     pipe(
       selectedResolutionTitles,
-      A.partition((name) => Boolean(name.handle.batch))
+      A.partition((handle) => Boolean(handle.tags.find(({ type }) => type === 'batch')?.value))
     )
 
   // console.log('series', series)
   // console.log('title', title)
   // console.log('targets', targets)
-  // console.log('mediaTitlesNameByResolution', mediaTitlesNameByResolution)
-  // console.log('selectedResolution', selectedResolution)
+  console.log('selectedResolution', selectedResolution)
 
-  const renderTitleHandleName = (name: TitleHandleName) => (
-    <div key={`${name.handle.uri}-${name.handle.names.findIndex(({ name: _name }) => _name === name.name)}`}>
+  const renderTitleHandleName = (handle: TitleHandle) => (
+    <div key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === handle.name)}`}>
       {
-        name.handle.batch
+        handle.tags.find(({ type }) => type === 'batch')?.value
           ? '[BATCH]'
           : ''
       }
@@ -232,25 +263,31 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
         !loadingTargets
         && (
           <img
-            src={getSchemeTarget(name.handle.scheme)!.icon}
-            alt={`${getSchemeTarget(name.handle.scheme)!.name} favicon`}
-            title={getSchemeTarget(name.handle.scheme)!.name}
+            src={getSchemeTarget(handle.scheme)!.icon}
+            alt={`${getSchemeTarget(handle.scheme)!.name} favicon`}
+            title={getSchemeTarget(handle.scheme)!.name}
           />
         )
       }
-      <Link href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: name.handle.uri })}>{name.handle.teamTitle?.team.tag ? `[${name.handle.teamTitle?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</Link>
-      {/* <a href={name.handle.url}>{name.handle.teamTitle?.team.tag ? `[${name.handle.teamTitle?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(name.handle.size)}]</a> */}
-      {
+      <Link
+        href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: handle.uri })}
+      >
+        {handle.teamTitle?.team.tag ? `[${handle.teamTitle?.team.tag}]` : ''}
+        {handle.names.at(0)?.name}
+         [{getHumanReadableByteString(handle.tags.find(({ type }) => type === 'size')?.value)}]
+      </Link>
+      {/* <a href={handle.url}>{handle.teamTitle?.team.tag ? `[${handle.teamTitle?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(handle.size)}]</a> */}
+      {/* {
         !loadingTargets
-        && name.handle.teamTitle?.team.icon
+        && handle.teamTitle?.team.icon
         && (
           <img
-            src={name.handle.teamTitle.team.icon}
-            alt={`${name.handle.teamTitle.team.name} favicon`}
-            title={name.handle.teamTitle.team.name}
+            src={handle.teamTitle.team.icon}
+            alt={`${handle.teamTitle.team.name} favicon`}
+            title={handle.teamTitle.team.name}
           />
         )
-      }
+      } */}
     </div>
   )
 
@@ -271,7 +308,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       <div className="titles">
         <div className="list">
           {
-            series?.titles.map(title => (
+            titles?.map(title => (
               // todo: replace the title number with a real number
               <Link
                 key={title.uri}
@@ -282,8 +319,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                   navigate(getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri }), true)
                 }}
               >
-                <span className="number">{title.names?.at(0)?.name ? title.number?.at(0).number ?? '' : ''}</span>
-                <span className="name">{title.names?.at(0)?.name ?? `Title ${title.number?.at(0).number}`}</span>
+                <span className="number">{title.names?.at(0)?.name ? title.number ?? '' : ''}</span>
+                <span className="name">{title.names?.at(0)?.name ?? `Title ${title.number}`}</span>
                 <span className="date">{title.dates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
               </Link>
             ))
@@ -302,7 +339,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             <br />
             <div className='resolutions'>
               {
-                mediaTitlesNameByResolution.map(([resolution]) =>
+                mediaTitleHandlesByResolution.map(([resolution]) =>
                   <span
                     key={resolution}
                     className={((resolution ? Number(resolution) : undefined) === selectedResolution) ? 'selected' : ''}

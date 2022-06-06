@@ -34,8 +34,8 @@ const HeaderPage = ({ children, category }: { children: React.ReactNode, categor
 export const routes = {
   [getRouterRoutePath(Route.HOME)]: () => <Home/>,
   [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
-  [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, episodeUri }) => <Title uri={uri} episodeUri={episodeUri}/>,
-  [getRouterRoutePath(Route.WATCH)]: ({ uri, episodeUri, source }) => <Watch uri={uri} episodeUri={episodeUri} source={source}/>,
+  [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, titleUri }) => <Title uri={uri} titleUri={titleUri}/>,
+  [getRouterRoutePath(Route.WATCH)]: ({ uri, titleUri, source }) => <Watch uri={uri} titleUri={titleUri} source={source}/>,
   // [getRouterRoutePath(Route.CATEGORY)]: ({ category }) => <CategoryComponent category={Category['toLowerString'()]}/>,
   '/category/movies': () => 
     <HeaderPage category={'MOVIE'}>

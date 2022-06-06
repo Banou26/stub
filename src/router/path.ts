@@ -12,16 +12,16 @@ export enum Route {
 const Routes = {
   [Route.HOME]: () => '/',
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
-  [Route.TITLE_EPISODE]: ({ uri, episodeUri }: { uri: string, episodeUri: string }) => `/title/${uri}/${episodeUri}`,
-  [Route.WATCH]: ({ uri, episodeUri, source }: { uri: string, episodeUri: string, source: string }) => `/watch/${uri}/${episodeUri}/${source}`,
+  [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
+  [Route.WATCH]: ({ uri, titleUri, source }: { uri: string, titleUri: string, source: string }) => `/watch/${uri}/${titleUri}/${source}`,
   [Route.CATEGORY]: ({ category }: { category: string }) => `/category/${category}`,
 }
 
 const RouterRoutes = {
   [Route.HOME]: '/',
   [Route.TITLE]: '/title/:uri',
-  [Route.TITLE_EPISODE]: '/title/:uri/:episodeUri',
-  [Route.WATCH]: '/watch/:uri/:episodeUri/:source',
+  [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
+  [Route.WATCH]: '/watch/:uri/:titleUri/:source',
   [Route.CATEGORY]: '/category/:category',
 }
 
