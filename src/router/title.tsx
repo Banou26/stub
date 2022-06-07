@@ -5,7 +5,7 @@ import * as R from 'fp-ts/lib/Record'
 import { reverse, contramap } from 'fp-ts/ord'
 import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
-import { filter, from, map } from 'rxjs'
+import { filter, from, map, shareReplay, tap } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 
 import { getRoutePath, Route } from './path'
@@ -119,40 +119,46 @@ const style = css`
 // type TitleHandleName = GetTitle['title']['names'][number]
 
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
-  const firstUri = uri.split(',')?.at(0)!
+  const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
-  const series$ = useMemo(() => from(getSeries({ uri }, { fetch })), [])
+  const series$ = useMemo(() => from(getSeries({ uri }, { fetch })), [uri])
   const series = useObservable(series$)
   const titles$ = useMemo(() =>
     series$
       .pipe(
         filter(Boolean),
-        mergeMap(series => searchTitles({ series }, { fetch }))
+        mergeMap(series => searchTitles({ series }, { fetch })),
+        shareReplay()
       ),
-    [series]
+    [series$]
   )
+  const titles = useObservable(titles$)
+  const firstTitleUri = titles?.at(0)?.uri
+  // console.log('titles', titles)
+
+  // console.log('firstTitleUri', firstTitleUri)
+
   const title$ = useMemo(() =>
     titles$
       .pipe(
-        map(titles => titles.find(({ uri }) => uri === titleUri)),
+        map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
         filter(Boolean),
         mergeMap(title => searchTitles({ series, search: title }, { fetch }))
       ),
-    [titles$]
+    [titles$, titleUri ?? firstTitleUri]
   )
   const title = useObservable(title$)
-  const titles = useObservable(titles$)
-  console.log('series', series)
-  console.log('titles', titles)
-  console.log('title', title)
+  // console.log('title', title)
+  // console.log('series', series)
+  // console.log('titles', titles)
+  // console.log('title', title)
   // const { data: { series } = {} } = useQuery<GetSeries>(GET_TITLE, { variables: { uri: firstUri } })
-  const firstTitleUri = series?.titles.at(0)?.uri
   // const { loading: titleLoading, data: { title } = {} } = useQuery<GetTitle>(GET_EPISODE, { variables: { uri: titleUri ?? firstTitleUri, series }, skip: !firstTitleUri || !series })
   // const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
 
   // const series = undefined
   // const title = undefined
-  const titleLoading = true
+  const titlesLoading = true
   const loadingTargets = true
   const dateData = series?.dates.at(0)
 
@@ -192,7 +198,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   const titleHandles = title?.handles ?? []
 
-  console.log('titleHandles', titleHandles)
+  // console.log('titleHandles', titleHandles)
 
   const byResolution =
     pipe(
@@ -218,7 +224,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.sort(byResolution)
     )
 
-  console.log('mediaTitleHandlesByResolution', mediaTitleHandlesByResolution)
+  // console.log('mediaTitleHandlesByResolution', mediaTitleHandlesByResolution)
 
   const resolutions =
     pipe(
@@ -226,12 +232,17 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.map(([resolution]) => resolution)
     )
     
-  console.log('resolutions', resolutions)
+  // console.log('resolutions', resolutions)
 
   useEffect(() => {
-    if(!resolutions.length) return
-    if(!resolutions.includes(1080)) setResolution(Math.max(...resolutions))
-  }, [resolutions.join(',')])
+    if(!resolutions.length || !automaticResolutionSelection) return
+    setResolution(Math.max(...resolutions))
+  }, [resolutions.join(','), automaticResolutionSelection])
+
+  const selectResolution = (resolution: number) => {
+    setAutomaticResolutionSelection(false)
+    setResolution(resolution ? Number(resolution) : undefined)
+  }
 
   const selectedResolutionTitles =
     pipe(
@@ -250,7 +261,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   // console.log('series', series)
   // console.log('title', title)
   // console.log('targets', targets)
-  console.log('selectedResolution', selectedResolution)
+  // console.log('selectedResolution', selectedResolution)
 
   const renderTitleHandleName = (handle: TitleHandle) => (
     <div key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === handle.name)}`}>
@@ -330,7 +341,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           <h2>{title?.names?.at(0)?.name}</h2>
           <div className="synopsis">
             {
-              titleLoading ? 'Loading...' :
+              !title?.synopses ? 'Loading...' :
               title?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
             }
           </div>
@@ -343,7 +354,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                   <span
                     key={resolution}
                     className={((resolution ? Number(resolution) : undefined) === selectedResolution) ? 'selected' : ''}
-                    onClick={() => setResolution(resolution ? Number(resolution) : undefined)}
+                    onClick={() => selectResolution(resolution)}
                   >
                     {
                       resolution
@@ -359,6 +370,12 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               {batchTitles.map(renderTitleHandleName)}
               <br />
               {singularTitles.map(renderTitleHandleName)}
+              <br />
+              {
+                titlesLoading && (
+                  <div style={{ backgroundColor: 'gray', padding: '2rem', width: '100%' }}>loading animation here</div>
+                )
+              }
             </div>
           </div>
         </div>
