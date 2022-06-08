@@ -16,8 +16,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
 import { useFetch } from '../utils/use-fetch'
 import { fetch } from '@mfkn/fkn-lib'
-import { useObservable } from 'react-use'
 import { diceCompare } from '../utils/string'
+import { useObservable } from '../utils/use-observable'
 
 const style = css`
   display: grid;
@@ -112,6 +112,15 @@ const style = css`
           background-color: rgb(75, 75, 75);
         }
       }
+
+      .source {
+        display: flex;
+        align-items:center;
+        .team-icon {
+          height: 3.2rem;
+          width: 3.2rem;
+        }
+      }
     }
   }
 `
@@ -121,34 +130,33 @@ const style = css`
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
-  const series$ = useMemo(() => from(getSeries({ uri }, { fetch })), [uri])
-  const series = useObservable(series$)
-  const titles$ = useMemo(() =>
+  const { observable: series$, value: series } = useObservable(() => from(getSeries({ uri }, { fetch })), [uri])
+  const { observable: titles$, value: titles, completed } = useObservable(() =>
     series$
       .pipe(
         filter(Boolean),
-        mergeMap(series => searchTitles({ series }, { fetch })),
-        shareReplay()
+        mergeMap(series => searchTitles({ series }, { fetch }))
       ),
     [series$]
   )
-  const titles = useObservable(titles$)
+  const titlesLoading = !completed
   const firstTitleUri = titles?.at(0)?.uri
   // console.log('titles', titles)
 
   // console.log('firstTitleUri', firstTitleUri)
 
-  const title$ = useMemo(() =>
-    titles$
+  const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
+
+  const { value: title } = useObservable(() =>
+    titlesReplay$
       .pipe(
         map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
         filter(Boolean),
         mergeMap(title => searchTitles({ series, search: title }, { fetch }))
       ),
-    [titles$, titleUri ?? firstTitleUri]
+    [titlesReplay$, titleUri ?? firstTitleUri]
   )
-  const title = useObservable(title$)
-  // console.log('title', title)
+  console.log('title', title)
   // console.log('series', series)
   // console.log('titles', titles)
   // console.log('title', title)
@@ -158,8 +166,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   // const series = undefined
   // const title = undefined
-  const titlesLoading = true
-  const loadingTargets = true
+  // const titlesLoading = true
+  // const loadingTargets = false
   const dateData = series?.dates.at(0)
 
   const releaseDate =
@@ -215,6 +223,12 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const mediaTitleHandlesByResolution =
     pipe(
       titleHandles,
+      A.filter(handle => {
+        const meta = handle.tags.find(({ type }) => type === 'meta')?.value
+        if (!meta) return true
+        if (meta.includes('HEVC') || meta.includes('x265')) return false
+        return true
+      }),
       A.filter(handle => !!handle.tags.find(({ type }) => type === 'protocol-type')?.value),
       // A.sort(bySeriesSimilarity),
       // @ts-ignore
@@ -263,44 +277,54 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   // console.log('targets', targets)
   // console.log('selectedResolution', selectedResolution)
 
-  const renderTitleHandleName = (handle: TitleHandle) => (
-    <div key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === handle.name)}`}>
-      {
-        handle.tags.find(({ type }) => type === 'batch')?.value
-          ? '[BATCH]'
-          : ''
-      }
-      {
-        !loadingTargets
-        && (
-          <img
-            src={getSchemeTarget(handle.scheme)!.icon}
-            alt={`${getSchemeTarget(handle.scheme)!.name} favicon`}
-            title={getSchemeTarget(handle.scheme)!.name}
-          />
-        )
-      }
-      <Link
-        href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: handle.uri })}
-      >
-        {handle.teamTitle?.team.tag ? `[${handle.teamTitle?.team.tag}]` : ''}
-        {handle.names.at(0)?.name}
-         [{getHumanReadableByteString(handle.tags.find(({ type }) => type === 'size')?.value)}]
-      </Link>
-      {/* <a href={handle.url}>{handle.teamTitle?.team.tag ? `[${handle.teamTitle?.team.tag}]` : ''}{name.name} [{getHumanReadableByteString(handle.size)}]</a> */}
-      {/* {
-        !loadingTargets
-        && handle.teamTitle?.team.icon
-        && (
-          <img
-            src={handle.teamTitle.team.icon}
-            alt={`${handle.teamTitle.team.name} favicon`}
-            title={handle.teamTitle.team.name}
-          />
-        )
-      } */}
-    </div>
-  )
+  const renderTitleHandleName = (handle: TitleHandle) => {
+    const teamTag = handle.tags.find(({ type }) => type === 'team')
+    const teamEpisodeTag = handle.tags.find(({ type }) => type === 'team-episode')
+    const name = handle.names.at(0)?.name
+    return (
+      <div className="source" key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === name)}`}>
+        {
+          handle.tags.find(({ type }) => type === 'batch')?.value
+            ? '[BATCH]'
+            : ''
+        }
+        {/* {
+          !loadingTargets
+          && (
+            <img
+              src={teamTag?.value.icon}
+              alt={`${teamTag?.value.name} favicon`}
+              title={teamTag?.value.name}
+              // src={getSchemeTarget(handle.scheme)!.icon}
+              // alt={`${getSchemeTarget(handle.scheme)!.name} favicon`}
+              // title={getSchemeTarget(handle.scheme)!.name}
+            />
+          )
+        } */}
+        <Link
+          href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: handle.uri })}
+        >
+          {teamTag?.value.tag ? `[${teamTag?.value.tag}]` : ''}
+          {name}
+           [{getHumanReadableByteString(handle.tags.find(({ type }) => type === 'size')?.value)}]
+        </Link>
+        {/* <a href={handle.url}>{teamTag?.value.tag ? `[${teamTag?.value.tag}]` : ''}{handle.names.at(0)?.name} [{getHumanReadableByteString(handle.size)}]</a> */}
+        <a href={teamEpisodeTag?.value?.url ?? teamTag?.value.url}>
+          {
+            teamTag?.value.icon
+            && (
+              <img
+                className="team-icon"
+                src={teamTag?.value.icon}
+                alt={`${teamTag?.value.name} favicon`}
+                title={teamTag?.value.name}
+              />
+            )
+          }
+        </a>
+      </div>
+    )
+  }
 
   return (
     <div css={style}>
