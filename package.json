@@ -65,6 +65,7 @@
     "idb": "^7.0.0",
     "laserr": "file:../../laserr",
     "osra": "^0.0.3",
+    "p-throttle": "^5.0.0",
     "parse-torrent": "^9.1.4",
     "path": "^0.12.7",
     "raviger": "^2.0.1",

@@ -1,4 +1,4 @@
-import { css } from '@emotion/react'
+import { css, keyframes } from '@emotion/react'
 import { Link, navigate } from 'raviger'
 import { groupBy, NonEmptyArray, sort, sortBy } from 'fp-ts/NonEmptyArray'
 import * as R from 'fp-ts/lib/Record'
@@ -10,7 +10,6 @@ import { mergeMap } from 'rxjs/operators'
 
 import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
-import { getHumanReadableByteString } from '../utils/bytes'
 import { useEffect, useMemo, useState } from 'react'
 
 import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
@@ -18,12 +17,41 @@ import { useFetch } from '../utils/use-fetch'
 import { fetch } from '@mfkn/fkn-lib'
 import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
+import { getHumanReadableByteString } from '../utils/bytes'
+
+const placeHolderShimmer = keyframes`
+  0%{
+      background-position: -468px 0;
+  }
+  100%{
+      background-position: 468px 0;
+  }
+`
 
 const style = css`
   display: grid;
   grid-template-columns: 40rem 1fr;
   grid-template-rows: 50rem 1fr;
   padding: 10rem;
+
+  .title-placeholder {
+    height: 3.2rem;
+    width: 45rem;
+  }
+
+  .gradient {
+    animation-duration: 1.8s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: ${placeHolderShimmer};
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    /* background: linear-gradient(to right, #222222 8%, #323232 38%, #222222 54%); */
+    background: linear-gradient(to right, #1c1c1c 8%, #272727 38%, #1c1c1c 54%);
+    background-size: 1000px 640px;
+    
+    position: relative;
+  }
 
   .poster {
     height: 100%;
@@ -113,12 +141,24 @@ const style = css`
         }
       }
 
-      .source {
+      .sources {
         display: flex;
-        align-items:center;
-        .team-icon {
+        flex-direction: column;
+        .source {
+          display: flex;
+          align-items:center;
           height: 3.2rem;
-          width: 3.2rem;
+          margin: 0.5rem 0;
+          a {
+            height: 3.2rem;
+            display: flex;
+            align-items: center;
+          }
+          .team-icon {
+            height: 3.2rem;
+            width: 3.2rem;
+            margin-left: 0.5rem;
+          }
         }
       }
     }
@@ -131,7 +171,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
   const { observable: series$, value: series } = useObservable(() => from(getSeries({ uri }, { fetch })), [uri])
-  const { observable: titles$, value: titles, completed } = useObservable(() =>
+  const { observable: titles$, value: titles, completed: seriesTitlesCompleted } = useObservable(() =>
     series$
       .pipe(
         filter(Boolean),
@@ -139,7 +179,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       ),
     [series$]
   )
-  const titlesLoading = !completed
+  const seriesTitlesLoading = !seriesTitlesCompleted
   const firstTitleUri = titles?.at(0)?.uri
   // console.log('titles', titles)
 
@@ -147,7 +187,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
 
-  const { value: title } = useObservable(() =>
+  const { value: title, completed: titleHandlesCompleted } = useObservable(() =>
     titlesReplay$
       .pipe(
         map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
@@ -156,7 +196,9 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       ),
     [titlesReplay$, titleUri ?? firstTitleUri]
   )
+  const titlesLoading = !titleHandlesCompleted
   console.log('title', title)
+  console.log('titlesLoading', titlesLoading)
   // console.log('series', series)
   // console.log('titles', titles)
   // console.log('title', title)
@@ -360,6 +402,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               </Link>
             ))
           }
+          {
+            seriesTitlesLoading && (
+              [...Array(titles?.length ? 3 : 10).keys()].map((i, _, arr) =>
+                <div key={i} className="title gradient" style={{ opacity: 1 / (arr.length / (arr.length - i)) }}>
+                </div>
+              )
+            )
+          }
         </div>
         <div className="title-info">
           <h2>{title?.names?.at(0)?.name}</h2>
@@ -390,14 +440,16 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               }
             </div>
             <br />
-            <div>
+            <div className="sources">
               {batchTitles.map(renderTitleHandleName)}
               <br />
               {singularTitles.map(renderTitleHandleName)}
-              <br />
               {
                 titlesLoading && (
-                  <div style={{ backgroundColor: 'gray', padding: '2rem', width: '100%' }}>loading animation here</div>
+                  [...Array(selectedResolutionTitles?.length ? 3 : 10).keys()].map((i, _, arr) =>
+                    <div key={i} className="title-placeholder gradient source" style={{ opacity: 1 / (arr.length / (arr.length - i)) }}>
+                    </div>
+                  )
                 )
               }
             </div>
