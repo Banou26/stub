@@ -13,7 +13,7 @@ const Routes = {
   [Route.HOME]: () => '/',
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
-  [Route.WATCH]: ({ uri, titleUri, source }: { uri: string, titleUri: string, source: string }) => `/watch/${uri}/${titleUri}/${source}`,
+  [Route.WATCH]: ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, sourceUri: string }) => `/watch/${uri}/${titleUri}/${sourceUri}`,
   [Route.CATEGORY]: ({ category }: { category: string }) => `/category/${category}`,
 }
 
@@ -21,7 +21,7 @@ const RouterRoutes = {
   [Route.HOME]: '/',
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
-  [Route.WATCH]: '/watch/:uri/:titleUri/:source',
+  [Route.WATCH]: '/watch/:uri/:titleUri/:sourceUri',
   [Route.CATEGORY]: '/category/:category',
 }
 

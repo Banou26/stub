@@ -6,8 +6,6 @@ import CategoryComponent from './category'
 import { getRouterRoutePath, Route } from './path'
 import Title from './title'
 import Watch from './watch'
-import Search from './home/search'
-import watch from './watch'
 import { Fragment } from 'react'
 import Header from 'src/components/header'
 
@@ -35,7 +33,7 @@ export const routes = {
   [getRouterRoutePath(Route.HOME)]: () => <Home/>,
   [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
   [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, titleUri }) => <Title uri={uri} titleUri={titleUri}/>,
-  [getRouterRoutePath(Route.WATCH)]: ({ uri, titleUri, source }) => <Watch uri={uri} titleUri={titleUri} source={source}/>,
+  [getRouterRoutePath(Route.WATCH)]: ({ uri, titleUri, sourceUri }) => <Watch uri={uri} titleUri={titleUri} sourceUri={sourceUri}/>,
   // [getRouterRoutePath(Route.CATEGORY)]: ({ category }) => <CategoryComponent category={Category['toLowerString'()]}/>,
   '/category/movies': () => 
     <HeaderPage category={'MOVIE'}>
@@ -45,7 +43,7 @@ export const routes = {
     <HeaderPage category={'SHOW'}>
       <CategoryComponent category={'SHOW'}/>
     </HeaderPage>,
-  '/category/animes': () => 
+  '/category/anime': () => 
     <HeaderPage category={'ANIME'}>
       <CategoryComponent category={'ANIME'}/>
     </HeaderPage>,

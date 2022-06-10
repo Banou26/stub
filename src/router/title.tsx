@@ -1,23 +1,22 @@
 import { css, keyframes } from '@emotion/react'
 import { Link, navigate } from 'raviger'
-import { groupBy, NonEmptyArray, sort, sortBy } from 'fp-ts/NonEmptyArray'
-import * as R from 'fp-ts/lib/Record'
-import { reverse, contramap } from 'fp-ts/ord'
-import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
-import { filter, from, map, shareReplay, tap } from 'rxjs'
+import * as R from 'fp-ts/lib/Record'
+import { pipe } from 'fp-ts/function'
+import { reverse, contramap } from 'fp-ts/ord'
+import { groupBy, NonEmptyArray } from 'fp-ts/NonEmptyArray'
 import { mergeMap } from 'rxjs/operators'
+import { filter, from, map, shareReplay } from 'rxjs'
 
 import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
-import { useFetch } from '../utils/use-fetch'
-import { fetch } from '@mfkn/fkn-lib'
 import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
 import { getHumanReadableByteString } from '../utils/bytes'
+import { cachedDelayedFetch } from '../utils/fetch'
 
 const placeHolderShimmer = keyframes`
   0%{
@@ -165,25 +164,22 @@ const style = css`
   }
 `
 
-// type TitleHandleName = GetTitle['title']['names'][number]
-
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
-  const { observable: series$, value: series } = useObservable(() => from(getSeries({ uri }, { fetch })), [uri])
+  const { observable: series$, value: series } = useObservable(() =>
+    from(getSeries({ uri }, { fetch: cachedDelayedFetch })),
+    [uri]
+  )
   const { observable: titles$, value: titles, completed: seriesTitlesCompleted } = useObservable(() =>
     series$
       .pipe(
         filter(Boolean),
-        mergeMap(series => searchTitles({ series }, { fetch }))
+        mergeMap(series => searchTitles({ series }, { fetch: cachedDelayedFetch }))
       ),
     [series$]
   )
-  const seriesTitlesLoading = !seriesTitlesCompleted
   const firstTitleUri = titles?.at(0)?.uri
-  // console.log('titles', titles)
-
-  // console.log('firstTitleUri', firstTitleUri)
 
   const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
 
@@ -192,24 +188,16 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       .pipe(
         map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
         filter(Boolean),
-        mergeMap(title => searchTitles({ series, search: title }, { fetch }))
+        mergeMap(title => searchTitles({ series, search: title }, { fetch: cachedDelayedFetch }))
       ),
     [titlesReplay$, titleUri ?? firstTitleUri]
   )
+  const seriesTitlesLoading = !seriesTitlesCompleted
   const titlesLoading = !titleHandlesCompleted
   console.log('title', title)
-  console.log('titlesLoading', titlesLoading)
-  // console.log('series', series)
-  // console.log('titles', titles)
-  // console.log('title', title)
-  // const { data: { series } = {} } = useQuery<GetSeries>(GET_TITLE, { variables: { uri: firstUri } })
-  // const { loading: titleLoading, data: { title } = {} } = useQuery<GetTitle>(GET_EPISODE, { variables: { uri: titleUri ?? firstTitleUri, series }, skip: !firstTitleUri || !series })
-  // const { loading: loadingTargets, data: { targets } = {} } = useQuery<GetTargets>(GET_TARGETS)
+  // console.log('seriesTitlesLoading', seriesTitlesLoading)
+  // console.log('titlesLoading', titlesLoading)
 
-  // const series = undefined
-  // const title = undefined
-  // const titlesLoading = true
-  // const loadingTargets = false
   const dateData = series?.dates.at(0)
 
   const releaseDate =
@@ -242,13 +230,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       )
       : ''
 
-  const getSchemeTarget = (scheme: string) =>
-    targets
-      ?.find(({ scheme: _scheme }) => _scheme === scheme)
-
   const titleHandles = title?.handles ?? []
-
-  // console.log('titleHandles', titleHandles)
 
   const byResolution =
     pipe(
@@ -280,15 +262,11 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.sort(byResolution)
     )
 
-  // console.log('mediaTitleHandlesByResolution', mediaTitleHandlesByResolution)
-
   const resolutions =
     pipe(
       mediaTitleHandlesByResolution,
       A.map(([resolution]) => resolution)
     )
-    
-  // console.log('resolutions', resolutions)
 
   useEffect(() => {
     if(!resolutions.length || !automaticResolutionSelection) return
@@ -330,19 +308,6 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             ? '[BATCH]'
             : ''
         }
-        {/* {
-          !loadingTargets
-          && (
-            <img
-              src={teamTag?.value.icon}
-              alt={`${teamTag?.value.name} favicon`}
-              title={teamTag?.value.name}
-              // src={getSchemeTarget(handle.scheme)!.icon}
-              // alt={`${getSchemeTarget(handle.scheme)!.name} favicon`}
-              // title={getSchemeTarget(handle.scheme)!.name}
-            />
-          )
-        } */}
         <Link
           href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: handle.uri })}
         >
@@ -350,7 +315,6 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           {name}
            [{getHumanReadableByteString(handle.tags.find(({ type }) => type === 'size')?.value)}]
         </Link>
-        {/* <a href={handle.url}>{teamTag?.value.tag ? `[${teamTag?.value.tag}]` : ''}{handle.names.at(0)?.name} [{getHumanReadableByteString(handle.size)}]</a> */}
         <a href={teamEpisodeTag?.value?.url ?? teamTag?.value.url}>
           {
             teamTag?.value.icon

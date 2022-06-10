@@ -16,6 +16,7 @@
     "typescript": "^4.6.0-beta"
   },
   "scripts": {
+    "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* dist/build",
     "copy-fkn-media-player-subtitles-octopus": "copyfiles -u 3 ./node_modules/fkn-media-player/build/subtitles-* dist",
     "copy-fkn-media-player-worker": "copyfiles -u 3 ./node_modules/fkn-media-player/build/worker* dist",
     "copy-fkn-media-player-deps": "npm run copy-fkn-media-player-subtitles-octopus && npm run copy-fkn-media-player-worker",
@@ -39,10 +40,10 @@
     "package-watch": "nodemon --watch src --watch ../lib/lib -e js,ts,tsx --exec \"npm run package-asar\"",
     "build-index": "node ./build.js -m",
     "build-index-watch": "node --preserve-symlinks ./build.js -w -s",
-    "build": "npm run copy-libass && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
+    "build": "npm run copy-anitomy && npm run copy-libass && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
     "build-bypass-ts": "npm run copy-libass && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar",
-    "watch": "concurrently \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
-    "_watch": "concurrently \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
+    "watch": "concurrently \"npm run copy-anitomy\" \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
+    "_watch": "concurrently \"npm run copy-anitomy\" \"npm run copy-libass\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
     "dev": "npm run watch"
   },
   "dependencies": {
@@ -52,6 +53,7 @@
     "@types/node": "^16.11.6",
     "@types/parse-torrent": "^5.8.4",
     "@types/react": "^17.0.27",
+    "anitomyscript": "^2.0.4",
     "assert": "^2.0.0",
     "browserify-fs": "^1.0.0",
     "browserify-zlib": "^0.2.0",

@@ -81,7 +81,7 @@ export default () => {
           }
         </Slider>
 
-        <Link href="/category/animes" className="category">Anime</Link>
+        <Link href="/category/anime" className="category">Anime</Link>
         <Slider>
           {
             latestAnime
