@@ -253,7 +253,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
         if (meta.includes('HEVC') || meta.includes('x265')) return false
         return true
       }),
-      A.filter(handle => !!handle.tags.find(({ type }) => type === 'protocol-type')?.value),
+      A.filter(handle => !!handle.tags.find(({ type }) => type === 'source')?.value),
       // A.sort(bySeriesSimilarity),
       // @ts-ignore
       groupBy(handle => handle.tags.find(({ type }) => type === 'resolution').value?.toString()),
@@ -309,7 +309,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             : ''
         }
         <Link
-          href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, source: handle.uri })}
+          href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, sourceUri: handle.uri })}
         >
           {teamTag?.value.tag ? `[${teamTag?.value.tag}]` : ''}
           {name}
