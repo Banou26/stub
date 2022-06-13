@@ -168,7 +168,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
   const [selectedResolution, setResolution] = useState<number | undefined>(1080)
   const { observable: series$, value: series } = useObservable(() =>
-    from(getSeries({ uri }, { fetch: cachedDelayedFetch })),
+    getSeries({ uri }, { fetch: cachedDelayedFetch }),
     [uri]
   )
   const { observable: titles$, value: titles, completed: seriesTitlesCompleted } = useObservable(() =>
@@ -301,6 +301,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     const teamTag = handle.tags.find(({ type }) => type === 'team')
     const teamEpisodeTag = handle.tags.find(({ type }) => type === 'team-episode')
     const name = handle.names.at(0)?.name
+    console.log('handle', handle)
     return (
       <div className="source" key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === name)}`}>
         {
