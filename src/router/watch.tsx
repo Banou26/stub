@@ -3,8 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { fetch } from '@mfkn/fkn-lib'
 import FKNMediaPlayer from 'fkn-media-player'
-import { from, of } from 'rxjs'
-import sanitizeHtml from 'sanitize-html'
+import { of } from 'rxjs'
 
 import { getTitle } from '../../../../scannarr/src'
 import { cachedDelayedFetch } from '../utils/fetch'
@@ -22,12 +21,21 @@ const style = css`
     }
   }
 
+  .description {
+    text-align: center;
+    padding: 2.5rem;
+    margin: 1.5rem auto;
+    margin-bottom: 0;
+    width: 150rem;
+    white-space: pre-line;
+  }
+
   .comments {
     display: grid;
     margin: 5rem auto;
     overflow: hidden;
 
-    .description {
+    .header {
       text-align: center;
       padding: 2.5rem;
     }
@@ -48,6 +56,7 @@ const style = css`
       }
       .message {
         margin-top: 1.5rem;
+        white-space: pre-line;
       }
     }
   }
@@ -129,6 +138,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
       })
   }, [title])
 
+  // todo: add more info on top of the description, e.g url, video infos, download rate, ect...
   return (
     <div css={style}>
       <div className="player">
@@ -136,20 +146,19 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
       </div>
       <div
         className="description"
-        dangerouslySetInnerHTML={{
-          __html: sanitizeHtml(
-            titleHandle
-              ?.tags
-              .find(({ type }) => type === 'description')
-              ?.value
-          )
-        }}
-      />
+      >
+        {
+          titleHandle
+            ?.tags
+            .find(({ type }) => type === 'description')
+            ?.value
+        }
+      </div>
       {
         comments?.length
           ? (
             <div className="comments">
-              <div>
+              <div className="header">
                 Comments
                 {
                   titleHandle?.url
