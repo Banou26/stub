@@ -7,6 +7,8 @@ import { reverse, contramap } from 'fp-ts/ord'
 import { groupBy, NonEmptyArray } from 'fp-ts/NonEmptyArray'
 import { mergeMap } from 'rxjs/operators'
 import { filter, from, map, shareReplay } from 'rxjs'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnet } from '@fortawesome/free-solid-svg-icons'
 
 import { getRoutePath, Route } from './path'
 import * as A from 'fp-ts/lib/Array'
@@ -300,12 +302,15 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const renderTitleHandleName = (handle: TitleHandle) => {
     const teamTag = handle.tags.find(({ type }) => type === 'team')
     const teamEpisodeTag = handle.tags.find(({ type }) => type === 'team-episode')
+    const sizeTag = handle.tags.find(({ type }) => type === 'size')
+    const sourceTag = handle.tags.find(({ type }) => type === 'source')
+    const batchTag = handle.tags.find(({ type }) => type === 'batch')
     const name = handle.names.at(0)?.name
     console.log('handle', handle)
     return (
       <div className="source" key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === name)}`}>
         {
-          handle.tags.find(({ type }) => type === 'batch')?.value
+          batchTag?.value
             ? '[BATCH]'
             : ''
         }
@@ -314,7 +319,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
         >
           {teamTag?.value.tag ? `[${teamTag?.value.tag}]` : ''}
           {name}
-           [{getHumanReadableByteString(handle.tags.find(({ type }) => type === 'size')?.value)}]
+           [{getHumanReadableByteString(sizeTag?.value)}]
         </Link>
         <a href={teamEpisodeTag?.value?.url ?? teamTag?.value.url}>
           {
@@ -329,6 +334,24 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             )
           }
         </a>
+        {
+          sourceTag?.value.type === 'torrent-file'
+            ? (
+              <span>
+                <span>
+                  <span>{sourceTag?.value.seeders}</span>
+                  <span>/</span>
+                  <span>{sourceTag?.value.leechers}</span>
+                </span>
+                <span>
+                  <a href={sourceTag?.value.magnetUri}>
+                    <FontAwesomeIcon icon={faMagnet}/>
+                  </a>
+                </span>
+              </span>
+            )
+            : null
+        }
       </div>
     )
   }
