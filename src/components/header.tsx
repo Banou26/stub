@@ -3,7 +3,8 @@ import { Link } from 'raviger'
 import { FocusEvent, FocusEventHandler, Fragment, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
-import type { Category, TitleHandle } from '../../../../scannarr/src'
+import { useObservable } from '../utils/use-observable'
+import { Category, searchSeries, TitleHandle } from '../../../../scannarr/src'
 import { searchTitles } from '../../../../scannarr/src'
 import { useFetch } from '../utils/use-fetch'
 
@@ -66,14 +67,15 @@ const Header = ({ category }: { category?: Category }) => {
   const [showSearchResults, setShowSearchResults] = useState(false)
   const { register, watch, handleSubmit, getFieldState } = useForm()
   const search = watch('search')
-  const [searchValue, setSearchValue] = useState(undefined)
-  const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], search: searchValue }), { skip: !searchValue })
-
+  const [searchValue, setSearchValue] = useState('')
+  const { completed, value: data } = useObservable(() => searchSeries({ categories: [category!], search: searchValue }), [searchValue])
+  const loading = !completed
+  // const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => searchTitles({ categories: [category!], search: searchValue }), { skip: !searchValue })
+  console.log('data', data)
 
   useDebounce(() => {
     if (!search?.length) return
     setSearchValue(search)
-    if (data) refetch()
     setShowSearchResults(true)
   }, 500, [watch('search')])
 
