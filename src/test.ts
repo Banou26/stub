@@ -64,3 +64,26 @@
 // registerServiceWorker()
   
 // console.log('test')
+
+
+// todo: once https://developer.chrome.com/origintrials/#/view_trial/3378825620434714625 ships for real, try again
+// (async () => {
+//   const directory = await window.showDirectoryPicker({ startIn: 'desktop' })
+//   const fileHandle = await (await directory.getFileHandle('[SlyFox] Summertime Rendering - 06 [6AE33BEB].mkv')).getFile()
+//   const fileSize = fileHandle.size
+//   let index = 0
+//   const sliceLength = 5_000_000
+//   while (index < fileSize) {
+//       console.log(`writing ${index}-${index + sliceLength}`)
+//       const buff = fileHandle.slice(index, index + sliceLength)
+//       const newFileHandle = await directory.getFileHandle('copied.mkv', { create: true })
+//       const writeStream = await newFileHandle.createWritable()
+//       await writeStream.truncate(fileSize)
+//       await writeStream.seek(index)
+//       await buff.stream().pipeTo(writeStream)
+//       index = index + sliceLength
+//       console.log(`done writing ${index}-${index + sliceLength}`)
+//       await new Promise(resolve => setTimeout(resolve, 2000))
+//   }
+//   console.log('finished')
+// })()
