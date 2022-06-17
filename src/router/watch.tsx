@@ -11,6 +11,7 @@ import { useObservable } from 'src/utils/use-observable'
 
 
 const style = css`
+  display: grid;
   height: 100%;
   /* overflow: hidden; */
   .player {
@@ -33,7 +34,6 @@ const style = css`
   .comments {
     display: grid;
     margin: 5rem auto;
-    overflow: hidden;
 
     .header {
       text-align: center;
@@ -45,6 +45,7 @@ const style = css`
       grid-template-columns: auto 1fr;
       margin: 1.5rem auto;
       width: 150rem;
+      overflow: hidden;
 
       .avatar {
         height: 12rem;
