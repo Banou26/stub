@@ -13,6 +13,7 @@ import { useObservable } from 'src/utils/use-observable'
 const style = css`
   display: grid;
   height: 100%;
+  grid-template-rows: 100% auto;
   /* overflow: hidden; */
   .player {
     height: 100%;
