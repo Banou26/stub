@@ -24,6 +24,7 @@ const style = css`
   }
 
   .description {
+    background: rgb(35, 35, 35);
     text-align: center;
     padding: 2.5rem;
     margin: 1.5rem auto;
@@ -46,6 +47,8 @@ const style = css`
       grid-template-columns: auto 1fr;
       margin: 1.5rem auto;
       width: 150rem;
+      padding: 1rem;
+      background: rgb(35, 35, 35);
       overflow: hidden;
 
       .avatar {
