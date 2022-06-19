@@ -185,6 +185,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
 
+  // todo: fix issue when a title is selected + we refresh the page, it doesn't load the side infos
   const { value: title, completed: titleHandlesCompleted } = useObservable(() =>
     titlesReplay$
       .pipe(
