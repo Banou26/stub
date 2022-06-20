@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Link } from 'raviger'
+import { Link, navigate, useRedirect } from 'raviger'
 import { useMemo } from 'react'
 import { useObservable } from 'react-use'
 
@@ -7,6 +7,7 @@ import Slider from 'src/components/slider'
 import { Category, searchSeries, TitleHandle } from '../../../../../scannarr/src'
 import { searchTitles } from '../../../../../scannarr/src'
 import { useFetch } from '../../utils/use-fetch'
+import { getRoutePath, Route } from '../path'
 
 const style = css`
 
@@ -38,6 +39,7 @@ padding: 5rem;
 `
 
 export default () => {
+  navigate(getRoutePath(Route.CATEGORY, { category: 'ANIME' }))
   // const { data: movies } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['MOVIE'], latest: true }))
   // const { data: shows } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['SHOW'], latest: true }))
   const movie$ = useMemo(() => searchSeries({ categories: ['MOVIE'], latest: true }), [])
