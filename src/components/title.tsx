@@ -1,16 +1,13 @@
+import type { Series } from '../../../../scannarr/src'
 
-import { useState, useEffect } from 'react'
 import { css } from '@emotion/react'
 import { Link } from 'raviger'
-
-import { getLatest, Category, TitleHandle } from 'src/lib'
-import Slider from 'src/components/slider'
-import { useFetch } from 'src/lib/hooks/utils'
 
 const style = css`
 align-items: center;
 background-repeat: no-repeat;
 background-size: cover;
+background-position: center;
 
 display: grid;
 grid-template-rows: auto auto;
@@ -21,12 +18,25 @@ span {
   text-align: center;
   text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
   padding-top: 1rem;
-  background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) calc(100% - 1rem), rgba(0,0,0,0) 100%);
+  background:
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,0.5) 0%,
+      rgba(0,0,0,0.5) calc(100% - 1rem),
+      rgba(0,0,0,0) 100%
+    );
 }
 `
 
-export default ({ title }: { title: TitleHandle }) => (
-  <Link css={style} key={title.id} href={`/title/${title.uri}`} className="title" style={{ backgroundImage: `url(${title.images.at(0)?.url})` }}>
-    <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
+export default ({ series, ...rest }: { series: Series }) => (
+  <Link
+    css={style}
+    key={series.uri}
+    href={`/title/${series.uri}`}
+    className="series"
+    style={{ backgroundImage: `url(${series.images.at(0)?.url})` }}
+    {...rest}
+  >
+    <span style={{ color: 'white' }}>{series.names.at(0)?.name}</span>
   </Link>
 )

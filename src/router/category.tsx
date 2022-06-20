@@ -1,18 +1,15 @@
 
-import { useState, useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { css } from '@emotion/react'
-import { Link } from 'raviger'
 
-import type { Category, TitleHandle } from '../../../../scannarr/src'
+import type { Category } from '../../../../scannarr/src'
 import { searchSeries } from '../../../../scannarr/src'
-import Slider from 'src/components/slider'
-import Title from 'src/components/title'
-import { useFetch } from '../utils/use-fetch'
+import Card from 'src/components/card'
 import { useObservable } from 'react-use'
 
 const style = css`
 
-padding: 5rem;
+padding: 5rem 10rem;
 
 .anime {
 
@@ -24,9 +21,10 @@ padding: 5rem;
 
 .items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(22.5rem, 1fr));
-  grid-auto-rows: 31.8rem;
-  grid-gap: 2.5rem;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(calc(25rem + 40rem), 1fr));
+  grid-auto-rows: 30rem;
+  grid-gap: 3.5rem 0;
 }
 `
 
@@ -40,7 +38,7 @@ export default ({ category }: { category?: Category }) => {
     <div css={style}>
       <div className="items">
         {
-          categoryItems?.map(item => <Title key={item.uri} title={item}/>)
+          categoryItems?.map(item => <Card key={item.uri} series={item}/>)
         }
       </div>
     </div>
