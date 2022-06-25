@@ -5,7 +5,7 @@ import { css } from '@emotion/react'
 import type { Category } from '../../../../scannarr/src'
 import { searchSeries } from '../../../../scannarr/src'
 import Card from 'src/components/card'
-import { useObservable } from 'react-use'
+import useObservable from '../utils/use-observable'
 
 const style = css`
 
@@ -29,16 +29,23 @@ padding: 5rem 10rem;
 `
 
 export default ({ category }: { category?: Category }) => {
-  const categoryItems$ = useMemo(() => searchSeries({ categories: [category!], latest: true }), [])
-  const categoryItems = useObservable(categoryItems$)
+  const { value: categoryItems } = useObservable(
+    () => searchSeries({ categories: [category!], latest: true }),
+    []
+  )
+
+  const sortedItems = categoryItems
+    ?.sort(({ popularity }, { popularity: popularity2 }) => (popularity2 ?? 0) - (popularity ?? 0))
 
   // const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], latest: true }), { skip: !category })
-
+  console.log('categoryItems', categoryItems)
   return (
     <div css={style}>
       <div className="items">
         {
-          categoryItems?.map(item => <Card key={item.uri} series={item}/>)
+          sortedItems?.map(item =>
+            <Card key={item.uri} series={item}/>  
+          )
         }
       </div>
     </div>

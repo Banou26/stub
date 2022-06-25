@@ -76,6 +76,7 @@
     "raviger": "^2.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.1",
+    "react-feather": "^2.0.10",
     "react-hook-form": "^7.28.0",
     "react-use": "^17.4.0",
     "rxjs": "^7.5.5",

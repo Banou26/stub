@@ -409,6 +409,19 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             }
           </div>
           <div>
+            <div>
+              <div>Search override</div>
+              <input
+                type="text"
+                placeholder={`${
+                  series?.names.at(0)?.name
+                } ${
+                  titles
+                    ?.find(({ uri }) => uri === (titleUri ?? firstTitleUri))
+                    ?.number
+                }`}
+              />
+            </div>
             <br />
             <br />
             <div className='resolutions'>

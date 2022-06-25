@@ -25,3 +25,5 @@ export const useObservable = <T>(func: () => Observable<T>, deps: any[]) => {
     value
   }
 }
+
+export default useObservable

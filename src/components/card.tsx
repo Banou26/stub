@@ -1,7 +1,9 @@
-import type { Series } from '../../../../scannarr/src'
+import { getTarget, Series } from '../../../../scannarr/src'
 
+import { Heart, Users } from 'react-feather'
 import { css } from '@emotion/react'
 import Title from './title'
+import { useEffect, useMemo, useState } from 'react'
 
 const style = css`
 display: grid;
@@ -15,35 +17,183 @@ overflow: hidden;
 
 .data {
   display: grid;
-  grid-template-rows: 5rem 21rem 4rem;
+  grid-template-rows: auto 1fr auto;
+  /* grid-template-rows: 5rem minmax(18rem, auto) auto; */
+  /* grid-template-rows: 5rem minmax(18rem, 1fr) fit-content(5rem); */
+  /* grid-template-rows: 5rem 20rem 5rem; */
   background: rgb(35, 35, 35);
 
+  .head {
+    display: grid;
+    grid-template-columns: 25rem auto;
+    height: 5rem;
+    padding: 0.25rem 1rem 0.25rem 2rem;
+
+    .episode {
+      .number {
+        font-size: 1.7rem;
+      }
+
+      .date {
+        font-size: 2rem;
+      }
+    }
+
+    .infos {
+      display: grid;
+      grid-template-columns: auto auto;
+
+      .sources {
+        .source {
+          img {
+            height: 1.6rem;
+            width: 1.6rem;
+          }
+        }
+      }
+
+      .stats {
+        .popularity {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .score {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+
   .synopsis {
-    margin: 2rem 0 0 2rem;
+    margin: 1rem 0 0 2rem;
     padding-right: 2rem;
-    overflow: auto;
+    overflow-y: auto;
     line-height: 2.5rem;
+    max-height: 21rem;
   }
 
   .genres {
-    padding: 0 2rem;
+    display: flex;
+    padding: 0.5rem 2rem;
+    column-gap: 1rem;
+    /* column-gap: 2rem; */
+    row-gap: 0.5rem;
+    /* flex-wrap: wrap; */
+    font-size: 1.1rem;
+    overflow-x: auto;
+
+    .genre {
+      height: fit-content;
+      border-radius: 3px;
+      border: 1px solid rgb(66, 66, 66);
+      padding: 0.25rem 0.5rem;
+      --background-color: rgb(51, 51, 51);
+      background-color: var(--background-color);
+
+      &.adult {
+        --background-color: rgb(86, 32, 32);
+      }
+    }
   }
 }
 `
 
 export default ({ series }: { series: Series }) => {
-  console.log('series', series)
+  const [delta, setDelta] = useState<number>()
+
+  const isUnreleased = useMemo(() =>
+    series
+      ? series?.status === 'NOT_YET_RELEASED'
+      : undefined
+  , [series])
+
+  const releasedNumbers = useMemo(() => {
+    if (!series) return
+    const nextRelease =
+      series
+        ?.airingSchedule
+        ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
+        .filter(({ date }) => Date.now() - date.getTime() < 0)
+        .at(0)
+    if (!nextRelease) return series.titleNumbers ?? 1
+    return nextRelease.number
+  }, [series])
+
+  useEffect(() => {
+    const date = series.dates.at(0)
+    const nextRelease =
+      series
+        ?.airingSchedule
+        ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
+        .filter(({ date }) => Date.now() - date.getTime() < 0)
+        .at(0)
+      ?? ({
+        number: 0,
+        date: date &&
+          'start' in date ? date.start
+          : date?.date
+      })
+    if (!nextRelease?.date) return
+    setDelta(nextRelease?.date.getTime() - Date.now())
+  }, [series])
+
+  const days = useMemo(() => delta ? Math.floor(delta / (1000 * 60 * 60 * 24)) : undefined, [delta])
+  const hours = useMemo(() => delta ? Math.floor((delta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) : undefined, [delta])
+
+  const popularity = useMemo(() =>
+    series.popularity
+      ? new Intl.NumberFormat('en-US', { notation: 'compact' }).format(series.popularity)
+      : undefined,
+    [series.popularity]
+  )
+
   return (
     <div css={style}>
       <Title series={series} className="title"/>
       <div className="data">
-        <div></div>
+        <div className="head">
+          <div className="episode">
+            <div className="number">
+              Ep {releasedNumbers ? releasedNumbers : '...'} {series.titleNumbers ? `of ${series.titleNumbers} ` : ''}
+              airing in
+            </div>
+            <div className="date">
+              {
+                delta
+                  ? <>{days} day, {hours} hours</>
+                  : null
+              }
+            </div>
+          </div>
+          <div className="infos">
+            <div className="sources">
+              {
+                series?.handles.map(handle =>
+                  <a href={handle.url ?? getTarget(handle.scheme)?.origin} className="source">
+                    <img src={getTarget(handle.scheme)?.icon} alt={getTarget(handle.scheme)?.name}/>
+                  </a>
+                )
+              }
+            </div>
+            <div className="stats">
+              <div className="popularity">{popularity}<Users/></div>
+              <div className="score"><span>{series?.averageScore * 10} / 10</span><Heart/></div>
+            </div>
+          </div>
+        </div>
         <div className="synopsis">
           {series.synopses.at(0)?.synopsis}
         </div>
         <div className="genres">
-          <span>genre</span>
-          <span>genre</span>
+          {
+            series.genres.map(genre =>
+              <span key={genre.name} className={`genre${genre.adult ? ' adult' : ''}`}>{genre.name}</span>  
+            )
+          }
         </div>
       </div>
     </div>
