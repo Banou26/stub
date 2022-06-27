@@ -15,6 +15,9 @@ export const useObservable = <T>(func: () => Observable<T>, deps: any[]) => {
     })
     return () => {
       subscription.unsubscribe()
+      setCompleted(false)
+      setError(undefined)
+      setValue(undefined)
     }
   }, deps)
 

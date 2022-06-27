@@ -25,7 +25,8 @@ overflow: hidden;
 
   .head {
     display: grid;
-    grid-template-columns: 25rem auto;
+    grid-template-columns: auto auto;
+    /* grid-template-columns: 25rem auto; */
     height: 5rem;
     padding: 0.25rem 1rem 0.25rem 2rem;
 
@@ -44,7 +45,14 @@ overflow: hidden;
       grid-template-columns: auto auto;
 
       .sources {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 1.6rem);
+        grid-template-rows: repeat(auto-fill, 1.6rem);
+        direction: rtl;
+
         .source {
+          height: 1.6rem;
+          width: 1.6rem;
           img {
             height: 1.6rem;
             width: 1.6rem;
@@ -55,14 +63,17 @@ overflow: hidden;
       .stats {
         .popularity {
           display: flex;
-          justify-content: center;
+          justify-content: space-around;
           align-items: center;
         }
 
         .score {
           display: flex;
-          justify-content: center;
+          justify-content: space-around;
           align-items: center;
+          svg {
+            color: hsl(338,73%,60%);
+          }
         }
       }
     }
@@ -74,6 +85,7 @@ overflow: hidden;
     overflow-y: auto;
     line-height: 2.5rem;
     max-height: 21rem;
+    font-size: 1.4rem;
   }
 
   .genres {
@@ -93,6 +105,11 @@ overflow: hidden;
       padding: 0.25rem 0.5rem;
       --background-color: rgb(51, 51, 51);
       background-color: var(--background-color);
+      
+      a {
+        color: white;
+        text-decoration: none;
+      }
 
       &.adult {
         --background-color: rgb(86, 32, 32);
@@ -102,6 +119,7 @@ overflow: hidden;
 }
 `
 
+// todo: reduce the amount of DOM elements
 export default ({ series }: { series: Series }) => {
   const [delta, setDelta] = useState<number>()
 
@@ -173,7 +191,7 @@ export default ({ series }: { series: Series }) => {
             <div className="sources">
               {
                 series?.handles.map(handle =>
-                  <a href={handle.url ?? getTarget(handle.scheme)?.origin} className="source">
+                  <a key={handle.uri} href={handle.url ?? getTarget(handle.scheme)?.origin} className="source">
                     <img src={getTarget(handle.scheme)?.icon} alt={getTarget(handle.scheme)?.name}/>
                   </a>
                 )
@@ -181,7 +199,16 @@ export default ({ series }: { series: Series }) => {
             </div>
             <div className="stats">
               <div className="popularity">{popularity}<Users/></div>
-              <div className="score"><span>{series?.averageScore * 10} / 10</span><Heart/></div>
+              {
+                series?.averageScore
+                  ? (
+                    <div className="score">
+                      <span>{(series?.averageScore * 10).toFixed(1)}</span>
+                      <Heart/>
+                    </div>
+                  )
+                  : null
+              }
             </div>
           </div>
         </div>
@@ -191,7 +218,14 @@ export default ({ series }: { series: Series }) => {
         <div className="genres">
           {
             series.genres.map(genre =>
-              <span key={genre.name} className={`genre${genre.adult ? ' adult' : ''}`}>{genre.name}</span>  
+              <span key={genre.name} className={`genre${genre.adult ? ' adult' : ''}`}>
+                {
+                  // todo: replace this link with a link to our own genres page
+                  genre.url
+                    ? <a href={genre.url} target="_blank" rel="noopener noreferrer">{genre.name}</a>
+                    : <>{genre.name}</>
+                }
+              </span>  
             )
           }
         </div>

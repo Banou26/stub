@@ -67,6 +67,7 @@ const Header = ({ category }: { category?: Category }) => {
   const [showSearchResults, setShowSearchResults] = useState(false)
   const { register, watch, handleSubmit, getFieldState } = useForm()
   const search = watch('search')
+  // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
   const { completed, value: data } = useObservable(() => searchSeries({ categories: [category!], search: searchValue }), [searchValue])
   const loading = !completed
@@ -77,7 +78,7 @@ const Header = ({ category }: { category?: Category }) => {
     if (!search?.length) return
     setSearchValue(search)
     setShowSearchResults(true)
-  }, 500, [watch('search')])
+  }, 500, [search])
 
   const onSubmit = (v) => {
   }

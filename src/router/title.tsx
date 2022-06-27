@@ -98,6 +98,16 @@ const style = css`
         cursor: pointer;
         color: #fff;
 
+        .name {
+          display: flex;
+          gap: 2rem;
+
+          .main {}
+          .secondary {
+            color: #777777;
+          }
+        }
+
         &:hover {
           text-decoration: none;
         }
@@ -121,10 +131,21 @@ const style = css`
       background-color: rgb(35, 35, 35);
       padding: 2.5rem;
 
-      h2 {
+      .title {
+        display: flex;
+        gap: 2rem;
+        /* display: grid;
+        grid-auto-flow: column; */
+        /* grid-template-columns: fit-content(100%) auto; */
+        /* grid-gap: 1rem; */
+        align-items: baseline;
         margin-bottom: 2.5rem;
         padding-bottom: 1rem;
         border-bottom: 0.1rem solid rgb(75, 75, 75);
+
+        h3 {
+          color: #777777;
+        }
       }
 
       .resolutions {
@@ -136,6 +157,7 @@ const style = css`
           cursor: pointer;
           padding: 1rem;
           text-align: center;
+          border: 0.1rem solid rgb(75, 75, 75);
         }
         .selected {
           background-color: rgb(75, 75, 75);
@@ -173,35 +195,38 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     getSeries({ uri }, { fetch: cachedDelayedFetch }),
     [uri]
   )
+  const { observable: seriesReplay$ } = useObservable(() => series$.pipe(shareReplay()), [series$])
+
   const { observable: titles$, value: titles, completed: seriesTitlesCompleted } = useObservable(() =>
-    series$
+    seriesReplay$
       .pipe(
         filter(Boolean),
         mergeMap(series => searchTitles({ series }, { fetch: cachedDelayedFetch }))
       ),
-    [series$]
+    [seriesReplay$]
   )
-  const firstTitleUri = titles?.at(0)?.uri
-
   const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
 
-  // todo: fix issue when a title is selected + we refresh the page, it doesn't load the side infos
-  const { value: title, completed: titleHandlesCompleted } = useObservable(() =>
-    titlesReplay$
-      .pipe(
-        map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
-        filter(Boolean),
-        mergeMap(title => searchTitles({ series, search: title }, { fetch: cachedDelayedFetch }))
-      ),
-    [titlesReplay$, titleUri ?? firstTitleUri]
+  const firstTitleUri = titles?.at(0)?.uri
+
+  const { value: title, completed: titleHandlesCompleted } = useObservable(
+    () =>
+      series
+        ? (
+          titlesReplay$
+            .pipe(
+              map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
+              filter(Boolean),
+              mergeMap(title => searchTitles({ series, search: title }, { fetch: cachedDelayedFetch }))
+            )
+        )
+        : from([]),
+    [series, titlesReplay$, titleUri ?? firstTitleUri]
   )
   const seriesTitlesLoading = !seriesTitlesCompleted
   const titlesLoading = !titleHandlesCompleted
-  console.log('title', title)
-  // console.log('seriesTitlesLoading', seriesTitlesLoading)
-  // console.log('titlesLoading', titlesLoading)
 
-  const dateData = series?.dates.at(0)
+  const dateData = series?.dates?.at(0)
 
   const releaseDate =
     series && dateData && 'date' in dateData &&
@@ -259,7 +284,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.filter(handle => !!handle.tags.find(({ type }) => type === 'source')?.value),
       // A.sort(bySeriesSimilarity),
       // @ts-ignore
-      groupBy(handle => handle.tags.find(({ type }) => type === 'resolution').value?.toString()),
+      groupBy(handle => handle.resolution?.toString()),
       R.toArray,
       A.map(([resolution, handle]) => [resolution ? Number(resolution) : undefined, handle] as const),
       A.sort(byResolution)
@@ -289,48 +314,59 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.flatten
     )
 
+  // todo: remove results with no seeders
   const { left: singularTitles, right: batchTitles } =
     pipe(
       selectedResolutionTitles,
-      A.partition((handle) => Boolean(handle.tags.find(({ type }) => type === 'batch')?.value))
+      A.filter((handle) => handle.number === title?.number),
+      A.partition((handle) => Boolean(handle.batch))
     )
+  
+  const mainTitleName =
+    title
+      ?.names
+      ?.find(({ language }) => language === 'en')
+      ?.name
+    ?? title?.names?.at(0)?.name
 
-  // console.log('series', series)
-  // console.log('title', title)
+  const secondaryTitleNames =
+    title
+    ?.names
+    ?.filter(({ score, name }) => score >= 0.8 && name !== mainTitleName)
+
+  console.log('series', series)
+  console.log('title', title)
   // console.log('targets', targets)
   // console.log('selectedResolution', selectedResolution)
 
   const renderTitleHandleName = (handle: TitleHandle) => {
-    const teamTag = handle.tags.find(({ type }) => type === 'team')
-    const teamEpisodeTag = handle.tags.find(({ type }) => type === 'team-episode')
-    const sizeTag = handle.tags.find(({ type }) => type === 'size')
-    const sourceTag = handle.tags.find(({ type }) => type === 'source')
-    const batchTag = handle.tags.find(({ type }) => type === 'batch')
-    const name = handle.names.at(0)?.name
-    console.log('handle', handle)
+    const teamTag = handle.team
+    const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
+    const sourceTag = handle.tags?.find(({ type }) => type === 'source')
+    const name = handle.names?.at(0)?.name
     return (
-      <div className="source" key={`${handle.uri}-${handle.names.findIndex(({ name: _name }) => _name === name)}`}>
+      <div className="source" key={`${handle.uri}-${handle.names?.findIndex(({ name: _name }) => _name === name)}`}>
         {
-          batchTag?.value
+          handle.batch
             ? '[BATCH]'
             : ''
         }
         <Link
           href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, sourceUri: handle.uri })}
         >
-          {teamTag?.value.tag ? `[${teamTag?.value.tag}]` : ''}
+          {teamTag?.tag ? `[${teamTag?.tag}]` : ''}
           {name}
-           [{getHumanReadableByteString(sizeTag?.value)}]
+           [{getHumanReadableByteString(handle.size)}]
         </Link>
-        <a href={teamEpisodeTag?.value?.url ?? teamTag?.value.url}>
+        <a href={teamEpisodeTag?.value?.url ?? teamTag?.url}>
           {
-            teamTag?.value.icon
+            teamTag?.icon
             && (
               <img
                 className="team-icon"
-                src={teamTag?.value.icon}
-                alt={`${teamTag?.value.name} favicon`}
-                title={teamTag?.value.name}
+                src={teamTag?.icon}
+                alt={`${teamTag?.name} favicon`}
+                title={teamTag?.name}
               />
             )
           }
@@ -359,7 +395,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   return (
     <div css={style}>
-      <img src={series?.images.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" />
+      <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" />
       <div>
         <div>
           <h1>{series?.names?.at(0)?.name}</h1>
@@ -374,22 +410,48 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       <div className="titles">
         <div className="list">
           {
-            titles?.map(title => (
-              // todo: replace the title number with a real number
-              <Link
-                key={title.uri}
-                className={`title ${title.uri === (titleUri ?? firstTitleUri) ? 'selected' : ''}`}
-                href={getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri })}
-                onClick={(ev) => {
-                  ev.preventDefault()
-                  navigate(getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri }), true)
-                }}
-              >
-                <span className="number">{title.names?.at(0)?.name ? title.number ?? '' : ''}</span>
-                <span className="name">{title.names?.at(0)?.name ?? `Title ${title.number}`}</span>
-                <span className="date">{title.dates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
-              </Link>
-            ))
+            titles?.map(title => {
+              const mainTitleName =
+                title
+                  ?.names
+                  ?.find(({ language }) => language === 'en')
+                  ?.name
+                ?? title?.names?.at(0)?.name
+                ?? `Episode ${title.number}`
+            
+              const secondaryTitleNames =
+                title
+                ?.names
+                ?.filter(({ score, name }) => score >= 0.8 && name !== mainTitleName)
+
+              return (
+                // todo: replace the title number with a real number
+                <Link
+                  key={title.uri}
+                  className={`title ${title.uri === (titleUri ?? firstTitleUri) ? 'selected' : ''}`}
+                  href={getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri })}
+                  onClick={(ev) => {
+                    ev.preventDefault()
+                    navigate(getRoutePath(Route.TITLE_EPISODE, { uri, titleUri: title.uri }), true)
+                  }}
+                >
+                  <span className="number">
+                    {title.names?.at(0)?.name ? title.number ?? '' : ''}
+                  </span>
+                  <span className="name">
+                    <span className="main">{mainTitleName}</span>
+                    {
+                      secondaryTitleNames?.map(name =>
+                        <span className="secondary">
+                          {name.name}
+                        </span>
+                      )
+                    }
+                  </span>
+                  <span className="date">{title.dates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
+                </Link>
+              )
+            })
           }
           {
             seriesTitlesLoading && (
@@ -401,7 +463,16 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           }
         </div>
         <div className="title-info">
-          <h2>{title?.names?.at(0)?.name}</h2>
+          <div className="title">
+            <h2>{mainTitleName}</h2>
+            {
+              secondaryTitleNames?.map(titleName =>
+                <h3>
+                  {titleName.name}
+                </h3>
+              )
+            }
+          </div>
           <div className="synopsis">
             {
               !title?.synopses ? 'Loading...' :
