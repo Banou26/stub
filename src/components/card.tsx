@@ -1,9 +1,11 @@
 import { getTarget, Series } from '../../../../scannarr/src'
 
+import { useEffect, useMemo, useState } from 'react'
 import { Heart, Users } from 'react-feather'
 import { css } from '@emotion/react'
+
 import Title from './title'
-import { useEffect, useMemo, useState } from 'react'
+import Sources from './sources'
 
 const style = css`
 display: grid;
@@ -49,15 +51,6 @@ overflow: hidden;
         grid-template-columns: repeat(auto-fill, 1.6rem);
         grid-template-rows: repeat(auto-fill, 1.6rem);
         direction: rtl;
-
-        .source {
-          height: 1.6rem;
-          width: 1.6rem;
-          img {
-            height: 1.6rem;
-            width: 1.6rem;
-          }
-        }
       }
 
       .stats {
@@ -189,13 +182,7 @@ export default ({ series }: { series: Series }) => {
           </div>
           <div className="infos">
             <div className="sources">
-              {
-                series?.handles.map(handle =>
-                  <a key={handle.uri} href={handle.url ?? getTarget(handle.scheme)?.origin} className="source">
-                    <img src={getTarget(handle.scheme)?.icon} alt={getTarget(handle.scheme)?.name}/>
-                  </a>
-                )
-              }
+              <Sources handles={series?.handles}/>
             </div>
             <div className="stats">
               <div className="popularity">{popularity}<Users/></div>

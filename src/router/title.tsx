@@ -19,6 +19,7 @@ import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
 import { getHumanReadableByteString } from '../utils/bytes'
 import { cachedDelayedFetch } from '../utils/fetch'
+import Sources from '../components/sources'
 
 const placeHolderShimmer = keyframes`
   0%{
@@ -34,6 +35,7 @@ const style = css`
   grid-template-columns: 40rem 1fr;
   grid-template-rows: 50rem 1fr;
   padding: 10rem;
+  padding-bottom: 5rem;
 
   .title-placeholder {
     height: 3.2rem;
@@ -58,23 +60,47 @@ const style = css`
     height: 100%;
   }
 
-  h1 {
-    margin-bottom: 2.5rem;
-  }
+  .series {
+    .title-bar {
+      display: flex;
+      gap: 2rem;
+      align-items: baseline;
+      margin-bottom: 2.5rem;
 
-  h1 + div {
-    font-weight: 500;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 0.1rem solid rgb(75, 75, 75);
-  }
+      h1 {
+      }
 
-  .synopsis {
-    font-weight: 500;
-    line-height: 2.5rem;
-    white-space: pre-wrap;
-    padding-bottom: 1rem;
-    border-bottom: 0.1rem solid rgb(75, 75, 75);
+      h2 {
+        color: #777777;
+      }
+    }
+
+    .data {
+      display: flex;
+      align-items: end;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 0.1rem solid rgb(75, 75, 75);
+
+      .sources {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 3.2rem);
+        height: 3.2rem;
+      }
+
+      .date {
+        font-weight: 500;
+        margin-right: 2rem;
+      }
+    }
+
+    .synopsis {
+      font-weight: 500;
+      line-height: 2.5rem;
+      white-space: pre-wrap;
+      padding-bottom: 1rem;
+      border-bottom: 0.1rem solid rgb(75, 75, 75);
+    }
   }
 
   .titles {
@@ -87,8 +113,11 @@ const style = css`
       display: grid;
       grid-auto-rows: 7.5rem;
       grid-gap: 1rem;
-      padding: 10rem;
-      padding-top: 5rem;
+      padding-left: 10rem;
+      margin-right: 10rem;
+      margin-top: 5rem;
+      max-height: 85rem;
+      overflow-y: auto;
 
       .title {
         display: flex;
@@ -148,6 +177,14 @@ const style = css`
         }
       }
 
+      .synopsis {
+        font-weight: 500;
+        line-height: 2.5rem;
+        white-space: pre-wrap;
+        padding-bottom: 1rem;
+        border-bottom: 0.1rem solid rgb(75, 75, 75);
+      }
+
       .resolutions {
         display: grid;
         grid-auto-flow: column;
@@ -165,22 +202,47 @@ const style = css`
       }
 
       .sources {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        /* grid-template-columns: 1fr 1fr; */
+        grid-template-columns: 1fr 1fr;
+        margin-top: 4rem;
+        column-gap: 2rem;
+        row-gap: 1rem;
+
         .source {
+          position: relative;
           display: flex;
           align-items:center;
-          height: 3.2rem;
+          /* height: 3.2rem; */
           margin: 0.5rem 0;
+          padding: 1rem;
+          border: 0.1rem solid rgb(75, 75, 75);
+
+          .backlink {
+            position: absolute;
+            inset: 0;
+            padding: inherit;
+            box-sizing: content-box;
+            z-index: 50;
+          }
+
           a {
-            height: 3.2rem;
+            z-index: 100;
+          }
+
+          .team {
             display: flex;
             align-items: center;
+            height: 3.2rem;
+            color: #fff;
+            margin-right: 1rem;
           }
+
           .team-icon {
             height: 3.2rem;
             width: 3.2rem;
             margin-left: 0.5rem;
+            margin-right: 0.5rem;
           }
         }
       }
@@ -293,11 +355,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const resolutions =
     pipe(
       mediaTitleHandlesByResolution,
-      A.map(([resolution]) => resolution)
+      A.map(([resolution]) => resolution),
+      A.filter(resolution => !isNaN(resolution))
     )
 
   useEffect(() => {
+    console.log('res effect', resolutions, automaticResolutionSelection)
     if(!resolutions.length || !automaticResolutionSelection) return
+    console.log('res effect setResolution', Math.max(...resolutions))
     setResolution(Math.max(...resolutions))
   }, [resolutions.join(','), automaticResolutionSelection])
 
@@ -322,6 +387,18 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.partition((handle) => Boolean(handle.batch))
     )
   
+  const mainSeriesName =
+    series
+      ?.names
+      ?.find(({ language }) => language === 'en')
+      ?.name
+    ?? series?.names?.at(0)?.name
+
+  const secondarySeriesNames =
+    series
+    ?.names
+    ?.filter(({ score, name }) => score >= 0.8 && name !== mainSeriesName)
+
   const mainTitleName =
     title
       ?.names
@@ -340,37 +417,59 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   // console.log('selectedResolution', selectedResolution)
 
   const renderTitleHandleName = (handle: TitleHandle) => {
+    if (handle.batch) return null
     const teamTag = handle.team
     const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
     const sourceTag = handle.tags?.find(({ type }) => type === 'source')
     const name = handle.names?.at(0)?.name
     return (
-      <div className="source" key={`${handle.uri}-${handle.names?.findIndex(({ name: _name }) => _name === name)}`}>
+      <div
+        className="source"
+        key={`${handle.uri}-${handle.names?.findIndex(({ name: _name }) => _name === name)}`}
+      >
+        <Link
+          className="backlink"
+          href={
+            getRoutePath(
+              Route.WATCH,
+              {
+                uri,
+                titleUri:
+                  titleUri ?? firstTitleUri,
+                sourceUri: handle.uri
+              }
+            )
+          }
+        />
         {
           handle.batch
-            ? '[BATCH]'
-            : ''
+            ? <span>[BATCH]</span>
+            : null
         }
-        <Link
-          href={getRoutePath(Route.WATCH, { uri, titleUri: titleUri ?? firstTitleUri, sourceUri: handle.uri })}
-        >
-          {teamTag?.tag ? `[${teamTag?.tag}]` : ''}
-          {name}
-           [{getHumanReadableByteString(handle.size)}]
-        </Link>
-        <a href={teamEpisodeTag?.value?.url ?? teamTag?.url}>
+        <a href={teamEpisodeTag?.value?.url ?? teamTag?.url} className="team">
           {
             teamTag?.icon
             && (
               <img
                 className="team-icon"
                 src={teamTag?.icon}
-                alt={`${teamTag?.name} favicon`}
+                alt={`[${teamTag?.tag}]`}
                 title={teamTag?.name}
               />
             )
           }
+          <span>
+            {
+              teamTag?.tag
+                ? `[${teamTag?.tag}]`
+                : null
+            }
+          </span>
         </a>
+        <span>
+          {name}
+           [{getHumanReadableByteString(handle.size)}]
+        </span>
         {
           sourceTag?.value.type === 'torrent-file'
             ? (
@@ -396,11 +495,25 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   return (
     <div css={style}>
       <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" />
-      <div>
+      <div className="series">
         <div>
-          <h1>{series?.names?.at(0)?.name}</h1>
-          <div> 
-            <span>{release}</span>
+          <div className="title-bar">
+            <h1>{mainSeriesName}</h1>
+            {
+              secondarySeriesNames?.map((name, i) =>
+                <h2 key={i}>
+                  {name.name}
+                </h2>  
+              )
+            }
+          </div>
+          <div className="data">
+            <div className="date"> 
+              {release}
+            </div>
+            <div className="sources">
+              <Sources handles={series?.handles}/>
+            </div>
           </div>
         </div>
         <div className="synopsis">
@@ -441,8 +554,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                   <span className="name">
                     <span className="main">{mainTitleName}</span>
                     {
-                      secondaryTitleNames?.map(name =>
-                        <span className="secondary">
+                      secondaryTitleNames?.map((name, i) =>
+                        <span key={i} className="secondary">
                           {name.name}
                         </span>
                       )
@@ -466,8 +579,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           <div className="title">
             <h2>{mainTitleName}</h2>
             {
-              secondaryTitleNames?.map(titleName =>
-                <h3>
+              secondaryTitleNames?.map((titleName, i) =>
+                <h3 key={i}>
                   {titleName.name}
                 </h3>
               )
@@ -493,8 +606,6 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                 }`}
               />
             </div>
-            <br />
-            <br />
             <div className='resolutions'>
               {
                 mediaTitleHandlesByResolution.map(([resolution]) =>
@@ -512,10 +623,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                 )
               }
             </div>
-            <br />
             <div className="sources">
               {batchTitles.map(renderTitleHandleName)}
-              <br />
               {singularTitles.map(renderTitleHandleName)}
               {
                 titlesLoading && (

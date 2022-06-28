@@ -1,5 +1,4 @@
 
-import { useMemo } from 'react'
 import { css } from '@emotion/react'
 
 import type { Category } from '../../../../scannarr/src'
