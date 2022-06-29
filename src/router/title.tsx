@@ -1,25 +1,28 @@
 import { css, keyframes } from '@emotion/react'
+import { useEffect, useState } from 'react'
 import { Link, navigate } from 'raviger'
 import * as N from 'fp-ts/number'
 import * as R from 'fp-ts/lib/Record'
 import { pipe } from 'fp-ts/function'
 import { reverse, contramap } from 'fp-ts/ord'
+import * as A from 'fp-ts/lib/Array'
 import { groupBy, NonEmptyArray } from 'fp-ts/NonEmptyArray'
 import { mergeMap } from 'rxjs/operators'
 import { filter, from, map, shareReplay } from 'rxjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnet } from '@fortawesome/free-solid-svg-icons'
+import { ChevronDown, ChevronUp, Heart } from 'react-feather'
 
 import { getRoutePath, Route } from './path'
-import * as A from 'fp-ts/lib/Array'
-import { useEffect, useState } from 'react'
-
 import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
 import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
 import { getHumanReadableByteString } from '../utils/bytes'
 import { cachedDelayedFetch } from '../utils/fetch'
 import Sources from '../components/sources'
+import Input from '../components/inputs'
+import { sort } from 'fp-ts/lib/ReadonlyArray'
+import { toUndefined } from 'fp-ts/lib/Option'
 
 const placeHolderShimmer = keyframes`
   0%{
@@ -60,6 +63,16 @@ const style = css`
     height: 100%;
   }
 
+  .score {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    svg {
+      margin-left: 0.5rem;
+      color: hsl(338,73%,60%);
+    }
+  }
+
   .series {
     .title-bar {
       display: flex;
@@ -81,6 +94,7 @@ const style = css`
       margin-bottom: 2.5rem;
       padding-bottom: 1rem;
       border-bottom: 0.1rem solid rgb(75, 75, 75);
+      column-gap: 2rem;
 
       .sources {
         display: grid;
@@ -90,7 +104,6 @@ const style = css`
 
       .date {
         font-weight: 500;
-        margin-right: 2rem;
       }
     }
 
@@ -127,6 +140,10 @@ const style = css`
         cursor: pointer;
         color: #fff;
 
+        &:hover {
+          background-color: rgb(42, 42, 42);
+        }
+
         .name {
           display: flex;
           gap: 2rem;
@@ -149,13 +166,22 @@ const style = css`
           display: inline-block;
           width: 5rem;
         }
-        .date {
+        .data {
+          display: grid;
+          grid-template-columns: auto 1fr;
           margin-left: auto;
+
+          .date {
+            margin-left: 2rem;
+            min-width: 10rem;
+          }
         }
       }
     }
 
     .title-info {
+      display: flex;
+      flex-direction: column;
       height: 90rem;
       background-color: rgb(35, 35, 35);
       padding: 2.5rem;
@@ -185,6 +211,11 @@ const style = css`
         border-bottom: 0.1rem solid rgb(75, 75, 75);
       }
 
+      .search-override {
+        margin: 2rem;
+        width: 40rem;
+      }
+
       .resolutions {
         display: grid;
         grid-auto-flow: column;
@@ -195,8 +226,11 @@ const style = css`
           padding: 1rem;
           text-align: center;
           border: 0.1rem solid rgb(75, 75, 75);
+          &:hover {
+            background-color: rgb(42, 42, 42);
+          }
         }
-        .selected {
+        span.selected {
           background-color: rgb(75, 75, 75);
         }
       }
@@ -217,6 +251,10 @@ const style = css`
           margin: 0.5rem 0;
           padding: 1rem;
           border: 0.1rem solid rgb(75, 75, 75);
+
+          &:hover {
+            background-color: rgb(42, 42, 42);
+          }
 
           .backlink {
             position: absolute;
@@ -244,6 +282,58 @@ const style = css`
             margin-left: 0.5rem;
             margin-right: 0.5rem;
           }
+
+          .name {
+            margin: auto;
+          }
+
+          .info {
+            display: flex;
+            align-items:center;
+            gap: 1rem;
+
+            .torrent {
+              display: grid;
+              grid-template-columns: 1fr auto;
+
+              .status {
+                display: grid;
+                grid-template-rows: 1fr auto;
+                color: #fff;
+                text-decoration: none;
+                
+                .seeders, .leechers {
+                  z-index: 100;
+                  display: flex;
+                  align-items: center;
+                }
+              }
+              .magnet {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 100;
+                padding: 0 1rem;
+              }
+            }
+          }
+        }
+      }
+
+      .actions {
+        display: flex;
+        margin-top: auto;
+        column-gap: 5rem;
+        .watch, .download {
+          width: 20rem;
+          text-transform: uppercase;
+          margin: 0.5rem 0;
+          padding: 2rem;
+          border: 0.1rem solid rgb(75, 75, 75);
+          background-color: rgb(75, 75, 75);
+          color: #fff;
+          text-decoration: none;
+          text-align: center;
         }
       }
     }
@@ -267,6 +357,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       ),
     [seriesReplay$]
   )
+  console.log('titles', titles)
   const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
 
   const firstTitleUri = titles?.at(0)?.uri
@@ -338,12 +429,12 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     pipe(
       titleHandles,
       A.filter(handle => {
-        const meta = handle.tags.find(({ type }) => type === 'meta')?.value
+        const meta = handle.tags?.find(({ type }) => type === 'meta')?.value
         if (!meta) return true
         if (meta.includes('HEVC') || meta.includes('x265')) return false
         return true
       }),
-      A.filter(handle => !!handle.tags.find(({ type }) => type === 'source')?.value),
+      A.filter(handle => !!handle.tags?.find(({ type }) => type === 'source')?.value),
       // A.sort(bySeriesSimilarity),
       // @ts-ignore
       groupBy(handle => handle.resolution?.toString()),
@@ -386,6 +477,22 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.filter((handle) => handle.number === title?.number),
       A.partition((handle) => Boolean(handle.batch))
     )
+
+  const byHandleSeeders =
+    pipe(
+      N.Ord,
+      contramap((handle: TitleHandle) => handle.tags.find(({ type }) => type === 'source')?.value.seeders),
+      reverse
+    )
+
+  const mostSeededTitle =
+    pipe(
+      singularTitles,
+      sort(byHandleSeeders),
+      A.head,
+      toUndefined
+    )
+
   
   const mainSeriesName =
     series
@@ -417,6 +524,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   // console.log('selectedResolution', selectedResolution)
 
   const renderTitleHandleName = (handle: TitleHandle) => {
+    // todo: reintroduce once we support batches
     if (handle.batch) return null
     const teamTag = handle.team
     const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
@@ -446,7 +554,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             ? <span>[BATCH]</span>
             : null
         }
-        <a href={teamEpisodeTag?.value?.url ?? teamTag?.url} className="team">
+        <a href={teamEpisodeTag?.value?.url ?? teamTag?.url} className="team" target="_blank" rel="noopener noreferrer">
           {
             teamTag?.icon
             && (
@@ -466,28 +574,48 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             }
           </span>
         </a>
-        <span>
+        <span className="name">
           {name}
-           [{getHumanReadableByteString(handle.size)}]
         </span>
-        {
-          sourceTag?.value.type === 'torrent-file'
-            ? (
-              <span>
-                <span>
-                  <span>{sourceTag?.value.seeders}</span>
-                  <span>/</span>
-                  <span>{sourceTag?.value.leechers}</span>
-                </span>
-                <span>
-                  <a href={sourceTag?.value.magnetUri}>
+        <span className="info">
+          <span className="size">
+            {getHumanReadableByteString(handle.size)}
+          </span>
+          {
+            sourceTag?.value.type === 'torrent-file'
+              ? (
+                <span className="torrent">
+                  <a  className="magnet" href={sourceTag?.value.magnetUri}>
                     <FontAwesomeIcon icon={faMagnet}/>
                   </a>
+                  <Link
+                    className="status"
+                    href={
+                      getRoutePath(
+                        Route.WATCH,
+                        {
+                          uri,
+                          titleUri:
+                            titleUri ?? firstTitleUri,
+                          sourceUri: handle.uri
+                        }
+                      )
+                    }
+                  >
+                    <div className="seeders" title="seeders">
+                      <ChevronUp/>
+                      {sourceTag?.value.seeders}
+                    </div>
+                    <div className="leechers" title="leechers">
+                      <ChevronDown/>
+                      {sourceTag?.value.leechers}
+                    </div>
+                  </Link>
                 </span>
-              </span>
-            )
-            : null
-        }
+              )
+              : null
+          }
+        </span>
       </div>
     )
   }
@@ -511,6 +639,18 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             <div className="date"> 
               {release}
             </div>
+            <span className="score">
+              {
+                series?.averageScore
+                  ? (
+                    <>
+                      <span>{(series?.averageScore * 10).toFixed(1)}</span>
+                      <Heart/>
+                    </>
+                  )
+                  : null
+              }
+            </span>
             <div className="sources">
               <Sources handles={series?.handles}/>
             </div>
@@ -561,7 +701,21 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                       )
                     }
                   </span>
-                  <span className="date">{title.dates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
+                  <span className="data">
+                    <span className="score">
+                      {
+                        title?.averageScore
+                          ? (
+                            <>
+                              <span>{(title?.averageScore * 10).toFixed(1)}</span>
+                              <Heart/>
+                            </>
+                          )
+                          : null
+                      }
+                    </span>
+                    <span className="date">{title.dates?.at(0)?.date!.toDateString().slice(4).trim() ?? ''}</span>
+                  </span>
                 </Link>
               )
             })
@@ -593,16 +747,18 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             }
           </div>
           <div>
-            <div>
-              <div>Search override</div>
-              <input
+            <div className="search-override">
+              <Input
                 type="text"
+                label='Search override'
                 placeholder={`${
                   series?.names.at(0)?.name
                 } ${
                   titles
                     ?.find(({ uri }) => uri === (titleUri ?? firstTitleUri))
                     ?.number
+                    ?.toString()
+                    .padStart('2', 0)
                 }`}
               />
             </div>
@@ -636,6 +792,34 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               }
             </div>
           </div>
+          <div className="actions">
+              {
+                mostSeededTitle
+                  ? (
+                    <>
+                      <Link
+                        className="watch"
+                        href={
+                          getRoutePath(
+                            Route.WATCH,
+                            {
+                              uri,
+                              titleUri: uri,
+                              sourceUri: mostSeededTitle.uri
+                            }
+                          )
+                        }
+                      >
+                        Watch
+                      </Link>
+                      <div className="download">
+                        Download
+                      </div>
+                    </>
+                  )
+                  : null
+              }
+            </div>
         </div>
       </div>
     </div>
