@@ -328,7 +328,7 @@ const style = css`
           width: 20rem;
           text-transform: uppercase;
           margin: 0.5rem 0;
-          padding: 2rem;
+          padding: 1rem 2rem;
           border: 0.1rem solid rgb(75, 75, 75);
           background-color: rgb(75, 75, 75);
           color: #fff;
