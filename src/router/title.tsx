@@ -10,7 +10,7 @@ import { groupBy, NonEmptyArray } from 'fp-ts/NonEmptyArray'
 import { mergeMap } from 'rxjs/operators'
 import { filter, from, map, shareReplay } from 'rxjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnet } from '@fortawesome/free-solid-svg-icons'
+import { faExternalLink, faLink, faMagnet } from '@fortawesome/free-solid-svg-icons'
 import { ChevronDown, ChevronUp, Heart } from 'react-feather'
 
 import { getRoutePath, Route } from './path'
@@ -251,21 +251,14 @@ const style = css`
           margin: 0.5rem 0;
           padding: 1rem;
           border: 0.1rem solid rgb(75, 75, 75);
+          cursor: pointer;
 
           &:hover {
             background-color: rgb(42, 42, 42);
           }
 
-          .backlink {
-            position: absolute;
-            inset: 0;
-            padding: inherit;
-            box-sizing: content-box;
-            z-index: 50;
-          }
-
-          a {
-            z-index: 100;
+          &.selected {
+            background-color: rgb(75, 75, 75);
           }
 
           .team {
@@ -285,6 +278,7 @@ const style = css`
 
           .name {
             margin: auto;
+            padding: 0 2rem;
           }
 
           .info {
@@ -303,17 +297,20 @@ const style = css`
                 text-decoration: none;
                 
                 .seeders, .leechers {
-                  z-index: 100;
                   display: flex;
                   align-items: center;
                 }
               }
-              .magnet {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 100;
-                padding: 0 1rem;
+
+              .uris {
+                display: grid;
+                grid-template-rows: 1fr auto;
+                .magnet, .url {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  padding: 0 1rem;
+                }
               }
             }
           }
@@ -329,7 +326,6 @@ const style = css`
           text-transform: uppercase;
           margin: 0.5rem 0;
           padding: 1rem 2rem;
-          border: 0.1rem solid rgb(75, 75, 75);
           background-color: rgb(75, 75, 75);
           color: #fff;
           text-decoration: none;
@@ -342,7 +338,8 @@ const style = css`
 
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
-  const [selectedResolution, setResolution] = useState<number | undefined>(1080)
+  const [selectedResolution, setResolution] = useState<number | undefined>(undefined)
+  const [selectedSource, setSource] = useState<string | undefined>()
   const { observable: series$, value: series } = useObservable(() =>
     getSeries({ uri }, { fetch: cachedDelayedFetch }),
     [uri]
@@ -357,7 +354,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       ),
     [seriesReplay$]
   )
-  console.log('titles', titles)
+
   const { observable: titlesReplay$ } = useObservable(() => titles$.pipe(shareReplay()), [titles$])
 
   const firstTitleUri = titles?.at(0)?.uri
@@ -416,7 +413,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const byResolution =
     pipe(
       reverse(N.Ord),
-      contramap(([resolution]: [number, NonEmptyArray<TitleHandle>]) => resolution)
+      contramap(([resolution]: [number | undefined, NonEmptyArray<TitleHandle>]) => resolution)
     )
 
   const bySeriesSimilarity =
@@ -428,6 +425,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const mediaTitleHandlesByResolution =
     pipe(
       titleHandles,
+      A.filter((handle) => handle.number === title?.number),
       A.filter(handle => {
         const meta = handle.tags?.find(({ type }) => type === 'meta')?.value
         if (!meta) return true
@@ -440,24 +438,27 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       groupBy(handle => handle.resolution?.toString()),
       R.toArray,
       A.map(([resolution, handle]) => [resolution ? Number(resolution) : undefined, handle] as const),
-      A.sort(byResolution)
+      A.sort(byResolution),
+      A.map(([resolution, handles]) => [resolution ? resolution : undefined, handles] as const)
     )
 
   const resolutions =
     pipe(
       mediaTitleHandlesByResolution,
-      A.map(([resolution]) => resolution),
-      A.filter(resolution => !isNaN(resolution))
+      A.map(([resolution]) => resolution)
     )
 
   useEffect(() => {
-    console.log('res effect', resolutions, automaticResolutionSelection)
-    if(!resolutions.length || !automaticResolutionSelection) return
-    console.log('res effect setResolution', Math.max(...resolutions))
-    setResolution(Math.max(...resolutions))
-  }, [resolutions.join(','), automaticResolutionSelection])
+    if((!resolutions.length || !automaticResolutionSelection) && resolutions.includes(selectedResolution)) return
+    if (resolutions.length > 1 && resolutions.includes(undefined)) {
+      const _resolutions = resolutions.filter(Boolean) as number[]
+      setResolution(Math.max(..._resolutions))
+    } else {
+      setResolution(undefined)
+    }
+  }, [resolutions.map(val => val?.toString() ?? 'undefined').join(','), automaticResolutionSelection])
 
-  const selectResolution = (resolution: number) => {
+  const selectResolution = (resolution: number | undefined) => {
     setAutomaticResolutionSelection(false)
     setResolution(resolution ? Number(resolution) : undefined)
   }
@@ -474,7 +475,6 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const { left: singularTitles, right: batchTitles } =
     pipe(
       selectedResolutionTitles,
-      A.filter((handle) => handle.number === title?.number),
       A.partition((handle) => Boolean(handle.batch))
     )
 
@@ -492,7 +492,6 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.head,
       toUndefined
     )
-
   
   const mainSeriesName =
     series
@@ -518,6 +517,11 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     ?.names
     ?.filter(({ score, name }) => score >= 0.8 && name !== mainTitleName)
 
+  useEffect(() => {
+    if (!mostSeededTitle) return
+    setSource(mostSeededTitle.uri)
+  }, [selectedResolution, mostSeededTitle])
+
   console.log('series', series)
   console.log('title', title)
   // console.log('targets', targets)
@@ -530,25 +534,17 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
     const sourceTag = handle.tags?.find(({ type }) => type === 'source')
     const name = handle.names?.at(0)?.name
+
+    const setAsSource = () => {
+      setSource(handle.uri)
+    }
+
     return (
       <div
-        className="source"
+        className={`source ${selectedSource === handle.uri ? 'selected' : ''}`}
         key={`${handle.uri}-${handle.names?.findIndex(({ name: _name }) => _name === name)}`}
+        onClick={setAsSource}
       >
-        <Link
-          className="backlink"
-          href={
-            getRoutePath(
-              Route.WATCH,
-              {
-                uri,
-                titleUri:
-                  titleUri ?? firstTitleUri,
-                sourceUri: handle.uri
-              }
-            )
-          }
-        />
         {
           handle.batch
             ? <span>[BATCH]</span>
@@ -585,9 +581,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             sourceTag?.value.type === 'torrent-file'
               ? (
                 <span className="torrent">
-                  <a  className="magnet" href={sourceTag?.value.magnetUri}>
-                    <FontAwesomeIcon icon={faMagnet}/>
-                  </a>
+                  <div className="uris">
+                    <a className="magnet" href={sourceTag?.value.magnetUri}>
+                      <FontAwesomeIcon icon={faMagnet}/>
+                    </a>
+                    <a className="url" href={handle.url}>
+                      <FontAwesomeIcon icon={faExternalLink}/>
+                    </a>
+                  </div>
                   <Link
                     className="status"
                     href={
@@ -749,8 +750,9 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           <div>
             <div className="search-override">
               <Input
+                disabled
                 type="text"
-                label='Search override'
+                label='Search override [WIP]'
                 placeholder={`${
                   series?.names.at(0)?.name
                 } ${
@@ -758,7 +760,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                     ?.find(({ uri }) => uri === (titleUri ?? firstTitleUri))
                     ?.number
                     ?.toString()
-                    .padStart('2', 0)
+                    .padStart(2, '0')
                 }`}
               />
             </div>
@@ -766,7 +768,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               {
                 mediaTitleHandlesByResolution.map(([resolution]) =>
                   <span
-                    key={resolution}
+                    key={resolution ?? 'undefined'}
                     className={((resolution ? Number(resolution) : undefined) === selectedResolution) ? 'selected' : ''}
                     onClick={() => selectResolution(resolution)}
                   >
@@ -794,7 +796,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           </div>
           <div className="actions">
               {
-                mostSeededTitle
+                selectedSource
                   ? (
                     <>
                       <Link
@@ -805,7 +807,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                             {
                               uri,
                               titleUri: uri,
-                              sourceUri: mostSeededTitle.uri
+                              sourceUri: selectedSource
                             }
                           )
                         }
