@@ -7,8 +7,7 @@ import { of } from 'rxjs'
 
 import { getTitle } from '../../../../scannarr/src'
 import { cachedDelayedFetch } from '../utils/fetch'
-import { useObservable } from 'src/utils/use-observable'
-
+import { useObservable } from '../utils/use-observable'
 
 const style = css`
   display: grid;
