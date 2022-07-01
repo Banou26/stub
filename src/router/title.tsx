@@ -806,7 +806,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                             Route.WATCH,
                             {
                               uri,
-                              titleUri: uri,
+                              titleUri,
                               sourceUri: selectedSource
                             }
                           )
