@@ -585,7 +585,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                     <a className="magnet" href={sourceTag?.value.magnetUri}>
                       <FontAwesomeIcon icon={faMagnet}/>
                     </a>
-                    <a className="url" href={handle.url}>
+                    <a className="url" href={handle.url} title="external link" target="_blank" rel="noopener noreferrer">
                       <FontAwesomeIcon icon={faExternalLink}/>
                     </a>
                   </div>
