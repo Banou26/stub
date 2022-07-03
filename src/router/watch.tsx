@@ -11,14 +11,17 @@ import { useObservable } from '../utils/use-observable'
 
 const style = css`
   display: grid;
-  height: 100%;
+  height: 100vh;
   grid-template-rows: 100% auto;
   /* overflow: hidden; */
   .player {
-    height: 100%;
+    height: 100vh;
     /* width: 100%; */
     & > div {
-      height: 100%;
+      height: 100vh;
+      & > video, & > div {
+        height: 100vh;
+      }
     }
   }
 
@@ -73,10 +76,11 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
   // const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
   const { value: title } = useObservable(() =>
     sourceUri
-      ? getTitle({ uri: sourceUri }, { fetch: cachedDelayedFetch })
+      ? console.log('getTitle', sourceUri) || getTitle({ uri: sourceUri }, { fetch: cachedDelayedFetch })
       : of(undefined),
     [uri]
   )
+  console.log('title', title)
   const titleHandle = useMemo(
     () => title?.handles.find(({ uri }) => uri === sourceUri),
     [sourceUri, title]
@@ -104,7 +108,6 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
     ),
     [titleHandle]
   )
-  console.log('title', title)
   const [torrent, setTorrent] = useState<ParseTorrent.Instance>()
 
   const mediaId =

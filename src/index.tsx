@@ -21,13 +21,13 @@ const style = css`
 
   html {
     font-size: 62.5%;
-    height: 100%;
+    height: 100vh;
     width: 100%;
   }
 
   body {
     margin: 0;
-    height: 100%;
+    height: 100vh;
     width: 100%;
     font-size: 1.6rem;
     font-family: Fira Sans;
@@ -39,7 +39,7 @@ const style = css`
   }
 
   body > div {
-    height: 100%;
+    height: 100vh;
     width: 100%;
   }
 
