@@ -336,6 +336,7 @@ const style = css`
   }
 `
 
+// todo: fix issue when clicking on resolution, going back to unknown res and back again to res, it stays on unknown res because automatic res becomes disabled, example on http://localhost:1234/app/616331fa7b57db93f0957a18/title/mal:47194/mal:47194-1
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
   const [selectedResolution, setResolution] = useState<number | undefined>(undefined)
