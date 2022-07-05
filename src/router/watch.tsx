@@ -154,12 +154,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
       <div
         className="description"
       >
-        {
-          titleHandle
-            ?.tags
-            .find(({ type }) => type === 'description')
-            ?.value
-        }
+        {titleHandle?.description}
       </div>
       {
         comments?.length
