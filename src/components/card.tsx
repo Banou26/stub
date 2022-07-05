@@ -6,6 +6,7 @@ import { css } from '@emotion/react'
 
 import Title from './title'
 import Sources from './sources'
+import Schedule from './schedule'
 
 const style = css`
 display: grid;
@@ -114,47 +115,6 @@ overflow: hidden;
 
 // todo: reduce the amount of DOM elements
 export default ({ series }: { series: Series }) => {
-  const [delta, setDelta] = useState<number>()
-
-  const isUnreleased = useMemo(() =>
-    series
-      ? series?.status === 'NOT_YET_RELEASED'
-      : undefined
-  , [series])
-
-  const releasedNumbers = useMemo(() => {
-    if (!series) return
-    const nextRelease =
-      series
-        ?.airingSchedule
-        ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
-        .filter(({ date }) => Date.now() - date.getTime() < 0)
-        .at(0)
-    if (!nextRelease) return series.titleNumbers ?? 1
-    return nextRelease.number
-  }, [series])
-
-  useEffect(() => {
-    const date = series.dates.at(0)
-    const nextRelease =
-      series
-        ?.airingSchedule
-        ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
-        .filter(({ date }) => Date.now() - date.getTime() < 0)
-        .at(0)
-      ?? ({
-        number: 0,
-        date: date &&
-          'start' in date ? date.start
-          : date?.date
-      })
-    if (!nextRelease?.date) return
-    setDelta(nextRelease?.date.getTime() - Date.now())
-  }, [series])
-
-  const days = useMemo(() => delta ? Math.floor(delta / (1000 * 60 * 60 * 24)) : undefined, [delta])
-  const hours = useMemo(() => delta ? Math.floor((delta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) : undefined, [delta])
-
   const popularity = useMemo(() =>
     series.popularity
       ? new Intl.NumberFormat('en-US', { notation: 'compact' }).format(series.popularity)
@@ -167,19 +127,7 @@ export default ({ series }: { series: Series }) => {
       <Title series={series} className="title"/>
       <div className="data">
         <div className="head">
-          <div className="episode">
-            <div className="number">
-              Ep {releasedNumbers ? releasedNumbers : '...'} {series.titleNumbers ? `of ${series.titleNumbers} ` : ''}
-              airing in
-            </div>
-            <div className="date">
-              {
-                delta
-                  ? <>{days} day, {hours} hours</>
-                  : null
-              }
-            </div>
-          </div>
+          <Schedule series={series}/>
           <div className="infos">
             <div className="sources">
               <Sources handles={series?.handles}/>
