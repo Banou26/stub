@@ -346,7 +346,6 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     [uri]
   )
   const { observable: seriesReplay$ } = useObservable(() => series$.pipe(shareReplay()), [series$])
-
   const { observable: titles$, value: titles, completed: seriesTitlesCompleted } = useObservable(() =>
     seriesReplay$
       .pipe(
@@ -451,9 +450,12 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   useEffect(() => {
     if((!resolutions.length || !automaticResolutionSelection) && resolutions.includes(selectedResolution)) return
-    if (resolutions.length > 1 && resolutions.includes(undefined)) {
-      const _resolutions = resolutions.filter(Boolean) as number[]
-      setResolution(Math.max(..._resolutions))
+    if (resolutions.length) {
+      const resolution =
+        isNaN(Math.max(...resolutions as number[]))
+          ? undefined
+          : Math.max(...resolutions as number[])
+      setResolution(resolution)
     } else {
       setResolution(undefined)
     }
