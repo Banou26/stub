@@ -267,6 +267,11 @@ const style = css`
             height: 3.2rem;
             color: #fff;
             margin-right: 1rem;
+            text-decoration: none;
+          }
+
+          .team[href]:hover {
+            text-decoration: underline;
           }
 
           .team-icon {
