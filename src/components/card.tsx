@@ -45,8 +45,8 @@ overflow: hidden;
 
     .infos {
       display: grid;
-      grid-template-columns: auto auto;
-
+      grid-template-columns: auto 7.5rem;
+      column-gap: 0.5rem;
       .sources {
         display: grid;
         grid-template-columns: repeat(auto-fill, 1.6rem);
@@ -55,19 +55,13 @@ overflow: hidden;
       }
 
       .stats {
-        .popularity {
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
+        margin-left: auto;
+        .popularity, .score {
+          display: grid;
+          grid-template-columns: 5rem 2.4rem;
         }
-
-        .score {
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          svg {
-            color: hsl(338,73%,60%);
-          }
+        .score svg {
+          color: hsl(338,73%,60%);
         }
       }
     }
@@ -138,7 +132,7 @@ export default ({ series }: { series: Series }) => {
                 series?.averageScore
                   ? (
                     <div className="score">
-                      <span>{(series?.averageScore * 10).toFixed(1)}</span>
+                      {(series?.averageScore * 10).toFixed(1)}
                       <Heart/>
                     </div>
                   )
