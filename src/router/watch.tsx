@@ -94,7 +94,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
         .map((comment, i) => (
           <div key={i} className="comment">
             <div>
-              <img className="avatar" src={comment.user.avatar} alt={`${comment.user.name} avatar`}/>
+              <img className="avatar" src={comment.user.avatar} alt={`${comment.user.name} avatar`} referrer-policy="same-origin"/>
             </div>
             <div>
               <div>

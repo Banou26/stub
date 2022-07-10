@@ -105,7 +105,7 @@ const Header = ({ category }: { category?: Category }) => {
                 {
                   data.map(title =>
                     <Link key={title.uri} href={`/title/${title.uri}`}>
-                      <img src={title.images.at(0)?.url} alt="" />
+                      <img src={title.images.at(0)?.url} alt="" referrer-policy="same-origin"/>
                       <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
                     </Link>
                   )

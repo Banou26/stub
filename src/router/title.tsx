@@ -567,6 +567,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                 src={teamTag?.icon}
                 alt={`[${teamTag?.tag}]`}
                 title={teamTag?.name}
+                referrer-policy="same-origin"
               />
             )
           }
@@ -631,7 +632,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   return (
     <div css={style}>
-      <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" />
+      <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" referrer-policy="same-origin" />
       <div className="series">
         <div>
           <div className="title-bar">

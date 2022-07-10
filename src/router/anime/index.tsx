@@ -32,7 +32,7 @@ export default () => {
   //         animes?.map(anime =>
   //           <Link key={anime.name} href={`/anime/${anime.name}`}>
   //             <h3 style={{ color: 'white' }}>{anime.name}</h3>
-  //             <img src={anime.image}/>
+  //             <img src={anime.image} referrer-policy="same-origin"/>
   //           </Link>
   //         )
   //       }
