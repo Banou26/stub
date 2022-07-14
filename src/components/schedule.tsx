@@ -135,7 +135,16 @@ export default ({ series }: { series: Series }) => {
       </div>
       <div className="date">
         {
-          series.airingSchedule && delta && !past ? <>{days} day, {hours} hours</>
+          series.airingSchedule && delta && !past ? (
+            <>
+            {
+              days
+                ? <>{days} day, </>
+                : null
+            }
+            {hours} hours
+            </>
+          )
           : release ? release
           : null
         }
