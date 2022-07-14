@@ -1,17 +1,29 @@
+import type { Category } from '../../../../../scannarr/src'
+
 import { css } from '@emotion/react'
 
-import type { Category } from '../../../../../scannarr/src'
-import { searchSeries } from '../../../../../scannarr/src'
-import Card from 'src/components/card'
-import useObservable from '../../utils/use-observable'
-import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 import { pipe } from 'fp-ts/lib/function'
-import { filter, sortBy } from 'fp-ts/lib/NonEmptyArray'
 import * as A from 'fp-ts/lib/Array'
+
+import { searchSeries } from '../../../../../scannarr/src'
+import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
+import { byPopularity } from '../../../../../scannarr/src/utils'
+
+import useObservable from '../../utils/use-observable'
+import Card from '../../components/card'
 
 const style = css`
 
 padding: 5rem 10rem;
+
+h2 {
+  font-size: 4rem;
+  padding: 5rem;
+}
+
+.section:not(:first-child) {
+  margin-top: 10rem;
+}
 
 .anime {
 
@@ -44,35 +56,63 @@ export default ({ category }: { category?: Category }) => {
 
   const currentSeason = getCurrentSeason()
 
-  const currentSeasonAnime =
+  const { left: _continuations, right: _currentSeasonAnime } =
     pipe(
       categoryItems ?? [],
-      A.filter(Boolean),
-      // A.filter(item => item)
+      A.partition(item => {
+        const dateData = item.dates?.at(0)
+        if (!dateData) return false
+        const dateSeason =
+          getCurrentSeason(
+            0,
+            'date' in dateData
+              ? dateData.date
+              : dateData.start
+          )
+        return currentSeason.season === dateSeason.season && currentSeason.year === dateSeason.year
+      })
     )
+
+  const currentSeasonAnime =
+    pipe(
+      _currentSeasonAnime,
+      A.sortBy([byPopularity])
+    )
+
+  const continuations =
+    pipe(
+      _continuations,
+      A.sortBy([byPopularity])
+    )
+
+  const anchorCurrentSeason = `${currentSeason.season.toLowerCase()}-${currentSeason.year}`
 
   return (
     <div css={style}>
-      <div>
-        <h3>This season</h3>
+      <div className="section">
+        <a id={anchorCurrentSeason} href={`#${anchorCurrentSeason}`}>
+          <h2>Current season</h2>
+        </a>
         <div className="items">
           {
-            sortedItems?.map(item =>
-              <Card key={item.uri} series={item}/>  
-            )
-          }
-        </div>
-      </div>
-      {/* <div>
-        <h3>Continuing</h3>
-        <div className="items">
-          {
-            sortedItems?.map(item =>
+            currentSeasonAnime?.map(item =>
               <Card key={item.uri} series={item}/>
             )
           }
         </div>
-      </div> */}
+      </div>
+      <div className="section">
+        <a id={`${anchorCurrentSeason}-leftovers`} href={`#${anchorCurrentSeason}-leftovers`}>
+          <h2>Leftovers</h2>
+        </a>
+        <div className="items">
+          {
+            continuations?.map(item =>
+              <Card key={item.uri} series={item}/>
+            )
+          }
+        </div>
+      </div>
     </div>
   )
 }
