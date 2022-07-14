@@ -40,6 +40,7 @@ padding: 5rem;
 
 export default () => {
   navigate(getRoutePath(Route.CATEGORY, { category: 'ANIME' }))
+  return null
   // const { data: movies } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['MOVIE'], latest: true }))
   // const { data: shows } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['SHOW'], latest: true }))
   const movie$ = useMemo(() => searchSeries({ categories: ['MOVIE'], latest: true }), [])
