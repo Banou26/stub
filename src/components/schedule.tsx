@@ -3,8 +3,6 @@ import type { Series } from '../../../../scannarr/src'
 import { useEffect, useMemo, useState } from 'react'
 
 export default ({ series }: { series: Series }) => {
-  const [delta, setDelta] = useState<number>()
-
   const isUnreleased = useMemo(() =>
     series
       ? series?.status === 'NOT_YET_RELEASED'
@@ -23,66 +21,97 @@ export default ({ series }: { series: Series }) => {
     return nextRelease.number
   }, [series])
 
-  useEffect(() => {
-    if (!series.dates) return
-    const date = series.dates.at(0)
-    const nextRelease =
-      series
-        ?.airingSchedule
-        ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
-        .filter(({ date }) => Date.now() - date.getTime() < 0)
-        .at(0)
-      ?? ({
+  const nextAiring = useMemo(() =>
+    series
+      ?.airingSchedule
+      ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
+      .filter(({ date }) => Date.now() - date.getTime() < 0)
+      .at(0),
+    [series]
+  )
+
+  const startReleaseDateData = useMemo(
+    () => series.dates?.at(0),
+    [series]
+  )
+
+  const startReleaseDate = useMemo(() => {
+      if (!startReleaseDateData) return
+      const date = startReleaseDateData
+      return {
         number: 0,
-        date: date &&
+        date:
           'start' in date ? date.start
           : date?.date
-      })
-    if (!nextRelease?.date) return
-    setDelta(nextRelease?.date.getTime() - Date.now())
+      }
+    },
+    [startReleaseDateData]
+  )
+
+  const startReleaseDelta = useMemo(() => {
+    if (!startReleaseDate?.date) return
+    return startReleaseDate?.date.getTime() - Date.now()
   }, [series])
+
+  const nextAiringDelta = useMemo(() => {
+    if (!nextAiring?.date) return
+    return nextAiring?.date.getTime() - Date.now()
+  }, [series])
+
+  const delta = useMemo(() =>
+    nextAiringDelta ?? startReleaseDelta,
+    [nextAiringDelta, startReleaseDelta]
+  )
+
+  if (series.names.some(({ name }) => name === 'Made in Abyss: Retsujitsu no Ougonkyou')) {
+    console.log('series?.airingSchedule', series?.airingSchedule)
+  }
 
   const days = useMemo(() => delta ? Math.floor(delta / (1000 * 60 * 60 * 24)) : undefined, [delta])
   const hours = useMemo(() => delta ? Math.floor((delta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) : undefined, [delta])
 
-  const dateData = series?.dates?.at(0)
-
-  const releaseDate =
-    series && dateData && 'date' in dateData &&
+  const releaseDate = useMemo(() =>
+    series && startReleaseDateData && 'date' in startReleaseDateData &&
     (series.categories.some(category => category === 'MOVIE')
-      ? `${dateData.date.getFullYear()}`
-      : `${dateData.date.toDateString().slice(4).trim()}`)
+      ? `${startReleaseDateData.date.getFullYear()}`
+      : `${startReleaseDateData.date.toDateString().slice(4).trim()}`),
+    [series, startReleaseDateData]
+  )
 
-  const dateStart =
-    dateData &&
-    !('date' in dateData) &&
-    dateData.start.toDateString().slice(4).trim()
-  const dateEnd =
-    dateData &&
-    !('date' in dateData) &&
-    dateData.end?.toDateString().slice(4).trim()
+  const dateStart = useMemo(() =>
+    startReleaseDateData &&
+    !('date' in startReleaseDateData) &&
+    startReleaseDateData.start.toDateString().slice(4).trim(),
+    [startReleaseDateData]
+  )
 
-  // todo: fix date display,  dateData?.start?.toDateString() ?? '' sometimes returns Invalid Date, e.g: http://616331fa7b57db93f0957a18.localhost:2345/title/anilist:144858
+  const dateEnd = useMemo(() =>
+    startReleaseDateData &&
+    !('date' in startReleaseDateData) &&
+    startReleaseDateData.end?.toDateString().slice(4).trim(),
+    [startReleaseDateData]
+  )
+
   const airingDate =
-    series && dateData && !('date' in dateData) &&
-    dateData.end
+    series && startReleaseDateData && !('date' in startReleaseDateData) &&
+    startReleaseDateData.end
       ? `${dateStart} to ${dateEnd}`
-      : dateData?.start?.toDateString() ?? ''
+      : startReleaseDateData?.start?.toDateString() ?? ''
 
   const release =
-    series && dateData
+    series && startReleaseDateData
       ? (
-        'date' in dateData
+        'date' in startReleaseDateData
           ? releaseDate
           : airingDate
       )
       : ''
 
   const past =
-    !dateData ? undefined
-    : series ?.airingSchedule && delta ? delta < Date.now()
-    : 'date' in dateData ? dateData.date.getTime() < Date.now()
-    : dateData.start.getTime() < Date.now()
+    !startReleaseDateData ? undefined
+    : series ?.airingSchedule && delta ? delta < 0
+    : 'date' in startReleaseDateData ? startReleaseDateData.date.getTime() < Date.now()
+    : startReleaseDateData.start.getTime() < Date.now()
 
   return (
     <div className="episode">
