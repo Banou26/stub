@@ -1,3 +1,5 @@
+import type { Category } from '../../../../scannarr/src'
+
 import { navigate, useLocationChange } from 'raviger'
 import { useCallback, useState } from 'react'
 
@@ -14,7 +16,7 @@ const Routes = {
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
   [Route.WATCH]: ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, sourceUri: string }) => `/watch/${uri}/${titleUri}/${sourceUri}`,
-  [Route.CATEGORY]: ({ category }: { category: string }) => `/category/${category}`,
+  [Route.CATEGORY]: ({ category }: { category: Category }) => `/category/${category.toLowerCase()}`,
 }
 
 const RouterRoutes = {
