@@ -33,6 +33,7 @@ const placeHolderShimmer = keyframes`
   }
 `
 
+// todo: re-enable scroll snap on mobile
 const style = css`
   display: grid;
   grid-template-columns: 40rem 1fr;
@@ -125,12 +126,13 @@ const style = css`
     .list {
       display: grid;
       grid-auto-rows: 7.5rem;
-      grid-gap: 1rem;
+      grid-gap: 1.1rem;
       padding-left: 10rem;
       margin-right: 10rem;
       margin-top: 5rem;
       max-height: 85rem;
       overflow-y: auto;
+      /* scroll-snap-type: y proximity; */
 
       .title {
         display: flex;
@@ -139,6 +141,7 @@ const style = css`
         background-color: rgb(35, 35, 35);
         cursor: pointer;
         color: #fff;
+        /* scroll-snap-align: start; */
 
         &:hover {
           background-color: rgb(42, 42, 42);
@@ -179,12 +182,12 @@ const style = css`
       }
     }
 
-    .title-info {
+    .title-side {
       display: flex;
       flex-direction: column;
       height: 90rem;
       background-color: rgb(35, 35, 35);
-      padding: 2.5rem;
+      padding: 2rem 2.5rem;
 
       .title {
         display: flex;
@@ -203,12 +206,27 @@ const style = css`
         }
       }
 
-      .synopsis {
-        font-weight: 500;
-        line-height: 2.5rem;
-        white-space: pre-wrap;
+      & > .info {
+        height: 27.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
         padding-bottom: 1rem;
         border-bottom: 0.1rem solid rgb(75, 75, 75);
+
+        .thumbnail {
+          height: 100%;
+        }
+
+        .synopsis {
+          height: 100%;
+          overflow: auto;
+          font-weight: 500;
+          line-height: 2.5rem;
+          white-space: pre-wrap;
+          padding-right: 1rem;
+        }
+
       }
 
       .search-override {
@@ -237,11 +255,12 @@ const style = css`
 
       .sources {
         display: grid;
-        /* grid-template-columns: 1fr 1fr; */
         grid-template-columns: 1fr 1fr;
-        margin-top: 4rem;
+        margin-top: 1rem;
         column-gap: 2rem;
         row-gap: 1rem;
+        overflow: auto;
+        max-height: 30rem;
 
         .source {
           position: relative;
@@ -630,6 +649,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     )
   }
 
+  // todo: add spoiler feature on the episode thumbnail & synopsis
   return (
     <div css={style}>
       <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" referrer-policy="same-origin" />
@@ -739,7 +759,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             )
           }
         </div>
-        <div className="title-info">
+        <div className="title-side">
           <div className="title">
             <h2>{mainTitleName}</h2>
             {
@@ -750,11 +770,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               )
             }
           </div>
-          <div className="synopsis">
-            {
-              !title?.synopses ? 'Loading...' :
-              title?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
-            }
+          <div className="info">
+            <img className="thumbnail" src={title?.images?.at(0)?.url} alt="Episode thumbnail"/>
+            <div className="synopsis">
+              {
+                !title?.synopses ? 'Loading...' :
+                title?.synopses?.at(0)?.synopsis ?? 'No synopsis found'
+              }
+            </div>
           </div>
           <div>
             <div className="search-override">
