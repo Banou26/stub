@@ -97,7 +97,9 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
             <div>
               <div>
                 <a className="username" href={comment.user.url}>{comment.user.name}</a>
-                <span className="date">{comment.date?.toDateString()}</span>
+                <a href={comment.url} className="date">
+                  <span>{comment.date?.toDateString()}</span>
+                </a>
               </div>
               <div className="message">{comment.message.trim()}</div>
             </div>
