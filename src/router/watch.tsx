@@ -88,10 +88,8 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
   const comments = useMemo(
     () => (
       titleHandle
-        ?.tags
-        .find(tag => tag.type === 'comments')
-        ?.value
-        .map((comment, i) => (
+        ?.comments
+        ?.map((comment, i) => (
           <div key={i} className="comment">
             <div>
               <img className="avatar" src={comment.user.avatar} alt={`${comment.user.name} avatar`} referrer-policy="same-origin"/>
