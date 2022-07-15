@@ -4,10 +4,14 @@ import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { fetch } from '@mfkn/fkn-lib'
 import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
+import DOMPurify from 'dompurify'
+import * as marked from 'marked'
 
 import { getTitle } from '../../../../scannarr/src'
 import { cachedDelayedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
+
+console.log('marked', marked)
 
 const style = css`
   display: grid;
@@ -101,7 +105,10 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
                   <span>{comment.date?.toDateString()}</span>
                 </a>
               </div>
-              <div className="message">{comment.message.trim()}</div>
+              <div
+                className="message"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(comment.message.trim())) }}
+              ></div>
             </div>
           </div>
         ))
@@ -145,6 +152,14 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
       })
   }, [title])
 
+  const descriptionHtml = useMemo(
+    () =>
+      titleHandle?.description
+        ? DOMPurify.sanitize(marked.parse(titleHandle?.description))
+        : undefined,
+    [titleHandle?.description]
+  )
+
   // todo: add more info on top of the description, e.g url, video infos, download rate, ect...
   return (
     <div css={style}>
@@ -153,9 +168,8 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
       </div>
       <div
         className="description"
-      >
-        {titleHandle?.description}
-      </div>
+        dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+      ></div>
       {
         comments?.length
           ? (
