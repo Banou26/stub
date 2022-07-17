@@ -11,8 +11,6 @@ import { getTitle } from '../../../../scannarr/src'
 import { cachedDelayedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
 
-console.log('marked', marked)
-
 const style = css`
   display: grid;
   height: 100vh;
