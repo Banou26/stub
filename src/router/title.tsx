@@ -650,6 +650,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   }
 
   // todo: add spoiler feature on the episode thumbnail & synopsis
+  // todo: maybe checkout https://upscalerjs.com/#/ to improve thumbnail/images quality
   return (
     <div css={style}>
       <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" referrer-policy="same-origin" />
@@ -771,7 +772,11 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             }
           </div>
           <div className="info">
-            <img className="thumbnail" src={title?.images?.at(0)?.url} alt="Episode thumbnail"/>
+            {
+              title?.images?.at(0)?.url
+                ? <img className="thumbnail" src={title?.images?.at(0)?.url} alt="Episode thumbnail"/>
+                : null
+            }
             <div className="synopsis">
               {
                 !title?.synopses ? 'Loading...' :

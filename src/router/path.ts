@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react'
 
 export enum Route {
   HOME = 'HOME',
+  AUTH = 'AUTH',
   TITLE = 'TITLE',
   TITLE_EPISODE = 'TITLE_EPISODE',
   WATCH = 'WATCH',
@@ -13,6 +14,7 @@ export enum Route {
 
 const Routes = {
   [Route.HOME]: () => '/',
+  [Route.AUTH]: ({ name }: { name: string }) => `/auth/${name}`,
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
   [Route.WATCH]: ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, sourceUri: string }) => `/watch/${uri}/${titleUri}/${sourceUri}`,
@@ -21,6 +23,7 @@ const Routes = {
 
 const RouterRoutes = {
   [Route.HOME]: '/',
+  [Route.AUTH]: '/auth/:name',
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
   [Route.WATCH]: '/watch/:uri/:titleUri/:sourceUri',

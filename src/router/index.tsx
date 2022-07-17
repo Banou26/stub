@@ -4,6 +4,7 @@ import { Category } from '../../../../scannarr/src'
 import Home from './home'
 import CategoryComponent from './category'
 import { getRouterRoutePath, Route } from './path'
+import Auth from './auth/mal'
 import Title from './title'
 import Watch from './watch'
 import { Fragment } from 'react'
@@ -31,6 +32,7 @@ const HeaderPage = ({ children, category }: { children: React.ReactNode, categor
 
 export const routes = {
   [getRouterRoutePath(Route.HOME)]: () => <Home/>,
+  [getRouterRoutePath(Route.AUTH)]: ({ name }) => <Auth name={name}/>,
   [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
   [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, titleUri }) => <Title uri={uri} titleUri={titleUri}/>,
   [getRouterRoutePath(Route.WATCH)]: ({ uri, titleUri, sourceUri }) => <Watch uri={uri} titleUri={titleUri} sourceUri={sourceUri}/>,
