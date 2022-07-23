@@ -1,26 +1,15 @@
-import { useRoutes } from 'raviger'
+import type { Category } from '../../../../scannarr/src'
 
-import { Category } from '../../../../scannarr/src'
+import { useRoutes } from 'raviger'
+import { Fragment } from 'react'
+
 import Home from './home'
 import CategoryComponent from './category'
 import { getRouterRoutePath, Route } from './path'
 import Auth from './auth/mal'
 import Title from './title'
 import Watch from './watch'
-import { Fragment } from 'react'
-import Header from 'src/components/header'
-
-// export const routes = {
-//   '/': () => <Home/>,
-//   '/category/movies': () => <CategoryComponent category={'MOVIE'}/>,
-//   '/category/shows': () => <CategoryComponent category={'SHOW'}/>,
-//   '/category/animes': () => <CategoryComponent category={'ANIME'}/>,
-//   '/title/:uri': ({ uri }) => <Title uri={uri}/>,
-//   '/watch/:name': ({ name }) => <Watch name={decodeURI(name)}/>,
-//   '/search': () => <Search/>
-// }
-
-// export default () => useRoutes(routes)
+import Header from '../components/header'
 
 const HeaderPage = ({ children, category }: { children: React.ReactNode, category: Category }) =>
   <Fragment>
