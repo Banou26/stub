@@ -1,6 +1,7 @@
+import type ParseTorrentFile from 'parse-torrent-file'
+
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
-import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { torrent } from '@fkn/lib'
 import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
@@ -8,8 +9,15 @@ import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 
 import { getTitle } from '../../../../scannarr/src'
+import { Uri } from '../../../../scannarr/src/utils'
 import { cachedDelayedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
+
+const PROXY_ORIGIN = process.env.PROXY_ORIGIN
+const PROXY_VERSION = process.env.PROXY_VERSION
+
+if (!PROXY_ORIGIN) throw new Error('Missing PROXY_ORIGIN environment variable')
+if (!PROXY_VERSION) throw new Error('Missing PROXY_VERSION environment variable')
 
 const style = css`
   display: grid;
@@ -71,22 +79,19 @@ const style = css`
   }
 `
 
-export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, sourceUri: string }) => {
-  const firstUri = uri.split(',')?.at(0)!
-  // const { data: { title } = {} } = useQuery<GetTitle>(GET_TITLE, { variables: { uri: firstUri } })
-  // const firstEpisodeUri = title?.episodes.at(0)?.uri
-  // const { loading: episodeLoading, data: { episode } = {} } = useQuery<GetEpisode>(GET_EPISODE, { variables: { uri: episodeUri ?? firstEpisodeUri, title }, skip: !firstEpisodeUri || !title })
+export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceUri: Uri }) => {
   const { value: title } = useObservable(() =>
     sourceUri
-      ? console.log('getTitle', sourceUri) || getTitle({ uri: sourceUri }, { fetch: cachedDelayedFetch })
+      ? getTitle({ uri: sourceUri }, { fetch: cachedDelayedFetch })
       : of(undefined),
     [uri]
   )
-  console.log('title', title)
+
   const titleHandle = useMemo(
     () => title?.handles.find(({ uri }) => uri === sourceUri),
     [sourceUri, title]
   )
+
   const comments = useMemo(
     () => (
       titleHandle
@@ -113,11 +118,11 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
     ),
     [titleHandle]
   )
-  const [torrent, setTorrent] = useState<ParseTorrent.Instance>()
+  const [_torrent, setTorrent] = useState<ParseTorrentFile.Instance>()
 
   const mediaId =
-    torrent
-      ? `${torrent?.infoHash}-${torrent?.name}`
+    _torrent
+      ? `${_torrent?.infoHash}-${_torrent?.name}`
       : undefined
 
   const [size, setSize] = useState<number>()
@@ -128,26 +133,16 @@ export default ({ uri, titleUri, sourceUri }: { uri: string, titleUri: string, s
     const { url, type } =
       titleHandle
         .tags
-        .find(({ type }) => type === 'source')
+        ?.find(({ type }) => type === 'source')
         ?.value
 
     if (type !== 'torrent-file') throw new Error('titleHandle source tag type isn\'t torrent-file')
     
-    fetch(url)
-      .then(res => res.arrayBuffer())
-      .then(res => {
-        const torrent = ParseTorrent(Buffer.from(res))
-        setTorrent(torrent)
-        return torrent
-      })
-      .then(toMagnetURI)
-      .then(uri => window.fetch(`${process.env.PROXY_ORIGIN}/${process.env.PROXY_VERSION}/torrent/${encodeURIComponent(uri)}`))
-      .then((res) => {
-        const { headers, body } = res
-        if (!body || !headers.get('Content-Length')) throw new Error('no stream or Content-Length returned from the response')
-        setSize(Number(headers.get('Content-Length')))
-        setStream(body)
-      })
+    torrent(url).then(({ torrentFile, torrent: { headers, body } }) => {
+      setTorrent(torrentFile)
+      setSize(Number(headers.get('Content-Length')))
+      setStream(body)
+    })
   }, [title])
 
   const descriptionHtml = useMemo(
