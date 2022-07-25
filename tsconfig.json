@@ -14,8 +14,8 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@mfkn/fkn-lib": ["../lib/lib/lib/src/index"],
-      "@mfkn/fkn-lib/*": ["../lib/lib/lib/src/*"]
+      "@fkn/lib": ["../lib/lib/lib/src/index"],
+      "@fkn/lib/*": ["../lib/lib/lib/src/*"]
     },
     "skipLibCheck": true,
     "types": ["../../osra/build"]

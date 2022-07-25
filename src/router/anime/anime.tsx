@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 
-import { torrent as downloadTorrent } from '@mfkn/fkn-lib'
+import { torrent as downloadTorrent } from '@fkn/lib'
 
 import { getAnimeSeason } from '../../lib/targets/myanimelist'
 import { getAnimeTorrents } from '../../lib/targets/nyaasi'

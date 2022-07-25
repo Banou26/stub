@@ -1,6 +1,6 @@
 import type { FetchType } from '../../../../scannarr/src'
 
-import { fetch } from '@mfkn/fkn-lib'
+import { fetch } from '@fkn/lib'
 
 export const cachedDelayedFetch: FetchType = (input, init) =>
   fetch(

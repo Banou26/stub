@@ -1,4 +1,4 @@
-// import { fetch, torrent } from '@mfkn/fkn-lib'
+// import { fetch, torrent } from '@fkn/lib'
 // import './lib'
 
 // fetch(
@@ -59,7 +59,7 @@
 // //   torrentSubscription.unsubscribe()
 // // }, 25000)
 
-// import { registerServiceWorker } from '@mfkn/fkn-lib'
+// import { registerServiceWorker } from '@fkn/lib'
 
 // registerServiceWorker()
   

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetch } from '@mfkn/fkn-lib'
+import { fetch } from '@fkn/lib'
 
 type RequestType = 'json' | 'arrayBuffer' | 'blob' | 'text' | 'formData' | undefined
 

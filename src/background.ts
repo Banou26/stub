@@ -1,2 +1,2 @@
-import '@mfkn/fkn-lib'
+import '@fkn/lib'
 console.log('background')

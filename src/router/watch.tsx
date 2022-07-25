@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
 import ParseTorrent, { toMagnetURI } from 'parse-torrent'
-import { fetch } from '@mfkn/fkn-lib'
+import { torrent } from '@fkn/lib'
 import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'

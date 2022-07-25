@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { useQueryParams } from 'raviger'
 import { css } from '@emotion/react'
 
-import { torrent as downloadTorrent } from '@mfkn/fkn-lib'
+import { torrent as downloadTorrent } from '@fkn/lib'
 
 import { useFetch } from 'src/lib/hooks/utils'
 
