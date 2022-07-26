@@ -49,7 +49,10 @@ const config = {
     'process.platform': '"web"',
     'process.env.WEB_ORIGIN': '"http://localhost:1234"',
     'process.env.WEB_SANDBOX_ORIGIN': '"http://localhost:2345"',
-    'process.env.PROXY_ORIGIN': '"http://localhost:4001"', // https://dev.proxy.fkn.app // http://localhost:4001
+    'process.env.PROXY_ORIGIN': '"http://localhost:4001"',
+    // 'process.env.WEB_ORIGIN': '"https://dev.fkn.app"',
+    // 'process.env.WEB_SANDBOX_ORIGIN': '"https://sdbx.app"',
+    // 'process.env.PROXY_ORIGIN': '"https://dev.proxy.fkn.app"',
     'process.env.PROXY_VERSION': '"v0"'
   }
 }
