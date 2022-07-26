@@ -474,11 +474,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   useEffect(() => {
     if((!resolutions.length || !automaticResolutionSelection) && resolutions.includes(selectedResolution)) return
-    if (resolutions.length) {
-      const resolution =
-        isNaN(Math.max(...resolutions as number[]))
-          ? undefined
-          : Math.max(...resolutions as number[])
+    if (resolutions.filter(Boolean).length) {
+      const resolution = Math.max(...resolutions.filter(Boolean) as number[])
       setResolution(resolution)
     } else {
       setResolution(undefined)
