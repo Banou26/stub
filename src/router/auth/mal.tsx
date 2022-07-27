@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
+
 const clientID = '45c7955ab6aa13ac1d1dafbc3f6fab4b'
-const redirectURL = 'https://fkn.app/app/616331fa7b57db93f0957a18/auth/foo'
 
 const generateChallenge = () => {
   var result = "";
@@ -11,32 +12,55 @@ const generateChallenge = () => {
   return result;
 };
 
-// const callbackResp = () => {
-//   const response = req.query;
-//   const rn = await fetch(`https://myanimelist.net/v1/oauth2/token`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/x-www-form-urlencoded",
-//     },
-//     body: `grant_type=authorization_code&code=${response.code}&client_id=${this[_clientID]}${
-//       this[_clientSecret] ? `&client_secret=${this[_clientSecret]}` : ""
-//     }&code_verifier=${this[_codeChallenge]}&redirect_uri=${this[_callback]}`,
-//   });
-
-//   const data = await rn.json();
-//   req.get_data = data;
-//   this[_refreshToken] = data.refresh_token;
-//   next();
-// }
-
 export default ({ name }: { name?: string }) => {
+  const challenge = generateChallenge()
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: clientID,
+    code_challenge: challenge,
+    state: challenge
+  }).toString()
 
-  // window.location = `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${this[_clientID]}&code_challenge=${this[_codeChallenge]}&redirect_uri=${this[_callback]}&code_challenge_method=plain`
+  const searchParams = new URLSearchParams(location.search)
+  const authorizationCode = searchParams.get('code')
+  const state = searchParams.get('state')
 
+  useEffect(() => {
+    if (!authorizationCode || !state) return
+    const params = new URLSearchParams({
+      client_id: clientID,
+      code: authorizationCode,
+      code_verifier: state,
+      grant_type: 'authorization_code'
+    }).toString()
+
+    fetch(`https://myanimelist.net/v1/oauth2/token`, {
+      method: 'POST',
+      headers:{ 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    }).then(async res => {
+      console.log('res', await res.text())
+    })
+  }, [authorizationCode])
+
+  const url = `https://myanimelist.net/v1/oauth2/authorize?${params}`
 
   return (
     <div>
       {name} AUTH
+      {
+        authorizationCode
+          ? (
+            <div>
+              AUTHENTICATING
+            </div>
+          )
+          : (
+            <a href={url}>
+              CLICK TO AUTH
+            </a>
+          )
+      }
     </div>
   )
 }
