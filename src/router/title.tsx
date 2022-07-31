@@ -554,6 +554,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const renderTitleHandleName = (handle: TitleHandle) => {
     // todo: reintroduce once we support batches
     if (handle.batch) return null
+    const { number } = handle
     const teamTag = handle.team
     const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
     const sourceTag = handle.tags?.find(({ type }) => type === 'source')
@@ -596,7 +597,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           </span>
         </a>
         <span className="name">
-          {name}
+          {name} {number ? number.toString().padStart(2, '0') : ''}
         </span>
         <span className="info">
           <span className="size" title={new Intl.NumberFormat('en-US', { unit: 'byte', notation: 'standard', style: 'unit', unitDisplay: 'long' }).format(Math.round(handle.size))}>
