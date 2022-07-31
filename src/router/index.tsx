@@ -10,7 +10,7 @@ import Auth from './auth/mal'
 import Title from './title'
 import Watch from './watch'
 import Header from '../components/header'
-import { isUri } from '../../../../scannarr/src/utils'
+import { isUri, isUris } from '../../../../scannarr/src/utils'
 
 const HeaderPage = ({ children, category }: { children: React.ReactNode, category: Category }) =>
   <Fragment>
@@ -31,7 +31,7 @@ export const routes = {
   [getRouterRoutePath(Route.TITLE)]: ({ uri }) => <Title uri={uri}/>,
   [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, titleUri }) => <Title uri={uri} titleUri={titleUri}/>,
   [getRouterRoutePath(Route.WATCH)]: ({ uri, titleUri, sourceUri }) =>
-    isUri(uri) && isUri(titleUri) && isUri(sourceUri)
+    isUris(uri) && isUri(titleUri) && isUri(sourceUri)
       ? <Watch uri={uri} titleUri={titleUri} sourceUri={sourceUri}/>
       : <NotFoundPage/>,
   // [getRouterRoutePath(Route.CATEGORY)]: ({ category }) => <CategoryComponent category={Category['toLowerString'()]}/>,
