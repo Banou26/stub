@@ -599,7 +599,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           {name}
         </span>
         <span className="info">
-          <span className="size">
+          <span className="size" title={new Intl.NumberFormat('en-US', { unit: 'byte', notation: 'standard', style: 'unit', unitDisplay: 'long' }).format(Math.round(handle.size))}>
             {getHumanReadableByteString(handle.size)}
           </span>
           {
