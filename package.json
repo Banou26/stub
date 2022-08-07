@@ -42,7 +42,7 @@
     "build-index-watch": "node --preserve-symlinks ./build.js -w -s",
     "build": "npm run copy-anitomy && npm run copy-fkn-media-player-deps && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
     "build-bypass-ts": "npm run copy-fkn-media-player-deps && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar",
-    "watch": "concurrently \"npm run copy-anitomy\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
+    "watch": "concurrently \"npm run serve\" \"npm run copy-anitomy\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
     "_watch": "concurrently \"npm run copy-anitomy\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
     "dev": "npm run watch"
   },
@@ -73,7 +73,7 @@
     "marked": "^4.0.18",
     "osra": "^0.0.3",
     "p-throttle": "^5.0.0",
-    "parse-torrent": "^9.1.4",
+    "parse-torrent": "^9.1.5",
     "path": "^0.12.7",
     "raviger": "^2.0.1",
     "react": "^17.0.2",

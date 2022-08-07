@@ -47,13 +47,13 @@ const config = {
   plugins: [polyfills],
   define: {
     'process.platform': '"web"',
-    'process.env.WEB_ORIGIN': '"http://localhost:1234"',
-    'process.env.WEB_SANDBOX_ORIGIN': '"http://localhost:2345"',
-    'process.env.PROXY_ORIGIN': '"http://localhost:4001"',
+    // 'process.env.WEB_ORIGIN': '"http://localhost:1234"',
+    // 'process.env.WEB_SANDBOX_ORIGIN': '"http://localhost:2345"',
+    // 'process.env.PROXY_ORIGIN': '"http://localhost:4001"',
     // 'process.env.WEB_ORIGIN': '"https://dev.fkn.app"',
     // 'process.env.WEB_SANDBOX_ORIGIN': '"https://sdbx.app"',
     // 'process.env.PROXY_ORIGIN': '"https://dev.proxy.fkn.app"',
-    'process.env.PROXY_VERSION': '"v0"'
+    // 'process.env.PROXY_VERSION': '"v0"'
   }
 }
 
@@ -64,26 +64,29 @@ esbuild.build({
   inject: ['./src/react-shim.ts']
 })
 
-if (process.argv.includes('-s') || process.argv.includes('--serve')) {
-  http
-    .createServer(async (req, res) => {
-      
-      const url = new URL(req.url, 'http://localhost:4560')
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:1234')
-      try {
-        
-        res.setHeader('Content-Type', mime.getType(path.resolve('./', path.join('dist', url.pathname))))
-        await new Promise((resolve, reject) =>
-          fs
-            .createReadStream(path.resolve('./', path.join('dist', url.pathname)))
-            .on('error', reject)
-            .on('finish', resolve)
-            .pipe(res)
-        )
-      } catch (err) {
-        res.writeHead(404)
-        res.end()
-      }
-    })
-    .listen(4560)
-}
+// if (process.argv.includes('-s') || process.argv.includes('--serve')) {
+//   const corsOrigins = ['http://localhost:1234', 'http://616331fa7b57db93f0957a18.localhost:2345']
+
+//   http
+//     .createServer(async (req, res) => {
+//       const origin = req.headers.origin
+//       const url = new URL(req.url, 'http://localhost:4560')
+//       if (corsOrigins.includes(origin)) {
+//         res.setHeader('Access-Control-Allow-Origin', origin)
+//       }
+//       try {
+//         res.setHeader('Content-Type', mime.getType(path.resolve('./', path.join('dist', url.pathname))))
+//         await new Promise((resolve, reject) =>
+//           fs
+//             .createReadStream(path.resolve('./', path.join('dist', url.pathname)), { start })
+//             .on('error', reject)
+//             .on('finish', resolve)
+//             .pipe(res)
+//         )
+//       } catch (err) {
+//         res.writeHead(404)
+//         res.end()
+//       }
+//     })
+//     .listen(4560)
+// }
