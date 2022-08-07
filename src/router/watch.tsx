@@ -2,7 +2,7 @@ import type ParseTorrentFile from 'parse-torrent-file'
 
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
-import { torrent } from '@fkn/lib'
+import { torrent, torrentStatus } from '@fkn/lib'
 import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
@@ -12,12 +12,8 @@ import { getTitle } from '../../../../scannarr/src'
 import { Uri } from '../../../../scannarr/src/utils'
 import { cachedDelayedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
-
-const PROXY_ORIGIN = process.env.PROXY_ORIGIN
-const PROXY_VERSION = process.env.PROXY_VERSION
-
-if (!PROXY_ORIGIN) throw new Error('Missing PROXY_ORIGIN environment variable')
-if (!PROXY_VERSION) throw new Error('Missing PROXY_VERSION environment variable')
+import { useFetch } from 'src/utils/use-fetch'
+import { toMagnetURI } from 'parse-torrent'
 
 const style = css`
   display: grid;
@@ -119,7 +115,9 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
     [titleHandle]
   )
   const [_torrent, setTorrent] = useState<ParseTorrentFile.Instance>()
-
+  const magnet = useMemo(() => _torrent ? toMagnetURI(_torrent).replace('xt=urn:btih:[object Object]&', '') : undefined, [_torrent])
+  console.log('_torrent', _torrent)
+  console.log('magnet', magnet)
   const mediaId =
     _torrent
       ? `${_torrent?.infoHash}-${_torrent?.name}`
@@ -144,6 +142,19 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
       setStream(body)
     })
   }, [title])
+
+  useEffect(() => {
+    if (!magnet) return
+    const interval = setInterval(() => {
+      torrentStatus(magnet).then((status) => {
+        console.log('torrent status', status)
+      })
+    }, 1_000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [magnet])
 
   const descriptionHtml = useMemo(
     () =>
