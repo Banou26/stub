@@ -25,6 +25,17 @@ const style = css`
     width: 100%;
   }
 
+  /* @media (min-width: 204.8rem) { */
+  /* @media (min-width: 128rem) { */
+  /* @media only screen  */
+  @media
+   screen and (max-width : 2560px),
+   screen and (max-height : 1440px) {
+    html {
+      font-size: 41.5%; /* true value is of the 67% scale is font-size: 41.875%; but idk why it make a scrollbar appear */
+    }
+  }
+
   body {
     margin: 0;
     height: 100vh;
