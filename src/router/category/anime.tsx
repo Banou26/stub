@@ -9,7 +9,7 @@ import { searchSeries } from '../../../../../scannarr/src'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 import { byPopularity } from '../../../../../scannarr/src/utils'
 
-import { cachedDelayedFetch } from '../../utils/fetch'
+import { cachedFetch } from '../../utils/fetch'
 import useObservable from '../../utils/use-observable'
 import Card from '../../components/card'
 
@@ -45,7 +45,7 @@ h2 {
 
 export default ({ category }: { category?: Category }) => {
   const { value: categoryItems } = useObservable(
-    () => searchSeries({ categories: [category!], latest: true }, { fetch: cachedDelayedFetch }),
+    () => searchSeries({ categories: [category!], latest: true }, { fetch: cachedFetch }),
     []
   )
 

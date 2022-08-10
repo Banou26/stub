@@ -10,7 +10,7 @@ import * as marked from 'marked'
 
 import { getTitle } from '../../../../scannarr/src'
 import { Uri } from '../../../../scannarr/src/utils'
-import { cachedDelayedFetch } from '../utils/fetch'
+import { cachedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
 import { useFetch } from 'src/utils/use-fetch'
 import { toMagnetURI } from 'parse-torrent'
@@ -78,7 +78,7 @@ const style = css`
 export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceUri: Uri }) => {
   const { value: title } = useObservable(() =>
     sourceUri
-      ? getTitle({ uri: sourceUri }, { fetch: cachedDelayedFetch })
+      ? getTitle({ uri: sourceUri }, { fetch: cachedFetch })
       : of(undefined),
     [uri]
   )

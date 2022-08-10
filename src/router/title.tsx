@@ -18,7 +18,7 @@ import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
 import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
 import { getHumanReadableByteString } from '../utils/bytes'
-import { cachedDelayedFetch } from '../utils/fetch'
+import { cachedFetch } from '../utils/fetch'
 import Sources from '../components/sources'
 import Input from '../components/inputs'
 import { sort } from 'fp-ts/lib/ReadonlyArray'
@@ -366,7 +366,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [selectedResolution, setResolution] = useState<number | undefined>(undefined)
   const [selectedSource, setSource] = useState<string | undefined>()
   const { observable: series$, value: series } = useObservable(() =>
-    getSeries({ uri }, { fetch: cachedDelayedFetch }),
+    getSeries({ uri }, { fetch: cachedFetch }),
     [uri]
   )
   const { observable: seriesReplay$ } = useObservable(() => series$.pipe(shareReplay()), [series$])
@@ -374,7 +374,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     seriesReplay$
       .pipe(
         filter(Boolean),
-        mergeMap(series => searchTitles({ series }, { fetch: cachedDelayedFetch }))
+        mergeMap(series => searchTitles({ series }, { fetch: cachedFetch }))
       ),
     [seriesReplay$]
   )
@@ -391,7 +391,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             .pipe(
               map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
               filter(Boolean),
-              mergeMap(title => searchTitles({ series, search: title }, { fetch: cachedDelayedFetch }))
+              mergeMap(title => searchTitles({ series, search: title }, { fetch: cachedFetch }))
             )
         )
         : from([]),
