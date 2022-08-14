@@ -14,6 +14,12 @@ grid-template-columns: 25rem 40rem;
 background: rgb(35, 35, 35);
 overflow: hidden;
 
+@media
+screen and (max-width : 2560px),
+screen and (max-height : 1440px) {
+  grid-template-columns: 20rem 32rem;
+}
+
 .title {
   height: 30rem;
 }

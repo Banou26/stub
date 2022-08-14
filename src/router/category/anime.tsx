@@ -22,7 +22,7 @@ h2 {
   padding: 5rem;
 }
 
-.section:not(:first-child) {
+.section:not(:first-of-type) {
   margin-top: 10rem;
 }
 
@@ -40,6 +40,19 @@ h2 {
   grid-template-columns: repeat(auto-fill, minmax(calc(25rem + 40rem), 1fr));
   grid-auto-rows: 30rem;
   grid-gap: 3.5rem 0;
+}
+
+@media
+screen and (max-width : 2560px),
+screen and (max-height : 1440px) {
+  .items {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(calc(20rem + 32rem), 1fr));
+    grid-auto-rows: 30rem;
+    grid-gap: 3.5rem 0;
+  }
+  /* grid-template-columns: 20rem 32rem; */
 }
 `
 

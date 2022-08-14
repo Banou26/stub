@@ -1,8 +1,9 @@
 import type ParseTorrentFile from 'parse-torrent-file'
+import type { TorrentStatusResult } from '@fkn/lib/torrent'
 
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
-import { torrent, torrentStatus } from '@fkn/lib'
+import { torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
 import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
@@ -14,6 +15,8 @@ import { cachedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
 import { useFetch } from 'src/utils/use-fetch'
 import { toMagnetURI } from 'parse-torrent'
+import { AlertCircle, ArrowDown, ArrowUp, Users } from 'react-feather'
+import { getHumanReadableByteString } from '../utils/bytes'
 
 const style = css`
   display: grid;
@@ -74,6 +77,35 @@ const style = css`
     }
   }
 `
+
+const torrentInfoStyle = css`
+  
+`
+
+const TorrentInfo = ({ magnet }: { magnet?: string }) => {
+  const [status, setStatus] = useState()
+  console.log('torrent status', status)
+
+  useEffect(() => {
+    if (!magnet) return
+    const interval = setInterval(() => {
+      torrentStatus(magnet).then(setStatus)
+    }, 1_000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [magnet])
+
+  return (
+    <div css={torrentInfoStyle} title={'Proxy server\'s current torrent information stats'}>
+      <Users/> {status?.connectedPeers ?? 0}
+      <ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s
+      <ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s
+      <AlertCircle/>
+    </div>
+  )
+}
 
 export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceUri: Uri }) => {
   const { value: title } = useObservable(() =>
@@ -143,19 +175,6 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
     })
   }, [title])
 
-  useEffect(() => {
-    if (!magnet) return
-    const interval = setInterval(() => {
-      torrentStatus(magnet).then((status) => {
-        console.log('torrent status', status)
-      })
-    }, 1_000)
-
-    return () => {
-      clearInterval(interval)
-    }
-  }, [magnet])
-
   const descriptionHtml = useMemo(
     () =>
       titleHandle?.description
@@ -168,7 +187,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
   return (
     <div css={style}>
       <div className="player">
-        <FKNMediaPlayer id={mediaId} size={size} stream={stream}/>
+        <FKNMediaPlayer id={mediaId} size={size} stream={stream} customControls={[() => <TorrentInfo magnet={magnet} />]}/>
       </div>
       <div
         className="description"

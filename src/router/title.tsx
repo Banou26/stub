@@ -114,6 +114,8 @@ const style = css`
       white-space: pre-wrap;
       padding-bottom: 1rem;
       border-bottom: 0.1rem solid rgb(75, 75, 75);
+      max-height: 30rem;
+      overflow: auto;
     }
   }
 
@@ -358,6 +360,17 @@ const style = css`
       }
     }
   }
+
+
+  /* @media
+  screen and (max-width : 2560px),
+  screen and (max-height : 1440px) {
+    grid-template-rows: 35rem 1fr;
+    
+    .series .synopsis {
+      max-height: 25rem;
+    }
+  } */
 `
 
 // todo: fix issue when clicking on resolution, going back to unknown res and back again to res, it stays on unknown res because automatic res becomes disabled, example on http://localhost:1234/app/616331fa7b57db93f0957a18/title/mal:47194/mal:47194-1
