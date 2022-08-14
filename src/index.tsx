@@ -1,6 +1,6 @@
 /// <reference types="@emotion/react/types/css-prop" />
 import { css, Global } from '@emotion/react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { targets } from '../../../laserr/src'
 import { addTarget } from '../../../scannarr/src'
 
@@ -77,10 +77,11 @@ for (const target of targets) {
   addTarget(target)
 }
 
-render(
+const root = createRoot(document.body.appendChild(document.createElement('div')))
+
+root.render(
   <>
     <Global styles={style}/>
     <Mount/>
-  </>,
-  document.body.appendChild(document.createElement('div'))
+  </>
 )
