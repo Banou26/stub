@@ -98,7 +98,7 @@ const TorrentInfo = ({ magnet }: { magnet?: string }) => {
   }, [magnet])
 
   return (
-    <div css={torrentInfoStyle} title={'Proxy server\'s current torrent information stats'}>
+    <div css={torrentInfoStyle} title={'FKN proxy server\'s current torrent information stats'}>
       <Users/> {status?.connectedPeers ?? 0}
       <ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s
       <ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s
