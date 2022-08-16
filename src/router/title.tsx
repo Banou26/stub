@@ -642,11 +642,11 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                       )
                     }
                   >
-                    <div className="seeders" title="seeders">
+                    <div className="seeders" title={`${sourceTag?.value.seeders} seeders`}>
                       <ChevronUp/>
                       {sourceTag?.value.seeders}
                     </div>
-                    <div className="leechers" title="leechers">
+                    <div className="leechers" title={`${sourceTag?.value.leechers} leechers`}>
                       <ChevronDown/>
                       {sourceTag?.value.leechers}
                     </div>
