@@ -8,6 +8,8 @@ import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
+import ReactTooltip from 'react-tooltip'
+import { AlertCircle, ArrowDown, ArrowUp, Users, Server } from 'react-feather'
 
 import { getTitle } from '../../../../scannarr/src'
 import { Uri } from '../../../../scannarr/src/utils'
@@ -15,7 +17,6 @@ import { cachedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
 import { useFetch } from 'src/utils/use-fetch'
 import { toMagnetURI } from 'parse-torrent'
-import { AlertCircle, ArrowDown, ArrowUp, Users } from 'react-feather'
 import { getHumanReadableByteString } from '../utils/bytes'
 
 const style = css`
@@ -29,7 +30,8 @@ const style = css`
     & > div {
       height: 100vh;
       & > video, & > div {
-        height: 100vh;
+        height: 100%;
+        max-height: 100vh;
       }
     }
   }
@@ -84,12 +86,12 @@ const torrentInfoStyle = css`
 
 const TorrentInfo = ({ magnet }: { magnet?: string }) => {
   const [status, setStatus] = useState()
-  console.log('torrent status', status)
 
   useEffect(() => {
     if (!magnet) return
     const interval = setInterval(() => {
-      torrentStatus(magnet).then(setStatus)
+      torrentStatus(magnet)
+        .then(setStatus)
     }, 1_000)
 
     return () => {
@@ -98,12 +100,15 @@ const TorrentInfo = ({ magnet }: { magnet?: string }) => {
   }, [magnet])
 
   return (
-    <div css={torrentInfoStyle} title={'FKN proxy server\'s current torrent information stats'}>
-      <Users/> {status?.connectedPeers ?? 0}
-      <ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s
-      <ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s
-      <AlertCircle/>
-    </div>
+    <>
+      <ReactTooltip id="torrent-info-tooltip" effect="solid" place="top">
+        <div>FKN proxy server's current torrent information stats</div>
+        <div><Users/> {status?.connectedPeers ?? 0}</div>
+        <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
+        <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div>
+      </ReactTooltip>
+      <Server data-tip data-for="torrent-info-tooltip"/>
+    </>
   )
 }
 
