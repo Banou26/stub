@@ -105,6 +105,7 @@ const style = css`
         display: grid;
         grid-template-columns: repeat(auto-fill, 3.2rem);
         height: 3.2rem;
+        max-width: 20rem;
       }
 
       .date {
