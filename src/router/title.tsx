@@ -1,5 +1,5 @@
 import { css, keyframes } from '@emotion/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from 'raviger'
 import * as N from 'fp-ts/number'
 import * as R from 'fp-ts/lib/Record'
@@ -12,6 +12,8 @@ import { filter, from, map, shareReplay } from 'rxjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLink, faLink, faMagnet } from '@fortawesome/free-solid-svg-icons'
 import { ChevronDown, ChevronUp, Heart } from 'react-feather'
+import DOMPurify from 'dompurify'
+import * as marked from 'marked'
 
 import { getRoutePath, Route } from './path'
 import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
@@ -662,6 +664,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     )
   }
 
+  const synopsis = useMemo(() =>
+    <div
+      className="message"
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(series?.synopses?.at(0)?.synopsis.trim() ?? '')) }}
+    ></div>,
+    [series?.synopses?.at(0)?.synopsis]
+  )
+
   // todo: add spoiler feature on the episode thumbnail & synopsis
   // todo: maybe checkout https://upscalerjs.com/#/ to improve thumbnail/images quality
   return (
@@ -701,7 +711,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           </div>
         </div>
         <div className="synopsis">
-          {series?.synopses?.at(0)?.synopsis}
+          {synopsis}
         </div>
       </div>
       <div className="titles">
