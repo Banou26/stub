@@ -673,11 +673,19 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     [series?.synopses?.at(0)?.synopsis]
   )
 
+  const poster = useMemo(
+    () =>
+      series?.images?.find(({ type, size }) => type === 'poster' && size === 'large') ||
+      series?.images?.find(({ type, size }) => type === 'poster' && size === 'medium') ||
+      series?.images?.find(({ type, size }) => type === 'poster' && size === 'small'),
+    [series?.images]
+  )
+
   // todo: add spoiler feature on the episode thumbnail & synopsis
   // todo: maybe checkout https://upscalerjs.com/#/ to improve thumbnail/images quality
   return (
     <div css={style}>
-      <img src={series?.images?.at(0)?.url} alt={`${series?.names?.at(0)?.name} poster`} className="poster" referrer-policy="same-origin" />
+      <img src={poster?.url} alt={`${mainSeriesName} poster`} className="poster" referrer-policy="same-origin" />
       <div className="series">
         <div>
           <div className="title-bar">
