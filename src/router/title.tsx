@@ -40,8 +40,7 @@ const style = css`
   display: grid;
   grid-template-columns: 40rem 1fr;
   grid-template-rows: 50rem 1fr;
-  padding: 10rem;
-  padding-bottom: 5rem;
+  padding: 4rem 10rem;
 
   .title-placeholder {
     height: 3.2rem;
@@ -270,7 +269,6 @@ const style = css`
         max-height: 30rem;
 
         .source {
-          position: relative;
           display: flex;
           align-items:center;
           /* height: 3.2rem; */

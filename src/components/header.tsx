@@ -10,9 +10,15 @@ import { useFetch } from '../utils/use-fetch'
 
 import Input from './inputs'
 
+import IconUrl from '../images/icon.png'
+import { getRoutePath, Route } from '../router/path'
+import { cachedFetch } from '../utils/fetch'
+
 const style = css`
+  position: fixed;
   height: 6rem;
   width: 100%;
+  background-color: rgb(35, 35, 35);
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -27,7 +33,28 @@ const style = css`
 
   .left {
     display: grid;
-    grid-template-columns: 26rem auto;
+    grid-template-columns: 15rem auto;
+
+    .logo-link {
+      display: grid;
+      grid-template-columns: 5rem auto;
+      height: 5rem;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      text-decoration: none;
+
+      .logo-icon {
+        height: 5rem;
+      }
+
+      span {
+        margin-left: 1.5rem;
+
+      }
+    }
   }
 
   .middle {
@@ -42,15 +69,35 @@ const style = css`
       width: 100rem;
       background-color: rgb(35, 35, 35);
       height: fit-content;
+      row-gap: 0.5rem;
+      height: 50rem;
+      /* height: calc(100vh - 10rem); */
+      overflow: auto;
+      padding: 1.5rem 0;
+
       a {
         display: grid;
         grid-template-columns: 5rem auto;
-        align-items: center;
         height: 5rem;
         padding-left: 2.5rem;
+        overflow: hidden;
+
+        &:hover {
+          background-color: rgb(75, 75, 75);
+        }
 
         img {
+          /* height: 100%; */
+          width: 100%;
+          object-fit: contain;
+          margin: auto;
+        }
+
+        span {
+          display: grid;
+          align-items: center;
           height: 5rem;
+          margin-left: 1rem;
         }
       }
     }
@@ -63,16 +110,16 @@ const style = css`
   }
 `
 
-const Header = ({ category }: { category?: Category }) => {
+const Header = () => {
+  const [category, setCategory] = useState<Category>('ANIME')
   const [showSearchResults, setShowSearchResults] = useState(false)
   const { register, watch, handleSubmit, getFieldState } = useForm()
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
-  const { completed, value: data } = useObservable(() => searchSeries({ categories: [category!], search: searchValue }), [searchValue])
+  const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: cachedFetch }), [searchValue])
   const loading = !completed
   // const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => searchTitles({ categories: [category!], search: searchValue }), { skip: !searchValue })
-  console.log('data', data)
 
   useDebounce(() => {
     if (!search?.length) return
@@ -94,6 +141,10 @@ const Header = ({ category }: { category?: Category }) => {
     <Fragment>
       <header css={style}>
         <div className="left">
+          <Link href={getRoutePath(Route.HOME)} className='logo-link'>
+            <img src={IconUrl} alt="Stub Logo" className='logo-icon'/>
+            <span>Stub</span>
+          </Link>
         </div>
         <div className="middle">
          <form onSubmit={handleSubmit(onSubmit)}>
@@ -104,7 +155,7 @@ const Header = ({ category }: { category?: Category }) => {
               <div className="searchResults">
                 {
                   data.map(title =>
-                    <Link key={title.uri} href={`/title/${title.uri}`}>
+                    <Link key={title.uri} href={getRoutePath(Route.TITLE, { uri: title.uri })}>
                       <img src={title.images.at(0)?.url} alt="" referrer-policy="same-origin"/>
                       <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
                     </Link>
