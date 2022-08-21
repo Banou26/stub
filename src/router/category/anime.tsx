@@ -73,6 +73,8 @@ export default ({ category }: { category?: Category }) => {
   const { left: _continuations, right: _currentSeasonAnime } =
     pipe(
       categoryItems ?? [],
+      // todo: remove once user UI filters/sorts are implemented
+      A.filter(item => !item.genres?.some(genre => genre.adult)),
       A.partition(item => {
         const dateData = item.dates?.at(0)
         if (!dateData) return false
