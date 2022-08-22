@@ -1,5 +1,5 @@
 import { css, keyframes } from '@emotion/react'
-import { useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from 'raviger'
 import * as N from 'fp-ts/number'
 import * as R from 'fp-ts/lib/Record'
@@ -25,6 +25,19 @@ import Sources from '../components/sources'
 import Input from '../components/inputs'
 import { sort } from 'fp-ts/lib/ReadonlyArray'
 import { toUndefined } from 'fp-ts/lib/Option'
+
+const byResolution =
+  pipe(
+    reverse(N.Ord),
+    contramap(([resolution]: [number | undefined, NonEmptyArray<TitleHandle>]) => resolution)
+  )
+
+const byHandleSeeders =
+  pipe(
+    N.Ord,
+    contramap((handle: TitleHandle) => handle.tags?.find(({ type }) => type === 'source')?.value.seeders),
+    reverse
+  )
 
 const placeHolderShimmer = keyframes`
   0%{
@@ -105,6 +118,7 @@ const style = css`
         grid-template-columns: repeat(auto-fill, 3.2rem);
         height: 3.2rem;
         max-width: 20rem;
+        column-gap: 0.25rem;
       }
 
       .date {
@@ -376,6 +390,105 @@ const style = css`
   } */
 `
 
+const renderTitleHandleName = (
+  { uri, titleUri, firstTitleUri, handle, setSource, selectedSource }:
+  { uri: string, titleUri?: string, firstTitleUri?: string, handle: TitleHandle, setSource: Dispatch<SetStateAction<string | undefined>>, selectedSource: string | undefined }
+) => {
+  // todo: reintroduce once we support batches
+  if (handle.batch) return null
+  const { number } = handle
+  const teamTag = handle.team
+  const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
+  const sourceTag = handle.tags?.find(({ type }) => type === 'source')
+  const name = handle.names?.at(0)?.name
+
+  const setAsSource = () => {
+    setSource(handle.uri)
+  }
+
+  return (
+    <div
+      className={`source ${selectedSource === handle.uri ? 'selected' : ''}`}
+      key={`${handle.uri}-${handle.names?.findIndex(({ name: _name }) => _name === name)}`}
+      onClick={setAsSource}
+    >
+      {
+        handle.batch
+          ? <span>[BATCH]</span>
+          : null
+      }
+      <a href={teamEpisodeTag?.value?.url ?? teamTag?.url} className="team" target="_blank" rel="noopener noreferrer">
+        {
+          teamTag?.icon
+          && (
+            <img
+              className="team-icon"
+              src={teamTag?.icon}
+              alt={`[${teamTag?.tag}]`}
+              title={teamTag?.name}
+              referrer-policy="same-origin"
+            />
+          )
+        }
+        <span>
+          {
+            teamTag?.tag
+              ? `[${teamTag?.tag}]`
+              : null
+          }
+        </span>
+      </a>
+      <span className="name">
+        {name} {number ? number.toString().padStart(2, '0') : ''}
+      </span>
+      <span className="info">
+        <span className="size" title={new Intl.NumberFormat('en-US', { unit: 'byte', notation: 'standard', style: 'unit', unitDisplay: 'long' }).format(Math.round(handle.size))}>
+          {getHumanReadableByteString(handle.size)}
+        </span>
+        {
+          sourceTag?.value.type === 'torrent-file'
+            ? (
+              <span className="torrent">
+                <div className="uris">
+                  <a className="magnet" href={sourceTag?.value.magnetUri}>
+                    <FontAwesomeIcon icon={faMagnet}/>
+                  </a>
+                  <a className="url" href={handle.url} title="external link" target="_blank" rel="noopener noreferrer">
+                    <FontAwesomeIcon icon={faExternalLink}/>
+                  </a>
+                </div>
+                <Link
+                  className="status"
+                  href={
+                    getRoutePath(
+                      Route.WATCH,
+                      {
+                        uri,
+                        titleUri:
+                          titleUri ?? firstTitleUri,
+                        sourceUri: handle.uri
+                      }
+                    )
+                  }
+                >
+                  <div className="seeders" title={`${sourceTag?.value.seeders} seeders`}>
+                    <ChevronUp/>
+                    {sourceTag?.value.seeders}
+                  </div>
+                  <div className="leechers" title={`${sourceTag?.value.leechers} leechers`}>
+                    <ChevronDown/>
+                    {sourceTag?.value.leechers}
+                  </div>
+                </Link>
+              </span>
+            )
+            : null
+        }
+      </span>
+    </div>
+  )
+}
+
 // todo: fix issue when clicking on resolution, going back to unknown res and back again to res, it stays on unknown res because automatic res becomes disabled, example on http://localhost:1234/app/616331fa7b57db93f0957a18/title/mal:47194/mal:47194-1
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [automaticResolutionSelection, setAutomaticResolutionSelection] = useState<boolean>(true)
@@ -450,19 +563,13 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
 
   const titleHandles = title?.handles ?? []
 
-  const byResolution =
-    pipe(
-      reverse(N.Ord),
-      contramap(([resolution]: [number | undefined, NonEmptyArray<TitleHandle>]) => resolution)
-    )
-
   const bySeriesSimilarity =
     pipe(
       reverse(N.Ord),
       contramap((_series: TitleHandle) => diceCompare(series?.names.at(0)?.name!, _series.name))
     )
 
-  const mediaTitleHandlesByResolution =
+  const mediaTitleHandlesByResolution = useMemo(() => (
     pipe(
       titleHandles,
       A.filter((handle) => handle.number === title?.number),
@@ -481,12 +588,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       A.sort(byResolution),
       A.map(([resolution, handles]) => [resolution ? resolution : undefined, handles] as const)
     )
+  ), [titleHandles, title?.number])
 
-  const resolutions =
+  const resolutions = useMemo(() => (
     pipe(
       mediaTitleHandlesByResolution,
       A.map(([resolution]) => resolution)
     )
+  ), [mediaTitleHandlesByResolution])
 
   useEffect(() => {
     if((!resolutions.length || !automaticResolutionSelection) && resolutions.includes(selectedResolution)) return
@@ -503,59 +612,59 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     setResolution(resolution ? Number(resolution) : undefined)
   }
 
-  const selectedResolutionTitles =
+  const selectedResolutionTitles = useMemo(() => (
     pipe(
       mediaTitleHandlesByResolution,
       A.filter(([resolution]) => resolution === selectedResolution),
       A.map(([, handle]) => handle),
       A.flatten
     )
+  ), [mediaTitleHandlesByResolution, selectedResolution])
 
   // todo: remove results with no seeders
-  const { left: singularTitles, right: batchTitles } =
+  const { left: singularTitles, right: batchTitles } = useMemo(() => (
     pipe(
       selectedResolutionTitles,
       A.partition((handle) => Boolean(handle.batch))
     )
+  ), [selectedResolutionTitles])
 
-  const byHandleSeeders =
-    pipe(
-      N.Ord,
-      contramap((handle: TitleHandle) => handle.tags.find(({ type }) => type === 'source')?.value.seeders),
-      reverse
-    )
-
-  const mostSeededTitle =
+  const mostSeededTitle = useMemo(() => (
     pipe(
       singularTitles,
       sort(byHandleSeeders),
       A.head,
       toUndefined
     )
+  ), [singularTitles])
   
-  const mainSeriesName =
+  const mainSeriesName = useMemo(() => (
     series
       ?.names
       ?.find(({ language }) => language === 'en')
       ?.name
     ?? series?.names?.at(0)?.name
+  ), [series?.names])
 
-  const secondarySeriesNames =
+  const secondarySeriesNames = useMemo(() => (
     series
     ?.names
     ?.filter(({ score, name }) => score >= 0.8 && name !== mainSeriesName)
+  ), [series?.names])
 
-  const mainTitleName =
+  const mainTitleName = useMemo(() => (
     title
       ?.names
       ?.find(({ language }) => language === 'en')
       ?.name
     ?? title?.names?.at(0)?.name
+  ), [title?.names])
 
-  const secondaryTitleNames =
+  const secondaryTitleNames = useMemo(() => (
     title
     ?.names
     ?.filter(({ score, name }) => score >= 0.8 && name !== mainTitleName)
+  ), [title?.names])
 
   useEffect(() => {
     if (!mostSeededTitle) return
@@ -567,101 +676,13 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   // console.log('targets', targets)
   // console.log('selectedResolution', selectedResolution)
 
-  const renderTitleHandleName = (handle: TitleHandle) => {
-    // todo: reintroduce once we support batches
-    if (handle.batch) return null
-    const { number } = handle
-    const teamTag = handle.team
-    const teamEpisodeTag = handle.tags?.find(({ type }) => type === 'team-episode')
-    const sourceTag = handle.tags?.find(({ type }) => type === 'source')
-    const name = handle.names?.at(0)?.name
-
-    const setAsSource = () => {
-      setSource(handle.uri)
-    }
-
-    return (
-      <div
-        className={`source ${selectedSource === handle.uri ? 'selected' : ''}`}
-        key={`${handle.uri}-${handle.names?.findIndex(({ name: _name }) => _name === name)}`}
-        onClick={setAsSource}
-      >
-        {
-          handle.batch
-            ? <span>[BATCH]</span>
-            : null
-        }
-        <a href={teamEpisodeTag?.value?.url ?? teamTag?.url} className="team" target="_blank" rel="noopener noreferrer">
-          {
-            teamTag?.icon
-            && (
-              <img
-                className="team-icon"
-                src={teamTag?.icon}
-                alt={`[${teamTag?.tag}]`}
-                title={teamTag?.name}
-                referrer-policy="same-origin"
-              />
-            )
-          }
-          <span>
-            {
-              teamTag?.tag
-                ? `[${teamTag?.tag}]`
-                : null
-            }
-          </span>
-        </a>
-        <span className="name">
-          {name} {number ? number.toString().padStart(2, '0') : ''}
-        </span>
-        <span className="info">
-          <span className="size" title={new Intl.NumberFormat('en-US', { unit: 'byte', notation: 'standard', style: 'unit', unitDisplay: 'long' }).format(Math.round(handle.size))}>
-            {getHumanReadableByteString(handle.size)}
-          </span>
-          {
-            sourceTag?.value.type === 'torrent-file'
-              ? (
-                <span className="torrent">
-                  <div className="uris">
-                    <a className="magnet" href={sourceTag?.value.magnetUri}>
-                      <FontAwesomeIcon icon={faMagnet}/>
-                    </a>
-                    <a className="url" href={handle.url} title="external link" target="_blank" rel="noopener noreferrer">
-                      <FontAwesomeIcon icon={faExternalLink}/>
-                    </a>
-                  </div>
-                  <Link
-                    className="status"
-                    href={
-                      getRoutePath(
-                        Route.WATCH,
-                        {
-                          uri,
-                          titleUri:
-                            titleUri ?? firstTitleUri,
-                          sourceUri: handle.uri
-                        }
-                      )
-                    }
-                  >
-                    <div className="seeders" title={`${sourceTag?.value.seeders} seeders`}>
-                      <ChevronUp/>
-                      {sourceTag?.value.seeders}
-                    </div>
-                    <div className="leechers" title={`${sourceTag?.value.leechers} leechers`}>
-                      <ChevronDown/>
-                      {sourceTag?.value.leechers}
-                    </div>
-                  </Link>
-                </span>
-              )
-              : null
-          }
-        </span>
-      </div>
+  const groupedRelations = useMemo(() => (
+    pipe(
+      series?.relations ?? [],
+      groupBy(relation => relation.relation),
+      R.toArray
     )
-  }
+  ), [series?.relations])
 
   const synopsis = useMemo(() =>
     <div
@@ -720,6 +741,41 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
         <div className="synopsis">
           {synopsis}
         </div>
+        <div className="relations">
+          {
+            groupedRelations.length
+              ? (
+                groupedRelations.map(([relation, relations]) =>
+                  <div>
+                    {relation}
+                    <div>
+                      {
+                        relations.map(relation =>
+                          <Link key={relation.reference.uri} href={getRoutePath(Route.TITLE, { uri: relation.reference.uri })}>
+                            {
+                              relation
+                                .reference
+                                ?.names
+                                ?.find(({ language }) => language === 'en')
+                                ?.name
+                              ?? (
+                                relation
+                                  .reference
+                                  ?.names
+                                  ?.at(0)
+                                  ?.name
+                              )
+                            }
+                          </Link>
+                        )
+                      }
+                    </div>
+                  </div>
+                )
+              )
+              : null
+          }
+        </div>
       </div>
       <div className="titles">
         <div className="list">
@@ -735,8 +791,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             
               const secondaryTitleNames =
                 title
-                ?.names
-                ?.filter(({ score, name }) => score >= 0.8 && name !== mainTitleName)
+                  ?.names
+                  ?.filter(({ score, name }) => score >= 0.8 && name !== mainTitleName)
 
               return (
                 // todo: replace the title number with a real number
@@ -849,8 +905,8 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               }
             </div>
             <div className="sources">
-              {batchTitles.map(renderTitleHandleName)}
-              {singularTitles.map(renderTitleHandleName)}
+              {batchTitles.map(handle => renderTitleHandleName({ uri, titleUri, firstTitleUri, handle, selectedSource, setSource }))}
+              {singularTitles.map(handle => renderTitleHandleName({ uri, titleUri, firstTitleUri, handle, selectedSource, setSource }))}
               {
                 titlesLoading && (
                   [...Array(selectedResolutionTitles?.length ? 3 : 10).keys()].map((i, _, arr) =>
