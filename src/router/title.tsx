@@ -25,6 +25,7 @@ import Sources from '../components/sources'
 import Input from '../components/inputs'
 import { sort } from 'fp-ts/lib/ReadonlyArray'
 import { toUndefined } from 'fp-ts/lib/Option'
+import { LanguageTag } from '../../../../laserr/src/utils'
 
 const byResolution =
   pipe(
@@ -768,11 +769,13 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
           <div className="title-bar">
             <h1>{mainSeriesName}</h1>
             {
-              secondarySeriesNames?.map((name, i) =>
-                <h2 key={i}>
-                  {name.name}
-                </h2>  
-              )
+              secondarySeriesNames
+                ?.filter((name) => name.language === LanguageTag.JA || name.language === LanguageTag.EN)
+                .map((name, i) =>
+                  <h2 key={i}>
+                    {name.name}
+                  </h2>  
+                )
             }
           </div>
           <div className="data">
