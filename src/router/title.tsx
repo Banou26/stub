@@ -11,12 +11,12 @@ import { mergeMap } from 'rxjs/operators'
 import { filter, from, map, shareReplay } from 'rxjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLink, faLink, faMagnet } from '@fortawesome/free-solid-svg-icons'
-import { ChevronDown, ChevronUp, Heart } from 'react-feather'
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Heart } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 
 import { getRoutePath, Route } from './path'
-import { getSeries, searchTitles, TitleHandle } from '../../../../scannarr/src'
+import { getSeries, Relation, Relationship, searchTitles, Series, TitleHandle } from '../../../../scannarr/src'
 import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
 import { getHumanReadableByteString } from '../utils/bytes'
@@ -134,6 +134,38 @@ const style = css`
       border-bottom: 0.1rem solid rgb(75, 75, 75);
       max-height: 30rem;
       overflow: auto;
+    }
+
+    .relations {
+      display: grid;
+      padding: 1rem;
+      gap: 0.5rem;
+
+      div {
+        display: flex;
+      }
+
+      .chronology {
+        a:nth-child(2) {
+          margin-left: auto;
+        }
+      }
+
+      a {
+        display: flex;
+        align-items: center;
+        font-size: 1.8rem;
+        /* color: #fff; */
+        text-decoration: none;
+        
+        span {
+          margin: 0 1rem;
+        }
+      }
+
+      span a {
+        margin: 0 1rem;
+      }
     }
   }
 
@@ -390,7 +422,7 @@ const style = css`
   } */
 `
 
-const renderTitleHandleName = (
+const TitleHandleName = (
   { uri, titleUri, firstTitleUri, handle, setSource, selectedSource }:
   { uri: string, titleUri?: string, firstTitleUri?: string, handle: TitleHandle, setSource: Dispatch<SetStateAction<string | undefined>>, selectedSource: string | undefined }
 ) => {
@@ -488,6 +520,23 @@ const renderTitleHandleName = (
     </div>
   )
 }
+
+const RelationLink = ({ reference, children }: { reference: Series, children?: React.ReactNode }) =>
+  <Link key={reference.uri} href={getRoutePath(Route.TITLE, { uri: reference.uri })}>
+    {
+      children
+      ?? reference
+        .names
+        .find(({ language }) => language === 'en')
+        ?.name
+      ?? (
+        reference
+          .names
+          .at(0)
+          ?.name
+      )
+    }
+  </Link>
 
 // todo: fix issue when clicking on resolution, going back to unknown res and back again to res, it stays on unknown res because automatic res becomes disabled, example on http://localhost:1234/app/616331fa7b57db93f0957a18/title/mal:47194/mal:47194-1
 export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
@@ -679,10 +728,19 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const groupedRelations = useMemo(() => (
     pipe(
       series?.relations ?? [],
-      groupBy(relation => relation.relation),
-      R.toArray
-    )
+      groupBy(relation => relation.relation)
+    ) as Record<Relationship, NonEmptyArray<Relation<Series>>>
   ), [series?.relations])
+
+  const groupedRelationsArray = useMemo(() => (
+    pipe(
+      groupedRelations,
+      R.toArray
+    ) as [Relationship, NonEmptyArray<Relation<Series>>][]
+  ), [series?.relations])
+
+  console.log('groupedRelations', groupedRelations)
+  console.log('groupedRelationsArray', groupedRelationsArray)
 
   const synopsis = useMemo(() =>
     <div
@@ -743,35 +801,88 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
         </div>
         <div className="relations">
           {
-            groupedRelations.length
+            groupedRelations.PREQUEL || groupedRelations.SEQUEL
               ? (
-                groupedRelations.map(([relation, relations]) =>
-                  <div>
-                    {relation}
-                    <div>
-                      {
-                        relations.map(relation =>
-                          <Link key={relation.reference.uri} href={getRoutePath(Route.TITLE, { uri: relation.reference.uri })}>
+                <div className="chronology">
+                  {
+                    groupedRelations.PREQUEL?.at(0)
+                      ? (
+                        <RelationLink reference={groupedRelations.PREQUEL?.at(0)!.reference}>
+                          <ChevronLeft/>
+                          Prequel: 
+                          <span>
                             {
-                              relation
+                              groupedRelations.PREQUEL?.at(0)!
                                 .reference
-                                ?.names
-                                ?.find(({ language }) => language === 'en')
+                                .names
+                                .find(({ language }) => language === 'en')
                                 ?.name
                               ?? (
-                                relation
+                                groupedRelations.PREQUEL?.at(0)!
                                   .reference
-                                  ?.names
-                                  ?.at(0)
+                                  .names
+                                  .at(0)
                                   ?.name
                               )
                             }
-                          </Link>
+                          </span>
+                        </RelationLink>
+                      )
+                      : null
+                  }
+                  {
+                    groupedRelations.SEQUEL
+                      ? (
+                        <RelationLink reference={groupedRelations.SEQUEL?.at(0)!.reference}>
+                          Sequel: 
+                          <span>
+                            {
+                              groupedRelations.SEQUEL?.at(0)!
+                                .reference
+                                .names
+                                .find(({ language }) => language === 'en')
+                                ?.name
+                              ?? (
+                                groupedRelations.SEQUEL?.at(0)!
+                                  .reference
+                                  .names
+                                  .at(0)
+                                  ?.name
+                              )
+                            }
+                          </span>
+                          <ChevronRight/>
+                        </RelationLink>
+                      )
+                      : null
+                  }
+                  
+                </div>
+              )
+              : null
+          }
+          {
+            groupedRelationsArray.length
+              ? (
+                groupedRelationsArray
+                  .filter(([relation]) => !(relation === 'PREQUEL' || relation === 'SEQUEL'))
+                  .map(([relation, relations]) =>
+                    <div key={relation}>
+                      {
+                        relation === 'PREQUEL' ? (
+                          <span>Prequel</span>
                         )
+                        : `${relation[0]?.toUpperCase()}${relation.slice(1).replaceAll('_', ' ').toLowerCase()}`
                       }
+                      <span>
+                        {
+                          relations.map(relation =>
+                            <RelationLink reference={relation.reference}/>
+                          )
+                        }
+                      </span>
                     </div>
-                  </div>
-                )
+                  )
               )
               : null
           }
@@ -905,8 +1016,26 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               }
             </div>
             <div className="sources">
-              {batchTitles.map(handle => renderTitleHandleName({ uri, titleUri, firstTitleUri, handle, selectedSource, setSource }))}
-              {singularTitles.map(handle => renderTitleHandleName({ uri, titleUri, firstTitleUri, handle, selectedSource, setSource }))}
+              {batchTitles.map(handle =>
+                <TitleHandleName
+                  uri={uri}
+                  titleUri={titleUri}
+                  firstTitleUri={firstTitleUri}
+                  handle={handle}
+                  selectedSource={selectedSource}
+                  setSource={setSource}
+                />
+              )}
+              {singularTitles.map(handle =>
+                <TitleHandleName
+                  uri={uri}
+                  titleUri={titleUri}
+                  firstTitleUri={firstTitleUri}
+                  handle={handle}
+                  selectedSource={selectedSource}
+                  setSource={setSource}
+                />
+              )}
               {
                 titlesLoading && (
                   [...Array(selectedResolutionTitles?.length ? 3 : 10).keys()].map((i, _, arr) =>
