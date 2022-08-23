@@ -118,7 +118,7 @@ const style = css`
         margin-bottom: 2.5rem;
 
         overflow: hidden;
-        white-space: nowrap;
+        /* white-space: nowrap; */
         text-overflow: ellipsis;
 
         @media
@@ -632,7 +632,7 @@ const TitleHandleName = (
 }
 
 const RelationLink = ({ reference, children }: { reference: Series, children?: React.ReactNode }) =>
-  <Link key={reference.uri} href={getRoutePath(Route.TITLE, { uri: reference.uri })}>
+  <Link href={getRoutePath(Route.TITLE, { uri: reference.uri })}>
     {
       children
       ?? reference
@@ -989,7 +989,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
                       <span>
                         {
                           relations.map(relation =>
-                            <RelationLink reference={relation.reference}/>
+                            <RelationLink key={relation.reference.uri} reference={relation.reference}/>
                           )
                         }
                       </span>
