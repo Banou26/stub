@@ -56,6 +56,14 @@ const style = css`
   grid-template-rows: 50rem 1fr;
   padding: 4rem 10rem;
 
+  @media
+  screen and (max-width: 1920px),
+  screen and (max-height: 1080px) {
+    grid-template-columns: 25rem 1fr;
+    grid-template-rows: 35rem 1fr;
+    padding: 4rem 1rem;
+  }
+
   .title-placeholder {
     height: 3.2rem;
     width: 45rem;
@@ -92,17 +100,39 @@ const style = css`
   }
 
   .series {
+    @media
+    screen and (max-width: 1920px),
+    screen and (max-height: 1080px) {
+      padding-left: 1rem;
+    }
     .title-bar {
-      display: flex;
-      gap: 2rem;
-      align-items: baseline;
-      margin-bottom: 2.5rem;
-
-      h1 {
+      @media
+      screen and (max-width: 1920px),
+      screen and (max-height: 1080px) {
+        font-size: 1.4rem;
       }
+      .titles {
+        display: flex;
+        gap: 2rem;
+        align-items: baseline;
+        margin-bottom: 2.5rem;
 
-      h2 {
-        color: #777777;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        @media
+        screen and (max-width: 1920px),
+        screen and (max-height: 1080px) {
+          margin-bottom: .5rem;
+        }
+
+        h1 {
+        }
+
+        h2 {
+          color: #777777;
+        }
       }
     }
 
@@ -135,12 +165,24 @@ const style = css`
       border-bottom: 0.1rem solid rgb(75, 75, 75);
       max-height: 30rem;
       overflow: auto;
+      @media
+      screen and (max-width: 1920px),
+      screen and (max-height: 1080px) {
+        max-height: 15rem;
+      }
     }
 
     .relations {
       display: grid;
       padding: 1rem;
       gap: 0.5rem;
+
+      @media
+      screen and (max-width: 1920px),
+      screen and (max-height: 1080px) {
+        padding: .5rem;
+        gap: 0.25rem;
+      }
 
       div {
         display: flex;
@@ -187,14 +229,29 @@ const style = css`
       overflow-y: auto;
       /* scroll-snap-type: y proximity; */
 
+      @media
+      screen and (max-width: 1920px),
+      screen and (max-height: 1080px) {
+        padding-left: 0;
+        margin-right: 2.5rem;
+        /* margin-right: 5rem; */
+        margin-top: 1.5rem;
+        max-height: 60rem;
+      }
+
       .title {
-        display: flex;
+        display: grid;
+        grid-template-columns: fit-content(5rem) auto auto;
         align-items: center;
         padding: 2.5rem;
         background-color: rgb(35, 35, 35);
         cursor: pointer;
         color: #fff;
         /* scroll-snap-align: start; */
+
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
 
         &:hover {
           background-color: rgb(42, 42, 42);
@@ -204,6 +261,17 @@ const style = css`
           display: flex;
           gap: 2rem;
 
+          @media
+          screen and (max-width: 1920px),
+          screen and (max-height: 1080px) {
+            max-width: 60rem;
+          }
+
+          .main, .secondary {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
           .main {}
           .secondary {
             color: #777777;
@@ -239,8 +307,21 @@ const style = css`
       display: flex;
       flex-direction: column;
       height: 90rem;
+      /* height: 90rem; */
       background-color: rgb(35, 35, 35);
       padding: 2rem 2.5rem;
+
+      @media
+      screen and (max-width : 2560px),
+      screen and (max-height : 1440px) {
+        height: 80rem;
+      }
+
+      @media
+      screen and (max-width: 1920px),
+      screen and (max-height: 1080px) {
+        height: 60rem;
+      }
 
       .title {
         display: flex;
@@ -254,6 +335,17 @@ const style = css`
         padding-bottom: 1rem;
         border-bottom: 0.1rem solid rgb(75, 75, 75);
 
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        @media
+        screen and (max-width: 1920px),
+        screen and (max-height: 1080px) {
+          font-size: 1.4rem;
+          gap: 1rem;
+        }
+
         h3 {
           color: #777777;
         }
@@ -266,6 +358,13 @@ const style = css`
         gap: 2rem;
         padding-bottom: 1rem;
         border-bottom: 0.1rem solid rgb(75, 75, 75);
+
+        @media
+        screen and (max-width: 1920px),
+        screen and (max-height: 1080px) {
+          height: 17.5rem;
+          gap: 1rem;
+        }
 
         .thumbnail {
           height: 100%;
@@ -316,7 +415,8 @@ const style = css`
         max-height: 30rem;
 
         .source {
-          display: flex;
+          display: grid;
+          grid-template-columns: fit-content(13rem) auto auto;
           align-items:center;
           /* height: 3.2rem; */
           margin: 0.5rem 0;
@@ -337,8 +437,17 @@ const style = css`
             align-items: center;
             height: 3.2rem;
             color: #fff;
-            margin-right: 1rem;
+            /* margin-right: 1rem; */
             text-decoration: none;
+
+            @media
+            screen and (max-width: 1920px),
+            screen and (max-height: 1080px) {
+              width: 4rem;
+              overflow: hidden;
+              /* white-space: nowrap; */
+              text-overflow: ellipsis;
+            }
           }
 
           .team[href]:hover {
@@ -765,14 +874,14 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     <div css={style}>
       <img src={poster?.url} alt={`${mainSeriesName} poster`} className="poster" referrer-policy="same-origin" />
       <div className="series">
-        <div>
-          <div className="title-bar">
-            <h1>{mainSeriesName}</h1>
+        <div className="title-bar">
+          <div className="titles">
+            <h1 title={mainSeriesName}>{mainSeriesName}</h1>
             {
               secondarySeriesNames
                 ?.filter((name) => name.language === LanguageTag.JA || name.language === LanguageTag.EN)
                 .map((name, i) =>
-                  <h2 key={i}>
+                  <h2 key={i} title={name.name}>
                     {name.name}
                   </h2>  
                 )
