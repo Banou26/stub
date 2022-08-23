@@ -186,11 +186,26 @@ const style = css`
 
       div {
         display: flex;
-      }
 
-      .chronology {
-        a:nth-child(2) {
-          margin-left: auto;
+        .name {
+          display: flex;
+          align-items: start;
+          min-width: 9rem;
+
+          svg {
+            margin-left: auto;
+          }
+        }
+
+        span {
+          display: flex;
+        }
+
+        .links {
+          margin-left: 1rem;
+          display: flex;
+          flex-direction: column;
+          column-gap: 1rem;
         }
       }
 
@@ -204,10 +219,6 @@ const style = css`
         span {
           margin: 0 1rem;
         }
-      }
-
-      span a {
-        margin: 0 1rem;
       }
     }
   }
@@ -306,7 +317,7 @@ const style = css`
     .title-side {
       display: flex;
       flex-direction: column;
-      height: 90rem;
+      min-height: 90rem;
       /* height: 90rem; */
       background-color: rgb(35, 35, 35);
       padding: 2rem 2.5rem;
@@ -314,13 +325,13 @@ const style = css`
       @media
       screen and (max-width : 2560px),
       screen and (max-height : 1440px) {
-        height: 80rem;
+        min-height: 80rem;
       }
 
       @media
       screen and (max-width: 1920px),
       screen and (max-height: 1080px) {
-        height: 60rem;
+        min-height: 60rem;
       }
 
       .title {
@@ -913,80 +924,21 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
         </div>
         <div className="relations">
           {
-            groupedRelations.PREQUEL || groupedRelations.SEQUEL
-              ? (
-                <div className="chronology">
-                  {
-                    groupedRelations.PREQUEL?.at(0)
-                      ? (
-                        <RelationLink reference={groupedRelations.PREQUEL?.at(0)!.reference}>
-                          <ChevronLeft/>
-                          Prequel: 
-                          <span>
-                            {
-                              groupedRelations.PREQUEL?.at(0)!
-                                .reference
-                                .names
-                                .find(({ language }) => language === 'en')
-                                ?.name
-                              ?? (
-                                groupedRelations.PREQUEL?.at(0)!
-                                  .reference
-                                  .names
-                                  .at(0)
-                                  ?.name
-                              )
-                            }
-                          </span>
-                        </RelationLink>
-                      )
-                      : null
-                  }
-                  {
-                    groupedRelations.SEQUEL
-                      ? (
-                        <RelationLink reference={groupedRelations.SEQUEL?.at(0)!.reference}>
-                          Sequel: 
-                          <span>
-                            {
-                              groupedRelations.SEQUEL?.at(0)!
-                                .reference
-                                .names
-                                .find(({ language }) => language === 'en')
-                                ?.name
-                              ?? (
-                                groupedRelations.SEQUEL?.at(0)!
-                                  .reference
-                                  .names
-                                  .at(0)
-                                  ?.name
-                              )
-                            }
-                          </span>
-                          <ChevronRight/>
-                        </RelationLink>
-                      )
-                      : null
-                  }
-                  
-                </div>
-              )
-              : null
-          }
-          {
             groupedRelationsArray.length
               ? (
                 groupedRelationsArray
-                  .filter(([relation]) => !(relation === 'PREQUEL' || relation === 'SEQUEL'))
                   .map(([relation, relations]) =>
                     <div key={relation}>
                       {
                         relation === 'PREQUEL' ? (
-                          <span>Prequel</span>
+                          <span className="name">Prequel <ChevronLeft/></span>
                         )
-                        : `${relation[0]?.toUpperCase()}${relation.slice(1).replaceAll('_', ' ').toLowerCase()}`
+                        : relation === 'SEQUEL' ? (
+                          <span className="name">Sequel <ChevronRight/></span>
+                        )
+                        : <span className="name">{relation[0]?.toUpperCase()}{relation.slice(1).replaceAll('_', ' ').toLowerCase()}</span>
                       }
-                      <span>
+                      <span className="links">
                         {
                           relations.map(relation =>
                             <RelationLink key={relation.reference.uri} reference={relation.reference}/>
