@@ -1082,6 +1082,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             <div className="sources">
               {batchTitles.map(handle =>
                 <TitleHandleName
+                  key={handle.uri}
                   uri={uri}
                   titleUri={titleUri}
                   firstTitleUri={firstTitleUri}
@@ -1092,6 +1093,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
               )}
               {singularTitles.map(handle =>
                 <TitleHandleName
+                  key={handle.uri}
                   uri={uri}
                   titleUri={titleUri}
                   firstTitleUri={firstTitleUri}
