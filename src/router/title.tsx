@@ -10,7 +10,7 @@ import { groupBy, NonEmptyArray } from 'fp-ts/NonEmptyArray'
 import { mergeMap } from 'rxjs/operators'
 import { filter, from, map, shareReplay } from 'rxjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLink, faLink, faMagnet } from '@fortawesome/free-solid-svg-icons'
+import { faExternalLink, faFileArrowDown, faLink, faMagnet } from '@fortawesome/free-solid-svg-icons'
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Heart } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
@@ -481,6 +481,7 @@ const style = css`
             display: flex;
             align-items:center;
             gap: 1rem;
+            margin-left: auto;
 
             .torrent {
               display: grid;
@@ -500,12 +501,13 @@ const style = css`
 
               .uris {
                 display: grid;
-                grid-template-rows: 1fr auto;
-                .magnet, .url {
+                grid-template-rows: repeat( auto-fit, minmax(2rem, 1fr) );
+                grid-auto-flow: column;
+                .torrent-file, .magnet, .url {
                   display: flex;
                   justify-content: center;
                   align-items: center;
-                  padding: 0 1rem;
+                  /* padding: 0 1rem; */
                 }
               }
             }
@@ -605,6 +607,9 @@ const TitleHandleName = (
                 <div className="uris">
                   <a className="magnet" href={sourceTag?.value.magnetUri}>
                     <FontAwesomeIcon icon={faMagnet}/>
+                  </a>
+                  <a className="torrent-file" href={sourceTag?.value.url}>
+                    <FontAwesomeIcon icon={faFileArrowDown}/>
                   </a>
                   <a className="url" href={handle.url} title="external link" target="_blank" rel="noopener noreferrer">
                     <FontAwesomeIcon icon={faExternalLink}/>
