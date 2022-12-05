@@ -4,3 +4,4 @@ dist
 release
 /lib
 gh-actions.secrets
+build

@@ -3,6 +3,8 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from 'raviger'
 import * as N from 'fp-ts/number'
 import * as R from 'fp-ts/lib/Record'
+import * as O from 'fp-ts/Option'
+import * as Alt from 'fp-ts/Alternative'
 import { pipe } from 'fp-ts/function'
 import { reverse, contramap } from 'fp-ts/ord'
 import * as A from 'fp-ts/lib/Array'
@@ -26,6 +28,8 @@ import Input from '../components/inputs'
 import { sort } from 'fp-ts/lib/ReadonlyArray'
 import { toUndefined } from 'fp-ts/lib/Option'
 import { LanguageTag } from '../../../../laserr/src/utils'
+import Name from '../../../../scannarr/src/types/name'
+import { getOrElse } from 'fp-ts/lib/EitherT'
 
 const byResolution =
   pipe(
@@ -194,6 +198,16 @@ const style = css`
 
           svg {
             margin-left: auto;
+          }
+        }
+
+        @supports selector(.name:has(+.links > a:nth-of-type(2))) {
+          .name {
+            align-items: center;
+          }
+
+          .name:has(+.links > a:nth-of-type(2)) {
+            align-items: start;
           }
         }
 
@@ -812,7 +826,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       toUndefined
     )
   ), [singularTitles])
-  
+
   const mainSeriesName = useMemo(() => (
     series
       ?.names
@@ -820,6 +834,19 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
       ?.name
     ?? series?.names?.at(0)?.name
   ), [series?.names])
+
+  // todo: replace with this once i impl FP-TS
+  // const seriesOption = O.fromNullable(series)
+  // const mainSeriesName = pipe(
+  //   seriesOption,
+  //   O.map(series => series.names),
+  //   O.chain((names) => pipe(
+  //     names,
+  //     A.findFirst(x => x.language == 'en'),
+  //     O.alt(() => A.lookup(0, names))
+  //   )),
+  //   O.map(x => x.name)
+  // )
 
   const secondarySeriesNames = useMemo(() => (
     series

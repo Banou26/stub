@@ -5,17 +5,29 @@
   "type": "module",
   "devDependencies": {
     "@types/bittorrent-protocol": "^3.1.2",
-    "@types/simple-peer": "^9.11.4",
-    "concurrently": "^6.3.0",
+    "@types/simple-peer": "^9.11.5",
+    "@vitejs/plugin-react": "^2.2.0",
+    "concurrently": "^7.6.0",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.13.3",
-    "esbuild-plugin-alias": "^0.2.0",
+    "esbuild-plugin-alias": "^0.2.1",
     "http-server": "^13.0.2",
     "mime": "^3.0.0",
-    "nodemon": "^2.0.13",
-    "typescript": "^4.6.0-beta"
+    "nodemon": "^2.0.20",
+    "shx": "^0.3.4",
+    "typescript": "^4.9.3",
+    "vite": "^3.2.4"
+  },
+  "vite_scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build && npm run copy-anitomy && npm run copy-fkn-media-player && npm run package-build",
+    "watch-package-build": "nodemon --watch build -e js,wasm,ts --exec \"npm run package-build\"",
+    "package-build": "shx rm build/package.asar & npx asar pack build tmp/package.asar && shx mv tmp/package.asar build/package.asar",
+    "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* build",
+    "copy-fkn-media-player": "copyfiles -u 3 ./node_modules/fkn-media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp"
   },
   "scripts": {
+    "copy-fkn-media-player": "copyfiles -u 3 ./node_modules/fkn-media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp",
     "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* dist/build",
     "copy-fkn-media-player-subtitles-octopus": "copyfiles -u 3 ./node_modules/fkn-media-player/build/subtitles-octopus.* dist && copyfiles -u 3 ./node_modules/fkn-media-player/build/subtitles-octopus-worker.* dist",
     "copy-fkn-media-player-worker": "copyfiles -u 3 ./node_modules/fkn-media-player/build/worker* dist",
@@ -40,10 +52,10 @@
     "package-watch": "nodemon --watch src --watch ../lib/lib -e js,ts,tsx --exec \"npm run package-asar\"",
     "build-index": "node ./build.js -m",
     "build-index-watch": "node --preserve-symlinks ./build.js -w -s",
-    "build": "npm run copy-anitomy && npm run copy-fkn-media-player-deps && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
-    "build-bypass-ts": "npm run copy-fkn-media-player-deps && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar",
-    "watch": "concurrently \"npm run serve\" \"npm run copy-anitomy\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
-    "_watch": "concurrently \"npm run copy-anitomy\" \"npm run copy-fkn-media-player-deps\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
+    "build": "npm run copy-anitomy && npm run copy-fkn-media-player && npm run copy-seal && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar && npm run type-check",
+    "build-bypass-ts": "npm run copy-fkn-media-player && npm run build-index && npx copyfiles -f ./src/manifest.json ./dist && npm run package-asar",
+    "watch": "concurrently \"npm run serve\" \"npm run copy-anitomy\" \"npm run copy-fkn-media-player\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run package-watch\"",
+    "_watch": "concurrently \"npm run copy-anitomy\" \"npm run copy-fkn-media-player\" \"npm run copy-seal\" \"npm run manifest-watch\" \"npm run build-index-watch\" \"npm run type-check-watch\" \"npm run package-watch\"",
     "dev": "npm run watch"
   },
   "dependencies": {

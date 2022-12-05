@@ -21,17 +21,17 @@ import { getHumanReadableByteString } from '../utils/bytes'
 
 const style = css`
   display: grid;
-  height: 100vh;
+  height: calc(100vh - 6rem);
   grid-template-rows: 100% auto;
   /* overflow: hidden; */
   .player {
-    height: 100vh;
+    height: calc(100vh - 6rem);
     /* width: 100%; */
     & > div {
-      height: 100vh;
+      height: calc(100vh - 6rem);
       & > video, & > div {
         height: 100%;
-        max-height: 100vh;
+        max-height: calc(100vh - 6rem);
       }
     }
   }
@@ -84,20 +84,21 @@ const torrentInfoStyle = css`
   
 `
 
-const TorrentInfo = ({ magnet }: { magnet?: string }) => {
+const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.Instance }) => {
   const [status, setStatus] = useState()
 
   useEffect(() => {
-    if (!magnet) return
+    if (!torrentInstance) return
     const interval = setInterval(() => {
-      torrentStatus(magnet)
+      if (!torrentInstance.infoHash) return
+      torrentStatus(torrentInstance.infoHash)
         .then(setStatus)
     }, 1_000)
 
     return () => {
       clearInterval(interval)
     }
-  }, [magnet])
+  }, [torrentInstance])
 
   return (
     <>
@@ -151,19 +152,14 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
     ),
     [titleHandle]
   )
-  const [_torrent, setTorrent] = useState<ParseTorrentFile.Instance>()
-  const magnet = useMemo(() => _torrent ? toMagnetURI(_torrent).replace('xt=urn:btih:[object Object]&', '') : undefined, [_torrent])
-  console.log('_torrent', _torrent)
+  const [torrentInstance, setTorrent] = useState<ParseTorrentFile.Instance>()
+  const magnet = useMemo(() => torrentInstance ? toMagnetURI(torrentInstance).replace('xt=urn:btih:[object Object]&', '') : undefined, [torrentInstance])
+  console.log('_torrent', torrentInstance)
   console.log('magnet', magnet)
-  const mediaId =
-    _torrent
-      ? `${_torrent?.infoHash}-${_torrent?.name}`
-      : undefined
 
   const [size, setSize] = useState<number>()
-  const [stream, setStream] = useState<ReadableStream<Uint8Array>>()
 
-  useEffect(() => {
+  const url = useMemo((): string | undefined => {
     if (!title || !titleHandle) return
     const { url, type } =
       titleHandle
@@ -172,13 +168,21 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
         ?.value
 
     if (type !== 'torrent-file') throw new Error('titleHandle source tag type isn\'t torrent-file')
-    
-    torrent(url).then(({ torrentFile, torrent: { headers, body } }) => {
-      setTorrent(torrentFile)
-      setSize(Number(headers.get('Content-Length')))
-      setStream(body)
-    })
+    return url
   }, [title])
+
+  useEffect(() => {
+    if (!url) return
+    torrent({ url, fileIndex: 0, offset: 0, end: 1 }).then(({ torrent: { headers, body } }) => {
+      if (!body) throw new Error('no body')
+      const contentRangeContentLength = headers.get('Content-Range')?.split('/').at(1)
+      const contentLength =
+        contentRangeContentLength
+          ? Number(contentRangeContentLength)
+          : Number(headers.get('Content-Length'))
+      setSize(contentLength)
+    })
+  }, [url])
 
   const descriptionHtml = useMemo(
     () =>
@@ -188,11 +192,22 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
     [titleHandle?.description]
   )
 
+  const onFetch = (offset: number, end: number) =>
+    torrent({ url, fileIndex: 0, offset, end })
+
+  console.log('NEW CODE')
+
   // todo: add more info on top of the description, e.g url, video infos, download rate, ect...
   return (
     <div css={style}>
       <div className="player">
-        <FKNMediaPlayer id={mediaId} size={size} stream={stream} customControls={[() => <TorrentInfo magnet={magnet} />]}/>
+        <FKNMediaPlayer
+          size={size}
+          fetch={onFetch}
+          publicPath={'/build/'}
+          workerPath={'/build/worker.js'}
+          libassPath={'/build/subtitles-octopus-worker.js'}
+        />
       </div>
       <div
         className="description"
