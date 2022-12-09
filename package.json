@@ -4,6 +4,8 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@types/bittorrent-protocol": "^3.1.2",
     "@types/simple-peer": "^9.11.5",
     "@vitejs/plugin-react": "^2.2.0",
@@ -18,15 +20,15 @@
     "typescript": "^4.9.3",
     "vite": "^3.2.4"
   },
-  "vite_scripts": {
-    "dev": "vite build --watch",
+  "scripts": {
+    "dev": "vite --port 4560",
     "build": "vite build && npm run copy-anitomy && npm run copy-fkn-media-player && npm run package-build",
     "watch-package-build": "nodemon --watch build -e js,wasm,ts --exec \"npm run package-build\"",
     "package-build": "shx rm build/package.asar & npx asar pack build tmp/package.asar && shx mv tmp/package.asar build/package.asar",
     "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* build",
     "copy-fkn-media-player": "copyfiles -u 3 ./node_modules/fkn-media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp"
   },
-  "scripts": {
+  "_scripts": {
     "copy-fkn-media-player": "copyfiles -u 3 ./node_modules/fkn-media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp",
     "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* dist/build",
     "copy-fkn-media-player-subtitles-octopus": "copyfiles -u 3 ./node_modules/fkn-media-player/build/subtitles-octopus.* dist && copyfiles -u 3 ./node_modules/fkn-media-player/build/subtitles-octopus-worker.* dist",
@@ -77,8 +79,8 @@
     "dompurify": "^2.3.9",
     "events": "^3.3.0",
     "fkn-media-player": "file:../../fkn-media-player",
-    "fp-ts": "^2.11.8",
-    "fp-ts-std": "^0.13.1",
+    "fp-ts": "^2.12.1",
+    "fp-ts-std": "^0.14.2",
     "graphql": "^16.0.1",
     "idb": "^7.0.0",
     "laserr": "file:../../laserr",
