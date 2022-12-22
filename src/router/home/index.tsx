@@ -3,7 +3,7 @@ import { Link, navigate, useRedirect } from 'raviger'
 import { useEffect, useMemo } from 'react'
 import { useObservable } from 'react-use'
 
-import Slider from 'src/components/slider'
+import Slider from '../../components/slider'
 import { Category, searchSeries, TitleHandle } from '../../../../../scannarr/src'
 import { searchTitles } from '../../../../../scannarr/src'
 import { useFetch } from '../../utils/use-fetch'
