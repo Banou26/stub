@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext", "esnext.array"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "noImplicitAny": false,
     "outDir": "./lib",
     "sourceMap": true,
@@ -14,16 +13,5 @@
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
     "baseUrl": ".",
-    "paths": {
-      "@fkn/lib": ["../lib/lib/lib/src/index"],
-      "@fkn/lib/*": ["../lib/lib/lib/src/*"]
-    },
-    "skipLibCheck": true,
-    "types": ["../../osra/build"]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"],
-  "targets": {
-    "types": false
   }
 }

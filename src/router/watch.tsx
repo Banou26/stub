@@ -1,9 +1,9 @@
 import type ParseTorrentFile from 'parse-torrent-file'
-import type { TorrentStatusResult } from '@fkn/lib/torrent'
+// import type { TorrentStatusResult } from '@fkn/lib/torrent'
 
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
-import { torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
+import { fetch, torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
 import FKNMediaPlayer from 'fkn-media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
@@ -84,6 +84,52 @@ const torrentInfoStyle = css`
   
 `
 
+const BASE_BUFFER_SIZE = 5_000_000
+
+export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, size: number }) =>
+  new ReadableStream<Uint8Array>({
+    start() {
+      // @ts-ignore
+      this.reader = stream.getReader()
+    },
+    async pull(controller) {
+      // @ts-ignore
+      const { leftOverData }: { leftOverData: Uint8Array | undefined } = this
+
+      const accumulate = async ({ buffer = new Uint8Array(SIZE), currentSize = 0 } = {}): Promise<{ buffer?: Uint8Array, currentSize?: number, done: boolean }> => {
+        // @ts-ignore
+        const { value: newBuffer, done } = await this.reader.read()
+  
+        if (currentSize === 0 && leftOverData) {
+          buffer.set(leftOverData)
+          currentSize += leftOverData.byteLength
+          // @ts-ignore
+          this.leftOverData = undefined
+        }
+  
+        if (done) {
+          return { buffer: buffer.slice(0, currentSize), currentSize, done }
+        }
+  
+        let newSize
+        const slicedBuffer = newBuffer.slice(0, SIZE - currentSize)
+        newSize = currentSize + slicedBuffer.byteLength
+        buffer.set(slicedBuffer, currentSize)
+  
+        if (newSize === SIZE) {
+          // @ts-ignore
+          this.leftOverData = newBuffer.slice(SIZE - currentSize)
+          return { buffer, currentSize: newSize, done: false }
+        }
+        
+        return accumulate({ buffer, currentSize: newSize })
+      }
+      const { buffer, done } = await accumulate()
+      if (buffer?.byteLength) controller.enqueue(buffer)
+      if (done) controller.close()
+    }
+  })
+
 const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.Instance }) => {
   const [status, setStatus] = useState()
 
@@ -137,8 +183,8 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
             </div>
             <div>
               <div>
-                <a className="username" href={comment.user.url}>{comment.user.name}</a>
-                <a href={comment.url} className="date">
+                <a className="username" href={comment.user.url} target="_blank" rel="noopener noreferrer">{comment.user.name}</a>
+                <a href={comment.url} className="date" target="_blank" rel="noopener noreferrer">
                   <span>{comment.date?.toDateString()}</span>
                 </a>
               </div>
@@ -154,10 +200,61 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
   )
   const [torrentInstance, setTorrent] = useState<ParseTorrentFile.Instance>()
   const magnet = useMemo(() => torrentInstance ? toMagnetURI(torrentInstance).replace('xt=urn:btih:[object Object]&', '') : undefined, [torrentInstance])
-  console.log('_torrent', torrentInstance)
-  console.log('magnet', magnet)
+  // console.log('_torrent', torrentInstance)
+  // console.log('magnet', magnet)
 
+  const [torrentFileArrayBuffer, setTorrentFileArrayBuffer] = useState<ArrayBuffer | undefined>()
   const [size, setSize] = useState<number>()
+
+  const [currentStreamOffset, setCurrentStreamOffset] = useState<number>(0)
+  const [streamReader, setStreamReader] = useState<ReadableStreamDefaultReader<Uint8Array>>()
+
+  useEffect(() => {
+    if (!streamReader) return
+    return () => {
+      streamReader.cancel()
+    }
+  }, [streamReader])
+
+  const setupStream = async (offset: number) => {
+    if (streamReader) {
+      streamReader.cancel()
+    }
+    const streamResponse = await onFetch(offset, undefined, true)
+    if (!streamResponse.body) throw new Error('no body')
+    const stream = bufferStream({ stream: streamResponse.body, size: BASE_BUFFER_SIZE })
+    const reader = stream.getReader()
+    setStreamReader(reader)
+    setCurrentStreamOffset(offset)
+    return reader
+  }
+
+  const onFetch = async (offset: number, end?: number, force?: boolean) => {
+    if (force || end !== undefined && ((end - offset) + 1) !== BASE_BUFFER_SIZE) {
+      return torrent({
+        arrayBuffer: structuredClone(torrentFileArrayBuffer),
+        fileIndex: 0,
+        offset,
+        end
+      })
+    }
+    const _streamReader =
+      currentStreamOffset !== offset
+        ? await setupStream(offset)
+        : streamReader
+
+    if (!_streamReader) throw new Error('Stream reader not ready')
+    return new Response(
+      await _streamReader
+        .read()
+        .then(({ value }) => {
+          if (value) {
+            setCurrentStreamOffset(offset => offset + value.byteLength)
+          }
+          return value
+        })
+    )
+  }
 
   const url = useMemo((): string | undefined => {
     if (!title || !titleHandle) return
@@ -173,16 +270,26 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
 
   useEffect(() => {
     if (!url) return
-    torrent({ url, fileIndex: 0, offset: 0, end: 1 }).then(({ torrent: { headers, body } }) => {
-      if (!body) throw new Error('no body')
-      const contentRangeContentLength = headers.get('Content-Range')?.split('/').at(1)
-      const contentLength =
-        contentRangeContentLength
-          ? Number(contentRangeContentLength)
-          : Number(headers.get('Content-Length'))
-      setSize(contentLength)
-    })
+    cachedFetch(url)
+      .then(async res => setTorrentFileArrayBuffer(await res.arrayBuffer()))
   }, [url])
+
+  useEffect(() => {
+    if (!torrentFileArrayBuffer) return
+    torrent({ arrayBuffer: structuredClone(torrentFileArrayBuffer), fileIndex: 0, offset: 0, end: 1 })
+      .then(async (res) => {
+        const { headers, body } = res
+        if (!body) throw new Error('no body')
+        const contentRangeContentLength = headers.get('Content-Range')?.split('/').at(1)
+        const contentLength =
+          contentRangeContentLength
+            ? Number(contentRangeContentLength)
+            : Number(headers.get('Content-Length'))
+
+        await setupStream(0)
+        setSize(contentLength)
+      })
+  }, [torrentFileArrayBuffer])
 
   const descriptionHtml = useMemo(
     () =>
@@ -191,11 +298,6 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
         : undefined,
     [titleHandle?.description]
   )
-
-  const onFetch = (offset: number, end: number) =>
-    torrent({ url, fileIndex: 0, offset, end })
-
-  console.log('NEW CODE')
 
   // todo: add more info on top of the description, e.g url, video infos, download rate, ect...
   return (

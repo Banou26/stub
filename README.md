@@ -1,5 +1,12 @@
 # Stub
-foo bar baz
+
+
+## Dev steps:
+
+You have to run `npm run copy-anitomy` first before being able to run `npm run dev`
+
+
+
 
 
 ## todo:
