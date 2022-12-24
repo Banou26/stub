@@ -6,6 +6,7 @@
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
+    "@rollup/plugin-inject": "^5.0.3",
     "@types/bittorrent-protocol": "^3.1.2",
     "@types/simple-peer": "^9.11.5",
     "@vitejs/plugin-react": "^3.0.0",
@@ -15,10 +16,12 @@
     "esbuild-plugin-alias": "^0.2.1",
     "http-server": "^13.0.2",
     "mime": "^3.0.0",
+    "node-stdlib-browser": "^1.2.0",
     "nodemon": "^2.0.20",
     "shx": "^0.3.4",
     "typescript": "^4.8.3",
-    "vite": "^4.0.1"
+    "vite": "^4.0.1",
+    "vite-plugin-node-stdlib-browser": "^0.1.1"
   },
   "scripts": {
     "dev": "vite --port 4560",

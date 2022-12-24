@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 
 export default defineConfig({
   build: {
@@ -18,19 +19,19 @@ export default defineConfig({
     esbuildOptions: {
       plugins: [
         // @ts-ignore
-        NodeGlobalsPolyfillPlugin({
-          process: true,
-          buffer: true
-        }),
-        // @ts-ignore
-        NodeModulesPolyfillPlugin()
+        // NodeGlobalsPolyfillPlugin({
+        //   process: true
+        // }),
+        // // @ts-ignore
+        // NodeModulesPolyfillPlugin()
       ]
     }
   },
   plugins: [
     react({
       jsxImportSource: '@emotion/react'
-    })
+    }),
+    nodePolyfills()
   ],
   server: {
     fs: {

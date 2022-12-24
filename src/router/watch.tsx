@@ -1,7 +1,7 @@
 import type ParseTorrentFile from 'parse-torrent-file'
 // import type { TorrentStatusResult } from '@fkn/lib/torrent'
 
-// import Buffer from 'buffer'
+import { Buffer } from 'buffer'
 
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
@@ -20,8 +20,6 @@ import { useObservable } from '../utils/use-observable'
 import { useFetch } from 'src/utils/use-fetch'
 import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { getHumanReadableByteString } from '../utils/bytes'
-
-// console.log('Buffer', Buffer)
 
 const style = css`
   display: grid;
@@ -49,11 +47,10 @@ const style = css`
     display: grid;
     justify-content: center;
     align-items: center;
-    div {
-      margin-top: 20rem;
+    & > div {
+      padding: 2.5rem;
+      margin-top: 25rem;
       position: relative;
-      height: 10rem;
-      width: 10rem;
       background-color: rgb(35, 35, 35);
     }
   }
@@ -169,15 +166,12 @@ const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.I
   }, [torrentInstance])
 
   return (
-    <>
-      <ReactTooltip id="torrent-info-tooltip" effect="solid" place="top">
-        <div>FKN proxy server's current torrent information stats</div>
-        <div><Users/> {status?.connectedPeers ?? 0}</div>
-        <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
-        <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div>
-      </ReactTooltip>
-      <Server data-tip data-for="torrent-info-tooltip"/>
-    </>
+    <div>
+      <div>FKN proxy server's current torrent information stats</div>
+      <div><Users/> {status?.connectedPeers ?? 0}</div>
+      <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
+      <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div>
+    </div>
   )
 }
 
@@ -231,10 +225,10 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
   const [currentStreamOffset, setCurrentStreamOffset] = useState<number>(0)
   const [streamReader, setStreamReader] = useState<ReadableStreamDefaultReader<Uint8Array>>()
 
-  // useEffect(() => {
-  //   if (!torrentFileArrayBuffer) return
-  //   setTorrent(ParseTorrent(Buffer.from(torrentFileArrayBuffer)))
-  // }, [torrentFileArrayBuffer])
+  useEffect(() => {
+    if (!torrentFileArrayBuffer) return
+    setTorrent(ParseTorrent(Buffer.from(torrentFileArrayBuffer)) as ParseTorrentFile.Instance)
+  }, [torrentFileArrayBuffer])
 
   useEffect(() => {
     if (!streamReader) return
@@ -338,11 +332,15 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
           libassPath={'/build/subtitles-octopus-worker.js'}
         />
       </div>
-      <div className="player-overlay">
-        <div>
-          <TorrentInfo torrentInstance={torrentInstance}/>
-        </div>
-      </div>
+      {
+        undefined === undefined
+          ? (
+            <div className="player-overlay">
+              <TorrentInfo torrentInstance={torrentInstance}/>
+            </div>
+          )
+          : undefined
+      }
       <div
         className="description"
         dangerouslySetInnerHTML={{ __html: descriptionHtml }}
