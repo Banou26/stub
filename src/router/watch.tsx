@@ -1,6 +1,8 @@
 import type ParseTorrentFile from 'parse-torrent-file'
 // import type { TorrentStatusResult } from '@fkn/lib/torrent'
 
+// import Buffer from 'buffer'
+
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { fetch, torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
@@ -16,8 +18,10 @@ import { Uri } from '../../../../scannarr/src/utils'
 import { cachedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
 import { useFetch } from 'src/utils/use-fetch'
-import { toMagnetURI } from 'parse-torrent'
+import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { getHumanReadableByteString } from '../utils/bytes'
+
+// console.log('Buffer', Buffer)
 
 const style = css`
   display: grid;
@@ -33,6 +37,24 @@ const style = css`
         height: 100%;
         max-height: calc(100vh - 6rem);
       }
+    }
+  }
+
+  .player, .player-overlay {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .player-overlay {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    div {
+      margin-top: 20rem;
+      position: relative;
+      height: 10rem;
+      width: 10rem;
+      background-color: rgb(35, 35, 35);
     }
   }
 
@@ -132,7 +154,7 @@ export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, s
 
 const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.Instance }) => {
   const [status, setStatus] = useState()
-
+  console.log('torrent status', torrentInstance?.infoHash, status)
   useEffect(() => {
     if (!torrentInstance) return
     const interval = setInterval(() => {
@@ -208,6 +230,11 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
 
   const [currentStreamOffset, setCurrentStreamOffset] = useState<number>(0)
   const [streamReader, setStreamReader] = useState<ReadableStreamDefaultReader<Uint8Array>>()
+
+  // useEffect(() => {
+  //   if (!torrentFileArrayBuffer) return
+  //   setTorrent(ParseTorrent(Buffer.from(torrentFileArrayBuffer)))
+  // }, [torrentFileArrayBuffer])
 
   useEffect(() => {
     if (!streamReader) return
@@ -310,6 +337,11 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
           workerPath={'/build/worker.js'}
           libassPath={'/build/subtitles-octopus-worker.js'}
         />
+      </div>
+      <div className="player-overlay">
+        <div>
+          <TorrentInfo torrentInstance={torrentInstance}/>
+        </div>
       </div>
       <div
         className="description"
