@@ -11,7 +11,7 @@ import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 import ReactTooltip from 'react-tooltip'
-import { AlertCircle, ArrowDown, ArrowUp, Users, Server } from 'react-feather'
+import { AlertCircle, ArrowDown, ArrowUp, Users, Server, Globe, Info } from 'react-feather'
 
 import { getTitle } from '../../../../scannarr/src'
 import { Uri } from '../../../../scannarr/src/utils'
@@ -99,10 +99,6 @@ const style = css`
   }
 `
 
-const torrentInfoStyle = css`
-  
-`
-
 const BASE_BUFFER_SIZE = 5_000_000
 
 export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, size: number }) =>
@@ -149,6 +145,24 @@ export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, s
     }
   })
 
+const torrentInfoStyle = css`
+  display: flex;
+  flex-direction: column;
+  .title, .peers {
+    margin: 1rem 0;
+  }
+
+  .peers {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2rem;
+    div {
+      display: flex;
+      align-items: center;
+    }
+  }
+`
+
 const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.Instance }) => {
   const [status, setStatus] = useState()
   console.log('torrent status', torrentInstance?.infoHash, status)
@@ -166,11 +180,16 @@ const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.I
   }, [torrentInstance])
 
   return (
-    <div>
-      <div>FKN proxy server's current torrent information stats</div>
-      <div><Users/> {status?.connectedPeers ?? 0}</div>
-      <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
-      <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div>
+    <div css={torrentInfoStyle}>
+      <div className="title">Media's serving information</div>
+      <div>Current state: {status?.state}</div>
+      <div>Connected peers: {status?.connectedPeers ?? 0}</div>
+      <div className="peers">
+        <div title="seeders">Seeders: {status?.totalPeers}</div>
+        <div title="leechers">Leechers: {status?.downloadingPeers}</div>
+      </div>
+      {/* <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
+      <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div> */}
     </div>
   )
 }
@@ -333,7 +352,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
         />
       </div>
       {
-        undefined === undefined
+        size === undefined
           ? (
             <div className="player-overlay">
               <TorrentInfo torrentInstance={torrentInstance}/>
