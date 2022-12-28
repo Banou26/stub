@@ -13,6 +13,8 @@ import Input from './inputs'
 import IconUrl from '../images/icon.png'
 import { getRoutePath, Route } from '../router/path'
 import { cachedFetch } from '../utils/fetch'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import DiscordIconUrl from '../images/discord-mark-blue.svg'
 
 const style = css`
   position: fixed;
@@ -33,7 +35,8 @@ const style = css`
 
   .left {
     display: grid;
-    grid-template-columns: 15rem auto;
+    grid-template-columns: 15rem 15rem auto;
+    gap: 2rem;
 
     .logo-link {
       display: grid;
@@ -45,14 +48,26 @@ const style = css`
       font-size: 2.2rem;
       font-weight: bold;
       text-decoration: none;
+      gap: 1.5rem;
 
       .logo-icon {
         height: 5rem;
       }
 
-      span {
-        margin-left: 1.5rem;
-
+      &.discord {
+        color: #5865F2;
+        &:hover {
+          color: #fff;
+          .discord-logo-icon {
+            background-color: #fff;
+          }
+        }
+        .discord-logo-icon {
+          width: 5rem;
+          height: 100%;
+          background-color: #5865F2;
+          mask: url(${DiscordIconUrl}) no-repeat center;
+        }
       }
     }
   }
@@ -144,6 +159,10 @@ const Header = () => {
           <Link href={getRoutePath(Route.HOME)} className='logo-link'>
             <img src={IconUrl} alt="Stub Logo" className='logo-icon'/>
             <span>Stub</span>
+          </Link>
+          <Link href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className='logo-link discord'>
+            <span className="discord-logo-icon"></span>
+            <span>Discord</span>
           </Link>
         </div>
         <div className="middle">
