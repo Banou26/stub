@@ -104,17 +104,24 @@ const style = css`
   }
 
   .series {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
     @media
     screen and (max-width: 1920px),
     screen and (max-height: 1080px) {
       padding-left: 1rem;
     }
+
     .title-bar {
+
       @media
       screen and (max-width: 1920px),
       screen and (max-height: 1080px) {
         font-size: 1.4rem;
       }
+
       .titles {
         display: flex;
         gap: 2rem;
@@ -180,16 +187,20 @@ const style = css`
       display: grid;
       padding: 1rem;
       gap: 0.5rem;
+      overflow: hidden;
+      /* height: 100%; */
 
       @media
       screen and (max-width: 1920px),
       screen and (max-height: 1080px) {
         padding: .5rem;
-        gap: 0.25rem;
       }
 
       div {
         display: flex;
+        overflow: hidden;
+        width: 100%;
+        gap: 1rem;
 
         .name {
           display: flex;
@@ -216,10 +227,14 @@ const style = css`
         }
 
         .links {
-          margin-left: 1rem;
           display: flex;
           flex-direction: column;
-          column-gap: 1rem;
+          flex-wrap: wrap;
+          row-gap: .5rem;
+          column-gap: 2.5rem;
+          /* column-gap: 1rem; */
+          /* display: grid;
+          grid-auto-flow: column; */
         }
       }
 
