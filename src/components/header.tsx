@@ -167,11 +167,16 @@ const Header = () => {
         </div>
         <div className="middle">
          <form onSubmit={handleSubmit(onSubmit)}>
-            <Input type="text" placeholder='Search' {...register('search', { onBlur: hideSearchResults })} onFocus={_showSearchResults} autoComplete="off"/>
+            <Input
+              type="text"
+              placeholder='Search' {...register('search', { onBlur: hideSearchResults })}
+              onFocus={_showSearchResults}
+              autoComplete="off"
+            />
           </form>
           {
             showSearchResults && data ? (
-              <div className="searchResults">
+              <div className="searchResults" onBlur={hideSearchResults}>
                 {
                   data.map(title =>
                     <Link key={title.uri} href={getRoutePath(Route.TITLE, { uri: title.uri })}>
