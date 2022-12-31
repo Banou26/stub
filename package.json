@@ -58,6 +58,8 @@
     "dev": "npm run watch"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.3",
+    "@apollo/server": "^4.3.0",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@fkn/lib": "file:../lib",
@@ -74,7 +76,7 @@
     "fkn-media-player": "file:../../fkn-media-player",
     "fp-ts": "^2.12.1",
     "fp-ts-std": "^0.14.2",
-    "graphql": "^16.0.1",
+    "graphql": "^16.0.0-experimental-stream-defer.5",
     "idb": "^7.0.0",
     "laserr": "file:../../laserr",
     "marked": "^4.0.18",
