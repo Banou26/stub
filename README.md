@@ -21,3 +21,5 @@ make use of Taiga's https://github.com/erengy/anime-relations list to try and in
 - https://github.com/Duke-13/Test_AnimeSuperResolutionForChromeExtensions
 - https://gist.github.com/Juszoe/4680d0cb18811a459cc7fa83214e499c#gistcomment-3259179
 - https://gist.github.com/NeuroWhAI/ce524cdf6913fae5eee830561bf32f40
+
+check out if https://github.com/jmir1/aniyomi has some nice sources
