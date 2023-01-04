@@ -1,7 +1,12 @@
 import { ApolloServer } from '@apollo/server'
-import { ApolloClient, InMemoryCache, HttpLink, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
+import gql from 'graphql-tag'
 
 const typeDefs = `#graphql
+  directive @defer(if: Boolean, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+  directive @stream(if: Boolean, label: String, initialCount: Int = 0) on FIELD
+
+
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
 
   type Test {
@@ -42,6 +47,11 @@ const wait = (time: number) =>
 const resolvers = {
   Query: {
     books: () => books,
+    // books: async function*() {
+    //   for await (const book of books) {
+    //     yield book
+    //   }
+    // }
   },
   Test: {
     foo: async () => {
@@ -76,14 +86,17 @@ server.start().then(() => {
 const apolloCache = new InMemoryCache();
 
 const fetch: (input: RequestInfo | URL, init: RequestInit) => Promise<Response> = async (input, init) => {
-  console.log('input', input)
-  console.log('init', init)
+  const body = JSON.parse(init.body!)
+  // console.log('input', input)
+  // console.log('init', init)
   const headers = new Map<string, string>();
   for (const [key, value] of Object.entries(init.headers!)) {
     if (value !== undefined) {
       headers.set(key, Array.isArray(value) ? value.join(', ') : value);
     }
   }
+  // headers.set('accept', 'application/graphql-response+json')
+  // headers.set('accept', 'multipart/mixed; deferSpec=20220824')
   const httpGraphQLRequest = {
     body: JSON.parse(init.body!),
     headers,
@@ -91,7 +104,15 @@ const fetch: (input: RequestInfo | URL, init: RequestInit) => Promise<Response> 
     search: ''
   }
   console.log('httpGraphQLRequest', httpGraphQLRequest)
-  const deferRes = await server.executeOperation(JSON.parse(init.body!))
+  const req: Parameters<typeof server['executeOperation']>[0] = {
+    query: body.query,
+    variables: body.variables,
+    operationName: body.operationName,
+    http: httpGraphQLRequest
+  }
+  console.log('req', req)
+  const deferRes = await server.executeOperation(req)
+  // const deferRes = await server.executeOperation(JSON.parse(init.body!))
   console.log('executeOperation', deferRes)
   const deferBody = deferRes.body
   // const deferArr = deferBody.kind === 'single' ? [await deferBody.singleResult.next(), await deferBody.singleResult.next(), await deferBody.singleResult.next(), , await deferBody.singleResult.next()] : []
@@ -119,6 +140,7 @@ const fetch: (input: RequestInfo | URL, init: RequestInit) => Promise<Response> 
 
 const client = new ApolloClient({
   cache: apolloCache,
+  // link: new HttpLink({ uri: 'http://localhost:4000/graphql' })
   link: new HttpLink({ fetch })
 })
 
