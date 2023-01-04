@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server'
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+import { createRoot } from 'react-dom/client'
 
 const typeDefs = `#graphql
   directive @defer(if: Boolean, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
@@ -82,6 +83,19 @@ server.start().then(() => {
 //   console.log('YESSSSSSSSSSSSS', res)
 // })
 
+function iteratorToStream(iterator) {
+  return new ReadableStream({
+    async pull(controller) {
+      const { value, done } = await iterator.next();
+
+      if (done) {
+        controller.close();
+      } else {
+        controller.enqueue(value);
+      }
+    },
+  });
+}
 
 const apolloCache = new InMemoryCache();
 
@@ -122,7 +136,8 @@ const fetch: (input: RequestInfo | URL, init: RequestInit) => Promise<Response> 
     context: async () => ({ req: {}, res: {} })
   })
   console.log('server res', res)
-  return new Response(res.body.string, { headers: res.headers, status: res.status})
+  // return res
+  return new Response(iteratorToStream(res.body.asyncIterator), { headers: res.headers, status: res.status })
   // const server = new ApolloServer({
   //   typeDefs,
   //   resolvers,
@@ -144,32 +159,45 @@ const client = new ApolloClient({
   link: new HttpLink({ fetch })
 })
 
-client.query({
-  query: gql(`
-  
-  # fragment TestFragment on Test {
-  #   foo
-  # }
-
-  query GetBooks {
-    books {
-      title
-      author
-      ... @defer {
-        test {
-          foo
-        }
+const queryReq = gql(`
+query GetBooks {
+  books {
+    title
+    author
+    ... @defer {
+      test {
+        foo
       }
-      # test {
-      #   ...TestFragment @defer
-      # }
-      # test {
-      #   foo
-      # }
     }
   }
-  
-  `)
+}
+`)
+
+client.query({
+  query: queryReq
 }).then(res => {
   console.log('client res', res)
 })
+
+
+
+const root = createRoot(document.body.appendChild(document.createElement('div')))
+
+const Mount = () => {
+  const { data, ...rest } = useQuery(queryReq)
+
+  console.log('data', rest, data)
+
+  return (
+    <div>
+      foo
+    </div>
+  )
+}
+
+root.render(
+  <ApolloProvider client={client}>
+    <Mount/>
+  </ApolloProvider>
+)
+
