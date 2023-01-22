@@ -79,6 +79,7 @@
     "fp-ts": "^2.12.1",
     "fp-ts-std": "^0.14.2",
     "graphql": "^17.0.0-alpha.2",
+    "graphql-tag": "^2.12.6",
     "idb": "^7.0.0",
     "laserr": "file:../../laserr",
     "marked": "^4.0.18",
