@@ -7,14 +7,16 @@ import { useObservable } from '../utils/use-observable'
 import { Category, searchSeries, TitleHandle } from '../../../../scannarr/src'
 import { searchTitles } from '../../../../scannarr/src'
 import { useFetch } from '../utils/use-fetch'
+import { GitHub } from 'react-feather'
 
 import Input from './inputs'
 
 import IconUrl from '../images/icon.png'
 import { getRoutePath, Route } from '../router/path'
 import { cachedFetch } from '../utils/fetch'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DiscordIconUrl from '../images/discord-mark-blue.svg'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const style = css`
   position: fixed;
@@ -35,7 +37,7 @@ const style = css`
 
   .left {
     display: grid;
-    grid-template-columns: 15rem 15rem auto;
+    grid-template-columns: 15rem 15rem 15rem auto;
     gap: 2rem;
 
     .logo-link {
@@ -156,13 +158,17 @@ const Header = () => {
     <Fragment>
       <header css={style}>
         <div className="left">
-          <Link href={getRoutePath(Route.HOME)} className='logo-link'>
-            <img src={IconUrl} alt="Stub Logo" className='logo-icon'/>
+          <Link href={getRoutePath(Route.HOME)} className="logo-link">
+            <img src={IconUrl} alt="Stub Logo" className="logo-icon"/>
             <span>Stub</span>
           </Link>
-          <Link href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className='logo-link discord'>
+          <Link href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className="logo-link discord">
             <span className="discord-logo-icon"></span>
             <span>Discord</span>
+          </Link>
+          <Link href="https://github.com/Banou26/stub" target="_blank" rel="noopener noreferrer" className="logo-link github">
+            <FontAwesomeIcon icon={faGithub} className="github-logo-icon" size='2x'/>
+            <span>Github</span>
           </Link>
         </div>
         <div className="middle">
