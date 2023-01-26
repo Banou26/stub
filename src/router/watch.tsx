@@ -6,7 +6,7 @@ import { Buffer } from 'buffer'
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { fetch, torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
-import FKNMediaPlayer from 'fkn-media-player'
+import FKNMediaPlayer from '@banou/media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
@@ -17,7 +17,7 @@ import { getTitle } from '../../../../scannarr/src'
 import { Uri } from '../../../../scannarr/src/utils'
 import { cachedFetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
-import { useFetch } from 'src/utils/use-fetch'
+import { useFetch } from '../utils/use-fetch'
 import ParseTorrent, { toMagnetURI } from 'parse-torrent'
 import { getHumanReadableByteString } from '../utils/bytes'
 
@@ -315,6 +315,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
   }, [url])
 
   useEffect(() => {
+    console.log('torrentFileArrayBuffer', torrentFileArrayBuffer)
     if (!torrentFileArrayBuffer) return
     torrent({ arrayBuffer: structuredClone(torrentFileArrayBuffer), fileIndex: 0, offset: 0, end: 1 })
       .then(async (res) => {
@@ -355,7 +356,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
         size === undefined
           ? (
             <div className="player-overlay">
-              <TorrentInfo torrentInstance={torrentInstance}/>
+              {/* <TorrentInfo torrentInstance={torrentInstance}/> */}
             </div>
           )
           : undefined
