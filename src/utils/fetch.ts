@@ -1,9 +1,9 @@
 import type { FetchType } from '../../../../scannarr/src'
 
-import { fetch } from '@fkn/lib'
+import { serverProxyFetch } from '@fkn/lib'
 
 export const cachedFetch: FetchType = (input, init) =>
-  fetch(
+  serverProxyFetch(
     input.toString(),
     {
       ...init,
