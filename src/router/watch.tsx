@@ -315,7 +315,6 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
   }, [url])
 
   useEffect(() => {
-    console.log('torrentFileArrayBuffer', torrentFileArrayBuffer)
     if (!torrentFileArrayBuffer) return
     torrent({ arrayBuffer: structuredClone(torrentFileArrayBuffer), fileIndex: 0, offset: 0, end: 1 })
       .then(async (res) => {
