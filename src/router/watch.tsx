@@ -349,7 +349,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
           fetch={onFetch}
           publicPath={'/build/'}
           workerPath={'/build/worker.js'}
-          libassPath={'/build/subtitles-octopus-worker.js'}
+          libassPath={'/build/jassub-worker.js'}
         />
       </div>
       {
