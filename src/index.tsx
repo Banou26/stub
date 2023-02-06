@@ -1,4 +1,5 @@
 /// <reference types="@emotion/react/types/css-prop" />
+import './vite-hmr'
 import { css, Global } from '@emotion/react'
 import { createRoot } from 'react-dom/client'
 import { targets } from '../../../laserr/src'

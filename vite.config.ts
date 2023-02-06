@@ -27,6 +27,12 @@ export default defineConfig({
     polyfills()
   ],
   server: {
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 4560,
+      clientPort: 4560
+    },
     fs: {
       allow: ['../..']
     }
