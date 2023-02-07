@@ -346,8 +346,8 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
         <FKNMediaPlayer
           size={size}
           fetch={onFetch}
-          publicPath={'/build/'}
-          workerPath={'/build/worker.js'}
+          publicPath={new URL('/build/', new URL(import.meta.url).origin).toString()}
+          workerPath={new URL('/build/worker.js', import.meta.url).toString()}
           libassPath={'/build/jassub-worker.js'}
         />
       </div>
