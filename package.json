@@ -39,6 +39,7 @@
     "@banou/media-player": "github:Banou26/media-player",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "@fkn/lib": "github:MFKN/fkn-web-lib",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
