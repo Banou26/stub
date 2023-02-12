@@ -339,6 +339,13 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
     [titleHandle?.description]
   )
 
+  const jassubUrl = useMemo(() => {
+    const workerUrl = new URL('/build/jassub-worker.js', import.meta.url).toString()
+    const workerWasmUrl = new URL('/build/jassub-worker.wasm', import.meta.url).toString()
+    const blob = new Blob([`globalThis.publicPath = ${workerWasmUrl};importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
+    return URL.createObjectURL(blob)
+  }, [])
+
   // todo: add more info on top of the description, e.g url, video infos, download rate, ect...
   return (
     <div css={style}>
@@ -348,7 +355,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
           fetch={onFetch}
           publicPath={new URL('/build/', new URL(import.meta.url).origin).toString()}
           workerPath={new URL('/build/worker.js', import.meta.url).toString()}
-          libassPath={'/build/jassub-worker.js'}
+          libassPath={jassubUrl}
         />
       </div>
       {
