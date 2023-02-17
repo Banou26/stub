@@ -31,7 +31,10 @@ const NotFoundPage = () =>
 
 // todo: refactor the header, remove it from each pages and put it at the top level, as it makes a re-render flash whenever we change page
 export const routes = {
-  [getRouterRoutePath(Route.HOME)]: () => <Home/>,
+  [getRouterRoutePath(Route.HOME)]: () =>
+    <HeaderPage>
+      <Home/>
+    </HeaderPage>,
   [getRouterRoutePath(Route.AUTH)]: ({ name }) =>
     <HeaderPage>
       <Auth name={name}/>
