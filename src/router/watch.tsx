@@ -340,10 +340,17 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
     [titleHandle?.description]
   )
 
-  const jassubUrl = useMemo(() => {
-    const workerUrl = new URL('/build/jassub-worker.js', import.meta.url).toString()
-    const workerWasmUrl = new URL('/build/jassub-worker.wasm', import.meta.url).toString()
-    const blob = new Blob([`globalThis.publicPath = ${workerWasmUrl};importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
+  const jassubWorkerUrl = useMemo(() => {
+    const workerUrl = new URL('/build/jassub-worker.js', new URL(window.location.toString()).origin).toString()
+    console.log('jassubWorkerUrl', workerUrl)
+    const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
+    return URL.createObjectURL(blob)
+  }, [])
+
+  const libavWorkerUrl = useMemo(() => {
+    const workerUrl = new URL('/build/worker.js', new URL(window.location.toString()).origin).toString()
+    console.log('libavWorkerUrl', workerUrl)
+    const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
     return URL.createObjectURL(blob)
   }, [])
 
@@ -353,10 +360,10 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
       <div className="player">
         <FKNMediaPlayer
           size={size}
-          publicPath={new URL('/build/', new URL(import.meta.url).origin).toString()}
-          workerPath={new URL('/build/worker.js', import.meta.url).toString()}
-          libassPath={jassubUrl}
           fetch={(offset, end) => onFetch(offset, end, !BACKPRESSURE_STREAM_ENABLED)}
+          publicPath={new URL('/build/', new URL(window.location.toString()).origin).toString()}
+          libavWorkerUrl={libavWorkerUrl}
+          libassWorkerUrl={jassubWorkerUrl}
         />
       </div>
       {
