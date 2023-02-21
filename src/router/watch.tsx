@@ -99,6 +99,7 @@ const style = css`
   }
 `
 
+const BACKPRESSURE_STREAM_ENABLED = !navigator.userAgent.includes("Firefox")
 const BASE_BUFFER_SIZE = 5_000_000
 
 export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, size: number }) =>
@@ -326,7 +327,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
             ? Number(contentRangeContentLength)
             : Number(headers.get('Content-Length'))
 
-        await setupStream(0)
+        if (BACKPRESSURE_STREAM_ENABLED) await setupStream(0)
         setSize(contentLength)
       })
   }, [torrentFileArrayBuffer])
@@ -352,10 +353,10 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
       <div className="player">
         <FKNMediaPlayer
           size={size}
-          fetch={onFetch}
           publicPath={new URL('/build/', new URL(import.meta.url).origin).toString()}
           workerPath={new URL('/build/worker.js', import.meta.url).toString()}
           libassPath={jassubUrl}
+          fetch={(offset, end) => onFetch(offset, end, !BACKPRESSURE_STREAM_ENABLED)}
         />
       </div>
       {
