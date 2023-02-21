@@ -3,8 +3,14 @@
   "version": "0.0.10",
   "license": "MIT",
   "type": "module",
+  "main": "build/index.js",
+  "_main": "src/index.tsx",
+  "keywords": [
+    "fkn",
+    "fkn-type:app"
+  ],
   "files": [
-    "."
+    "build"
   ],
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.3",
@@ -23,14 +29,16 @@
   },
   "scripts": {
     "dev": "vite --port 4560",
-    "build": "vite build && npm run copy-anitomy && npm run copy-media-player && npm run package-build",
+    "build": "vite build && npm run copy-anitomy && npm run copy-media-player",
     "watch-package-build": "nodemon --watch build -e js,wasm,ts --exec \"npm run package-build\"",
     "package-build": "shx rm build/package.asar & npx asar pack build tmp/package.asar && shx mv tmp/package.asar build/package.asar",
     "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* build",
     "copy-media-player": "copyfiles -u 4 ./node_modules/@banou/media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp",
     "build-deps": "npm run build-deps-media-player && npm run build-deps-fkn-lib",
+    "build-deps-local": "npm run build-deps-media-player && npm run build-deps-fkn-lib-local",
     "build-deps-media-player": "cd node_modules/@banou/media-player && npm i && npm run build && cd ../../..",
     "build-deps-fkn-lib": "cd node_modules/@fkn/lib && npm i && npm run build && cd ../../..",
+    "build-deps-fkn-lib-local": "cd node_modules/@fkn/lib && npm i && npm run build-dev && cd ../../..",
     "remove-build-deps": "shx rm -rf node_modules/@banou/media-player"
   },
   "dependencies": {
