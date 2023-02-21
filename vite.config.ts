@@ -4,7 +4,7 @@ import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 
 import polyfills from './vite-plugin-node-stdlib-browser.cjs'
 
-export default defineConfig({
+export default defineConfig((env) => ({
   build: {
     target: 'esnext',
     outDir: 'build',
@@ -19,6 +19,9 @@ export default defineConfig({
       entry: 'src/index.tsx',
       formats: ['es']
     }
+  },
+  define: env.mode === 'development' ? {} : {
+    'process.env.NODE_ENV': JSON.stringify('production')
   },
   plugins: [
     react({
@@ -37,4 +40,4 @@ export default defineConfig({
       allow: ['../..']
     }
   }
-})
+}))

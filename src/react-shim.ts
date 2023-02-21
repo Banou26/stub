@@ -8,6 +8,7 @@ globalThis.global = globalThis
 if (!globalThis.process) {
   globalThis.process = {
     env: {
+      NODE_ENV: 'production',
       NODE_DEBUG: 'false',
     },
     cwd: () => '/',
