@@ -356,7 +356,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
   }, [])
 
   const libavWorkerUrl = useMemo(() => {
-    const workerUrl = new URL('/build/worker.js', new URL(window.location.toString()).origin).toString()
+    const workerUrl = new URL('/build/libav.js', new URL(window.location.toString()).origin).toString()
     console.log('libavWorkerUrl', workerUrl)
     const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
     return URL.createObjectURL(blob)
