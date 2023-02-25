@@ -164,9 +164,19 @@ const torrentInfoStyle = css`
   }
 `
 
+type TorrentStatus = {
+  state: 'downloading' | 'preparing' | 'finished' | 'seeding' | 'error' | 'unknown',
+  downloadRate: number,
+  uploadRate: number,
+  totalPeers: number,
+  downloadingPeers: number,
+  connectedPeers: number,
+  progress: number
+}
+
 const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.Instance }) => {
-  const [status, setStatus] = useState()
-  console.log('torrent status', torrentInstance?.infoHash, status)
+  const [status, setStatus] = useState<TorrentStatus | undefined>()
+  console.log('status', status)
   useEffect(() => {
     if (!torrentInstance) return
     const interval = setInterval(() => {
@@ -175,9 +185,7 @@ const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.I
         .then(setStatus)
     }, 1_000)
 
-    return () => {
-      clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [torrentInstance])
 
   return (
@@ -189,8 +197,8 @@ const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.I
         <div title="seeders">Seeders: {status?.totalPeers}</div>
         <div title="leechers">Leechers: {status?.downloadingPeers}</div>
       </div>
-      {/* <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
-      <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div> */}
+      <div><ArrowUp/> {getHumanReadableByteString(status?.uploadRate ?? 0, true)}/s</div>
+      <div><ArrowDown/> {getHumanReadableByteString(status?.downloadRate ?? 0, true)}/s</div>
     </div>
   )
 }
@@ -370,7 +378,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
         size === undefined
           ? (
             <div className="player-overlay">
-              {/* <TorrentInfo torrentInstance={torrentInstance}/> */}
+              <TorrentInfo torrentInstance={torrentInstance}/>
             </div>
           )
           : undefined
