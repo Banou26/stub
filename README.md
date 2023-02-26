@@ -1,5 +1,8 @@
 # Stub
 
+Shows, Movies, Anime, all in one place from your browser
+
+<!-- 
 
 ## Dev steps:
 
@@ -27,3 +30,5 @@ make use of Taiga's https://github.com/erengy/anime-relations list to try and in
 - https://gist.github.com/NeuroWhAI/ce524cdf6913fae5eee830561bf32f40
 
 check out if https://github.com/jmir1/aniyomi has some nice sources
+
+-->
