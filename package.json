@@ -42,8 +42,8 @@
     "remove-build-deps": "shx rm -rf node_modules/@banou/media-player"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.3",
-    "@apollo/server": "^4.3.0",
+    "@apollo/client": "^3.7.10",
+    "@apollo/server": "^4.4.1",
     "@banou/media-player": "github:Banou26/media-player",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
@@ -62,7 +62,7 @@
     "events": "^3.3.0",
     "fp-ts": "^2.12.1",
     "fp-ts-std": "^0.14.2",
-    "graphql": "^16.6.0",
+    "graphql": "^17.0.0-alpha.1.canary.pr.3361.04ab27334641e170ce0e05bc927b972991953882",
     "graphql-tag": "^2.12.6",
     "idb": "^7.0.0",
     "marked": "^4.0.18",
