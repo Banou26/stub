@@ -5,13 +5,15 @@ import { css } from '@emotion/react'
 import { pipe } from 'fp-ts/lib/function'
 import * as A from 'fp-ts/lib/Array'
 
-import { searchSeries } from '../../../../../scannarr/src'
+// import { searchSeries } from '../../../../../scannarr/src'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
-import { byPopularity } from '../../../../../scannarr/src/utils'
+// import { byPopularity } from '../../../../../scannarr/src/utils'
 
-import { cachedFetch } from '../../utils/fetch'
 import useObservable from '../../utils/use-observable'
 import Card from '../../components/card'
+import { useQuery } from '@apollo/client'
+import { gql } from '../../generated'
+import { MediaSeason, MediaSort } from '../../generated/graphql'
 
 const style = css`
 
@@ -56,17 +58,37 @@ screen and (max-height : 1440px) {
 }
 `
 
+const GET_CURRENT_SEASON = gql(`
+  query GET_CURRENT_SEASON($season: MediaSeason!, $seasonYear: Int! $sort: [MediaSort]!) {
+    Page {
+      media(season: $season, seasonYear: $seasonYear, sort: $sort) {
+        id
+        title {
+          romanized
+          english
+          native
+        }
+        popularity
+      }
+    }
+  }
+`)
+
 export default ({ category }: { category?: Category }) => {
-  const { value: categoryItems } = useObservable(
-    () => searchSeries({ categories: [category!], latest: true }, { fetch: cachedFetch }),
-    []
+  const { error, data: { Page } = {} } = useQuery(
+    GET_CURRENT_SEASON,
+    {
+      variables: {
+        season: MediaSeason.Winter,
+        seasonYear: 2023,
+        sort: [MediaSort.Popularity]
+      }
+    }
   )
 
-  const sortedItems = categoryItems
-    ?.sort(({ popularity }, { popularity: popularity2 }) => (popularity2 ?? 0) - (popularity ?? 0))
+  console.log('Page', error, Page)
 
-  // const { loading, data: categoryItems, error } = useFetch<TitleHandle[]>(() => searchTitle({ categories: [category!], latest: true }), { skip: !category })
-  console.log('categoryItems', categoryItems)
+  const categoryItems = []
 
   const currentSeason = getCurrentSeason()
 
@@ -92,13 +114,13 @@ export default ({ category }: { category?: Category }) => {
   const currentSeasonAnime =
     pipe(
       _currentSeasonAnime,
-      A.sortBy([byPopularity])
+      // A.sortBy([byPopularity])
     )
 
   const continuations =
     pipe(
       _continuations,
-      A.sortBy([byPopularity])
+      // A.sortBy([byPopularity])
     )
 
   const anchorCurrentSeason = `${currentSeason.season.toLowerCase()}-${currentSeason.year}`

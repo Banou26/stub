@@ -1,24 +1,12 @@
 {
-  "name": "@banou/stub",
-  "version": "0.0.11",
+  "name": "@banou26/stub",
+  "version": "0.0.9",
   "license": "MIT",
-  "main": "build/index.js",
-  "_main": "src/index.tsx",
-  "keywords": [
-    "fkn",
-    "fkn-type:app"
-  ],
+  "type": "module",
   "files": [
-    "build"
+    "."
   ],
   "devDependencies": {
-    "@graphql-codegen/cli": "^3.2.2",
-    "@graphql-codegen/client-preset": "^2.1.1",
-    "@graphql-codegen/introspection": "^3.0.1",
-    "@graphql-codegen/typescript": "^3.0.2",
-    "@graphql-codegen/typescript-document-nodes": "^3.0.2",
-    "@graphql-codegen/typescript-resolvers": "^3.1.1",
-    "@graphql-typed-document-node/core": "^3.2.0",
     "@rollup/plugin-inject": "^5.0.3",
     "@types/bittorrent-protocol": "^3.1.2",
     "@types/simple-peer": "^9.11.5",
@@ -31,29 +19,23 @@
     "rollup-plugin-polyfill-node": "^0.12.0",
     "shx": "^0.3.4",
     "typescript": "^4.8.3",
-    "vite": "^4.1.2"
+    "vite": "^4.0.1"
   },
   "scripts": {
-    "codegen": "concurrently \"npm run _codegen\"",
-    "codegen-watch": "concurrently \"npm run _codegen-watch\"",
-    "_codegen": "node _codegen.mjs && graphql-codegen --config codegen.ts & node _codegen.js",
-    "_codegen-watch": "node _codegen.mjs && graphql-codegen -w --config codegen.ts & node _codegen.js",
-    "dev": "concurrently \"vite --port 4560\" \"npm run _codegen-watch\"",
-    "build": "vite build && npm run copy-anitomy && npm run copy-media-player",
+    "dev": "vite --port 4560",
+    "build": "vite build && npm run copy-anitomy && npm run copy-fkn-media-player && npm run package-build",
     "watch-package-build": "nodemon --watch build -e js,wasm,ts --exec \"npm run package-build\"",
     "package-build": "shx rm build/package.asar & npx asar pack build tmp/package.asar && shx mv tmp/package.asar build/package.asar",
     "copy-anitomy": "copyfiles -u 3 ./node_modules/anitomyscript/build/* build",
-    "copy-media-player": "copyfiles -u 4 ./node_modules/@banou/media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp",
+    "copy-fkn-media-player": "copyfiles -u 3 ./node_modules/fkn-media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp",
     "build-deps": "npm run build-deps-media-player && npm run build-deps-fkn-lib",
-    "build-deps-local": "npm run build-deps-media-player && npm run build-deps-fkn-lib-local",
     "build-deps-media-player": "cd node_modules/@banou/media-player && npm i && npm run build && cd ../../..",
     "build-deps-fkn-lib": "cd node_modules/@fkn/lib && npm i && npm run build && cd ../../..",
-    "build-deps-fkn-lib-local": "cd node_modules/@fkn/lib && npm i && npm run build-dev && cd ../../..",
     "remove-build-deps": "shx rm -rf node_modules/@banou/media-player"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.11",
-    "@apollo/server": "^4.5.0",
+    "@apollo/client": "^3.7.3",
+    "@apollo/server": "^4.3.0",
     "@banou/media-player": "github:Banou26/media-player",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
@@ -75,7 +57,6 @@
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
     "idb": "^7.0.0",
-    "laserr": "file:../../laserr",
     "marked": "^4.0.18",
     "osra": "^0.0.8",
     "p-queue": "^7.3.0",
@@ -90,7 +71,6 @@
     "react-tooltip": "^4.2.21",
     "react-use": "^17.4.0",
     "rxjs": "^7.5.5",
-    "scannarr": "file:../../scannarr",
     "tslib": "^2.4.1",
     "url": "^0.11.0",
     "util": "^0.12.4"

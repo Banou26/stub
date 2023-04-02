@@ -2,10 +2,12 @@
 import './vite-hmr'
 import { css, Global } from '@emotion/react'
 import { createRoot } from 'react-dom/client'
-import { targets } from '../../../laserr/src'
-import { addTarget } from '../../../scannarr/src'
 
 import Mount from './components'
+import { makeServer } from 'scannarr'
+import { targets } from 'laserr'
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { fetch } from './utils/fetch'
 
 const style = css`
   @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
@@ -73,15 +75,26 @@ const style = css`
   }
 `
 
-for (const target of targets) {
-  addTarget(target)
-}
+const { server, link } = makeServer({
+  context: () => ({
+    fetch: (...args) => fetch(...args)
+  }),
+  resolvers: [
+    ...targets
+  ]
+})
+
+server.start()
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link
+})
 
 const root = createRoot(document.body.appendChild(document.createElement('div')))
 
 root.render(
-  <>
+  <ApolloProvider client={client}>
     <Global styles={style}/>
     <Mount/>
-  </>
+  </ApolloProvider>
 )

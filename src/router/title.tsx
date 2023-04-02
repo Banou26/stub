@@ -18,11 +18,11 @@ import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 
 import { getRoutePath, Route } from './path'
-import { getSeries, Relation, Relationship, searchTitles, Series, TitleHandle } from '../../../../scannarr/src'
+import { Relation, Relationship, Series, TitleHandle } from '../../../../scannarr/src'
 import { diceCompare } from '../utils/string'
 import { useObservable } from '../utils/use-observable'
 import { getHumanReadableByteString } from '../utils/bytes'
-import { cachedFetch } from '../utils/fetch'
+import { fetch } from '../utils/fetch'
 import Sources from '../components/sources'
 import Input from '../components/inputs'
 import { sort } from 'fp-ts/lib/ReadonlyArray'
@@ -699,7 +699,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
   const [selectedResolution, setResolution] = useState<number | undefined>(undefined)
   const [selectedSource, setSource] = useState<string | undefined>()
   const { observable: series$, value: series } = useObservable(() =>
-    getSeries({ uri }, { fetch: cachedFetch }),
+    getSeries({ uri }, { fetch }),
     [uri]
   )
   const { observable: seriesReplay$ } = useObservable(() => series$.pipe(shareReplay()), [series$])
@@ -707,7 +707,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
     seriesReplay$
       .pipe(
         filter(Boolean),
-        mergeMap(series => searchTitles({ series }, { fetch: cachedFetch }))
+        mergeMap(series => searchTitles({ series }, { fetch }))
       ),
     [seriesReplay$]
   )
@@ -724,7 +724,7 @@ export default ({ uri, titleUri }: { uri: string, titleUri?: string }) => {
             .pipe(
               map(titles => titles.find(({ uri }) => uri === (titleUri ?? firstTitleUri))),
               filter(Boolean),
-              mergeMap(title => searchTitles({ series, search: title }, { fetch: cachedFetch }))
+              mergeMap(title => searchTitles({ series, search: title }, { fetch }))
             )
         )
         : from([]),

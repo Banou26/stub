@@ -5,7 +5,7 @@ import { Buffer } from 'buffer'
 
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
-import { fetch, torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
+import { torrent, torrentStatus, TorrentStatusType } from '@fkn/lib'
 import FKNMediaPlayer from '@banou/media-player'
 import { of } from 'rxjs'
 import DOMPurify from 'dompurify'
@@ -13,9 +13,8 @@ import * as marked from 'marked'
 import ReactTooltip from 'react-tooltip'
 import { AlertCircle, ArrowDown, ArrowUp, Users, Server, Globe, Info } from 'react-feather'
 
-import { getTitle } from '../../../../scannarr/src'
 import { Uri } from '../../../../scannarr/src/utils'
-import { cachedFetch } from '../utils/fetch'
+import { fetch } from '../utils/fetch'
 import { useObservable } from '../utils/use-observable'
 import { useFetch } from '../utils/use-fetch'
 import ParseTorrent, { toMagnetURI } from 'parse-torrent'
@@ -206,7 +205,7 @@ const TorrentInfo = ({ torrentInstance }: { torrentInstance?: ParseTorrentFile.I
 export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceUri: Uri }) => {
   const { value: title } = useObservable(() =>
     sourceUri
-      ? getTitle({ uri: sourceUri }, { fetch: cachedFetch })
+      ? getTitle({ uri: sourceUri }, { fetch })
       : of(undefined),
     [uri]
   )
@@ -319,7 +318,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
 
   useEffect(() => {
     if (!url) return
-    cachedFetch(url)
+    fetch(url)
       .then(async res => setTorrentFileArrayBuffer(await res.arrayBuffer()))
   }, [url])
 

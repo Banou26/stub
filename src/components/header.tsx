@@ -4,7 +4,7 @@ import { FocusEvent, FocusEventHandler, Fragment, useEffect, useState } from 're
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
 import { useObservable } from '../utils/use-observable'
-import { Category, searchSeries, TitleHandle } from '../../../../scannarr/src'
+import { Category, TitleHandle } from '../../../../scannarr/src'
 import { searchTitles } from '../../../../scannarr/src'
 import { useFetch } from '../utils/use-fetch'
 import { GitHub } from 'react-feather'
@@ -13,7 +13,7 @@ import Input from './inputs'
 
 import IconUrl from '../images/icon.png'
 import { getRoutePath, Route } from '../router/path'
-import { cachedFetch } from '../utils/fetch'
+import { fetch } from '../utils/fetch'
 import DiscordIconUrl from '../images/discord-mark-blue.svg'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -134,7 +134,9 @@ const Header = () => {
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
-  const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: cachedFetch }), [searchValue])
+  // const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: fetch }), [searchValue])
+  const completed = true
+  const data = []
   const loading = !completed
   // const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => searchTitles({ categories: [category!], search: searchValue }), { skip: !searchValue })
 
