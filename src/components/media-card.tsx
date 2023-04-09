@@ -114,31 +114,31 @@ screen and (max-height : 1440px) {
 `
 
 // todo: reduce the amount of DOM elements
-export default ({ media }: { media: Series }) => {
+export default ({ series }: { series: Series }) => {
   const popularity = useMemo(() =>
-    media.popularity
-      ? new Intl.NumberFormat('en-US', { notation: 'compact' }).format(media.popularity)
+    series.popularity
+      ? new Intl.NumberFormat('en-US', { notation: 'compact' }).format(series.popularity)
       : undefined,
-    [media.popularity]
+    [series.popularity]
   )
 
   return (
     <div css={style}>
-      {/* <Title media={media} className="title"/> */}
+      <Title series={series} className="title"/>
       <div className="data">
         <div className="head">
-          {/* <Schedule media={media}/> */}
+          <Schedule series={series}/>
           <div className="infos">
             <div className="sources">
-              <Sources handles={media?.handles}/>
+              <Sources handles={series?.handles}/>
             </div>
             <div className="stats">
               <div className="popularity">{popularity}<Users/></div>
               {
-                media?.averageScore
+                series?.averageScore
                   ? (
                     <div className="score">
-                      {(media?.averageScore * 10).toFixed(1)}
+                      {(series?.averageScore * 10).toFixed(1)}
                       <Heart/>
                     </div>
                   )
@@ -148,11 +148,11 @@ export default ({ media }: { media: Series }) => {
           </div>
         </div>
         <div className="synopsis">
-          {media.description}
+          {series.synopses.at(0)?.synopsis}
         </div>
         <div className="genres">
-          {/* {
-            media.genres.map(genre =>
+          {
+            series.genres.map(genre =>
               <span key={genre.name} className={`genre${genre.adult ? ' adult' : ''}`}>
                 {
                   // todo: replace this link with a link to our own genres page
@@ -162,7 +162,7 @@ export default ({ media }: { media: Series }) => {
                 }
               </span>  
             )
-          } */}
+          }
         </div>
       </div>
     </div>

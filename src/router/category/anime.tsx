@@ -10,7 +10,7 @@ import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 // import { byPopularity } from '../../../../../scannarr/src/utils'
 
 import useObservable from '../../utils/use-observable'
-import Card from '../../components/card'
+import MediaCard from '../../components/card'
 import { useQuery } from '@apollo/client'
 import { gql } from '../../generated'
 import { MediaSeason, MediaSort } from '../../generated/graphql'
@@ -62,13 +62,38 @@ const GET_CURRENT_SEASON = gql(`
   query GET_CURRENT_SEASON($season: MediaSeason!, $seasonYear: Int! $sort: [MediaSort]!) {
     Page {
       media(season: $season, seasonYear: $seasonYear, sort: $sort) {
-        id
+        uri
         title {
           romanized
           english
           native
         }
         popularity
+        shortDescription
+        description
+        coverImage {
+          color
+          extraLarge
+          large
+          medium
+          small
+        }
+        bannerImage
+        handles {
+          nodes {
+            uri
+            title {
+              romanized
+            }
+            popularity
+            shortDescription
+            description
+          }
+        }
+        trailers {
+          uri
+          thumbnail
+        }
       }
     }
   }
@@ -86,42 +111,43 @@ export default ({ category }: { category?: Category }) => {
     }
   )
 
-  console.log('Page', error, Page)
+  if (error) console.error('error', error)
+  console.log('Page', Page)
 
-  const categoryItems = []
+  // const categoryItems = []
 
   const currentSeason = getCurrentSeason()
 
-  const { left: _continuations, right: _currentSeasonAnime } =
-    pipe(
-      categoryItems ?? [],
-      // todo: remove once user UI filters/sorts are implemented
-      A.filter(item => !item.genres?.some(genre => genre.adult)),
-      A.partition(item => {
-        const dateData = item.dates?.at(0)
-        if (!dateData) return false
-        const dateSeason =
-          getCurrentSeason(
-            0,
-            'date' in dateData
-              ? dateData.date
-              : dateData.start
-          )
-        return currentSeason.season === dateSeason.season && currentSeason.year === dateSeason.year
-      })
-    )
+  // const { left: _continuations, right: _currentSeasonAnime } =
+  //   pipe(
+  //     categoryItems ?? [],
+  //     // todo: remove once user UI filters/sorts are implemented
+  //     A.filter(item => !item.genres?.some(genre => genre.adult)),
+  //     A.partition(item => {
+  //       const dateData = item.dates?.at(0)
+  //       if (!dateData) return false
+  //       const dateSeason =
+  //         getCurrentSeason(
+  //           0,
+  //           'date' in dateData
+  //             ? dateData.date
+  //             : dateData.start
+  //         )
+  //       return currentSeason.season === dateSeason.season && currentSeason.year === dateSeason.year
+  //     })
+  //   )
 
-  const currentSeasonAnime =
-    pipe(
-      _currentSeasonAnime,
-      // A.sortBy([byPopularity])
-    )
+  // const currentSeasonAnime =
+  //   pipe(
+  //     _currentSeasonAnime,
+  //     // A.sortBy([byPopularity])
+  //   )
 
-  const continuations =
-    pipe(
-      _continuations,
-      // A.sortBy([byPopularity])
-    )
+  // const continuations =
+  //   pipe(
+  //     _continuations,
+  //     // A.sortBy([byPopularity])
+  //   )
 
   const anchorCurrentSeason = `${currentSeason.season.toLowerCase()}-${currentSeason.year}`
 
@@ -133,13 +159,25 @@ export default ({ category }: { category?: Category }) => {
         </a>
         <div className="items">
           {
+            Page?.media?.map(media =>
+              <MediaCard key={media.uri} media={media}/>
+            )
+          }
+        </div>
+      </div>
+      {/* <div className="section">
+        <a id={anchorCurrentSeason} href={`#${anchorCurrentSeason}`}>
+          <h2>Current season</h2>
+        </a>
+        <div className="items">
+          {
             currentSeasonAnime?.map(item =>
               <Card key={item.uri} series={item}/>
             )
           }
         </div>
-      </div>
-      <div className="section">
+      </div> */}
+      {/* <div className="section">
         <a id={`${anchorCurrentSeason}-leftovers`} href={`#${anchorCurrentSeason}-leftovers`}>
           <h2>Leftovers</h2>
         </a>
@@ -150,7 +188,7 @@ export default ({ category }: { category?: Category }) => {
             )
           }
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

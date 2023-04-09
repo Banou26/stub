@@ -1,3 +1,4 @@
+import { HandleConnection } from '../generated/graphql'
 import type { Handle } from '../../../../scannarr/src'
 
 // import { getTarget } from '../../../../scannarr/src'
@@ -8,10 +9,10 @@ const style = css`
 background-size: cover;
 `
 
-export default ({ handles }: { handles?: Handle[] }) => (
+export default ({ handles }: { handles?: HandleConnection }) => (
   <>
     {
-      handles?.map(handle =>
+      handles?.nodes?.map(handle =>
         <a
           css={style}
           key={handle.uri}
