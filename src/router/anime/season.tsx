@@ -62,7 +62,11 @@ export const GET_CURRENT_SEASON = gql(`
   query GET_CURRENT_SEASON($season: MediaSeason!, $seasonYear: Int! $sort: [MediaSort]!) {
     Page {
       media(season: $season, seasonYear: $seasonYear, sort: $sort) {
+        handler
+        origin
+        id
         uri
+        url
         title {
           romanized
           english
@@ -78,7 +82,11 @@ export const GET_CURRENT_SEASON = gql(`
         bannerImage
         handles {
           nodes {
+            handler
+            origin
+            id
             uri
+            url
             title {
               romanized
             }
@@ -97,12 +105,13 @@ export const GET_CURRENT_SEASON = gql(`
 `)
 
 export default ({ category }: { category?: Category }) => {
+  const currentSeason = getCurrentSeason()
   const { error, data: { Page } = {} } = useQuery(
     GET_CURRENT_SEASON,
     {
       variables: {
-        season: MediaSeason.Winter,
-        seasonYear: 2023,
+        season: currentSeason.season,
+        seasonYear: currentSeason.year,
         sort: [MediaSort.Popularity]
       }
     }
@@ -112,8 +121,6 @@ export default ({ category }: { category?: Category }) => {
   console.log('Page', Page)
 
   // const categoryItems = []
-
-  const currentSeason = getCurrentSeason()
 
   // const { left: _continuations, right: _currentSeasonAnime } =
   //   pipe(

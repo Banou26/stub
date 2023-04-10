@@ -10,7 +10,7 @@ const { server, link } = makeServer({
     fetch: (...args) => fetch(...args)
   }),
   resolvers: [
-    ...targets
+    ...targets.map(({ resolvers }) => resolvers)
   ]
 })
 

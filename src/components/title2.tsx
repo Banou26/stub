@@ -3,6 +3,7 @@ import type { Media } from '../../../../scannarr/src'
 import { css } from '@emotion/react'
 import { Link } from 'react-router-dom'
 
+import { targets } from 'laserr'
 import { Route, getRoutePath } from '../router/path'
 
 const style = css`
@@ -91,32 +92,41 @@ const style = css`
 }
 `
 
-export default ({ media, ...rest }: { media: Media }) => (
-  <div css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }}>
-    <Link
-      tabIndex={-1}
-      to={getRoutePath(Route.TITLE, { uri: media.uri })}
-      className="card link"
-    />
-    <div className="information">
-        <div className="title">
-        <Link to={getRoutePath(Route.TITLE, { uri: media.uri })} className="title-text">
-          {
-            (media.title?.romanized?.length ?? 0) > 30
-              ? media.title?.romanized?.slice(0, 30) + '...'
-              : media.title?.romanized
-          }
-        </Link>
-          {/* {
-            media.originIcon &&
-            media.url && (
-              <a href={media.url} className="origin-icon" target="_blank" rel="noopener noreferrer">
-                <img src={media.originIcon} alt=""/>
-              </a>
-            )
-          } */}
-        </div>
-      <div className="description">{media.shortDescription}</div>
+export default ({ media, ...rest }: { media: Media }) => {
+  const mediaTargets =
+    targets
+      .filter(target => media.handles.nodes.find((handle) => handle.origin === target.origin))
+      .map(target => ({
+        target,
+        media: media.handles.nodes.find((handle) => handle.origin === target.origin)
+      }))
+
+  return (
+    <div css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }}>
+      <Link
+        tabIndex={-1}
+        to={getRoutePath(Route.TITLE, { uri: media.uri })}
+        className="card link"
+      />
+      <div className="information">
+          <div className="title">
+            <Link to={getRoutePath(Route.TITLE, { uri: media.uri })} className="title-text">
+              {
+                (media.title?.romanized?.length ?? 0) > 30
+                  ? media.title?.romanized?.slice(0, 30) + '...'
+                  : media.title?.romanized
+              }
+            </Link>
+            {
+              mediaTargets.map(({ target, media }) => (
+                <a key={target.origin} href={media.url} className="origin-icon" target="_blank" rel="noopener noreferrer">
+                  <img src={target.icon} alt=""/>
+                </a>
+              ))
+            }
+          </div>
+        <div className="description">{media.shortDescription}</div>
+      </div>
     </div>
-  </div>
-)
+  )
+}

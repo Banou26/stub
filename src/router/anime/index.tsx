@@ -19,7 +19,10 @@ padding: 5rem 10rem;
 
 h2 {
   font-size: 4rem;
-  padding: 5rem;
+  /* padding: 5rem; */
+  padding-top: 5rem;
+  padding-left: 5rem;
+  padding-bottom: 2rem;
 }
 
 .section:not(:first-of-type) {
@@ -50,20 +53,19 @@ h2 {
 `
 
 export default () => {
+  const currentSeason = getCurrentSeason()
   const { error, data: { Page } = {} } = useQuery(
     GET_CURRENT_SEASON,
     {
       variables: {
-        season: MediaSeason.Winter,
-        seasonYear: 2023,
+        season: currentSeason.season,
+        seasonYear: currentSeason.year,
         sort: [MediaSort.Popularity]
       }
     }
   )
 
   if (error) console.error(error)
-
-  
 
   return (
     <div css={style}>
@@ -77,7 +79,7 @@ export default () => {
               <div className="section-items">
                 {
                   Page?.media?.map(media =>
-                    <Title2 media={media} className="title card Tag"/>
+                    <Title2 key={media.uri} media={media}/>
                   )
                 }
               </div>

@@ -29,6 +29,8 @@ const style = css`
   user-select: none;
   padding: 0 4rem;
 
+  z-index: 100;
+
   .left {
     display: grid;
     grid-template-columns: 15rem 15rem 15rem auto;
@@ -151,50 +153,48 @@ const Header = () => {
   }
 
   return (
-    <Fragment>
-      <header css={style}>
-        <div className="left">
-          <Link href={getRoutePath(Route.HOME)} className="logo-link">
-            <img src={IconUrl} alt="Stub Logo" className="logo-icon"/>
-            <span>Stub</span>
-          </Link>
-          <Link href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className="logo-link discord">
-            <span className="discord-logo-icon"></span>
-            <span>Discord</span>
-          </Link>
-          <Link href="https://github.com/Banou26/stub" target="_blank" rel="noopener noreferrer" className="logo-link github">
-            <FontAwesomeIcon icon={faGithub} className="github-logo-icon" size='2x'/>
-            <span>Github</span>
-          </Link>
-        </div>
-        <div className="middle">
-         <form onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              type="text"
-              placeholder='Search' {...register('search', { onBlur: hideSearchResults })}
-              onFocus={_showSearchResults}
-              autoComplete="off"
-            />
-          </form>
-          {
-            showSearchResults && data ? (
-              <div className="searchResults" onBlur={hideSearchResults}>
-                {
-                  data.map(title =>
-                    <Link key={title.uri} href={getRoutePath(Route.TITLE, { uri: title.uri })}>
-                      <img src={title.images.at(0)?.url} alt="" referrer-policy="same-origin"/>
-                      <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
-                    </Link>
-                  )
-                }
-              </div>
-            ) : null
-          }
-        </div>
-        <div className="right">
-        </div>
-      </header>
-    </Fragment>
+    <header css={style}>
+      <div className="left">
+        <Link href={getRoutePath(Route.HOME)} className="logo-link">
+          <img src={IconUrl} alt="Stub Logo" className="logo-icon"/>
+          <span>Stub</span>
+        </Link>
+        <Link href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className="logo-link discord">
+          <span className="discord-logo-icon"></span>
+          <span>Discord</span>
+        </Link>
+        <Link href="https://github.com/Banou26/stub" target="_blank" rel="noopener noreferrer" className="logo-link github">
+          <FontAwesomeIcon icon={faGithub} className="github-logo-icon" size='2x'/>
+          <span>Github</span>
+        </Link>
+      </div>
+      <div className="middle">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            type="text"
+            placeholder='Search' {...register('search', { onBlur: hideSearchResults })}
+            onFocus={_showSearchResults}
+            autoComplete="off"
+          />
+        </form>
+        {
+          showSearchResults && data ? (
+            <div className="searchResults" onBlur={hideSearchResults}>
+              {
+                data.map(title =>
+                  <Link key={title.uri} href={getRoutePath(Route.TITLE, { uri: title.uri })}>
+                    <img src={title.images.at(0)?.url} alt="" referrer-policy="same-origin"/>
+                    <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
+                  </Link>
+                )
+              }
+            </div>
+          ) : null
+        }
+      </div>
+      <div className="right">
+      </div>
+    </header>
   )
 }
 
