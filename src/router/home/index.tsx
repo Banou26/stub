@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Link, navigate, useRedirect } from 'raviger'
+import { redirect } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
 import { useObservable } from 'react-use'
 
@@ -40,7 +40,7 @@ padding: 5rem;
 
 export default () => {
   useEffect(() => {
-    navigate(getRoutePath(Route.CATEGORY, { category: 'ANIME' }))
+    redirect(getRoutePath(Route.ANIME))
   }, [])
   return null
   // const { data: movies } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['MOVIE'], latest: true }))

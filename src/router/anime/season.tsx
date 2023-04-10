@@ -14,7 +14,6 @@ import MediaCard from '../../components/card'
 import { useQuery } from '@apollo/client'
 import { gql } from '../../generated'
 import { MediaSeason, MediaSort } from '../../generated/graphql'
-import { GET_CURRENT_SEASON } from '../anime/season'
 
 const style = css`
 
@@ -58,6 +57,44 @@ screen and (max-height : 1440px) {
   /* grid-template-columns: 20rem 32rem; */
 }
 `
+
+export const GET_CURRENT_SEASON = gql(`
+  query GET_CURRENT_SEASON($season: MediaSeason!, $seasonYear: Int! $sort: [MediaSort]!) {
+    Page {
+      media(season: $season, seasonYear: $seasonYear, sort: $sort) {
+        uri
+        title {
+          romanized
+          english
+          native
+        }
+        popularity
+        shortDescription
+        description
+        coverImage {
+          color
+          default
+        }
+        bannerImage
+        handles {
+          nodes {
+            uri
+            title {
+              romanized
+            }
+            popularity
+            shortDescription
+            description
+          }
+        }
+        trailers {
+          uri
+          thumbnail
+        }
+      }
+    }
+  }
+`)
 
 export default ({ category }: { category?: Category }) => {
   const { error, data: { Page } = {} } = useQuery(

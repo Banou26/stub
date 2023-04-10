@@ -1,7 +1,7 @@
-import type { Series } from '../../../../scannarr/src'
+import type { Media } from '../../../../scannarr/src'
 
 import { css } from '@emotion/react'
-import { Link } from 'raviger'
+import { Link } from 'react-router-dom'
 
 const style = css`
 align-items: center;
@@ -28,15 +28,15 @@ span {
 }
 `
 
-export default ({ series, ...rest }: { series: Series }) => (
+export default ({ media, ...rest }: { media: Media }) => (
   <Link
     css={style}
-    key={series.uri}
-    href={`/title/${series.uri}`}
-    className="series"
-    style={{ backgroundImage: `url(${series.images.at(0)?.url})` }}
+    key={media.uri}
+    href={`/title/${media.uri}`}
+    className="media"
+    style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})` }}
     {...rest}
   >
-    <span style={{ color: 'white' }}>{series.names.at(0)?.name}</span>
+    <span style={{ color: 'white' }}>{media.title?.romanized}</span>
   </Link>
 )

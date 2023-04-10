@@ -7,6 +7,7 @@ import { css } from '@emotion/react'
 import Title from './title'
 import Sources from './sources'
 import Schedule from './schedule'
+import { Media } from '../generated/graphql'
 
 const style = css`
 display: grid;
@@ -114,7 +115,7 @@ screen and (max-height : 1440px) {
 `
 
 // todo: reduce the amount of DOM elements
-export default ({ media }: { media: Series }) => {
+export default ({ media }: { media: Media }) => {
   const popularity = useMemo(() =>
     media.popularity
       ? new Intl.NumberFormat('en-US', { notation: 'compact' }).format(media.popularity)
@@ -124,7 +125,7 @@ export default ({ media }: { media: Series }) => {
 
   return (
     <div css={style}>
-      {/* <Title media={media} className="title"/> */}
+      <Title media={media} className="title"/>
       <div className="data">
         <div className="head">
           {/* <Schedule media={media}/> */}

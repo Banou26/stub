@@ -1,73 +1,43 @@
 import { css } from '@emotion/react'
-import { useRoutes } from 'raviger'
-import { Fragment } from 'react'
+import { RouterProvider } from 'react-router'
+import { createBrowserRouter } from 'react-router-dom'
 
 import Home from './home'
-import CategoryComponent from './category'
 import { getRouterRoutePath, Route } from './path'
-import Auth from './auth/mal'
-import Title from './title'
-import Watch from './watch'
 import Header from '../components/header'
-import { isUri, isUris } from '../../../../scannarr/src/utils'
+import Anime from './anime'
+import Season from './anime/season'
 
 const contentStyle = css`
   padding-top: 6rem;
 `
 
-const HeaderPage = ({ children }: { children: React.ReactNode }) =>
-  <Fragment>
+const wrapElement = (children: React.ReactNode) =>
+  <>
     <Header/>
     <div css={contentStyle}>
       {children}
     </div>
-  </Fragment>
+  </>
 
-const NotFoundPage = () =>
-  <div>
-    Page not found
-  </div>
+const router = createBrowserRouter([
+  {
 
+    path: getRouterRoutePath(Route.HOME),
+    element: wrapElement(<Home/>)
+  },
+  {
+    path: getRouterRoutePath(Route.ANIME),
+    element: wrapElement(<Anime/>)
+  },
+  {
+    path: getRouterRoutePath(Route.ANIME_SEASON),
+    element: wrapElement(<Season/>)
+  },
+  {
+    path: '/*',
+    element: wrapElement(<div>404 No page found</div>)
+  }
+])
 
-// todo: refactor the header, remove it from each pages and put it at the top level, as it makes a re-render flash whenever we change page
-export const routes = {
-  [getRouterRoutePath(Route.HOME)]: () =>
-    <HeaderPage>
-      <Home/>
-    </HeaderPage>,
-  [getRouterRoutePath(Route.AUTH)]: ({ name }) =>
-    <HeaderPage>
-      <Auth name={name}/>
-    </HeaderPage>,
-  [getRouterRoutePath(Route.TITLE)]: ({ uri }) =>
-    <HeaderPage>
-      <Title uri={uri}/>
-    </HeaderPage>,
-  [getRouterRoutePath(Route.TITLE_EPISODE)]: ({ uri, titleUri }) =>
-    <HeaderPage>
-      <Title uri={uri} titleUri={titleUri}/>
-    </HeaderPage>,
-  [getRouterRoutePath(Route.WATCH)]: ({ uri, titleUri, sourceUri }) =>
-    <HeaderPage>
-      {
-        isUris(uri) && isUri(titleUri) && isUri(sourceUri)
-          ? <Watch uri={uri} titleUri={titleUri} sourceUri={sourceUri}/>
-          : <NotFoundPage/>
-      }
-    </HeaderPage>,
-  // [getRouterRoutePath(Route.CATEGORY)]: ({ category }) => <CategoryComponent category={Category['toLowerString'()]}/>,
-  '/category/movies': () => 
-    <HeaderPage>
-      <CategoryComponent category={'MOVIE'}/>
-    </HeaderPage>,
-  '/category/shows': () => 
-    <HeaderPage>
-      <CategoryComponent category={'SHOW'}/>
-    </HeaderPage>,
-  '/category/anime': () => 
-    <HeaderPage>
-      <CategoryComponent category={'ANIME'}/>
-    </HeaderPage>,
-}
-
-export default () => useRoutes(routes)
+export default () => <RouterProvider router={router}/>

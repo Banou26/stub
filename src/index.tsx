@@ -1,6 +1,7 @@
 /// <reference types="@emotion/react/types/css-prop" />
 import './vite-hmr'
 import { css, Global } from '@emotion/react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import Mount from './components'
@@ -39,20 +40,6 @@ const style = css`
     // font-family: "Segoe UI", Roboto, "Fira Sans",  "Helvetica Neue", Arial, sans-serif;
   }
 
-
-  /* @media
-  screen and (max-width : 2560px),
-  screen and (max-height : 1440px) {
-    html {
-      font-size: 41.875%;
-    }
-
-    body {
-      font-size: 2.38805970149rem;
-    }
-  } */
-  
-
   body > div {
     height: 100vh;
     width: 100%;
@@ -77,8 +64,10 @@ const style = css`
 const root = createRoot(document.body.appendChild(document.createElement('div')))
 
 root.render(
-  <ApolloProvider client={client}>
-    <Global styles={style}/>
-    <Mount/>
-  </ApolloProvider>
+  <StrictMode>
+    <ApolloProvider client={client}>
+      <Global styles={style}/>
+      <Mount/>
+    </ApolloProvider>
+  </StrictMode>
 )
