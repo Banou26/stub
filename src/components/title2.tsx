@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { targets } from 'laserr'
 import { Route, getRoutePath } from '../router/path'
+import { forwardRef } from 'react'
 
 const style = css`
 &.card, .card {
@@ -92,7 +93,7 @@ const style = css`
 }
 `
 
-export default ({ media, ...rest }: { media: Media }) => {
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const mediaTargets =
     targets
       .filter(target => media.handles.nodes.find((handle) => handle.origin === target.origin))
@@ -102,7 +103,7 @@ export default ({ media, ...rest }: { media: Media }) => {
       }))
 
   return (
-    <div css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }}>
+    <div ref={ref} css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }} {...rest}>
       <Link
         tabIndex={-1}
         to={getRoutePath(Route.TITLE, { uri: media.uri })}
@@ -129,4 +130,4 @@ export default ({ media, ...rest }: { media: Media }) => {
       </div>
     </div>
   )
-}
+})

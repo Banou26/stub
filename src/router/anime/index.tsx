@@ -1,7 +1,9 @@
 import { css } from '@emotion/react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
+import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react'
 
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 import MediaCard from '../../components/card'
@@ -10,6 +12,7 @@ import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
 import Title from '../../components/title'
 import Title2 from '../../components/title2'
+
 
 import './index.css'
 
@@ -41,6 +44,7 @@ h2 {
   overflow: auto;
   margin: 1.5rem 0;
   gap: 2.5rem;
+  overflow: visible;
   /* &::-webkit-scrollbar{
     display: none;
   } */
@@ -48,12 +52,33 @@ h2 {
 
 .ScrollAreaRoot {
   margin: 2.5rem 0;
+  overflow: visible;
 }
+/* 
+.title-wrapper {
+  position: relative;
+  overflow: visible;
+
+  /* .hover-details {
+    position: absolute;
+    height: 35rem;
+    width: 50rem;
+    top: -50%;
+    left: -50%;
+    background-color: rgb(35, 35, 35);
+  } */
+} */
 
 `
 
+const hoverCardStyle = css`
+  background-color: rgb(35, 35, 35);
+  width: 50rem;
+  height: 35rem;
+`
+
 export default () => {
-  const currentSeason = getCurrentSeason()
+  const currentSeason = useMemo(() => getCurrentSeason(), [])
   const { error, data: { Page } = {} } = useQuery(
     GET_CURRENT_SEASON,
     {
@@ -64,8 +89,19 @@ export default () => {
       }
     }
   )
+  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate })
 
   if (error) console.error(error)
+
+  const titleCards = useMemo(() =>
+    Page?.media?.map(media =>
+      <Title2
+        key={media.uri}
+        media={media}
+        onMouseOver={e => refs.setReference(e.currentTarget)}
+      />
+    )
+  , [Page?.media])
 
   return (
     <div css={style}>
@@ -77,11 +113,7 @@ export default () => {
           <ScrollArea.Root className="ScrollAreaRoot">
             <ScrollArea.Viewport className="ScrollAreaViewport">
               <div className="section-items">
-                {
-                  Page?.media?.map(media =>
-                    <Title2 key={media.uri} media={media}/>
-                  )
-                }
+                {titleCards}
               </div>
             </ScrollArea.Viewport>
             <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
@@ -89,6 +121,21 @@ export default () => {
             </ScrollArea.Scrollbar>
             <ScrollArea.Corner className="ScrollAreaCorner" />
           </ScrollArea.Root>
+          <div
+            ref={refs.setFloating}
+            style={{
+              position: strategy,
+              top: y ?? 0,
+              left: x ?? 0,
+              width: 'max-content',
+            }}
+          >
+            <div>Floating element</div>
+            <div>Floating element</div>
+            <div>Floating element</div>
+            <div>Floating element</div>
+            <div>Floating element</div>
+          </div>
         </div>
       </div>
       <div className="section">
@@ -96,11 +143,11 @@ export default () => {
           <h2>Popular animes</h2>
         </Link>
         <div className="items">
-          {
+          {/* {
             Page?.media?.map(media =>
-              <Title2 media={media} className="title card Tag"/>
+              <Title2 key={media.uri} media={media} className="title card Tag"/>
             )
-          }
+          } */}
         </div>
       </div>
     </div>
