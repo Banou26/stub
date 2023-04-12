@@ -7,7 +7,7 @@ import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react'
 
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 import MediaCard from '../../components/card'
-import { MediaSeason, MediaSort } from '../../generated/graphql'
+import { Media, MediaSeason, MediaSort } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
 import Title from '../../components/title'
@@ -54,20 +54,14 @@ h2 {
   margin: 2.5rem 0;
   overflow: visible;
 }
-/* 
-.title-wrapper {
-  position: relative;
-  overflow: visible;
 
-  /* .hover-details {
-    position: absolute;
-    height: 35rem;
-    width: 50rem;
-    top: -50%;
-    left: -50%;
-    background-color: rgb(35, 35, 35);
-  } */
-} */
+.title-hovercard {
+  display: grid;
+  height: 35rem;
+  width: 50rem;
+  background-color: rgb(35, 35, 35);
+  margin-top: 35rem;
+}
 
 `
 
@@ -89,7 +83,8 @@ export default () => {
       }
     }
   )
-  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate })
+  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top' })
+  const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
 
   if (error) console.error(error)
 
@@ -98,7 +93,15 @@ export default () => {
       <Title2
         key={media.uri}
         media={media}
-        onMouseOver={e => refs.setReference(e.currentTarget)}
+        onMouseEnter={e => {
+          refs.setReference(e.currentTarget)
+          setHoverCardMedia(media)
+        }}
+        onMouseLeave={(e) => {
+          if (refs.floating.current === e.relatedTarget  || refs.floating.current?.contains(e.relatedTarget)) return
+          refs.setReference(null)
+          setHoverCardMedia(undefined)
+        }}
       />
     )
   , [Page?.media])
@@ -121,21 +124,22 @@ export default () => {
             </ScrollArea.Scrollbar>
             <ScrollArea.Corner className="ScrollAreaCorner" />
           </ScrollArea.Root>
-          <div
-            ref={refs.setFloating}
-            style={{
-              position: strategy,
-              top: y ?? 0,
-              left: x ?? 0,
-              width: 'max-content',
-            }}
-          >
-            <div>Floating element</div>
-            <div>Floating element</div>
-            <div>Floating element</div>
-            <div>Floating element</div>
-            <div>Floating element</div>
-          </div>
+          {
+            refs.reference.current && (
+              <div
+                className="title-hovercard"
+                ref={refs.setFloating}
+                onMouseLeave={() => refs.setReference(null)}
+                style={{
+                  position: strategy,
+                  top: y ?? 0,
+                  left: x ?? 0
+                }}
+              >
+                <div>{hoverCardMedia?.title?.romanized}</div>
+              </div>
+            )
+          }
         </div>
       </div>
       <div className="section">
