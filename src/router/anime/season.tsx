@@ -96,7 +96,11 @@ export const GET_CURRENT_SEASON = gql(`
           }
         }
         trailers {
+          handler
+          origin
+          id
           uri
+          url
           thumbnail
         }
       }

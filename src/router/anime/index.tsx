@@ -57,10 +57,25 @@ h2 {
 
 .title-hovercard {
   display: grid;
-  height: 35rem;
-  width: 50rem;
+  height: 40rem;
+  width: 60rem;
   background-color: rgb(35, 35, 35);
-  margin-top: 35rem;
+  margin-top: 37.5rem;
+  overflow: hidden;
+
+  .title {
+    display: none;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 2rem;
+  }
+
+  iframe {
+    margin-top: -5.90rem;
+    height: 50rem;
+    width: 60rem;
+    pointer-events: none;
+  }
 }
 
 `
@@ -85,6 +100,8 @@ export default () => {
   )
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top' })
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
+
+  console.log('hoverCardMedia', hoverCardMedia)
 
   if (error) console.error(error)
 
@@ -136,7 +153,30 @@ export default () => {
                   left: x ?? 0
                 }}
               >
-                <div>{hoverCardMedia?.title?.romanized}</div>
+                <div className="title">{hoverCardMedia?.title?.romanized}</div>
+                {
+                  hoverCardMedia?.trailers?.at(0)?.thumbnail && (
+                    <iframe
+                      width="3055"
+                      height="1441"
+                      src={`https://www.youtube.com/embed/${hoverCardMedia?.trailers?.at(0)?.id}?${
+                        new URLSearchParams({
+                          autoplay: '1',
+                          mute: '0',
+                          loop: '1',
+                          controls: '0',
+                          showinfo: '0',
+                          modestbranding: '1',
+                          rel: '0'
+                        })
+                      }`}
+                      title="On-device Machine Learning With TensorFlow"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen={true}
+                    ></iframe>
+                  )
+                }
               </div>
             )
           }
