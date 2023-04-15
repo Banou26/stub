@@ -127,7 +127,7 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
               ))
             }
           </div>
-        <div className="description">{media.shortDescription}</div>
+        <div className="description">{media.shortDescription?.slice(0, 100)}{media.shortDescription?.length > 100 ? '...' : ''}</div>
       </div>
     </div>
   )
