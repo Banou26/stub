@@ -62,6 +62,7 @@ h2 {
   background-color: rgb(35, 35, 35);
   margin-top: 37.5rem;
   overflow: hidden;
+  border-radius: 1rem;
 
   .title {
     display: none;

@@ -17,6 +17,7 @@ const style = css`
   width: 25rem;
   font-size: 2.5rem;
   overflow: hidden;
+  border-radius: 1rem;
 
   &.link {
     position: absolute;
