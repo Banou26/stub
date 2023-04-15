@@ -1,10 +1,15 @@
 import { css } from '@emotion/react'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 import { useQuery } from '@apollo/client'
 import { Link } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react'
+import ReactPlayer from 'react-player'
+import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
+import * as Slider from '@radix-ui/react-slider'
+import ReactTooltip from 'react-tooltip'
 
+import useNamespacedLocalStorage from '../../utils/use-local-storage'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 import MediaCard from '../../components/card'
 import { Media, MediaSeason, MediaSort } from '../../generated/graphql'
@@ -12,6 +17,7 @@ import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
 import Title from '../../components/title'
 import Title2 from '../../components/title2'
+import useScrub from '../../utils/use-scrub'
 
 
 import './index.css'
@@ -64,6 +70,16 @@ h2 {
   margin-top: 37.5rem;
   overflow: hidden;
   border-radius: 1rem;
+  user-select: none;
+
+  & > div:first-of-type > div:first-of-type {
+    grid-area: container;
+    margin-top: -5.90rem;
+    /* margin-top: -2.95rem; */
+    height: 50rem !important;
+    width: 60rem !important;
+    pointer-events: none;
+  }
 
   .title {
     grid-area: container;
@@ -72,22 +88,164 @@ h2 {
     margin: 2rem;
   }
 
-  iframe {
-    grid-area: container;
-    margin-top: -5.90rem;
-    height: 50rem;
-    width: 60rem;
-    pointer-events: none;
+  .volume-area-wrapper {
+    position: absolute;
+    bottom: 2rem;
+    left: 1rem;
+
+    display: grid;
+    height: 2rem;
+
+    .volume-area {
+      display: flex;
+      /* grid-template-columns: 4.8rem fit-content(0rem); */
+      /* height: 100%; */
+      cursor: pointer;
+      color: #fff;
+
+      .mute-button {
+        color: #fff;
+        border: none;
+        background: none;
+        height: 100%;
+        width: 4.8rem;
+        cursor: pointer;
+      }
+
+      .volume-panel {
+        display: inline-block;
+        width: 0;
+        /* width: 100%; */
+        /* width: 12rem; */
+        height: 100%;
+        -webkit-transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
+        transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
+        cursor: pointer;
+        outline: 0;
+
+        &.volume-control-hover {
+          width: 6rem;
+          /* width: 52px; */
+          margin-right: 3px;
+          -webkit-transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
+          transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
+        }
+
+        .slider {
+          height: 100%;
+          min-height: 36px;
+          position: relative;
+          overflow: hidden;
+
+          .slider-handle {
+            /* left: 40px; */
+            position: absolute;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            margin-top: -6px;
+            margin-left: -5px;
+            /* background: #fff; */
+          }
+          .slider-handle::before, .slider-handle::after {
+            content: "";
+            position: absolute;
+            display: block;
+            top: 50%;
+            left: 0;
+            height: 3px;
+            margin-top: -2px;
+            width: 64px;
+          }
+          .slider-handle::before {
+            left: -58px;
+            background: #fff;
+          }
+          .slider-handle::after {
+            left: 6px;
+            background: rgba(255,255,255,.2);
+          }
+        }
+      }
+    }
   }
 }
-
 `
 
 const hoverCardStyle = css`
   background-color: rgb(35, 35, 35);
-  width: 50rem;
-  height: 35rem;
+  width: 64rem;
+  height: 36rem;
 `
+
+const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
+  const [playerVolume, setPlayerVolume] = useState(1)
+
+  const volumeBarRef = useRef<HTMLDivElement>(null)
+  const [hiddenVolumeArea, setHiddenVolumeArea] = useState(true)
+  const useStoredValue = useNamespacedLocalStorage<{ volume: number, muted: boolean }>('fkn-media-player')
+  const [volume, setStoredVolume] = useStoredValue('volume', 1)
+  const [isMuted, setStoredMuted] = useStoredValue('muted', true)
+  const { scrub: volumeScrub, value: volumeScrubValue } = useScrub({ ref: volumeBarRef, defaultValue: volume })
+
+
+  useEffect(() => {
+    if (isMuted) {
+      setStoredMuted(isMuted)
+      if (volumeScrubValue) setStoredVolume(volumeScrubValue)
+      return
+    }
+    if (volumeScrubValue === undefined) return
+    setPlayerVolume(volumeScrubValue ** 2)
+    setStoredVolume(volumeScrubValue)
+    setStoredMuted(isMuted)
+  }, [volumeScrubValue, isMuted])
+
+  const toggleMuteButton = () => {
+    setStoredMuted(value => !value)
+  }
+
+  const hoverVolumeArea: React.DOMAttributes<HTMLDivElement>['onMouseOver'] = () => {
+    setHiddenVolumeArea(false)
+  }
+
+  const mouseOutBottom: React.DOMAttributes<HTMLDivElement>['onMouseOut'] = (ev) => {
+    setHiddenVolumeArea(true)
+  }
+
+  return (
+    <div css={hoverCardStyle} ref={ref} {...rest} className="title-hovercard">
+      <ReactPlayer
+        controls={false}
+        url={`https://www.youtube.com/watch?v=${media.trailers?.at(0)?.id}`}
+        loop={true}
+        playing={true}
+        volume={playerVolume}
+        muted={isMuted}
+        stopOnUnmount={true}
+      />
+      <div className="volume-area-wrapper" onMouseLeave={mouseOutBottom}>
+        <div className="volume-area" onMouseOver={hoverVolumeArea}>
+          <button className="mute-button" data-tip data-for="mute-button-tooltip" onClick={toggleMuteButton}>
+            {
+              isMuted ? <VolumeX/>
+              : (volume ?? 0) > 0.66 ? <Volume2/>
+              : (volume ?? 0) > 0.33 ? <Volume1/>
+              : (volume ?? 0) > 0 ? <Volume/>
+              : <VolumeX/>
+            }
+          </button>
+          <div ref={volumeBarRef} className={`volume-panel${hiddenVolumeArea ? '' : ' volume-control-hover'}`} onMouseDown={volumeScrub}>
+            <div className="slider">
+              <div className="slider-handle" style={{ left: `${(volume ?? 0) * 100}%` }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})
 
 export default () => {
   const currentSeason = useMemo(() => getCurrentSeason(), [])
@@ -132,6 +290,12 @@ export default () => {
     )
   , [Page?.media])
 
+  const onHoverCardMouseLeave = () => {
+    if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
+    refs.setReference(null)
+    setHoverCardMedia(undefined)
+  }
+
   return (
     <div css={style}>
       <div className="section">
@@ -151,51 +315,17 @@ export default () => {
             <ScrollArea.Corner className="ScrollAreaCorner" />
           </ScrollArea.Root>
           {
-            refs.reference.current && hoverCardMedia && (
-              <div
-                className="title-hovercard"
+            hoverCardMedia && (
+              <TitleHoverCard
+                media={hoverCardMedia}
                 ref={refs.setFloating}
-                onMouseLeave={() => refs.setReference(null)}
+                onMouseLeave={onHoverCardMouseLeave}
                 style={{
                   position: strategy,
                   top: y ?? 0,
                   left: x ?? 0
                 }}
-              >
-                {/* <div className="title">{hoverCardMedia.title?.romanized}</div> */}
-                {
-                  hoverCardMedia.trailers?.at(0)?.thumbnail && (
-                    <iframe
-                      width="3055"
-                      height="1441"
-                      src={`https://www.youtube.com/embed/${hoverCardMedia.trailers?.at(0)?.id}?${
-                        new URLSearchParams({
-                          autoplay: '1',
-                          mute: '0',
-                          loop: '1',
-                          controls: '0',
-                          showinfo: '0',
-                          modestbranding: '1',
-                          rel: '0'
-                        })
-                      }`}
-                      title="On-device Machine Learning With TensorFlow"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen={true}
-                    ></iframe>
-                  )
-                }
-                <div className="title">
-                  <Link to={getRoutePath(Route.TITLE, { uri: hoverCardMedia.uri })} className="title-text">
-                    {
-                      (hoverCardMedia.title?.romanized?.length ?? 0) > 30
-                        ? hoverCardMedia.title?.romanized?.slice(0, 30) + '...'
-                        : hoverCardMedia.title?.romanized
-                    }
-                  </Link>
-                </div>
-              </div>
+              />
             )
           }
         </div>

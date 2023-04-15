@@ -53,16 +53,15 @@ const style = css`
     margin: .5rem 0;
   }
 
-  .description {
+  /* .description {
     width: 100%;
     font-size: 1.7rem;
     word-wrap: break-word;
-  }
+  } */
 
   .information {
     width: 100%;
     text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
-    padding-top: 1rem;
     background:
       linear-gradient(
         0deg,
@@ -77,6 +76,8 @@ const style = css`
     align-items: center;
     text-align: center;
     padding: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 0;
     width: 25rem;
     color: white;
     font-size: 2.5rem;
@@ -127,7 +128,7 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
               ))
             }
           </div>
-        <div className="description">{media.shortDescription?.slice(0, 100)}{media.shortDescription?.length > 100 ? '...' : ''}</div>
+        {/* <div className="description">{media.shortDescription?.slice(0, 100)}{media.shortDescription?.length > 100 ? '...' : ''}</div> */}
       </div>
     </div>
   )
