@@ -57,6 +57,7 @@ h2 {
 
 .title-hovercard {
   display: grid;
+  grid-template:"container";
   height: 40rem;
   width: 60rem;
   background-color: rgb(35, 35, 35);
@@ -65,13 +66,14 @@ h2 {
   border-radius: 1rem;
 
   .title {
-    display: none;
+    grid-area: container;
     font-size: 2.5rem;
     font-weight: bold;
     margin: 2rem;
   }
 
   iframe {
+    grid-area: container;
     margin-top: -5.90rem;
     height: 50rem;
     width: 60rem;
@@ -101,8 +103,7 @@ export default () => {
   )
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top' })
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
-
-  console.log('hoverCardMedia', hoverCardMedia)
+  const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
   if (error) console.error(error)
 
@@ -112,11 +113,18 @@ export default () => {
         key={media.uri}
         media={media}
         onMouseEnter={e => {
-          refs.setReference(e.currentTarget)
-          setHoverCardMedia(media)
+          setHoverCardMedia(undefined)
+          refs.setReference(e.target)
+          setHoverCardTriggerTimeout(
+            window.setTimeout(() => {
+              if (refs.reference.current !== e.target) return
+              setHoverCardMedia(media)
+            }, 500)
+          )
         }}
         onMouseLeave={(e) => {
           if (refs.floating.current === e.relatedTarget  || refs.floating.current?.contains(e.relatedTarget)) return
+          if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
           refs.setReference(null)
           setHoverCardMedia(undefined)
         }}
@@ -143,7 +151,7 @@ export default () => {
             <ScrollArea.Corner className="ScrollAreaCorner" />
           </ScrollArea.Root>
           {
-            refs.reference.current && (
+            refs.reference.current && hoverCardMedia && (
               <div
                 className="title-hovercard"
                 ref={refs.setFloating}
@@ -154,13 +162,13 @@ export default () => {
                   left: x ?? 0
                 }}
               >
-                <div className="title">{hoverCardMedia?.title?.romanized}</div>
+                {/* <div className="title">{hoverCardMedia.title?.romanized}</div> */}
                 {
-                  hoverCardMedia?.trailers?.at(0)?.thumbnail && (
+                  hoverCardMedia.trailers?.at(0)?.thumbnail && (
                     <iframe
                       width="3055"
                       height="1441"
-                      src={`https://www.youtube.com/embed/${hoverCardMedia?.trailers?.at(0)?.id}?${
+                      src={`https://www.youtube.com/embed/${hoverCardMedia.trailers?.at(0)?.id}?${
                         new URLSearchParams({
                           autoplay: '1',
                           mute: '0',
@@ -178,6 +186,15 @@ export default () => {
                     ></iframe>
                   )
                 }
+                <div className="title">
+                  <Link to={getRoutePath(Route.TITLE, { uri: hoverCardMedia.uri })} className="title-text">
+                    {
+                      (hoverCardMedia.title?.romanized?.length ?? 0) > 30
+                        ? hoverCardMedia.title?.romanized?.slice(0, 30) + '...'
+                        : hoverCardMedia.title?.romanized
+                    }
+                  </Link>
+                </div>
               </div>
             )
           }
