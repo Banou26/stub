@@ -1,26 +1,22 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 import { useQuery } from '@apollo/client'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
-import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react'
+import { autoUpdate, useFloating } from '@floating-ui/react'
 import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
-import * as Slider from '@radix-ui/react-slider'
-import ReactTooltip from 'react-tooltip'
 
 import useNamespacedLocalStorage from '../../utils/use-local-storage'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
-import MediaCard from '../../components/card'
-import { Media, MediaSeason, MediaSort } from '../../generated/graphql'
+import { Media, MediaSort } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
-import Title from '../../components/title'
 import Title2 from '../../components/title2'
 import useScrub from '../../utils/use-scrub'
 
-
 import './index.css'
+import PreviewModal from './preview-modal'
 
 const style = css`
 
@@ -72,7 +68,7 @@ h2 {
   border-radius: 1rem;
   user-select: none;
 
-  & > div:first-of-type > div:first-of-type {
+  & > a > div:first-of-type {
     grid-area: container;
     margin-top: -5.90rem;
     /* margin-top: -2.95rem; */
@@ -181,10 +177,11 @@ const hoverCardStyle = css`
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const [playerVolume, setPlayerVolume] = useState(1)
+  const [isReady, setIsReady] = useState(false)
 
   const volumeBarRef = useRef<HTMLDivElement>(null)
   const [hiddenVolumeArea, setHiddenVolumeArea] = useState(true)
-  const useStoredValue = useNamespacedLocalStorage<{ volume: number, muted: boolean }>('fkn-media-player')
+  const useStoredValue = useNamespacedLocalStorage<{ volume: number, muted: boolean }>('title-hovercard')
   const [volume, setStoredVolume] = useStoredValue('volume', 1)
   const [isMuted, setStoredMuted] = useStoredValue('muted', true)
   const { scrub: volumeScrub, value: volumeScrubValue } = useScrub({ ref: volumeBarRef, defaultValue: volume })
@@ -214,17 +211,24 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
     setHiddenVolumeArea(true)
   }
 
+  const onReady = () => {
+    setIsReady(true)
+  }
+
   return (
     <div css={hoverCardStyle} ref={ref} {...rest} className="title-hovercard">
-      <ReactPlayer
-        controls={false}
-        url={`https://www.youtube.com/watch?v=${media.trailers?.at(0)?.id}`}
-        loop={true}
-        playing={true}
-        volume={playerVolume}
-        muted={isMuted}
-        stopOnUnmount={true}
-      />
+      <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
+        <ReactPlayer
+          onReady={onReady}
+          controls={false}
+          url={`https://www.youtube.com/watch?v=${media.trailers?.at(0)?.id}`}
+          loop={true}
+          playing={true}
+          volume={isReady ? playerVolume : undefined}
+          muted={isMuted}
+          stopOnUnmount={true}
+        />
+      </Link>
       <div className="volume-area-wrapper" onMouseLeave={mouseOutBottom}>
         <div className="volume-area" onMouseOver={hoverVolumeArea}>
           <button className="mute-button" data-tip data-for="mute-button-tooltip" onClick={toggleMuteButton}>
@@ -248,6 +252,7 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
 })
 
 export default () => {
+  const [searchParams] = useSearchParams()
   const currentSeason = useMemo(() => getCurrentSeason(), [])
   const { error, data: { Page } = {} } = useQuery(
     GET_CURRENT_SEASON,
@@ -342,6 +347,7 @@ export default () => {
           } */}
         </div>
       </div>
+      <PreviewModal/>
     </div>
   )
 }

@@ -120,13 +120,13 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
                   : media.title?.romanized
               }
             </Link>
-            {
+            {/* {
               mediaTargets.map(({ target, media }) => (
                 <a key={target.origin} href={media.url} className="origin-icon" target="_blank" rel="noopener noreferrer">
                   <img src={target.icon} alt=""/>
                 </a>
               ))
-            }
+            } */}
           </div>
         {/* <div className="description">{media.shortDescription?.slice(0, 100)}{media.shortDescription?.length > 100 ? '...' : ''}</div> */}
       </div>
