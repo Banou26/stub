@@ -63,6 +63,45 @@ animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
   }
 }
+
+.content {
+  margin: 2.5rem;
+  
+  .title {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    h2 {
+      font-size: 3rem;
+    }
+
+    .origins {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      margin-left: 1rem;
+
+      a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        img {
+          height: 3rem;
+          width: 3rem;
+        }
+      }
+    }
+  }
+
+  .description {
+    margin-top: 2.5rem;
+  }
+}
+
+
+
 `
 
 export const GET_MEDIA = gql(`
@@ -99,6 +138,21 @@ export const GET_MEDIA = gql(`
           popularity
           shortDescription
           description
+          handles {
+            nodes {
+              handler
+              origin
+              id
+              uri
+              url
+              title {
+                romanized
+              }
+              popularity
+              shortDescription
+              description
+            }
+          }
         }
       }
       trailers {
@@ -147,14 +201,21 @@ export default () => {
             <div className="trailer">
               <MinimalPlayer media={media} className="player"/>
             </div>
-            <h2>{media?.title?.romanized}</h2>
-            {
-              mediaTargets?.map(({ target, media }) => (
-                <a key={target.origin} href={media.url} className="origin-icon" target="_blank" rel="noopener noreferrer">
-                  <img src={target.icon} alt=""/>
-                </a>
-              ))
-            }
+            <div className="content">
+              <div className="title">
+                <h2>{media?.title?.romanized}</h2>
+                <div className="origins">
+                  {
+                    mediaTargets?.map(({ target, media }) => (
+                      <a key={target.origin} href={media.url} className="origin-icon" target="_blank" rel="noopener noreferrer">
+                        <img src={target.icon} alt=""/>
+                      </a>
+                    ))
+                  }
+                </div>
+              </div>
+              <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
+            </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
