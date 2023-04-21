@@ -7,7 +7,8 @@ export enum Route {
   WATCH = 'WATCH',
   // CATEGORY = 'CATEGORY',
   ANIME = 'ANIME',
-  ANIME_SEASON = 'ANIME_SEASON'
+  ANIME_SEASON = 'ANIME_SEASON',
+  TEST = 'TEST',
 }
 
 const Routes = {
@@ -19,6 +20,7 @@ const Routes = {
   // [Route.CATEGORY]: ({ category }: { category: Category }) => `/category/${category.toLowerCase()}`,
   [Route.ANIME]: () => `/anime`,
   [Route.ANIME_SEASON]: () => `/anime/season`,
+  [Route.TEST]: () => `/test`,
 }
 
 const RouterRoutes = {
@@ -30,6 +32,7 @@ const RouterRoutes = {
   // [Route.CATEGORY]: '/category/:category',
   [Route.ANIME]: `/anime`,
   [Route.ANIME_SEASON]: `/anime/season`,
+  [Route.TEST]: `/test`,
 }
 
 export const getRouterRoutePath =

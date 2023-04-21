@@ -7,6 +7,7 @@ import { getRouterRoutePath, Route } from './path'
 import Header from '../components/header'
 import Anime from './anime'
 import Season from './anime/season'
+import Test from './test'
 
 const contentStyle = css`
   padding-top: 6rem;
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: getRouterRoutePath(Route.ANIME_SEASON),
     element: wrapElement(<Season/>)
+  },
+  {
+    path: getRouterRoutePath(Route.TEST),
+    element: wrapElement(<Test/>)
   },
   {
     path: '/*',
