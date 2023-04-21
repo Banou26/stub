@@ -82,6 +82,7 @@ const style = css`
     color: white;
     font-size: 2.5rem;
     overflow: hidden;
+    pointer-events: none;
 
     .title-text, .author, .origin-icon {
       color: white;
