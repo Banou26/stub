@@ -17,6 +17,7 @@ import useScrub from '../../utils/use-scrub'
 
 import './index.css'
 import PreviewModal from './preview-modal'
+import { MinimalPlayer } from '../../components/minimal-player'
 
 const style = css`
 
@@ -76,103 +77,96 @@ h2 {
     width: 60rem !important;
     pointer-events: none;
   }
+}
+`
 
-  .title {
-    grid-area: container;
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin: 2rem;
-  }
+const hoverCardStyle = css`
+background-color: rgb(35, 35, 35);
+width: 64rem;
+height: 36rem;
 
-  .volume-area-wrapper {
-    position: absolute;
-    bottom: 2rem;
-    left: 1rem;
+.volume-area-wrapper {
+  position: absolute;
+  bottom: 2rem;
+  left: 1rem;
 
-    display: grid;
-    height: 2rem;
+  display: grid;
+  height: 2rem;
 
-    .volume-area {
-      display: flex;
-      /* grid-template-columns: 4.8rem fit-content(0rem); */
-      /* height: 100%; */
-      cursor: pointer;
+  .volume-area {
+    display: flex;
+    /* grid-template-columns: 4.8rem fit-content(0rem); */
+    /* height: 100%; */
+    cursor: pointer;
+    color: #fff;
+
+    .mute-button {
       color: #fff;
+      border: none;
+      background: none;
+      height: 100%;
+      width: 4.8rem;
+      cursor: pointer;
+    }
 
-      .mute-button {
-        color: #fff;
-        border: none;
-        background: none;
-        height: 100%;
-        width: 4.8rem;
-        cursor: pointer;
+    .volume-panel {
+      display: inline-block;
+      width: 0;
+      /* width: 100%; */
+      /* width: 12rem; */
+      height: 100%;
+      -webkit-transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
+      transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
+      cursor: pointer;
+      outline: 0;
+
+      &.volume-control-hover {
+        width: 6rem;
+        /* width: 52px; */
+        margin-right: 3px;
+        -webkit-transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
+        transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
       }
 
-      .volume-panel {
-        display: inline-block;
-        width: 0;
-        /* width: 100%; */
-        /* width: 12rem; */
+      .slider {
         height: 100%;
-        -webkit-transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
-        transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
-        cursor: pointer;
-        outline: 0;
+        min-height: 36px;
+        position: relative;
+        overflow: hidden;
 
-        &.volume-control-hover {
-          width: 6rem;
-          /* width: 52px; */
-          margin-right: 3px;
-          -webkit-transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
-          transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
+        .slider-handle {
+          /* left: 40px; */
+          position: absolute;
+          top: 50%;
+          width: 12px;
+          height: 12px;
+          border-radius: 6px;
+          margin-top: -6px;
+          margin-left: -5px;
+          /* background: #fff; */
         }
-
-        .slider {
-          height: 100%;
-          min-height: 36px;
-          position: relative;
-          overflow: hidden;
-
-          .slider-handle {
-            /* left: 40px; */
-            position: absolute;
-            top: 50%;
-            width: 12px;
-            height: 12px;
-            border-radius: 6px;
-            margin-top: -6px;
-            margin-left: -5px;
-            /* background: #fff; */
-          }
-          .slider-handle::before, .slider-handle::after {
-            content: "";
-            position: absolute;
-            display: block;
-            top: 50%;
-            left: 0;
-            height: 3px;
-            margin-top: -2px;
-            width: 64px;
-          }
-          .slider-handle::before {
-            left: -58px;
-            background: #fff;
-          }
-          .slider-handle::after {
-            left: 6px;
-            background: rgba(255,255,255,.2);
-          }
+        .slider-handle::before, .slider-handle::after {
+          content: "";
+          position: absolute;
+          display: block;
+          top: 50%;
+          left: 0;
+          height: 3px;
+          margin-top: -2px;
+          width: 64px;
+        }
+        .slider-handle::before {
+          left: -58px;
+          background: #fff;
+        }
+        .slider-handle::after {
+          left: 6px;
+          background: rgba(255,255,255,.2);
         }
       }
     }
   }
 }
-`
-
-const hoverCardStyle = css`
-  background-color: rgb(35, 35, 35);
-  width: 64rem;
-  height: 36rem;
 `
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
@@ -185,7 +179,6 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   const [volume, setStoredVolume] = useStoredValue('volume', 1)
   const [isMuted, setStoredMuted] = useStoredValue('muted', true)
   const { scrub: volumeScrub, value: volumeScrubValue } = useScrub({ ref: volumeBarRef, defaultValue: volume })
-
 
   useEffect(() => {
     if (isMuted) {
@@ -214,6 +207,16 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   const onReady = () => {
     setIsReady(true)
   }
+
+  return (
+    <MinimalPlayer
+      media={media}
+      redirectTo={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+      ref={ref}
+      {...rest}
+      className="title-hovercard"
+    />
+  )
 
   return (
     <div css={hoverCardStyle} ref={ref} {...rest} className="title-hovercard">
