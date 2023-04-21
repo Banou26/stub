@@ -31,7 +31,21 @@ animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   margin: 0 1rem;
 }
 
-.title-hovercard {
+.trailer {
+  &:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    height: 67.6rem;
+    background: linear-gradient(0deg, #181818, transparent 20%);
+    pointer-events: none;
+  }
+  .volume-area-wrapper {
+    z-index: 100;
+  }
+}
+
+.player {
   position: relative;
   display: grid;
   grid-template:"container";
@@ -43,16 +57,10 @@ animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 
   & > div:first-of-type {
     grid-area: container;
-    height: 67.5rem !important;
+    height: 89.25rem !important;
     width: 100% !important;
+    margin-top: -11rem;
     pointer-events: none;
-    &:after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      bottom: -1rem;
-      background: linear-gradient(0deg, #181818, transparent 20%);
-    }
   }
 }
 `
@@ -136,7 +144,9 @@ export default () => {
         <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/>
         <Dialog.Content asChild={true}>
           <div css={style}>
-            <MinimalPlayer media={media} className="title-hovercard"/>
+            <div className="trailer">
+              <MinimalPlayer media={media} className="player"/>
+            </div>
             <h2>{media?.title?.romanized}</h2>
             {
               mediaTargets?.map(({ target, media }) => (

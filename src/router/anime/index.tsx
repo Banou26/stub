@@ -61,8 +61,8 @@ h2 {
 .title-hovercard {
   display: grid;
   grid-template:"container";
-  height: 40rem;
-  width: 60rem;
+  height: 39.25rem;
+  width: 70rem;
   background-color: rgb(35, 35, 35);
   margin-top: 37.5rem;
   overflow: hidden;
@@ -71,10 +71,10 @@ h2 {
 
   & > a > div:first-of-type {
     grid-area: container;
-    margin-top: -5.90rem;
+    margin-top: -10.3rem;
     /* margin-top: -2.95rem; */
-    height: 50rem !important;
-    width: 60rem !important;
+    height: 60rem !important;
+    width: 70rem !important;
     pointer-events: none;
   }
 }
