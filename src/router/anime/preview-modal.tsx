@@ -163,6 +163,24 @@ export const GET_MEDIA = gql(`
         url
         thumbnail
       }
+      airingSchedule {
+        edges {
+          node {
+            airingAt
+            episode
+            uri
+            media {
+              handler
+              origin
+              id
+              uri
+              url
+            }
+            mediaUri
+            timeUntilAiring
+          }
+        }
+      }
     }
   }
 `)
@@ -215,6 +233,23 @@ export default () => {
                 </div>
               </div>
               <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
+              <div>
+                {
+                  media?.airingSchedule?.edges.map(({ node }) => {
+                    const airingAt = new Date(node.airingAt * 1000)
+                    const airingAtString = airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
+                    const relativeTime = new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
+                    return (
+                      <div key={node.uri}>
+                        <span>Episode {node.episode}</span>
+                        {', '}
+                        {/* <span>{airingAtString}</span> */}
+                        <span>{relativeTime}</span>
+                      </div>
+                    )
+                  })
+                }
+              </div>
             </div>
           </div>
         </Dialog.Content>
