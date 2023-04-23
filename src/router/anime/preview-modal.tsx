@@ -24,8 +24,8 @@ position: fixed;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
-max-height: 85vh;
 animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+height: min-content;
 
 .origin-icon {
   margin: 0 1rem;
