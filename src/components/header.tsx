@@ -29,7 +29,7 @@ const style = css`
   user-select: none;
   padding: 0 4rem;
 
-  z-index: 100;
+  /* z-index: 100; */
 
   .left {
     display: grid;
