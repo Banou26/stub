@@ -105,8 +105,8 @@ height: min-content;
 `
 
 export const GET_MEDIA = gql(`
-  query GET_MEDIA($uri: String!) {
-    Media(uri: $uri) {
+  query GET_MEDIA($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
       handler
       origin
       id

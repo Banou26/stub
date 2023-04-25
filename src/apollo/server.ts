@@ -9,7 +9,7 @@ const { server, link } = makeServer({
     // @ts-expect-error
     fetch: (...args) => fetch(...args)
   }),
-  resolvers: [
+  resolversList: [
     ...targets.map(({ resolvers }) => resolvers)
   ]
 })
