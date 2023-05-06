@@ -99,10 +99,10 @@ const style = css`
 export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const mediaTargets =
     targets
-      .filter(target => media.handles.nodes.find((handle) => handle.origin === target.origin))
+      .filter(target => media.handles.edges.find((handle) => handle.node.origin === target.origin))
       .map(target => ({
         target,
-        media: media.handles.nodes.find((handle) => handle.origin === target.origin)
+        media: media.handles.edges.find((handle) => handle.node.origin === target.origin)
       }))
 
   return (

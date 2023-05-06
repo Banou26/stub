@@ -81,18 +81,22 @@ export const GET_CURRENT_SEASON = gql(`
         }
         bannerImage
         handles {
-          nodes {
-            handler
-            origin
-            id
-            uri
-            url
-            title {
-              romanized
+          edges {
+            node {
+              handler
+              origin
+              id
+              uri
+              url
+              title {
+                romanized
+                english
+                native
+              }
+              popularity
+              shortDescription
+              description
             }
-            popularity
-            shortDescription
-            description
           }
         }
         trailers {

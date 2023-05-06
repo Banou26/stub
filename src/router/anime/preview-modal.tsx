@@ -126,31 +126,35 @@ export const GET_MEDIA = gql(`
       }
       bannerImage
       handles {
-        nodes {
-          handler
-          origin
-          id
-          uri
-          url
-          title {
-            romanized
-          }
-          popularity
-          shortDescription
-          description
-          handles {
-            nodes {
+        edges {
+          node {
+            handler
+            origin
+            id
+            uri
+            url
+            title {
+              romanized
+            }
+            trailers {
               handler
               origin
               id
               uri
               url
-              title {
-                romanized
+              thumbnail
+            }
+            popularity
+            shortDescription
+            description
+            handles {
+              nodes {
+                handler
+                origin
+                id
+                uri
+                url
               }
-              popularity
-              shortDescription
-              description
             }
           }
         }
@@ -192,14 +196,21 @@ export default () => {
   const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
   console.log('media', media)
 
+  if (error) {
+    console.log('preview modal error', error)
+    console.error(error)
+  }
+
   const mediaTargets =
     media &&
     targets
-      .filter(target => media.handles.nodes.find((handle) => handle.origin === target.origin))
+      .filter(target => media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node)
       .map(target => ({
         target,
-        media: media.handles.nodes.find((handle) => handle.origin === target.origin)
+        media: media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node
       }))
+
+  console.log('mediaTargets', mediaTargets)
 
   const onOverlayClick = () => {
     const { details, ...rest } = Object.fromEntries(searchParams.entries())
@@ -225,7 +236,7 @@ export default () => {
                 <div className="origins">
                   {
                     mediaTargets?.map(({ target, media }) => (
-                      <a key={target.origin} href={media.url} className="origin-icon" target="_blank" rel="noopener noreferrer">
+                      <a key={target.origin} href={media.url ?? target.originUrl} className="origin-icon" target="_blank" rel="noopener noreferrer">
                         <img src={target.icon} alt=""/>
                       </a>
                     ))
@@ -238,7 +249,10 @@ export default () => {
                   media?.airingSchedule?.edges.map(({ node }) => {
                     const airingAt = new Date(node.airingAt * 1000)
                     const airingAtString = airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
-                    const relativeTime = new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
+                    const relativeTime =
+                      !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
+                        ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
+                        : undefined
                     return (
                       <div key={node.uri}>
                         <span>Episode {node.episode}</span>

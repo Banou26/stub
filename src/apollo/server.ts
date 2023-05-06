@@ -11,7 +11,8 @@ const { server, link } = makeServer({
   }),
   resolversList: [
     ...targets.map(({ resolvers }) => resolvers)
-  ]
+  ],
+  originPriority: ['anilist', 'mal']
 })
 
 server.start()
