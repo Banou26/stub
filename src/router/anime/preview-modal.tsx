@@ -7,7 +7,7 @@ import './preview-modal.css'
 import { gql } from '../../generated'
 import { overlayStyle } from '../../components/modal'
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
 
@@ -98,10 +98,61 @@ height: min-content;
   .description {
     margin-top: 2.5rem;
   }
+
+  .episodes {
+    margin-top: 4rem;
+    border-top: .1rem solid rgba(255, 255, 255, .1);
+
+    .episode {
+      display: grid;
+      grid-template-columns: 5rem auto 10rem;
+      height: 10rem;
+      border-bottom: .1rem solid rgba(255, 255, 255, .1);
+      color: #fff;
+      text-decoration: none;
+
+
+      &:hover {
+        .title {
+          text-decoration: underline;
+        }
+      }
+
+      .information, .episode-number, .date {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .information {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-left: 2.5rem;
+        /* justify-content: start; */
+
+        .title {
+          margin-right: auto;
+          font-size: 2rem;
+        }
+
+        .description {
+          display: flex;
+          min-height: 2rem;
+          font-size: 2rem;
+        }
+      }
+
+      .episode-number {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+        vertical-align: middle;
+      }
+    }
+  }
 }
-
-
-
 `
 
 export const GET_MEDIA = gql(`
@@ -182,6 +233,13 @@ export const GET_MEDIA = gql(`
             }
             mediaUri
             timeUntilAiring
+            thumbnail
+            title {
+              romanized
+              english
+              native
+            }
+            description
           }
         }
       }
@@ -244,7 +302,7 @@ export default () => {
                 </div>
               </div>
               <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
-              <div>
+              <div className="episodes">
                 {
                   media?.airingSchedule?.edges.map(({ node }) => {
                     const airingAt = new Date(node.airingAt * 1000)
@@ -253,13 +311,29 @@ export default () => {
                       !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
                         ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
                         : undefined
+
+                    console.log('relativeTime', relativeTime)
+
+                    if (node.timeUntilAiring > 0) return undefined
+
                     return (
-                      <div key={node.uri}>
-                        <span>Episode {node.episode}</span>
-                        {', '}
-                        {/* <span>{airingAtString}</span> */}
-                        <span>{relativeTime}</span>
-                      </div>
+                      <Link
+                        key={node.uri}
+                        className="episode"
+                        to={getRoutePath(Route.WATCH, { uri: `${mediaUri}-${node.episode}` })}
+                      >
+                        <div className="episode-number">{node.episode}</div>
+                        {
+                          node.thumbnail
+                            ? <img src={node.thumbnail} alt="" className="thumbnail"/>
+                            : undefined
+                        }
+                        <div className="information">
+                          <div className="title">{node.title?.romanized}</div>
+                          <div className="description">{node.description}</div>
+                        </div>
+                        <div className="date">{relativeTime}</div>
+                      </Link>
                     )
                   })
                 }
