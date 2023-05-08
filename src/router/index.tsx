@@ -8,6 +8,7 @@ import Header from '../components/header'
 import Anime from './anime'
 import Season from './anime/season'
 import Test from './test'
+import Watch from './watch'
 
 const contentStyle = css`
   padding-top: 6rem;
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: getRouterRoutePath(Route.ANIME_SEASON),
     element: wrapElement(<Season/>)
+  },
+  {
+    path: getRouterRoutePath(Route.WATCH),
+    element: wrapElement(<Watch/>)
   },
   {
     path: getRouterRoutePath(Route.TEST),

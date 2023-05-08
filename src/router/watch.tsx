@@ -373,7 +373,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
           libassWorkerUrl={jassubWorkerUrl}
         />
       </div>
-      {
+      {/* {
         size === undefined
           ? (
             <div className="player-overlay">
@@ -381,7 +381,7 @@ export default ({ uri, titleUri, sourceUri }: { uri: Uri, titleUri: Uri, sourceU
             </div>
           )
           : undefined
-      }
+      } */}
       <div
         className="description"
         dangerouslySetInnerHTML={{ __html: descriptionHtml }}

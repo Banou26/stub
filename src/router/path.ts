@@ -28,7 +28,7 @@ const RouterRoutes = {
   [Route.AUTH]: '/auth/:name',
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
-  [Route.WATCH]: '/watch/:uri/:titleUri/:sourceUri',
+  [Route.WATCH]: '/watch/:uri',
   // [Route.CATEGORY]: '/category/:category',
   [Route.ANIME]: `/anime`,
   [Route.ANIME_SEASON]: `/anime/season`,
