@@ -287,7 +287,7 @@ export default () => {
             window.setTimeout(() => {
               if (refs.reference.current !== e.target) return
               setHoverCardMedia(media)
-            }, 500)
+            }, 250)
           )
         }}
         onMouseLeave={(e) => {
