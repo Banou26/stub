@@ -13,8 +13,9 @@ import { Route, getRoutePath } from '../path'
 
 const style = css`
 overflow: auto;
-position: fixed;
-inset: 0;
+${overlayStyle}
+/* position: fixed;
+inset: 0; */
 display: flex;
 justify-content: center;
 /* align-items: center; */
@@ -289,7 +290,9 @@ export default () => {
 
   console.log('mediaTargets', mediaTargets)
 
-  const onOverlayClick = () => {
+  const onOverlayClick = (ev) => {
+    console.log('ev', ev)
+    if (ev.target !== ev.currentTarget) return
     const { details, ...rest } = Object.fromEntries(searchParams.entries())
     setSearchParams(rest)
   }
@@ -301,9 +304,9 @@ export default () => {
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
       <Dialog.Portal className="foo">
-        <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/>
+        {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
         <Dialog.Content asChild={true}>
-          <div css={style}>
+          <div css={style} onClick={onOverlayClick}>
             <div className="modal">
               <div className="trailer">
                 <MinimalPlayer media={media} className="player"/>
