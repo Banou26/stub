@@ -237,11 +237,11 @@ export const GET_MEDIA = gql(`
         url
         thumbnail
       }
-      airingSchedule {
+      episodes {
         edges {
           node {
             airingAt
-            episode
+            number
             uri
             media {
               handler
@@ -327,7 +327,7 @@ export default () => {
                 <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
                 <div className="episodes">
                   {
-                    media?.airingSchedule?.edges.map(({ node }) => {
+                    media?.episodes?.edges.map(({ node }) => {
                       const airingAt = new Date(node.airingAt * 1000)
                       const airingAtString = airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
                       const relativeTime =
@@ -343,9 +343,9 @@ export default () => {
                         <Link
                           key={node.uri}
                           className="episode"
-                          to={getRoutePath(Route.WATCH, { uri: `${mediaUri}-${node.episode}` })}
+                          to={getRoutePath(Route.WATCH, { episodeUri: `${mediaUri}-${node.number}` })}
                         >
-                          <div className="episode-number">{node.episode}</div>
+                          <div className="episode-number">{node.number}</div>
                           {
                             node.thumbnail
                               ? <img src={node.thumbnail} alt="" className="thumbnail"/>

@@ -94,13 +94,11 @@ export enum HandleRelation {
 }
 
 /**
- * Media is a type of handle that represents a media file.
+ * Media is a type of handle that represents a media.
  * It generally represents a Movie, TV Show, Game, Package, ect...
  */
 export type Media = Handle & {
   __typename?: 'Media';
-  /** The media's entire airing schedule */
-  airingSchedule?: Maybe<MediaAiringScheduleConnection>;
   /** The average score of the media */
   averageScore?: Maybe<Scalars['Int']>;
   /** The banner image of the media */
@@ -111,6 +109,7 @@ export type Media = Handle & {
   description?: Maybe<Scalars['String']>;
   /** The last official release date of the media */
   endDate?: Maybe<FuzzyDate>;
+  episodes?: Maybe<MediaEpisodeConnection>;
   /** External links to another site related to the media */
   externalLinks?: Maybe<Array<Maybe<MediaExternalLink>>>;
   format?: Maybe<MediaFormat>;
@@ -146,18 +145,7 @@ export type Media = Handle & {
 
 
 /**
- * Media is a type of handle that represents a media file.
- * It generally represents a Movie, TV Show, Game, Package, ect...
- */
-export type MediaAiringScheduleArgs = {
-  notYetAired?: InputMaybe<Scalars['Boolean']>;
-  page?: InputMaybe<Scalars['Int']>;
-  perPage?: InputMaybe<Scalars['Int']>;
-};
-
-
-/**
- * Media is a type of handle that represents a media file.
+ * Media is a type of handle that represents a media.
  * It generally represents a Movie, TV Show, Game, Package, ect...
  */
 export type MediaDescriptionArgs = {
@@ -166,7 +154,18 @@ export type MediaDescriptionArgs = {
 
 
 /**
- * Media is a type of handle that represents a media file.
+ * Media is a type of handle that represents a media.
+ * It generally represents a Movie, TV Show, Game, Package, ect...
+ */
+export type MediaEpisodesArgs = {
+  notYetAired?: InputMaybe<Scalars['Boolean']>;
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
+};
+
+
+/**
+ * Media is a type of handle that represents a media.
  * It generally represents a Movie, TV Show, Game, Package, ect...
  */
 export type MediaShortDescriptionArgs = {
@@ -181,7 +180,7 @@ export type MediaAiringSchedule = Handle & {
   /** The description of the episode */
   description?: Maybe<Scalars['String']>;
   /** The airing episode number */
-  episode: Scalars['Int'];
+  episodeNumber: Scalars['Int'];
   handler: Scalars['String'];
   handles: HandleConnection;
   id: Scalars['String'];
@@ -246,6 +245,46 @@ export type MediaEdge = HandleEdge & {
   /** The relation between the two handles */
   handleRelationType: HandleRelation;
   node: Media;
+};
+
+export type MediaEpisode = Handle & {
+  __typename?: 'MediaEpisode';
+  /** The time the episode airs at */
+  airingAt: Scalars['Float'];
+  /** The description of the episode */
+  description?: Maybe<Scalars['String']>;
+  handler: Scalars['String'];
+  handles: HandleConnection;
+  id: Scalars['String'];
+  /** The associate media of the episode */
+  media?: Maybe<Media>;
+  /** The associate media uri of the episode */
+  mediaUri: Scalars['String'];
+  /** The episode number */
+  number: Scalars['Int'];
+  origin: Scalars['String'];
+  /** The url for the thumbnail image of the video */
+  thumbnail?: Maybe<Scalars['String']>;
+  /** Seconds until episode starts airing */
+  timeUntilAiring: Scalars['Float'];
+  /** The title of the episode */
+  title?: Maybe<MediaTitle>;
+  uri: Scalars['Uri'];
+  url?: Maybe<Scalars['String']>;
+};
+
+export type MediaEpisodeConnection = {
+  __typename?: 'MediaEpisodeConnection';
+  edges?: Maybe<Array<Maybe<MediaEpisodeEdge>>>;
+  nodes?: Maybe<Array<Maybe<MediaEpisode>>>;
+  /** The pagination information */
+  pageInfo?: Maybe<PageInfo>;
+};
+
+/** MediaEpisode connection edge */
+export type MediaEpisodeEdge = {
+  __typename?: 'MediaEpisodeEdge';
+  node?: Maybe<MediaEpisode>;
 };
 
 /** An external link to another site related to the media or its properties */
@@ -610,7 +649,7 @@ export type Get_MediaQueryVariables = Exact<{
 }>;
 
 
-export type Get_MediaQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, bannerImage?: Array<string | null> | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null } | null, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', nodes: Array<{ __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null }> } } }> }, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, airingSchedule?: { __typename?: 'MediaAiringScheduleConnection', edges?: Array<{ __typename?: 'MediaAiringScheduleEdge', node?: { __typename?: 'MediaAiringSchedule', airingAt: number, episode: number, uri: any, mediaUri: string, timeUntilAiring: number, thumbnail?: string | null, description?: string | null, media?: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null } | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } | null } | null> | null } | null } | null };
+export type Get_MediaQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, bannerImage?: Array<string | null> | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null } | null, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', nodes: Array<{ __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null }> } } }> }, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, episodes?: { __typename?: 'MediaEpisodeConnection', edges?: Array<{ __typename?: 'MediaEpisodeEdge', node?: { __typename?: 'MediaEpisode', airingAt: number, number: number, uri: any, mediaUri: string, timeUntilAiring: number, thumbnail?: string | null, description?: string | null, media?: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null } | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } | null } | null> | null } | null } | null };
 
 export type Get_Current_SeasonQueryVariables = Exact<{
   season: MediaSeason;
@@ -622,5 +661,5 @@ export type Get_Current_SeasonQueryVariables = Exact<{
 export type Get_Current_SeasonQuery = { __typename?: 'Query', Page?: { __typename?: 'Page', media?: Array<{ __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, bannerImage?: Array<string | null> | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } }> }, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null }> | null } | null };
 
 
-export const Get_MediaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GET_MEDIA"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"origin"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Media"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"uri"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uri"}}},{"kind":"Argument","name":{"kind":"Name","value":"origin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"origin"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"airingSchedule"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"airingAt"}},{"kind":"Field","name":{"kind":"Name","value":"episode"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mediaUri"}},{"kind":"Field","name":{"kind":"Name","value":"timeUntilAiring"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<Get_MediaQuery, Get_MediaQueryVariables>;
+export const Get_MediaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GET_MEDIA"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"origin"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Media"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"uri"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uri"}}},{"kind":"Argument","name":{"kind":"Name","value":"origin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"origin"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"episodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"airingAt"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mediaUri"}},{"kind":"Field","name":{"kind":"Name","value":"timeUntilAiring"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<Get_MediaQuery, Get_MediaQueryVariables>;
 export const Get_Current_SeasonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GET_CURRENT_SEASON"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"season"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MediaSeason"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"seasonYear"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MediaSort"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Page"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"media"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"season"},"value":{"kind":"Variable","name":{"kind":"Name","value":"season"}}},{"kind":"Argument","name":{"kind":"Name","value":"seasonYear"},"value":{"kind":"Variable","name":{"kind":"Name","value":"seasonYear"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handler"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Get_Current_SeasonQuery, Get_Current_SeasonQueryVariables>;
