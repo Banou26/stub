@@ -175,7 +175,7 @@ left: 50%; */
 `
 
 export const GET_MEDIA = gql(`
-  query GET_MEDIA($uri: String!, $origin: String, $id: String) {
+  query GetMedia($uri: String!, $origin: String, $id: String) {
     Media(uri: $uri, origin: $origin, id: $id) {
       handler
       origin
@@ -270,7 +270,7 @@ export const GET_MEDIA = gql(`
 export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
-  console.log('mediaUri', mediaUri)
+  // console.log('mediaUri', mediaUri)
   const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
   console.log('media', media)
 
@@ -288,7 +288,7 @@ export default () => {
         media: media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node
       }))
 
-  console.log('mediaTargets', mediaTargets)
+  // console.log('mediaTargets', mediaTargets)
 
   const onOverlayClick = (ev) => {
     console.log('ev', ev)
@@ -299,7 +299,7 @@ export default () => {
 
   if (!media) return null
 
-  console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
+  // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
@@ -335,7 +335,7 @@ export default () => {
                           ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
                           : undefined
 
-                      console.log('relativeTime', relativeTime)
+                      // console.log('relativeTime', relativeTime)
 
                       if (node.timeUntilAiring > 0) return undefined
 
