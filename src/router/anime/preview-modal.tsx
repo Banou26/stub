@@ -6,7 +6,7 @@ import { targets } from 'laserr'
 // import './preview-modal.css'
 import { gql } from '../../generated'
 import { overlayStyle } from '../../components/modal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
@@ -273,6 +273,10 @@ export default () => {
   // console.log('mediaUri', mediaUri)
   const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
   console.log('media', media)
+  useEffect(() => {
+    if (!(media && media.uri !== mediaUri)) return
+    setSearchParams({ details: media.uri })
+  }, [media, mediaUri])
 
   if (error) {
     console.log('preview modal error', error)
@@ -291,7 +295,6 @@ export default () => {
   // console.log('mediaTargets', mediaTargets)
 
   const onOverlayClick = (ev) => {
-    console.log('ev', ev)
     if (ev.target !== ev.currentTarget) return
     const { details, ...rest } = Object.fromEntries(searchParams.entries())
     setSearchParams(rest)
@@ -303,7 +306,7 @@ export default () => {
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
-      <Dialog.Portal className="foo">
+      <Dialog.Portal>
         {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
         <Dialog.Content asChild={true}>
           <div css={style} onClick={onOverlayClick}>
