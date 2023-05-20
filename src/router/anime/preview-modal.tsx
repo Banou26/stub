@@ -205,6 +205,8 @@ export const GET_MEDIA = gql(`
             url
             title {
               romanized
+              english
+              native
             }
             trailers {
               handler
@@ -224,6 +226,31 @@ export const GET_MEDIA = gql(`
                 id
                 uri
                 url
+              }
+            }
+            episodes {
+              edges {
+                node {
+                  airingAt
+                  number
+                  uri
+                  media {
+                    handler
+                    origin
+                    id
+                    uri
+                    url
+                  }
+                  mediaUri
+                  timeUntilAiring
+                  thumbnail
+                  title {
+                    romanized
+                    english
+                    native
+                  }
+                  description
+                }
               }
             }
           }
@@ -266,6 +293,8 @@ export const GET_MEDIA = gql(`
   }
 `)
 
+
+// http://localhost:4560/test?details=scannarr%3AbWFsOjQ2NTY5LGFuaWxpc3Q6MTI4ODkz
 
 export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
