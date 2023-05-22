@@ -267,9 +267,13 @@ export const GET_MEDIA = gql(`
       episodes {
         edges {
           node {
+            handler
+            origin
+            id
+            uri
+            url
             airingAt
             number
-            uri
             media {
               handler
               origin
@@ -384,7 +388,13 @@ export default () => {
                               : undefined
                           }
                           <div className="information">
-                            <div className="title">{node.title?.romanized}</div>
+                            <div className="title">
+                              {
+                                node.title?.romanized
+                                ?? node.title?.english
+                                ?? node.title?.native
+                              }
+                            </div>
                             {
                               node.description
                                 ? <div className="description">{node.description}</div>
