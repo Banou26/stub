@@ -152,11 +152,14 @@ left: 50%; */
           .title {
             margin-right: auto;
             font-size: 2rem;
+            font-weight: bold;
           }
 
           .description {
             display: flex;
-            font-size: 2rem;
+            font-size: 1.5rem;
+            margin-right: auto;
+            color: rgba(255, 255, 255, .8);
           }
         }
 
