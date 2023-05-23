@@ -382,7 +382,7 @@ export default () => {
                         <Link
                           key={node.uri}
                           className="episode"
-                          to={getRoutePath(Route.WATCH, { episodeUri: `${mediaUri}-${node.number}` })}
+                          to={getRoutePath(Route.WATCH, { episodeUri: node.uri })}
                         >
                           <div className="episode-number">{node.number}</div>
                           {
