@@ -113,7 +113,7 @@ left: 50%; */
       }
     }
 
-    .description {
+    & > .description {
       margin-top: 2.5rem;
     }
 
@@ -147,6 +147,7 @@ left: 50%; */
           flex-direction: column;
           align-items: center;
           padding-left: 2.5rem;
+          padding-top: 1rem;
           /* justify-content: start; */
 
           .title {
@@ -160,6 +161,7 @@ left: 50%; */
             font-size: 1.5rem;
             margin-right: auto;
             color: rgba(255, 255, 255, .8);
+            margin-top: 1rem;
           }
         }
 
