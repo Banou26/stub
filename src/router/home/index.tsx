@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { redirect } from 'react-router-dom'
+import { redirect, Navigate } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
 import { useObservable } from 'react-use'
 
@@ -39,10 +39,7 @@ padding: 5rem;
 `
 
 export default () => {
-  useEffect(() => {
-    redirect(getRoutePath(Route.ANIME))
-  }, [])
-  return null
+  return <Navigate to={getRoutePath(Route.ANIME)}/>
   // const { data: movies } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['MOVIE'], latest: true }))
   // const { data: shows } = useFetch<TitleHandle[]>(() => searchTitles({ categories: ['SHOW'], latest: true }))
   // const movie$ = useMemo(() => searchSeries({ categories: ['MOVIE'], latest: true }), [])
