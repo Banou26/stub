@@ -64,10 +64,10 @@ const style = css`
 const root = createRoot(document.body.appendChild(document.createElement('div')))
 
 root.render(
-  <StrictMode>
+  // <StrictMode>
     <ApolloProvider client={client}>
       <Global styles={style}/>
       <Mount/>
     </ApolloProvider>
-  </StrictMode>
+  // </StrictMode>
 )
