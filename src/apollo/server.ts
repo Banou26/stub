@@ -9,9 +9,10 @@ const { server, link } = makeServer({
     // @ts-expect-error
     fetch: (...args) => fetch(...args)
   }),
-  resolversList: [
-    ...targets.map(({ resolvers }) => resolvers)
-  ],
+  // resolversList: [
+  //   ...targets.map(({ resolvers }) => resolvers)
+  // ],
+  origins: targets,
   originPriority: ['anilist', 'mal', 'cr']
 })
 
