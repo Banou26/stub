@@ -117,6 +117,30 @@ left: 50%; */
       margin-top: 2.5rem;
     }
 
+    .metadata-only {
+      display: flex;
+      flex-direction: column;
+      margin: 4rem auto;
+      margin-bottom: 0;
+      width: fit-content;
+
+      padding: 1rem;
+      background-color: rgb(190, 45, 45);
+      border-radius: 1rem;
+
+      background-color: rgb(190, 45, 45);
+      border: .1rem solid #f44336;
+      border-radius: .6rem;
+
+      div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 2rem;
+      }
+    }
+
     .episodes {
       margin-top: 4rem;
       border-top: .1rem solid rgba(255, 255, 255, .1);
@@ -303,6 +327,19 @@ export const GET_MEDIA = gql(`
 `)
 
 
+export const GET_ORIGINS = gql(`
+  query GetOrigins($ids: [String!]) {
+    Page {
+      origin(ids: $ids) {
+        id
+        name
+        official
+        metadataOnly
+      }
+    }
+  }
+`)
+
 // http://localhost:4560/test?details=scannarr%3AbWFsOjQ2NTY5LGFuaWxpc3Q6MTI4ODkz
 
 export default () => {
@@ -310,7 +347,11 @@ export default () => {
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
   const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
+  const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
+  console.log('foundSources', foundSources)
+  const { error: error2, data: { Page: originPage } = {} } = useQuery(GET_ORIGINS, { variables: { ids: foundSources }, skip: !foundSources })
   console.log('media', media)
+  console.log('originPage', originPage)
   useEffect(() => {
     if (!(media && media.uri !== mediaUri)) return
     setSearchParams({ details: media.uri })
@@ -319,6 +360,11 @@ export default () => {
   if (error) {
     console.log('preview modal error', error)
     console.error(error)
+  }
+
+  if (error2) {
+    console.log('preview modal error', error2)
+    console.error(error2)
   }
 
   const mediaTargets =
@@ -341,6 +387,8 @@ export default () => {
   if (!media) return null
 
   // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
+
+  const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
@@ -366,6 +414,16 @@ export default () => {
                   </div>
                 </div>
                 <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
+                {
+                  onlyMetadataOrigins
+                    ? (
+                      <div className="metadata-only">
+                        <div>No data sources found to playback the episodes</div>
+                        <div>Click here to search for data source plugins</div>
+                      </div>
+                    )
+                    : undefined
+                }
                 <div className="episodes">
                   {
                     media?.episodes?.edges.map(({ node }) => {
