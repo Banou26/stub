@@ -385,7 +385,35 @@ export default () => {
     setSearchParams(rest)
   }
 
-  if (!media) return null
+  if (!media) {
+    return (
+      <Dialog.Root open={Boolean(mediaUri)}>
+        <Dialog.Portal>
+          {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
+          <Dialog.Content asChild={true}>
+            <div css={style} onClick={onOverlayClick}>
+              <div className="modal">
+                <div className="trailer">
+                  {/* <MinimalPlayer className="player"/> */}
+                </div>
+                <div className="content">
+                  <div className="title">
+                    <h2>Loading title...</h2>
+                    <div className="origins">
+                    </div>
+                  </div>
+                  <div className="description">Loading description...</div>
+                  <div className="episodes">
+                    Loading episodes....
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    )
+  }
 
   // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
 
@@ -419,7 +447,7 @@ export default () => {
                   onlyMetadataOrigins
                     ? (
                       <div className="metadata-only">
-                        <div>No data sources found to playback the episodes</div>
+                        <div>No sources found with playback data for the episodes</div>
                         <div>Click here to search for data source plugins</div>
                       </div>
                     )
