@@ -453,6 +453,18 @@ export default () => {
                     )
                     : undefined
                 }
+                {
+                  // todo: implement this
+                  // only extension sources without extension installed
+                  false
+                    ? (
+                      <div className="metadata-only">
+                        <div>The only episode sources require the webextension to be installed</div>
+                        <div>Click here to install the webextension</div>
+                      </div>
+                    )
+                    : undefined
+                }
                 <div className="episodes">
                   {
                     media?.episodes?.edges.map(({ node }) => {
