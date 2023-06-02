@@ -152,6 +152,7 @@ left: 50%; */
         border-bottom: .1rem solid rgba(255, 255, 255, .1);
         color: #fff;
         text-decoration: none;
+        overflow: hidden;
 
 
         &:hover {
