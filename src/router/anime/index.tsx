@@ -271,7 +271,7 @@ export default () => {
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
-  console.log('Anime Page', Page)
+  // console.log('Anime Page', Page)
 
   if (error) console.error(error)
 

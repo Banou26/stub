@@ -349,10 +349,10 @@ export default () => {
   // console.log('mediaUri', mediaUri)
   const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
-  console.log('foundSources', foundSources)
+  // console.log('foundSources', foundSources)
   const { error: error2, data: { Page: originPage } = {} } = useQuery(GET_ORIGINS, { variables: { ids: foundSources }, skip: !foundSources })
-  console.log('media', media)
-  console.log('originPage', originPage)
+  // console.log('media', media)
+  // console.log('originPage', originPage)
   useEffect(() => {
     if (!(media && media.uri !== mediaUri)) return
     setSearchParams({ details: media.uri })
