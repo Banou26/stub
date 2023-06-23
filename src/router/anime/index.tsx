@@ -1,4 +1,4 @@
-import { css } from '@emotion/react'
+import { css, keyframes } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 import { useQuery } from '@apollo/client'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -63,11 +63,22 @@ h2 {
   grid-template:"container";
   height: 39.25rem;
   width: 70rem;
-  background-color: rgb(35, 35, 35);
+  /* background-color: rgb(35, 35, 35); */
+  background-color: #000;
   margin-top: 37.5rem;
   overflow: hidden;
   border-radius: 1rem;
   user-select: none;
+
+  transform: scale(0.95);
+  overflow: hidden;
+  transition: transform .2s ease, opacity .2s ease;
+  opacity: 0;
+
+  &:hover {
+    transform: scale(1);
+    opacity: 1;
+  }
 
   & > a > div:first-of-type {
     grid-area: container;
@@ -287,7 +298,7 @@ export default () => {
             window.setTimeout(() => {
               if (refs.reference.current !== e.target) return
               setHoverCardMedia(media)
-            }, 250)
+            }, 0)
           )
         }}
         onMouseLeave={(e) => {

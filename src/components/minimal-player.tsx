@@ -149,6 +149,7 @@ export const MinimalPlayer = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDiv
                 volume={isReady ? playerVolume : undefined}
                 muted={isMuted}
                 stopOnUnmount={true}
+                style={{ display: isReady ? '' : 'none' }}
               />
             </Link>
           )
@@ -162,6 +163,7 @@ export const MinimalPlayer = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDiv
               volume={isReady ? playerVolume : undefined}
               muted={isMuted}
               stopOnUnmount={true}
+              style={{ display: isReady ? '' : 'none' }}
             />
           )
       }
