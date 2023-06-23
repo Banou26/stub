@@ -1,9 +1,9 @@
-import { css, keyframes } from '@emotion/react'
+import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 import { useQuery } from '@apollo/client'
 import { Link, useSearchParams } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
-import { autoUpdate, useFloating } from '@floating-ui/react'
+import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
 
@@ -278,7 +278,7 @@ export default () => {
       }
     }
   )
-  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top' })
+  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
