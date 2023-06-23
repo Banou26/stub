@@ -576,9 +576,9 @@ export type Origin = {
 
 export type Page = {
   __typename?: 'Page';
-  media?: Maybe<Array<Media>>;
-  origin?: Maybe<Array<Origin>>;
-  pageInfo?: Maybe<PageInfo>;
+  media: Array<Media>;
+  origin: Array<Origin>;
+  pageInfo: PageInfo;
 };
 
 
@@ -640,7 +640,7 @@ export type Query = {
   Episode?: Maybe<MediaEpisode>;
   Media?: Maybe<Media>;
   Origin?: Maybe<Origin>;
-  Page?: Maybe<Page>;
+  Page: Page;
   dummy?: Maybe<Scalars['String']>;
 };
 
@@ -732,7 +732,7 @@ export type GetOriginsQueryVariables = Exact<{
 }>;
 
 
-export type GetOriginsQuery = { __typename?: 'Query', Page?: { __typename?: 'Page', origin?: Array<{ __typename?: 'Origin', id: string, name: string, official?: boolean | null, metadataOnly?: boolean | null }> | null } | null };
+export type GetOriginsQuery = { __typename?: 'Query', Page: { __typename?: 'Page', origin: Array<{ __typename?: 'Origin', id: string, name: string, official?: boolean | null, metadataOnly?: boolean | null }> } };
 
 export type Get_Current_SeasonQueryVariables = Exact<{
   season: MediaSeason;
@@ -741,7 +741,7 @@ export type Get_Current_SeasonQueryVariables = Exact<{
 }>;
 
 
-export type Get_Current_SeasonQuery = { __typename?: 'Query', Page?: { __typename?: 'Page', media?: Array<{ __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, bannerImage?: Array<string | null> | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } }> }, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null }> | null } | null };
+export type Get_Current_SeasonQuery = { __typename?: 'Query', Page: { __typename?: 'Page', media: Array<{ __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, bannerImage?: Array<string | null> | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null } | null> | null, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', handler: string, origin: string, id: string, uri: any, url?: string | null, popularity?: number | null, shortDescription?: string | null, description?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } }> }, trailers?: Array<{ __typename?: 'MediaTrailer', handler: string, origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null }> } };
 
 export type GetMediaEpisodeQueryVariables = Exact<{
   uri: Scalars['String'];
