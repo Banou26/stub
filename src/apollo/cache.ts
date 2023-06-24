@@ -11,7 +11,7 @@ export default new InMemoryCache({
       fields: {
         coverImage: {
           merge: (existing, incoming, { args, toReference }: FieldFunctionOptions<Record<string, any>, Record<string, any>>) =>
-            incoming ?? existing
+            [...existing ?? [], ...incoming ?? []]
         }
       }
     },
