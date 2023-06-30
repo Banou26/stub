@@ -351,7 +351,7 @@ export default () => {
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
   const { error: error2, data: { Page: originPage } = {} } = useQuery(GET_ORIGINS, { variables: { ids: foundSources }, skip: !foundSources })
-  // console.log('media', media)
+  console.log('media', media)
   // console.log('originPage', originPage)
   useEffect(() => {
     if (!(media && media.uri !== mediaUri)) return
@@ -444,7 +444,8 @@ export default () => {
                 </div>
                 <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
                 {
-                  onlyMetadataOrigins
+                  // onlyMetadataOrigins
+                  false
                     ? (
                       <div className="metadata-only">
                         <div>No sources found with playback data for the episodes</div>
