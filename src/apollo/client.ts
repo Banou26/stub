@@ -1,12 +1,32 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import cache from './cache'
-import { link } from './server'
+// import { link } from './server'
 
-const client = new ApolloClient({
-  cache,
-  // @ts-expect-error
-  link
+import { targets } from 'laserr'
+import { makeScannarr } from 'scannarr'
+
+import { fetch } from '../utils/fetch'
+
+const { client } = makeScannarr({
+  origins: targets,
+  context: async () => ({
+    fetch: (...args: Parameters<typeof window.fetch>) => fetch(...args)
+  }),
+  policies: {
+    Media: {
+      description: {
+        originPriority: ['anilist', 'mal', 'cr'],
+        merge: (existing, incoming) => incoming
+      }
+    }
+  }
 })
+
+// const client = new ApolloClient({
+//   cache,
+//   // @ts-expect-error
+//   link
+// })
 
 export default client
