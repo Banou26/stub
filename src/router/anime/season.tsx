@@ -58,7 +58,7 @@ screen and (max-height : 1440px) {
 }
 `
 
-export const GET_CURRENT_SEASON = gql(`
+export const GET_CURRENT_SEASON = gql(`#graphql
   query GET_CURRENT_SEASON($season: MediaSeason!, $seasonYear: Int! $sort: [MediaSort]!) {
     Page {
       media(season: $season, seasonYear: $seasonYear, sort: $sort) {

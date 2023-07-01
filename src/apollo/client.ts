@@ -16,7 +16,7 @@ const { client } = makeScannarr({
   policies: {
     Media: {
       description: {
-        originPriority: ['anilist', 'mal', 'cr'],
+        originPriority: ['mal', 'anilist', 'cr'],
         merge: (existing, incoming) => incoming
       }
     }

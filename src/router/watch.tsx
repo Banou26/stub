@@ -12,7 +12,7 @@ const style = css`
 
 `
 
-export const GET_MEDIA_EPISODE = gql(`
+export const GET_MEDIA_EPISODE = gql(`#graphql
   query GetMediaEpisode($uri: String!, $origin: String, $id: String) {
     Episode(uri: $uri, origin: $origin, id: $id) {
       handler
@@ -51,6 +51,11 @@ export default () => {
   const { episodeUri, uri } = useParams() as { episodeUri: Uri, uri: Uri }
   const mediaUri = episodeUri.split('-')[0]
   console.log('episodeUri', episodeUri, uri)
+  // const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
+  const { error: error2, data: { Episode: episode } = {} } = useQuery(GET_MEDIA_EPISODE, { variables: { uri: episodeUri! }, skip: !episodeUri })
+  console.log('episode', episode)
+  // if (error) console.error(error)
+  if (error2) console.error(error2)
 
   return (
     <div css={style}>

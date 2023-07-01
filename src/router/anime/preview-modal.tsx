@@ -204,7 +204,7 @@ left: 50%; */
 
 `
 
-export const GET_MEDIA = gql(`
+export const GET_MEDIA = gql(`#graphql
   query GetMedia($uri: String!, $origin: String, $id: String) {
     Media(uri: $uri, origin: $origin, id: $id) {
       handler
@@ -250,12 +250,14 @@ export const GET_MEDIA = gql(`
             shortDescription
             description
             handles {
-              nodes {
-                handler
-                origin
-                id
-                uri
-                url
+              edges {
+                node {
+                  handler
+                  origin
+                  id
+                  uri
+                  url
+                }
               }
             }
             episodes {
@@ -468,48 +470,52 @@ export default () => {
                 }
                 <div className="episodes">
                   {
-                    media?.episodes?.edges.map(({ node }) => {
-                      const airingAt = new Date(node.airingAt * 1000)
-                      const airingAtString = airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
-                      const relativeTime =
-                        !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
-                          ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
-                          : undefined
+                    [...media
+                      ?.episodes
+                      ?.edges ?? []]
+                      ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
+                      .map(({ node }) => {
+                        const airingAt = new Date(node.airingAt * 1000)
+                        const airingAtString = airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
+                        const relativeTime =
+                          !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
+                            ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
+                            : undefined
 
-                      // console.log('relativeTime', relativeTime)
+                        // console.log('relativeTime', relativeTime)
 
-                      if (node.timeUntilAiring > 0) return undefined
+                        if (node.timeUntilAiring > 0) return undefined
 
-                      return (
-                        <Link
-                          key={node.uri}
-                          className="episode"
-                          to={getRoutePath(Route.WATCH, { episodeUri: node.uri })}
-                        >
-                          <div className="episode-number">{node.number}</div>
-                          {
-                            node.thumbnail
-                              ? <img src={node.thumbnail} alt="" className="thumbnail"/>
-                              : undefined
-                          }
-                          <div className="information">
-                            <div className="title">
-                              {
-                                node.title?.romanized
-                                ?? node.title?.english
-                                ?? node.title?.native
-                              }
-                            </div>
+                        return (
+                          <Link
+                            key={node.uri}
+                            className="episode"
+                            to={getRoutePath(Route.WATCH, { episodeUri: node.uri })}
+                          >
+                            <div className="episode-number">{node.number}</div>
                             {
-                              node.description
-                                ? <div className="description">{node.description}</div>
+                              node.thumbnail
+                                ? <img src={node.thumbnail} alt="" className="thumbnail"/>
                                 : undefined
                             }
-                          </div>
-                          <div className="date">{relativeTime}</div>
-                        </Link>
-                      )
-                    })
+                            <div className="information">
+                              <div className="title">
+                                {
+                                  node.title?.romanized
+                                  ?? node.title?.english
+                                  ?? node.title?.native
+                                }
+                              </div>
+                              {
+                                node.description
+                                  ? <div className="description">{node.description}</div>
+                                  : undefined
+                              }
+                            </div>
+                            <div className="date">{relativeTime}</div>
+                          </Link>
+                        )
+                      })
                   }
                 </div>
               </div>
