@@ -261,7 +261,7 @@ export type MediaEpisode = {
   /** The associate media uri of the episode */
   mediaUri: Scalars['String'];
   /** The episode number */
-  number: Scalars['Int'];
+  number: Scalars['Float'];
   origin: Scalars['String'];
   /** The playback information for the episode */
   playback?: Maybe<MediaEpisodePlayback>;

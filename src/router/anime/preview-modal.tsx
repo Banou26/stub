@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
+import { mergeScannarrUris, toUriEpisodeId } from 'scannarr/src'
 
 const style = css`
 overflow: auto;
@@ -357,7 +358,7 @@ export default () => {
   // console.log('originPage', originPage)
   useEffect(() => {
     if (!(media && media.uri !== mediaUri)) return
-    setSearchParams({ details: media.uri })
+    setSearchParams({ details: media.uri }, { replace: true })
   }, [media, mediaUri])
 
   if (error) {
@@ -486,11 +487,14 @@ export default () => {
 
                         if (node.timeUntilAiring > 0) return undefined
 
+                        // todo merge normal uris with the episode uris to keep more sources
+                        const episodeScannarrUri = toUriEpisodeId(mergeScannarrUris([mediaUri, node.uri]), node.number)
+
                         return (
                           <Link
-                            key={node.uri}
+                            key={episodeScannarrUri}
                             className="episode"
-                            to={getRoutePath(Route.WATCH, { episodeUri: node.uri })}
+                            to={getRoutePath(Route.WATCH, { episodeUri: episodeScannarrUri })}
                           >
                             <div className="episode-number">{node.number}</div>
                             {
