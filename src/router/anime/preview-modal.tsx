@@ -488,13 +488,13 @@ export default () => {
                         if (node.timeUntilAiring > 0) return undefined
 
                         // todo merge normal uris with the episode uris to keep more sources
-                        const episodeScannarrUri = toUriEpisodeId(mergeScannarrUris([mediaUri, node.uri]), node.number)
+                        const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
 
                         return (
                           <Link
                             key={episodeScannarrUri}
                             className="episode"
-                            to={getRoutePath(Route.WATCH, { episodeUri: episodeScannarrUri })}
+                            to={getRoutePath(Route.WATCH, { mediaUri: mediaUri, episodeUri: episodeScannarrUri })}
                           >
                             <div className="episode-number">{node.number}</div>
                             {

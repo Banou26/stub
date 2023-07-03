@@ -48,9 +48,11 @@ export const GET_MEDIA_EPISODE = gql(`#graphql
 `)
 
 export default () => {
-  const { episodeUri, uri } = useParams() as { episodeUri: Uri, uri: Uri }
-  const mediaUri = episodeUri.split('-')[0]
-  console.log('episodeUri', episodeUri, uri)
+  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
+  const episodeId = episodeUri.split('-')[1]
+  console.log('mediaUri', mediaUri)
+  console.log('episodeUri', episodeUri)
+  console.log('episodeId', episodeId)
   // const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
   const { error: error2, data: { Episode: episode } = {} } = useQuery(GET_MEDIA_EPISODE, { variables: { uri: episodeUri! }, skip: !episodeUri })
   console.log('episode', episode)
