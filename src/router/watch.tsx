@@ -13,7 +13,7 @@ const style = css`
 `
 
 export const GET_MEDIA_EPISODE = gql(`#graphql
-  query GetMediaEpisode($uri: String!, $origin: String, $id: String) {
+  query GetEpisode($uri: String!, $origin: String, $id: String) {
     Episode(uri: $uri, origin: $origin, id: $id) {
       handler
       origin
