@@ -12,40 +12,40 @@ const style = css`
 
 `
 
-export const GET_MEDIA_EPISODE = gql(`
-  query GetMediaEpisode($uri: String!, $origin: String, $id: String) {
-    Episode(uri: $uri, origin: $origin, id: $id) {
-      handler
-      origin
-      id
-      uri
-      url
-      title {
-        romanized
-        english
-        native
-      }
-      description
-      handles {
-        edges {
-          node {
-            handler
-            origin
-            id
-            uri
-          }
-        }
-      }
-      playback {
-        type
-        url
-        uri
-        origin
-        data
-      }
-    }
-  }
-`)
+// export const GET_MEDIA_EPISODE = gql(`
+//   query GetMediaEpisode($uri: String!, $origin: String, $id: String) {
+//     Episode(uri: $uri, origin: $origin, id: $id) {
+//       handler
+//       origin
+//       id
+//       uri
+//       url
+//       title {
+//         romanized
+//         english
+//         native
+//       }
+//       description
+//       handles {
+//         edges {
+//           node {
+//             handler
+//             origin
+//             id
+//             uri
+//           }
+//         }
+//       }
+//       playback {
+//         type
+//         url
+//         uri
+//         origin
+//         data
+//       }
+//     }
+//   }
+// `)
 
 export default () => {
   const { episodeUri, uri } = useParams() as { episodeUri: Uri, uri: Uri }

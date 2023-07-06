@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { declarativeNetRequestUpdateDynamicRules } from '@fkn/lib'
 
 import { gql } from '../generated'
-import { Uri } from '../../../../scannarr/src/utils'
+import { Uri, mergeScannarrUris } from '../../../../scannarr/src/utils'
 import { GET_MEDIA } from './anime/preview-modal'
 import { useEffect } from 'react'
 
@@ -37,11 +37,15 @@ export const GET_MEDIA_EPISODE = gql(`#graphql
         }
       }
       playback {
-        type
-        url
-        uri
-        origin
-        data
+        edges {
+          node {
+            type
+            url
+            uri
+            origin
+            data
+          }
+        }
       }
     }
   }
@@ -53,8 +57,16 @@ export default () => {
   console.log('mediaUri', mediaUri)
   console.log('episodeUri', episodeUri)
   console.log('episodeId', episodeId)
+  const uri = mergeScannarrUris([mediaUri, episodeUri])
+  console.log('uri', uri)
   // const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
-  const { error: error2, data: { Episode: episode } = {} } = useQuery(GET_MEDIA_EPISODE, { variables: { uri: episodeUri! }, skip: !episodeUri })
+  const { error: error2, data: { Episode: episode } = {} } = useQuery(
+    GET_MEDIA_EPISODE,
+    {
+      variables: { uri },
+      skip: !uri
+    }
+  )
   console.log('episode', episode)
   // if (error) console.error(error)
   if (error2) console.error(error2)
