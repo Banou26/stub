@@ -31,4 +31,10 @@ make use of Taiga's https://github.com/erengy/anime-relations list to try and in
 
 check out if https://github.com/jmir1/aniyomi has some nice sources
 
+https://thewiki.moe/en/tutorials/unblock
+
+IMPL MAL INTEGRATION // https://github.com/prince-ao/myanimelist-oauth/blob/main/lib/malOauth.js
+
+https://unsplash.com/photos/3dnZdTseNKg
+
 -->
