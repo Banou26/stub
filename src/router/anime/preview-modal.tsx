@@ -331,7 +331,7 @@ export const GET_MEDIA = gql(`#graphql
 `)
 
 
-export const GET_ORIGINS = gql(`
+export const GET_ORIGINS = gql(`#graphql
   query GetOrigins($ids: [String!]) {
     Page {
       origin(ids: $ids) {
