@@ -1,19 +1,18 @@
 import { useParams, useSearchParams } from 'react-router-dom'
 
-import { gql } from '../generated'
-import { Uri, mergeScannarrUris } from 'scannarr/src/utils'
 import { useQuery } from '@apollo/client'
 import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
-import { overlayStyle } from '../components/modal'
 import { useEffect } from 'react'
-import { arr2text, Hex, hex2bin } from 'uint8-util'
+import { hex2bin } from 'uint8-util'
 import { Buffer } from 'buffer'
-import Bencode from 'bencode-js'
-import base32 from 'thirty-two'
-import querystring from 'querystring'
+import Bencode from 'bencode'
 import parseTorrent from 'parse-torrent'
+import { Uri, mergeScannarrUris } from 'scannarr/src/utils'
+
+import { gql } from '../generated'
 import { fetch } from '../utils/fetch'
+import { overlayStyle } from '../components/modal'
 
 const style = css`
 overflow: auto;
@@ -101,19 +100,6 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
   }
 `)
 
-/**
- * `querystring.stringify` using `escape` instead of encodeURIComponent, since bittorrent
- * clients send non-UTF8 querystrings
- * @param  {Object} obj
- * @return {string}
- */
-export const querystringStringify = obj => {
-  let ret = querystring.stringify(obj, null, null, { encodeURIComponent: escape })
-  ret = ret.replace(/[@*/+]/g, char => // `escape` doesn't encode the characters @*/+ so we do it manually
-  `%${char.charCodeAt(0).toString(16).toUpperCase()}`)
-  return ret
-}
-
 export default () => {
   const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
   const episodeId = episodeUri.split('-')[1]
@@ -148,15 +134,21 @@ export default () => {
 
   useEffect(() => {
     if (!Page?.playbackSource?.length) return
-    const firstSource = Page?.playbackSource[0]
-    console.log('firstSource', { ...firstSource, data: JSON.parse(firstSource?.data) })
-    const parsedTorrent = parseTorrent(JSON.parse(firstSource?.data).magnetUri)
-    const bin = hex2bin(parsedTorrent.infoHash)
-    const nyaaUrl = `http://nyaa.tracker.wf:7777/scrape?info_hash=${escape(bin)}`
+    const infoHashes =
+      Page
+        ?.playbackSource
+        .map((source) => {
+          const parsedTorrent = parseTorrent(JSON.parse(source?.data).magnetUri)
+          const bin = hex2bin(parsedTorrent.infoHash)
+          return bin
+        })
+        .slice(0, 25)
+    const infoHashesQuery = infoHashes.map((infoHash) => `info_hash=${escape(infoHash)}`).join('&')
+    const nyaaUrl = `http://nyaa.tracker.wf:7777/scrape?${infoHashesQuery}`
     fetch(nyaaUrl)
-      .then((res) => res.text())
+      .then((res) => res.arrayBuffer())
       .then((res) => {
-        console.log('res', res)
+        console.log('bendecoded', Bencode.decode(Buffer.from(res)))
       })
   }, [Page?.playbackSource])
 
