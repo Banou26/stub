@@ -3,8 +3,8 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
-import { useEffect } from 'react'
-import { hex2bin } from 'uint8-util'
+import { useEffect, useMemo, useState } from 'react'
+import { arr2text, bin2hex, hex2array, hex2bin } from 'uint8-util'
 import { Buffer } from 'buffer'
 import Bencode from 'bencode'
 import parseTorrent from 'parse-torrent'
@@ -100,6 +100,17 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
   }
 `)
 
+const END_OF_TYPE = 0x65 // 'e'
+Bencode.decode.dictionary = function () {
+  Bencode.decode.position++
+  var dict = new Map()
+  while (Bencode.decode.data[Bencode.decode.position] !== END_OF_TYPE) {
+    dict.set(Bencode.decode.buffer(), Bencode.decode.next())
+  }
+  Bencode.decode.position++
+  return dict
+}
+
 export default () => {
   const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
   const episodeId = episodeUri.split('-')[1]
@@ -132,23 +143,39 @@ export default () => {
     setSearchParams({ sources: true })
   }
 
-  useEffect(() => {
-    if (!Page?.playbackSource?.length) return
-    const infoHashes =
+  const [trackerData, setTrackerData] = useState(new Map())
+
+  const torrentSourcesInfoHashes = useMemo(
+    () =>
       Page
         ?.playbackSource
-        .map((source) => {
+        ?.map((source) => {
           const parsedTorrent = parseTorrent(JSON.parse(source?.data).magnetUri)
-          const bin = hex2bin(parsedTorrent.infoHash)
-          return bin
-        })
-        .slice(0, 25)
+          const binStr = hex2bin(parsedTorrent.infoHash)
+          return [source.uri, binStr, Buffer.from(parsedTorrent.infoHash, 'hex')]
+        }),
+    [Page?.playbackSource]
+  )
+
+  useEffect(() => {
+    if (!Page?.playbackSource?.length) return
+    const infoHashes = torrentSourcesInfoHashes?.map(([, binStr]) => binStr).slice(0, 25)
     const infoHashesQuery = infoHashes.map((infoHash) => `info_hash=${escape(infoHash)}`).join('&')
     const nyaaUrl = `http://nyaa.tracker.wf:7777/scrape?${infoHashesQuery}`
     fetch(nyaaUrl)
       .then((res) => res.arrayBuffer())
       .then((res) => {
-        console.log('bendecoded', Bencode.decode(Buffer.from(res)))
+        const decoded = Bencode.decode(Buffer.from(res))
+        const newEntries =
+          [...decoded.values().next().value.entries()]
+            .map(([infoHash, data]) => [
+              infoHash,
+              Object.fromEntries(
+                [...data.entries()].map(([key, value]) => [Buffer.from(key).toString(), value])
+              )
+            ])
+
+        setTrackerData(new Map([...trackerData.entries(), ...newEntries]))
       })
   }, [Page?.playbackSource])
 
@@ -170,13 +197,29 @@ export default () => {
                   </div>
                   <div>
                     {
-                      Page?.playbackSource?.map((source) => (
-                        <div className="source" key={source.id}>
-                          <div className="url">
-                            {source.filename}
+                      Page?.playbackSource?.map((source) => {
+                        const foundTrackerData =
+                          [...trackerData.entries()]
+                            .find(([buffer]) =>
+                              buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
+                            )
+                            ?.[1]
+                        return (
+                          <div className="source" key={source.id}>
+                            <div className="url">
+                              {source.filename}
+                              <br />
+                              {
+                                foundTrackerData
+                                ? (
+                                  JSON.stringify(foundTrackerData) ?? 'tracker data not found'
+                                )
+                                : 'tracker data might be loading'
+                              }
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        )
+                      })
                     }
                   </div>
                 </div>
