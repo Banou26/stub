@@ -307,10 +307,14 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
       <td className='name'>
         <div>
           {
-            !raw && teamIcon && (
-                !hideIcon
+            !raw && (
+                teamIcon && !hideIcon
                   ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
-                  : <div className="team">{formatted.groups?.at(0) ? `[${formatted.groups?.at(0)}]` : ''}</div>
+                  : (
+                    formatted.groups?.at(0)
+                      ? <div className="team">{formatted.groups?.at(0) ? `[${formatted.groups?.at(0)}]` : ''}</div>
+                      : undefined
+                  )
               )
           }
           <span>
