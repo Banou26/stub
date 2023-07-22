@@ -260,8 +260,8 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
 
 const teams = makeVar({})
 
-const getTeamIcon = (url) => {
-  const cachedValue = useReactiveVar(teams)?.[url]
+const getTeamIcon = (url, noHook = false) => {
+  const cachedValue = noHook ? teams()[url] : useReactiveVar(teams)[url]
   if (cachedValue && !(cachedValue instanceof Promise)) return cachedValue
   if (cachedValue instanceof Promise) return undefined
   const res = fetch(url)
@@ -325,7 +325,9 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
 
   const [hideIcon, setHideIcon] = useState(false)
 
-  const sourceLink = <Link className="link" to={getRoutePath(Route.WATCH, { episodeUri, mediaUri, sourceUri: source.uri })} />
+  const watchEpisodeUrl = getRoutePath(Route.WATCH, { episodeUri, mediaUri, sourceUri: source.uri })
+
+  const sourceLink = <Link className="link" to={watchEpisodeUrl} />
 
   return (
     <tr className="source" key={source.uri}>
@@ -335,7 +337,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
           {
             !raw && (
                 <>
-                  <a href={source.team.url} className="team-link">
+                  <a href={source.team?.url ?? watchEpisodeUrl} className="team-link">
                     {
                       teamIcon && !hideIcon
                         ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
@@ -346,7 +348,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
                         )
                     }
                   </a>
-                  <a href={source.team.url} className="team-link-back">
+                  <a href={source.team?.url ?? watchEpisodeUrl} className="team-link-back">
                     {
                       teamIcon && !hideIcon
                         ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
@@ -401,29 +403,25 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
 }
 
 const SourcesModal = (
-  { sources, trackerDataPerSource, uri, mediaUri, episodeUri }:
+  { sources, trackerDataPerSource }:
   {
     sources: GetPlaybackSourcesQuery['Page']['playbackSource'],
-    trackerDataPerSource: Map<any, { complete: number, incomplete: number, downloaded: number }>,
-    uri: string,
-    mediaUri: string,
-    episodeUri: String
+    trackerDataPerSource: Map<any, { complete: number, incomplete: number, downloaded: number }>
   }
 ) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const sourcesModalOpen = Boolean(searchParams.get('sources'))
   const displayRawName = searchParams.get('sources') === 'raw'
 
-
   const onOverlayClick = (ev) => {
     if (ev.target !== ev.currentTarget) return
     const { sources, ...rest } = searchParams
     setSearchParams(rest)
   }
+
   return (
     <Dialog.Root open={sourcesModalOpen}>
       <Dialog.Portal>
-        {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
         <Dialog.Content css={style} asChild={true}>
           <div onClick={onOverlayClick}>
             <div className="modal">
@@ -547,6 +545,14 @@ export default () => {
         ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0)),
     [Page?.playbackSource, trackerDataPerSource]
   )
+
+  useEffect(() => {
+    if (!sortedSources) return
+    for (const source of sortedSources) {
+      if (!source.team?.url) continue
+      getTeamIcon(source.team?.url, true)
+    }
+  }, [sortedSources])
 
   return (
     <div>
