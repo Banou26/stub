@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { makeVar, useQuery, useReactiveVar } from '@apollo/client'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -16,6 +16,7 @@ import { gql } from '../generated'
 import { fetch } from '../utils/fetch'
 import { overlayStyle } from '../components/modal'
 import { getHumanReadableByteString } from '../utils/bytes'
+import { Route, getRoutePath } from './path'
 
 const style = css`
 overflow: auto;
@@ -121,6 +122,14 @@ padding: 5rem;
         tr {
           border-bottom: 1px solid rgb(50, 50, 50);
 
+          .link {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+          }
+
           &:hover {
             background-color: rgb(50, 50, 50);
           }
@@ -133,6 +142,7 @@ padding: 5rem;
             letter-spacing: 0.1rem;
             color: rgb(255, 255, 255);
             vertical-align: middle;
+            position: relative;
 
             line-height: 2.5rem;
 
@@ -260,6 +270,7 @@ const getTeamIcon = (url) => {
 }
 
 const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) => {
+  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
   const teamIcon = source.team?.url && getTeamIcon(source.team?.url)
   const parsed = useMemo(() => parse(source.filename), [source.filename])
   const formatted = useMemo(() => format(parsed), [parsed])
@@ -302,9 +313,12 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
 
   const [hideIcon, setHideIcon] = useState(false)
 
+  const sourceLink = <Link className="link" to={getRoutePath(Route.WATCH, { episodeUri, mediaUri, sourceUri: source.uri })} />
+
   return (
     <tr className="source" key={source.uri}>
       <td className='name'>
+        {sourceLink}
         <div>
           {
             !raw && (
@@ -347,11 +361,12 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
           </span>
         </div>
       </td>
-      <td>{getHumanReadableByteString(source.bytes)}</td>
-      <td>{trackerData.complete}</td>
-      <td>{trackerData.incomplete}</td>
-      <td>{trackerData.downloaded}</td>
-      <td>{relativeTime}</td>
+      <td>{sourceLink}{getHumanReadableByteString(source.bytes)}
+      </td>
+      <td>{sourceLink}{trackerData.complete}</td>
+      <td>{sourceLink}{trackerData.incomplete}</td>
+      <td>{sourceLink}{trackerData.downloaded}</td>
+      <td>{sourceLink}{relativeTime}</td>
     </tr>
   )
 }

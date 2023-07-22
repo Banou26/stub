@@ -16,7 +16,8 @@ const Routes = {
   [Route.AUTH]: ({ name }: { name: string }) => `/auth/${name}`,
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
-  [Route.WATCH]: ({ mediaUri, episodeUri }: { mediaUri: string, episodeUri: string }) => `/watch/${mediaUri}/${episodeUri}`,
+  [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
+    `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
   // [Route.CATEGORY]: ({ category }: { category: Category }) => `/category/${category.toLowerCase()}`,
   [Route.ANIME]: () => `/anime`,
   [Route.ANIME_SEASON]: () => `/anime/season`,
@@ -28,7 +29,7 @@ const RouterRoutes = {
   [Route.AUTH]: '/auth/:name',
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
-  [Route.WATCH]: '/watch/:mediaUri/:episodeUri',
+  [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',
   // [Route.CATEGORY]: '/category/:category',
   [Route.ANIME]: `/anime`,
   [Route.ANIME_SEASON]: `/anime/season`,
