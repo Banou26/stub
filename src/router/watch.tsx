@@ -4,11 +4,13 @@ import { useQuery } from '@apollo/client'
 import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
-import { arr2text, bin2hex, hex2array, hex2bin } from 'uint8-util'
+import { hex2bin } from 'uint8-util'
 import { Buffer } from 'buffer'
 import Bencode from 'bencode'
 import parseTorrent from 'parse-torrent'
 import { Uri, mergeScannarrUris } from 'scannarr/src/utils'
+import { parse, format } from 'sacha'
+import CountryLanguage from '@ladjs/country-language'
 
 import { gql } from '../generated'
 import { fetch } from '../utils/fetch'
@@ -100,47 +102,84 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
   }
 `)
 
-const END_OF_TYPE = 0x65 // 'e'
-Bencode.decode.dictionary = function () {
-  Bencode.decode.position++
-  var dict = new Map()
-  while (Bencode.decode.data[Bencode.decode.position] !== END_OF_TYPE) {
-    dict.set(Bencode.decode.buffer(), Bencode.decode.next())
+const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) => {
+  const parsed = useMemo(() => parse(source.filename), [source.filename])
+  const formatted = useMemo(() => format(parsed), [parsed])
+  const countries =
+    [
+      ...new Map(
+        [
+          ...new Map(
+            formatted
+              .audioLanguageTerms
+              ?.flatMap(lang => CountryLanguage.getLanguageCountries(lang.split('-').at(0)))
+              .map((country) => [country.numCode, country])
+          ).values()
+        ]
+        .map(country => CountryLanguage.getCountryLanguages(country.code_3))
+        .filter(langs => langs.length === 1)
+        .flatMap(langs => langs.map(lang => [lang.iso639_3, lang]))
+      )
+      .values()
+    ]
+    .map(country =>
+      country.iso639_3 === 'eng'
+        ? { ...country, iso639_1: 'gb' }
+        : country
+    )
+  if (formatted.audioLanguageTerms?.length >= 2) {
+    console.log('test', CountryLanguage.getCountryLanguages('ES'))
+    console.log('parsed', parsed)
+    console.log('formatted', formatted)
+    console.log('countriesLangs', countries)
   }
-  Bencode.decode.position++
-  return dict
+  return (
+    <tr className="source" key={source.uri}>
+      {/* make a toggle to display cleaned up name (via sacha's parsing) & raw name */}
+      <td>
+        <span>{raw ? source.filename : formatted.titles.join(' ')}</span>
+        {
+          !raw &&
+          countries.length > 0 &&
+          <span className="origins">
+            {
+              countries.map((country) =>
+                <img
+                  height="20"
+                  style={{ marginLeft: 5 }}
+                  src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country.iso639_1.toUpperCase()}.svg`}
+                />
+              )
+            }
+          </span>
+        }
+      </td>
+      <td></td>
+      <td>{trackerData.complete}</td>
+      <td>{trackerData.incomplete}</td>
+    </tr>
+  )
 }
 
-export default () => {
-  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
-  const episodeId = episodeUri.split('-')[1]
+const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: string, episodeUri: String }) => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const episodeId = episodeUri.split('-')[1]
   const sourcesModalOpen = Boolean(searchParams.get('sources'))
-  console.log('mediaUri', mediaUri)
-  console.log('episodeUri', episodeUri)
-  console.log('episodeId', episodeId)
-  const uri = mergeScannarrUris([mediaUri, episodeUri])
-  console.log('uri', uri)
-  // const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
-  const { error: error2, data: { Page } = {} } = useQuery(
+  const { error, data: { Page } = {} } = useQuery(
     GET_PLAYBACK_SOURCES,
     {
       variables: { uri, number: Number(episodeId) },
       skip: !uri
     }
   )
+  const [displayRawName, setDisplayRawName] = useState(false)
   console.log('Page', Page)
-  // if (error) console.error(error)
-  if (error2) console.error(error2)
+  if (error) console.error(error)
 
   const onOverlayClick = (ev) => {
     if (ev.target !== ev.currentTarget) return
     const { sources, ...rest } = searchParams
     setSearchParams(rest)
-  }
-
-  const onSourcesClick = () => {
-    setSearchParams({ sources: true })
   }
 
   const [trackerData, setTrackerData] = useState(new Map())
@@ -158,8 +197,8 @@ export default () => {
   )
 
   useEffect(() => {
-    if (!Page?.playbackSource?.length) return
-    const infoHashes = torrentSourcesInfoHashes?.map(([, binStr]) => binStr).slice(0, 25)
+    if (!torrentSourcesInfoHashes?.length) return
+    const infoHashes = torrentSourcesInfoHashes?.map(([, binStr]) => binStr)
     const infoHashesQuery = infoHashes.map((infoHash) => `info_hash=${escape(infoHash)}`).join('&')
     const nyaaUrl = `http://nyaa.tracker.wf:7777/scrape?${infoHashesQuery}`
     fetch(nyaaUrl)
@@ -167,67 +206,111 @@ export default () => {
       .then((res) => {
         const decoded = Bencode.decode(Buffer.from(res))
         const newEntries =
-          [...decoded.values().next().value.entries()]
+          [...decoded.files.entries()]
             .map(([infoHash, data]) => [
               infoHash,
-              Object.fromEntries(
-                [...data.entries()].map(([key, value]) => [Buffer.from(key).toString(), value])
-              )
+              data
             ])
-
         setTrackerData(new Map([...trackerData.entries(), ...newEntries]))
       })
-  }, [Page?.playbackSource])
+  }, [torrentSourcesInfoHashes])
+
+  const trackerDataPerSource = useMemo(
+    () =>
+      Page
+        ?.playbackSource
+        ?.map((source) => {
+          const foundTrackerData =
+            [...trackerData.entries()]
+              .find(([buffer]) =>
+                buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
+              )
+              ?.[1]
+          const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData) ?? '{}')
+          return [source.uri, torrentData]
+        }),
+    [Page?.playbackSource, trackerData]
+  )
+
+  return (
+    <Dialog.Root open={sourcesModalOpen}>
+      <Dialog.Portal>
+        {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
+        <Dialog.Content css={style} asChild={true}>
+          <div onClick={onOverlayClick}>
+            <div className="modal">
+              <div className="trailer">
+                {/* <MinimalPlayer className="player"/> */}
+              </div>
+              <div className="content">
+                <div className="title">
+                  <h2>Sources</h2>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name <button onClick={() => setDisplayRawName(val => !val)}>{displayRawName ? 'raw' : 'formatted'}</button></th>
+                      <th>Size</th>
+                      <th>Seeders</th>
+                      <th>Leechers</th>
+                    </tr>
+                  </thead>
+                  {
+                    Page?.playbackSource?.map((source) =>
+                      <SourceRow
+                        raw={displayRawName}
+                        source={source}
+                        trackerData={trackerDataPerSource?.find(([uri]) => uri === source.uri)?.[1]}
+                      />
+                    )
+                    // Page?.playbackSource?.map((source) => {
+                    //   const foundTrackerData =
+                    //     [...trackerData.entries()]
+                    //       .find(([buffer]) =>
+                    //         buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
+                    //       )
+                    //       ?.[1]
+                    //   const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData) ?? '{}')
+                    //   const parsed = parse(source.filename)
+                    //   console.log('parsed', parsed)
+                    //   const formatted = format(parsed)
+                    //   console.log('formatted', formatted)
+                    //   return (
+                    //     <tr key={source.uri} className="source" key={source.id}>
+                    //       {/* make a toggle to display cleaned up name (via sacha's parsing) & raw name */}
+                    //       <td>
+                    //         <span>{displayRawName ? source.filename : parsed.titles.at(0)}</span>
+                    //       </td>
+                    //       <td></td>
+                    //       <td>{torrentData.complete}</td>
+                    //       <td>{torrentData.incomplete}</td>
+                    //     </tr>
+                    //   )
+                    // })
+                  }
+                </table>
+              </div>
+            </div>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  )
+}
+
+export default () => {
+  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
+  const [, setSearchParams] = useSearchParams()
+  const uri = mergeScannarrUris([mediaUri, episodeUri])
+
+  const onSourcesClick = () => {
+    setSearchParams({ sources: '1' })
+  }
 
   return (
     <div>
       <button onClick={onSourcesClick} type="button">Sources</button>
-      <Dialog.Root open={sourcesModalOpen}>
-        <Dialog.Portal>
-          {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
-          <Dialog.Content css={style} asChild={true}>
-            <div onClick={onOverlayClick}>
-              <div className="modal">
-                <div className="trailer">
-                  {/* <MinimalPlayer className="player"/> */}
-                </div>
-                <div className="content">
-                  <div className="title">
-                    <h2>Sources</h2>
-                  </div>
-                  <div>
-                    {
-                      Page?.playbackSource?.map((source) => {
-                        const foundTrackerData =
-                          [...trackerData.entries()]
-                            .find(([buffer]) =>
-                              buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
-                            )
-                            ?.[1]
-                        return (
-                          <div className="source" key={source.id}>
-                            <div className="url">
-                              {source.filename}
-                              <br />
-                              {
-                                foundTrackerData
-                                ? (
-                                  JSON.stringify(foundTrackerData) ?? 'tracker data not found'
-                                )
-                                : 'tracker data might be loading'
-                              }
-                            </div>
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <SourcesModal uri={uri} mediaUri={mediaUri} episodeUri={episodeUri} />
     </div>
   )
 }
