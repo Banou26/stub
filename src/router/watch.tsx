@@ -304,7 +304,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
 
   const relativeTime =
     !isNaN(airedTime) && isFinite(airedTime)
-      ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(airedTime / 1000 / 60 / 60 / 24), 'days')
+      ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(-Math.round(airedTime / 1000 / 60 / 60 / 24), 'days')
       : undefined
   console.log('formatted', formatted)
 
