@@ -162,6 +162,19 @@ padding: 5rem;
               vertical-align: bottom;
             }
           }
+
+          .tags {
+            margin-left: 1rem;
+            background-color: rgb(50, 50, 50);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+          }
         }
       }
     }
@@ -268,6 +281,11 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
     !isNaN(airedTime) && isFinite(airedTime)
       ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(airedTime / 1000 / 60 / 60 / 24), 'days')
       : undefined
+  console.log('formatted', formatted)
+
+  const tags = [
+    ...formatted.resolutionTerms ?? []
+  ]
 
   return (
     <tr className="source" key={source.uri}>
@@ -293,6 +311,17 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
               )
             }
           </span>
+        }
+        {
+          !raw && tags.length > 0 && (
+            <span className="tags">
+              {
+                tags.map((tag) =>
+                  <span key={tag}>{tag}</span>
+                )
+              }
+            </span>
+          )
         }
       </td>
       <td>{getHumanReadableByteString(source.bytes)}</td>
