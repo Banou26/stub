@@ -133,21 +133,34 @@ padding: 5rem;
             letter-spacing: 0.1rem;
             color: rgb(255, 255, 255);
             vertical-align: middle;
+
+            line-height: 2.5rem;
+
+            ::first-line {
+                line-height: 1;
+            }
+
+            &.name div {
+              display: flex;
+              align-items: center;
+            }
           }
 
           .title {
             display: inline-block;
             height: 100%;
-            margin: 0 1rem;
+            margin-right: 1rem;
             margin-bottom: auto;
             vertical-align: middle;
           }
 
           .team {
+            display: inline-block;
             height: 2rem;
-            width: 2rem;
+            min-width: 2rem;
             margin-right: 0.5rem;
             vertical-align: bottom;
+            margin-right: 1rem;
           }
           div.team {
             display: inline-block;
@@ -287,42 +300,48 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
     ...formatted.resolutionTerms ?? []
   ]
 
+  const [hideIcon, setHideIcon] = useState(false)
+
   return (
     <tr className="source" key={source.uri}>
-      <td>
-        {
-          !raw && (
-            teamIcon
-              ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon}/>
-              : <div className="team"/>
-          )
-        }
-        <span className="title">{raw ? source.filename : formatted.titles.join(' ')}</span>
-        {
-          !raw &&
-          countries.length > 0 &&
-          <span className="languages">
+      <td className='name'>
+        <div>
+          {
+            !raw && teamIcon && (
+                !hideIcon
+                  ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
+                  : <div className="team">{formatted.groups?.at(0) ? `[${formatted.groups?.at(0)}]` : ''}</div>
+              )
+          }
+          <span>
+            <span className="title">{raw ? source.filename : formatted.titles.join(' ')}</span>
             {
-              countries.map((country) =>
-                <img
-                  key={country.iso639_1}
-                  src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country.iso639_1.toUpperCase()}.svg`}
-                />
+              !raw &&
+              countries.length > 0 &&
+              <span className="languages">
+                {
+                  countries.map((country) =>
+                    <img
+                      key={country.iso639_1}
+                      src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country.iso639_1.toUpperCase()}.svg`}
+                    />
+                  )
+                }
+              </span>
+            }
+            {
+              !raw && tags.length > 0 && (
+                <span className="tags">
+                  {
+                    tags.map((tag) =>
+                      <span key={tag}>{tag}</span>
+                    )
+                  }
+                </span>
               )
             }
           </span>
-        }
-        {
-          !raw && tags.length > 0 && (
-            <span className="tags">
-              {
-                tags.map((tag) =>
-                  <span key={tag}>{tag}</span>
-                )
-              }
-            </span>
-          )
-        }
+        </div>
       </td>
       <td>{getHumanReadableByteString(source.bytes)}</td>
       <td>{trackerData.complete}</td>
@@ -336,6 +355,7 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
   const [searchParams, setSearchParams] = useSearchParams()
   const episodeId = episodeUri.split('-')[1]
   const sourcesModalOpen = Boolean(searchParams.get('sources'))
+  const displayRawName = searchParams.get('sources') === 'raw'
   const { error, data: { Page } = {} } = useQuery(
     GET_PLAYBACK_SOURCES,
     {
@@ -343,7 +363,6 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
       skip: !uri
     }
   )
-  const [displayRawName, setDisplayRawName] = useState(false)
   if (error) console.error(error)
 
   const onOverlayClick = (ev) => {
@@ -424,7 +443,7 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
                 <table>
                   <thead>
                     <tr>
-                      <th>Name <button onClick={() => setDisplayRawName(val => !val)}>{displayRawName ? 'raw' : 'formatted'}</button></th>
+                      <th>Name <button onClick={() => setSearchParams({ sources: searchParams.get('sources') === 'raw' ? 'formatted' : 'raw' })}>{displayRawName ? 'raw' : 'formatted'}</button></th>
                       <th>Size</th>
                       <th>Seeders</th>
                       <th>Leechers</th>
@@ -461,7 +480,7 @@ export default () => {
   const uri = mergeScannarrUris([mediaUri, episodeUri])
 
   const onSourcesClick = () => {
-    setSearchParams({ sources: '1' })
+    setSearchParams({ sources: 'formatted' })
   }
 
   return (
