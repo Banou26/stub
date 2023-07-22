@@ -260,7 +260,14 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
         : country
     )
 
-  const uploadDate = new Date(source.uploadDate).toLocaleDateString({ year: 'numeric', month: 'long', day: 'numeric' })
+  // const uploadDate = new Date(source.uploadDate).toLocaleDateString({ year: 'numeric', month: 'long', day: 'numeric' })
+
+  const airedTime = Date.now() - new Date(source.uploadDate).getTime()
+
+  const relativeTime =
+    !isNaN(airedTime) && isFinite(airedTime)
+      ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(airedTime / 1000 / 60 / 60 / 24), 'days')
+      : undefined
 
   return (
     <tr className="source" key={source.uri}>
@@ -291,7 +298,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
       <td>{getHumanReadableByteString(source.bytes)}</td>
       <td>{trackerData.complete}</td>
       <td>{trackerData.incomplete}</td>
-      <td>{uploadDate}</td>
+      <td>{relativeTime}</td>
     </tr>
   )
 }
