@@ -350,6 +350,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
       <td>{getHumanReadableByteString(source.bytes)}</td>
       <td>{trackerData.complete}</td>
       <td>{trackerData.incomplete}</td>
+      <td>{trackerData.downloaded}</td>
       <td>{relativeTime}</td>
     </tr>
   )
@@ -449,8 +450,9 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
                     <tr>
                       <th>Name <button onClick={() => setSearchParams({ sources: searchParams.get('sources') === 'raw' ? 'formatted' : 'raw' })}>{displayRawName ? 'raw' : 'formatted'}</button></th>
                       <th>Size</th>
-                      <th>Seeders</th>
-                      <th>Leechers</th>
+                      <th>Seed</th>
+                      <th>Leech</th>
+                      <th>Downloads</th>
                       <th className="upload-date">Upload date</th>
                     </tr>
                   </thead>
