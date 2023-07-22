@@ -154,6 +154,11 @@ padding: 5rem;
               display: flex;
               align-items: center;
             }
+
+            text-align: right;
+            &:first-of-type {
+              text-align: left;
+            }
           }
 
           .title {
@@ -165,6 +170,12 @@ padding: 5rem;
             word-break: break-all;
           }
 
+          .team-link {
+            position: absolute;
+          }
+          .team-link-back {
+            opacity: 0;
+          }
           .team {
             display: inline-block;
             height: 2rem;
@@ -306,7 +317,6 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
     !isNaN(airedTime) && isFinite(airedTime)
       ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(-Math.round(airedTime / 1000 / 60 / 60 / 24), 'days')
       : undefined
-  console.log('formatted', formatted)
 
   const tags = [
     ...formatted.resolutionTerms ?? []
@@ -323,13 +333,30 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
         <div>
           {
             !raw && (
-                teamIcon && !hideIcon
-                  ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
-                  : (
-                    formatted.groups?.at(0)
-                      ? <div className="team">{formatted.groups?.at(0) ? `[${formatted.groups?.at(0)}]` : ''}</div>
-                      : undefined
-                  )
+                <>
+                  <a href={source.team.url} className="team-link">
+                    {
+                      teamIcon && !hideIcon
+                        ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
+                        : (
+                          formatted.groups?.at(0)
+                            ? <div className="team">{formatted.groups?.at(0) ? `[${formatted.groups?.at(0)}]` : ''}</div>
+                            : undefined
+                        )
+                    }
+                  </a>
+                  <a href={source.team.url} className="team-link-back">
+                    {
+                      teamIcon && !hideIcon
+                        ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon} onError={event => setHideIcon(true)}/>
+                        : (
+                          formatted.groups?.at(0)
+                            ? <div className="team">{formatted.groups?.at(0) ? `[${formatted.groups?.at(0)}]` : ''}</div>
+                            : undefined
+                        )
+                    }
+                  </a>
+                </>
               )
           }
           <span>
