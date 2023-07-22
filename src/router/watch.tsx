@@ -162,6 +162,7 @@ padding: 5rem;
             margin-right: 1rem;
             margin-bottom: auto;
             vertical-align: middle;
+            word-break: break-all;
           }
 
           .team {
