@@ -28,7 +28,7 @@ padding: 5rem;
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 120rem;
+  max-width: 150rem;
   background-color: rgb(35, 35, 35);
   border-radius: 1rem;
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -39,7 +39,7 @@ padding: 5rem;
   .content {
     margin: 2.5rem;
     
-    .title {
+    & > .title {
       display: flex;
       justify-content: start;
       align-items: center;
@@ -62,6 +62,105 @@ padding: 5rem;
           img {
             height: 3rem;
             width: 3rem;
+          }
+        }
+      }
+    }
+
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+      border: 1px solid rgb(50, 50, 50);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      margin-top: 1rem;
+
+      thead {
+        background-color: rgb(50, 50, 50);
+        color: rgb(255, 255, 255);
+        font-size: 1.5rem;
+        font-weight: 500;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        border-bottom: 1px solid rgb(50, 50, 50);
+        
+        th {
+          padding: 1rem 2rem;
+
+          &:first-of-type {
+            padding-left: 3rem;
+
+            button {
+              /* background-color: transparent; */
+              background-color: rgb(32, 32, 32);
+              padding: 0.5rem 1rem;
+              border: none;
+              color: rgb(255, 255, 255);
+              font-size: 1.5rem;
+              font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.1rem;
+              cursor: pointer;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+
+          &.upload-date {
+            width: 12rem;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid rgb(50, 50, 50);
+
+          &:hover {
+            background-color: rgb(50, 50, 50);
+          }
+
+          & > td {
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-align: left;
+            letter-spacing: 0.1rem;
+            color: rgb(255, 255, 255);
+            vertical-align: middle;
+          }
+
+          .title {
+            display: inline-block;
+            height: 100%;
+            margin: 0 1rem;
+            margin-bottom: auto;
+            vertical-align: middle;
+          }
+
+          .team {
+            height: 2rem;
+            width: 2rem;
+            margin-right: 0.5rem;
+            vertical-align: bottom;
+          }
+          div.team {
+            display: inline-block;
+          }
+
+          .languages {
+            margin-left: 1rem;
+            
+            img {
+              height: 2rem;
+              margin-right: 0.5rem;
+              vertical-align: bottom;
+            }
           }
         }
       }
@@ -160,21 +259,28 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
         ? { ...country, iso639_1: 'gb' }
         : country
     )
+
+  const uploadDate = new Date(source.uploadDate).toLocaleDateString({ year: 'numeric', month: 'long', day: 'numeric' })
+
   return (
     <tr className="source" key={source.uri}>
       <td>
-        {!raw && teamIcon && <img height="30" title={formatted.groups?.at(0)} alt={formatted.groups?.at(0)} src={teamIcon}/>}
-        <span>{raw ? source.filename : formatted.titles.join(' ')}</span>
+        {
+          !raw && (
+            teamIcon
+              ? <img className="team" title={formatted.groups?.at(0)} src={teamIcon}/>
+              : <div className="team"/>
+          )
+        }
+        <span className="title">{raw ? source.filename : formatted.titles.join(' ')}</span>
         {
           !raw &&
           countries.length > 0 &&
-          <span className="origins">
+          <span className="languages">
             {
               countries.map((country) =>
                 <img
                   key={country.iso639_1}
-                  height="20"
-                  style={{ marginLeft: 5 }}
                   src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country.iso639_1.toUpperCase()}.svg`}
                 />
               )
@@ -185,6 +291,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
       <td>{getHumanReadableByteString(source.bytes)}</td>
       <td>{trackerData.complete}</td>
       <td>{trackerData.incomplete}</td>
+      <td>{uploadDate}</td>
     </tr>
   )
 }
@@ -231,6 +338,9 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
     fetch(nyaaUrl)
       .then((res) => res.arrayBuffer())
       .then((res) => {
+        if (Buffer.from(res).toString().includes('FetchError')) {
+          throw new Error(Buffer.from(res).toString())
+        }
         const decoded = Bencode.decode(Buffer.from(res))
         const newEntries =
           [...decoded.files.entries()]
@@ -244,18 +354,20 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
 
   const trackerDataPerSource = useMemo(
     () =>
-      Page
-        ?.playbackSource
-        ?.map((source) => {
-          const foundTrackerData =
-            [...trackerData.entries()]
-              .find(([buffer]) =>
-                buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
-              )
-              ?.[1]
-          const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData) ?? '{}')
-          return [source.uri, torrentData]
-        }),
+      new Map(
+        Page
+          ?.playbackSource
+          ?.map((source) => {
+            const foundTrackerData =
+              [...trackerData.entries()]
+                .find(([buffer]) =>
+                  buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
+                )
+                ?.[1]
+            const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData) ?? '{}')
+            return [source.uri, torrentData]
+          })
+      ),
     [Page?.playbackSource, trackerData]
   )
 
@@ -280,18 +392,21 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
                       <th>Size</th>
                       <th>Seeders</th>
                       <th>Leechers</th>
+                      <th className="upload-date">Upload date</th>
                     </tr>
                   </thead>
                   <tbody>
                     {
-                      Page?.playbackSource?.map((source) =>
-                        <SourceRow
-                          key={source.uri}
-                          raw={displayRawName}
-                          source={source}
-                          trackerData={trackerDataPerSource?.find(([uri]) => uri === source.uri)?.[1]}
-                        />
-                      )
+                      [...Page?.playbackSource ?? []]
+                        ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0))
+                        ?.map((source) =>
+                          <SourceRow
+                            key={source.uri}
+                            raw={displayRawName}
+                            source={source}
+                            trackerData={trackerDataPerSource.get(source.uri)}
+                          />
+                        )
                     }
                   </tbody>
                 </table>
