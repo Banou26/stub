@@ -17,6 +17,7 @@ import { fetch } from '../utils/fetch'
 import { overlayStyle } from '../components/modal'
 import { getHumanReadableByteString } from '../utils/bytes'
 import { Route, getRoutePath } from './path'
+import { GetPlaybackSourcesQuery } from 'src/generated/graphql'
 
 const style = css`
 overflow: auto;
@@ -399,11 +400,79 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
   )
 }
 
-const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: string, episodeUri: String }) => {
+const SourcesModal = (
+  { sources, trackerDataPerSource, uri, mediaUri, episodeUri }:
+  {
+    sources: GetPlaybackSourcesQuery['Page']['playbackSource'],
+    trackerDataPerSource: Map<any, { complete: number, incomplete: number, downloaded: number }>,
+    uri: string,
+    mediaUri: string,
+    episodeUri: String
+  }
+) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const episodeId = episodeUri.split('-')[1]
   const sourcesModalOpen = Boolean(searchParams.get('sources'))
   const displayRawName = searchParams.get('sources') === 'raw'
+
+
+  const onOverlayClick = (ev) => {
+    if (ev.target !== ev.currentTarget) return
+    const { sources, ...rest } = searchParams
+    setSearchParams(rest)
+  }
+  return (
+    <Dialog.Root open={sourcesModalOpen}>
+      <Dialog.Portal>
+        {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
+        <Dialog.Content css={style} asChild={true}>
+          <div onClick={onOverlayClick}>
+            <div className="modal">
+              <div className="trailer">
+                {/* <MinimalPlayer className="player"/> */}
+              </div>
+              <div className="content">
+                <div className="title">
+                  <h2>Sources</h2>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name <button onClick={() => setSearchParams({ sources: searchParams.get('sources') === 'raw' ? 'formatted' : 'raw' })}>{displayRawName ? 'raw' : 'formatted'}</button></th>
+                      <th>Size</th>
+                      <th>Seed</th>
+                      <th>Leech</th>
+                      <th>Downloads</th>
+                      <th className="upload-date">Upload date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      sources
+                        ?.map((source) =>
+                          <SourceRow
+                            key={source.uri}
+                            raw={displayRawName}
+                            source={source}
+                            trackerData={trackerDataPerSource.get(source.uri)}
+                          />
+                        )
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  )
+}
+
+export default () => {
+  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
+  const [, setSearchParams] = useSearchParams()
+  const uri = mergeScannarrUris([mediaUri, episodeUri])
+  const episodeId = episodeUri.split('-')[1]
   const { error, data: { Page } = {} } = useQuery(
     GET_PLAYBACK_SOURCES,
     {
@@ -412,12 +481,6 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
     }
   )
   if (error) console.error(error)
-
-  const onOverlayClick = (ev) => {
-    if (ev.target !== ev.currentTarget) return
-    const { sources, ...rest } = searchParams
-    setSearchParams(rest)
-  }
 
   const [trackerData, setTrackerData] = useState(new Map())
 
@@ -474,68 +537,27 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
     [Page?.playbackSource, trackerData]
   )
 
-  return (
-    <Dialog.Root open={sourcesModalOpen}>
-      <Dialog.Portal>
-        {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
-        <Dialog.Content css={style} asChild={true}>
-          <div onClick={onOverlayClick}>
-            <div className="modal">
-              <div className="trailer">
-                {/* <MinimalPlayer className="player"/> */}
-              </div>
-              <div className="content">
-                <div className="title">
-                  <h2>Sources</h2>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name <button onClick={() => setSearchParams({ sources: searchParams.get('sources') === 'raw' ? 'formatted' : 'raw' })}>{displayRawName ? 'raw' : 'formatted'}</button></th>
-                      <th>Size</th>
-                      <th>Seed</th>
-                      <th>Leech</th>
-                      <th>Downloads</th>
-                      <th className="upload-date">Upload date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      [...Page?.playbackSource ?? []]
-                        ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0))
-                        ?.map((source) =>
-                          <SourceRow
-                            key={source.uri}
-                            raw={displayRawName}
-                            source={source}
-                            trackerData={trackerDataPerSource.get(source.uri)}
-                          />
-                        )
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-  )
-}
-
-export default () => {
-  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
-  const [, setSearchParams] = useSearchParams()
-  const uri = mergeScannarrUris([mediaUri, episodeUri])
-
   const onSourcesClick = () => {
     setSearchParams({ sources: 'formatted' })
   }
+  
+  const sortedSources = useMemo(
+    () =>
+      [...Page?.playbackSource ?? []]
+        ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0)),
+    [Page?.playbackSource, trackerDataPerSource]
+  )
 
   return (
     <div>
       <button onClick={onSourcesClick} type="button">Sources</button>
-      <SourcesModal uri={uri} mediaUri={mediaUri} episodeUri={episodeUri} />
+      <SourcesModal
+        uri={uri}
+        sources={sortedSources}
+        trackerDataPerSource={trackerDataPerSource}
+        mediaUri={mediaUri}
+        episodeUri={episodeUri}
+      />
     </div>
   )
 }
