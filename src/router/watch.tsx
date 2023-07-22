@@ -1,6 +1,6 @@
 import { useParams, useSearchParams } from 'react-router-dom'
 
-import { useQuery } from '@apollo/client'
+import { makeVar, useQuery, useReactiveVar } from '@apollo/client'
 import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
@@ -15,6 +15,7 @@ import CountryLanguage from '@ladjs/country-language'
 import { gql } from '../generated'
 import { fetch } from '../utils/fetch'
 import { overlayStyle } from '../components/modal'
+import { getHumanReadableByteString } from '../utils/bytes'
 
 const style = css`
 overflow: auto;
@@ -91,7 +92,14 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
         bytes
         uploadDate
         thumbnails
-        team
+        team {
+          handler
+          origin
+          id
+          uri
+          url
+          name
+        }
         resolution
         hash
         format
@@ -102,7 +110,32 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
   }
 `)
 
+const teams = makeVar({})
+
+const getTeamIcon = (url) => {
+  const cachedValue = useReactiveVar(teams)?.[url]
+  if (cachedValue && !(cachedValue instanceof Promise)) return cachedValue
+  if (cachedValue instanceof Promise) return undefined
+  const res = fetch(url)
+    .then(res => res.text())
+    .then((res) => {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(res, 'text/html')
+      const img = doc.querySelector<HTMLLinkElement>('link[rel*="icon"]')
+      const _href = img?.getAttribute('href')
+      const href =
+        _href?.startsWith('http')
+          ? _href
+          : `${new URL(url).origin}${_href?.startsWith('/') ? '' : '/'}${_href ?? ''}`
+      teams({ ...teams(), [url]: href })
+      return href
+    })
+  teams({ ...teams(), [url]: res })
+  return undefined
+}
+
 const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) => {
+  const teamIcon = source.team?.url && getTeamIcon(source.team?.url)
   const parsed = useMemo(() => parse(source.filename), [source.filename])
   const formatted = useMemo(() => format(parsed), [parsed])
   const countries =
@@ -127,16 +160,10 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
         ? { ...country, iso639_1: 'gb' }
         : country
     )
-  if (formatted.audioLanguageTerms?.length >= 2) {
-    console.log('test', CountryLanguage.getCountryLanguages('ES'))
-    console.log('parsed', parsed)
-    console.log('formatted', formatted)
-    console.log('countriesLangs', countries)
-  }
   return (
     <tr className="source" key={source.uri}>
-      {/* make a toggle to display cleaned up name (via sacha's parsing) & raw name */}
       <td>
+        {!raw && teamIcon && <img height="30" title={formatted.groups?.at(0)} alt={formatted.groups?.at(0)} src={teamIcon}/>}
         <span>{raw ? source.filename : formatted.titles.join(' ')}</span>
         {
           !raw &&
@@ -145,6 +172,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
             {
               countries.map((country) =>
                 <img
+                  key={country.iso639_1}
                   height="20"
                   style={{ marginLeft: 5 }}
                   src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country.iso639_1.toUpperCase()}.svg`}
@@ -154,7 +182,7 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
           </span>
         }
       </td>
-      <td></td>
+      <td>{getHumanReadableByteString(source.bytes)}</td>
       <td>{trackerData.complete}</td>
       <td>{trackerData.incomplete}</td>
     </tr>
@@ -173,7 +201,6 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
     }
   )
   const [displayRawName, setDisplayRawName] = useState(false)
-  console.log('Page', Page)
   if (error) console.error(error)
 
   const onOverlayClick = (ev) => {
@@ -255,39 +282,18 @@ const SourcesModal = ({ uri, mediaUri, episodeUri }: { uri: string, mediaUri: st
                       <th>Leechers</th>
                     </tr>
                   </thead>
-                  {
-                    Page?.playbackSource?.map((source) =>
-                      <SourceRow
-                        raw={displayRawName}
-                        source={source}
-                        trackerData={trackerDataPerSource?.find(([uri]) => uri === source.uri)?.[1]}
-                      />
-                    )
-                    // Page?.playbackSource?.map((source) => {
-                    //   const foundTrackerData =
-                    //     [...trackerData.entries()]
-                    //       .find(([buffer]) =>
-                    //         buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
-                    //       )
-                    //       ?.[1]
-                    //   const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData) ?? '{}')
-                    //   const parsed = parse(source.filename)
-                    //   console.log('parsed', parsed)
-                    //   const formatted = format(parsed)
-                    //   console.log('formatted', formatted)
-                    //   return (
-                    //     <tr key={source.uri} className="source" key={source.id}>
-                    //       {/* make a toggle to display cleaned up name (via sacha's parsing) & raw name */}
-                    //       <td>
-                    //         <span>{displayRawName ? source.filename : parsed.titles.at(0)}</span>
-                    //       </td>
-                    //       <td></td>
-                    //       <td>{torrentData.complete}</td>
-                    //       <td>{torrentData.incomplete}</td>
-                    //     </tr>
-                    //   )
-                    // })
-                  }
+                  <tbody>
+                    {
+                      Page?.playbackSource?.map((source) =>
+                        <SourceRow
+                          key={source.uri}
+                          raw={displayRawName}
+                          source={source}
+                          trackerData={trackerDataPerSource?.find(([uri]) => uri === source.uri)?.[1]}
+                        />
+                      )
+                    }
+                  </tbody>
                 </table>
               </div>
             </div>
