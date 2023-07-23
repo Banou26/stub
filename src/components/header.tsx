@@ -155,18 +155,18 @@ const Header = () => {
   return (
     <header css={style}>
       <div className="left">
-        <Link href={getRoutePath(Route.HOME)} className="logo-link">
+        <Link to={getRoutePath(Route.HOME)} className="logo-link">
           <img src={IconUrl} alt="Stub Logo" className="logo-icon"/>
           <span>Stub</span>
         </Link>
-        <Link href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className="logo-link discord">
+        <a href="https://discord.gg/aVWMJsQxSY" target="_blank" rel="noopener noreferrer" className="logo-link discord">
           <span className="discord-logo-icon"></span>
           <span>Discord</span>
-        </Link>
-        <Link href="https://github.com/Banou26/stub" target="_blank" rel="noopener noreferrer" className="logo-link github">
+        </a>
+        <a href="https://github.com/Banou26/stub" target="_blank" rel="noopener noreferrer" className="logo-link github">
           <FontAwesomeIcon icon={faGithub} className="github-logo-icon" size='2x'/>
           <span>Github</span>
-        </Link>
+        </a>
       </div>
       <div className="middle">
         <form onSubmit={handleSubmit(onSubmit)}>

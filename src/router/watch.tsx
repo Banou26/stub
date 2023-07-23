@@ -229,35 +229,6 @@ const style = css`
   display: grid;
   height: calc(100vh - 6rem);
   grid-template-rows: 100% auto;
-  /* overflow: hidden; */
-  .player {
-    height: calc(90vh - 6rem);
-    /* width: 90%; */
-    & > div {
-      height: calc(90vh - 6rem);
-      & > video, & > div {
-        height: 100%;
-        max-height: calc(100vh - 6rem);
-      }
-    }
-  }
-
-  .player, .player-overlay {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .player-overlay {
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    & > div {
-      padding: 2.5rem;
-      margin-top: 25rem;
-      position: relative;
-      background-color: rgb(35, 35, 35);
-    }
-  }
 
   .description {
     background: rgb(35, 35, 35);
@@ -302,6 +273,36 @@ const style = css`
     }
   }
 
+`
+
+
+const playerStyle = css`
+height: calc(90vh - 6rem);
+/* width: 90%; */
+& > div {
+  height: calc(90vh - 6rem);
+  & > video, & > div {
+    height: 100%;
+    max-height: calc(100vh - 6rem);
+  }
+}
+
+grid-column: 1;
+grid-row: 1;
+
+.player-overlay {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-column: 1;
+  grid-row: 1;
+  & > div {
+    padding: 2.5rem;
+    margin-top: 25rem;
+    position: relative;
+    background-color: rgb(35, 35, 35);
+  }
+}
 `
 
 export const GET_PLAYBACK_SOURCES = gql(`#graphql
@@ -624,6 +625,7 @@ const Player = ({ source }: { source }) => {
   }, [streamReader])
 
   const setupStream = async (offset: number) => {
+    console.log('setupStream', offset)
     if (streamReader) {
       streamReader.cancel()
     }
@@ -637,6 +639,7 @@ const Player = ({ source }: { source }) => {
   }
 
   const onFetch = async (offset: number, end?: number, force?: boolean) => {
+    console.log('onFetch', offset, end, force)
     if (force || end !== undefined && ((end - offset) + 1) !== BASE_BUFFER_SIZE) {
       return torrent({
         arrayBuffer: structuredClone(torrentFileArrayBuffer),
@@ -645,10 +648,12 @@ const Player = ({ source }: { source }) => {
         end
       })
     }
+    console.log('before _streamReader')
     const _streamReader =
       currentStreamOffset !== offset
         ? await setupStream(offset)
         : streamReader
+    console.log('_streamReader', _streamReader)
 
     if (!_streamReader) throw new Error('Stream reader not ready')
     return new Response(
@@ -663,10 +668,7 @@ const Player = ({ source }: { source }) => {
     )
   }
 
-  console.log('source', source)
-
   const url = useMemo(() => source?.data && JSON.parse(source?.data).torrentUrl, [source?.data])
-  console.log('url', url)
 
   useEffect(() => {
     if (!url) return
@@ -693,20 +695,20 @@ const Player = ({ source }: { source }) => {
 
   const jassubWorkerUrl = useMemo(() => {
     const workerUrl = new URL('/build/jassub-worker.js', new URL(window.location.toString()).origin).toString()
-    console.log('jassubWorkerUrl', workerUrl)
+    // console.log('jassubWorkerUrl', workerUrl)
     const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
     return URL.createObjectURL(blob)
   }, [])
 
   const libavWorkerUrl = useMemo(() => {
     const workerUrl = new URL('/build/libav.js', new URL(window.location.toString()).origin).toString()
-    console.log('libavWorkerUrl', workerUrl)
+    // console.log('libavWorkerUrl', workerUrl)
     const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
     return URL.createObjectURL(blob)
   }, [])
 
   return (
-    <div className="player">
+    <div css={playerStyle}>
       <FKNMediaPlayer
         size={size}
         fetch={(offset, end) => onFetch(offset, end, !BACKPRESSURE_STREAM_ENABLED)}
@@ -738,7 +740,7 @@ export default () => {
     [Page?.playbackSource, sourceUri]
   )
 
-  console.log(currentSource)
+  // console.log(currentSource)
 
   const [trackerData, setTrackerData] = useState(new Map())
 
@@ -747,9 +749,14 @@ export default () => {
       Page
         ?.playbackSource
         ?.map((source) => {
-          const parsedTorrent = parseTorrent(JSON.parse(source?.data).magnetUri)
-          const binStr = hex2bin(parsedTorrent.infoHash)
-          return [source.uri, binStr, Buffer.from(parsedTorrent.infoHash, 'hex')]
+          try {
+            const parsedTorrent = parseTorrent(JSON.parse(source?.data).magnetUri)
+            const binStr = hex2bin(parsedTorrent.infoHash)
+            return [source.uri, binStr, Buffer.from(parsedTorrent.infoHash, 'hex')]
+          } catch (err) {
+            console.error(err)
+            return undefined
+          }
         }),
     [Page?.playbackSource]
   )
@@ -779,6 +786,7 @@ export default () => {
   const trackerDataPerSource = useMemo(
     () =>
       new Map(
+        // @ts-expect-error
         Page
           ?.playbackSource
           ?.map((source) => {
@@ -788,9 +796,15 @@ export default () => {
                   buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
                 )
                 ?.[1]
-            const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData) ?? '{}')
-            return [source.uri, torrentData]
+            try {
+              const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData))
+              return [source.uri, torrentData]
+            } catch (err) {
+              // console.error(err)
+              return [source.uri, undefined]
+            }
           })
+          ?.filter(([uri, data]) => uri && data)
       ),
     [Page?.playbackSource, trackerData]
   )
@@ -806,10 +820,15 @@ export default () => {
   
   const sortedSources = useMemo(
     () =>
-      [...Page?.playbackSource ?? []]
-        ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0)),
+      trackerDataPerSource.size && Page?.playbackSource
+        ? (
+          [...Page?.playbackSource ?? []]
+            ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0))
+        )
+        : [],
     [Page?.playbackSource, trackerDataPerSource]
   )
+  // console.log('sortedSources', sortedSources)
 
   useEffect(() => {
     if (!sortedSources) return
@@ -821,10 +840,14 @@ export default () => {
 
   useEffect(() => {
     const bestMatch = sortedSources.at(0)
-    if (trackerDataPerSource.size && sortedSources.length && bestMatch && !currentSource) {
+    // console.log('bestMatch', bestMatch)
+    // console.log('currentSource', currentSource)
+    // console.log('trackerDataPerSource', trackerDataPerSource)
+    // console.log('sortedSources', sortedSources)
+    if (trackerDataPerSource.size && sortedSources.length && trackerDataPerSource.size === sortedSources.length && bestMatch && !currentSource) {
       navigate(getRoutePath(Route.WATCH, { mediaUri, episodeUri, sourceUri: bestMatch.uri }))
     }
-  }, [currentSource])
+  }, [currentSource, sortedSources, trackerDataPerSource])
 
   // const descriptionHtml = useMemo(
   //   () =>
