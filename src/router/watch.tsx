@@ -603,8 +603,6 @@ export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, s
 const Player = ({ source }: { source }) => {
   const [torrentInstance, setTorrent] = useState<ParseTorrentFile.Instance>()
   const magnet = useMemo(() => torrentInstance ? toMagnetURI(torrentInstance).replace('xt=urn:btih:[object Object]&', '') : undefined, [torrentInstance])
-  // console.log('_torrent', torrentInstance)
-  // console.log('magnet', magnet)
 
   const [torrentFileArrayBuffer, setTorrentFileArrayBuffer] = useState<ArrayBuffer | undefined>()
   const [size, setSize] = useState<number>()
@@ -625,7 +623,6 @@ const Player = ({ source }: { source }) => {
   }, [streamReader])
 
   const setupStream = async (offset: number) => {
-    console.log('setupStream', offset)
     if (streamReader) {
       streamReader.cancel()
     }
@@ -639,7 +636,6 @@ const Player = ({ source }: { source }) => {
   }
 
   const onFetch = async (offset: number, end?: number, force?: boolean) => {
-    console.log('onFetch', offset, end, force)
     if (force || end !== undefined && ((end - offset) + 1) !== BASE_BUFFER_SIZE) {
       return torrent({
         arrayBuffer: structuredClone(torrentFileArrayBuffer),
@@ -648,12 +644,10 @@ const Player = ({ source }: { source }) => {
         end
       })
     }
-    console.log('before _streamReader')
     const _streamReader =
       currentStreamOffset !== offset
         ? await setupStream(offset)
         : streamReader
-    console.log('_streamReader', _streamReader)
 
     if (!_streamReader) throw new Error('Stream reader not ready')
     return new Response(
@@ -695,14 +689,12 @@ const Player = ({ source }: { source }) => {
 
   const jassubWorkerUrl = useMemo(() => {
     const workerUrl = new URL('/build/jassub-worker.js', new URL(window.location.toString()).origin).toString()
-    // console.log('jassubWorkerUrl', workerUrl)
     const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
     return URL.createObjectURL(blob)
   }, [])
 
   const libavWorkerUrl = useMemo(() => {
     const workerUrl = new URL('/build/libav.js', new URL(window.location.toString()).origin).toString()
-    // console.log('libavWorkerUrl', workerUrl)
     const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)})`], { type: 'application/javascript' })
     return URL.createObjectURL(blob)
   }, [])
@@ -733,14 +725,12 @@ export default () => {
       skip: !uri
     }
   )
-  if (error) console.error(error)
 
   const currentSource = useMemo(
     () => Page?.playbackSource?.find((source) => source.uri === sourceUri),
     [Page?.playbackSource, sourceUri]
   )
 
-  // console.log(currentSource)
 
   const [trackerData, setTrackerData] = useState(new Map())
 
@@ -754,7 +744,6 @@ export default () => {
             const binStr = hex2bin(parsedTorrent.infoHash)
             return [source.uri, binStr, Buffer.from(parsedTorrent.infoHash, 'hex')]
           } catch (err) {
-            console.error(err)
             return undefined
           }
         }),
@@ -800,7 +789,6 @@ export default () => {
               const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData))
               return [source.uri, torrentData]
             } catch (err) {
-              // console.error(err)
               return [source.uri, undefined]
             }
           })
@@ -828,7 +816,6 @@ export default () => {
         : [],
     [Page?.playbackSource, trackerDataPerSource]
   )
-  // console.log('sortedSources', sortedSources)
 
   useEffect(() => {
     if (!sortedSources) return
@@ -840,10 +827,6 @@ export default () => {
 
   useEffect(() => {
     const bestMatch = sortedSources.at(0)
-    // console.log('bestMatch', bestMatch)
-    // console.log('currentSource', currentSource)
-    // console.log('trackerDataPerSource', trackerDataPerSource)
-    // console.log('sortedSources', sortedSources)
     if (trackerDataPerSource.size && sortedSources.length && trackerDataPerSource.size === sortedSources.length && bestMatch && !currentSource) {
       navigate(getRoutePath(Route.WATCH, { mediaUri, episodeUri, sourceUri: bestMatch.uri }))
     }

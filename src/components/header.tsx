@@ -134,7 +134,6 @@ const Header = () => {
   const completed = true
   const data = []
   const loading = !completed
-  // const { loading, data, error, refetch } = useFetch<TitleHandle[]>(() => searchTitles({ categories: [category!], search: searchValue }), { skip: !searchValue })
 
   useDebounce(() => {
     if (!search?.length) return
