@@ -38,7 +38,7 @@ const router = createBrowserRouter([
   },
   {
     path: getRouterRoutePath(Route.WATCH),
-    element: wrapElement(<Watch/>)
+    element: <Watch/>
   },
   {
     path: getRouterRoutePath(Route.TEST),
