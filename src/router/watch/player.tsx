@@ -9,15 +9,23 @@ import FKNMediaPlayer from '@banou/media-player'
 
 import { fetch } from '../../utils/fetch'
 import { torrent } from '@fkn/lib'
+import { ArrowLeft, Home } from 'react-feather'
+import { Link, useNavigate } from 'react-router-dom'
+import { Route, getRoutePath } from '../path'
 
 const playerStyle = css`
 height: 100%;
+width: 100%;
+overflow-x: hidden;
 /* width: 100%; */
 & > div {
   height: 100%;
+  width: 100%;
   & > video, & > div {
-    height: 100%;
+    height: 100vh;
     max-height: 100%;
+    width: 100vw;
+    max-width: 100%;
   }
 }
 
@@ -25,16 +33,36 @@ grid-column: 1;
 grid-row: 1;
 
 .player-overlay {
-  display: grid;
-  justify-content: center;
-  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
   grid-column: 1;
   grid-row: 1;
-  & > div {
-    padding: 2.5rem;
-    margin-top: 25rem;
+  & > div, & > a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    & > svg {
+      margin-right: 1rem;
+    }
+    text-decoration: none;
+    margin: 1.5rem;
+    padding: 1rem;
     position: relative;
-    background-color: rgb(35, 35, 35);
+    /* background-color: rgb(35, 35, 35); */
+    /* background: linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) calc(100% - 1rem), rgba(0,0,0,0) 100%); */
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.1) calc(100% - 1rem),rgba(0,0,0,0) 100%);
+  }
+}
+
+.hide {
+  .player-overlay {
+    display: none;
   }
 }
 `
@@ -86,7 +114,7 @@ export const bufferStream = ({ stream, size: SIZE }: { stream: ReadableStream, s
     }
   })
 
-const Player = ({ source }: { source }) => {
+const Player = ({ mediaUri, source }: { mediaUri: string, source }) => {
   const [torrentInstance, setTorrent] = useState<ParseTorrentFile.Instance>()
   const magnet = useMemo(() => torrentInstance ? toMagnetURI(torrentInstance).replace('xt=urn:btih:[object Object]&', '') : undefined, [torrentInstance])
 
@@ -185,9 +213,23 @@ const Player = ({ source }: { source }) => {
     return URL.createObjectURL(blob)
   }, [])
 
+  const customOverlay = useMemo(() => (
+    <div className="player-overlay">
+      <Link to={{ pathname: getRoutePath(Route.ANIME), search: `details=${mediaUri}` }} className="home">
+        <ArrowLeft/>
+        <span>Back</span>
+      </Link>
+      <Link to={getRoutePath(Route.HOME)} className="home">
+        <Home/>
+        <span>Home</span>
+      </Link>
+    </div>
+  ), [])
+
   return (
     <div css={playerStyle}>
       <FKNMediaPlayer
+        customOverlay={customOverlay}
         size={size}
         fetch={(offset, end) => onFetch(offset, end, !BACKPRESSURE_STREAM_ENABLED)}
         publicPath={new URL('/build/', new URL(window.location.toString()).origin).toString()}

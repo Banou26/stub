@@ -18,6 +18,7 @@ import SourcesModal, { getTeamIcon } from './sources-modal'
 const style = css`
   display: grid;
   height: 100%;
+  width: 100%;
   grid-template-rows: 100% auto;
 
   .description {
@@ -236,7 +237,7 @@ const Watch = () => {
 
   return (
     <div css={style}>
-      <Player source={currentSource}/>
+      <Player mediaUri={mediaUri} source={currentSource}/>
       {/* <div
         className="description"
         dangerouslySetInnerHTML={{ __html: descriptionHtml }}
