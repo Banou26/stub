@@ -6,6 +6,8 @@ import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
+import DOMPurify from 'dompurify'
+import * as marked from 'marked'
 
 import useNamespacedLocalStorage from '../../utils/use-local-storage'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
@@ -18,6 +20,7 @@ import useScrub from '../../utils/use-scrub'
 import './index.css'
 import PreviewModal from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
+import { getSeason } from '../../utils/date'
 
 const style = css`
 
@@ -60,33 +63,83 @@ h2 {
 
 .title-hovercard {
   display: grid;
-  grid-template:"container";
-  height: 39.25rem;
+  /* height: 39.25rem; */
   width: 70rem;
-  /* background-color: rgb(35, 35, 35); */
-  background-color: #000;
+  background-color: rgb(35, 35, 35);
+  /* background-color: #000; */
   margin-top: 37.5rem;
-  overflow: hidden;
+  /* margin-top: 50rem; */
+  /* overflow: hidden; */
   border-radius: 1rem;
   user-select: none;
 
   transform: scale(0.95);
-  overflow: hidden;
+  /* overflow: hidden; */
   transition: transform .2s ease, opacity .2s ease;
-  opacity: 0;
+  /* opacity: 0; */
 
   &:hover {
     transform: scale(1);
     opacity: 1;
   }
 
-  & > a > div:first-of-type {
-    grid-area: container;
-    margin-top: -10.3rem;
-    /* margin-top: -2.95rem; */
-    height: 60rem !important;
-    width: 70rem !important;
-    pointer-events: none;
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .content {
+    padding: 2rem;
+    width: 70rem;
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .description {
+      display: flex;
+      overflow: hidden;
+    }
+  }
+
+  .title-hovercard-player {
+    position: relative;
+    display: grid;
+    grid-template: "container";
+    height: 39.25rem;
+    width: 70rem;
+    /* background-color: rgb(35, 35, 35); */
+    background-color: #000;
+    /* margin-top: 37.5rem; */
+    overflow: hidden;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    user-select: none;
+
+    /* transform: scale(0.95); */
+    overflow: hidden;
+    /* transition: transform .2s ease, opacity .2s ease; */
+    /* opacity: 0; */
+
+    /* &:hover {
+      transform: scale(1);
+      opacity: 1;
+    } */
+
+    & > a > div:first-of-type {
+      grid-area: container;
+      margin-top: -10.3rem;
+      /* margin-top: -2.95rem; */
+      height: 60rem !important;
+      width: 70rem !important;
+      pointer-events: none;
+    }
   }
 }
 `
@@ -219,14 +272,89 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
     setIsReady(true)
   }
 
+  const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
+  const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
+
+  useEffect(() => {
+    if (contentRef === null) return
+    const resizeObserver = new ResizeObserver(() => {
+      setContentHeight(contentRef.clientHeight)
+    })
+    resizeObserver.observe(contentRef as HTMLDivElement)
+    return () => {
+      resizeObserver.disconnect()
+    }
+  })
+
+  console.log('descriptionHeight', contentHeight, rest)
+
+  console.log('rest.height', rest.style.top)
+  console.log(contentHeight ? `calc(${rest.style.top}px + ${contentHeight}px)` : rest.style.top)
+
+  console.log('media', media)
+
+  const descriptionText = useMemo(
+    () =>
+      media?.description
+        ? new DOMParser().parseFromString(DOMPurify.sanitize(marked.parse(media?.description)), 'text/html').body.innerText
+        : undefined,
+    [media?.description]
+  )
+
+  const ellipsedDescriptionText = useMemo(
+    () =>
+      descriptionText
+        ? descriptionText.length > 225
+          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225))}...`
+          : descriptionText
+        : undefined,
+    [descriptionText]
+  )
+
+  console.log('descriptionText', descriptionText)
+
   return (
-    <MinimalPlayer
-      media={media}
-      redirectTo={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+    <div
       ref={ref}
-      {...rest}
+      {...{
+        ...rest,
+        style: {
+          ...rest.style,
+          top: contentHeight ? `calc(${rest.style.top}px + ${contentHeight / 2}px)` : rest.style.top
+        }
+      }}
       className="title-hovercard"
-    />
+    >
+      <MinimalPlayer
+        media={media}
+        redirectTo={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+        className="title-hovercard-player"
+      />
+      <Link
+        to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+        ref={setContentRef}
+      >
+        <div className="content">
+          <div className="top">
+            <span className="episodes">
+              {media.episodeCount ?? '?'} Episodes
+            </span>
+            {
+              media.startDate
+                ? (
+                  <span className="date">
+                    {getSeason(new Date(media.startDate.year, media.startDate.month, media.startDate.day))} {media.startDate.year}
+                  </span>
+                )
+                : <span className="date"/>
+            }
+          </div>
+          <div className="description">
+            {ellipsedDescriptionText}
+          </div>
+        </div>
+      </Link>
+    </div>
   )
 
   return (

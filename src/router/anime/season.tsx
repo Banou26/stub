@@ -79,6 +79,19 @@ export const GET_CURRENT_SEASON = gql(`#graphql
           color
           default
         }
+        season
+        seasonYear
+        startDate {
+          day
+          month
+          year
+        }
+        endDate {
+          day
+          month
+          year
+        }
+        episodeCount
         bannerImage
         handles {
           edges {
@@ -88,6 +101,19 @@ export const GET_CURRENT_SEASON = gql(`#graphql
               id
               uri
               url
+              episodeCount
+              season
+              seasonYear
+              startDate {
+                day
+                month
+                year
+              }
+              endDate {
+                day
+                month
+                year
+              }
               title {
                 romanized
                 english

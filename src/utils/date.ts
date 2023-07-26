@@ -1,5 +1,8 @@
 import type { DateData, Series, Title, AiringSchedule } from '../../../../scannarr/src'
 
+const seasons = ['WINTER', 'SPRING', 'SUMMER', 'FALL'] as const
+export const getSeason = (d: Date) => seasons[Math.floor((d.getMonth() / 12) * 4) % 4]
+
 export const getNextAiring = (airingSchedules: AiringSchedule[]) =>
   airingSchedules
     ?.sort(({ date }, { date: date2 }) => date.getTime() - date2.getTime())
