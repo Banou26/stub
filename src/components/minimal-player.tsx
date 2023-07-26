@@ -120,6 +120,8 @@ export const MinimalPlayer = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDiv
 
   const toggleMuteButton = () => {
     setStoredMuted(value => !value)
+    if (volumeScrubValue === undefined) return
+    setPlayerVolume(volumeScrubValue ** 2)
   }
 
   const hoverVolumeArea: React.DOMAttributes<HTMLDivElement>['onMouseOver'] = () => {
