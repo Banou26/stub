@@ -474,16 +474,26 @@ export default () => {
                       ?.edges ?? []]
                       ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
                       .map(({ node }) => {
-                        const airingAt = new Date(node.airingAt * 1000)
-                        const airingAtString = airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
+                        const airingAt = new Date(node.airingAt)
+                        const airingAtString =
+                          new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+                            .format(Math.round((airingAt.getTime() - Date.now()) / 60 / 60 / 24 / 1000), 'days')// airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
                         const relativeTime =
-                          !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
-                            ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
-                            : undefined
+                          airingAt
+                            ? airingAtString
+                            : (
+                              node.timeUntilAiring && !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
+                                ? (
+                                  new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+                                    .format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
+                                )
+                                : undefined
+                            )
 
-                        // console.log('relativeTime', relativeTime)
-
-                        if (node.timeUntilAiring > 0) return undefined
+                        if (
+                          (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
+                          || airingAt.getTime() - Date.now() > 0
+                        ) return undefined
 
                         // todo merge normal uris with the episode uris to keep more sources
                         const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
