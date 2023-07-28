@@ -478,17 +478,13 @@ export default () => {
                         const airingAtString =
                           new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
                             .format(Math.round((airingAt.getTime() - Date.now()) / 60 / 60 / 24 / 1000), 'days')// airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
+                        const timeUntilAiringString =
+                          new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+                            .format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
                         const relativeTime =
-                          airingAt
-                            ? airingAtString
-                            : (
-                              node.timeUntilAiring && !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring)
-                                ? (
-                                  new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-                                    .format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
-                                )
-                                : undefined
-                            )
+                          airingAt ? airingAtString
+                          : node.timeUntilAiring && !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring) ? timeUntilAiringString
+                          : undefined
 
                         if (
                           (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
