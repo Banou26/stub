@@ -286,12 +286,12 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
     }
   })
 
-  console.log('descriptionHeight', contentHeight, rest)
+  // console.log('descriptionHeight', contentHeight, rest)
 
-  console.log('rest.height', rest.style.top)
-  console.log(contentHeight ? `calc(${rest.style.top}px + ${contentHeight}px)` : rest.style.top)
+  // console.log('rest.height', rest.style.top)
+  // console.log(contentHeight ? `calc(${rest.style.top}px + ${contentHeight}px)` : rest.style.top)
 
-  console.log('media', media)
+  // console.log('media', media)
 
   const descriptionText = useMemo(
     () =>
@@ -311,7 +311,7 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
     [descriptionText]
   )
 
-  console.log('descriptionText', descriptionText)
+  // console.log('descriptionText', descriptionText)
 
   return (
     <div
