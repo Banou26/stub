@@ -229,6 +229,8 @@ export const GET_MEDIA = gql(`#graphql
       popularity
       shortDescription
       description
+      season
+      seasonYear
       coverImage {
         color
         default
@@ -255,6 +257,8 @@ export const GET_MEDIA = gql(`#graphql
               url
               thumbnail
             }
+            season
+            seasonYear
             popularity
             shortDescription
             description
@@ -275,13 +279,6 @@ export const GET_MEDIA = gql(`#graphql
                   airingAt
                   number
                   uri
-                  media {
-                    handler
-                    origin
-                    id
-                    uri
-                    url
-                  }
                   mediaUri
                   timeUntilAiring
                   thumbnail
@@ -315,13 +312,6 @@ export const GET_MEDIA = gql(`#graphql
             url
             airingAt
             number
-            media {
-              handler
-              origin
-              id
-              uri
-              url
-            }
             mediaUri
             timeUntilAiring
             thumbnail
