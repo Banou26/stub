@@ -176,10 +176,18 @@ left: 50%; */
           padding-top: 1rem;
           /* justify-content: start; */
 
+          &:has(.empty) {
+            padding-left: 0;
+          }
+
           .title {
             margin-right: auto;
             font-size: 2rem;
             font-weight: bold;
+
+            &.empty {
+              font-weight: normal;
+            }
           }
 
           .description {
@@ -490,24 +498,28 @@ export default () => {
                         // todo merge normal uris with the episode uris to keep more sources
                         const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
 
+                        const usedTitle =
+                          node.title?.romanized
+                          ?? node.title?.english
+                          ?? node.title?.native
+
                         return (
                           <Link
                             key={episodeScannarrUri}
                             className="episode"
                             to={getRoutePath(Route.WATCH, { mediaUri: mediaUri, episodeUri: episodeScannarrUri })}
                           >
-                            <div className="episode-number">{node.number}</div>
+                            <div className="episode-number">{usedTitle !== undefined && usedTitle !== null ? node.number : undefined}</div>
                             {
                               node.thumbnail
                                 ? <img src={node.thumbnail} alt="" className="thumbnail"/>
                                 : undefined
                             }
                             <div className="information">
-                              <div className="title">
+                              <div className={`title ${usedTitle ? '' : 'empty'}`}>
                                 {
-                                  node.title?.romanized
-                                  ?? node.title?.english
-                                  ?? node.title?.native
+                                  usedTitle
+                                  ?? `Episode ${node.number}`
                                 }
                               </div>
                               {
