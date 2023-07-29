@@ -151,6 +151,9 @@ z-index: 125;
         text-decoration: none;
         overflow: hidden;
 
+        &:last-of-type {
+          border-bottom: none;
+        }
 
         &:hover {
           .title {
