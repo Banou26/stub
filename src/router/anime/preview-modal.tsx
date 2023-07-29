@@ -6,11 +6,12 @@ import { targets } from 'laserr'
 // import './preview-modal.css'
 import { gql } from '../../generated'
 import { overlayStyle } from '../../components/modal'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
 import { mergeScannarrUris, toUriEpisodeId } from 'scannarr/src'
+import { Episode } from 'scannarr'
 
 const style = css`
 overflow: auto;
@@ -85,7 +86,7 @@ z-index: 125;
     }
   }
 
-  .content {
+  & > .content {
     margin: 2.5rem;
     
     .title {
@@ -170,34 +171,46 @@ z-index: 125;
           align-items: center;
         }
 
-        .information {
+        .content {
           display: flex;
-          flex-direction: column;
           align-items: center;
-          padding-left: 2.5rem;
-          padding-top: 1rem;
-          /* justify-content: start; */
 
-          &:has(.empty) {
-            padding-left: 0;
+          .thumbnail {
+            display: flex !important;
+            height: 7.5rem;
+            background-color: rgba(255, 255, 255, .1);
+            border-radius: .5rem;
           }
 
-          .title {
-            margin-right: auto;
-            font-size: 2rem;
-            font-weight: bold;
-
-            &.empty {
-              font-weight: normal;
-            }
-          }
-
-          .description {
+          .information {
             display: flex;
-            font-size: 1.5rem;
-            margin-right: auto;
-            color: rgba(255, 255, 255, .8);
-            margin-top: 1rem;
+            flex-direction: column;
+            align-items: center;
+            padding-left: 2.5rem;
+            padding-top: 1rem;
+            /* justify-content: start; */
+
+            &:has(.empty) {
+              padding-left: 0;
+            }
+
+            .title {
+              margin-right: auto;
+              font-size: 2rem;
+              font-weight: bold;
+
+              &.empty {
+                font-weight: normal;
+              }
+            }
+
+            .description {
+              display: flex;
+              font-size: 1.5rem;
+              margin-right: auto;
+              color: rgba(255, 255, 255, .8);
+              margin-top: 1rem;
+            }
           }
         }
 
@@ -346,6 +359,97 @@ export const GET_ORIGINS = gql(`#graphql
 
 // http://localhost:4560/test?details=scannarr%3AbWFsOjQ2NTY5LGFuaWxpc3Q6MTI4ODkz
 
+const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => {
+  const airingAt = new Date(node.airingAt)
+  const airingAtString =
+    new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+      .format(Math.round((airingAt.getTime() - Date.now()) / 60 / 60 / 24 / 1000), 'days')// airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
+  const timeUntilAiringString =
+    new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+      .format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
+  const relativeTime =
+    airingAt ? airingAtString
+    : node.timeUntilAiring && !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring) ? timeUntilAiringString
+    : undefined
+
+  if (
+    (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
+    || airingAt.getTime() - Date.now() > 0
+  ) return null
+
+  // todo merge normal uris with the episode uris to keep more sources
+  const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
+
+  const usedTitle =
+    node.title?.romanized
+    ?? node.title?.english
+    ?? node.title?.native
+
+  const [thumbnailErrored, setThumbnailErrored] = useState(false)
+  const [fallbackThumbnail, setFallbackThumbnail] = useState<string | undefined>()
+
+  useEffect(() => {
+    if (!(node.thumbnail && thumbnailErrored)) return
+    fetch(node.thumbnail)
+      .then(res => res.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob)
+        setFallbackThumbnail(url)
+      })
+  }, [node.thumbnail, thumbnailErrored])
+
+  const [thumbnailRef, setThumbnailRef] = useState<HTMLImageElement | null>(null)
+
+  useEffect(() => {
+    if (!(thumbnailRef && node.thumbnail && thumbnailErrored)) return
+    const interval = setInterval(() => {
+      const allowedAttributes = ['src', 'alt', 'class', 'style']
+      for (const attr of thumbnailRef.getAttributeNames()) {
+        if (!allowedAttributes.includes(attr)) thumbnailRef.removeAttribute(attr)
+      }
+    }, 100)
+    return () => clearInterval(interval)
+  }, [thumbnailRef, node.thumbnail, thumbnailErrored])
+
+  return (
+    <Link
+      className="episode"
+      to={getRoutePath(Route.WATCH, { mediaUri: mediaUri, episodeUri: episodeScannarrUri })}
+    >
+      <div className="episode-number">{usedTitle !== undefined && usedTitle !== null ? node.number : undefined}</div>
+      <div className="content">
+        {
+          node.thumbnail
+            ? (
+              <img
+                ref={setThumbnailRef}
+                src={fallbackThumbnail ?? node.thumbnail}
+                alt=""
+                className="thumbnail"
+                onError={() => setThumbnailErrored(true)}
+              />
+            )
+            : undefined
+        }
+        <div className="information">
+          <div className={`title ${usedTitle ? '' : 'empty'}`}>
+            {
+              usedTitle
+              ?? `Episode ${node.number}`
+            }
+          </div>
+          {
+            node.description
+              ? <div className="description">{node.description}</div>
+              : undefined
+          }
+        </div>
+      </div>
+      <div className="date">{relativeTime}</div>
+    </Link>
+  )
+}
+
 export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
@@ -473,63 +577,10 @@ export default () => {
                   {
                     [...media
                       ?.episodes
-                      ?.edges ?? []]
+                      ?.edges ?? []
+                    ]
                       ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
-                      .map(({ node }) => {
-                        const airingAt = new Date(node.airingAt)
-                        const airingAtString =
-                          new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-                            .format(Math.round((airingAt.getTime() - Date.now()) / 60 / 60 / 24 / 1000), 'days')// airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
-                        const timeUntilAiringString =
-                          new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-                            .format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
-                        const relativeTime =
-                          airingAt ? airingAtString
-                          : node.timeUntilAiring && !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring) ? timeUntilAiringString
-                          : undefined
-
-                        if (
-                          (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
-                          || airingAt.getTime() - Date.now() > 0
-                        ) return undefined
-
-                        // todo merge normal uris with the episode uris to keep more sources
-                        const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
-
-                        const usedTitle =
-                          node.title?.romanized
-                          ?? node.title?.english
-                          ?? node.title?.native
-
-                        return (
-                          <Link
-                            key={episodeScannarrUri}
-                            className="episode"
-                            to={getRoutePath(Route.WATCH, { mediaUri: mediaUri, episodeUri: episodeScannarrUri })}
-                          >
-                            <div className="episode-number">{usedTitle !== undefined && usedTitle !== null ? node.number : undefined}</div>
-                            {
-                              node.thumbnail
-                                ? <img src={node.thumbnail} alt="" className="thumbnail"/>
-                                : undefined
-                            }
-                            <div className="information">
-                              <div className={`title ${usedTitle ? '' : 'empty'}`}>
-                                {
-                                  usedTitle
-                                  ?? `Episode ${node.number}`
-                                }
-                              </div>
-                              {
-                                node.description
-                                  ? <div className="description">{node.description}</div>
-                                  : undefined
-                              }
-                            </div>
-                            <div className="date">{relativeTime}</div>
-                          </Link>
-                        )
-                      })
+                      .map(({ node }) => <EpisodeRow key={node.uri} mediaUri={mediaUri} node={node}/>)
                   }
                 </div>
               </div>
