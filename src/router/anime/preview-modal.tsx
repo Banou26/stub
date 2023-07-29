@@ -54,14 +54,7 @@ z-index: 125;
   .trailer {
     border-radius: 1rem 1rem 0 0;
     overflow: hidden;
-    &:after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      height: 67.6rem;
-      background: linear-gradient(0deg, #181818, transparent 20%);
-      pointer-events: none;
-    }
+
     .volume-area-wrapper {
       z-index: 100;
     }
