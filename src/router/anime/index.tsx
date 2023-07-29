@@ -559,12 +559,18 @@ export default () => {
   }
 
   const [headerTrailerRef, setHeaderTrailerRef] = useState<HTMLDivElement | null>()
-  const [headerTrailerPaused, setHeaderTrailerPaused] = useState(false)
+  const [headerTrailerPaused, setHeaderTrailerPaused] = useState(!!mediaUriModal)
 
   useEffect(() => {
     if (!headerTrailerRef) return
     const observer = new IntersectionObserver(
-      (entries: IntersectionObserverEntry[]) => setHeaderTrailerPaused(!entries[0]?.isIntersecting),
+      (entries: IntersectionObserverEntry[]) => {
+        if (!!mediaUriModal) {
+          setHeaderTrailerPaused(true)
+          return
+        }
+        setHeaderTrailerPaused(!entries[0]?.isIntersecting)
+      },
       { threshold: [0.7] }
     )
     observer.observe(headerTrailerRef)
