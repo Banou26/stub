@@ -30,7 +30,7 @@ const router = createBrowserRouter([
   },
   {
     path: getRouterRoutePath(Route.ANIME),
-    element: wrapElement(<Anime/>)
+    element: <Anime/>
   },
   {
     path: getRouterRoutePath(Route.ANIME_SEASON),

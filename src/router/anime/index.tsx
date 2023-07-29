@@ -18,24 +18,167 @@ import Title2 from '../../components/title2'
 import useScrub from '../../utils/use-scrub'
 
 import './index.css'
-import PreviewModal from './preview-modal'
+import PreviewModal, { GET_MEDIA } from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
+import Header from '../../components/header'
+
+const headerStyle = css`
+animation-name: showBackgroundAnimation;
+animation-duration: 1ms; /* Firefox requires this to apply the animation */
+animation-direction: alternate;
+animation-timeline: scroll(block nearest);
+
+@keyframes showBackgroundAnimation {
+  from {
+    background-color: transparent;
+  }
+  10% {
+    background-color: rgb(35, 35, 35);
+  }
+  to {
+    background-color: rgb(35, 35, 35);
+  }
+}
+`
 
 const style = css`
+position: relative;
 
-padding: 5rem 10rem;
+/* padding: 5rem 10rem; */
+padding-top: 0;
 
 h2 {
   font-size: 4rem;
   /* padding: 5rem; */
   padding-top: 5rem;
   padding-left: 5rem;
-  padding-bottom: 2rem;
+  /* padding-bottom: 2rem; */
+}
+
+.header-serie {
+  position: absolute;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  /* height: calc(100vh - 5rem); */
+  /* height: 100%; */
+  height: calc(100vh - 5rem);
+
+  padding-bottom: 0;
+
+  .serie-title {
+    font-size: 4rem;
+    font-weight: 700;
+  }
+
+  .header-serie-content {
+    position: absolute;
+
+    top: 40rem;
+
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    /* height: 100%; */
+    /* width: 100%; */
+    padding: 5rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+
+    
+    .header-serie-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .header-serie-description {
+      margin-top: 2rem;
+      margin-left: 1rem;
+      font-size: 1.8rem;
+      font-weight: 400;
+      line-height: 1.5;
+      /* color: #aaa; */
+      color: #fff;
+      max-width: 50rem;
+    }
+  }
+
+  .player-wrapper {
+    display: inline;
+    width: 100%;
+  }
+
+  .player {
+    height: calc(100vh - 5rem) !important;
+    overflow: hidden;
+    & > div:first-of-type {
+      grid-area: container;
+      height: 140vh !important;
+      width: 100% !important;
+      margin-top: -20vh;
+      pointer-events: none;
+    }
+    /* & > div:first-child {
+      width: 100% !important;
+      height: calc(100vh - 5rem) !important;
+      iframe {
+        height: 100% !important;
+        pointer-events: none;
+      }
+    } */
+
+    .volume-area-wrapper {
+      z-index: 25;
+      bottom: unset;
+      top: 35rem;
+      left: 4.5rem;
+    }
+  }
+
+  .shadow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 30vh;
+
+    /* background-color: rgb(15, 15, 15); */
+    background:
+      linear-gradient(
+        0deg,
+        rgba(15, 15, 15, 1) 0%,
+        rgba(15, 15, 15, 0.5) calc(100% - 10rem),
+        rgba(15, 15, 15, 0) 100%
+      );
+  }
+}
+
+.section {
+  position: relative;
+  padding: 5rem 10rem;
 }
 
 .section:not(:first-of-type) {
   margin-top: 10rem;
+}
+
+div.section.first-section {
+  margin-top: 0;
+  padding-top: 65vh;
+  h2 {
+    color: #fff;
+    text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+  }
 }
 
 .section-header {
@@ -59,6 +202,7 @@ h2 {
 .ScrollAreaRoot {
   margin: 2.5rem 0;
   overflow: visible;
+  box-shadow: unset;
 }
 
 .title-hovercard {
@@ -305,7 +449,7 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
     () =>
       descriptionText
         ? descriptionText.length > 225
-          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225))}...`
+          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
           : descriptionText
         : undefined,
     [descriptionText]
@@ -406,10 +550,31 @@ export default () => {
       }
     }
   )
+  const firstMedia = useMemo(() => Page?.media.at(0), [Page?.media.at(0)])
+  const { data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: firstMedia?.uri }, skip: !firstMedia })
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
+  const descriptionText = useMemo(
+    () =>
+      media?.description
+        ? new DOMParser().parseFromString(DOMPurify.sanitize(marked.parse(media?.description)), 'text/html').body.innerText
+        : undefined,
+    [media?.description]
+  )
+
+  const ellipsedDescriptionText = useMemo(
+    () =>
+      descriptionText
+        ? descriptionText.length > 225
+          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
+          : descriptionText
+        : undefined,
+    [descriptionText]
+  )
+
+  // console.log('Anime Page', Page)
   // console.log('Anime Page', Page)
 
   if (error) console.error(error)
@@ -446,52 +611,76 @@ export default () => {
   }
 
   return (
-    <div css={style}>
-      <div className="section">
-        <Link to={getRoutePath(Route.ANIME_SEASON)}>
-          <h2>Current season</h2>
-        </Link>
-        <div className="section-items">
-          <ScrollArea.Root className="ScrollAreaRoot">
-            <ScrollArea.Viewport className="ScrollAreaViewport">
-              <div className="section-items">
-                {titleCards}
-              </div>
-            </ScrollArea.Viewport>
-            <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
-              <ScrollArea.Thumb className="ScrollAreaThumb" />
-            </ScrollArea.Scrollbar>
-            <ScrollArea.Corner className="ScrollAreaCorner" />
-          </ScrollArea.Root>
+    <>
+      <Header css={headerStyle}/>
+      <div css={style}>
+        <div className="header-serie">
           {
-            hoverCardMedia && (
-              <TitleHoverCard
-                media={hoverCardMedia}
-                ref={refs.setFloating}
-                onMouseLeave={onHoverCardMouseLeave}
-                style={{
-                  position: strategy,
-                  top: y ?? 0,
-                  left: x ?? 0
-                }}
-              />
+            media && (
+              <div className="player-wrapper">
+                <MinimalPlayer media={media} className="player"/>
+                <div className="shadow"/>
+                <div className="header-serie-content">
+                  <div className="header-serie-title">
+                    <h1>{media.title?.english ?? media.title?.romaji}</h1>
+                  </div>
+                  <div className="header-serie-description">
+                    {ellipsedDescriptionText}
+                  </div>
+                </div>
+                {/* <div className="header-serie-image">
+                  <img src={media.coverImage?.extraLarge ?? media.coverImage?.large ?? media.coverImage?.medium ?? ''} alt=""/>
+                </div> */}
+              </div>
             )
           }
         </div>
-      </div>
-      <div className="section">
-        <Link to={getRoutePath(Route.ANIME_SEASON)}>
-          <h2>Popular animes</h2>
-        </Link>
-        <div className="items">
-          {/* {
-            Page?.media?.map(media =>
-              <Title2 key={media.uri} media={media} className="title card Tag"/>
-            )
-          } */}
+        <div className="section first-section">
+          <Link to={getRoutePath(Route.ANIME_SEASON)}>
+            <h2>Current season</h2>
+          </Link>
+          <div className="section-items">
+            <ScrollArea.Root className="ScrollAreaRoot">
+              <ScrollArea.Viewport className="ScrollAreaViewport">
+                <div className="section-items">
+                  {titleCards}
+                </div>
+              </ScrollArea.Viewport>
+              <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
+                <ScrollArea.Thumb className="ScrollAreaThumb" />
+              </ScrollArea.Scrollbar>
+              <ScrollArea.Corner className="ScrollAreaCorner" />
+            </ScrollArea.Root>
+            {
+              hoverCardMedia && (
+                <TitleHoverCard
+                  media={hoverCardMedia}
+                  ref={refs.setFloating}
+                  onMouseLeave={onHoverCardMouseLeave}
+                  style={{
+                    position: strategy,
+                    top: y ?? 0,
+                    left: x ?? 0
+                  }}
+                />
+              )
+            }
+          </div>
         </div>
+        <div className="section">
+          <Link to={getRoutePath(Route.ANIME_SEASON)}>
+            <h2>Popular animes</h2>
+          </Link>
+          <div className="items">
+            {/* {
+              Page?.media?.map(media =>
+                <Title2 key={media.uri} media={media} className="title card Tag"/>
+              )
+            } */}
+          </div>
+        </div>
+        <PreviewModal/>
       </div>
-      <PreviewModal/>
-    </div>
+    </>
   )
 }

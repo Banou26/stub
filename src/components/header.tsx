@@ -29,7 +29,7 @@ const style = css`
   user-select: none;
   padding: 0 4rem;
 
-  /* z-index: 100; */
+  z-index: 100;
 
   .left {
     display: grid;
@@ -123,7 +123,7 @@ const style = css`
   }
 `
 
-const Header = () => {
+const Header = ({ ...rest }) => {
   const [category, setCategory] = useState<Category>('ANIME')
   const [showSearchResults, setShowSearchResults] = useState(false)
   const { register, watch, handleSubmit, getFieldState } = useForm()
@@ -152,7 +152,7 @@ const Header = () => {
   }
 
   return (
-    <header css={style}>
+    <header css={style} {...rest}>
       <div className="left">
         <Link to={getRoutePath(Route.HOME)} className="logo-link">
           <img src={IconUrl} alt="Stub Logo" className="logo-icon"/>

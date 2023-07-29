@@ -25,6 +25,8 @@ padding: 5rem;
 /* top: 50%;
 left: 50%; */
 
+z-index: 50;
+
 .modal {
   position: relative;
   display: flex;
