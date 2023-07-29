@@ -610,6 +610,21 @@ export default () => {
     setHoverCardMedia(undefined)
   }
 
+  const [headerTrailerRef, setHeaderTrailerRef] = useState<HTMLDivElement | null>()
+  const [headerTrailerPaused, setHeaderTrailerPaused] = useState(false)
+
+  useEffect(() => {
+    if (!headerTrailerRef) return
+    const observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[]) => setHeaderTrailerPaused(!entries[0]?.isIntersecting),
+      { threshold: [0.7] }
+    )
+    observer.observe(headerTrailerRef)
+    return () => {
+      observer.disconnect()
+    }
+  }, [headerTrailerRef])
+
   return (
     <>
       <Header css={headerStyle}/>
@@ -618,7 +633,7 @@ export default () => {
           {
             media && (
               <div className="player-wrapper">
-                <MinimalPlayer media={media} className="player"/>
+                <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
                 <div className="shadow"/>
                 <div className="header-serie-content">
                   <div className="header-serie-title">
