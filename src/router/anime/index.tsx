@@ -5,7 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import ReactPlayer from 'react-player'
-import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
+import { VolumeX, Volume2, Volume1, Volume, Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 
@@ -115,6 +115,35 @@ h2 {
   .player-wrapper {
     display: inline;
     width: 100%;
+
+    a {
+      text-decoration: none;
+    }
+
+    button {
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      color: #fff;
+      font-size: 3rem;
+      font-weight: 700;
+      padding: 1rem;
+      margin: 0;
+      margin: 1rem;
+      text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      align-items: center;
+
+      svg {
+        margin-right: 1rem;
+      }
+
+      &:hover {
+        color: #aaa;
+      }
+    }
   }
 
   .player {
@@ -378,44 +407,6 @@ height: 36rem;
 `
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
-  const [playerVolume, setPlayerVolume] = useState(1)
-  const [isReady, setIsReady] = useState(false)
-
-  const volumeBarRef = useRef<HTMLDivElement>(null)
-  const [hiddenVolumeArea, setHiddenVolumeArea] = useState(true)
-  const useStoredValue = useNamespacedLocalStorage<{ volume: number, muted: boolean }>('title-hovercard')
-  const [volume, setStoredVolume] = useStoredValue('volume', 1)
-  const [isMuted, setStoredMuted] = useStoredValue('muted', true)
-  const { scrub: volumeScrub, value: volumeScrubValue } = useScrub({ ref: volumeBarRef, defaultValue: volume })
-
-  useEffect(() => {
-    if (isMuted) {
-      setStoredMuted(isMuted)
-      if (volumeScrubValue) setStoredVolume(volumeScrubValue)
-      return
-    }
-    if (volumeScrubValue === undefined) return
-    setPlayerVolume(volumeScrubValue ** 2)
-    setStoredVolume(volumeScrubValue)
-    setStoredMuted(isMuted)
-  }, [volumeScrubValue, isMuted])
-
-  const toggleMuteButton = () => {
-    setStoredMuted(value => !value)
-  }
-
-  const hoverVolumeArea: React.DOMAttributes<HTMLDivElement>['onMouseOver'] = () => {
-    setHiddenVolumeArea(false)
-  }
-
-  const mouseOutBottom: React.DOMAttributes<HTMLDivElement>['onMouseOut'] = (ev) => {
-    setHiddenVolumeArea(true)
-  }
-
-  const onReady = () => {
-    setIsReady(true)
-  }
-
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
   const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
 
@@ -429,13 +420,6 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
       resizeObserver.disconnect()
     }
   })
-
-  // console.log('descriptionHeight', contentHeight, rest)
-
-  // console.log('rest.height', rest.style.top)
-  // console.log(contentHeight ? `calc(${rest.style.top}px + ${contentHeight}px)` : rest.style.top)
-
-  // console.log('media', media)
 
   const descriptionText = useMemo(
     () =>
@@ -454,8 +438,6 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         : undefined,
     [descriptionText]
   )
-
-  // console.log('descriptionText', descriptionText)
 
   return (
     <div
@@ -500,45 +482,11 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
       </Link>
     </div>
   )
-
-  return (
-    <div css={hoverCardStyle} ref={ref} {...rest} className="title-hovercard">
-      <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
-        <ReactPlayer
-          onReady={onReady}
-          controls={false}
-          url={`https://www.youtube.com/watch?v=${media.trailers?.at(0)?.id}`}
-          loop={true}
-          playing={true}
-          volume={isReady ? playerVolume : undefined}
-          muted={isMuted}
-          stopOnUnmount={true}
-        />
-      </Link>
-      <div className="volume-area-wrapper" onMouseLeave={mouseOutBottom}>
-        <div className="volume-area" onMouseOver={hoverVolumeArea}>
-          <button className="mute-button" data-tip data-for="mute-button-tooltip" onClick={toggleMuteButton}>
-            {
-              isMuted ? <VolumeX/>
-              : (volume ?? 0) > 0.66 ? <Volume2/>
-              : (volume ?? 0) > 0.33 ? <Volume1/>
-              : (volume ?? 0) > 0 ? <Volume/>
-              : <VolumeX/>
-            }
-          </button>
-          <div ref={volumeBarRef} className={`volume-panel${hiddenVolumeArea ? '' : ' volume-control-hover'}`} onMouseDown={volumeScrub}>
-            <div className="slider">
-              <div className="slider-handle" style={{ left: `${(volume ?? 0) * 100}%` }}></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 })
 
 export default () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
   const { error, data: { Page } = {} } = useQuery(
     GET_CURRENT_SEASON,
@@ -625,6 +573,10 @@ export default () => {
     }
   }, [headerTrailerRef])
 
+  useEffect(() => {
+    setHeaderTrailerPaused(!!mediaUriModal)
+  }, [mediaUriModal])
+
   return (
     <>
       <Header css={headerStyle}/>
@@ -642,10 +594,13 @@ export default () => {
                   <div className="header-serie-description">
                     {ellipsedDescriptionText}
                   </div>
+                  <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
+                    <button>
+                      <Play/>
+                      Watch
+                    </button>
+                  </Link>
                 </div>
-                {/* <div className="header-serie-image">
-                  <img src={media.coverImage?.extraLarge ?? media.coverImage?.large ?? media.coverImage?.medium ?? ''} alt=""/>
-                </div> */}
               </div>
             )
           }
