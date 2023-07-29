@@ -498,8 +498,9 @@ export default () => {
       }
     }
   )
-  const firstMedia = useMemo(() => Page?.media.at(0), [Page?.media.at(0)])
-  const { data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: firstMedia?.uri }, skip: !firstMedia })
+  const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
+  const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
+  const { data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: first5RandomMedia?.uri }, skip: !first5RandomMedia })
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
@@ -595,7 +596,13 @@ export default () => {
                 <div className="shadow"/>
                 <div className="header-serie-content">
                   <div className="header-serie-title">
-                    <h1>{media.title?.english ?? media.title?.romaji}</h1>
+                    <h1>
+                      {
+                        media.title?.english
+                        ?? media.title?.romanized
+                        ?? media.title?.native
+                      }
+                    </h1>
                   </div>
                   <div className="header-serie-description">
                     {ellipsedDescriptionText}
