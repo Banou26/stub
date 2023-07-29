@@ -120,7 +120,7 @@ h2 {
       text-decoration: none;
     }
 
-    button {
+    .watch {
       background: none;
       border: none;
       outline: none;
@@ -595,7 +595,7 @@ export default () => {
                     {ellipsedDescriptionText}
                   </div>
                   <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
-                    <button>
+                    <button className="watch">
                       <Play/>
                       Watch
                     </button>
