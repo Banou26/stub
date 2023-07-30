@@ -184,6 +184,7 @@ z-index: 125;
             align-items: center;
             padding-left: 2.5rem;
             padding-top: 1rem;
+            padding-right: 1rem;
             /* justify-content: start; */
 
             &:has(.empty) {
