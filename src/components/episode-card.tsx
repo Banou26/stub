@@ -1,4 +1,4 @@
-import type { Media } from '../../../../scannarr/src'
+import type { Episode } from '../generated/graphql'
 
 import { css } from '@emotion/react'
 import { Link } from 'react-router-dom'
@@ -12,8 +12,8 @@ const style = css`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 35rem;
-  width: 25rem;
+  height: 25rem;
+  width: 40rem;
   font-size: 2.5rem;
   overflow: hidden;
   border-radius: 1rem;
@@ -89,21 +89,21 @@ const style = css`
 }
 `
 
-export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { episode: Episode }>(({ episode, ...rest }, ref) => {
   return (
-    <div ref={ref} css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }} {...rest}>
+    <div ref={ref} css={style} key={episode.uri} className="card category-item" style={{ backgroundImage: `url(${episode.thumbnail})`, backgroundSize: 'cover' }} {...rest}>
       <Link
         tabIndex={-1}
-        to={getRoutePath(Route.TITLE, { uri: media.uri })}
+        to={getRoutePath(Route.TITLE, { uri: episode.uri })}
         className="card link"
       />
       <div className="information">
           <div className="title">
-            <Link to={getRoutePath(Route.TITLE, { uri: media.uri })} className="title-text">
+            <Link to={getRoutePath(Route.TITLE, { uri: episode.uri })} className="title-text">
               {
-                (media.title?.romanized?.length ?? 0) > 30
-                  ? media.title?.romanized?.slice(0, 30) + '...'
-                  : media.title?.romanized
+                (episode.title?.romanized?.length ?? 0) > 30
+                  ? episode.title?.romanized?.slice(0, 30) + '...'
+                  : episode.title?.romanized
               }
             </Link>
           </div>

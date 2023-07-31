@@ -11,7 +11,7 @@ import * as marked from 'marked'
 
 import useNamespacedLocalStorage from '../../utils/use-local-storage'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
-import { Media, MediaSort } from '../../generated/graphql'
+import { EpisodeSort, Media, MediaSort, Episode } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
 import Title2 from '../../components/title2'
@@ -22,6 +22,8 @@ import PreviewModal, { GET_MEDIA } from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
+import { gql } from '../../generated'
+import EpisodeCard from '../../components/episode-card'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -199,7 +201,7 @@ h2 {
 }
 
 .section:not(:first-of-type) {
-  margin-top: 10rem;
+  margin-top: 5rem;
 }
 
 div.section.first-section {
@@ -485,6 +487,162 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   )
 })
 
+const GET_MEDIA_EPISODES = gql(`#graphql
+  query GetMediaEpisodes($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      handler
+      origin
+      id
+      uri
+      url
+      episodes {
+        edges {
+          node {
+            handler
+            origin
+            id
+            uri
+            url
+            number
+            title {
+              english
+              romanized
+              native
+            }
+            description
+            thumbnail
+            uri
+          }
+        }
+      }
+      handles {
+        edges {
+          node {
+            handler
+            origin
+            id
+            uri
+            url
+            episodes {
+              edges {
+                node {
+                  handler
+                  origin
+                  id
+                  uri
+                  url
+                  number
+                  title {
+                    english
+                    romanized
+                    native
+                  }
+                  description
+                  thumbnail
+                  uri
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`)
+
+const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTMLAttributes<HTMLDivElement>) => {
+  const [isVisible, setIsVisible] = useState(false)
+  const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
+  const { data: { Media } = {} } = useQuery(GET_MEDIA_EPISODES, { variables: { uri: _episode.uri }, skip: !isVisible })
+
+  const mediaEpisode = useMemo(() => {
+    if (!Media) return _episode
+    const newEpisode = Media.episodes?.edges?.find(({ node }) => node.number === _episode.number)?.node
+    return newEpisode
+  }, [Media])
+
+  const [fallbackThumbnail, setFallbackThumbnail] = useState<string | undefined>()
+  useEffect(() => {
+    if (!(mediaEpisode?.thumbnail)) return
+    fetch(mediaEpisode?.thumbnail)
+      .then(res => res.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob)
+        setFallbackThumbnail(url)
+      })
+  }, [mediaEpisode?.thumbnail])
+
+  const episode =
+    mediaEpisode
+      ? ({
+        ...mediaEpisode,
+        thumbnail: fallbackThumbnail ?? mediaEpisode?.thumbnail
+      })
+      : _episode
+
+  useEffect(() => {
+    if (contentRef === null) return
+    const resizeObserver = new IntersectionObserver((entries) => {
+      setIsVisible(entries[0]?.isIntersecting)
+    }, { threshold: 0.01 })
+    resizeObserver.observe(contentRef as HTMLDivElement)
+    return () => {
+      resizeObserver.disconnect()
+    }
+  })
+
+  if (isVisible && !episode.thumbnail) return null
+
+  return (
+    <EpisodeCard
+      ref={setContentRef}
+      key={episode.uri}
+      episode={episode}
+    />
+  )
+}
+
+export const GET_LATEST_EPISODES = gql(`#graphql
+  query GetLatestEpisodes($sort: [EpisodeSort]!) {
+    Page {
+      episode(sort: $sort) {
+        handler
+        origin
+        id
+        uri
+        url
+        number
+        title {
+          romanized
+          english
+          native
+        }
+        description
+        airingAt
+        handles {
+          edges {
+            node {
+              handler
+              origin
+              id
+              uri
+              url
+              number
+              title {
+                romanized
+                english
+                native
+              }
+              description
+              airingAt
+            }
+          }
+        }
+      }
+    }
+  }
+`)
+
 export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUriModal = searchParams.get('details')
@@ -499,7 +657,9 @@ export default () => {
       }
     }
   )
-  const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
+  const { data: { Page: LatestEpisodePage } = {} } = useQuery(GET_LATEST_EPISODES, { variables: { sort: [EpisodeSort.Latest] } })
+  const randomNum = useMemo(() => 9, [])
+  // const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
   const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
   const { data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: first5RandomMedia?.uri }, skip: !first5RandomMedia })
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
@@ -525,7 +685,7 @@ export default () => {
   )
 
   // console.log('Anime Page', Page)
-  // console.log('Anime Page', Page)
+  // console.log('LatestEpisodePage', LatestEpisodePage)
 
   if (error) console.error(error)
 
@@ -653,14 +813,24 @@ export default () => {
         </div>
         <div className="section">
           <Link to={getRoutePath(Route.ANIME_SEASON)}>
-            <h2>Popular animes</h2>
+            <h2>Latest episodes</h2>
           </Link>
-          <div className="items">
-            {/* {
-              Page?.media?.map(media =>
-                <Title2 key={media.uri} media={media} className="title card Tag"/>
-              )
-            } */}
+          <div className="section-items">
+            <ScrollArea.Root className="ScrollAreaRoot">
+              <ScrollArea.Viewport className="ScrollAreaViewport">
+                <div className="section-items">
+                  {
+                    LatestEpisodePage?.episode?.map(episode =>
+                      <EpisodeItem key={episode.uri} episode={episode} />
+                    )
+                  }
+                </div>
+              </ScrollArea.Viewport>
+              <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
+                <ScrollArea.Thumb className="ScrollAreaThumb" />
+              </ScrollArea.Scrollbar>
+              <ScrollArea.Corner className="ScrollAreaCorner" />
+            </ScrollArea.Root>
           </div>
         </div>
         <PreviewModal/>
