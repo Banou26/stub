@@ -50,12 +50,12 @@ position: relative;
 /* padding: 5rem 10rem; */
 padding-top: 0;
 
-h2 {
-  font-size: 4rem;
-  /* padding: 5rem; */
-  padding-top: 5rem;
-  padding-left: 5rem;
-  /* padding-bottom: 2rem; */
+a:has(>h2) {
+  margin-left: 5rem;
+  h2 {
+    display: inline-block;
+    font-size: 4rem;
+  }
 }
 
 .header-serie {
@@ -553,13 +553,24 @@ const GET_MEDIA_EPISODES = gql(`#graphql
 const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTMLAttributes<HTMLDivElement>) => {
   const [isVisible, setIsVisible] = useState(false)
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
-  const { data: { Media } = {} } = useQuery(GET_MEDIA_EPISODES, { variables: { uri: _episode.uri }, skip: !isVisible })
+  const [hasNoThumbnail, setHasNoThumbnail] = useState(false)
+  const { data: { Media } = {} } = useQuery(GET_MEDIA_EPISODES, { variables: { uri: _episode.uri }, skip: !isVisible || hasNoThumbnail })
 
-  const mediaEpisode = useMemo(() => {
-    if (!Media) return _episode
-    const newEpisode = Media.episodes?.edges?.find(({ node }) => node.number === _episode.number)?.node
-    return newEpisode
-  }, [Media])
+  const mediaEpisode = useMemo(
+    () => (
+      Media
+        ? Media.episodes?.edges?.find(({ node }) => node.number === _episode.number)?.node
+        : _episode
+    ),
+    [Media, _episode]
+  )
+
+  useEffect(() => {
+    if (!Media || !mediaEpisode) return
+    if (!mediaEpisode?.thumbnail) {
+      setHasNoThumbnail(true)
+    }
+  }, [Media, mediaEpisode])
 
   const [fallbackThumbnail, setFallbackThumbnail] = useState<string | undefined>()
   useEffect(() => {
@@ -581,7 +592,7 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
       : _episode
 
   useEffect(() => {
-    if (contentRef === null) return
+    if (!contentRef || hasNoThumbnail) return
     const resizeObserver = new IntersectionObserver((entries) => {
       setIsVisible(entries[0]?.isIntersecting)
     }, { threshold: 0.01 })
@@ -589,13 +600,16 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
     return () => {
       resizeObserver.disconnect()
     }
-  })
+  }, [contentRef, hasNoThumbnail])
 
-  if (isVisible && !episode.thumbnail) return null
+  if (hasNoThumbnail || (isVisible && !episode.thumbnail)) {
+    return null
+  }
 
   return (
     <EpisodeCard
       ref={setContentRef}
+      style={isVisible ? { backgroundImage: `url(${episode.thumbnail})`, backgroundSize: 'cover' } : {}}
       key={episode.uri}
       episode={episode}
     />

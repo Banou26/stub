@@ -2,7 +2,7 @@ import type { Media } from '../../../../scannarr/src'
 
 import { css } from '@emotion/react'
 import { Link } from 'react-router-dom'
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 
 import { Route, getRoutePath } from '../router/path'
 
@@ -89,9 +89,32 @@ const style = css`
 }
 `
 
-export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, _ref) => {
+  const [ref, setRef] = useState<HTMLDivElement | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!ref) {
+      setIsVisible(false)
+      // @ts-expect-error
+      if (_ref) _ref.current = null
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => setIsVisible(entries[0]!.isIntersecting),
+      { threshold: 0.01 }
+    )
+
+    observer.observe(ref)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [ref])
+  
   return (
-    <div ref={ref} css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }} {...rest}>
+    <div ref={setRef} css={style} key={media.uri} className="card category-item" style={isVisible ? { backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' } : {}} {...rest}>
       <Link
         tabIndex={-1}
         to={getRoutePath(Route.TITLE, { uri: media.uri })}

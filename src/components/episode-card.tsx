@@ -2,7 +2,7 @@ import type { Episode } from '../generated/graphql'
 
 import { css } from '@emotion/react'
 import { Link } from 'react-router-dom'
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 
 import { Route, getRoutePath } from '../router/path'
 
@@ -71,7 +71,6 @@ const style = css`
     padding: 2rem;
     padding-top: 1rem;
     padding-bottom: 0;
-    width: 25rem;
     color: white;
     font-size: 2.5rem;
     overflow: hidden;
@@ -89,25 +88,23 @@ const style = css`
 }
 `
 
-export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { episode: Episode }>(({ episode, ...rest }, ref) => {
-  return (
-    <div ref={ref} css={style} key={episode.uri} className="card category-item" style={{ backgroundImage: `url(${episode.thumbnail})`, backgroundSize: 'cover' }} {...rest}>
-      <Link
-        tabIndex={-1}
-        to={getRoutePath(Route.TITLE, { uri: episode.uri })}
-        className="card link"
-      />
-      <div className="information">
-          <div className="title">
-            <Link to={getRoutePath(Route.TITLE, { uri: episode.uri })} className="title-text">
-              {
-                (episode.title?.romanized?.length ?? 0) > 30
-                  ? episode.title?.romanized?.slice(0, 30) + '...'
-                  : episode.title?.romanized
-              }
-            </Link>
-          </div>
-      </div>
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { episode: Episode }>(({ episode, ...rest }, ref) => (
+  <div ref={ref} css={style} key={episode.uri} className="card category-item" {...rest}>
+    <Link
+      tabIndex={-1}
+      to={getRoutePath(Route.TITLE, { uri: episode.uri })}
+      className="card link"
+    />
+    <div className="information">
+        <div className="title">
+          <Link to={getRoutePath(Route.TITLE, { uri: episode.uri })} className="title-text">
+            {
+              (episode.title?.romanized?.length ?? 0) > 30
+                ? episode.title?.romanized?.slice(0, 30) + '...'
+                : episode.title?.romanized
+            }
+          </Link>
+        </div>
     </div>
-  )
-})
+  </div>
+))
