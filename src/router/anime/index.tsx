@@ -495,6 +495,8 @@ const GET_MEDIA_EPISODES = gql(`#graphql
       id
       uri
       url
+      season
+      seasonYear
       episodes {
         edges {
           node {
@@ -523,6 +525,8 @@ const GET_MEDIA_EPISODES = gql(`#graphql
             id
             uri
             url
+            season
+            seasonYear
             episodes {
               edges {
                 node {
