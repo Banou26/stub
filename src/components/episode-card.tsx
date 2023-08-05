@@ -98,11 +98,15 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
     <div className="information">
         <div className="title">
           <Link to={getRoutePath(Route.TITLE, { uri: episode.uri })} className="title-text">
-            {
-              (episode.title?.romanized?.length ?? 0) > 30
-                ? episode.title?.romanized?.slice(0, 30) + '...'
-                : episode.title?.romanized
-            }
+            <span>
+              {
+                (episode.media?.title?.romanized?.length ?? 0) > 30
+                  ? episode.media?.title?.romanized?.slice(0, 30) + '...'
+                  : episode.media?.title?.romanized
+              }
+            </span>
+            <br />
+            <span>Episode {episode.number}</span>
           </Link>
         </div>
     </div>

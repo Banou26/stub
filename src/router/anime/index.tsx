@@ -554,7 +554,14 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
   const [isVisible, setIsVisible] = useState(false)
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
   const [hasNoThumbnail, setHasNoThumbnail] = useState(false)
+
+
+  // const mediaEpisode = _episode
+
+
+  // comment from here
   const { data: { Media } = {} } = useQuery(GET_MEDIA_EPISODES, { variables: { uri: _episode.uri }, skip: !isVisible || hasNoThumbnail })
+
 
   const mediaEpisode = useMemo(
     () => (
@@ -571,6 +578,10 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
       setHasNoThumbnail(true)
     }
   }, [Media, mediaEpisode])
+  // to here, if you want to remove the request freeze issue
+
+
+
 
   const [fallbackThumbnail, setFallbackThumbnail] = useState<string | undefined>()
   useEffect(() => {
@@ -586,8 +597,12 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
   const episode =
     mediaEpisode
       ? ({
+        ..._episode,
         ...mediaEpisode,
-        thumbnail: fallbackThumbnail ?? mediaEpisode?.thumbnail
+        thumbnail:
+          fallbackThumbnail ??
+          mediaEpisode?.thumbnail ??
+          mediaEpisode.media?.coverImage?.at(0)?.default
       })
       : _episode
 
@@ -626,6 +641,28 @@ export const GET_LATEST_EPISODES = gql(`#graphql
         uri
         url
         number
+        mediaUri
+        media {
+          handler
+          origin
+          id
+          uri
+          url
+          title {
+            romanized
+            english
+            native
+          }
+          coverImage {
+            color
+            default
+            extraLarge
+            large
+            medium
+            small
+          }
+          bannerImage
+        }
         title {
           romanized
           english
@@ -633,6 +670,7 @@ export const GET_LATEST_EPISODES = gql(`#graphql
         }
         description
         airingAt
+        thumbnail
         handles {
           edges {
             node {
@@ -642,6 +680,28 @@ export const GET_LATEST_EPISODES = gql(`#graphql
               uri
               url
               number
+              mediaUri
+              media {
+                handler
+                origin
+                id
+                uri
+                url
+                title {
+                  romanized
+                  english
+                  native
+                }
+                coverImage {
+                  color
+                  default
+                  extraLarge
+                  large
+                  medium
+                  small
+                }
+                bannerImage
+              }
               title {
                 romanized
                 english
@@ -649,6 +709,7 @@ export const GET_LATEST_EPISODES = gql(`#graphql
               }
               description
               airingAt
+              thumbnail
             }
           }
         }
@@ -671,9 +732,8 @@ export default () => {
       }
     }
   )
-  const { data: { Page: LatestEpisodePage } = {} } = useQuery(GET_LATEST_EPISODES, { variables: { sort: [EpisodeSort.Latest] } })
-  const randomNum = useMemo(() => 9, [])
-  // const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
+  const { loading, data: { Page: LatestEpisodePage } = {} } = useQuery(GET_LATEST_EPISODES, { variables: { sort: [EpisodeSort.Latest] } })
+  const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
   const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
   const { data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: first5RandomMedia?.uri }, skip: !first5RandomMedia })
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
