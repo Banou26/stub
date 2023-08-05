@@ -70,7 +70,7 @@ padding: 5rem;
       width: 100%;
       border-collapse: collapse;
       border-spacing: 0;
-      border: 1px solid rgb(50, 50, 50);
+      border: .1rem solid rgb(50, 50, 50);
       border-radius: 0.5rem;
       overflow: hidden;
       margin-top: 1rem;
@@ -83,8 +83,8 @@ padding: 5rem;
         text-align: left;
         text-transform: uppercase;
         letter-spacing: 0.1rem;
-        border-bottom: 1px solid rgb(50, 50, 50);
-        
+        border-bottom: .1rem solid rgb(50, 50, 50);
+
         th {
           padding: 1rem 2rem;
 
@@ -116,8 +116,16 @@ padding: 5rem;
       }
 
       tbody {
-        tr {
-          border-bottom: 1px solid rgb(50, 50, 50);
+        tr.source {
+          border-bottom: .1rem solid rgb(50, 50, 50);
+          border-top: .2rem solid rgb(35, 35, 35);
+
+          &.active {
+            background-color: rgb(50, 50, 50);
+            &:first-of-type {
+              border-top: .2rem solid rgb(35, 35, 35);
+            }
+          }
 
           .link {
             display: inline-block;
@@ -240,7 +248,7 @@ export const getTeamIcon = (url, noHook = false) => {
 }
 
 const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) => {
-  const { mediaUri, episodeUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
+  const { mediaUri, episodeUri, sourceUri } = useParams() as { mediaUri: Uri, episodeUri: Uri }
   const teamIcon = source.team?.url && getTeamIcon(source.team?.url)
   const parsed = useMemo(() => parse(source.filename), [source.filename])
   const formatted = useMemo(() => format(parsed), [parsed])
@@ -286,8 +294,10 @@ const SourceRow = ({ raw, source, trackerData }: { raw, source, trackerData }) =
 
   const sourceLink = <Link className="link" to={watchEpisodeUrl} />
 
+  const isCurrentSource = source.uri === sourceUri
+
   return (
-    <tr className="source" key={source.uri}>
+    <tr className={`source ${isCurrentSource ? 'active' : ''}`} key={source.uri}>
       <td className='name'>
         {sourceLink}
         <div>
