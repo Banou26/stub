@@ -15,6 +15,12 @@ export default new InMemoryCache({
         }
       }
     },
+    Episode: {
+      keyFields: ['uri']
+    },
+    PlaybackSource: {
+      keyFields: ['uri']
+    },
     Origin: {
       keyFields: ['id']
     },

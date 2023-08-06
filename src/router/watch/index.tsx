@@ -76,6 +76,55 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
         id
         uri
         url
+        handles {
+          edges {
+            node {
+              handler
+              origin
+              id
+              uri
+              url
+              handles {
+                edges {
+                  node {
+                    handler
+                    origin
+                    id
+                    uri
+                    url
+                  }
+                }
+              }
+
+              type
+              filename
+              title {
+                romanized
+                english
+                native
+              }
+              structure
+              filesCount
+              bytes
+              uploadDate
+              thumbnails
+              team {
+                handler
+                origin
+                id
+                uri
+                url
+                name
+              }
+              resolution
+              hash
+              format
+              episodeRange
+              data
+            }
+          }
+        }
+
         type
         filename
         title {
@@ -122,10 +171,21 @@ const Watch = () => {
     }
   )
 
+  console.log('Page', Page)
+
+  console.log('mediaUri', mediaUri && mediaUri.replace('scannarr:', ''))
+  console.log('episodeUri', episodeUri && episodeUri.replace('scannarr:', ''))
+  console.log('sourceUri', sourceUri && sourceUri?.replace('scannarr:', ''))
+
   const currentSource = useMemo(
     () => Page?.playbackSource?.find((source) => source.uri === sourceUri),
     [Page?.playbackSource, sourceUri]
   )
+
+  useEffect(() => {
+    if (!(currentSource && currentSource.uri !== sourceUri)) return
+    setSearchParams({ details: currentSource.uri }, { replace: true })
+  }, [currentSource, sourceUri])
 
   const [trackerData, setTrackerData] = useState(new Map())
 
@@ -141,7 +201,8 @@ const Watch = () => {
           } catch (err) {
             return undefined
           }
-        }),
+        })
+        .filter(Boolean),
     [Page?.playbackSource]
   )
 
