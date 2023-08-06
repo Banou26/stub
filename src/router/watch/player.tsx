@@ -32,6 +32,10 @@ overflow-x: hidden;
 grid-column: 1;
 grid-row: 1;
 
+div canvas {
+  margin: auto;
+}
+
 .player-overlay {
   display: flex;
   justify-content: space-between;
