@@ -18,6 +18,21 @@ const GET_TEST = `#graphql
       english
       native
     }
+    description
+    shortDescription
+    popularity
+    averageScore
+    episodeCount
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
   }
 
   query GetMediaTest($uri: String!, $origin: String, $id: String) {
@@ -27,6 +42,16 @@ const GET_TEST = `#graphql
         edges @stream {
           node {
             ...GetMediaTestFragment
+            handles {
+              edges {
+                node {
+                  origin
+                  id
+                  uri
+                  url
+                }
+              }
+            }
           }
         }
       }
@@ -46,18 +71,20 @@ export default () => {
     setSearchParams({ details: `scannarr:(mal:54112,anizip:17806,anilist:159831,animetosho:17806,cr:GJ0H7QGQK,anidb:17806,kitsu:46954,notifymoe:fJAnfp24g,livechart:11767,tvdb:429310)` })
   }, [mediaUri, setSearchParams])
 
-  const [result, refetch] = useQuery({
+  const [result] = useQuery({
     query: GET_TEST,
     variables: {
       uri: mediaUri
     },
     pause: !mediaUri
   })
-  console.log('result', result, result.hasNext)
-  console.log('data', result.data?.Media)
+  // console.log('result', result, result.hasNext)
+  const { origin, id, url, ...rest } = result.data?.Media || {}
+
+  console.log('data', rest)
 
   useEffect(() => {
-    if (result.fetching || result.hasNext || result.hasNext === undefined) return
+    if (result.fetching || result.hasNext || result.hasNext === undefined || !result.data?.Media.uri) return
     setSearchParams({ details: result.data?.Media.uri })
   }, [result.hasNext, result.data?.Media.uri, setSearchParams])
 
