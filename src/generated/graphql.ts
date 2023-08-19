@@ -133,8 +133,6 @@ export type FuzzyDateInput = {
 
 /**  A Handle represents a unique identifier for a resource.  */
 export type Handle = {
-  /**  The name of the handler, e.g: 'fkn' for packages handled by FKN  */
-  handler: Scalars['String'];
   handles: HandleConnection;
   /**  The id of the resource, e.g: 'react' for the React package  */
   id: Scalars['String'];
@@ -580,6 +578,7 @@ export type Origin = {
   name: Scalars['String'];
   /** If the origin is official, e.g a legal redistributor or platform */
   official?: Maybe<Scalars['Boolean']>;
+  supportedUris?: Maybe<Array<Scalars['String']>>;
   /** The origin's URL, e.g "https://www.netflix.com/""  */
   url?: Maybe<Scalars['String']>;
 };

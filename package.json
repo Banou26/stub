@@ -71,6 +71,7 @@
     "@types/node": "^16.11.6",
     "@types/parse-torrent": "^5.8.4",
     "@types/react": "^17.0.27",
+    "@urql/exchange-graphcache": "^6.3.1",
     "bencode": "^3.0.3",
     "buffer": "^6.0.3",
     "dompurify": "^2.3.9",
@@ -101,6 +102,7 @@
     "tslib": "^2.4.1",
     "uint8-util": "^2.1.9",
     "url": "^0.11.0",
+    "urql": "^4.0.5",
     "util": "^0.12.4"
   }
 }

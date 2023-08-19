@@ -4,10 +4,12 @@ import './vite-hmr'
 import { css, Global } from '@emotion/react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'urql'
 
 import Mount from './components'
 import { ApolloProvider } from '@apollo/client'
-import client from './apollo/client'
+import apolloClient from './apollo/client'
+import { client } from './urql'
 
 
 const style = css`
@@ -67,9 +69,11 @@ const root = createRoot(document.body.appendChild(document.createElement('div'))
 
 root.render(
   // <StrictMode>
-    <ApolloProvider client={client}>
+  <Provider value={client}>
+    <ApolloProvider client={apolloClient}>
       <Global styles={style}/>
       <Mount/>
     </ApolloProvider>
+  </Provider>
   // </StrictMode>
 )
