@@ -172,7 +172,7 @@ export enum HandleRelation {
 export type Media = Handle & {
   __typename?: 'Media';
   /** The average score of the media */
-  averageScore?: Maybe<Scalars['Int']>;
+  averageScore?: Maybe<Scalars['Float']>;
   /** The banner image of the media */
   bannerImage?: Maybe<Array<Maybe<Scalars['String']>>>;
   /** The cover images of the media */

@@ -8,6 +8,25 @@ import { gql, useQuery } from 'urql'
 
 
 const GET_TEST = `#graphql
+  fragment GetEpisodeTestFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
   fragment GetMediaTestFragment on Media {
     origin
     id
@@ -18,11 +37,29 @@ const GET_TEST = `#graphql
       english
       native
     }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
     description
     shortDescription
+    season
+    seasonYear
     popularity
     averageScore
     episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
     startDate {
       year
       month
@@ -32,6 +69,20 @@ const GET_TEST = `#graphql
       year
       month
       day
+    }
+    episodes {
+      edges {
+        node {
+          ...GetEpisodeTestFragment
+          # handles {
+          #   edges {
+          #     node {
+          #       ...GetEpisodeTestFragment
+          #     }
+          #   }
+          # }
+        }
+      }
     }
   }
 
@@ -61,7 +112,6 @@ const GET_TEST = `#graphql
 
 export default () => {
 
-
   // return <img src="https://artworks.thetvdb.com/banners/v4/episode/9862554/screencap/64c56a26d211f.jpg"/>
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
@@ -80,6 +130,8 @@ export default () => {
   })
   // console.log('result', result, result.hasNext)
   const { origin, id, url, ...rest } = result.data?.Media || {}
+
+  if (result.error) console.error(result.error)
 
   console.log('data', rest)
 
