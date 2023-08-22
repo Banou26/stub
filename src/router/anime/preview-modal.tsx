@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useQuery } from '@apollo/client'
 import { targets } from 'laserr'
+import { gql as urqlGql, useQuery as urqlUseQuery } from 'urql'
 
 // import './preview-modal.css'
 import { gql } from '../../generated'
@@ -341,6 +342,103 @@ export const GET_MEDIA = gql(`#graphql
 `)
 
 
+const GET_TEST = `#graphql
+  fragment GetEpisodeTestFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
+  fragment GetMediaTestFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+    episodes {
+      edges {
+        node {
+          ...GetEpisodeTestFragment
+        }
+      }
+    }
+  }
+
+  query GetMediaTest($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      ...GetMediaTestFragment
+      handles {
+        edges @stream {
+          node {
+            ...GetMediaTestFragment
+            handles {
+              edges {
+                node {
+                  origin
+                  id
+                  uri
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+
 export const GET_ORIGINS = gql(`#graphql
   query GetOrigins($ids: [String!]) {
     Page {
@@ -451,16 +549,18 @@ export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
+  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = urqlUseQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
+  console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
   const { error: error2, data: { Page: originPage } = {} } = useQuery(GET_ORIGINS, { variables: { ids: foundSources }, skip: !foundSources })
   // console.log('media', media)
   // console.log('originPage', originPage)
+
   useEffect(() => {
-    if (!(media && media.uri !== mediaUri)) return
-    setSearchParams({ details: media.uri }, { replace: true })
-  }, [media, mediaUri])
+    if (fetching || hasNext || hasNext === undefined || !media?.uri) return
+    setSearchParams({ details: media.uri })
+  }, [hasNext, media?.uri, setSearchParams])
 
   if (error) {
     console.log('preview modal error', error)

@@ -4,7 +4,7 @@ import { fromScannarrUri } from 'scannarr/src/utils/uri2'
 // import { useQuery as useApolloQuery } from '@apollo/client'
 import { gql, useQuery } from 'urql'
 
-// import PreviewModal, { GET_MEDIA } from './anime/preview-modal'
+import PreviewModal, { GET_MEDIA } from './anime/preview-modal'
 
 
 const GET_TEST = `#graphql
@@ -74,13 +74,6 @@ const GET_TEST = `#graphql
       edges {
         node {
           ...GetEpisodeTestFragment
-          # handles {
-          #   edges {
-          #     node {
-          #       ...GetEpisodeTestFragment
-          #     }
-          #   }
-          # }
         }
       }
     }
@@ -103,6 +96,33 @@ const GET_TEST = `#graphql
                 }
               }
             }
+            # episodes {
+            #   edges {
+            #     node {
+            #       handles {
+            #         edges {
+            #           node {
+            #             ...GetEpisodeTestFragment
+            #           }
+            #         }
+            #       }
+            #     }
+            #   }
+            # }
+          }
+        }
+      }
+      episodes {
+        edges {
+          node {
+            ...GetEpisodeTestFragment
+            handles {
+              edges {
+                node {
+                  ...GetEpisodeTestFragment
+                }
+              }
+            }
           }
         }
       }
@@ -111,6 +131,7 @@ const GET_TEST = `#graphql
 `
 
 export default () => {
+  return <PreviewModal/>
 
   // return <img src="https://artworks.thetvdb.com/banners/v4/episode/9862554/screencap/64c56a26d211f.jpg"/>
   const [searchParams, setSearchParams] = useSearchParams()
@@ -134,12 +155,12 @@ export default () => {
   if (result.error) console.error(result.error)
 
   console.log('data', rest)
+  console.log('episode', rest?.episodes?.edges?.[0]?.node)
 
-  useEffect(() => {
-    if (result.fetching || result.hasNext || result.hasNext === undefined || !result.data?.Media.uri) return
-    setSearchParams({ details: result.data?.Media.uri })
-  }, [result.hasNext, result.data?.Media.uri, setSearchParams])
+  // useEffect(() => {
+  //   if (result.fetching || result.hasNext || result.hasNext === undefined || !result.data?.Media.uri) return
+  //   setSearchParams({ details: result.data?.Media.uri })
+  // }, [result.hasNext, result.data?.Media.uri, setSearchParams])
 
-  // return <PreviewModal/>
   return null
 }
