@@ -58,89 +58,71 @@ screen and (max-height : 1440px) {
 }
 `
 
-export const GET_CURRENT_SEASON = gql(`#graphql
+export const GET_CURRENT_SEASON = `#graphql
+  fragment GetMediaTestFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+  }
+
   query GetCurrentSeason($season: MediaSeason!, $seasonYear: Int!, $sort: [MediaSort]!) {
     Page {
       media(season: $season, seasonYear: $seasonYear, sort: $sort) {
-        handler
-        origin
-        id
-        uri
-        url
-        title {
-          romanized
-          english
-          native
-        }
-        popularity
-        shortDescription
-        description
-        coverImage {
-          color
-          default
-        }
-        season
-        seasonYear
-        startDate {
-          day
-          month
-          year
-        }
-        endDate {
-          day
-          month
-          year
-        }
-        episodeCount
-        bannerImage
+        ...GetMediaTestFragment
         handles {
           edges {
             node {
-              handler
-              origin
-              id
-              uri
-              url
-              episodeCount
-              season
-              seasonYear
-              startDate {
-                day
-                month
-                year
-              }
-              endDate {
-                day
-                month
-                year
-              }
-              title {
-                romanized
-                english
-                native
-              }
-              popularity
-              shortDescription
-              description
+              ...GetMediaTestFragment
             }
           }
-        }
-        trailers {
-          handler
-          origin
-          id
-          uri
-          url
-          thumbnail
         }
       }
     }
   }
-`)
+`
 
 export default ({ category }: { category?: Category }) => {
   const currentSeason = getCurrentSeason()
-  const { error, data: { Page } = {} } = useQuery(
+  const [currentSeasonResult] = useQuery(
     GET_CURRENT_SEASON,
     {
       variables: {
@@ -150,6 +132,7 @@ export default ({ category }: { category?: Category }) => {
       }
     }
   )
+  const { error, data: { Page } = {} } = currentSeasonResult
 
   if (error) console.error('error', error)
   console.log('Page', Page)

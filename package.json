@@ -71,6 +71,7 @@
     "@types/node": "^16.11.6",
     "@types/parse-torrent": "^5.8.4",
     "@types/react": "^17.0.27",
+    "@urql/exchange-graphcache": "^6.3.1",
     "bencode": "^3.0.3",
     "buffer": "^6.0.3",
     "dompurify": "^2.3.9",
@@ -82,7 +83,7 @@
     "idb": "^7.0.0",
     "laserr": "file:../../laserr",
     "marked": "^4.0.18",
-    "osra": "^0.0.8",
+    "osra": "^0.0.10",
     "p-queue": "^7.3.0",
     "p-throttle": "^5.0.0",
     "parse-torrent": "^9.1.5",
@@ -101,6 +102,7 @@
     "tslib": "^2.4.1",
     "uint8-util": "^2.1.9",
     "url": "^0.11.0",
+    "urql": "^4.0.5",
     "util": "^0.12.4"
   }
 }

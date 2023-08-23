@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { useQuery } from '@apollo/client'
 import { targets } from 'laserr'
+import { useQuery } from 'urql'
 
 // import './preview-modal.css'
 import { gql } from '../../generated'
@@ -225,59 +225,176 @@ z-index: 125;
 
 `
 
-export const GET_MEDIA = gql(`#graphql
-  query GetMedia($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
-      handler
+export const GET_MEDIA = `#graphql
+
+  fragment GetEpisodeTestFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
+  fragment GetMediaTestFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
       origin
       id
       uri
       url
-      title {
-        romanized
-        english
-        native
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+    episodes {
+      edges {
+        node {
+          ...GetEpisodeTestFragment
+        }
       }
-      popularity
-      shortDescription
-      description
-      season
-      seasonYear
-      coverImage {
-        color
-        default
-      }
-      bannerImage
+    }
+  }
+
+  query GetMedia($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      ...GetMediaTestFragment
       handles {
         edges {
           node {
-            handler
-            origin
-            id
-            uri
-            url
-            title {
-              romanized
-              english
-              native
-            }
-            trailers {
-              handler
-              origin
-              id
-              uri
-              url
-              thumbnail
-            }
-            season
-            seasonYear
-            popularity
-            shortDescription
-            description
+            ...GetMediaTestFragment
+          }
+        }
+      }
+    }
+  }
+`
+
+
+const GET_TEST = `#graphql
+  fragment GetEpisodeTestFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
+  fragment GetMediaTestFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+    episodes {
+      edges {
+        node {
+          ...GetEpisodeTestFragment
+        }
+      }
+    }
+  }
+
+  query GetMediaTest($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      ...GetMediaTestFragment
+      handles {
+        edges @stream {
+          node {
+            ...GetMediaTestFragment
             handles {
               edges {
                 node {
-                  handler
                   origin
                   id
                   uri
@@ -285,60 +402,12 @@ export const GET_MEDIA = gql(`#graphql
                 }
               }
             }
-            episodes {
-              edges {
-                node {
-                  airingAt
-                  number
-                  uri
-                  mediaUri
-                  timeUntilAiring
-                  thumbnail
-                  title {
-                    romanized
-                    english
-                    native
-                  }
-                  description
-                }
-              }
-            }
-          }
-        }
-      }
-      trailers {
-        handler
-        origin
-        id
-        uri
-        url
-        thumbnail
-      }
-      episodes {
-        edges {
-          node {
-            handler
-            origin
-            id
-            uri
-            url
-            airingAt
-            number
-            mediaUri
-            timeUntilAiring
-            thumbnail
-            title {
-              romanized
-              english
-              native
-            }
-            description
           }
         }
       }
     }
   }
-`)
+`
 
 
 export const GET_ORIGINS = gql(`#graphql
@@ -451,16 +520,18 @@ export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const { error, data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: mediaUri! }, skip: !mediaUri })
+  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
+  console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
-  const { error: error2, data: { Page: originPage } = {} } = useQuery(GET_ORIGINS, { variables: { ids: foundSources }, skip: !foundSources })
+  const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
   // console.log('media', media)
   // console.log('originPage', originPage)
-  useEffect(() => {
-    if (!(media && media.uri !== mediaUri)) return
-    setSearchParams({ details: media.uri }, { replace: true })
-  }, [media, mediaUri])
+
+  // useEffect(() => {
+  //   if (fetching || hasNext || hasNext === undefined || !media?.uri) return
+  //   setSearchParams({ details: media.uri })
+  // }, [hasNext, media?.uri, setSearchParams])
 
   if (error) {
     console.log('preview modal error', error)
