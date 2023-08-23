@@ -1,8 +1,7 @@
 import { css } from '@emotion/react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { useQuery } from '@apollo/client'
 import { targets } from 'laserr'
-import { gql as urqlGql, useQuery as urqlUseQuery } from 'urql'
+import { useQuery } from 'urql'
 
 // import './preview-modal.css'
 import { gql } from '../../generated'
@@ -226,120 +225,66 @@ z-index: 125;
 
 `
 
-export const GET_MEDIA = gql(`#graphql
-  query GetMedia($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
-      handler
+export const GET_MEDIA = `#graphql
+
+  fragment GetMediaTestFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
       origin
       id
       uri
       url
-      title {
-        romanized
-        english
-        native
-      }
-      popularity
-      shortDescription
-      description
-      season
-      seasonYear
-      coverImage {
-        color
-        default
-      }
-      bannerImage
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+  }
+
+  query GetMedia($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      ...GetMediaTestFragment
       handles {
         edges {
           node {
-            handler
-            origin
-            id
-            uri
-            url
-            title {
-              romanized
-              english
-              native
-            }
-            trailers {
-              handler
-              origin
-              id
-              uri
-              url
-              thumbnail
-            }
-            season
-            seasonYear
-            popularity
-            shortDescription
-            description
-            handles {
-              edges {
-                node {
-                  handler
-                  origin
-                  id
-                  uri
-                  url
-                }
-              }
-            }
-            episodes {
-              edges {
-                node {
-                  airingAt
-                  number
-                  uri
-                  mediaUri
-                  timeUntilAiring
-                  thumbnail
-                  title {
-                    romanized
-                    english
-                    native
-                  }
-                  description
-                }
-              }
-            }
-          }
-        }
-      }
-      trailers {
-        handler
-        origin
-        id
-        uri
-        url
-        thumbnail
-      }
-      episodes {
-        edges {
-          node {
-            handler
-            origin
-            id
-            uri
-            url
-            airingAt
-            number
-            mediaUri
-            timeUntilAiring
-            thumbnail
-            title {
-              romanized
-              english
-              native
-            }
-            description
+            ...GetMediaTestFragment
           }
         }
       }
     }
   }
-`)
+`
 
 
 const GET_TEST = `#graphql
@@ -549,11 +494,11 @@ export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = urqlUseQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
-  console.log('media', media)
+  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
+  // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
-  const { error: error2, data: { Page: originPage } = {} } = useQuery(GET_ORIGINS, { variables: { ids: foundSources }, skip: !foundSources })
+  const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
   // console.log('media', media)
   // console.log('originPage', originPage)
 

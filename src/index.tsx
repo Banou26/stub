@@ -70,10 +70,8 @@ const root = createRoot(document.body.appendChild(document.createElement('div'))
 root.render(
   // <StrictMode>
   <Provider value={client}>
-    <ApolloProvider client={apolloClient}>
-      <Global styles={style}/>
-      <Mount/>
-    </ApolloProvider>
+    <Global styles={style}/>
+    <Mount/>
   </Provider>
   // </StrictMode>
 )

@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
-import { useQuery } from '@apollo/client'
 import { Link, useSearchParams } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
@@ -8,6 +7,8 @@ import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume, Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
+import { useQuery } from 'urql'
+
 
 import useNamespacedLocalStorage from '../../utils/use-local-storage'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
@@ -487,10 +488,9 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   )
 })
 
-const GET_MEDIA_EPISODES = gql(`#graphql
+const GET_MEDIA_EPISODES = `#graphql
   query GetMediaEpisodes($uri: String!, $origin: String, $id: String) {
     Media(uri: $uri, origin: $origin, id: $id) {
-      handler
       origin
       id
       uri
@@ -500,7 +500,6 @@ const GET_MEDIA_EPISODES = gql(`#graphql
       episodes {
         edges {
           node {
-            handler
             origin
             id
             uri
@@ -520,7 +519,6 @@ const GET_MEDIA_EPISODES = gql(`#graphql
       handles {
         edges {
           node {
-            handler
             origin
             id
             uri
@@ -530,7 +528,6 @@ const GET_MEDIA_EPISODES = gql(`#graphql
             episodes {
               edges {
                 node {
-                  handler
                   origin
                   id
                   uri
@@ -552,7 +549,7 @@ const GET_MEDIA_EPISODES = gql(`#graphql
       }
     }
   }
-`)
+`
 
 const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTMLAttributes<HTMLDivElement>) => {
   const [isVisible, setIsVisible] = useState(false)
@@ -635,11 +632,10 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
   )
 }
 
-export const GET_LATEST_EPISODES = gql(`#graphql
+export const GET_LATEST_EPISODES = `#graphql
   query GetLatestEpisodes($sort: [EpisodeSort]!) {
     Page {
       episode(sort: $sort) {
-        handler
         origin
         id
         uri
@@ -647,7 +643,6 @@ export const GET_LATEST_EPISODES = gql(`#graphql
         number
         mediaUri
         media {
-          handler
           origin
           id
           uri
@@ -678,7 +673,6 @@ export const GET_LATEST_EPISODES = gql(`#graphql
         handles {
           edges {
             node {
-              handler
               origin
               id
               uri
@@ -686,7 +680,6 @@ export const GET_LATEST_EPISODES = gql(`#graphql
               number
               mediaUri
               media {
-                handler
                 origin
                 id
                 uri
@@ -720,15 +713,15 @@ export const GET_LATEST_EPISODES = gql(`#graphql
       }
     }
   }
-`)
+`
 
 export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
-  const { error, data: { Page } = {} } = useQuery(
-    GET_CURRENT_SEASON,
+  const [currentSeasonResult] = useQuery(
     {
+      query: GET_CURRENT_SEASON,
       variables: {
         season: currentSeason.season,
         seasonYear: currentSeason.year,
@@ -736,10 +729,13 @@ export default () => {
       }
     }
   )
-  const { loading, data: { Page: LatestEpisodePage } = {} } = useQuery(GET_LATEST_EPISODES, { variables: { sort: [EpisodeSort.Latest] } })
+  const { error } = currentSeasonResult ?? {}
+  const Page = currentSeasonResult.data?.Page
+  // const { loading, data: { Page: LatestEpisodePage } = {} } = useQuery(GET_LATEST_EPISODES, { variables: { sort: [EpisodeSort.Latest] } })
   const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
   const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
-  const { data: { Media: media } = {} } = useQuery(GET_MEDIA, { variables: { uri: first5RandomMedia?.uri }, skip: !first5RandomMedia })
+  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: first5RandomMedia?.uri }, pause: !first5RandomMedia })
+  const media = getMediaResult.data?.Media
   const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
   const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
@@ -897,11 +893,11 @@ export default () => {
             <ScrollArea.Root className="ScrollAreaRoot">
               <ScrollArea.Viewport className="ScrollAreaViewport">
                 <div className="section-items">
-                  {
+                  {/* {
                     LatestEpisodePage?.episode?.map(episode =>
                       <EpisodeItem key={episode.uri} episode={episode} />
                     )
-                  }
+                  } */}
                 </div>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
