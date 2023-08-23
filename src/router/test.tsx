@@ -135,7 +135,7 @@ const GET_TEST = `#graphql
 `
 
 export default () => {
-  // return <PreviewModal/>
+  return <PreviewModal/>
 
   // return <img src="https://artworks.thetvdb.com/banners/v4/episode/9862554/screencap/64c56a26d211f.jpg"/>
   const [searchParams, setSearchParams] = useSearchParams()

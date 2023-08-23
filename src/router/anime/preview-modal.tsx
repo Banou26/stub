@@ -227,6 +227,25 @@ z-index: 125;
 
 export const GET_MEDIA = `#graphql
 
+  fragment GetEpisodeTestFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
   fragment GetMediaTestFragment on Media {
     origin
     id
@@ -269,6 +288,13 @@ export const GET_MEDIA = `#graphql
       year
       month
       day
+    }
+    episodes {
+      edges {
+        node {
+          ...GetEpisodeTestFragment
+        }
+      }
     }
   }
 
@@ -495,17 +521,17 @@ export default () => {
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
   const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
-  // console.log('media', media)
+  console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
   const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
   // console.log('media', media)
   // console.log('originPage', originPage)
 
-  useEffect(() => {
-    if (fetching || hasNext || hasNext === undefined || !media?.uri) return
-    setSearchParams({ details: media.uri })
-  }, [hasNext, media?.uri, setSearchParams])
+  // useEffect(() => {
+  //   if (fetching || hasNext || hasNext === undefined || !media?.uri) return
+  //   setSearchParams({ details: media.uri })
+  // }, [hasNext, media?.uri, setSearchParams])
 
   if (error) {
     console.log('preview modal error', error)

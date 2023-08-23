@@ -71,7 +71,6 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
   query GetPlaybackSources($uri: String, $origin: String, $id: String, $search: String, $name: String, $resolution: String, $season: Int, $number: Float) {
     Page {
       playbackSource(uri: $uri, origin: $origin, id: $id, search: $search, name: $name, resolution: $resolution, season: $season, number: $number) {
-        handler
         origin
         id
         uri
@@ -79,7 +78,6 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
         handles {
           edges {
             node {
-              handler
               origin
               id
               uri
@@ -87,7 +85,6 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
               handles {
                 edges {
                   node {
-                    handler
                     origin
                     id
                     uri
@@ -109,7 +106,6 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
               uploadDate
               thumbnails
               team {
-                handler
                 origin
                 id
                 uri
@@ -138,7 +134,6 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
         uploadDate
         thumbnails
         team {
-          handler
           origin
           id
           uri

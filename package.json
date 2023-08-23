@@ -83,7 +83,7 @@
     "idb": "^7.0.0",
     "laserr": "file:../../laserr",
     "marked": "^4.0.18",
-    "osra": "^0.0.8",
+    "osra": "^0.0.10",
     "p-queue": "^7.3.0",
     "p-throttle": "^5.0.0",
     "parse-torrent": "^9.1.5",
