@@ -33,17 +33,18 @@ export const { client } = makeScannarrClient({
   context: async () => ({
     fetch
   }),
-  handleRequest: async (input: Request, ctx) => {
+  handleRequest: async (input: RequestInfo | URL, init?: RequestInit | undefined) => {
     const { body, ...rest } = await target(
       'HANDLE_REQUEST',
       {
-        input: input.url,
-        init: {
-          method: input.method,
-          headers: input.headers && Object.fromEntries(input.headers.entries()),
-          body: input.body
+        input: input.toString(),
+        init: init && {
+          method: init.method,
+          headers: init.headers,
+          body: init.body
         }
       })
+
     return new Response(
       body,
       rest

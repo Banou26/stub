@@ -32,10 +32,11 @@ const { yoga } = makeScannarrServer({
 
 const resolvers = {
   HANDLE_REQUEST: makeCallListener(async ({ input, init }: { input: RequestInfo, init?: RequestInit }) => {
-    const res = await yoga.handleRequest(new Request(input, { ...init, duplex: 'half' }), {})
+    const res = await yoga.handleRequest(new Request(input, init), {})
     return {
       ...res,
-      body: res.body
+      body: res.body,
+      headers: Object.fromEntries(res.headers.entries())
     }
   })
 }
@@ -48,5 +49,3 @@ registerListener({
   resolvers,
   key: 'yoga-server'
 })
-
-globalThis.postMessage('init')
