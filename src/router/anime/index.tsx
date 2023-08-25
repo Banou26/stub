@@ -19,7 +19,7 @@ import Title2 from '../../components/title2'
 import useScrub from '../../utils/use-scrub'
 
 import './index.css'
-import PreviewModal, { GET_MEDIA } from './preview-modal'
+import PreviewModal, { GET_PREVIEW_MODAL_MEDIA as GET_MEDIA } from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
@@ -489,61 +489,47 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
 })
 
 const GET_MEDIA_EPISODES = `#graphql
-  query GetMediaEpisodes($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
-      origin
-      id
-      uri
-      url
-      season
-      seasonYear
-      episodes {
-        edges {
-          node {
-            origin
-            id
-            uri
-            url
-            number
-            title {
-              english
-              romanized
-              native
-            }
-            description
-            thumbnail
-            uri
-          }
+  fragment GetMediaEpisodesEpisodeFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    number
+    title {
+      english
+      romanized
+      native
+    }
+    description
+    thumbnail
+    uri
+  }
+
+  fragment GetMediaEpisodesFragment on Media {
+    origin
+    id
+    uri
+    url
+
+    season
+    seasonYear
+    episodes {
+      edges {
+        node {
+          ...GetMediaEpisodesEpisodeFragment
         }
       }
+    }
+  }
+
+  query GetMediaEpisodes($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      ...GetMediaEpisodesFragment
       handles {
-        edges {
+        edges @stream {
           node {
-            origin
-            id
-            uri
-            url
-            season
-            seasonYear
-            episodes {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                  url
-                  number
-                  title {
-                    english
-                    romanized
-                    native
-                  }
-                  description
-                  thumbnail
-                  uri
-                }
-              }
-            }
+            ...GetMediaEpisodesFragment
           }
         }
       }
@@ -633,80 +619,52 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
 }
 
 export const GET_LATEST_EPISODES = `#graphql
+  fragment GetLatestEpisodesEpisodeFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    number
+    mediaUri
+    media {
+      origin
+      id
+      uri
+      url
+      title {
+        romanized
+        english
+        native
+      }
+      coverImage {
+        color
+        default
+        extraLarge
+        large
+        medium
+        small
+      }
+      bannerImage
+    }
+    title {
+      romanized
+      english
+      native
+    }
+    description
+    airingAt
+    thumbnail
+  }
+
   query GetLatestEpisodes($sort: [EpisodeSort]!) {
     Page {
       episode(sort: $sort) {
-        origin
-        id
-        uri
-        url
-        number
-        mediaUri
-        media {
-          origin
-          id
-          uri
-          url
-          title {
-            romanized
-            english
-            native
-          }
-          coverImage {
-            color
-            default
-            extraLarge
-            large
-            medium
-            small
-          }
-          bannerImage
-        }
-        title {
-          romanized
-          english
-          native
-        }
-        description
-        airingAt
-        thumbnail
+        ...GetLatestEpisodesEpisodeFragment
         handles {
-          edges {
+          edges @stream {
             node {
-              origin
-              id
-              uri
-              url
-              number
-              mediaUri
-              media {
-                origin
-                id
-                uri
-                url
-                title {
-                  romanized
-                  english
-                  native
-                }
-                coverImage {
-                  color
-                  default
-                  extraLarge
-                  large
-                  medium
-                  small
-                }
-                bannerImage
-              }
-              title {
-                romanized
-                english
-                native
-              }
-              description
-              airingAt
-              thumbnail
+              ...GetLatestEpisodesEpisodeFragment
             }
           }
         }

@@ -225,9 +225,8 @@ z-index: 125;
 
 `
 
-export const GET_MEDIA = `#graphql
-
-  fragment GetEpisodeTestFragment on Episode {
+export const GET_PREVIEW_MODAL_MEDIA = `#graphql
+  fragment GetPreviewModalMediaEpisodeFragment on Episode {
     origin
     id
     uri
@@ -246,7 +245,7 @@ export const GET_MEDIA = `#graphql
     description
   }
 
-  fragment GetMediaTestFragment on Media {
+  fragment GetPreviewModalMediaFragment on Media {
     origin
     id
     uri
@@ -292,106 +291,19 @@ export const GET_MEDIA = `#graphql
     episodes {
       edges {
         node {
-          ...GetEpisodeTestFragment
+          ...GetPreviewModalMediaEpisodeFragment
         }
       }
     }
   }
 
-  query GetMedia($uri: String!, $origin: String, $id: String) {
+  query GetPreviewModalMedia($uri: String!, $origin: String, $id: String) {
     Media(uri: $uri, origin: $origin, id: $id) {
-      ...GetMediaTestFragment
-      handles {
-        edges {
-          node {
-            ...GetMediaTestFragment
-          }
-        }
-      }
-    }
-  }
-`
-
-
-const GET_TEST = `#graphql
-  fragment GetEpisodeTestFragment on Episode {
-    origin
-    id
-    uri
-    url
-
-    airingAt
-    number
-    mediaUri
-    timeUntilAiring
-    thumbnail
-    title {
-      romanized
-      english
-      native
-    }
-    description
-  }
-
-  fragment GetMediaTestFragment on Media {
-    origin
-    id
-    uri
-    url
-    title {
-      romanized
-      english
-      native
-    }
-    bannerImage
-    coverImage {
-      color
-      default
-      extraLarge
-      large
-      medium
-      small
-    }
-    description
-    shortDescription
-    season
-    seasonYear
-    popularity
-    averageScore
-    episodeCount
-    trailers {
-      origin
-      id
-      uri
-      url
-      thumbnail
-    }
-    startDate {
-      year
-      month
-      day
-    }
-    endDate {
-      year
-      month
-      day
-    }
-    episodes {
-      edges {
-        node {
-          ...GetEpisodeTestFragment
-        }
-      }
-    }
-  }
-
-  query GetMediaTest($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
-      ...GetMediaTestFragment
+      ...GetPreviewModalMediaFragment
       handles {
         edges @stream {
           node {
-            ...GetMediaTestFragment
+            ...GetPreviewModalMediaFragment
             handles {
               edges {
                 node {
@@ -520,7 +432,7 @@ export default () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
+  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { uri: mediaUri! }, pause: !mediaUri })
   // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
