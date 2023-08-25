@@ -521,10 +521,10 @@ export default () => {
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
   const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_TEST, variables: { uri: mediaUri! }, pause: !mediaUri })
-  console.log('media', media)
+  // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
-  const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
+  // const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
   // console.log('media', media)
   // console.log('originPage', originPage)
 
@@ -538,10 +538,10 @@ export default () => {
     console.error(error)
   }
 
-  if (error2) {
-    console.log('preview modal error', error2)
-    console.error(error2)
-  }
+  // if (error2) {
+  //   console.log('preview modal error', error2)
+  //   console.error(error2)
+  // }
 
   const mediaTargets =
     media &&
@@ -592,7 +592,7 @@ export default () => {
 
   // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
 
-  const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
+  // const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>

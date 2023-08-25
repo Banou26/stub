@@ -135,16 +135,16 @@ const GET_TEST = `#graphql
 `
 
 export default () => {
-  return <PreviewModal/>
-
-  // return <img src="https://artworks.thetvdb.com/banners/v4/episode/9862554/screencap/64c56a26d211f.jpg"/>
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
-
   useEffect(() => {
     if (mediaUri) return
     setSearchParams({ details: `scannarr:(mal:54112,anizip:17806,anilist:159831,animetosho:17806,cr:GJ0H7QGQK,anidb:17806,kitsu:46954,notifymoe:fJAnfp24g,livechart:11767,tvdb:429310)` })
   }, [mediaUri, setSearchParams])
+
+  return <PreviewModal/>
+
+  // return <img src="https://artworks.thetvdb.com/banners/v4/episode/9862554/screencap/64c56a26d211f.jpg"/>
 
   const currentSeason = getCurrentSeason()
 
