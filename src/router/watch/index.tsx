@@ -1,13 +1,13 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import { useQuery} from '@apollo/client'
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { hex2bin } from 'uint8-util'
 import { Buffer } from 'buffer'
 import Bencode from 'bencode'
 import parseTorrent from 'parse-torrent'
-import { Uri, mergeScannarrUris } from 'scannarr/src/utils'
+import { useQuery } from 'urql'
+import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri2'
 
 import { gql } from '../../generated'
 import { fetch } from '../../utils/fetch'
@@ -67,21 +67,47 @@ const style = css`
 `
 
 
-export const GET_PLAYBACK_SOURCES = gql(`#graphql
+export const GET_PLAYBACK_SOURCES = `#graphql
+  fragment PlaybackSourceFragment on PlaybackSource {
+    origin
+    id
+    uri
+    url
+
+    type
+    filename
+    title {
+      romanized
+      english
+      native
+    }
+    structure
+    filesCount
+    bytes
+    uploadDate
+    thumbnails
+    team {
+      origin
+      id
+      uri
+      url
+      name
+    }
+    resolution
+    hash
+    format
+    episodeRange
+    data
+  }
+
   query GetPlaybackSources($uri: String, $origin: String, $id: String, $search: String, $name: String, $resolution: String, $season: Int, $number: Float) {
     Page {
       playbackSource(uri: $uri, origin: $origin, id: $id, search: $search, name: $name, resolution: $resolution, season: $season, number: $number) {
-        origin
-        id
-        uri
-        url
+        ...PlaybackSourceFragment
         handles {
-          edges {
+          edges @stream {
             node {
-              origin
-              id
-              uri
-              url
+              ...PlaybackSourceFragment
               handles {
                 edges {
                   node {
@@ -92,64 +118,110 @@ export const GET_PLAYBACK_SOURCES = gql(`#graphql
                   }
                 }
               }
-
-              type
-              filename
-              title {
-                romanized
-                english
-                native
-              }
-              structure
-              filesCount
-              bytes
-              uploadDate
-              thumbnails
-              team {
-                origin
-                id
-                uri
-                url
-                name
-              }
-              resolution
-              hash
-              format
-              episodeRange
-              data
             }
           }
         }
-
-        type
-        filename
-        title {
-          romanized
-          english
-          native
-        }
-        structure
-        filesCount
-        bytes
-        uploadDate
-        thumbnails
-        team {
-          origin
-          id
-          uri
-          url
-          name
-        }
-        resolution
-        hash
-        format
-        episodeRange
-        data
       }
     }
   }
-`)
+`
 
+
+export const GET_WATCH_MEDIA = `#graphql
+  fragment GetWatchMediaEpisodeFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
+  fragment GetWatchMediaFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+    episodes {
+      edges {
+        node {
+          ...GetWatchMediaEpisodeFragment
+        }
+      }
+    }
+  }
+
+  query GetWatchMedia($uri: String!, $origin: String, $id: String) {
+    Media(uri: $uri, origin: $origin, id: $id) {
+      ...GetWatchMediaFragment
+      handles {
+        edges @stream {
+          node {
+            ...GetWatchMediaFragment
+            handles {
+              edges {
+                node {
+                  origin
+                  id
+                  uri
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
 
 
 const Watch = () => {
@@ -157,12 +229,22 @@ const Watch = () => {
   const navigate = useNavigate()
   const [, setSearchParams] = useSearchParams()
   const uri = mergeScannarrUris([mediaUri, episodeUri])
-  const episodeId = episodeUri.split('-')[1]
-  const { error, data: { Page } = {} } = useQuery(
-    GET_PLAYBACK_SOURCES,
+  const episodeId = fromUriEpisodeId(episodeUri).episodeId
+
+  const [{ data: { Media: media } = { Media: undefined } }] = useQuery({
+    query: GET_WATCH_MEDIA,
+    variables: { uri: mediaUri! },
+    pause: !mediaUri
+  })
+
+  // console.log('media', media)
+  // console.log('episodeId', episodeId)
+
+  const [{ error, data: { Page } = { Page: undefined } }] = useQuery(
     {
+      query: GET_PLAYBACK_SOURCES,
       variables: { uri, number: Number(episodeId) },
-      skip: !uri
+      pause: !uri
     }
   )
 
@@ -176,6 +258,8 @@ const Watch = () => {
     () => Page?.playbackSource?.find((source) => source.uri === sourceUri),
     [Page?.playbackSource, sourceUri]
   )
+  
+  console.log('currentSource', currentSource)
 
   useEffect(() => {
     if (!(currentSource && currentSource.uri !== sourceUri)) return

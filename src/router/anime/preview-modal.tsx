@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
-import { mergeScannarrUris, toUriEpisodeId } from 'scannarr/src'
+import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr/src/utils/uri2'
 import { Episode } from 'scannarr'
 
 const style = css`
@@ -440,10 +440,24 @@ export default () => {
   // console.log('media', media)
   // console.log('originPage', originPage)
 
-  // useEffect(() => {
-  //   if (fetching || hasNext || hasNext === undefined || !media?.uri) return
-  //   setSearchParams({ details: media.uri })
-  // }, [hasNext, media?.uri, setSearchParams])
+  useEffect(() => {
+    if (fetching || hasNext || hasNext === undefined || !media?.uri || mediaUri === media?.uri || !mediaUri) return
+    const newUri = mergeScannarrUris([
+      media.uri,
+      toScannarrUri(
+        media
+          .handles
+          .edges
+          .flatMap(edge =>
+            edge
+            .node
+            .handles
+            .edges.map(edge => edge.node.uri)
+          )
+      )
+    ])
+    setTimeout(() => setSearchParams({ details: newUri }), 0)
+  }, [hasNext, media?.uri, setSearchParams])
 
   if (error) {
     console.log('preview modal error', error)
