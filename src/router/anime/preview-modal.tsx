@@ -535,11 +535,13 @@ export default () => {
                   <h2>{media?.title?.romanized}</h2>
                   <div className="origins">
                     {
-                      mediaTargets?.map(({ target, media }) => (
-                        <a key={target.origin} href={media.url ?? target.originUrl} className="origin-icon" target="_blank" rel="noopener noreferrer">
-                          <img src={target.icon} alt=""/>
-                        </a>
-                      ))
+                      mediaTargets
+                        ?.filter(({ media, target }) => media?.url && target.icon && target.official)
+                        ?.map(({ target, media }) => (
+                          <a key={target.origin} href={media.url ?? target.originUrl} className="origin-icon" target="_blank" rel="noopener noreferrer">
+                            <img src={target.icon} alt=""/>
+                          </a>
+                        ))
                     }
                   </div>
                 </div>
