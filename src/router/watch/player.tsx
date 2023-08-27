@@ -239,6 +239,7 @@ const Player = ({ mediaUri, source }: { mediaUri: string, source }) => {
         publicPath={new URL('/build/', new URL(window.location.toString()).origin).toString()}
         libavWorkerUrl={libavWorkerUrl}
         libassWorkerUrl={jassubWorkerUrl}
+        wasmUrl={new URL('/build/jassub-worker-modern.wasm', new URL(window.location.toString()).origin).toString()}
       />
     </div>
   )

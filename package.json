@@ -81,6 +81,7 @@
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
     "idb": "^7.0.0",
+    "jassub": "^1.7.1",
     "laserr": "file:../../laserr",
     "marked": "^4.0.18",
     "osra": "^0.0.10",
