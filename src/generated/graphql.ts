@@ -573,6 +573,8 @@ export type Origin = {
   name: Scalars['String'];
   /** If the origin is official, e.g a legal redistributor or platform */
   official?: Maybe<Scalars['Boolean']>;
+  /** Origin ID, e.g: "nflx" for Netflix */
+  origin: Scalars['String'];
   supportedUris?: Maybe<Array<Scalars['String']>>;
   /** The origin's URL, e.g "https://www.netflix.com/""  */
   url?: Maybe<Scalars['String']>;
@@ -667,10 +669,10 @@ export type PageInfo = {
 
 export type PlaybackSource = Handle & {
   __typename?: 'PlaybackSource';
-  Episode?: Maybe<Episode>;
   bytes?: Maybe<Scalars['Float']>;
   /** Stringified (json?) data for the playback, useful for custom players */
   data?: Maybe<Scalars['String']>;
+  episode?: Maybe<Episode>;
   episodeRange?: Maybe<Scalars['String']>;
   filename?: Maybe<Scalars['String']>;
   filesCount?: Maybe<Scalars['Int']>;
