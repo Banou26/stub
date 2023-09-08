@@ -94,7 +94,7 @@ a:has(>h2) {
     padding: 5rem;
     padding-top: 0;
     padding-bottom: 0;
-    text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+    text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
 
     
     .header-serie-title {
@@ -135,7 +135,7 @@ a:has(>h2) {
       padding: 1rem;
       margin: 0;
       margin: 1rem;
-      text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+      text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
       transition: all 0.2s ease-in-out;
       display: flex;
       align-items: center;
@@ -210,7 +210,7 @@ div.section.first-section {
   padding-top: 65vh;
   h2 {
     color: #fff;
-    text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+    text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
   }
 }
 
