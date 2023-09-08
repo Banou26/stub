@@ -55,6 +55,7 @@
     "@apollo/client": "^3.7.11",
     "@apollo/server": "^4.5.0",
     "@banou/media-player": "github:Banou26/media-player",
+    "@banou26/libav-wasm": "^0.1.8-ci-6113771371.0",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@fkn/lib": "file:../lib",
