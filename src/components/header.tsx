@@ -11,6 +11,7 @@ import { getRoutePath, Route } from '../router/path'
 import DiscordIconUrl from '../images/discord-mark-blue.svg'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useQuery } from 'urql'
 
 const style = css`
   position: fixed;
@@ -123,6 +124,69 @@ const style = css`
   }
 `
 
+
+export const SEARCH_MEDIA = `#graphql
+  fragment SearchMediaFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+  }
+
+  query SearchMedia($search: String!) {
+    Page {
+      media(search: $search) {
+        ...SearchMediaFragment
+        handles {
+          edges {
+            node {
+              ...SearchMediaFragment
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
 const Header = ({ ...rest }) => {
   const [category, setCategory] = useState<Category>('ANIME')
   const [showSearchResults, setShowSearchResults] = useState(false)
@@ -130,6 +194,8 @@ const Header = ({ ...rest }) => {
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
+  const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { search: searchValue } })
+  console.log('searchResult', searchResult)
   // const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: fetch }), [searchValue])
   const completed = true
   const data = []
@@ -177,13 +243,13 @@ const Header = ({ ...rest }) => {
           />
         </form>
         {
-          showSearchResults && data ? (
+          showSearchResults && searchResult?.data?.Page?.media ? (
             <div className="searchResults" onBlur={hideSearchResults}>
               {
-                data.map(title =>
-                  <Link key={title.uri} href={getRoutePath(Route.TITLE, { uri: title.uri })}>
-                    <img src={title.images.at(0)?.url} alt="" referrer-policy="same-origin"/>
-                    <span style={{ color: 'white' }}>{title.names.at(0)?.name}</span>
+                searchResult?.data?.Page?.media.map(media =>
+                  <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
+                    <img src={media.coverImage.at(0)?.default} alt="" referrer-policy="same-origin"/>
+                    <span style={{ color: 'white' }}>{media.title.romanized}</span>
                   </Link>
                 )
               }
