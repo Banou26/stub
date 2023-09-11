@@ -441,8 +441,7 @@ export default () => {
   // console.log('originPage', originPage)
 
   useEffect(() => {
-    if (fetching || hasNext || hasNext === undefined || !media?.uri || mediaUri === media?.uri || !mediaUri) return
-    const newUri = mergeScannarrUris([
+    const newUri = media && mergeScannarrUris([
       media.uri,
       toScannarrUri(
         media
@@ -456,8 +455,10 @@ export default () => {
           )
       )
     ])
+
+    if (!media || fetching || hasNext || hasNext === undefined || !media?.uri || mediaUri === newUri || !mediaUri) return
     setTimeout(() => setSearchParams({ details: newUri }), 0)
-  }, [hasNext, media?.uri, setSearchParams])
+  }, [hasNext, media, setSearchParams])
 
   if (error) {
     console.log('preview modal error', error)
