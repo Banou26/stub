@@ -547,7 +547,11 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
 
 
   // comment from here
-  const { data: { Media } = {} } = useQuery(GET_MEDIA_EPISODES, { variables: { uri: _episode.uri }, skip: !isVisible || hasNoThumbnail })
+  const [{ data: { Media } = {} }] = useQuery({
+    query: GET_MEDIA_EPISODES,
+    variables: { uri: _episode.uri },
+    pause: !isVisible || hasNoThumbnail
+  })
 
 
   const mediaEpisode = useMemo(
@@ -558,6 +562,8 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
     ),
     [Media, _episode]
   )
+
+  // console.log('EPISODE Media', Media, !isVisible, hasNoThumbnail, mediaEpisode)
 
   useEffect(() => {
     if (!Media || !mediaEpisode) return
@@ -594,17 +600,19 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
       : _episode
 
   useEffect(() => {
-    if (!contentRef || hasNoThumbnail) return
+    if (!contentRef || hasNoThumbnail || !setIsVisible) return
     const resizeObserver = new IntersectionObserver((entries) => {
+      // console.log('entries', entries)
       setIsVisible(entries[0]?.isIntersecting)
     }, { threshold: 0.01 })
     resizeObserver.observe(contentRef as HTMLDivElement)
     return () => {
       resizeObserver.disconnect()
     }
-  }, [contentRef, hasNoThumbnail])
+  }, [contentRef, hasNoThumbnail, setIsVisible])
 
-  if (hasNoThumbnail || (isVisible && !episode.thumbnail)) {
+  // episode.uri === 'scannarr:()' means the episode is loading / hasn't found any sources
+  if (hasNoThumbnail || (isVisible && !episode.thumbnail) || episode.uri === 'scannarr:()') {
     return null
   }
 
@@ -689,7 +697,11 @@ export default () => {
   )
   const { error } = currentSeasonResult ?? {}
   const Page = currentSeasonResult.data?.Page
-  // const { loading, data: { Page: LatestEpisodePage } = {} } = useQuery(GET_LATEST_EPISODES, { variables: { sort: [EpisodeSort.Latest] } })
+  const [lastEpisodesResult] = useQuery({
+    query: GET_LATEST_EPISODES,
+    variables: { sort: [EpisodeSort.Latest] }
+  })
+  const LatestEpisodePage = lastEpisodesResult.data?.Page
   const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
   const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
   const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: first5RandomMedia?.uri }, pause: !first5RandomMedia })
@@ -717,7 +729,7 @@ export default () => {
   )
 
   // console.log('Anime Page', Page)
-  // console.log('LatestEpisodePage', LatestEpisodePage)
+  console.log('LatestEpisodePage', LatestEpisodePage, lastEpisodesResult)
 
   if (error) console.error(error)
 
@@ -851,11 +863,11 @@ export default () => {
             <ScrollArea.Root className="ScrollAreaRoot">
               <ScrollArea.Viewport className="ScrollAreaViewport">
                 <div className="section-items">
-                  {/* {
+                  {
                     LatestEpisodePage?.episode?.map(episode =>
                       <EpisodeItem key={episode.uri} episode={episode} />
                     )
-                  } */}
+                  }
                 </div>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
