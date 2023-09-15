@@ -628,41 +628,41 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
 
 export const GET_LATEST_EPISODES = `#graphql
   fragment GetLatestEpisodesEpisodeFragment on Episode {
-    origin
-    id
+    # origin
+    # id
     uri
-    url
+    # url
 
-    number
-    mediaUri
+    # number
+    # mediaUri
     media {
-      origin
-      id
+      # origin
+      # id
       uri
-      url
-      title {
-        romanized
-        english
-        native
-      }
-      coverImage {
-        color
-        default
-        extraLarge
-        large
-        medium
-        small
-      }
-      bannerImage
+      # url
+      # title {
+      #   romanized
+      #   english
+      #   native
+      # }
+      # coverImage {
+      #   color
+      #   default
+      #   extraLarge
+      #   large
+      #   medium
+      #   small
+      # }
+      # bannerImage
     }
-    title {
-      romanized
-      english
-      native
-    }
-    description
-    airingAt
-    thumbnail
+    # title {
+    #   romanized
+    #   english
+    #   native
+    # }
+    # description
+    # airingAt
+    # thumbnail
   }
 
   query GetLatestEpisodes($sort: [EpisodeSort]!) {
@@ -729,7 +729,7 @@ export default () => {
   )
 
   // console.log('Anime Page', Page)
-  console.log('LatestEpisodePage', LatestEpisodePage, lastEpisodesResult)
+  console.log('LatestEpisodePage', LatestEpisodePage?.episode, lastEpisodesResult)
 
   if (error) console.error(error)
 
@@ -864,9 +864,12 @@ export default () => {
               <ScrollArea.Viewport className="ScrollAreaViewport">
                 <div className="section-items">
                   {
-                    LatestEpisodePage?.episode?.map(episode =>
-                      <EpisodeItem key={episode.uri} episode={episode} />
-                    )
+                    LatestEpisodePage
+                      ?.episode
+                      .filter((episode) => episode.uri !== 'scannarr:()')
+                      ?.map(episode =>
+                        <EpisodeItem key={episode.uri} episode={episode} />
+                      )
                   }
                 </div>
               </ScrollArea.Viewport>

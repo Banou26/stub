@@ -9,132 +9,80 @@ import { getCurrentSeason } from '../../../../laserr/src/targets/anilist'
 import { MediaSort } from 'scannarr/src'
 
 
-const GET_TEST = `#graphql
-  # fragment GetEpisodeTestFragment on Episode {
-  #   origin
-  #   id
-  #   uri
-  #   url
-
-  #   airingAt
-  #   number
-  #   mediaUri
-  #   timeUntilAiring
-  #   thumbnail
-  #   title {
-  #     romanized
-  #     english
-  #     native
-  #   }
-  #   description
-  # }
-
-  fragment GetMediaTestFragment on Media {
-    origin
-    id
+export const GET_LATEST_EPISODES = `#graphql
+  fragment GetLatestEpisodesEpisodeFragment on Episode {
+    # origin
+    # id
     uri
-    url
-    title {
-      romanized
-      english
-      native
-    }
-    bannerImage
-    coverImage {
-      color
-      default
-      extraLarge
-      large
-      medium
-      small
-    }
-    description
-    shortDescription
-    season
-    seasonYear
-    popularity
-    averageScore
-    episodeCount
-    trailers {
-      origin
-      id
+    # url
+
+    # number
+    # mediaUri
+    media {
+      # origin
+      # id
       uri
-      url
-      thumbnail
+      # url
+      # title {
+      #   romanized
+      #   english
+      #   native
+      # }
+      # coverImage {
+      #   color
+      #   default
+      #   extraLarge
+      #   large
+      #   medium
+      #   small
+      # }
+      # bannerImage
     }
-    startDate {
-      year
-      month
-      day
-    }
-    endDate {
-      year
-      month
-      day
-    }
-    # episodes {
-    #   edges {
-    #     node {
-    #       ...GetEpisodeTestFragment
-    #     }
-    #   }
+    # title {
+    #   romanized
+    #   english
+    #   native
     # }
+    # description
+    # airingAt
+    # thumbnail
   }
 
-  query GetMediaTest ($season: MediaSeason!, $seasonYear: Int!, $sort: [MediaSort]!) {
+  query GetLatestEpisodes($sort: [EpisodeSort]!) {
     Page {
-      media(season: $season, seasonYear: $seasonYear, sort: $sort) {
-        ...GetMediaTestFragment
+      episode(sort: $sort) {
+        ...GetLatestEpisodesEpisodeFragment
         handles {
-          edges {
+          edges @stream {
             node {
-              ...GetMediaTestFragment
-              # handles {
-              #   edges {
-              #     node {
-              #       origin
-              #       id
-              #       uri
-              #       url
-              #     }
-              #   }
-              # }
-              # episodes {
-              #   edges {
-              #     node {
-              #       handles {
-              #         edges {
-              #           node {
-              #             ...GetEpisodeTestFragment
-              #           }
-              #         }
-              #       }
-              #     }
-              #   }
-              # }
+              ...GetLatestEpisodesEpisodeFragment
             }
           }
         }
-        # episodes {
-        #   edges {
-        #     node {
-        #       ...GetEpisodeTestFragment
-        #       handles {
-        #         edges {
-        #           node {
-        #             ...GetEpisodeTestFragment
-        #           }
-        #         }
-        #       }
-        #     }
-        #   }
-        # }
       }
     }
   }
 `
 
+
 export default () => {
+  const [lastEpisodesResult, executeQuery] = useQuery({
+    query: GET_LATEST_EPISODES,
+    variables: { sort: ['LATEST'] },
+    // requestPolicy: 'cache-and-network'
+  })
+
+  console.log('lastEpisodesResult', lastEpisodesResult.data?.Page.episode[0], lastEpisodesResult)
+
+  // workaround
+  useEffect(() => {
+    if (!lastEpisodesResult.data?.Page.episode[0]) return
+    executeQuery({ requestPolicy: 'cache-and-network'})
+  }, [!!lastEpisodesResult.data?.Page.episode[0]])
+
+  return
+
+
   const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   useEffect(() => {
