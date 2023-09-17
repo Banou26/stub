@@ -14,6 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "#graphql\n  query GetOrigins($ids: [String!]) {\n    Page {\n      origin(ids: $ids) {\n        id\n        name\n        official\n        metadataOnly\n      }\n    }\n  }\n": types.GetOriginsDocument,
+    "\n  query GetEpisode {\n    Page {\n      episode {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetEpisodeDocument,
 };
 
 /**
@@ -34,6 +35,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "#graphql\n  query GetOrigins($ids: [String!]) {\n    Page {\n      origin(ids: $ids) {\n        id\n        name\n        official\n        metadataOnly\n      }\n    }\n  }\n"): (typeof documents)["#graphql\n  query GetOrigins($ids: [String!]) {\n    Page {\n      origin(ids: $ids) {\n        id\n        name\n        official\n        metadataOnly\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetEpisode {\n    Page {\n      episode {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetEpisode {\n    Page {\n      episode {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

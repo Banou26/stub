@@ -22,6 +22,15 @@ export const GET_LATEST_EPISODES = `#graphql
       # origin
       # id
       uri
+
+      handles {
+        edges {
+          node {
+            uri
+          }
+        }
+      }
+
       # url
       # title {
       #   romanized
@@ -56,6 +65,43 @@ export const GET_LATEST_EPISODES = `#graphql
           edges @stream {
             node {
               ...GetLatestEpisodesEpisodeFragment
+              handles {
+                edges {
+                  node {
+                    uri
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+const query = gql`
+  query GetEpisode {
+    Page {
+      episode {
+        uri
+        handles {
+          edges @stream {
+            node {
+              uri
+              media {
+                uri
+              }
+            }
+          }
+        }
+        media {
+          uri
+          handles {
+            edges {
+              node {
+                uri
+              }
             }
           }
         }
@@ -66,21 +112,24 @@ export const GET_LATEST_EPISODES = `#graphql
 
 
 export default () => {
-  const [lastEpisodesResult, executeQuery] = useQuery({
-    query: GET_LATEST_EPISODES,
-    variables: { sort: ['LATEST'] },
-    // requestPolicy: 'cache-and-network'
+  const [lastEpisodesResult] = useQuery({
+    query: query,
+    variables: { sort: ['LATEST'] }
   })
 
-  console.log('lastEpisodesResult', lastEpisodesResult.data?.Page.episode[0], lastEpisodesResult)
+  console.log('lastEpisodesResult', lastEpisodesResult.data?.Page.episode[0], lastEpisodesResult.data?.Page.episode[0]?.media, lastEpisodesResult)
 
   // workaround
-  useEffect(() => {
-    if (!lastEpisodesResult.data?.Page.episode[0]) return
-    executeQuery({ requestPolicy: 'cache-and-network'})
-  }, [!!lastEpisodesResult.data?.Page.episode[0]])
+  // useEffect(() => {
+  //   if (!lastEpisodesResult.data?.Page.episode[0]) return
+  //   executeQuery({ requestPolicy: 'cache-and-network'})
+  // }, [!!lastEpisodesResult.data?.Page.episode[0]])
 
-  return
+  return (
+    <div>
+      <pre>{JSON.stringify(lastEpisodesResult.data, null, 2)}</pre>
+    </div>
+  )
 
 
   const [searchParams, setSearchParams] = useSearchParams()
