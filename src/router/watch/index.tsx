@@ -103,11 +103,9 @@ export const GET_PLAYBACK_SOURCES = `#graphql
   query GetPlaybackSources($uri: String, $origin: String, $id: String, $search: String, $name: String, $resolution: String, $season: Int, $number: Float) {
     Page {
       playbackSource(uri: $uri, origin: $origin, id: $id, search: $search, name: $name, resolution: $resolution, season: $season, number: $number) {
-        ...PlaybackSourceFragment
         handles {
           edges @stream {
             node {
-              ...PlaybackSourceFragment
               handles {
                 edges {
                   node {
@@ -118,9 +116,11 @@ export const GET_PLAYBACK_SOURCES = `#graphql
                   }
                 }
               }
+              ...PlaybackSourceFragment
             }
           }
         }
+        ...PlaybackSourceFragment
       }
     }
   }
@@ -201,11 +201,9 @@ export const GET_WATCH_MEDIA = `#graphql
 
   query GetWatchMedia($uri: String!, $origin: String, $id: String) {
     Media(uri: $uri, origin: $origin, id: $id) {
-      ...GetWatchMediaFragment
       handles {
         edges @stream {
           node {
-            ...GetWatchMediaFragment
             handles {
               edges {
                 node {
@@ -216,9 +214,11 @@ export const GET_WATCH_MEDIA = `#graphql
                 }
               }
             }
+            ...GetWatchMediaFragment
           }
         }
       }
+      ...GetWatchMediaFragment
     }
   }
 `
