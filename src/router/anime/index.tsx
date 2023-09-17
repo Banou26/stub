@@ -547,11 +547,12 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
 
 
   // comment from here
-  const [{ data: { Media } = {} }] = useQuery({
-    query: GET_MEDIA_EPISODES,
-    variables: { uri: _episode.uri },
-    pause: !isVisible || hasNoThumbnail
-  })
+  // const [{ data: { Media } = {} }] = useQuery({
+  //   query: GET_MEDIA_EPISODES,
+  //   variables: { uri: _episode.uri },
+  //   pause: !isVisible || hasNoThumbnail
+  // })
+  const Media = undefined
 
 
   const mediaEpisode = useMemo(
@@ -627,48 +628,58 @@ const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTML
 }
 
 export const GET_LATEST_EPISODES = `#graphql
-  fragment GetLatestEpisodesEpisodeFragment on Episode {
-    # origin
-    # id
+  fragment GetLatestEpisodeMediaFragment on Media {
+    origin
+    id
     uri
-    # url
-
-    # number
-    # mediaUri
-    media {
-      # origin
-      # id
-      uri
-      # url
-      # title {
-      #   romanized
-      #   english
-      #   native
-      # }
-      # coverImage {
-      #   color
-      #   default
-      #   extraLarge
-      #   large
-      #   medium
-      #   small
-      # }
-      # bannerImage
+    url
+    title {
+      romanized
+      english
+      native
     }
-    # title {
-    #   romanized
-    #   english
-    #   native
-    # }
-    # description
-    # airingAt
-    # thumbnail
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    bannerImage
+  }
+
+  fragment GetLatestEpisodesEpisodeFragment on Episode {
+    origin
+    id
+    uri
+    url
+
+    number
+    mediaUri
+    media {
+      handles {
+        edges {
+          node {
+            ...GetLatestEpisodeMediaFragment
+          }
+        }
+      }
+      ...GetLatestEpisodeMediaFragment
+    }
+    title {
+      romanized
+      english
+      native
+    }
+    description
+    airingAt
+    thumbnail
   }
 
   query GetLatestEpisodes($sort: [EpisodeSort]!) {
     Page {
       episode(sort: $sort) {
-        ...GetLatestEpisodesEpisodeFragment
         handles {
           edges @stream {
             node {
@@ -676,6 +687,7 @@ export const GET_LATEST_EPISODES = `#graphql
             }
           }
         }
+        ...GetLatestEpisodesEpisodeFragment
       }
     }
   }

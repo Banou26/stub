@@ -299,11 +299,9 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
 
   query GetPreviewModalMedia($uri: String!, $origin: String, $id: String) {
     Media(uri: $uri, origin: $origin, id: $id) {
-      ...GetPreviewModalMediaFragment
       handles {
         edges @stream {
           node {
-            ...GetPreviewModalMediaFragment
             handles {
               edges {
                 node {
@@ -314,9 +312,11 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
                 }
               }
             }
+            ...GetPreviewModalMediaFragment
           }
         }
       }
+      ...GetPreviewModalMediaFragment
     }
   }
 `

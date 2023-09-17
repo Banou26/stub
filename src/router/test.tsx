@@ -11,18 +11,14 @@ import { MediaSort } from 'scannarr/src'
 
 export const GET_LATEST_EPISODES = `#graphql
   fragment GetLatestEpisodesEpisodeFragment on Episode {
-    # origin
-    # id
+    origin
+    id
     uri
-    # url
+    url
 
-    # number
-    # mediaUri
+    number
+    mediaUri
     media {
-      # origin
-      # id
-      uri
-
       handles {
         edges {
           node {
@@ -31,40 +27,42 @@ export const GET_LATEST_EPISODES = `#graphql
         }
       }
 
-      # url
-      # title {
-      #   romanized
-      #   english
-      #   native
-      # }
-      # coverImage {
-      #   color
-      #   default
-      #   extraLarge
-      #   large
-      #   medium
-      #   small
-      # }
-      # bannerImage
+      origin
+      id
+      uri
+
+      url
+      title {
+        romanized
+        english
+        native
+      }
+      coverImage {
+        color
+        default
+        extraLarge
+        large
+        medium
+        small
+      }
+      bannerImage
     }
-    # title {
-    #   romanized
-    #   english
-    #   native
-    # }
-    # description
-    # airingAt
-    # thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+    airingAt
+    thumbnail
   }
 
   query GetLatestEpisodes($sort: [EpisodeSort]!) {
     Page {
       episode(sort: $sort) {
-        ...GetLatestEpisodesEpisodeFragment
         handles {
           edges @stream {
             node {
-              ...GetLatestEpisodesEpisodeFragment
               handles {
                 edges {
                   node {
@@ -72,18 +70,20 @@ export const GET_LATEST_EPISODES = `#graphql
                   }
                 }
               }
+              ...GetLatestEpisodesEpisodeFragment
             }
           }
         }
+        ...GetLatestEpisodesEpisodeFragment
       }
     }
   }
 `
 
 const query = gql`
-  query GetEpisode {
+  query GetEpisodeTest($sort: [EpisodeSort]!) {
     Page {
-      episode {
+      episode(sort: $sort) {
         uri
         handles {
           edges @stream {
@@ -112,24 +112,18 @@ const query = gql`
 
 
 export default () => {
-  const [lastEpisodesResult] = useQuery({
-    query: query,
-    variables: { sort: ['LATEST'] }
-  })
+  // const [lastEpisodesResult] = useQuery({
+  //   query: GET_LATEST_EPISODES,
+  //   variables: { sort: ['LATEST'] }
+  // })
 
-  console.log('lastEpisodesResult', lastEpisodesResult.data?.Page.episode[0], lastEpisodesResult.data?.Page.episode[0]?.media, lastEpisodesResult)
+  // console.log('lastEpisodesResult', lastEpisodesResult.data?.Page.episode[0], lastEpisodesResult.data?.Page.episode[0]?.media, lastEpisodesResult)
 
-  // workaround
-  // useEffect(() => {
-  //   if (!lastEpisodesResult.data?.Page.episode[0]) return
-  //   executeQuery({ requestPolicy: 'cache-and-network'})
-  // }, [!!lastEpisodesResult.data?.Page.episode[0]])
-
-  return (
-    <div>
-      <pre>{JSON.stringify(lastEpisodesResult.data, null, 2)}</pre>
-    </div>
-  )
+  // return (
+  //   <div>
+  //     <pre>{JSON.stringify(lastEpisodesResult.data, null, 2)}</pre>
+  //   </div>
+  // )
 
 
   const [searchParams, setSearchParams] = useSearchParams()
