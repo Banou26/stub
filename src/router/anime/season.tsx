@@ -85,6 +85,25 @@ export const GET_CURRENT_SEASON = `#graphql
     popularity
     averageScore
     episodeCount
+    episodes {
+      edges {
+        node {
+          origin
+          id
+          uri
+          url
+          number
+          airingAt
+          title {
+            romanized
+            english
+            native
+          }
+          description
+          thumbnail
+        }
+      }
+    }
     trailers {
       origin
       id
@@ -107,7 +126,6 @@ export const GET_CURRENT_SEASON = `#graphql
   query GetCurrentSeason($season: MediaSeason!, $seasonYear: Int!, $sort: [MediaSort]!) {
     Page {
       media(season: $season, seasonYear: $seasonYear, sort: $sort) {
-        ...GetMediaTestFragment
         handles {
           edges {
             node {
@@ -115,6 +133,7 @@ export const GET_CURRENT_SEASON = `#graphql
             }
           }
         }
+        ...GetMediaTestFragment
       }
     }
   }

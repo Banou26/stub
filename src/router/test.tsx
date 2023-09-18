@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { fromScannarrUri } from 'scannarr/src/utils/uri2'
 // import { useQuery as useApolloQuery } from '@apollo/client'
@@ -7,6 +7,7 @@ import { gql, useQuery } from 'urql'
 import PreviewModal, { GET_MEDIA } from './anime/preview-modal'
 import { getCurrentSeason } from '../../../../laserr/src/targets/anilist'
 import { MediaSort } from 'scannarr/src'
+import { GET_CURRENT_SEASON } from './anime/season'
 
 
 export const GET_LATEST_EPISODES = `#graphql
@@ -126,30 +127,46 @@ export default () => {
   // )
 
 
-  const [searchParams, setSearchParams] = useSearchParams()
-  const mediaUri = searchParams.get('details')
-  useEffect(() => {
-    if (mediaUri) return
-    setSearchParams({ details: `scannarr:(mal:54112,anizip:17806,anilist:159831,animetosho:17806,cr:GJ0H7QGQK,anidb:17806,kitsu:46954,notifymoe:fJAnfp24g,livechart:11767,tvdb:429310)` })
-  }, [mediaUri, setSearchParams])
+  const currentSeason = useMemo(() => getCurrentSeason(), [])
+  const [currentSeasonResult] = useQuery(
+    {
+      query: GET_CURRENT_SEASON,
+      variables: {
+        season: currentSeason.season,
+        seasonYear: currentSeason.year,
+        sort: [MediaSort.Popularity]
+      }
+    }
+  )
 
-  return <PreviewModal/>
+  console.log('currentSeasonResult', currentSeasonResult.data)
+  return
+
+
+  // const [searchParams, setSearchParams] = useSearchParams()
+  // const mediaUri = searchParams.get('details')
+  // useEffect(() => {
+  //   if (mediaUri) return
+  //   setSearchParams({ details: `scannarr:(mal:54112,anizip:17806,anilist:159831,animetosho:17806,cr:GJ0H7QGQK,anidb:17806,kitsu:46954,notifymoe:fJAnfp24g,livechart:11767,tvdb:429310)` })
+  // }, [mediaUri, setSearchParams])
+
+  // return <PreviewModal/>
 
   // return <img src="https://artworks.thetvdb.com/banners/v4/episode/9862554/screencap/64c56a26d211f.jpg"/>
 
-  const currentSeason = getCurrentSeason()
+  // const currentSeason = getCurrentSeason()
 
-  const [result] = useQuery({
-    query: GET_TEST,
-    variables: {
-      season: currentSeason.season,
-      seasonYear: currentSeason.year,
-      sort: [MediaSort.Popularity]
-    },
-    pause: !mediaUri
-  })
+  // const [result] = useQuery({
+  //   query: GET_TEST,
+  //   variables: {
+  //     season: currentSeason.season,
+  //     seasonYear: currentSeason.year,
+  //     sort: [MediaSort.Popularity]
+  //   },
+  //   pause: !mediaUri
+  // })
 
-  console.log('data', result.data)
+  // console.log('data', result.data)
 
   // console.log('result', result, result.hasNext)
   // const { origin, id, url, ...rest } = result.data?.Media || {}

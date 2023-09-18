@@ -709,12 +709,13 @@ export default () => {
   )
   const { error } = currentSeasonResult ?? {}
   const Page = currentSeasonResult.data?.Page
-  const [lastEpisodesResult] = useQuery({
-    query: GET_LATEST_EPISODES,
-    variables: { sort: [EpisodeSort.Latest] }
-  })
-  const LatestEpisodePage = lastEpisodesResult.data?.Page
-  const randomNum = useMemo(() => Math.floor(Math.random() * 10), [])
+  // const [lastEpisodesResult] = useQuery({
+  //   query: GET_LATEST_EPISODES,
+  //   variables: { sort: [EpisodeSort.Latest] }
+  // })
+  const lastEpisodesResult = undefined
+  const LatestEpisodePage = lastEpisodesResult?.data?.Page
+  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, LatestEpisodePage?.media?.length ?? 0)), [])
   const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
   const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: first5RandomMedia?.uri }, pause: !first5RandomMedia })
   const media = getMediaResult.data?.Media
@@ -741,7 +742,8 @@ export default () => {
   )
 
   // console.log('Anime Page', Page)
-  console.log('LatestEpisodePage', LatestEpisodePage?.episode, lastEpisodesResult)
+  // console.log('LatestEpisodePage', LatestEpisodePage?.episode, lastEpisodesResult)
+  // console.log('Page?.media', Page?.media)
 
   if (error) console.error(error)
 
@@ -876,13 +878,34 @@ export default () => {
               <ScrollArea.Viewport className="ScrollAreaViewport">
                 <div className="section-items">
                   {
+                    Page
+                      ?.media
+                      ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
+                      .filter(({ node }) => node.airingAt < Date.now())
+                      .sort((a, b) => b.node.airingAt - a.node.airingAt)
+                      .map(({ node: episode }) =>
+                        <EpisodeCard
+                          key={episode.uri}
+                          style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                          episode={episode}
+                        />
+                        // <EpisodeItem key={episode.uri} episode={episode} />
+                      )
+                    // <EpisodeCard
+                    //   ref={setContentRef}
+                    //   style={isVisible ? { backgroundImage: `url(${episode.thumbnail})`, backgroundSize: 'cover' } : {}}
+                    //   key={episode.uri}
+                    //   episode={episode}
+                    // />
+                  }
+                  {/* {
                     LatestEpisodePage
                       ?.episode
                       .filter((episode) => episode.uri !== 'scannarr:()')
                       ?.map(episode =>
                         <EpisodeItem key={episode.uri} episode={episode} />
                       )
-                  }
+                  } */}
                 </div>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
