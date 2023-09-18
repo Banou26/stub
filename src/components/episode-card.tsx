@@ -1,4 +1,5 @@
 import type { Episode } from '../generated/graphql'
+import type { To } from 'react-router'
 
 import { css } from '@emotion/react'
 import { Link } from 'react-router-dom'
@@ -88,16 +89,16 @@ const style = css`
 }
 `
 
-export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { episode: Episode }>(({ episode, ...rest }, ref) => (
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { episode: Episode, to: To }>(({ episode, to, ...rest }, ref) => (
   <div ref={ref} css={style} key={episode.uri} className="card category-item" {...rest}>
     <Link
       tabIndex={-1}
-      to={getRoutePath(Route.TITLE, { uri: episode.uri })}
+      to={to}
       className="card link"
     />
     <div className="information">
         <div className="title">
-          <Link to={getRoutePath(Route.TITLE, { uri: episode.uri })} className="title-text">
+          <Link to={to} className="title-text">
             <span>
               {
                 (episode.media?.title?.romanized?.length ?? 0) > 30

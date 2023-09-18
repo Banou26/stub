@@ -488,213 +488,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   )
 })
 
-const GET_MEDIA_EPISODES = `#graphql
-  fragment GetMediaEpisodesEpisodeFragment on Episode {
-    origin
-    id
-    uri
-    url
-
-    number
-    title {
-      english
-      romanized
-      native
-    }
-    description
-    thumbnail
-    uri
-  }
-
-  fragment GetMediaEpisodesFragment on Media {
-    origin
-    id
-    uri
-    url
-
-    season
-    seasonYear
-    episodes {
-      edges {
-        node {
-          ...GetMediaEpisodesEpisodeFragment
-        }
-      }
-    }
-  }
-
-  query GetMediaEpisodes($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
-      ...GetMediaEpisodesFragment
-      handles {
-        edges @stream {
-          node {
-            ...GetMediaEpisodesFragment
-          }
-        }
-      }
-    }
-  }
-`
-
-const EpisodeItem = ({ episode: _episode, ...rest }: { episode: Episode } & HTMLAttributes<HTMLDivElement>) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
-  const [hasNoThumbnail, setHasNoThumbnail] = useState(false)
-
-
-  // const mediaEpisode = _episode
-
-
-  // comment from here
-  // const [{ data: { Media } = {} }] = useQuery({
-  //   query: GET_MEDIA_EPISODES,
-  //   variables: { uri: _episode.uri },
-  //   pause: !isVisible || hasNoThumbnail
-  // })
-  const Media = undefined
-
-
-  const mediaEpisode = useMemo(
-    () => (
-      Media
-        ? Media.episodes?.edges?.find(({ node }) => node.number === _episode.number)?.node
-        : _episode
-    ),
-    [Media, _episode]
-  )
-
-  // console.log('EPISODE Media', Media, !isVisible, hasNoThumbnail, mediaEpisode)
-
-  useEffect(() => {
-    if (!Media || !mediaEpisode) return
-    if (!mediaEpisode?.thumbnail) {
-      setHasNoThumbnail(true)
-    }
-  }, [Media, mediaEpisode])
-  // to here, if you want to remove the request freeze issue
-
-
-
-
-  const [fallbackThumbnail, setFallbackThumbnail] = useState<string | undefined>()
-  useEffect(() => {
-    if (!(mediaEpisode?.thumbnail)) return
-    fetch(mediaEpisode?.thumbnail)
-      .then(res => res.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob)
-        setFallbackThumbnail(url)
-      })
-  }, [mediaEpisode?.thumbnail])
-
-  const episode =
-    mediaEpisode
-      ? ({
-        ..._episode,
-        ...mediaEpisode,
-        thumbnail:
-          fallbackThumbnail ??
-          mediaEpisode?.thumbnail ??
-          mediaEpisode.media?.coverImage?.at(0)?.default
-      })
-      : _episode
-
-  useEffect(() => {
-    if (!contentRef || hasNoThumbnail || !setIsVisible) return
-    const resizeObserver = new IntersectionObserver((entries) => {
-      // console.log('entries', entries)
-      setIsVisible(entries[0]?.isIntersecting)
-    }, { threshold: 0.01 })
-    resizeObserver.observe(contentRef as HTMLDivElement)
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [contentRef, hasNoThumbnail, setIsVisible])
-
-  // episode.uri === 'scannarr:()' means the episode is loading / hasn't found any sources
-  if (hasNoThumbnail || (isVisible && !episode.thumbnail) || episode.uri === 'scannarr:()') {
-    return null
-  }
-
-  return (
-    <EpisodeCard
-      ref={setContentRef}
-      style={isVisible ? { backgroundImage: `url(${episode.thumbnail})`, backgroundSize: 'cover' } : {}}
-      key={episode.uri}
-      episode={episode}
-    />
-  )
-}
-
-export const GET_LATEST_EPISODES = `#graphql
-  fragment GetLatestEpisodeMediaFragment on Media {
-    origin
-    id
-    uri
-    url
-    title {
-      romanized
-      english
-      native
-    }
-    coverImage {
-      color
-      default
-      extraLarge
-      large
-      medium
-      small
-    }
-    bannerImage
-  }
-
-  fragment GetLatestEpisodesEpisodeFragment on Episode {
-    origin
-    id
-    uri
-    url
-
-    number
-    mediaUri
-    media {
-      handles {
-        edges {
-          node {
-            ...GetLatestEpisodeMediaFragment
-          }
-        }
-      }
-      ...GetLatestEpisodeMediaFragment
-    }
-    title {
-      romanized
-      english
-      native
-    }
-    description
-    airingAt
-    thumbnail
-  }
-
-  query GetLatestEpisodes($sort: [EpisodeSort]!) {
-    Page {
-      episode(sort: $sort) {
-        handles {
-          edges @stream {
-            node {
-              ...GetLatestEpisodesEpisodeFragment
-            }
-          }
-        }
-        ...GetLatestEpisodesEpisodeFragment
-      }
-    }
-  }
-`
-
 export default () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
   const [currentSeasonResult] = useQuery(
@@ -709,10 +504,6 @@ export default () => {
   )
   const { error } = currentSeasonResult ?? {}
   const Page = currentSeasonResult.data?.Page
-  // const [lastEpisodesResult] = useQuery({
-  //   query: GET_LATEST_EPISODES,
-  //   variables: { sort: [EpisodeSort.Latest] }
-  // })
   const lastEpisodesResult = undefined
   const LatestEpisodePage = lastEpisodesResult?.data?.Page
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, LatestEpisodePage?.media?.length ?? 0)), [])
@@ -887,26 +678,12 @@ export default () => {
                       .map(({ node: episode }) =>
                         <EpisodeCard
                           key={episode.uri}
+                          to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: episode.media.uri }).toString() }}
                           style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
                           episode={episode}
                         />
-                        // <EpisodeItem key={episode.uri} episode={episode} />
                       )
-                    // <EpisodeCard
-                    //   ref={setContentRef}
-                    //   style={isVisible ? { backgroundImage: `url(${episode.thumbnail})`, backgroundSize: 'cover' } : {}}
-                    //   key={episode.uri}
-                    //   episode={episode}
-                    // />
                   }
-                  {/* {
-                    LatestEpisodePage
-                      ?.episode
-                      .filter((episode) => episode.uri !== 'scannarr:()')
-                      ?.map(episode =>
-                        <EpisodeItem key={episode.uri} episode={episode} />
-                      )
-                  } */}
                 </div>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
