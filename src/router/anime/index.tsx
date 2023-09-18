@@ -881,7 +881,8 @@ export default () => {
                     Page
                       ?.media
                       ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-                      .filter(({ node }) => node.airingAt < Date.now())
+                      .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+                      .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
                       .sort((a, b) => b.node.airingAt - a.node.airingAt)
                       .map(({ node: episode }) =>
                         <EpisodeCard
