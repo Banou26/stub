@@ -6,7 +6,7 @@ import { gql, useQuery } from 'urql'
 
 import PreviewModal, { GET_MEDIA } from './anime/preview-modal'
 import { getCurrentSeason } from '../../../../laserr/src/targets/anilist'
-import { MediaSort } from 'scannarr/src'
+import { GraphQLTypes } from 'scannarr'
 import { GET_CURRENT_SEASON } from './anime/season'
 
 
@@ -134,7 +134,7 @@ export default () => {
       variables: {
         season: currentSeason.season,
         seasonYear: currentSeason.year,
-        sort: [MediaSort.Popularity]
+        sort: [GraphQLTypes.MediaSort.Popularity]
       }
     }
   )

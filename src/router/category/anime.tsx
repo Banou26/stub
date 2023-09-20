@@ -9,7 +9,6 @@ import * as A from 'fp-ts/lib/Array'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 // import { byPopularity } from '../../../../../scannarr/src/utils'
 
-import useObservable from '../../utils/use-observable'
 import MediaCard from '../../components/card'
 import { useQuery } from '@apollo/client'
 import { gql } from '../../generated'

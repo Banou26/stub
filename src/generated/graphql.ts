@@ -256,6 +256,8 @@ export type MediaAiringSchedule = Handle & {
   id: Scalars['String'];
   /** The associate media of the airing episode */
   media?: Maybe<Media>;
+  /** The associate media uri of the airing episode */
+  mediaUri?: Maybe<Scalars['String']>;
   origin: Scalars['String'];
   /** The url for the thumbnail image of the video */
   thumbnail?: Maybe<Scalars['String']>;
