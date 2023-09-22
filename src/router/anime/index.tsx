@@ -488,6 +488,24 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   )
 })
 
+const parseTextDescription = (text: string | undefined) =>
+  text &&
+  new DOMParser()
+    .parseFromString(
+      DOMPurify.sanitize(
+        marked.parse(text)
+      ),
+      'text/html'
+    )
+    .body
+    .innerText
+
+const getEllipsedDescription = (text: string | undefined) =>
+  text &&
+  text.length > 225
+    ? `${text.slice(0, text.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
+    : text
+
 export default () => {
   const [searchParams] = useSearchParams()
   const mediaUriModal = searchParams.get('details')
@@ -502,41 +520,29 @@ export default () => {
       }
     }
   )
-  const { error } = currentSeasonResult ?? {}
-  const Page = currentSeasonResult.data?.Page
-  const lastEpisodesResult = undefined
-  const LatestEpisodePage = lastEpisodesResult?.data?.Page
-  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, LatestEpisodePage?.media?.length ?? 0)), [])
-  const first5RandomMedia = useMemo(() => Page?.media.at(randomNum), [Page?.media.at(randomNum)])
-  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: first5RandomMedia?.uri }, pause: !first5RandomMedia })
-  const media = getMediaResult.data?.Media
-  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
-  const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
-  const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
+  const { error, data: { Page } = {} } = currentSeasonResult
+
+  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, Page?.media?.length ?? 0)), [Page?.media?.length])
+  const theaterMedia = useMemo(() => Page?.media.at(randomNum), [])
+  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: theaterMedia?.uri }, pause: !theaterMedia })
+  const { error: error2, data: { Media } = {} } = getMediaResult
+
+  if (error) console.error(error)
+  if (error2) console.error(error2)
 
   const descriptionText = useMemo(
-    () =>
-      media?.description
-        ? new DOMParser().parseFromString(DOMPurify.sanitize(marked.parse(media?.description)), 'text/html').body.innerText
-        : undefined,
-    [media?.description]
+    () => parseTextDescription(Media?.description),
+    [Media?.description]
   )
 
   const ellipsedDescriptionText = useMemo(
-    () =>
-      descriptionText
-        ? descriptionText.length > 225
-          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
-          : descriptionText
-        : undefined,
+    () => getEllipsedDescription(descriptionText),
     [descriptionText]
   )
 
-  // console.log('Anime Page', Page)
-  // console.log('LatestEpisodePage', LatestEpisodePage?.episode, lastEpisodesResult)
-  // console.log('Page?.media', Page?.media)
-
-  if (error) console.error(error)
+  const {x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
+  const [hoverCardMedia, setHoverCardMedia] = useState<Media | undefined>(undefined)
+  const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
   const titleCards = useMemo(() =>
     Page?.media?.map(media =>
@@ -600,24 +606,24 @@ export default () => {
       <div css={style}>
         <div className="header-serie">
           {
-            media && (
+            Media && (
               <div className="player-wrapper">
-                <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
+                <MinimalPlayer ref={setHeaderTrailerRef} media={Media} paused={headerTrailerPaused} className="player"/>
                 <div className="shadow"/>
                 <div className="header-serie-content">
                   <div className="header-serie-title">
                     <h1>
                       {
-                        media.title?.english
-                        ?? media.title?.romanized
-                        ?? media.title?.native
+                        Media.title?.english
+                        ?? Media.title?.romanized
+                        ?? Media.title?.native
                       }
                     </h1>
                   </div>
                   <div className="header-serie-description">
                     {ellipsedDescriptionText}
                   </div>
-                  <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
+                  <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: Media.uri }).toString() }}>
                     <button className="watch">
                       <Play/>
                       Watch
