@@ -1,16 +1,11 @@
 import { css } from '@emotion/react'
 
-import { pipe } from 'fp-ts/lib/function'
-import * as A from 'fp-ts/lib/Array'
-
-// import { searchSeries } from '../../../../../scannarr/src'
-import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
-// import { byPopularity } from '../../../../../scannarr/src/utils'
-
 import MediaCard from '../../components/card'
-import { useQuery } from '@apollo/client'
-import { gql } from '../../generated'
-import { MediaSeason, MediaSort } from '../../generated/graphql'
+import {  MediaSort } from '../../generated/graphql'
+import { useSearchParams } from 'react-router-dom'
+import { useMemo } from 'react'
+import { getCurrentSeason } from 'laserr/src/targets/anilist'
+import { useQuery } from 'urql'
 
 const style = css`
 
@@ -136,11 +131,13 @@ export const GET_CURRENT_SEASON = `#graphql
   }
 `
 
-export default ({ category }: { category?: Category }) => {
-  const currentSeason = getCurrentSeason()
+export default () => {
+  const [searchParams] = useSearchParams()
+  const mediaUriModal = searchParams.get('details')
+  const currentSeason = useMemo(() => getCurrentSeason(), [])
   const [currentSeasonResult] = useQuery(
-    GET_CURRENT_SEASON,
     {
+      query: GET_CURRENT_SEASON,
       variables: {
         season: currentSeason.season,
         seasonYear: currentSeason.year,
@@ -149,42 +146,6 @@ export default ({ category }: { category?: Category }) => {
     }
   )
   const { error, data: { Page } = {} } = currentSeasonResult
-
-  if (error) console.error('error', error)
-  console.log('Page', Page)
-
-  // const categoryItems = []
-
-  // const { left: _continuations, right: _currentSeasonAnime } =
-  //   pipe(
-  //     categoryItems ?? [],
-  //     // todo: remove once user UI filters/sorts are implemented
-  //     A.filter(item => !item.genres?.some(genre => genre.adult)),
-  //     A.partition(item => {
-  //       const dateData = item.dates?.at(0)
-  //       if (!dateData) return false
-  //       const dateSeason =
-  //         getCurrentSeason(
-  //           0,
-  //           'date' in dateData
-  //             ? dateData.date
-  //             : dateData.start
-  //         )
-  //       return currentSeason.season === dateSeason.season && currentSeason.year === dateSeason.year
-  //     })
-  //   )
-
-  // const currentSeasonAnime =
-  //   pipe(
-  //     _currentSeasonAnime,
-  //     // A.sortBy([byPopularity])
-  //   )
-
-  // const continuations =
-  //   pipe(
-  //     _continuations,
-  //     // A.sortBy([byPopularity])
-  //   )
 
   const anchorCurrentSeason = `${currentSeason.season.toLowerCase()}-${currentSeason.year}`
 
