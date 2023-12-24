@@ -523,7 +523,7 @@ export default () => {
   const { error, data: { Page } = {} } = currentSeasonResult
 
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, Page?.media?.length ?? 0)), [Page?.media?.length])
-  const theaterMedia = useMemo(() => Page?.media.at(randomNum), [])
+  const theaterMedia = useMemo(() => Page?.media.at(randomNum), [Page, randomNum])
   const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: theaterMedia?.uri }, pause: !theaterMedia })
   const { error: error2, data: { Media } = {} } = getMediaResult
 
