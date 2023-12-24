@@ -40,22 +40,11 @@
     "_codegen": "node _codegen.mjs && graphql-codegen --config codegen.ts & node _codegen.js",
     "_codegen-watch": "node _codegen.mjs && graphql-codegen -w --config codegen.ts & node _codegen.js",
     "dev": "concurrently \"vite --port 4560\" \"npm run _codegen-watch\"",
-    "build": "vite build && npm run copy-media-player",
-    "watch-package-build": "nodemon --watch build -e js,wasm,ts --exec \"npm run package-build\"",
-    "package-build": "shx rm build/package.asar & npx asar pack build tmp/package.asar && shx mv tmp/package.asar build/package.asar",
-    "copy-media-player": "copyfiles -u 4 ./node_modules/@banou/media-player/build/* build/tmp && shx rm build/tmp/index.js && shx mv build/tmp/* build && shx rm -rf build/tmp",
-    "build-deps": "npm run build-deps-media-player && npm run build-deps-fkn-lib",
-    "build-deps-local": "npm run build-deps-media-player && npm run build-deps-fkn-lib-local",
-    "build-deps-media-player": "cd node_modules/@banou/media-player && npm i && npm run build && cd ../../..",
-    "build-deps-fkn-lib": "cd node_modules/@fkn/lib && npm i && npm run build && cd ../../..",
-    "build-deps-fkn-lib-local": "cd node_modules/@fkn/lib && npm i && npm run build-dev && cd ../../..",
-    "remove-build-deps": "shx rm -rf node_modules/@banou/media-player"
+    "build": "vite build"
   },
   "dependencies": {
     "@apollo/client": "^3.7.11",
     "@apollo/server": "^4.5.0",
-    "@banou/media-player": "github:Banou26/media-player",
-    "@banou26/libav-wasm": "^0.1.8-ci-6113771371.0",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@fkn/lib": "file:../lib",

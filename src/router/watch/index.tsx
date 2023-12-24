@@ -9,10 +9,8 @@ import parseTorrent from 'parse-torrent'
 import { useQuery } from 'urql'
 import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri2'
 
-import { gql } from '../../generated'
 import { fetch } from '../../utils/fetch'
 import { Route, getRoutePath } from '../path'
-import Player from './player'
 import SourcesModal, { getTeamIcon } from './sources-modal'
 
 const style = css`
@@ -377,7 +375,7 @@ const Watch = () => {
 
   return (
     <div css={style}>
-      <Player mediaUri={mediaUri} source={currentSource}/>
+      <iframe src="https://torrent.fkn.app" frameborder="0"></iframe>
       {/* <div
         className="description"
         dangerouslySetInnerHTML={{ __html: descriptionHtml }}
