@@ -11,7 +11,6 @@ import { useQuery } from 'urql'
 
 
 import useNamespacedLocalStorage from '../../utils/use-local-storage'
-import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 import { EpisodeSort, Media, MediaSort, Episode } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
@@ -25,6 +24,7 @@ import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import { gql } from '../../generated'
 import EpisodeCard from '../../components/episode-card'
+import { getCurrentSeason } from 'laserr/src/targets/anilist'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;

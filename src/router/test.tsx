@@ -1,13 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { fromScannarrUri } from 'scannarr/src/utils/uri2'
-// import { useQuery as useApolloQuery } from '@apollo/client'
+import { useMemo } from 'react'
 import { gql, useQuery } from 'urql'
 
-import PreviewModal, { GET_MEDIA } from './anime/preview-modal'
-import { getCurrentSeason } from '../../../../laserr/src/targets/anilist'
 import { GraphQLTypes } from 'scannarr'
 import { GET_CURRENT_SEASON } from './anime/season'
+import { getCurrentSeason } from 'laserr/src/targets/anilist'
 
 
 export const GET_LATEST_EPISODES = `#graphql
