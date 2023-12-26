@@ -392,7 +392,7 @@ const Watch = () => {
         currentSourceObject?.magnetUri
           ? (
             <iframe
-              src={`http://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
+              src={`https://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
             />
           )
           : undefined
