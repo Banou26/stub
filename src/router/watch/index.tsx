@@ -19,6 +19,11 @@ const style = css`
   width: 100%;
   grid-template-rows: 100% auto;
 
+  iframe {
+    height: 100%;
+    width: 100%;
+  }
+
   .description {
     background: rgb(35, 35, 35);
     text-align: center;
@@ -246,18 +251,23 @@ const Watch = () => {
     }
   )
 
-  console.log('Page', Page)
+  // console.log('Page', Page)
 
-  console.log('mediaUri', mediaUri && mediaUri.replace('scannarr:', ''))
-  console.log('episodeUri', episodeUri && episodeUri.replace('scannarr:', ''))
-  console.log('sourceUri', sourceUri && sourceUri?.replace('scannarr:', ''))
+  // console.log('mediaUri', mediaUri && mediaUri.replace('scannarr:', ''))
+  // console.log('episodeUri', episodeUri && episodeUri.replace('scannarr:', ''))
+  // console.log('sourceUri', sourceUri && sourceUri?.replace('scannarr:', ''))
 
   const currentSource = useMemo(
     () => Page?.playbackSource?.find((source) => source.uri === sourceUri),
     [Page?.playbackSource, sourceUri]
   )
+
+  const currentSourceObject = useMemo(
+    () => currentSource && JSON.parse(currentSource?.data),
+    [currentSource]
+  )
   
-  console.log('currentSource', currentSource)
+  // console.log('currentSource', currentSource)
 
   useEffect(() => {
     if (!(currentSource && currentSource.uri !== sourceUri)) return
@@ -318,6 +328,7 @@ const Watch = () => {
                   buffer.every((val, i) => val === torrentSourcesInfoHashes?.find(([uri]) => uri === source.uri)?.[2][i])
                 )
                 ?.[1]
+            if (!foundTrackerData) return [source.uri, undefined]
             try {
               const torrentData: { complete: number, incomplete: number, downloaded: number } = JSON.parse(JSON.stringify(foundTrackerData))
               return [source.uri, torrentData]
@@ -373,9 +384,19 @@ const Watch = () => {
   //   [currentSource?.description]
   // )
 
+  // console.log('magnet', currentSourceObject?.magnetUri)
+
   return (
     <div css={style}>
-      <iframe src="https://torrent.fkn.app" frameborder="0"></iframe>
+      {
+        currentSourceObject?.magnetUri
+          ? (
+            <iframe
+              src={`http://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
+            />
+          )
+          : undefined
+      }
       {/* <div
         className="description"
         dangerouslySetInnerHTML={{ __html: descriptionHtml }}

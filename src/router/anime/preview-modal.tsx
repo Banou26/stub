@@ -27,6 +27,7 @@ padding: 5rem;
 left: 50%; */
 
 z-index: 125;
+pointer-events: none;
 
 .modal {
   position: relative;
