@@ -1,6 +1,6 @@
 {
   "name": "@banou/stub",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "license": "MIT",
   "main": "build/index.js",
   "keywords": [
