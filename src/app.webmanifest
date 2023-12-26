@@ -1,0 +1,18 @@
+{
+  "short_name": "Stub",
+  "name": "Stub",
+  "description": "A place to watch your series, anime, movies and more.",
+  "icons": [
+    {
+      "src": "./assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
+  "background_color": "#3367D6",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3367D6"
+}

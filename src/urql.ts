@@ -1,12 +1,12 @@
 import { makeScannarrClient } from 'scannarr'
 import { call, makeCallListener, registerListener } from 'osra'
 
-import workerUrl from './yoga-worker?url'
+import WorkerUrl from './yoga-worker?worker&url'
 
 import { fetch } from './utils/fetch'
 import { Resolvers as WorkerResolvers } from './yoga-worker'
 
-const worker = new Worker(workerUrl, { type: 'module' })
+const worker = new Worker(WorkerUrl, { type: 'module' })
 
 const target = call<WorkerResolvers>(worker, { key: 'yoga-server' })
 
