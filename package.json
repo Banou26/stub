@@ -47,7 +47,7 @@
     "@apollo/server": "^4.5.0",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
-    "@fkn/lib": "file:../lib",
+    "@fkn/lib": "^0.0.2",
     "@floating-ui/react": "^0.23.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
