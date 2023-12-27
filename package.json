@@ -74,7 +74,7 @@
     "graphql-tag": "^2.12.6",
     "idb": "^7.0.0",
     "jassub": "^1.7.1",
-    "laserr": "file:../../laserr",
+    "laserr": "^0.1.2",
     "marked": "^4.0.18",
     "osra": "^0.0.11",
     "p-queue": "^7.3.0",
@@ -90,13 +90,12 @@
     "react-tooltip": "^4.2.21",
     "react-use": "^17.4.0",
     "rxjs": "^7.5.5",
-    "sacha": "file:../../sacha",
-    "scannarr": "file:../../scannarr",
+    "sacha": "^0.1.0",
+    "scannarr": "^0.1.1",
     "tslib": "^2.4.1",
     "uint8-util": "^2.1.9",
     "url": "^0.11.0",
     "urql": "^4.0.5",
     "util": "^0.12.4"
-  },
-  "type": "module"
+  }
 }
