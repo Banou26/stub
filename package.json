@@ -1,6 +1,6 @@
 {
   "name": "@banou/stub",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "license": "MIT",
   "main": "build/index.js",
   "keywords": [
@@ -97,5 +97,6 @@
     "url": "^0.11.0",
     "urql": "^4.0.5",
     "util": "^0.12.4"
-  }
+  },
+  "type": "module"
 }
