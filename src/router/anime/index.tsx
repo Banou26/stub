@@ -267,14 +267,19 @@ div.section.first-section {
 
 .title-hovercard {
   display: grid;
-  width: 70rem;
   background-color: rgb(35, 35, 35);
-  margin-top: 37.5rem;
   border-radius: 1rem;
   user-select: none;
 
   transform: scale(0.95);
   transition: transform .2s ease, opacity .2s ease;
+
+  width: 50rem;
+  margin-top: 29rem;
+  @media (min-width: 2560px) {
+    width: 70rem;
+    margin-top: 37.5rem;
+  }
 
   &:hover {
     transform: scale(1);
@@ -287,22 +292,45 @@ div.section.first-section {
   }
 
   .content {
-    padding: 2rem;
-    width: 70rem;
+    padding: 1.5rem;
+    width: 50rem;
+
+    @media (min-width: 2560px) {
+      padding: 2rem;
+      width: 70rem;
+    }
+
+    .title {
+      margin-bottom: .25rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+
+      @media (min-width: 2560px) {
+        margin-bottom: .5rem;
+        font-size: 2rem;
+      }
+    }
 
     .top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: .5rem;
+
+      @media (min-width: 2560px) {
+        margin-bottom: 1rem;
+      }
 
       font-size: 1.5rem;
-      font-weight: bold;
+      font-weight: 600;
     }
 
     .description {
       display: flex;
       overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 1.25rem;
+      font-weight: 500;
     }
   }
 
@@ -310,8 +338,6 @@ div.section.first-section {
     position: relative;
     display: grid;
     grid-template: "container";
-    height: 39.25rem;
-    width: 70rem;
     background-color: #000;
     overflow: hidden;
     border-top-left-radius: 1rem;
@@ -320,12 +346,25 @@ div.section.first-section {
 
     overflow: hidden;
 
+    height: 28rem;
+    width: 50rem;
+    @media (min-width: 2560px) {
+      height: 39.25rem;
+      width: 70rem;
+    }
+
     & > a > div:first-of-type {
       grid-area: container;
-      margin-top: -10.3rem;
-      height: 60rem !important;
-      width: 70rem !important;
       pointer-events: none;
+
+      margin-top: -6.9rem;
+      height: 42rem !important;
+      width: 50rem !important;
+      @media (min-width: 2560px) {
+        margin-top: -10.3rem;
+        height: 60rem !important;
+        width: 70rem !important;
+      }
     }
   }
 }
@@ -357,8 +396,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   const ellipsedDescriptionText = useMemo(
     () =>
       descriptionText
-        ? descriptionText.length > 225
-          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
+        ? descriptionText.length > 150
+          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 150)).replace(/[,.]$/, '')}...`
           : descriptionText
         : undefined,
     [descriptionText]
@@ -386,6 +425,13 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         ref={setContentRef}
       >
         <div className="content">
+          <div className='title'>
+            {
+              media.title?.english
+                ?? media.title?.romanized
+                ?? media.title?.native
+            }
+          </div>
           <div className="top">
             <span className="episodes">
               {media.episodeCount ?? '?'} Episodes
