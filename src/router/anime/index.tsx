@@ -54,14 +54,16 @@ a:has(>h2) {
   h2 {
     display: inline-block;
     font-size: 1.5rem;
+    font-weight: 600;
     @media (min-width: 1024px) {
       font-size: 2rem;
     }
     @media (min-width: 1440px) {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
     }
     @media (min-width: 2560px) {
       font-size: 4rem;
+      font-weight: bold;
     }
   }
 }
@@ -85,7 +87,7 @@ a:has(>h2) {
 
   .header-serie-content {
     position: absolute;
-    top: 45rem;
+    top: 47.5rem;
     @media (min-width: 2560px) {
       top: 40rem;
     }
@@ -96,7 +98,11 @@ a:has(>h2) {
     flex-direction: column;
     align-items: flex-start;
 
-    padding: 5rem 10rem;
+    padding: 5rem 5rem;
+    @media (min-width: 2560px) {
+      padding: 5rem 10rem;
+    }
+
     padding-top: 0;
     padding-bottom: 0;
     text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
@@ -188,11 +194,12 @@ a:has(>h2) {
     .volume-area-wrapper {
       z-index: 25;
       bottom: unset;
-      top: 40rem;
+      top: 43rem;
       @media (min-width: 2560px) {
         top: 35rem;
+        left: 9rem;
       }
-      left: 9rem;
+      left: 4rem;
     }
   }
 
@@ -216,7 +223,7 @@ a:has(>h2) {
 
 .section {
   position: relative;
-  padding: 2.5rem 0 2.5rem 10rem;
+  padding: 2.5rem 0 2.5rem 5rem;
   @media (min-width: 2560px) {
     padding: 5rem 0 5rem 10rem;
   }
