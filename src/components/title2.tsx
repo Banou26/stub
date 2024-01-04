@@ -12,11 +12,16 @@ const style = css`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 35rem;
-  width: 25rem;
   font-size: 2.5rem;
   overflow: hidden;
   border-radius: 1rem;
+
+  height: 30rem;
+  width: 20rem;
+  @media (min-width: 2560px) {
+    height: 35rem;
+    width: 25rem; 
+  }
 
   &.link {
     position: absolute;
@@ -46,10 +51,16 @@ const style = css`
 
   .title {
     width: 100%;
-    font-size: 2.2rem;
-    font-weight: bold;
     word-wrap: break-word;
-    margin: .5rem 0;
+
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: .1rem 0;
+    @media (min-width: 2560px) {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin: .5rem 0;
+    }
   }
 
   .information {
@@ -68,10 +79,11 @@ const style = css`
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 2rem;
-    padding-top: 1rem;
-    padding-bottom: 0;
-    width: 25rem;
+    padding: .5rem;
+    padding: .75rem .5rem 0rem .5rem;
+    @media (min-width: 2560px) {
+      padding: 1rem 2rem 0rem 2rem;
+    }
     color: white;
     font-size: 2.5rem;
     overflow: hidden;

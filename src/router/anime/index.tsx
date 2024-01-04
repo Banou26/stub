@@ -48,14 +48,23 @@ animation-timeline: scroll(block nearest);
 const style = css`
 position: relative;
 
-/* padding: 5rem 10rem; */
 padding-top: 0;
 
 a:has(>h2) {
-  margin-left: 5rem;
   h2 {
     display: inline-block;
-    font-size: 4rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    @media (min-width: 1024px) {
+      font-size: 2rem;
+    }
+    @media (min-width: 1440px) {
+      font-size: 2.25rem;
+    }
+    @media (min-width: 2560px) {
+      font-size: 4rem;
+      font-weight: bold;
+    }
   }
 }
 
@@ -67,8 +76,6 @@ a:has(>h2) {
   align-items: center;
 
   width: 100%;
-  /* height: calc(100vh - 5rem); */
-  /* height: 100%; */
   height: calc(100vh - 5rem);
 
   padding-bottom: 0;
@@ -80,8 +87,10 @@ a:has(>h2) {
 
   .header-serie-content {
     position: absolute;
-
-    top: 40rem;
+    top: 47.5rem;
+    @media (min-width: 2560px) {
+      top: 40rem;
+    }
 
     z-index: 20;
 
@@ -89,28 +98,47 @@ a:has(>h2) {
     flex-direction: column;
     align-items: flex-start;
 
-    /* height: 100%; */
-    /* width: 100%; */
-    padding: 5rem;
+    padding: 5rem 5rem;
+    @media (min-width: 2560px) {
+      padding: 5rem 10rem;
+    }
+
     padding-top: 0;
     padding-bottom: 0;
     text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
 
     
     .header-serie-title {
-      font-size: 2rem;
-      font-weight: 700;
+      > h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        
+        @media (min-width: 1024px) {
+          font-size: 2rem;
+        }
+        @media (min-width: 1440px) {
+          font-size: 2.5rem;
+        }
+        @media (min-width: 2560px) {
+          font-size: 3rem;
+        }
+      }
       color: #fff;
       max-width: 75rem;
     }
 
     .header-serie-description {
-      margin-top: 2rem;
-      margin-left: 1rem;
-      font-size: 1.8rem;
-      font-weight: 400;
+      font-size: 1.25rem;
+      @media (min-width: 1024px) {
+        font-size: 1.6rem;
+        margin-top: .5rem;
+      }
+      @media (min-width: 2560px) {
+        font-size: 1.8rem;
+        margin-top: 2rem;
+      }
+      font-weight: 500;
       line-height: 1.5;
-      /* color: #aaa; */
       color: #fff;
       max-width: 50rem;
     }
@@ -130,11 +158,13 @@ a:has(>h2) {
       outline: none;
       cursor: pointer;
       color: #fff;
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      padding: 1rem;
+      @media (min-width: 2560px) {
+        font-size: 3rem;
+      }
+      padding: 1rem 0;
       margin: 0;
-      margin: 1rem;
       text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
       transition: all 0.2s ease-in-out;
       display: flex;
@@ -160,20 +190,16 @@ a:has(>h2) {
       margin-top: -20vh;
       pointer-events: none;
     }
-    /* & > div:first-child {
-      width: 100% !important;
-      height: calc(100vh - 5rem) !important;
-      iframe {
-        height: 100% !important;
-        pointer-events: none;
-      }
-    } */
 
     .volume-area-wrapper {
       z-index: 25;
       bottom: unset;
-      top: 35rem;
-      left: 4.5rem;
+      top: 43rem;
+      @media (min-width: 2560px) {
+        top: 35rem;
+        left: 9rem;
+      }
+      left: 4rem;
     }
   }
 
@@ -185,7 +211,6 @@ a:has(>h2) {
     width: 100%;
     height: 30vh;
 
-    /* background-color: rgb(15, 15, 15); */
     background:
       linear-gradient(
         0deg,
@@ -198,16 +223,25 @@ a:has(>h2) {
 
 .section {
   position: relative;
-  padding: 5rem 10rem;
+  padding: 2.5rem 0 2.5rem 5rem;
+  @media (min-width: 2560px) {
+    padding: 5rem 0 5rem 10rem;
+  }
 }
 
 .section:not(:first-of-type) {
-  margin-top: 5rem;
+  margin-top: 1rem;
+  @media (min-width: 1440px) {
+    margin-top: 2.5rem;
+  }
+  @media (min-width: 2560px) {
+    margin-top: 5rem;
+  }
 }
 
 div.section.first-section {
   margin-top: 0;
-  padding-top: 65vh;
+  padding-top: 70vh;
   h2 {
     color: #fff;
     text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
@@ -224,36 +258,35 @@ div.section.first-section {
   grid-auto-flow:column;
   width: 100%;
   overflow: auto;
-  margin: 1.5rem 0;
+  margin: 0 0 1rem 0;
   gap: 2.5rem;
   overflow: visible;
-  /* &::-webkit-scrollbar{
-    display: none;
-  } */
 }
 
 .ScrollAreaRoot {
-  margin: 2.5rem 0;
+  margin: 1.5rem 0;
+  @media (min-width: 2560px) {
+    margin: 2.5rem 0;
+  }
   overflow: visible;
   box-shadow: unset;
 }
 
 .title-hovercard {
   display: grid;
-  /* height: 39.25rem; */
-  width: 70rem;
   background-color: rgb(35, 35, 35);
-  /* background-color: #000; */
-  margin-top: 37.5rem;
-  /* margin-top: 50rem; */
-  /* overflow: hidden; */
   border-radius: 1rem;
   user-select: none;
 
   transform: scale(0.95);
-  /* overflow: hidden; */
   transition: transform .2s ease, opacity .2s ease;
-  /* opacity: 0; */
+
+  width: 50rem;
+  margin-top: 29rem;
+  @media (min-width: 2560px) {
+    width: 70rem;
+    margin-top: 37.5rem;
+  }
 
   &:hover {
     transform: scale(1);
@@ -266,22 +299,45 @@ div.section.first-section {
   }
 
   .content {
-    padding: 2rem;
-    width: 70rem;
+    padding: 1.5rem;
+    width: 50rem;
+
+    @media (min-width: 2560px) {
+      padding: 2rem;
+      width: 70rem;
+    }
+
+    .title {
+      margin-bottom: .25rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+
+      @media (min-width: 2560px) {
+        margin-bottom: .5rem;
+        font-size: 2rem;
+      }
+    }
 
     .top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: .5rem;
+
+      @media (min-width: 2560px) {
+        margin-bottom: 1rem;
+      }
 
       font-size: 1.5rem;
-      font-weight: bold;
+      font-weight: 600;
     }
 
     .description {
       display: flex;
       overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 1.25rem;
+      font-weight: 500;
     }
   }
 
@@ -289,121 +345,32 @@ div.section.first-section {
     position: relative;
     display: grid;
     grid-template: "container";
-    height: 39.25rem;
-    width: 70rem;
-    /* background-color: rgb(35, 35, 35); */
     background-color: #000;
-    /* margin-top: 37.5rem; */
     overflow: hidden;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
     user-select: none;
 
-    /* transform: scale(0.95); */
     overflow: hidden;
-    /* transition: transform .2s ease, opacity .2s ease; */
-    /* opacity: 0; */
 
-    /* &:hover {
-      transform: scale(1);
-      opacity: 1;
-    } */
+    height: 28rem;
+    width: 50rem;
+    @media (min-width: 2560px) {
+      height: 39.25rem;
+      width: 70rem;
+    }
 
     & > a > div:first-of-type {
       grid-area: container;
-      margin-top: -10.3rem;
-      /* margin-top: -2.95rem; */
-      height: 60rem !important;
-      width: 70rem !important;
       pointer-events: none;
-    }
-  }
-}
-`
 
-const hoverCardStyle = css`
-background-color: rgb(35, 35, 35);
-width: 64rem;
-height: 36rem;
-
-.volume-area-wrapper {
-  position: absolute;
-  bottom: 2rem;
-  left: 1rem;
-
-  display: grid;
-  height: 2rem;
-
-  .volume-area {
-    display: flex;
-    /* grid-template-columns: 4.8rem fit-content(0rem); */
-    /* height: 100%; */
-    cursor: pointer;
-    color: #fff;
-
-    .mute-button {
-      color: #fff;
-      border: none;
-      background: none;
-      height: 100%;
-      width: 4.8rem;
-      cursor: pointer;
-    }
-
-    .volume-panel {
-      display: inline-block;
-      width: 0;
-      /* width: 100%; */
-      /* width: 12rem; */
-      height: 100%;
-      -webkit-transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
-      transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
-      cursor: pointer;
-      outline: 0;
-
-      &.volume-control-hover {
-        width: 6rem;
-        /* width: 52px; */
-        margin-right: 3px;
-        -webkit-transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
-        transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
-      }
-
-      .slider {
-        height: 100%;
-        min-height: 36px;
-        position: relative;
-        overflow: hidden;
-
-        .slider-handle {
-          /* left: 40px; */
-          position: absolute;
-          top: 50%;
-          width: 12px;
-          height: 12px;
-          border-radius: 6px;
-          margin-top: -6px;
-          margin-left: -5px;
-          /* background: #fff; */
-        }
-        .slider-handle::before, .slider-handle::after {
-          content: "";
-          position: absolute;
-          display: block;
-          top: 50%;
-          left: 0;
-          height: 3px;
-          margin-top: -2px;
-          width: 64px;
-        }
-        .slider-handle::before {
-          left: -58px;
-          background: #fff;
-        }
-        .slider-handle::after {
-          left: 6px;
-          background: rgba(255,255,255,.2);
-        }
+      margin-top: -6.9rem;
+      height: 42rem !important;
+      width: 50rem !important;
+      @media (min-width: 2560px) {
+        margin-top: -10.3rem;
+        height: 60rem !important;
+        width: 70rem !important;
       }
     }
   }
@@ -436,8 +403,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
   const ellipsedDescriptionText = useMemo(
     () =>
       descriptionText
-        ? descriptionText.length > 225
-          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
+        ? descriptionText.length > 150
+          ? `${descriptionText.slice(0, descriptionText.indexOf(' ', 150)).replace(/[,.]$/, '')}...`
           : descriptionText
         : undefined,
     [descriptionText]
@@ -465,6 +432,13 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         ref={setContentRef}
       >
         <div className="content">
+          <div className='title'>
+            {
+              media.title?.english
+                ?? media.title?.romanized
+                ?? media.title?.native
+            }
+          </div>
           <div className="top">
             <span className="episodes">
               {media.episodeCount ?? '?'} Episodes
