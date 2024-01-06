@@ -5,6 +5,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
 import { useMemo, useState } from 'react'
 import CountryLanguage from '@ladjs/country-language'
+import { createStore } from 'zustand/vanilla'
 
 import { parse, format } from 'sacha'
 
@@ -13,6 +14,7 @@ import { overlayStyle } from '../../components/modal'
 import { getHumanReadableByteString } from '../../utils/bytes'
 import { Route, getRoutePath } from '../path'
 import { GetPlaybackSourcesQuery } from '../../generated/graphql'
+import { useStore } from 'zustand'
 
 const sourceModalStyle = css`
 overflow: auto;
@@ -222,11 +224,12 @@ padding: 5rem;
 
 `
 
-// const teams = makeVar({})
+const store = createStore<{ teams: { [key: string]: string | Promise<string | undefined> | undefined } }>((set) => ({
+  teams: {}
+}))
 
 export const getTeamIcon = (url, noHook = false) => {
-  const cachedValue = undefined
-  // const cachedValue = noHook ? teams()[url] : useReactiveVar(teams)[url]
+  const cachedValue = noHook ? store.getState().teams[url] : useStore(store, (state) => state.teams)[url]
   if (cachedValue && !(cachedValue instanceof Promise)) return cachedValue
   if (cachedValue instanceof Promise) return undefined
   const res = fetch(url)
@@ -240,10 +243,10 @@ export const getTeamIcon = (url, noHook = false) => {
         _href?.startsWith('http')
           ? _href
           : `${new URL(url).origin}${_href?.startsWith('/') ? '' : '/'}${_href ?? ''}`
-      teams({ ...teams(), [url]: href })
+      store.setState({ teams: { ...store.getState().teams, [url]: href } })
       return href
     })
-  teams({ ...teams(), [url]: res })
+  store.setState({ teams: { ...store.getState().teams, [url]: res } })
   return undefined
 }
 
