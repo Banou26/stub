@@ -79,6 +79,8 @@
     "parse-torrent": "^9.1.5",
     "path": "^0.12.7",
     "preact": "^10.19.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-feather": "^2.0.10",
     "react-hook-form": "^7.34.1",
     "react-player": "^2.13.0",
@@ -94,6 +96,5 @@
     "urql": "^4.0.5",
     "util": "^0.12.4",
     "zustand": "^4.4.7"
-  },
-  "type": "module"
+  }
 }

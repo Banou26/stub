@@ -479,7 +479,7 @@ const getEllipsedDescription = (text: string | undefined) =>
     ? `${text.slice(0, text.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
     : text
 
-export default () => {
+const Anime = () => {
   const [searchParams] = useSearchParams()
   const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
@@ -678,3 +678,5 @@ export default () => {
     </>
   )
 }
+
+export default Anime

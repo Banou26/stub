@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import preact from '@preact/preset-vite'
 import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 // import topLevelAwait from 'vite-plugin-top-level-await'
@@ -28,9 +29,17 @@ export default defineConfig((env) => ({
     'process.env.NODE_ENV': JSON.stringify('production')
   },
   plugins: [
-    preact({
-      jsxImportSource: '@emotion/react'
-    }),
+    env.mode === 'development'
+      ? (
+        react({
+          jsxImportSource: '@emotion/react'
+        })
+      )
+      : (
+        preact({
+          jsxImportSource: '@emotion/react'
+        })
+      ),
     polyfills(),
     // topLevelAwait()
   ],

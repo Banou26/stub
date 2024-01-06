@@ -50,4 +50,6 @@ const router = createBrowserRouter([
   }
 ])
 
-export default () => <RouterProvider router={router}/>
+const RouterRoot = () => <RouterProvider router={router}/>
+
+export default RouterRoot
