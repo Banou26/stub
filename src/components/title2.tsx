@@ -1,7 +1,7 @@
 import type { Media } from '../../../../scannarr/src'
 
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+import { Link, To } from 'react-router-dom'
 import { forwardRef, useEffect, useState } from 'react'
 
 import { Route, getRoutePath } from '../router/path'
@@ -101,7 +101,7 @@ const style = css`
 }
 `
 
-export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, _ref) => {
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media, to: To }>(({ media, to, ...rest }, _ref) => {
   const [ref, setRef] = useState<HTMLDivElement | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -129,12 +129,13 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
     <div ref={setRef} css={style} key={media.uri} className="card category-item" style={isVisible ? { backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' } : {}} {...rest}>
       <Link
         tabIndex={-1}
-        to={getRoutePath(Route.TITLE, { uri: media.uri })}
+        to={to}
+        // to={getRoutePath(Route.TITLE, { uri: media.uri })}
         className="card link"
       />
       <div className="information">
           <div className="title">
-            <Link to={getRoutePath(Route.TITLE, { uri: media.uri })} className="title-text">
+            <Link to={to} className="title-text">
               {
                 (media.title?.romanized?.length ?? 0) > 30
                   ? media.title?.romanized?.slice(0, 30) + '...'

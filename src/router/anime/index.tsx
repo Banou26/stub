@@ -522,6 +522,7 @@ export default () => {
       <Title2
         key={media.uri}
         media={media}
+        to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
         onMouseEnter={e => {
           setHoverCardMedia(undefined)
           refs.setReference(e.target)
@@ -529,7 +530,7 @@ export default () => {
             window.setTimeout(() => {
               if (refs.reference.current !== e.target) return
               setHoverCardMedia(media)
-            }, 0)
+            }, 400)
           )
         }}
         onMouseLeave={(e) => {
