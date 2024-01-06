@@ -395,6 +395,9 @@ const Watch = () => {
           ? (
             <iframe
               src={`https://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
+              allow="fullscreen"
+              allowFullScreen
+              frameBorder="0"
             />
           )
           : undefined
