@@ -4,9 +4,9 @@
   "description": "A place to watch your series, anime, movies and more.",
   "icons": [
     {
-      "src": "./assets/logo.png",
+      "src": "/src/images/icon.webp",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/webp"
     }
   ],
   "id": "/?source=pwa",

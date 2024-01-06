@@ -6,7 +6,7 @@ import { useDebounce } from 'react-use'
 
 import Input from './inputs'
 
-import IconUrl from '../images/icon.png'
+import IconUrl from '../images/icon.webp'
 import { getRoutePath, Route } from '../router/path'
 import DiscordIconUrl from '../images/discord-mark-blue.svg'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
