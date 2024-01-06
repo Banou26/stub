@@ -1,7 +1,6 @@
 import type { Uri } from 'scannarr/src/utils'
 
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { makeVar, useReactiveVar } from '@apollo/client'
 import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
 import { useMemo, useState } from 'react'
@@ -223,10 +222,11 @@ padding: 5rem;
 
 `
 
-const teams = makeVar({})
+// const teams = makeVar({})
 
 export const getTeamIcon = (url, noHook = false) => {
-  const cachedValue = noHook ? teams()[url] : useReactiveVar(teams)[url]
+  const cachedValue = undefined
+  // const cachedValue = noHook ? teams()[url] : useReactiveVar(teams)[url]
   if (cachedValue && !(cachedValue instanceof Promise)) return cachedValue
   if (cachedValue instanceof Promise) return undefined
   const res = fetch(url)

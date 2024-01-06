@@ -1,3 +1,4 @@
+import { getIntrospectionQuery } from 'graphql'
 import { makeScannarrClient } from 'scannarr'
 import { call, makeCallListener, registerListener } from 'osra'
 
@@ -29,7 +30,26 @@ registerListener({
   key: 'yoga-fetch'
 })
 
+const introspectionSchema = await target(
+  'HANDLE_REQUEST',
+  {
+    input: 'http://d/graphql',
+    init: {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        variables: {},
+        query: getIntrospectionQuery({ descriptions: false }),
+      }),
+    }
+  }
+)
+  .then(res => new Response(res.body, res))
+  .then(res => res.json())
+  .then(({ data }) => data)
+
 export const { client } = makeScannarrClient({
+  introspectionSchema,
   context: async () => ({
     fetch
   }),
@@ -43,7 +63,8 @@ export const { client } = makeScannarrClient({
           headers: init.headers,
           body: init.body
         }
-      })
+      }
+    )
 
     return new Response(
       body,

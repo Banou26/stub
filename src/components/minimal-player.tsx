@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, HTMLAttributes, forwardRef, useRef } from 'react'
 import { Link, To } from 'react-router-dom'
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player/youtube'
 import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
 
 import useNamespacedLocalStorage from '../utils/use-local-storage'

@@ -2,18 +2,9 @@ import type { Category } from '../../../../../scannarr/src'
 
 import { css } from '@emotion/react'
 
-import { pipe } from 'fp-ts/lib/function'
-import * as A from 'fp-ts/lib/Array'
-
 // import { searchSeries } from '../../../../../scannarr/src'
 import { getCurrentSeason } from '../../../../../laserr/src/targets/anilist'
 // import { byPopularity } from '../../../../../scannarr/src/utils'
-
-import MediaCard from '../../components/card'
-import { useQuery } from '@apollo/client'
-import { gql } from '../../generated'
-import { MediaSeason, MediaSort } from '../../generated/graphql'
-import { GET_CURRENT_SEASON } from '../anime/season'
 
 const style = css`
 
@@ -59,19 +50,19 @@ screen and (max-height : 1440px) {
 `
 
 export default ({ category }: { category?: Category }) => {
-  const { error, data: { Page } = {} } = useQuery(
-    GET_CURRENT_SEASON,
-    {
-      variables: {
-        season: MediaSeason.Winter,
-        seasonYear: 2023,
-        sort: [MediaSort.Popularity]
-      }
-    }
-  )
+  // const { error, data: { Page } = {} } = useQuery(
+  //   GET_CURRENT_SEASON,
+  //   {
+  //     variables: {
+  //       season: MediaSeason.Winter,
+  //       seasonYear: 2023,
+  //       sort: [MediaSort.Popularity]
+  //     }
+  //   }
+  // )
 
-  if (error) console.error('error', error)
-  console.log('Page', Page)
+  // if (error) console.error('error', error)
+  // console.log('Page', Page)
 
   // const categoryItems = []
 
@@ -116,12 +107,12 @@ export default ({ category }: { category?: Category }) => {
         <a id={anchorCurrentSeason} href={`#${anchorCurrentSeason}`}>
           <h2>Current season</h2>
         </a>
-        <div className="items">
+        {/* <div className="items">
           {
             Page?.media?.map(media =>
               <MediaCard key={media.uri} media={media}/>
             )
-          }
+          } */}
         </div>
       </div>
       {/* <div className="section">

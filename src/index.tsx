@@ -7,8 +7,6 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'urql'
 
 import Mount from './components'
-import { ApolloProvider } from '@apollo/client'
-import apolloClient from './apollo/client'
 import { client } from './urql'
 
 

@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from
 import { Link, useSearchParams } from 'react-router-dom'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
-import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume, Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
