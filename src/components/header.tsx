@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+import { Link } from 'wouter'
 import { FocusEvent, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
@@ -245,7 +245,7 @@ const Header = ({ ...rest }) => {
             <div className="searchResults" onBlur={hideSearchResults}>
               {
                 searchResult?.data?.Page?.media.map(media =>
-                  <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}>
+                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
                     <img src={media.coverImage.at(0)?.default} alt="" referrer-policy="same-origin"/>
                     <span style={{ color: 'white' }}>{media.title.romanized}</span>
                   </Link>

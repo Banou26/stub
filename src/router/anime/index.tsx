@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+// import { Link, useSearchParams } from 'react-router-dom'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
@@ -19,6 +19,7 @@ import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
+import { Link, useLocation, useSearch } from 'wouter'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -418,11 +419,11 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
     >
       <MinimalPlayer
         media={media}
-        redirectTo={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+        redirectTo={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
         className="title-hovercard-player"
       />
       <Link
-        to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+        to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
         ref={setContentRef}
       >
         <div className="content">
@@ -475,7 +476,7 @@ const getEllipsedDescription = (text: string | undefined) =>
     : text
 
 const Anime = () => {
-  const [searchParams] = useSearchParams()
+  const searchParams = new URLSearchParams(useSearch())
   const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
   const [currentSeasonResult] = useQuery(
@@ -517,7 +518,7 @@ const Anime = () => {
       <Title2
         key={media.uri}
         media={media}
-        to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: media.uri }).toString() }}
+        to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
         onMouseEnter={e => {
           setHoverCardMedia(undefined)
           refs.setReference(e.target)
@@ -592,7 +593,7 @@ const Anime = () => {
                   <div className="header-serie-description">
                     {ellipsedDescriptionText}
                   </div>
-                  <Link to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: Media.uri }).toString() }}>
+                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: Media.uri }).toString()}`}>
                     <button className="watch">
                       <Play/>
                       Watch
@@ -643,7 +644,7 @@ const Anime = () => {
                   .map(({ node: episode }) =>
                     <EpisodeCard
                       key={episode.uri}
-                      to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: episode.media.uri }).toString() }}
+                      to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
                       style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
                       episode={episode}
                     />

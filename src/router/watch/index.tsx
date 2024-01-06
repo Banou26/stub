@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams, useSearch } from 'wouter'
 
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
@@ -229,8 +229,10 @@ export const GET_WATCH_MEDIA = `#graphql
 
 const Watch = () => {
   const { mediaUri, episodeUri, sourceUri } = useParams() as { mediaUri: Uri, episodeUri: Uri, sourceUri?: Uri }
-  const navigate = useNavigate()
-  const [, setSearchParams] = useSearchParams()
+  const [location, setLocation] = useLocation()
+  const setSearchParams =
+    (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
+      setLocation(`${location}?${new URLSearchParams(init).toString()}`)
   const uri = mergeScannarrUris([mediaUri, episodeUri])
   const episodeId = fromUriEpisodeId(episodeUri).episodeId
 
@@ -372,7 +374,7 @@ const Watch = () => {
   useEffect(() => {
     const bestMatch = sortedSources.at(0)
     if (trackerDataPerSource.size && sortedSources.length && trackerDataPerSource.size === sortedSources.length && bestMatch && !currentSource) {
-      navigate(getRoutePath(Route.WATCH, { mediaUri, episodeUri, sourceUri: bestMatch.uri }))
+      setLocation(getRoutePath(Route.WATCH, { mediaUri, episodeUri, sourceUri: bestMatch.uri }))
     }
   }, [currentSource, sortedSources, trackerDataPerSource])
 

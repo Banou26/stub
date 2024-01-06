@@ -1,10 +1,11 @@
 import type { Media } from '../../../../scannarr/src'
 
 import { css } from '@emotion/react'
-import { Link, To } from 'react-router-dom'
+// import { Link, To } from 'react-router-dom'
 import { forwardRef, useEffect, useState } from 'react'
 
 import { Route, getRoutePath } from '../router/path'
+import { Link } from 'wouter'
 
 const style = css`
 &.card, .card {

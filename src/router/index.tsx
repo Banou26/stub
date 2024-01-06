@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
-import { RouterProvider } from 'react-router'
-import { createBrowserRouter } from 'react-router-dom'
+import { Route as WRoute } from 'wouter'
 
 import Home from './home'
 import { getRouterRoutePath, Route } from './path'
@@ -22,34 +21,14 @@ const wrapElement = (children: React.ReactNode) =>
     </div>
   </>
 
-const router = createBrowserRouter([
-  {
-
-    path: getRouterRoutePath(Route.HOME),
-    element: wrapElement(<Home/>)
-  },
-  {
-    path: getRouterRoutePath(Route.ANIME),
-    element: <Anime/>
-  },
-  {
-    path: getRouterRoutePath(Route.ANIME_SEASON),
-    element: wrapElement(<Season/>)
-  },
-  {
-    path: getRouterRoutePath(Route.WATCH),
-    element: <Watch/>
-  },
-  {
-    path: getRouterRoutePath(Route.TEST),
-    element: wrapElement(<Test/>)
-  },
-  {
-    path: '/*',
-    element: wrapElement(<div>404 No page found</div>)
-  }
-])
-
-const RouterRoot = () => <RouterProvider router={router}/>
-
+const RouterRoot = () =>(
+  <>
+    <WRoute path={getRouterRoutePath(Route.HOME)} component={() => wrapElement(<Home/>)}/>
+    <WRoute path={getRouterRoutePath(Route.ANIME)} component={() => <Anime/>}/>
+    <WRoute path={getRouterRoutePath(Route.ANIME_SEASON)} component={() => wrapElement(<Season/>)}/>
+    <WRoute path={getRouterRoutePath(Route.WATCH)} component={() => <Watch/>}/>
+    <WRoute path={getRouterRoutePath(Route.TEST)} component={() => wrapElement(<Test/>)}/>
+    <WRoute path='/*' component={() => wrapElement(<div>404 No page found</div>)}/>
+  </>
+)
 export default RouterRoot

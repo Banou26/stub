@@ -1,6 +1,6 @@
 import type { Uri } from 'scannarr/src/utils'
 
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+// import { Link, useParams, useSearchParams } from 'react-router-dom'
 import * as Dialog from '@radix-ui/react-dialog'
 import { css } from '@emotion/react'
 import { useMemo, useState } from 'react'
@@ -15,6 +15,7 @@ import { getHumanReadableByteString } from '../../utils/bytes'
 import { Route, getRoutePath } from '../path'
 import { GetPlaybackSourcesQuery } from '../../generated/graphql'
 import { useStore } from 'zustand'
+import { Link, useLocation, useParams, useSearch } from 'wouter'
 
 const sourceModalStyle = css`
 overflow: auto;
@@ -379,7 +380,11 @@ const SourcesModal = (
     trackerDataPerSource: Map<any, { complete: number, incomplete: number, downloaded: number }>
   }
 ) => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [location, setLocation] = useLocation()
+  const searchParams = new URLSearchParams(useSearch())
+  const setSearchParams =
+    (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
+      setLocation(`${location}?${new URLSearchParams(init).toString()}`)
   const sourcesModalOpen = Boolean(searchParams.get('sources'))
   const displayRawName = searchParams.get('sources') === 'raw'
 

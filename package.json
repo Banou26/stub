@@ -83,7 +83,6 @@
     "react-feather": "^2.0.10",
     "react-hook-form": "^7.34.1",
     "react-player": "^2.13.0",
-    "react-router-dom": "^6.10.0",
     "react-tooltip": "^4.2.21",
     "react-use": "^17.4.0",
     "rxjs": "^7.5.5",
@@ -94,6 +93,7 @@
     "url": "^0.11.0",
     "urql": "^4.0.5",
     "util": "^0.12.4",
+    "wouter": "^3.0.0-rc.2",
     "zustand": "^4.4.7"
   }
 }

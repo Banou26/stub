@@ -1,7 +1,8 @@
+import { Link } from 'wouter'
 import type { Media } from '../../../../scannarr/src'
 
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 
 const style = css`
 align-items: center;

@@ -2,10 +2,11 @@ import { css } from '@emotion/react'
 
 import MediaCard from '../../components/card'
 import {  MediaSort } from '../../generated/graphql'
-import { useSearchParams } from 'react-router-dom'
+// import { useSearchParams } from 'react-router-dom'
 import { useMemo } from 'react'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
 import { useQuery } from 'urql'
+import { useLocation, useSearch } from 'wouter'
 
 const style = css`
 
@@ -132,7 +133,7 @@ export const GET_CURRENT_SEASON = `#graphql
 `
 
 export default () => {
-  const [searchParams] = useSearchParams()
+  const searchParams = new URLSearchParams(useSearch())
   const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
   const [currentSeasonResult] = useQuery(

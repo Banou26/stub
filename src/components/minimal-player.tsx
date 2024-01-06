@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, HTMLAttributes, forwardRef, useRef } from 'react'
-import { Link, To } from 'react-router-dom'
+// import { Link, To } from 'react-router-dom'
 import ReactPlayer from 'react-player/youtube'
 import { VolumeX, Volume2, Volume1, Volume } from 'react-feather'
 
@@ -9,6 +9,7 @@ import { Media } from '../generated/graphql'
 import useScrub from '../utils/use-scrub'
 
 import '../router/anime/index.css'
+import { Link } from 'wouter'
 
 const minimalPlayerStyle = css`
 .volume-area-wrapper {

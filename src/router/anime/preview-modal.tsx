@@ -7,11 +7,12 @@ import { useQuery } from 'urql'
 import { gql } from '../../generated'
 import { overlayStyle } from '../../components/modal'
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+// import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
 import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr/src/utils/uri2'
 import { Episode } from 'scannarr'
+import { Link, useLocation, useSearch } from 'wouter'
 
 const style = css`
 overflow: auto;
@@ -430,7 +431,12 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
 }
 
 export default () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [location, setLocation] = useLocation()
+  const searchParams = new URLSearchParams(useSearch())
+  const setSearchParams =
+    (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
+      setLocation(`${location}?${new URLSearchParams(init).toString()}`)
+  // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
   const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { uri: mediaUri! }, pause: !mediaUri })

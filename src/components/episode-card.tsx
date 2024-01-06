@@ -2,8 +2,9 @@ import type { Episode } from '../generated/graphql'
 import type { To } from 'react-router'
 
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { forwardRef } from 'react'
+import { Link } from 'wouter'
 
 
 const style = css`
