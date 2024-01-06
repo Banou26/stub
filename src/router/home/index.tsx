@@ -7,8 +7,12 @@ export default () => {
   const [, setLocation] = useLocation()
 
   useEffect(() => {
-    setLocation(getRoutePath(Route.HOME))
+    setLocation(getRoutePath(Route.ANIME))
   }, [])
 
-  return null
+  return (
+    <div>
+      Redirecting...
+    </div>
+  )
 }

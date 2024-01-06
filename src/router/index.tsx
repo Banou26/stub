@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Route as WRoute } from 'wouter'
+import { Switch, Route as WRoute } from 'wouter'
 
 import Home from './home'
 import { getRouterRoutePath, Route } from './path'
@@ -22,13 +22,13 @@ const wrapElement = (children: React.ReactNode) =>
   </>
 
 const RouterRoot = () =>(
-  <>
+  <Switch>
     <WRoute path={getRouterRoutePath(Route.HOME)} component={() => wrapElement(<Home/>)}/>
     <WRoute path={getRouterRoutePath(Route.ANIME)} component={() => <Anime/>}/>
     <WRoute path={getRouterRoutePath(Route.ANIME_SEASON)} component={() => wrapElement(<Season/>)}/>
     <WRoute path={getRouterRoutePath(Route.WATCH)} component={() => <Watch/>}/>
     <WRoute path={getRouterRoutePath(Route.TEST)} component={() => wrapElement(<Test/>)}/>
-    <WRoute path='/*' component={() => wrapElement(<div>404 No page found</div>)}/>
-  </>
+    <WRoute component={() => wrapElement(<div>404 No page found</div>)}/>
+  </Switch>
 )
 export default RouterRoot
