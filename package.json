@@ -41,7 +41,7 @@
     "_codegen": "node _codegen.mjs && graphql-codegen --config codegen.ts & node _codegen.js",
     "_codegen-watch": "node _codegen.mjs && graphql-codegen -w --config codegen.ts & node _codegen.js",
     "dev": "concurrently \"vite --port 4560\" \"npm run _codegen-watch\"",
-    "build": "vite build && npm run copy-html",
+    "build": "vite build",
     "copy-html": "shx cp src/index.html build/index.html && shx cp package.json build/package.json && shx cp src/app.webmanifest build/app.webmanifest && copyfiles -u 2 ./src/assets/* build/assets",
     "serve": "serve -s -C -p 4560 build"
   },

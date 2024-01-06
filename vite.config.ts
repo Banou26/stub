@@ -14,12 +14,6 @@ export default defineConfig((env) => ({
       plugins: [
         rollupNodePolyFill()
       ]
-    },
-    lib: {
-      name: 'Stub',
-      fileName: 'index',
-      entry: 'src/index.tsx',
-      formats: ['es']
     }
   },
   worker: {
