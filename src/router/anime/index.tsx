@@ -541,7 +541,7 @@ export default () => {
         }}
       />
     )
-  , [Page?.media])
+  , [Page?.media, hoverCardTriggerTimeout])
 
   const onHoverCardMouseLeave = () => {
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
