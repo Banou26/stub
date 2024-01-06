@@ -1,27 +1,22 @@
 import { css } from '@emotion/react'
-import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
+import { useState, useEffect, useMemo, HTMLAttributes, forwardRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
-import { VolumeX, Volume2, Volume1, Volume, Play } from 'react-feather'
+import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 import { useQuery } from 'urql'
 
-
-import useNamespacedLocalStorage from '../../utils/use-local-storage'
-import { EpisodeSort, Media, MediaSort, Episode } from '../../generated/graphql'
+import { Media, MediaSort } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
 import Title2 from '../../components/title2'
-import useScrub from '../../utils/use-scrub'
 
 import './index.css'
 import PreviewModal, { GET_PREVIEW_MODAL_MEDIA as GET_MEDIA } from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
-import { gql } from '../../generated'
 import EpisodeCard from '../../components/episode-card'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
 
@@ -252,23 +247,23 @@ div.section.first-section {
   justify-content: space-between;
 }
 
-.ScrollAreaRoot .section-items {
+.section-items .section-items {
   display: grid;
   grid-auto-flow:column;
   width: 100%;
   overflow: auto;
   margin: 0 0 1rem 0;
   gap: 2.5rem;
-  overflow: visible;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(253, 3.5%, 53.5%) #0f0f0f;
 }
 
-.ScrollAreaRoot {
-  margin: 1.5rem 0;
-  @media (min-width: 2560px) {
-    margin: 2.5rem 0;
+@-moz-document url-prefix() {
+  .section-items .section-items {
+    padding-bottom: 1.5rem;
+    scrollbar-width: initial;
   }
-  overflow: visible;
-  box-shadow: unset;
 }
 
 .title-hovercard {
@@ -613,17 +608,9 @@ const Anime = () => {
             <h2>Current season</h2>
           </Link>
           <div className="section-items">
-            <ScrollArea.Root className="ScrollAreaRoot">
-              <ScrollArea.Viewport className="ScrollAreaViewport">
-                <div className="section-items">
-                  {titleCards}
-                </div>
-              </ScrollArea.Viewport>
-              <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
-                <ScrollArea.Thumb className="ScrollAreaThumb" />
-              </ScrollArea.Scrollbar>
-              <ScrollArea.Corner className="ScrollAreaCorner" />
-            </ScrollArea.Root>
+            <div className="section-items">
+              {titleCards}
+            </div>
             {
               hoverCardMedia && (
                 <TitleHoverCard
@@ -645,32 +632,24 @@ const Anime = () => {
             <h2>Latest episodes</h2>
           </Link>
           <div className="section-items">
-            <ScrollArea.Root className="ScrollAreaRoot">
-              <ScrollArea.Viewport className="ScrollAreaViewport">
-                <div className="section-items">
-                  {
-                    Page
-                      ?.media
-                      ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-                      .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
-                      .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
-                      .sort((a, b) => b.node.airingAt - a.node.airingAt)
-                      .map(({ node: episode }) =>
-                        <EpisodeCard
-                          key={episode.uri}
-                          to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: episode.media.uri }).toString() }}
-                          style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                          episode={episode}
-                        />
-                      )
-                  }
-                </div>
-              </ScrollArea.Viewport>
-              <ScrollArea.Scrollbar className="ScrollAreaScrollbar" orientation="horizontal">
-                <ScrollArea.Thumb className="ScrollAreaThumb" />
-              </ScrollArea.Scrollbar>
-              <ScrollArea.Corner className="ScrollAreaCorner" />
-            </ScrollArea.Root>
+            <div className="section-items">
+              {
+                Page
+                  ?.media
+                  ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
+                  .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+                  .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
+                  .sort((a, b) => b.node.airingAt - a.node.airingAt)
+                  .map(({ node: episode }) =>
+                    <EpisodeCard
+                      key={episode.uri}
+                      to={{ pathname: getRoutePath(Route.ANIME), search: new URLSearchParams({ details: episode.media.uri }).toString() }}
+                      style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                      episode={episode}
+                    />
+                  )
+              }
+            </div>
           </div>
         </div>
         <PreviewModal/>
