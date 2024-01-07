@@ -512,6 +512,12 @@ const Draggable = ({ rootClass = "", children, disable }) => {
       scrollTop: 0
   });
   const handleDragStart = (e: MouseEvent) => {
+    if (
+      e.offsetX > e.target.clientWidth ||
+      e.offsetY > e.target.clientHeight
+    ) {
+      return
+    }
     e.preventDefault();
     if (disable || !ourRef || !(ourRef as Node).contains(e.target)) return
     const slider = ourRef.children[0];
