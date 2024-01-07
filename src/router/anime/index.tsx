@@ -512,6 +512,7 @@ const Draggable = ({ rootClass = "", children, disable }) => {
       scrollTop: 0
   });
   const handleDragStart = (e: MouseEvent) => {
+    e.preventDefault();
     if (disable || !ourRef || !(ourRef as Node).contains(e.target)) return
     const slider = ourRef.children[0];
     const startX = e.pageX - slider.offsetLeft;
@@ -520,7 +521,7 @@ const Draggable = ({ rootClass = "", children, disable }) => {
     const scrollTop = slider.scrollTop;
     mouseCoords.current = { startX, startY, scrollLeft, scrollTop }
     setIsMouseDown(true)
-    setIsDraggingTimeout(setTimeout(() => setIsDragging(true), 100))
+    setIsDraggingTimeout(setTimeout(() => setIsDragging(true), 150))
   }
   const handleDragEnd = (e) => {
     setIsMouseDown(false)
