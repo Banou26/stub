@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { useState, useEffect, useMemo, HTMLAttributes, forwardRef } from 'react'
+import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 // import { Link, useSearchParams } from 'react-router-dom'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
@@ -218,9 +218,16 @@ a:has(>h2) {
 
 .section {
   position: relative;
-  padding: 2.5rem 0 2.5rem 5rem;
+  padding: 2.5rem 0 2.5rem 0rem;
   @media (min-width: 2560px) {
-    padding: 5rem 0 5rem 10rem;
+    padding: 5rem 0 5rem 0rem;
+  }
+
+  & > a {
+    margin-left: 5rem;
+    @media (min-width: 2560px) {
+      margin-left: 10rem;
+    }
   }
 }
 
@@ -258,12 +265,29 @@ div.section.first-section {
   padding-bottom: 0.5rem;
   scrollbar-width: thin;
   scrollbar-color: hsl(253, 3.5%, 53.5%) #0f0f0f;
+
+  & > div:first-of-type {
+    margin-left: 5rem;
+    @media (min-width: 2560px) {
+      margin-left: 10rem;
+    }
+  }
 }
 
 @-moz-document url-prefix() {
   .section-items .section-items {
     padding-bottom: 1.5rem;
     scrollbar-width: initial;
+  }
+}
+
+.draggable {
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+  &.active > * {
+    pointer-events: none;
   }
 }
 
@@ -475,6 +499,68 @@ const getEllipsedDescription = (text: string | undefined) =>
     ? `${text.slice(0, text.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
     : text
 
+const Draggable = ({ rootClass = "", children, disable }) => {
+  if ('ontouchstart' in document.documentElement) return children
+  const [ourRef, setOurRef] = useState<HTMLDivElement | null>(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingTimeout, setIsDraggingTimeout] = useState<number>();
+  const mouseCoords = useRef({
+      startX: 0,
+      startY: 0,
+      scrollLeft: 0,
+      scrollTop: 0
+  });
+  const handleDragStart = (e: MouseEvent) => {
+    if (disable || !ourRef || !(ourRef as Node).contains(e.target)) return
+    const slider = ourRef.children[0];
+    const startX = e.pageX - slider.offsetLeft;
+    const startY = e.pageY - slider.offsetTop;
+    const scrollLeft = slider.scrollLeft;
+    const scrollTop = slider.scrollTop;
+    mouseCoords.current = { startX, startY, scrollLeft, scrollTop }
+    setIsMouseDown(true)
+    setIsDraggingTimeout(setTimeout(() => setIsDragging(true), 100))
+  }
+  const handleDragEnd = (e) => {
+    setIsMouseDown(false)
+    setIsDragging(false)
+    if (isDraggingTimeout) clearTimeout(isDraggingTimeout)
+    if (!ourRef) return
+  }
+  const handleDrag = (e) => {
+    if (!isMouseDown || !ourRef) return;
+    e.preventDefault();
+    const slider = ourRef.children[0];
+    const x = e.pageX - slider.offsetLeft;
+    const y = e.pageY - slider.offsetTop;
+    const walkX = (x - mouseCoords.current.startX);
+    const walkY = (y - mouseCoords.current.startY);
+    slider.scrollLeft = mouseCoords.current.scrollLeft - walkX;
+    slider.scrollTop = mouseCoords.current.scrollTop - walkY;
+  }
+
+  useEffect(() => {
+    if (!ourRef || disable) return
+    const root = document.body
+    root.addEventListener('mousedown', handleDragStart)
+    root.addEventListener('mouseup', handleDragEnd)
+    root.addEventListener('mousemove', handleDrag)
+    return () => {
+      root.removeEventListener('mousedown', handleDragStart)
+      root.removeEventListener('mouseup', handleDragEnd)
+      root.removeEventListener('mousemove', handleDrag)
+    }
+  }, [ourRef, isMouseDown, disable, setIsDragging, isDraggingTimeout])
+
+  return (
+    <div ref={ref => setOurRef(ref)} className={`draggable ${isDragging ? 'active' : ''}`}>
+      {/* <div ref={ourRef} onMouseDown={handleDragStart} onMouseUp={handleDragEnd} onMouseMove={handleDrag} className="draggable"> */}
+      {children}
+    </div>
+  )
+}
+
 const Anime = () => {
   const searchParams = new URLSearchParams(useSearch())
   const mediaUriModal = searchParams.get('details')
@@ -609,9 +695,11 @@ const Anime = () => {
             <h2>Current season</h2>
           </Link>
           <div className="section-items">
-            <div className="section-items">
-              {titleCards}
-            </div>
+            <Draggable disable={Boolean(hoverCardMedia)}>
+              <div className="section-items">
+                {titleCards}
+              </div>
+            </Draggable>
             {
               hoverCardMedia && (
                 <TitleHoverCard
@@ -633,24 +721,26 @@ const Anime = () => {
             <h2>Latest episodes</h2>
           </Link>
           <div className="section-items">
-            <div className="section-items">
-              {
-                Page
-                  ?.media
-                  ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-                  .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
-                  .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
-                  .sort((a, b) => b.node.airingAt - a.node.airingAt)
-                  .map(({ node: episode }) =>
-                    <EpisodeCard
-                      key={episode.uri}
-                      to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
-                      style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                      episode={episode}
-                    />
-                  )
-              }
-            </div>
+            <Draggable>
+              <div className="section-items">
+                {
+                  Page
+                    ?.media
+                    ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
+                    .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+                    .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
+                    .sort((a, b) => b.node.airingAt - a.node.airingAt)
+                    .map(({ node: episode }) =>
+                      <EpisodeCard
+                        key={episode.uri}
+                        to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
+                        style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                        episode={episode}
+                      />
+                    )
+                }
+              </div>
+            </Draggable>
           </div>
         </div>
         <PreviewModal/>
