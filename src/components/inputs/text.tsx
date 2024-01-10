@@ -21,21 +21,25 @@ export const style = css`
   }
 
   input {
-    width: 100%;
+    font-size: 1.6rem;
     color: #fff;
     caret-color: #fff;
-    font-size: 1.6rem;
-    border-radius: 3px;
-    border: 1px solid rgb(66, 66, 66);
-    padding: 1rem;
-    margin-top: .5rem;
+    border-radius: .5rem;
+    border: .1rem solid rgb(66, 66, 66);
 
-    --background-color: rgb(51, 51, 51);
+    width: 100%;
+    padding: .5rem;
+    margin: .25rem 0;
+    @media (min-width: 2560px) {
+      padding: 1rem;
+      margin-top: .5rem;
+    }
 
-    background-color: var(--background-color);
     outline: none;
     transition: box-shadow 200ms;
 
+    --background-color: rgb(51, 51, 51);
+    background-color: var(--background-color);
     &:focus {
       box-shadow: 0 0 1rem var(--background-color);
     }
@@ -50,7 +54,7 @@ export const style = css`
 
 export default forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & InputParameters>(({ label, error, ...props }, ref) => {
   const [touched, setTouched] = useState(false)
-
+  
   return (
     <label css={style}>
       <span className="label">{label}</span>
