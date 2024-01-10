@@ -71,9 +71,6 @@ const style = css`
           mask: url(${DiscordIconUrl}) no-repeat center;
         }
       }
-      :hover {
-        color: #777777;
-      }
     }
   }
 
