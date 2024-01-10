@@ -1,11 +1,12 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
-// import { Link, useSearchParams } from 'react-router-dom'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 import { useQuery } from 'urql'
+import { getCurrentSeason } from 'laserr/src/targets/anilist'
+import { Link, useSearch } from 'wouter'
 
 import { Media, MediaSort } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
@@ -18,8 +19,6 @@ import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
-import { getCurrentSeason } from 'laserr/src/targets/anilist'
-import { Link, useLocation, useSearch } from 'wouter'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -453,8 +452,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         <div className="content">
           <div className='title'>
             {
-              media.title?.english
-                ?? media.title?.romanized
+                media.title?.romanized
+                ?? media.title?.english
                 ?? media.title?.native
             }
           </div>

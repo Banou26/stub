@@ -1,5 +1,4 @@
-import { useLocation, useParams, useSearch } from 'wouter'
-
+import { useLocation, useParams } from 'wouter'
 import { css } from '@emotion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { hex2bin } from 'uint8-util'
@@ -12,6 +11,7 @@ import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri
 import { fetch } from '../../utils/fetch'
 import { Route, getRoutePath } from '../path'
 import SourcesModal, { getTeamIcon } from './sources-modal'
+import Spinner from '../../images/spinner.svg'
 
 const style = css`
   display: grid;
@@ -19,9 +19,48 @@ const style = css`
   width: 100%;
   grid-template-rows: 100% auto;
 
+  .source {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    @media (min-width: 2560px) {
+      font-size: 2.2rem;
+    }
+    background: rgb(35, 35, 35);
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 1.5rem;
+    @media (min-width: 640px) {
+      font-size: 2.2rem;
+    }
+    @media (min-width: 2560px) {
+      font-size: 3rem;
+    }
+    gap: 1rem;
+
+    .spinner {
+      margin-top: -4rem;
+    }
+  }
+
   iframe {
     height: 100%;
     width: 100%;
+    border: none;
   }
 
   .description {
@@ -33,40 +72,6 @@ const style = css`
     width: 150rem;
     white-space: pre-line;
   }
-
-  .comments {
-    display: grid;
-    margin: 5rem auto;
-
-    .header {
-      text-align: center;
-      padding: 2.5rem;
-    }
-
-    .comment {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      margin: 1.5rem auto;
-      width: 150rem;
-      padding: 1rem;
-      background: rgb(35, 35, 35);
-      overflow: hidden;
-
-      .avatar {
-        height: 12rem;
-        width: 12rem;
-        margin-right: 2.5rem;
-      }
-      .date {
-        margin-left: 2.5rem;
-      }
-      .message {
-        margin-top: 1.5rem;
-        white-space: pre-line;
-      }
-    }
-  }
-
 `
 
 
@@ -76,7 +81,6 @@ export const GET_PLAYBACK_SOURCES = `#graphql
     id
     uri
     url
-
     type
     filename
     title {
@@ -235,15 +239,12 @@ const Watch = () => {
       setLocation(`${location}?${new URLSearchParams(init).toString()}`)
   const uri = mergeScannarrUris([mediaUri, episodeUri])
   const episodeId = fromUriEpisodeId(episodeUri).episodeId
-
+  
   const [{ data: { Media: media } = { Media: undefined } }] = useQuery({
     query: GET_WATCH_MEDIA,
     variables: { uri: mediaUri! },
     pause: !mediaUri
   })
-
-  // console.log('media', media)
-  // console.log('episodeId', episodeId)
 
   const [{ error, data: { Page } = { Page: undefined } }] = useQuery(
     {
@@ -252,12 +253,6 @@ const Watch = () => {
       pause: !uri
     }
   )
-
-  // console.log('Page', Page)
-
-  // console.log('mediaUri', mediaUri && mediaUri.replace('scannarr:', ''))
-  // console.log('episodeUri', episodeUri && episodeUri.replace('scannarr:', ''))
-  // console.log('sourceUri', sourceUri && sourceUri?.replace('scannarr:', ''))
 
   const currentSource = useMemo(
     () => Page?.playbackSource?.find((source) => source.uri === sourceUri),
@@ -269,8 +264,6 @@ const Watch = () => {
     [currentSource]
   )
   
-  // console.log('currentSource', currentSource)
-
   useEffect(() => {
     if (!(currentSource && currentSource.uri !== sourceUri)) return
     setSearchParams({ details: currentSource.uri }, { replace: true })
@@ -393,14 +386,33 @@ const Watch = () => {
       {
         currentSourceObject?.magnetUri
           ? (
-            <iframe
-              src={`https://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
-              allow="fullscreen"
-              allowFullScreen
-              frameBorder="0"
-            />
+            <div className='fullscreen'>
+              <iframe
+                src={`https://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
+                allow="fullscreen"
+                allowFullScreen
+              />
+              <div>
+                <button className='source' onClick={onSourcesClick}>Select sources manually</button>
+              </div>
+            </div>
           )
-          : undefined
+          : (
+            <div>
+                <div className='loading'>
+                  <span>Loading...</span>
+                  <span className='title'>
+                    {
+                      media.title?.romanized
+                      ?? media.title?.english
+                      ?? media.title?.native
+                    } - {episodeId}
+                  </span>
+                  <button className='source' onClick={onSourcesClick}>Select sources manually</button>
+                  <img src={Spinner} alt="Loading" className='spinner'/>
+                </div>
+            </div>
+          )
       }
       {/* <div
         className="description"
@@ -410,9 +422,6 @@ const Watch = () => {
         sources={sortedSources}
         trackerDataPerSource={trackerDataPerSource}
       />
-      <div>
-        <button style={{ display: 'inline-block' }} onClick={onSourcesClick}>Select sources manually</button>
-      </div>
     </div>
   )
 }
