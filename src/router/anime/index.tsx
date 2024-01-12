@@ -6,6 +6,7 @@ import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 import { useQuery } from 'urql'
+import { Grid } from 'react-virtualized'
 
 import { Media, MediaSort } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
@@ -635,6 +636,23 @@ const Anime = () => {
     )
   , [Page?.media, hoverCardTriggerTimeout])
 
+  const episodeCards = useMemo(() =>
+    Page
+      ?.media
+      ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
+      .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+      .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
+      .sort((a, b) => b.node.airingAt - a.node.airingAt)
+      .map(({ node: episode }) =>
+        <EpisodeCard
+          key={episode.uri}
+          to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
+          style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          episode={episode}
+        />
+      )
+    , [Page?.media])
+
   const onHoverCardMouseLeave = () => {
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
     refs.setReference(null)
@@ -667,6 +685,13 @@ const Anime = () => {
   }, [mediaUriModal])
 
   const [isDragging, setIsDragging] = useState(false);
+
+  const titleCardHeight = 365
+  const titleCardWidth = 250
+  const listWidth = window.innerWidth
+
+  const episodeCardHeight = 265
+  const episodeCardWidth = 400
 
   return (
     <>
@@ -708,9 +733,21 @@ const Anime = () => {
           </Link>
           <div className="section-items">
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
-              <div className="section-items">
-                {titleCards}
-              </div>
+              <Grid
+                className="section-items"
+                height={titleCardHeight}
+                columnCount={titleCards?.length ?? 0}
+                columnWidth={listWidth / (Math.floor(listWidth / titleCardWidth) - 1)}
+                rowCount={1}
+                rowHeight={titleCardHeight}
+                rowWidth={titleCardWidth}
+                width={listWidth}
+                cellRenderer={({ columnIndex, key, rowIndex, style }) =>
+                  <div key={key} style={style}>
+                    {titleCards?.[columnIndex]}
+                  </div>
+                }
+              />
             </Draggable>
             {
               !isDragging && hoverCardMedia && (
@@ -734,24 +771,21 @@ const Anime = () => {
           </Link>
           <div className="section-items">
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
-              <div className="section-items">
-                {
-                  Page
-                    ?.media
-                    ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-                    .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
-                    .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
-                    .sort((a, b) => b.node.airingAt - a.node.airingAt)
-                    .map(({ node: episode }) =>
-                      <EpisodeCard
-                        key={episode.uri}
-                        to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
-                        style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                        episode={episode}
-                      />
-                    )
+              <Grid
+                className="section-items"
+                height={episodeCardHeight}
+                columnCount={episodeCards?.length ?? 0}
+                columnWidth={listWidth / (Math.floor(listWidth / episodeCardWidth))}
+                rowCount={1}
+                rowHeight={episodeCardHeight}
+                rowWidth={episodeCardWidth}
+                width={listWidth}
+                cellRenderer={({ columnIndex, key, rowIndex, style }) =>
+                  <div key={key} style={style}>
+                    {episodeCards?.[columnIndex]}
+                  </div>
                 }
-              </div>
+              />
             </Draggable>
           </div>
         </div>

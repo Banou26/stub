@@ -102,49 +102,24 @@ const style = css`
 }
 `
 
-export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media, to: To }>(({ media, to, ...rest }, _ref) => {
-  const [ref, setRef] = useState<HTMLDivElement | null>(null)
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    if (!ref) {
-      setIsVisible(false)
-      // @ts-expect-error
-      if (_ref) _ref.current = null
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => setIsVisible(entries[0]!.isIntersecting),
-      { threshold: 0.01 }
-    )
-
-    observer.observe(ref)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [ref])
-  
-  return (
-    <div ref={setRef} css={style} key={media.uri} className="card category-item" style={isVisible ? { backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' } : {}} {...rest}>
-      <Link
-        tabIndex={-1}
-        to={to}
-        // to={getRoutePath(Route.TITLE, { uri: media.uri })}
-        className="card link"
-      />
-      <div className="information">
-          <div className="title">
-            <Link to={to} className="title-text">
-              {
-                (media.title?.romanized?.length ?? 0) > 30
-                  ? media.title?.romanized?.slice(0, 30) + '...'
-                  : media.title?.romanized
-              }
-            </Link>
-          </div>
-      </div>
+export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElement> & { media: Media, to: To }>(({ media, to, ...rest }, _ref) =>
+  <div css={style} key={media.uri} className="card category-item" style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})`, backgroundSize: 'cover' }} {...rest}>
+    <Link
+      tabIndex={-1}
+      to={to}
+      // to={getRoutePath(Route.TITLE, { uri: media.uri })}
+      className="card link"
+    />
+    <div className="information">
+        <div className="title">
+          <Link to={to} className="title-text">
+            {
+              (media.title?.romanized?.length ?? 0) > 30
+                ? media.title?.romanized?.slice(0, 30) + '...'
+                : media.title?.romanized
+            }
+          </Link>
+        </div>
     </div>
-  )
-})
+  </div>
+)
