@@ -686,13 +686,24 @@ const Anime = () => {
 
   const [isDragging, setIsDragging] = useState(false);
 
-  const titleCardHeight = 365
-  const titleCardWidth = 250
+  const titleCardHeight =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 350
+      : 300
+  const titleCardWidth =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 260
+      : 210
   const listWidth = window.innerWidth
 
-  const episodeCardHeight = 265
-  const episodeCardWidth = 400
-
+  const episodeCardHeight =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 250
+      : 200
+  const episodeCardWidth =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 410
+      : 360
   return (
     <>
       <Header css={headerStyle}/>
@@ -735,14 +746,14 @@ const Anime = () => {
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
               <Grid
                 className="section-items"
-                height={titleCardHeight}
+                height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
                 columnCount={titleCards?.length ?? 0}
-                columnWidth={listWidth / (Math.floor(listWidth / titleCardWidth) - 1)}
+                columnWidth={listWidth / (listWidth / titleCardWidth)}
                 rowCount={1}
                 rowHeight={titleCardHeight}
                 rowWidth={titleCardWidth}
                 width={listWidth}
-                cellRenderer={({ columnIndex, key, rowIndex, style }) =>
+                cellRenderer={({ columnIndex, key, rowIndex, style: { height, width, ...style } }) =>
                   <div key={key} style={style}>
                     {titleCards?.[columnIndex]}
                   </div>
@@ -773,9 +784,9 @@ const Anime = () => {
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
               <Grid
                 className="section-items"
-                height={episodeCardHeight}
+                height={episodeCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
                 columnCount={episodeCards?.length ?? 0}
-                columnWidth={listWidth / (Math.floor(listWidth / episodeCardWidth))}
+                columnWidth={listWidth / (listWidth / episodeCardWidth)}
                 rowCount={1}
                 rowHeight={episodeCardHeight}
                 rowWidth={episodeCardWidth}
