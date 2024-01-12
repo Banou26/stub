@@ -20,6 +20,7 @@ import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
 import { Link, useLocation, useSearch } from 'wouter'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -499,18 +500,20 @@ const getEllipsedDescription = (text: string | undefined) =>
     ? `${text.slice(0, text.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
     : text
 
-const Draggable = ({ rootClass = "", children, disable }) => {
+const Draggable = (
+  { children, isDragging, setIsDragging }:
+  { children: ReactJSXElement, isDragging, setIsDragging: (val: boolean) => void }
+) => {
   if ('ontouchstart' in document.documentElement) return children
-  const [ourRef, setOurRef] = useState<HTMLDivElement | null>(null);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDraggingTimeout, setIsDraggingTimeout] = useState<number>();
+  const [ourRef, setOurRef] = useState<HTMLDivElement | null>(null)
+  const [isMouseDown, setIsMouseDown] = useState(false)
+  const [isDraggingTimeout, setIsDraggingTimeout] = useState<number>()
   const mouseCoords = useRef({
       startX: 0,
       startY: 0,
       scrollLeft: 0,
       scrollTop: 0
-  });
+  })
   const handleDragStart = (e: MouseEvent) => {
     if (
       e.offsetX > e.target.clientWidth ||
@@ -518,8 +521,8 @@ const Draggable = ({ rootClass = "", children, disable }) => {
     ) {
       return
     }
+    if (!ourRef || !(ourRef as Node).contains(e.target)) return
     e.preventDefault();
-    if (disable || !ourRef || !(ourRef as Node).contains(e.target)) return
     const slider = ourRef.children[0];
     const startX = e.pageX - slider.offsetLeft;
     const startY = e.pageY - slider.offsetTop;
@@ -548,8 +551,8 @@ const Draggable = ({ rootClass = "", children, disable }) => {
   }
 
   useEffect(() => {
-    if (!ourRef || disable) return
-    const root = document.body
+    if (!ourRef) return
+    const root = window
     root.addEventListener('mousedown', handleDragStart)
     root.addEventListener('mouseup', handleDragEnd)
     root.addEventListener('mousemove', handleDrag)
@@ -558,7 +561,7 @@ const Draggable = ({ rootClass = "", children, disable }) => {
       root.removeEventListener('mouseup', handleDragEnd)
       root.removeEventListener('mousemove', handleDrag)
     }
-  }, [ourRef, isMouseDown, disable, setIsDragging, isDraggingTimeout])
+  }, [ourRef, isMouseDown, setIsDragging, isDraggingTimeout])
 
   return (
     <div ref={ref => setOurRef(ref)} className={`draggable ${isDragging ? 'active' : ''}`}>
@@ -663,6 +666,8 @@ const Anime = () => {
     setHeaderTrailerPaused(!!mediaUriModal)
   }, [mediaUriModal])
 
+  const [isDragging, setIsDragging] = useState(false);
+
   return (
     <>
       <Header css={headerStyle}/>
@@ -702,13 +707,13 @@ const Anime = () => {
             <h2>Current season</h2>
           </Link>
           <div className="section-items">
-            <Draggable disable={Boolean(hoverCardMedia)}>
+            <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
               <div className="section-items">
                 {titleCards}
               </div>
             </Draggable>
             {
-              hoverCardMedia && (
+              !isDragging && hoverCardMedia && (
                 <TitleHoverCard
                   media={hoverCardMedia}
                   ref={refs.setFloating}
@@ -728,7 +733,7 @@ const Anime = () => {
             <h2>Latest episodes</h2>
           </Link>
           <div className="section-items">
-            <Draggable>
+            <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
               <div className="section-items">
                 {
                   Page
