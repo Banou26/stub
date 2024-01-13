@@ -1,11 +1,12 @@
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
-// import { Link, useSearchParams } from 'react-router-dom'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 import { useQuery } from 'urql'
+import { getCurrentSeason } from 'laserr/src/targets/anilist'
+import { Link, useLocation, useSearch } from 'wouter'
 import { Grid } from 'react-virtualized'
 
 import { Media, MediaSort } from '../../generated/graphql'
@@ -19,8 +20,6 @@ import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
-import { getCurrentSeason } from 'laserr/src/targets/anilist'
-import { Link, useLocation, useSearch } from 'wouter'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 const headerStyle = css`
@@ -455,8 +454,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         <div className="content">
           <div className='title'>
             {
-              media.title?.english
-                ?? media.title?.romanized
+                media.title?.romanized
+                ?? media.title?.english
                 ?? media.title?.native
             }
           </div>
