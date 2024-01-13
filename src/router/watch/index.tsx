@@ -403,9 +403,9 @@ const Watch = () => {
                   <span>Loading...</span>
                   <span className='title'>
                     {
-                      media.title?.romanized
-                      ?? media.title?.english
-                      ?? media.title?.native
+                      media?.title?.romanized
+                      ?? media?.title?.english
+                      ?? media?.title?.native
                     } - {episodeId}
                   </span>
                   <button className='source' onClick={onSourcesClick}>Select sources manually</button>
