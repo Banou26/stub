@@ -6,7 +6,8 @@ import DOMPurify from 'dompurify'
 import * as marked from 'marked'
 import { useQuery } from 'urql'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
-import { Link, useSearch } from 'wouter'
+import { Link, useLocation, useSearch } from 'wouter'
+import { Grid } from 'react-virtualized'
 
 import { Media, MediaSort } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
@@ -19,6 +20,7 @@ import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -498,18 +500,20 @@ const getEllipsedDescription = (text: string | undefined) =>
     ? `${text.slice(0, text.indexOf(' ', 225)).replace(/[,.]$/, '')}...`
     : text
 
-const Draggable = ({ rootClass = "", children, disable }) => {
+const Draggable = (
+  { children, isDragging, setIsDragging }:
+  { children: ReactJSXElement, isDragging, setIsDragging: (val: boolean) => void }
+) => {
   if ('ontouchstart' in document.documentElement) return children
-  const [ourRef, setOurRef] = useState<HTMLDivElement | null>(null);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDraggingTimeout, setIsDraggingTimeout] = useState<number>();
+  const [ourRef, setOurRef] = useState<HTMLDivElement | null>(null)
+  const [isMouseDown, setIsMouseDown] = useState(false)
+  const [isDraggingTimeout, setIsDraggingTimeout] = useState<number>()
   const mouseCoords = useRef({
       startX: 0,
       startY: 0,
       scrollLeft: 0,
       scrollTop: 0
-  });
+  })
   const handleDragStart = (e: MouseEvent) => {
     if (
       e.offsetX > e.target.clientWidth ||
@@ -517,8 +521,8 @@ const Draggable = ({ rootClass = "", children, disable }) => {
     ) {
       return
     }
+    if (!ourRef || !(ourRef as Node).contains(e.target)) return
     e.preventDefault();
-    if (disable || !ourRef || !(ourRef as Node).contains(e.target)) return
     const slider = ourRef.children[0];
     const startX = e.pageX - slider.offsetLeft;
     const startY = e.pageY - slider.offsetTop;
@@ -547,8 +551,8 @@ const Draggable = ({ rootClass = "", children, disable }) => {
   }
 
   useEffect(() => {
-    if (!ourRef || disable) return
-    const root = document.body
+    if (!ourRef) return
+    const root = window
     root.addEventListener('mousedown', handleDragStart)
     root.addEventListener('mouseup', handleDragEnd)
     root.addEventListener('mousemove', handleDrag)
@@ -557,7 +561,7 @@ const Draggable = ({ rootClass = "", children, disable }) => {
       root.removeEventListener('mouseup', handleDragEnd)
       root.removeEventListener('mousemove', handleDrag)
     }
-  }, [ourRef, isMouseDown, disable, setIsDragging, isDraggingTimeout])
+  }, [ourRef, isMouseDown, setIsDragging, isDraggingTimeout])
 
   return (
     <div ref={ref => setOurRef(ref)} className={`draggable ${isDragging ? 'active' : ''}`}>
@@ -631,6 +635,23 @@ const Anime = () => {
     )
   , [Page?.media, hoverCardTriggerTimeout])
 
+  const episodeCards = useMemo(() =>
+    Page
+      ?.media
+      ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
+      .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+      .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
+      .sort((a, b) => b.node.airingAt - a.node.airingAt)
+      .map(({ node: episode }) =>
+        <EpisodeCard
+          key={episode.uri}
+          to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
+          style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          episode={episode}
+        />
+      )
+    , [Page?.media])
+
   const onHoverCardMouseLeave = () => {
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
     refs.setReference(null)
@@ -662,6 +683,26 @@ const Anime = () => {
     setHeaderTrailerPaused(!!mediaUriModal)
   }, [mediaUriModal])
 
+  const [isDragging, setIsDragging] = useState(false);
+
+  const titleCardHeight =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 350
+      : 300
+  const titleCardWidth =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 260
+      : 210
+  const listWidth = window.innerWidth
+
+  const episodeCardHeight =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 250
+      : 200
+  const episodeCardWidth =
+    window.matchMedia('(min-width: 2560px)').matches
+      ? 410
+      : 360
   return (
     <>
       <Header css={headerStyle}/>
@@ -701,13 +742,25 @@ const Anime = () => {
             <h2>Current season</h2>
           </Link>
           <div className="section-items">
-            <Draggable disable={Boolean(hoverCardMedia)}>
-              <div className="section-items">
-                {titleCards}
-              </div>
+            <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
+              <Grid
+                className="section-items"
+                height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
+                columnCount={titleCards?.length ?? 0}
+                columnWidth={listWidth / (listWidth / titleCardWidth)}
+                rowCount={1}
+                rowHeight={titleCardHeight}
+                rowWidth={titleCardWidth}
+                width={listWidth}
+                cellRenderer={({ columnIndex, key, rowIndex, style: { height, width, ...style } }) =>
+                  <div key={key} style={style}>
+                    {titleCards?.[columnIndex]}
+                  </div>
+                }
+              />
             </Draggable>
             {
-              hoverCardMedia && (
+              !isDragging && hoverCardMedia && (
                 <TitleHoverCard
                   media={hoverCardMedia}
                   ref={refs.setFloating}
@@ -727,25 +780,22 @@ const Anime = () => {
             <h2>Latest episodes</h2>
           </Link>
           <div className="section-items">
-            <Draggable>
-              <div className="section-items">
-                {
-                  Page
-                    ?.media
-                    ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-                    .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
-                    .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
-                    .sort((a, b) => b.node.airingAt - a.node.airingAt)
-                    .map(({ node: episode }) =>
-                      <EpisodeCard
-                        key={episode.uri}
-                        to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
-                        style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                        episode={episode}
-                      />
-                    )
+            <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
+              <Grid
+                className="section-items"
+                height={episodeCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
+                columnCount={episodeCards?.length ?? 0}
+                columnWidth={listWidth / (listWidth / episodeCardWidth)}
+                rowCount={1}
+                rowHeight={episodeCardHeight}
+                rowWidth={episodeCardWidth}
+                width={listWidth}
+                cellRenderer={({ columnIndex, key, rowIndex, style }) =>
+                  <div key={key} style={style}>
+                    {episodeCards?.[columnIndex]}
+                  </div>
                 }
-              </div>
+              />
             </Draggable>
           </div>
         </div>
