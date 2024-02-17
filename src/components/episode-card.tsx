@@ -1,8 +1,6 @@
 import type { Episode } from '../generated/graphql'
-import type { To } from 'react-router'
 
 import { css } from '@emotion/react'
-// import { Link } from 'react-router-dom'
 import { forwardRef } from 'react'
 import { Link } from 'wouter'
 
@@ -17,11 +15,15 @@ const style = css`
   overflow: hidden;
   border-radius: 1rem;
 
-  height: 20rem;
-  width: 35rem;
+  height: 10rem;
+  width: 17.5rem;
+  @media (min-width: 1440px) {
+    height: 20rem;
+    width: 35rem;
+  }
   @media (min-width: 2560px) {
     height: 25rem;
-    width: 40rem;  
+    width: 40rem;
   }
 
   &.link {
@@ -54,7 +56,7 @@ const style = css`
     width: 100%;
     word-wrap: break-word;
 
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 600;
     margin: .1rem 0;
     @media (min-width: 2560px) {

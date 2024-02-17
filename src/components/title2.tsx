@@ -1,10 +1,5 @@
-import type { Media } from '../../../../scannarr/src'
-
 import { css } from '@emotion/react'
-// import { Link, To } from 'react-router-dom'
-import { forwardRef, useEffect, useState } from 'react'
-
-import { Route, getRoutePath } from '../router/path'
+import { forwardRef } from 'react'
 import { Link } from 'wouter'
 
 const style = css`
@@ -17,8 +12,12 @@ const style = css`
   overflow: hidden;
   border-radius: 1rem;
 
-  height: 30rem;
-  width: 20rem;
+  height: 14rem;
+  width: 13rem;
+  @media (min-width: 1440px) {
+    height: 30rem;
+    width: 20rem;  
+  }
   @media (min-width: 2560px) {
     height: 35rem;
     width: 25rem; 
@@ -54,7 +53,7 @@ const style = css`
     width: 100%;
     word-wrap: break-word;
 
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 600;
     margin: .1rem 0;
     @media (min-width: 2560px) {
@@ -107,7 +106,6 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
     <Link
       tabIndex={-1}
       to={to}
-      // to={getRoutePath(Route.TITLE, { uri: media.uri })}
       className="card link"
     />
     <div className="information">

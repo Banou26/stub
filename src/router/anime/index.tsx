@@ -103,7 +103,6 @@ a:has(>h2) {
     padding-bottom: 0;
     text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
 
-    
     .header-serie-title {
       > h1 {
         font-size: 1.5rem;
@@ -219,13 +218,19 @@ a:has(>h2) {
 
 .section {
   position: relative;
-  padding: 2.5rem 0 2.5rem 0rem;
+  padding: .5rem 0 .5rem 0rem;
+  @media (min-width: 1440px) {
+    padding: 2.5rem 0 2.5rem 0rem;
+  }
   @media (min-width: 2560px) {
     padding: 5rem 0 5rem 0rem;
   }
 
   & > a {
-    margin-left: 5rem;
+    margin-left: 1rem;
+    @media (min-width: 1440px) {
+      margin-left: 5rem;
+    }
     @media (min-width: 2560px) {
       margin-left: 10rem;
     }
@@ -233,7 +238,6 @@ a:has(>h2) {
 }
 
 .section:not(:first-of-type) {
-  margin-top: 1rem;
   @media (min-width: 1440px) {
     margin-top: 2.5rem;
   }
@@ -268,7 +272,10 @@ div.section.first-section {
   scrollbar-color: hsl(253, 3.5%, 53.5%) #0f0f0f;
 
   & > div:first-of-type {
-    margin-left: 5rem;
+    margin-left: 1rem;
+    @media (min-width: 1440px) {
+      margin-left: 5rem;
+    }
     @media (min-width: 2560px) {
       margin-left: 10rem;
     }
@@ -688,21 +695,29 @@ const Anime = () => {
   const titleCardHeight =
     window.matchMedia('(min-width: 2560px)').matches
       ? 350
-      : 300
+      : window.matchMedia('(min-width: 1440px)').matches
+        ? 300
+        : 140
   const titleCardWidth =
     window.matchMedia('(min-width: 2560px)').matches
       ? 260
-      : 210
+      : window.matchMedia('(min-width: 1440px)').matches
+        ? 210
+        : 135
   const listWidth = window.innerWidth
 
   const episodeCardHeight =
     window.matchMedia('(min-width: 2560px)').matches
       ? 250
-      : 200
+      : window.matchMedia('(min-width: 1440px)').matches
+        ? 200
+        : 100
   const episodeCardWidth =
     window.matchMedia('(min-width: 2560px)').matches
       ? 410
-      : 360
+      : window.matchMedia('(min-width: 1440px)').matches
+        ? 360
+        : 180
   return (
     <>
       <Header css={headerStyle}/>
