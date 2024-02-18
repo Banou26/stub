@@ -8,6 +8,7 @@ import Anime from './anime'
 import Season from './anime/season'
 import Test from './test'
 import Watch from './watch'
+import Mal from './auth/mal'
 
 const contentStyle = css`
   padding-top: 6rem;
@@ -28,6 +29,7 @@ const RouterRoot = () =>(
     <WRoute path={getRouterRoutePath(Route.ANIME_SEASON)} component={() => wrapElement(<Season/>)}/>
     <WRoute path={getRouterRoutePath(Route.WATCH)} component={() => <Watch/>}/>
     <WRoute path={getRouterRoutePath(Route.TEST)} component={() => wrapElement(<Test/>)}/>
+    <WRoute path={getRouterRoutePath(Route.AUTH)} component={() => wrapElement(<Mal/>)}/>
     <WRoute component={() => wrapElement(<div>404 No page found</div>)}/>
   </Switch>
 )
