@@ -38,9 +38,7 @@ const style = css`
     font-family: Fira Sans;
     background-color: #0f0f0f;
     color: #fff;
-    
     font-family: Montserrat;
-    // font-family: "Segoe UI", Roboto, "Fira Sans",  "Helvetica Neue", Arial, sans-serif;
   }
 
   body > div {
@@ -55,7 +53,6 @@ const style = css`
 
   a:hover {
     color: #fff;
-    text-decoration: underline;
   }
 
   ul {

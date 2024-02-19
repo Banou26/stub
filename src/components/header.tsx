@@ -80,22 +80,30 @@ const style = css`
 
     .searchResults {
       position: absolute;
-      display: grid;
+      display: flex;
+      flex-direction: column;
       bottom: 0;
-      top: 50px;
-      width: 100rem;
+      top: 3.25rem;
+      @media (min-width: 2560px) {
+        top: 5rem;
+      }
+      width: 100%;
       background-color: rgb(35, 35, 35);
-      height: fit-content;
-      row-gap: 0.5rem;
-      height: 50rem;
+      min-height: 40rem;
+      border-radius: 0.5rem;
+      @media (min-width: 2560px) {
+        height: 50rem;
+      }
       overflow: auto;
-      padding: 1.5rem 0;
 
       a {
         display: grid;
         grid-template-columns: 5rem auto;
-        height: 5rem;
-        padding-left: 2.5rem;
+        min-height: 5rem;
+        padding-left: 1rem;
+        @media (min-width: 2560px) {
+          padding-left: 2.5rem;
+        }
         overflow: hidden;
 
         &:hover {
@@ -104,6 +112,7 @@ const style = css`
 
         img {
           width: 100%;
+          height: 80%;
           object-fit: contain;
           margin: auto;
         }
