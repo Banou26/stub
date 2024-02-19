@@ -51,6 +51,7 @@ a:has(>h2) {
     display: inline-block;
     font-size: 1.5rem;
     font-weight: 600;
+    padding-bottom: .5rem;
     @media (min-width: 1024px) {
       font-size: 2rem;
     }
@@ -83,7 +84,7 @@ a:has(>h2) {
 
   .header-serie-content {
     position: absolute;
-    top: 47.5rem;
+    top: 46%;
     @media (min-width: 2560px) {
       top: 40rem;
     }
@@ -106,13 +107,13 @@ a:has(>h2) {
     .header-serie-title {
       > h1 {
         font-size: 1.5rem;
-        font-weight: 700;
+        font-weight: 600;
         
         @media (min-width: 1024px) {
-          font-size: 2rem;
+          font-size: 1.8rem;
         }
         @media (min-width: 1440px) {
-          font-size: 2.5rem;
+          font-size: 2rem;
         }
         @media (min-width: 2560px) {
           font-size: 3rem;
@@ -125,7 +126,7 @@ a:has(>h2) {
     .header-serie-description {
       font-size: 1.25rem;
       @media (min-width: 1024px) {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         margin-top: .5rem;
       }
       @media (min-width: 2560px) {
@@ -153,8 +154,8 @@ a:has(>h2) {
       outline: none;
       cursor: pointer;
       color: #fff;
-      font-size: 2.5rem;
-      font-weight: 700;
+      font-size: 2rem;
+      font-weight: 500;
       @media (min-width: 2560px) {
         font-size: 3rem;
       }
@@ -189,7 +190,7 @@ a:has(>h2) {
     .volume-area-wrapper {
       z-index: 25;
       bottom: unset;
-      top: 43rem;
+      top: 41%;
       @media (min-width: 2560px) {
         top: 35rem;
         left: 9rem;
