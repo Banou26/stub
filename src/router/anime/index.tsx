@@ -586,16 +586,18 @@ const Anime = () => {
     {
       query: GET_CURRENT_SEASON,
       variables: {
-        season: currentSeason.season,
-        seasonYear: currentSeason.year,
-        sort: [MediaSort.Popularity]
+        input: {
+          season: currentSeason.season,
+          seasonYear: currentSeason.year,
+          sorts: [MediaSort.Popularity]
+        }
       }
     }
   )
-  const { error, data: { Page } = {} } = currentSeasonResult
+  const { error, data: { mediaPage } = {} } = currentSeasonResult
 
-  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, Page?.media?.length ?? 0)), [Page?.media?.length])
-  const theaterMedia = useMemo(() => Page?.media.at(randomNum), [Page, randomNum])
+  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
+  const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
   const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: theaterMedia?.uri }, pause: !theaterMedia })
   const { error: error2, data: { Media } = {} } = getMediaResult
 
@@ -617,7 +619,7 @@ const Anime = () => {
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
   const titleCards = useMemo(() =>
-    Page?.media?.map(media =>
+    mediaPage?.nodes?.map(media =>
       <Title2
         key={media.uri}
         media={media}
@@ -640,11 +642,11 @@ const Anime = () => {
         }}
       />
     )
-  , [Page?.media, hoverCardTriggerTimeout])
+  , [mediaPage?.nodes, hoverCardTriggerTimeout])
 
   const episodeCards = useMemo(() =>
-    Page
-      ?.media
+    mediaPage
+      ?.nodes
       ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
       .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
       .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
@@ -657,7 +659,7 @@ const Anime = () => {
           episode={episode}
         />
       )
-    , [Page?.media])
+    , [mediaPage?.nodes])
 
   const onHoverCardMouseLeave = () => {
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)

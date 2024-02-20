@@ -173,8 +173,8 @@ export const SEARCH_MEDIA = `#graphql
   }
 
   query SearchMedia($search: String!) {
-    Page {
-      media(search: $search) {
+    mediaPage(search: $search) {
+      nodes {
         ...SearchMediaFragment
         handles {
           edges {

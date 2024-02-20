@@ -13,8 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "#graphql\n  query GetOrigins($ids: [String!]) {\n    Page {\n      origin(ids: $ids) {\n        id\n        name\n        official\n        metadataOnly\n      }\n    }\n  }\n": types.GetOriginsDocument,
-    "\n  query GetEpisodeTest($sort: [EpisodeSort]!) {\n    Page {\n      episode(sort: $sort) {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetEpisodeTestDocument,
+    "#graphql\n  query GetOrigins($input: OriginPageInput!) {\n    originPage(input: $input) {\n      id\n      name\n      official\n      metadataOnly\n    }\n  }\n": types.GetOriginsDocument,
+    "\n  query GetEpisodeTest($input: EpisodePageInput!) {\n    episodePage(input: $input) {\n      nodes {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetEpisodeTestDocument,
 };
 
 /**
@@ -34,11 +34,11 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "#graphql\n  query GetOrigins($ids: [String!]) {\n    Page {\n      origin(ids: $ids) {\n        id\n        name\n        official\n        metadataOnly\n      }\n    }\n  }\n"): (typeof documents)["#graphql\n  query GetOrigins($ids: [String!]) {\n    Page {\n      origin(ids: $ids) {\n        id\n        name\n        official\n        metadataOnly\n      }\n    }\n  }\n"];
+export function gql(source: "#graphql\n  query GetOrigins($input: OriginPageInput!) {\n    originPage(input: $input) {\n      id\n      name\n      official\n      metadataOnly\n    }\n  }\n"): (typeof documents)["#graphql\n  query GetOrigins($input: OriginPageInput!) {\n    originPage(input: $input) {\n      id\n      name\n      official\n      metadataOnly\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetEpisodeTest($sort: [EpisodeSort]!) {\n    Page {\n      episode(sort: $sort) {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetEpisodeTest($sort: [EpisodeSort]!) {\n    Page {\n      episode(sort: $sort) {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query GetEpisodeTest($input: EpisodePageInput!) {\n    episodePage(input: $input) {\n      nodes {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetEpisodeTest($input: EpisodePageInput!) {\n    episodePage(input: $input) {\n      nodes {\n        uri\n        handles {\n          edges @stream {\n            node {\n              uri\n              media {\n                uri\n              }\n            }\n          }\n        }\n        media {\n          uri\n          handles {\n            edges {\n              node {\n                uri\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

@@ -55,8 +55,6 @@ export type EpisodeConnection = HandleConnection & {
   __typename?: 'EpisodeConnection';
   edges: Array<EpisodeEdge>;
   nodes: Array<Episode>;
-  /** The pagination information */
-  pageInfo?: Maybe<PageInfo>;
 };
 
 /** Episode connection edge */
@@ -67,6 +65,58 @@ export type EpisodeEdge = HandleEdge & {
   node: Episode;
   /** The uri of the connection */
   uri?: Maybe<Scalars['Int']>;
+};
+
+export type EpisodeInput = {
+  /** Filter by the media id */
+  id?: InputMaybe<Scalars['String']>;
+  /** Filter by the media origin */
+  origin?: InputMaybe<Scalars['String']>;
+  /** Filter by the media uri */
+  uri?: InputMaybe<Scalars['String']>;
+};
+
+export type EpisodePage = {
+  __typename?: 'EpisodePage';
+  /** The current page */
+  currentPageCursor?: Maybe<Scalars['String']>;
+  /** The first page */
+  firstPageCursor?: Maybe<Scalars['String']>;
+  /** Total number of items on the current page */
+  inPage?: Maybe<Scalars['Int']>;
+  /** The last page cursor */
+  lastPageCursor?: Maybe<Scalars['String']>;
+  /** The current page */
+  nextPageCursor?: Maybe<Scalars['String']>;
+  /** The media page nodes */
+  nodes: Array<Episode>;
+  /** The current page */
+  previousPageCursor?: Maybe<Scalars['String']>;
+  /** The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  total?: Maybe<Scalars['Int']>;
+  /** Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalAfter?: Maybe<Scalars['Int']>;
+  /** Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalBefore?: Maybe<Scalars['Int']>;
+};
+
+export type EpisodePageInput = {
+  /** How many pages after the cursor to return */
+  after?: InputMaybe<Scalars['Int']>;
+  /** Cursor from where to start */
+  at?: InputMaybe<Scalars['String']>;
+  /** How many pages before the cursor to return */
+  before?: InputMaybe<Scalars['Int']>;
+  /** Filter by the media id */
+  ids?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by the media origin */
+  origins?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by search terms */
+  search?: InputMaybe<Scalars['String']>;
+  /** The order the results will be returned in */
+  sorts?: InputMaybe<Array<EpisodeSort>>;
+  /** Filter by the media uri */
+  uris?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export enum EpisodeSort {
@@ -150,8 +200,6 @@ export type Handle = {
 export type HandleConnection = {
   edges: Array<HandleEdge>;
   nodes: Array<Handle>;
-  /** The pagination information */
-  pageInfo?: Maybe<PageInfo>;
 };
 
 export type HandleEdge = {
@@ -273,8 +321,6 @@ export type MediaAiringScheduleConnection = {
   __typename?: 'MediaAiringScheduleConnection';
   edges?: Maybe<Array<Maybe<MediaAiringScheduleEdge>>>;
   nodes?: Maybe<Array<Maybe<MediaAiringSchedule>>>;
-  /** The pagination information */
-  pageInfo?: Maybe<PageInfo>;
 };
 
 /** MediaAiringSchedule connection edge */
@@ -289,8 +335,6 @@ export type MediaConnection = HandleConnection & {
   __typename?: 'MediaConnection';
   edges: Array<MediaEdge>;
   nodes: Array<Media>;
-  /** The pagination information */
-  pageInfo?: Maybe<PageInfo>;
 };
 
 /** The cover images of the media */
@@ -362,6 +406,68 @@ export enum MediaFormat {
   /** Anime which are under 15 minutes in length and broadcast on television */
   TvShort = 'TV_SHORT'
 }
+
+export type MediaInput = {
+  /** Filter by the media id */
+  id?: InputMaybe<Scalars['String']>;
+  /** Filter by the media origin */
+  origin?: InputMaybe<Scalars['String']>;
+  /** Filter by the media uri */
+  uri?: InputMaybe<Scalars['String']>;
+};
+
+export type MediaPage = {
+  __typename?: 'MediaPage';
+  /** The current page */
+  currentPageCursor?: Maybe<Scalars['String']>;
+  /** The first page */
+  firstPageCursor?: Maybe<Scalars['String']>;
+  /** Total number of items on the current page */
+  inPage?: Maybe<Scalars['Int']>;
+  /** The last page cursor */
+  lastPageCursor?: Maybe<Scalars['String']>;
+  /** The current page */
+  nextPageCursor?: Maybe<Scalars['String']>;
+  /** The media page nodes */
+  nodes: Array<Media>;
+  /** The current page */
+  previousPageCursor?: Maybe<Scalars['String']>;
+  /** The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  total?: Maybe<Scalars['Int']>;
+  /** Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalAfter?: Maybe<Scalars['Int']>;
+  /** Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalBefore?: Maybe<Scalars['Int']>;
+};
+
+export type MediaPageInput = {
+  /** How many pages after the cursor to return */
+  after?: InputMaybe<Scalars['Int']>;
+  /** Cursor from where to start */
+  at?: InputMaybe<Scalars['String']>;
+  /** How many pages before the cursor to return */
+  before?: InputMaybe<Scalars['Int']>;
+  /** Filter by the end date of the media */
+  endDate?: InputMaybe<Scalars['FuzzyDateInt']>;
+  /** Filter by the media id */
+  ids?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by the media origin */
+  origins?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by search terms */
+  search?: InputMaybe<Scalars['String']>;
+  /** Filter by media season */
+  season?: InputMaybe<MediaSeason>;
+  /** Filter by the year of the media season */
+  seasonYear?: InputMaybe<Scalars['Int']>;
+  /** The order the results will be returned in */
+  sorts?: InputMaybe<Array<MediaSort>>;
+  /** Filter by the start date of the media */
+  startDate?: InputMaybe<Scalars['FuzzyDateInt']>;
+  /** Filter by the media's current release status */
+  status?: InputMaybe<MediaStatus>;
+  /** Filter by the media uri */
+  uris?: InputMaybe<Array<Scalars['String']>>;
+};
 
 export enum MediaSeason {
   /** Months September to November */
@@ -580,91 +686,30 @@ export type Origin = {
   url?: Maybe<Scalars['String']>;
 };
 
-export type Page = {
-  __typename?: 'Page';
-  episode: Array<Episode>;
-  media: Array<Media>;
-  origin: Array<Origin>;
-  pageInfo: PageInfo;
-  playbackSource: Array<PlaybackSource>;
-};
-
-
-export type PageEpisodeArgs = {
-  id?: InputMaybe<Scalars['String']>;
-  origin?: InputMaybe<Scalars['String']>;
-  search?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Array<InputMaybe<EpisodeSort>>>;
-  uri?: InputMaybe<Scalars['String']>;
-};
-
-
-export type PageMediaArgs = {
-  endDate?: InputMaybe<Scalars['FuzzyDateInt']>;
-  endDate_greater?: InputMaybe<Scalars['FuzzyDateInt']>;
-  endDate_lesser?: InputMaybe<Scalars['FuzzyDateInt']>;
-  endDate_like?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  origin?: InputMaybe<Scalars['String']>;
-  search?: InputMaybe<Scalars['String']>;
-  season?: InputMaybe<MediaSeason>;
-  seasonYear?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Array<InputMaybe<MediaSort>>>;
-  startDate?: InputMaybe<Scalars['FuzzyDateInt']>;
-  startDate_greater?: InputMaybe<Scalars['FuzzyDateInt']>;
-  startDate_lesser?: InputMaybe<Scalars['FuzzyDateInt']>;
-  startDate_like?: InputMaybe<Scalars['String']>;
-  status?: InputMaybe<MediaStatus>;
-  status_in?: InputMaybe<Array<InputMaybe<MediaStatus>>>;
-  status_not?: InputMaybe<MediaStatus>;
-  status_not_in?: InputMaybe<Array<InputMaybe<MediaStatus>>>;
-  uri?: InputMaybe<Scalars['String']>;
-};
-
-
-export type PageOriginArgs = {
+export type OriginInput = {
+  /** Filter by origin categories */
   categories?: InputMaybe<Array<MediaType>>;
-  ids?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by the media id */
+  id?: InputMaybe<Scalars['String']>;
+  /** Filter by if the origin only returns metadata */
   metadataOnly?: InputMaybe<Scalars['Boolean']>;
-  names?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by the media origin */
+  name?: InputMaybe<Scalars['String']>;
+  /** Filter by if the origin is official */
   official?: InputMaybe<Scalars['Boolean']>;
 };
 
-
-export type PagePlaybackSourceArgs = {
-  id?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
+export type OriginPageInput = {
+  /** Filter by origin categories */
+  categories?: InputMaybe<Array<MediaType>>;
+  /** Filter by the media id */
+  ids?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by if the origin only returns metadata */
+  metadataOnly?: InputMaybe<Scalars['Boolean']>;
+  /** Filter by the media origin */
   names?: InputMaybe<Array<Scalars['String']>>;
-  number?: InputMaybe<Scalars['Float']>;
-  origin?: InputMaybe<Scalars['String']>;
-  quality?: InputMaybe<Scalars['String']>;
-  resolution?: InputMaybe<Scalars['String']>;
-  search?: InputMaybe<Scalars['String']>;
-  season?: InputMaybe<Scalars['Int']>;
-  trusted?: InputMaybe<Scalars['Boolean']>;
-  uri?: InputMaybe<Scalars['String']>;
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  /** The current page */
-  currentPageCursor?: Maybe<Scalars['String']>;
-  /** The first page */
-  firstPageCursor?: Maybe<Scalars['String']>;
-  /** Total number of items on the current page */
-  inPage?: Maybe<Scalars['Int']>;
-  /** The last page cursor */
-  lastPageCursor?: Maybe<Scalars['String']>;
-  /** The current page */
-  nextPageCursor?: Maybe<Scalars['String']>;
-  /** The current page */
-  previousPageCursor?: Maybe<Scalars['String']>;
-  /** The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
-  total?: Maybe<Scalars['Int']>;
-  /** Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
-  totalAfter?: Maybe<Scalars['Int']>;
-  /** Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
-  totalBefore?: Maybe<Scalars['Int']>;
+  /** Filter by if the origin is official */
+  official?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type PlaybackSource = Handle & {
@@ -698,8 +743,6 @@ export type PlaybackSourceConnection = HandleConnection & {
   __typename?: 'PlaybackSourceConnection';
   edges: Array<PlaybackSourceEdge>;
   nodes: Array<PlaybackSource>;
-  /** The pagination information */
-  pageInfo?: Maybe<PageInfo>;
 };
 
 /** PlaybackSource connection edge */
@@ -717,6 +760,56 @@ export enum PlaybackSourceFileStructure {
   Single = 'SINGLE'
 }
 
+export type PlaybackSourceInput = {
+  /** Filter by the media id */
+  id?: InputMaybe<Scalars['String']>;
+  /** Filter by the media origin */
+  origin?: InputMaybe<Scalars['String']>;
+  /** Filter by the media uri */
+  uri?: InputMaybe<Scalars['String']>;
+};
+
+export type PlaybackSourcePage = {
+  __typename?: 'PlaybackSourcePage';
+  /** The current page */
+  currentPageCursor?: Maybe<Scalars['String']>;
+  /** The first page */
+  firstPageCursor?: Maybe<Scalars['String']>;
+  /** Total number of items on the current page */
+  inPage?: Maybe<Scalars['Int']>;
+  /** The last page cursor */
+  lastPageCursor?: Maybe<Scalars['String']>;
+  /** The current page */
+  nextPageCursor?: Maybe<Scalars['String']>;
+  /** The media page nodes */
+  nodes: Array<PlaybackSource>;
+  /** The current page */
+  previousPageCursor?: Maybe<Scalars['String']>;
+  /** The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  total?: Maybe<Scalars['Int']>;
+  /** Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalAfter?: Maybe<Scalars['Int']>;
+  /** Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalBefore?: Maybe<Scalars['Int']>;
+};
+
+export type PlaybackSourcePageInput = {
+  /** How many pages after the cursor to return */
+  after?: InputMaybe<Scalars['Int']>;
+  /** Cursor from where to start */
+  at?: InputMaybe<Scalars['String']>;
+  /** How many pages before the cursor to return */
+  before?: InputMaybe<Scalars['Int']>;
+  /** Filter by the media id */
+  ids?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by the media origin */
+  origins?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter by search terms */
+  search?: InputMaybe<Scalars['String']>;
+  /** Filter by the media uri */
+  uris?: InputMaybe<Array<Scalars['String']>>;
+};
+
 export enum PlaybackSourceType {
   Custom = 'CUSTOM',
   Iframe = 'IFRAME',
@@ -726,75 +819,55 @@ export enum PlaybackSourceType {
 
 export type Query = {
   __typename?: 'Query';
-  Episode?: Maybe<Episode>;
-  Media?: Maybe<Media>;
-  Origin?: Maybe<Origin>;
-  Page: Page;
-  PlaybackSource?: Maybe<PlaybackSource>;
   dummy?: Maybe<Scalars['String']>;
+  episode?: Maybe<Episode>;
+  episodePage?: Maybe<EpisodePage>;
+  media?: Maybe<Media>;
+  mediaPage?: Maybe<MediaPage>;
+  origin?: Maybe<Origin>;
+  originPage: Array<Origin>;
+  playbackSource?: Maybe<PlaybackSource>;
+  playbackSourcePage?: Maybe<PlaybackSourcePage>;
 };
 
 
 export type QueryEpisodeArgs = {
-  id?: InputMaybe<Scalars['String']>;
-  origin?: InputMaybe<Scalars['String']>;
-  search?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Array<InputMaybe<EpisodeSort>>>;
-  uri?: InputMaybe<Scalars['String']>;
+  input?: InputMaybe<EpisodeInput>;
+};
+
+
+export type QueryEpisodePageArgs = {
+  input?: InputMaybe<EpisodePageInput>;
 };
 
 
 export type QueryMediaArgs = {
-  endDate?: InputMaybe<Scalars['FuzzyDateInt']>;
-  endDate_greater?: InputMaybe<Scalars['FuzzyDateInt']>;
-  endDate_lesser?: InputMaybe<Scalars['FuzzyDateInt']>;
-  endDate_like?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  origin?: InputMaybe<Scalars['String']>;
-  search?: InputMaybe<Scalars['String']>;
-  season?: InputMaybe<MediaSeason>;
-  seasonYear?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Array<InputMaybe<MediaSort>>>;
-  startDate?: InputMaybe<Scalars['FuzzyDateInt']>;
-  startDate_greater?: InputMaybe<Scalars['FuzzyDateInt']>;
-  startDate_lesser?: InputMaybe<Scalars['FuzzyDateInt']>;
-  startDate_like?: InputMaybe<Scalars['String']>;
-  status?: InputMaybe<MediaStatus>;
-  status_in?: InputMaybe<Array<InputMaybe<MediaStatus>>>;
-  status_not?: InputMaybe<MediaStatus>;
-  status_not_in?: InputMaybe<Array<InputMaybe<MediaStatus>>>;
-  uri?: InputMaybe<Scalars['String']>;
+  input?: InputMaybe<MediaInput>;
+};
+
+
+export type QueryMediaPageArgs = {
+  input?: InputMaybe<MediaPageInput>;
 };
 
 
 export type QueryOriginArgs = {
-  categories?: InputMaybe<Array<MediaType>>;
-  id?: InputMaybe<Scalars['String']>;
-  metadataOnly?: InputMaybe<Scalars['Boolean']>;
-  name?: InputMaybe<Scalars['String']>;
-  official?: InputMaybe<Scalars['Boolean']>;
+  input: OriginInput;
 };
 
 
-export type QueryPageArgs = {
-  after?: InputMaybe<Scalars['Int']>;
-  at?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['Int']>;
+export type QueryOriginPageArgs = {
+  input: OriginPageInput;
 };
 
 
 export type QueryPlaybackSourceArgs = {
-  id?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  names?: InputMaybe<Array<Scalars['String']>>;
-  number?: InputMaybe<Scalars['Float']>;
-  origin?: InputMaybe<Scalars['String']>;
-  quality?: InputMaybe<Scalars['String']>;
-  resolution?: InputMaybe<Scalars['String']>;
-  search?: InputMaybe<Scalars['String']>;
-  season?: InputMaybe<Scalars['Int']>;
-  trusted?: InputMaybe<Scalars['Boolean']>;
-  uri?: InputMaybe<Scalars['String']>;
+  input?: InputMaybe<PlaybackSourceInput>;
+};
+
+
+export type QueryPlaybackSourcePageArgs = {
+  input?: InputMaybe<PlaybackSourcePageInput>;
 };
 
 export type Resource = Handle & {
@@ -812,8 +885,6 @@ export type ResourceConnection = HandleConnection & {
   __typename?: 'ResourceConnection';
   edges: Array<ResourceEdge>;
   nodes: Array<Resource>;
-  /** The pagination information */
-  pageInfo?: Maybe<PageInfo>;
 };
 
 export type ResourceEdge = HandleEdge & {
@@ -834,19 +905,19 @@ export type Team = Handle & {
 };
 
 export type GetOriginsQueryVariables = Exact<{
-  ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  input: OriginPageInput;
 }>;
 
 
-export type GetOriginsQuery = { __typename?: 'Query', Page: { __typename?: 'Page', origin: Array<{ __typename?: 'Origin', id: string, name: string, official?: boolean | null, metadataOnly?: boolean | null }> } };
+export type GetOriginsQuery = { __typename?: 'Query', originPage: Array<{ __typename?: 'Origin', id: string, name: string, official?: boolean | null, metadataOnly?: boolean | null }> };
 
 export type GetEpisodeTestQueryVariables = Exact<{
-  sort: Array<InputMaybe<EpisodeSort>> | InputMaybe<EpisodeSort>;
+  input: EpisodePageInput;
 }>;
 
 
-export type GetEpisodeTestQuery = { __typename?: 'Query', Page: { __typename?: 'Page', episode: Array<{ __typename?: 'Episode', uri: any, handles: { __typename?: 'EpisodeConnection', edges: Array<{ __typename?: 'EpisodeEdge', node: { __typename?: 'Episode', uri: any, media?: { __typename?: 'Media', uri: any } | null } }> }, media?: { __typename?: 'Media', uri: any, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', uri: any } }> } } | null }> } };
+export type GetEpisodeTestQuery = { __typename?: 'Query', episodePage?: { __typename?: 'EpisodePage', nodes: Array<{ __typename?: 'Episode', uri: any, handles: { __typename?: 'EpisodeConnection', edges: Array<{ __typename?: 'EpisodeEdge', node: { __typename?: 'Episode', uri: any, media?: { __typename?: 'Media', uri: any } | null } }> }, media?: { __typename?: 'Media', uri: any, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', uri: any } }> } } | null }> } | null };
 
 
-export const GetOriginsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrigins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Page"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"official"}},{"kind":"Field","name":{"kind":"Name","value":"metadataOnly"}}]}}]}}]}}]} as unknown as DocumentNode<GetOriginsQuery, GetOriginsQueryVariables>;
-export const GetEpisodeTestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEpisodeTest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EpisodeSort"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Page"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"stream"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetEpisodeTestQuery, GetEpisodeTestQueryVariables>;
+export const GetOriginsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrigins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"OriginPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"official"}},{"kind":"Field","name":{"kind":"Name","value":"metadataOnly"}}]}}]}}]} as unknown as DocumentNode<GetOriginsQuery, GetOriginsQueryVariables>;
+export const GetEpisodeTestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEpisodeTest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EpisodePageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodePage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"stream"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetEpisodeTestQuery, GetEpisodeTestQueryVariables>;

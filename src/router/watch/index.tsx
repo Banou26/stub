@@ -108,8 +108,8 @@ export const GET_PLAYBACK_SOURCES = `#graphql
   }
 
   query GetPlaybackSources($uri: String, $origin: String, $id: String, $search: String, $name: String, $resolution: String, $season: Int, $number: Float) {
-    Page {
-      playbackSource(uri: $uri, origin: $origin, id: $id, search: $search, name: $name, resolution: $resolution, season: $season, number: $number) {
+    playbackSourcePage(uri: $uri, origin: $origin, id: $id, search: $search, name: $name, resolution: $resolution, season: $season, number: $number) {
+      nodes {
         handles {
           edges @stream {
             node {
@@ -207,7 +207,7 @@ export const GET_WATCH_MEDIA = `#graphql
   }
 
   query GetWatchMedia($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
+    media(uri: $uri, origin: $origin, id: $id) {
       handles {
         edges @stream {
           node {
@@ -246,7 +246,7 @@ const Watch = () => {
     pause: !mediaUri
   })
 
-  const [{ error, data: { Page } = { Page: undefined } }] = useQuery(
+  const [{ error, data: { playbackSourcePage } = { playbackSourcePage: undefined } }] = useQuery(
     {
       query: GET_PLAYBACK_SOURCES,
       variables: { uri, number: Number(episodeId) },
@@ -255,8 +255,8 @@ const Watch = () => {
   )
 
   const currentSource = useMemo(
-    () => Page?.playbackSource?.find((source) => source.uri === sourceUri),
-    [Page?.playbackSource, sourceUri]
+    () => playbackSourcePage?.nodes?.find((source) => source.uri === sourceUri),
+    [playbackSourcePage?.nodes, sourceUri]
   )
 
   const currentSourceObject = useMemo(
@@ -273,8 +273,8 @@ const Watch = () => {
 
   const torrentSourcesInfoHashes = useMemo(
     () =>
-      Page
-        ?.playbackSource
+      playbackSourcePage
+        ?.nodes
         ?.map((source) => {
           try {
             const parsedTorrent = parseTorrent(JSON.parse(source?.data).magnetUri)
@@ -285,7 +285,7 @@ const Watch = () => {
           }
         })
         .filter(Boolean),
-    [Page?.playbackSource]
+    [playbackSourcePage?.nodes]
   )
 
   useEffect(() => {
@@ -333,7 +333,7 @@ const Watch = () => {
           })
           ?.filter(([uri, data]) => uri && data)
       ),
-    [Page?.playbackSource, trackerData]
+    [playbackSourcePage?.nodes, trackerData]
   )
 
   const currentSourceTrackerData = useMemo(
@@ -347,13 +347,13 @@ const Watch = () => {
   
   const sortedSources = useMemo(
     () =>
-      trackerDataPerSource.size && Page?.playbackSource
+      trackerDataPerSource.size && playbackSourcePage?.nodes
         ? (
-          [...Page?.playbackSource ?? []]
+          [...playbackSourcePage?.nodes ?? []]
             ?.sort((a, b) => (trackerDataPerSource.get(b.uri)?.complete ?? 0) - (trackerDataPerSource.get(a.uri)?.complete ?? 0))
         )
         : [],
-    [Page?.playbackSource, trackerDataPerSource]
+    [playbackSourcePage?.nodes, trackerDataPerSource]
   )
 
   useEffect(() => {

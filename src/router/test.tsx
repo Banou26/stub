@@ -54,9 +54,9 @@ export const GET_LATEST_EPISODES = `#graphql
     thumbnail
   }
 
-  query GetLatestEpisodes($sort: [EpisodeSort]!) {
-    Page {
-      episode(sort: $sort) {
+  query GetLatestEpisodes($input: EpisodePageInput!) {
+    episodePage(input: $input) {
+      nodes {
         handles {
           edges @stream {
             node {
@@ -78,9 +78,9 @@ export const GET_LATEST_EPISODES = `#graphql
 `
 
 const query = gql`
-  query GetEpisodeTest($sort: [EpisodeSort]!) {
-    Page {
-      episode(sort: $sort) {
+  query GetEpisodeTest($input: EpisodePageInput!) {
+    episodePage(input: $input) {
+      nodes {
         uri
         handles {
           edges @stream {
@@ -128,9 +128,11 @@ export default () => {
     {
       query: GET_CURRENT_SEASON,
       variables: {
-        season: currentSeason.season,
-        seasonYear: currentSeason.year,
-        sort: [GraphQLTypes.MediaSort.Popularity]
+        input: {
+          season: currentSeason.season,
+          seasonYear: currentSeason.year,
+          sorts: [GraphQLTypes.MediaSort.Popularity]
+        }
       }
     }
   )
