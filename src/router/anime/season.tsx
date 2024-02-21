@@ -116,9 +116,9 @@ export const GET_CURRENT_SEASON = `#graphql
     }
   }
 
-  query GetCurrentSeason($season: MediaSeason!, $seasonYear: Int!, $sort: [MediaSort]!) {
-    Page {
-      media(season: $season, seasonYear: $seasonYear, sort: $sort) {
+  query GetCurrentSeason($input: MediaPageInput!) {
+    mediaPage(input: $input) {
+      nodes {
         handles {
           edges {
             node {
@@ -140,13 +140,15 @@ export default () => {
     {
       query: GET_CURRENT_SEASON,
       variables: {
-        season: currentSeason.season,
-        seasonYear: currentSeason.year,
-        sort: [MediaSort.Popularity]
+        input: {
+          season: currentSeason.season,
+          seasonYear: currentSeason.year,
+          sorts: [MediaSort.Popularity]
+        }
       }
     }
   )
-  const { error, data: { Page } = {} } = currentSeasonResult
+  const { error, data: { mediaPage } = {} } = currentSeasonResult
 
   const anchorCurrentSeason = `${currentSeason.season.toLowerCase()}-${currentSeason.year}`
 
@@ -158,7 +160,7 @@ export default () => {
         </a>
         <div className="items">
           {
-            Page?.media?.map(media =>
+            mediaPage?.nodes?.map(media =>
               <MediaCard key={media.uri} media={media}/>
             )
           }

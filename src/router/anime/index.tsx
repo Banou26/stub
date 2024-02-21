@@ -587,25 +587,26 @@ const Anime = () => {
     {
       query: GET_CURRENT_SEASON,
       variables: {
-        season: currentSeason.season,
-        seasonYear: currentSeason.year,
-        sort: [MediaSort.Popularity]
+        input: {
+          season: currentSeason.season,
+          seasonYear: currentSeason.year,
+          sorts: [MediaSort.Popularity]
+        }
       }
     }
   )
-  const { error, data: { Page } = {} } = currentSeasonResult
-
-  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, Page?.media?.length ?? 0)), [Page?.media?.length])
-  const theaterMedia = useMemo(() => Page?.media.at(randomNum), [Page, randomNum])
-  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { uri: theaterMedia?.uri }, pause: !theaterMedia })
-  const { error: error2, data: { Media } = {} } = getMediaResult
+  const { error, data: { mediaPage } = {} } = currentSeasonResult
+  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
+  const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
+  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
+  const { error: error2, data: { media } = {} } = getMediaResult
 
   if (error) console.error(error)
   if (error2) console.error(error2)
 
   const descriptionText = useMemo(
-    () => parseTextDescription(Media?.description),
-    [Media?.description]
+    () => parseTextDescription(media?.description),
+    [media?.description]
   )
 
   const ellipsedDescriptionText = useMemo(
@@ -618,7 +619,7 @@ const Anime = () => {
   const [hoverCardTriggerTimeout, setHoverCardTriggerTimeout] = useState<number | undefined>(undefined)
 
   const titleCards = useMemo(() =>
-    Page?.media?.map(media =>
+    mediaPage?.nodes?.map(media =>
       <Title2
         key={media.uri}
         media={media}
@@ -641,11 +642,11 @@ const Anime = () => {
         }}
       />
     )
-  , [Page?.media, hoverCardTriggerTimeout])
+  , [mediaPage?.nodes, hoverCardTriggerTimeout])
 
   const episodeCards = useMemo(() =>
-    Page
-      ?.media
+    mediaPage
+      ?.nodes
       ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
       .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
       .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
@@ -658,7 +659,7 @@ const Anime = () => {
           episode={episode}
         />
       )
-    , [Page?.media])
+    , [mediaPage?.nodes])
 
   const onHoverCardMouseLeave = () => {
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
@@ -725,24 +726,24 @@ const Anime = () => {
       <div css={style}>
         <div className="header-serie">
           {
-            Media && (
+            media && (
               <div className="player-wrapper">
-                <MinimalPlayer ref={setHeaderTrailerRef} media={Media} paused={headerTrailerPaused} className="player"/>
+                <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
                 <div className="shadow"/>
                 <div className="header-serie-content">
                   <div className="header-serie-title">
                     <h1>
                       {
-                        Media.title?.english
-                        ?? Media.title?.romanized
-                        ?? Media.title?.native
+                        media.title?.english
+                        ?? media.title?.romanized
+                        ?? media.title?.native
                       }
                     </h1>
                   </div>
                   <div className="header-serie-description">
                     {ellipsedDescriptionText}
                   </div>
-                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: Media.uri }).toString()}`}>
+                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
                     <button className="watch">
                       <Play/>
                       Watch

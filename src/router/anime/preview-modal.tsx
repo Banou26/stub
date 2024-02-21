@@ -299,8 +299,8 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
     }
   }
 
-  query GetPreviewModalMedia($uri: String!, $origin: String, $id: String) {
-    Media(uri: $uri, origin: $origin, id: $id) {
+  query GetPreviewModalMedia($input: MediaInput!) {
+    media(input: $input) {
       handles {
         edges @stream {
           node {
@@ -325,14 +325,12 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
 
 
 export const GET_ORIGINS = gql(`#graphql
-  query GetOrigins($ids: [String!]) {
-    Page {
-      origin(ids: $ids) {
-        id
-        name
-        official
-        metadataOnly
-      }
+  query GetOrigins($input: OriginPageInput!) {
+    originPage(input: $input) {
+      id
+      name
+      official
+      metadataOnly
     }
   }
 `)
@@ -439,7 +437,7 @@ export default () => {
   // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { uri: mediaUri! }, pause: !mediaUri })
+  const [{ fetching, hasNext, error, data: { media } = {} }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { input: { uri: mediaUri! } }, pause: !mediaUri })
   // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
