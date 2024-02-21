@@ -110,7 +110,7 @@ export type EpisodePageInput = {
   /** Filter by the media id */
   id?: InputMaybe<Scalars['String']>;
   /** Filter by the media origin */
-  origins?: InputMaybe<Scalars['String']>;
+  origin?: InputMaybe<Scalars['String']>;
   /** Filter by search terms */
   search?: InputMaybe<Scalars['String']>;
   /** The order the results will be returned in */
@@ -804,7 +804,7 @@ export type PlaybackSourcePageInput = {
   id?: InputMaybe<Scalars['String']>;
   number?: InputMaybe<Scalars['Int']>;
   /** Filter by the media origin */
-  origins?: InputMaybe<Scalars['String']>;
+  origin?: InputMaybe<Scalars['String']>;
   /** Filter by search terms */
   search?: InputMaybe<Scalars['String']>;
   /** Filter by the media uri */
