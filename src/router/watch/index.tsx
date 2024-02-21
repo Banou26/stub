@@ -107,8 +107,8 @@ export const GET_PLAYBACK_SOURCES = `#graphql
     data
   }
 
-  query GetPlaybackSources($uri: String, $origin: String, $id: String, $search: String, $name: String, $resolution: String, $season: Int, $number: Float) {
-    playbackSourcePage(uri: $uri, origin: $origin, id: $id, search: $search, name: $name, resolution: $resolution, season: $season, number: $number) {
+  query GetPlaybackSources($input: PlaybackSourcePageInput!) {
+    playbackSourcePage(input: $input) {
       nodes {
         handles {
           edges @stream {
@@ -206,8 +206,8 @@ export const GET_WATCH_MEDIA = `#graphql
     }
   }
 
-  query GetWatchMedia($uri: String!, $origin: String, $id: String) {
-    media(uri: $uri, origin: $origin, id: $id) {
+  query GetWatchMedia($input: MediaPageInput!) {
+    media(input: $input) {
       handles {
         edges @stream {
           node {
@@ -242,14 +242,23 @@ const Watch = () => {
   
   const [{ data: { media } = { media: undefined } }] = useQuery({
     query: GET_WATCH_MEDIA,
-    variables: { input: { uri: mediaUri! } },
+    variables: {
+      input: {
+        uri: mediaUri!
+      }
+    },
     pause: !mediaUri
   })
 
   const [{ error, data: { playbackSourcePage } = { playbackSourcePage: undefined } }] = useQuery(
     {
       query: GET_PLAYBACK_SOURCES,
-      variables: { uri, number: Number(episodeId) },
+      variables: {
+        input: {
+          uri,
+          number: Number(episodeId)
+        }
+      },
       pause: !uri
     }
   )

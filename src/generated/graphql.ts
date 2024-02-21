@@ -108,15 +108,15 @@ export type EpisodePageInput = {
   /** How many pages before the cursor to return */
   before?: InputMaybe<Scalars['Int']>;
   /** Filter by the media id */
-  ids?: InputMaybe<Array<Scalars['String']>>;
+  id?: InputMaybe<Scalars['String']>;
   /** Filter by the media origin */
-  origins?: InputMaybe<Array<Scalars['String']>>;
+  origins?: InputMaybe<Scalars['String']>;
   /** Filter by search terms */
   search?: InputMaybe<Scalars['String']>;
   /** The order the results will be returned in */
   sorts?: InputMaybe<Array<EpisodeSort>>;
   /** Filter by the media uri */
-  uris?: InputMaybe<Array<Scalars['String']>>;
+  uri?: InputMaybe<Scalars['String']>;
 };
 
 export enum EpisodeSort {
@@ -450,9 +450,9 @@ export type MediaPageInput = {
   /** Filter by the end date of the media */
   endDate?: InputMaybe<Scalars['FuzzyDateInt']>;
   /** Filter by the media id */
-  ids?: InputMaybe<Array<Scalars['String']>>;
+  id?: InputMaybe<Scalars['String']>;
   /** Filter by the media origin */
-  origins?: InputMaybe<Array<Scalars['String']>>;
+  origin?: InputMaybe<Scalars['String']>;
   /** Filter by search terms */
   search?: InputMaybe<Scalars['String']>;
   /** Filter by media season */
@@ -466,7 +466,7 @@ export type MediaPageInput = {
   /** Filter by the media's current release status */
   status?: InputMaybe<MediaStatus>;
   /** Filter by the media uri */
-  uris?: InputMaybe<Array<Scalars['String']>>;
+  uri?: InputMaybe<Scalars['String']>;
 };
 
 export enum MediaSeason {
@@ -801,13 +801,14 @@ export type PlaybackSourcePageInput = {
   /** How many pages before the cursor to return */
   before?: InputMaybe<Scalars['Int']>;
   /** Filter by the media id */
-  ids?: InputMaybe<Array<Scalars['String']>>;
+  id?: InputMaybe<Scalars['String']>;
+  number?: InputMaybe<Scalars['Int']>;
   /** Filter by the media origin */
-  origins?: InputMaybe<Array<Scalars['String']>>;
+  origins?: InputMaybe<Scalars['String']>;
   /** Filter by search terms */
   search?: InputMaybe<Scalars['String']>;
   /** Filter by the media uri */
-  uris?: InputMaybe<Array<Scalars['String']>>;
+  uri?: InputMaybe<Scalars['String']>;
 };
 
 export enum PlaybackSourceType {
