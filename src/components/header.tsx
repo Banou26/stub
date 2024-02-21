@@ -195,7 +195,7 @@ const Header = ({ ...rest }) => {
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
-  const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { search: searchValue }, pause: !searchValue })
+  const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { variable: { search: searchValue } }, pause: !searchValue })
   // console.log('searchResult', searchResult)
   // const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: fetch }), [searchValue])
   const completed = true

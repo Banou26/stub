@@ -242,7 +242,7 @@ const Watch = () => {
   
   const [{ data: { Media: media } = { Media: undefined } }] = useQuery({
     query: GET_WATCH_MEDIA,
-    variables: { uri: mediaUri! },
+    variables: { input: { uri: mediaUri! } },
     pause: !mediaUri
   })
 

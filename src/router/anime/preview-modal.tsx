@@ -437,7 +437,7 @@ export default () => {
   // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { uri: mediaUri! }, pause: !mediaUri })
+  const [{ fetching, hasNext, error, data: { Media: media } = { Media: undefined } }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { input: { uri: mediaUri! } }, pause: !mediaUri })
   // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)

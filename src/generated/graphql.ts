@@ -847,7 +847,7 @@ export type QueryMediaArgs = {
 
 
 export type QueryMediaPageArgs = {
-  input?: InputMaybe<MediaPageInput>;
+  input: MediaPageInput;
 };
 
 
