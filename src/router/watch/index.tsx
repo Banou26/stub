@@ -240,7 +240,7 @@ const Watch = () => {
   const uri = mergeScannarrUris([mediaUri, episodeUri])
   const episodeId = fromUriEpisodeId(episodeUri).episodeId
   
-  const [{ data: { Media: media } = { Media: undefined } }] = useQuery({
+  const [{ data: { media } = { media: undefined } }] = useQuery({
     query: GET_WATCH_MEDIA,
     variables: { input: { uri: mediaUri! } },
     pause: !mediaUri
@@ -313,9 +313,8 @@ const Watch = () => {
   const trackerDataPerSource = useMemo(
     () =>
       new Map(
-        // @ts-expect-error
-        Page
-          ?.playbackSource
+        playbackSourcePage
+          ?.nodes
           ?.map((source) => {
             const foundTrackerData =
               [...trackerData.entries()]

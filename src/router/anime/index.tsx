@@ -598,15 +598,14 @@ const Anime = () => {
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
   const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
-  const { error: error2, data: { Media } = {} } = getMediaResult
-  console.log('getMediaResult', getMediaResult)
+  const { error: error2, data: { media } = {} } = getMediaResult
 
   if (error) console.error(error)
   if (error2) console.error(error2)
 
   const descriptionText = useMemo(
-    () => parseTextDescription(Media?.description),
-    [Media?.description]
+    () => parseTextDescription(media?.description),
+    [media?.description]
   )
 
   const ellipsedDescriptionText = useMemo(
@@ -726,24 +725,24 @@ const Anime = () => {
       <div css={style}>
         <div className="header-serie">
           {
-            Media && (
+            media && (
               <div className="player-wrapper">
-                <MinimalPlayer ref={setHeaderTrailerRef} media={Media} paused={headerTrailerPaused} className="player"/>
+                <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
                 <div className="shadow"/>
                 <div className="header-serie-content">
                   <div className="header-serie-title">
                     <h1>
                       {
-                        Media.title?.english
-                        ?? Media.title?.romanized
-                        ?? Media.title?.native
+                        media.title?.english
+                        ?? media.title?.romanized
+                        ?? media.title?.native
                       }
                     </h1>
                   </div>
                   <div className="header-serie-description">
                     {ellipsedDescriptionText}
                   </div>
-                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: Media.uri }).toString()}`}>
+                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
                     <button className="watch">
                       <Play/>
                       Watch

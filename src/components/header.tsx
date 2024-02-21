@@ -172,8 +172,8 @@ export const SEARCH_MEDIA = `#graphql
     }
   }
 
-  query SearchMedia($search: String!) {
-    mediaPage(search: $search) {
+  query SearchMedia($input: MediaPageInput!) {
+    mediaPage(input: $input) {
       nodes {
         ...SearchMediaFragment
         handles {
@@ -195,8 +195,8 @@ const Header = ({ ...rest }) => {
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
-  const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { variable: { search: searchValue } }, pause: !searchValue })
-  // console.log('searchResult', searchResult)
+  const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { input: { search: searchValue } }, pause: !searchValue })
+
   // const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: fetch }), [searchValue])
   const completed = true
   const data = []
@@ -254,10 +254,10 @@ const Header = ({ ...rest }) => {
           />
         </form>
         {
-          showSearchResults && searchResult?.data?.Page?.media ? (
+          showSearchResults && searchResult?.data?.mediaPage ? (
             <div className="searchResults" onBlur={hideSearchResults}>
               {
-                searchResult?.data?.Page?.media.map(media =>
+                searchResult?.data?.mediaPage?.nodes.map(media =>
                   <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
                     <img src={media.coverImage.at(0)?.default} alt="" referrer-policy="same-origin"/>
                     <span style={{ color: 'white' }}>{media.title.romanized}</span>
