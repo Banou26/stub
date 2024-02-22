@@ -8,6 +8,8 @@ import { useQuery } from 'urql'
 import { getRoutePath, Route } from '../router/path'
 import DiscordIconUrl from '../images/discord-mark-blue.svg'
 import IconUrl from '../images/icon.webp'
+import MALIconUrl from '../images/mal-icon.webp'
+import ALIconUrl from '../images/al-icon.webp'
 import Input from './inputs'
 
 const style = css`
@@ -131,6 +133,29 @@ const style = css`
     display: grid;
     justify-items: end;
     align-items: center;
+
+    .authenticate {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      @media (min-width: 2560px) {
+        font-size: 2rem;
+      }
+
+      img {
+        height: 2rem;
+        width: 2rem;
+        @media (min-width: 2560px) {
+          height: 3rem;
+          width: 3rem;
+        }
+      }
+    }
   }
 `
 
@@ -278,6 +303,11 @@ const Header = ({ ...rest }) => {
         }
       </div>
       <div className="right">
+        <Link to={getRoutePath(Route.AUTH)} className='authenticate'>
+          <div>Login with your favorite trackers!</div>
+          <img src={MALIconUrl}/>
+          <img src={ALIconUrl}/>
+        </Link>
       </div>
     </header>
   )

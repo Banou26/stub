@@ -13,7 +13,7 @@ export enum Route {
 
 const Routes = {
   [Route.HOME]: () => '/',
-  [Route.AUTH]: ({ name }: { name: string }) => `/auth/${name}`,
+  [Route.AUTH]: () => `/auth`,
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
   [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
@@ -26,7 +26,7 @@ const Routes = {
 
 const RouterRoutes = {
   [Route.HOME]: '/',
-  [Route.AUTH]: '/auth/:name',
+  [Route.AUTH]: '/auth',
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',

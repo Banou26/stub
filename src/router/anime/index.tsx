@@ -21,6 +21,7 @@ import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { AuthResponse } from '../auth/mal'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -405,6 +406,87 @@ div.section.first-section {
 }
 `
 
+// export const GET_WATCHING_LIST = `#graphql
+//   fragment GetWatchingListFragment on Media {
+//     origin
+//     id
+//     uri
+//     url
+//     title {
+//       romanized
+//       english
+//       native
+//     }
+//     bannerImage
+//     coverImage {
+//       color
+//       default
+//       extraLarge
+//       large
+//       medium
+//       small
+//     }
+//     description
+//     shortDescription
+//     season
+//     seasonYear
+//     popularity
+//     averageScore
+//     episodeCount
+//     episodes {
+//       edges {
+//         node {
+//           origin
+//           id
+//           uri
+//           url
+//           number
+//           airingAt
+//           title {
+//             romanized
+//             english
+//             native
+//           }
+//           description
+//           thumbnail
+//         }
+//       }
+//     }
+//     trailers {
+//       origin
+//       id
+//       uri
+//       url
+//       thumbnail
+//     }
+//     startDate {
+//       year
+//       month
+//       day
+//     }
+//     endDate {
+//       year
+//       month
+//       day
+//     }
+//   }
+
+//   query GetWatchingList($input: MediaPageInput!) {
+//     mediaPage(input: $input) {
+//       nodes {
+//         handles {
+//           edges {
+//             node {
+//               ...GetMediaTestFragment
+//             }
+//           }
+//         }
+//         ...GetMediaTestFragment
+//       }
+//     }
+//   }
+// `
+
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
   const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
@@ -595,6 +677,32 @@ const Anime = () => {
       }
     }
   )
+
+  const [malAuth, setMalAuth] = useState<AuthResponse | null>(localStorage.getItem('auth-mal') ? JSON.parse(localStorage.getItem('auth-mal')!) : null)
+  
+  useEffect(() => {
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'auth-mal') {
+        setMalAuth(JSON.parse(e.newValue))
+      }
+    })
+  }, [])
+
+  // const [currentWatchingList] = useQuery(
+  //   {
+  //     query: GET_WATCHING_LIST,
+  //     variables: {
+  //       input: {
+  //         tokens: [{
+  //           origin: 'mal',
+  //           type: 'Bearer',
+  //           token: malAuth?.access_token
+  //         }]
+  //       }
+  //     }
+  //   }
+  // )
+  // console.log('currentWatchingList', currentWatchingList)
   const { error, data: { mediaPage } = {} } = currentSeasonResult
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])

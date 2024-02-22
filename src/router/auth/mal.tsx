@@ -14,7 +14,7 @@ const generateChallenge = () => {
   return result
 }
 
-type AuthResponse = {
+export type AuthResponse = {
   access_token: string
   expires_in: number
   refresh_token: string
