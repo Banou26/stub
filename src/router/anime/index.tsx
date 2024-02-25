@@ -71,7 +71,10 @@ a:has(>h2) {
 .header-serie {
   position: absolute;
 
-  display: flex;
+  display: none;
+  @media (min-width: 960px) {
+    display: flex;
+  }
   justify-content: space-between;
   align-items: center;
 
@@ -220,6 +223,59 @@ a:has(>h2) {
   }
 }
 
+.header-mobile {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @media (min-width: 960px) {
+    display: none;
+  }
+
+  width: 100%;
+  height: 35rem;
+  padding-top: 3.5rem;
+  @media (min-width: 640px) {
+    height: 45rem;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .content {
+    background-image: linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0));
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    padding: 5rem 1rem 1rem 1rem;
+    gap: 1rem;
+    bottom: 0;
+
+    .title {
+      font-size: 1.25rem;
+      @media (min-width: 640px) {
+        font-size: 1.5rem;
+      }
+      font-weight: 500;
+    }
+    .watch {
+      > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+      }
+    }
+  }
+}
+
 .section {
   position: relative;
   padding: .5rem 0 .5rem 0rem;
@@ -252,7 +308,9 @@ a:has(>h2) {
 
 div.section.first-section {
   margin-top: 0;
-  padding-top: 70vh;
+  @media (min-width: 960px) {
+    padding-top: 70vh;
+  }
   h2 {
     color: #fff;
     text-shadow: rgb(0 0 0 / 80%) -1px -1px 0, rgb(0 0 0 / 80%) -1px 1px 0, rgb(0 0 0 / 80%) 1px -1px 0, rgb(0 0 0 / 80%) 1px 1px 0;
@@ -967,30 +1025,61 @@ const Anime = () => {
         <div className="header-serie">
           {
             media && (
-              <div className="player-wrapper">
-                <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
-                <div className="shadow"/>
-                <div className="header-serie-content">
-                  <div className="header-serie-title">
-                    <h1>
+                <div className="player-wrapper">
+                  <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
+                  <div className="shadow"/>
+                  <div className="header-serie-content">
+                    <div className="header-serie-title">
+                      <h1>
+                        {
+                          media.title?.english
+                          ?? media.title?.romanized
+                          ?? media.title?.native
+                        }
+                      </h1>
+                    </div>
+                    <div className="header-serie-description">
+                      {ellipsedDescriptionText}
+                    </div>
+                    <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
+                      <button className="watch">
+                        <Play/>
+                        Watch
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+
+            )
+          }
+        </div>
+        <div className="header-mobile">
+          {
+            media && (
+              <>
+                <img src={media.coverImage.at(0)?.default} alt={media.title.english} />
+                <div className="content">
+                  <div className="title">
+                    <p>
                       {
                         media.title?.english
                         ?? media.title?.romanized
                         ?? media.title?.native
                       }
-                    </h1>
+                    </p>
                   </div>
-                  <div className="header-serie-description">
-                    {ellipsedDescriptionText}
-                  </div>
-                  <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
-                    <button className="watch">
+                  <Link
+                    to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
+                    className="watch"
+                  >
+                    <button>
                       <Play/>
                       Watch
                     </button>
                   </Link>
                 </div>
-              </div>
+
+              </>
             )
           }
         </div>
