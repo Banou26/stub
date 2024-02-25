@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useMutation, useQuery } from 'urql'
 import { ORIGINS_OAUTH2_IDS, generateOauth2State } from './utils'
 import { Route, getRoutePath } from '../path'
@@ -65,8 +65,64 @@ const GET_ORIGIN_AUTHENTICATION = `#graphql
     }
   }
 `
-export default () => {
-  const [{ data: { originAuthentication } = {} }] = useQuery({ query: GET_ORIGIN_AUTHENTICATION })
+
+const GET_ORIGIN_USER = `#graphql
+  query GetOriginUser($input: OriginUserInput!) {
+    originUser(input: $input) {
+      id
+      username
+      email
+      avatar
+    }
+  }
+`
+
+type OriginAuthentication = {
+  origin: {
+    id: string
+    name: string
+    icon: string
+  }
+  authentication: boolean
+  methods: {
+    type: string
+    url: string
+    headers: {
+      key: string
+      value: string
+    }[]
+    body: string
+  }[]
+}
+
+const OriginCard = ({ originAuthentication }: { originAuthentication: OriginAuthentication }) => {
+  console.log('originAuthentication', originAuthentication)
+  const method = originAuthentication.methods[0]
+  if (!method || method.type !== 'OAUTH2') return null
+
+  const [authState] = useState(JSON.parse(localStorage.getItem('auth-oauth2-states') ?? '')?.[originAuthentication.origin.id]?.[method.type.toLowerCase()])
+
+  console.log('localStorage', JSON.parse(localStorage.getItem('auth-oauth2-states')) ?? '')
+  console.log('authState', authState)
+
+  const [{ error, data }] = useQuery({
+    query: GET_ORIGIN_USER,
+    variables: {
+      input: {
+        origin: originAuthentication.origin.id,
+        type: method.type,
+        oauth2: {
+          accessToken: authState?.accessToken,
+          tokenType: authState?.tokenType
+        }
+      }
+    }
+  })
+
+  const originUser = data?.originUser
+
+  console.log('originUser', originUser)
+  if (error) console.error(error)
 
   const authenticate = (originAuth) => {
     const method = originAuth.methods[0]
@@ -89,6 +145,27 @@ export default () => {
     }
   }
 
+  return (
+    <div key={originAuthentication.origin.id} className='origin'>
+      <img src={originAuthentication.origin.icon} />
+      <div className='title'>{originAuthentication.origin.name}</div>
+      {
+        originUser
+          ? (
+            <div>
+              <img src={originUser.avatar} />
+              <div>{originUser.username}</div>
+              <div>{originUser.email}</div>
+            </div>
+          )
+          : <button onClick={() => authenticate(originAuthentication)}>Authenticate</button>
+      }
+    </div>
+  )
+}
+
+export default () => {
+  const [{ data: { originAuthentication } = {} }] = useQuery({ query: GET_ORIGIN_AUTHENTICATION })
   useEffect(() => {
     localStorage.removeItem('auth-oauth2-state')
   }, [])
@@ -96,13 +173,9 @@ export default () => {
   return (
     <div css={style}>
       {
-        originAuthentication?.map((originAuthentication, i) => (
-          <div key={originAuthentication.origin.id} className='origin'>
-            <img src={originAuthentication.origin.icon} />
-            <div className='title'>{originAuthentication.origin.name}</div>
-            <button onClick={() => authenticate(originAuthentication)}>Authenticate</button>
-          </div>
-        ))
+        originAuthentication?.map((originAuthentication, i) =>
+          <OriginCard key={i} originAuthentication={originAuthentication} />
+        )
       }
     </div>
   )
