@@ -775,6 +775,59 @@ export type OriginPageInput = {
   official?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type OriginUser = {
+  __typename?: 'OriginUser';
+  avatar?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  username: Scalars['String'];
+};
+
+export type OriginUserInput = {
+  oauth2?: InputMaybe<OriginUserInputOauth2>;
+  origin: Scalars['String'];
+  type: OriginAuthenticationMethodType;
+};
+
+export type OriginUserInputOauth2 = {
+  accessToken: Scalars['String'];
+  tokenType: Scalars['String'];
+};
+
+export type OriginUserMediaPage = {
+  __typename?: 'OriginUserMediaPage';
+  /** The current page */
+  currentPageCursor?: Maybe<Scalars['String']>;
+  /** The first page */
+  firstPageCursor?: Maybe<Scalars['String']>;
+  /** Total number of items on the current page */
+  inPage?: Maybe<Scalars['Int']>;
+  /** The last page cursor */
+  lastPageCursor?: Maybe<Scalars['String']>;
+  /** The current page */
+  nextPageCursor?: Maybe<Scalars['String']>;
+  /** The media page nodes */
+  nodes: Array<Media>;
+  /** The current page */
+  previousPageCursor?: Maybe<Scalars['String']>;
+  /** The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  total?: Maybe<Scalars['Int']>;
+  /** Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalAfter?: Maybe<Scalars['Int']>;
+  /** Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
+  totalBefore?: Maybe<Scalars['Int']>;
+};
+
+export type OriginUserMediaPageInput = {
+  authentications: Array<OriginUserMediaPageInputAuthentication>;
+};
+
+export type OriginUserMediaPageInputAuthentication = {
+  oauth2?: InputMaybe<OriginUserInputOauth2>;
+  origin: Scalars['String'];
+  type: OriginAuthenticationMethodType;
+};
+
 export type PlaybackSource = Handle & {
   __typename?: 'PlaybackSource';
   bytes?: Maybe<Scalars['Float']>;
@@ -891,6 +944,8 @@ export type Query = {
   origin?: Maybe<Origin>;
   originAuthentication: Array<OriginAuthentication>;
   originPage: Array<Origin>;
+  originUser: OriginUser;
+  originUserMediaPage: OriginUserMediaPage;
   playbackSource?: Maybe<PlaybackSource>;
   playbackSourcePage?: Maybe<PlaybackSourcePage>;
 };
@@ -923,6 +978,16 @@ export type QueryOriginArgs = {
 
 export type QueryOriginPageArgs = {
   input: OriginPageInput;
+};
+
+
+export type QueryOriginUserArgs = {
+  input: OriginUserInput;
+};
+
+
+export type QueryOriginUserMediaPageArgs = {
+  input: OriginUserMediaPageInput;
 };
 
 

@@ -22,6 +22,8 @@ import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { AuthResponse } from '../auth/mal'
+import { useLocalStorageAuthStates } from '../auth/utils'
+import { OriginUserMediaStatus } from 'scannarr/src/generated/graphql'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -406,86 +408,86 @@ div.section.first-section {
 }
 `
 
-// export const GET_WATCHING_LIST = `#graphql
-//   fragment GetWatchingListFragment on Media {
-//     origin
-//     id
-//     uri
-//     url
-//     title {
-//       romanized
-//       english
-//       native
-//     }
-//     bannerImage
-//     coverImage {
-//       color
-//       default
-//       extraLarge
-//       large
-//       medium
-//       small
-//     }
-//     description
-//     shortDescription
-//     season
-//     seasonYear
-//     popularity
-//     averageScore
-//     episodeCount
-//     episodes {
-//       edges {
-//         node {
-//           origin
-//           id
-//           uri
-//           url
-//           number
-//           airingAt
-//           title {
-//             romanized
-//             english
-//             native
-//           }
-//           description
-//           thumbnail
-//         }
-//       }
-//     }
-//     trailers {
-//       origin
-//       id
-//       uri
-//       url
-//       thumbnail
-//     }
-//     startDate {
-//       year
-//       month
-//       day
-//     }
-//     endDate {
-//       year
-//       month
-//       day
-//     }
-//   }
+export const GET_USER_MEDIA_LIST = `#graphql
+  fragment GetUserMediaListFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    episodes {
+      edges {
+        node {
+          origin
+          id
+          uri
+          url
+          number
+          airingAt
+          title {
+            romanized
+            english
+            native
+          }
+          description
+          thumbnail
+        }
+      }
+    }
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+  }
 
-//   query GetWatchingList($input: MediaPageInput!) {
-//     mediaPage(input: $input) {
-//       nodes {
-//         handles {
-//           edges {
-//             node {
-//               ...GetMediaTestFragment
-//             }
-//           }
-//         }
-//         ...GetMediaTestFragment
-//       }
-//     }
-//   }
-// `
+  query GetOriginUserMediaPage($input: OriginUserMediaPageInput!) {
+    originUserMediaPage(input: $input) {
+      nodes {
+        handles {
+          edges {
+            node {
+              ...GetUserMediaListFragment
+            }
+          }
+        }
+        ...GetUserMediaListFragment
+      }
+    }
+  }
+`
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
@@ -678,31 +680,47 @@ const Anime = () => {
     }
   )
 
-  const [malAuth, setMalAuth] = useState<AuthResponse | null>(localStorage.getItem('auth-mal') ? JSON.parse(localStorage.getItem('auth-mal')!) : null)
-  
-  useEffect(() => {
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'auth-mal') {
-        setMalAuth(JSON.parse(e.newValue))
-      }
-    })
-  }, [])
+  const authStates = useLocalStorageAuthStates()
 
-  // const [currentWatchingList] = useQuery(
-  //   {
-  //     query: GET_WATCHING_LIST,
-  //     variables: {
-  //       input: {
-  //         tokens: [{
-  //           origin: 'mal',
-  //           type: 'Bearer',
-  //           token: malAuth?.access_token
-  //         }]
-  //       }
-  //     }
-  //   }
-  // )
-  // console.log('currentWatchingList', currentWatchingList)
+  const [{ data: originUserMediaPageData }] = useQuery(
+    {
+      query: GET_USER_MEDIA_LIST,
+      variables: {
+        input: {
+          status: OriginUserMediaStatus.Watching,
+          authentications:
+            authStates
+              .map(authState => ({
+                origin: authState.origin,
+                type: authState.type,
+                oauth2: authState.oauth2 && {
+                  accessToken: authState.oauth2.accessToken,
+                  tokenType: authState.oauth2.tokenType
+                }
+              }))
+        }
+      },
+      pause: !authStates.length
+    }
+  )
+
+  const originUserMediaPage = originUserMediaPageData?.originUserMediaPage
+
+  const watchingCards = useMemo(() =>
+    originUserMediaPage?.nodes?.map(media =>
+      <Title2
+        key={media.uri}
+        media={media}
+        to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
+        onMouseEnter={e => {
+        }}
+        onMouseLeave={(e) => {
+
+        }}
+      />
+    )
+  , [originUserMediaPage?.nodes])
+
   const { error, data: { mediaPage } = {} } = currentSeasonResult
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
@@ -862,7 +880,54 @@ const Anime = () => {
             )
           }
         </div>
-        <div className="section first-section">
+        {
+          watchingCards?.length && (
+            <div className="section first-section">
+              <Link to={getRoutePath(Route.ANIME_SEASON)}>
+                <h2>Continue watching</h2>
+              </Link>
+              <div className="section-items">
+                <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
+                  <Grid
+                    className="section-items"
+                    height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
+                    columnCount={watchingCards?.length ?? 0}
+                    columnWidth={listWidth / (listWidth / titleCardWidth)}
+                    rowCount={1}
+                    rowHeight={titleCardHeight}
+                    rowWidth={titleCardWidth}
+                    width={listWidth}
+                    // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
+                    overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
+                      overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
+                      overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
+                    })}
+                    cellRenderer={({ columnIndex, key, rowIndex, style: { height, width, ...style } }) =>
+                      <div key={key} style={style}>
+                        {watchingCards?.[columnIndex]}
+                      </div>
+                    }
+                  />
+                </Draggable>
+                {
+                  !isDragging && hoverCardMedia && (
+                    <TitleHoverCard
+                      media={hoverCardMedia}
+                      ref={refs.setFloating}
+                      onMouseLeave={onHoverCardMouseLeave}
+                      style={{
+                        position: strategy,
+                        top: y ?? 0,
+                        left: x ?? 0
+                      }}
+                    />
+                  )
+                }
+              </div>
+            </div>
+          )
+        }
+        <div className={`section ${watchingCards?.length ? '' : 'first-section'}`}>
           <Link to={getRoutePath(Route.ANIME_SEASON)}>
             <h2>Current season</h2>
           </Link>
@@ -920,6 +985,11 @@ const Anime = () => {
                 rowHeight={episodeCardHeight}
                 rowWidth={episodeCardWidth}
                 width={listWidth}
+                // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
+                overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
+                  overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
+                  overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
+                })}
                 cellRenderer={({ columnIndex, key, rowIndex, style }) =>
                   <div key={key} style={style}>
                     {episodeCards?.[columnIndex]}

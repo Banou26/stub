@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useMutation, useQuery } from 'urql'
 import { Link, Redirect, useLocation, useParams } from 'wouter'
 import { Route, getRoutePath } from '../path'
-import { ORIGINS_OAUTH2_IDS } from './utils'
+import { ORIGINS_OAUTH2_IDS, setLocalStorageAuthState } from './utils'
 
 const style = css`
   .origin {
@@ -116,18 +116,16 @@ export default () => {
       }
     }).then(res => {
       localStorage.removeItem('auth-oauth2-state')
-      const currentAuthStates = localStorage.getItem('auth-oauth2-states')
-      localStorage.setItem('auth-oauth2-states', JSON.stringify({
-        ...JSON.parse(currentAuthStates),
-        [originId]: {
-          oauth2: {
-            accessToken: res.data.originAuthenticate.oauth2.accessToken,
-            refreshToken: res.data.originAuthenticate.oauth2.refreshToken,
-            expiresIn: res.data.originAuthenticate.oauth2.expiresIn,
-            tokenType: res.data.originAuthenticate.oauth2.tokenType
-          }
+      setLocalStorageAuthState({
+        origin: originId,
+        type: 'OAUTH2',
+        oauth2: {
+          accessToken: res.data.originAuthenticate.oauth2.accessToken,
+          refreshToken: res.data.originAuthenticate.oauth2.refreshToken,
+          expiresIn: res.data.originAuthenticate.oauth2.expiresIn,
+          tokenType: res.data.originAuthenticate.oauth2.tokenType
         }
-      }))
+      })
       setLocation(getRoutePath(Route.AUTH))
     })
   }, [authorizationCode, state, originId])

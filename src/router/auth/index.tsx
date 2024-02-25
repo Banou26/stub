@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery } from 'urql'
-import { ORIGINS_OAUTH2_IDS, generateOauth2State } from './utils'
+import { ORIGINS_OAUTH2_IDS, generateOauth2State, useLocalStorageAuthState } from './utils'
 import { Route, getRoutePath } from '../path'
 
 const style = css`
@@ -96,14 +96,10 @@ type OriginAuthentication = {
 }
 
 const OriginCard = ({ originAuthentication }: { originAuthentication: OriginAuthentication }) => {
-  console.log('originAuthentication', originAuthentication)
   const method = originAuthentication.methods[0]
   if (!method || method.type !== 'OAUTH2') return null
 
-  const [authState] = useState(JSON.parse(localStorage.getItem('auth-oauth2-states') ?? '')?.[originAuthentication.origin.id]?.[method.type.toLowerCase()])
-
-  console.log('localStorage', JSON.parse(localStorage.getItem('auth-oauth2-states')) ?? '')
-  console.log('authState', authState)
+  const authState = useLocalStorageAuthState(originAuthentication.origin.id, method.type)
 
   const [{ error, data }] = useQuery({
     query: GET_ORIGIN_USER,
@@ -111,9 +107,9 @@ const OriginCard = ({ originAuthentication }: { originAuthentication: OriginAuth
       input: {
         origin: originAuthentication.origin.id,
         type: method.type,
-        oauth2: {
-          accessToken: authState?.accessToken,
-          tokenType: authState?.tokenType
+        oauth2: authState?.oauth2 && {
+          accessToken: authState.oauth2.accessToken,
+          tokenType: authState.oauth2.tokenType
         }
       }
     }
@@ -121,13 +117,10 @@ const OriginCard = ({ originAuthentication }: { originAuthentication: OriginAuth
 
   const originUser = data?.originUser
 
-  console.log('originUser', originUser)
   if (error) console.error(error)
 
   const authenticate = (originAuth) => {
     const method = originAuth.methods[0]
-    console.log('originAuth', originAuth)
-    console.log('method', method)
     if (method.type === 'OAUTH2') {
       const clientId = ORIGINS_OAUTH2_IDS.find(([id]) => id === originAuth.origin.id)?.[1]
       if (!clientId) throw new Error(`Client ID not found for origin ${originAuth.origin.id}`)
@@ -140,7 +133,6 @@ const OriginCard = ({ originAuthentication }: { originAuthentication: OriginAuth
         state: challenge,
         redirect_uri: new URL(getRoutePath(Route.AUTH_OAUTH2_CALLBACK, { originId: originAuth.origin.id }), location.origin).href,
       }).toString()
-      console.log('params', params)
       window.location.href = `${method.url}?${params}`
     }
   }
@@ -153,7 +145,7 @@ const OriginCard = ({ originAuthentication }: { originAuthentication: OriginAuth
         originUser
           ? (
             <div>
-              <img src={originUser.avatar} />
+              <img src={originUser.avatar}/>
               <div>{originUser.username}</div>
               <div>{originUser.email}</div>
             </div>
