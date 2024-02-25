@@ -1,5 +1,5 @@
 import { call, makeCallListener, registerListener } from 'osra'
-import { makeScannarrServer } from 'scannarr'
+import { makeScannarrServer } from '../node_modules/scannarr'
 import { targets } from 'laserr'
 
 import type { Resolvers as ParentResolvers } from './urql'

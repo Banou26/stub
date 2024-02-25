@@ -2,6 +2,7 @@
 export enum Route {
   HOME = 'HOME',
   AUTH = 'AUTH',
+  AUTH_OAUTH2_CALLBACK = 'AUTH_OAUTH2_CALLBACK',
   TITLE = 'TITLE',
   TITLE_EPISODE = 'TITLE_EPISODE',
   WATCH = 'WATCH',
@@ -14,6 +15,7 @@ export enum Route {
 const Routes = {
   [Route.HOME]: () => '/',
   [Route.AUTH]: () => `/auth`,
+  [Route.AUTH_OAUTH2_CALLBACK]: ({ originId }: { originId: string }) => `/auth/oauth2/${originId}/callback`,
   [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
   [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
   [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
@@ -27,6 +29,7 @@ const Routes = {
 const RouterRoutes = {
   [Route.HOME]: '/',
   [Route.AUTH]: '/auth',
+  [Route.AUTH_OAUTH2_CALLBACK]: '/auth/oauth2/:originId/callback',
   [Route.TITLE]: '/title/:uri',
   [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',

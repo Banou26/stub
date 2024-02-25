@@ -6,3 +6,4 @@ release
 gh-actions.secrets
 build
 video3.mkv
+.env

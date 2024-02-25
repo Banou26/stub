@@ -659,6 +659,12 @@ export enum MediaType {
 export type Mutation = {
   __typename?: 'Mutation';
   dummy?: Maybe<Scalars['String']>;
+  originAuthenticate: OriginAuthenticate;
+};
+
+
+export type MutationOriginAuthenticateArgs = {
+  input: OriginAuthenticateInput;
 };
 
 /**
@@ -685,6 +691,63 @@ export type Origin = {
   /** The origin's URL, e.g "https://www.netflix.com/""  */
   url?: Maybe<Scalars['String']>;
 };
+
+export type OriginAuthenticate = {
+  __typename?: 'OriginAuthenticate';
+  oauth2?: Maybe<OriginAuthenticateOauth2>;
+};
+
+export type OriginAuthenticateInput = {
+  oauth2?: InputMaybe<OriginAuthenticateInputOauth2>;
+  origin: Scalars['String'];
+  type: OriginAuthenticationMethodType;
+};
+
+export type OriginAuthenticateInputOauth2 = {
+  authorizationCode: Scalars['String'];
+  clientId: Scalars['String'];
+  codeVerifier: Scalars['String'];
+  grantType: Scalars['String'];
+  redirectUri: Scalars['String'];
+};
+
+export type OriginAuthenticateOauth2 = {
+  __typename?: 'OriginAuthenticateOauth2';
+  accessToken: Scalars['String'];
+  expiresIn: Scalars['Int'];
+  refreshToken: Scalars['String'];
+  tokenType: Scalars['String'];
+};
+
+export type OriginAuthentication = {
+  __typename?: 'OriginAuthentication';
+  authentication?: Maybe<Scalars['Boolean']>;
+  methods?: Maybe<Array<OriginAuthenticationMethod>>;
+  origin: Origin;
+};
+
+export type OriginAuthenticationMethod = {
+  __typename?: 'OriginAuthenticationMethod';
+  body?: Maybe<Scalars['String']>;
+  headers?: Maybe<Array<OriginAuthenticationMethodHeaderValue>>;
+  type: OriginAuthenticationMethodType;
+  url?: Maybe<Scalars['String']>;
+};
+
+export type OriginAuthenticationMethodHeaderValue = {
+  __typename?: 'OriginAuthenticationMethodHeaderValue';
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type OriginAuthenticationMethodHeaderValueInput = {
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export enum OriginAuthenticationMethodType {
+  Oauth2 = 'OAUTH2'
+}
 
 export type OriginInput = {
   /** Filter by origin categories */
@@ -826,6 +889,7 @@ export type Query = {
   media?: Maybe<Media>;
   mediaPage?: Maybe<MediaPage>;
   origin?: Maybe<Origin>;
+  originAuthentication: Array<OriginAuthentication>;
   originPage: Array<Origin>;
   playbackSource?: Maybe<PlaybackSource>;
   playbackSourcePage?: Maybe<PlaybackSourcePage>;

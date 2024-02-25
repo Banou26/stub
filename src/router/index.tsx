@@ -9,6 +9,7 @@ import Season from './anime/season'
 import Test from './test'
 import Watch from './watch'
 import Auth from './auth'
+import AuthOauth2 from './auth/oauth2'
 
 const contentStyle = css`
   padding-top: 6rem;
@@ -30,6 +31,7 @@ const RouterRoot = () =>(
     <WRoute path={getRouterRoutePath(Route.WATCH)} component={() => <Watch/>}/>
     <WRoute path={getRouterRoutePath(Route.TEST)} component={() => wrapElement(<Test/>)}/>
     <WRoute path={getRouterRoutePath(Route.AUTH)} component={() => wrapElement(<Auth/>)}/>
+    <WRoute path={getRouterRoutePath(Route.AUTH_OAUTH2_CALLBACK)} component={() => wrapElement(<AuthOauth2/>)}/>
     <WRoute component={() => wrapElement(<div>404 No page found</div>)}/>
   </Switch>
 )
