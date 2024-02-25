@@ -877,6 +877,11 @@ const Anime = () => {
                 rowHeight={titleCardHeight}
                 rowWidth={titleCardWidth}
                 width={listWidth}
+                // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
+                overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
+                  overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
+                  overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
+                })}
                 cellRenderer={({ columnIndex, key, rowIndex, style: { height, width, ...style } }) =>
                   <div key={key} style={style}>
                     {titleCards?.[columnIndex]}
