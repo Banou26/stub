@@ -384,7 +384,7 @@ const SourcesModal = (
   const searchParams = new URLSearchParams(useSearch())
   const setSearchParams =
     (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
-      setLocation(`${location}?${new URLSearchParams(init).toString()}`)
+      setLocation(`${location}?${new URLSearchParams(init).toString()}`, { replace: true })
   const sourcesModalOpen = Boolean(searchParams.get('sources'))
   const displayRawName = searchParams.get('sources') === 'raw'
 

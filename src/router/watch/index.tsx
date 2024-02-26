@@ -375,7 +375,7 @@ const Watch = () => {
   useEffect(() => {
     const bestMatch = sortedSources.at(0)
     if (trackerDataPerSource.size && sortedSources.length && trackerDataPerSource.size === sortedSources.length && bestMatch && !currentSource) {
-      setLocation(getRoutePath(Route.WATCH, { mediaUri, episodeUri, sourceUri: bestMatch.uri }))
+      setLocation(getRoutePath(Route.WATCH, { mediaUri, episodeUri, sourceUri: bestMatch.uri }), { replace: true })
     }
   }, [currentSource, sortedSources, trackerDataPerSource])
 
