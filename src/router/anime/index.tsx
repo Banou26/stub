@@ -804,7 +804,15 @@ const Anime = () => {
   , [originUserMediaPage?.nodes])
 
   const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
-  const mediaPage = useMemo(() => _mediaPage?.nodes && ({ nodes: _mediaPage?.nodes?.sort((a, b) => b.popularity ?? 0 - a.popularity ?? 0) }), [_mediaPage?.nodes])
+  const mediaPage = useMemo(() =>
+    _mediaPage?.nodes && ({
+      nodes:
+        _mediaPage
+          ?.nodes
+          ?.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)) }),
+    [_mediaPage?.nodes]
+  )
+  
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
   const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
