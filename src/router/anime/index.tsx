@@ -264,10 +264,10 @@ div.section.first-section {
   justify-content: space-between;
 }
 
-.section-items .section-items {
+.section-items .virtualized-list {
   display: grid;
   grid-auto-flow:column;
-  width: 100%;
+  width: 100% !important;
   overflow: auto;
   margin: 0 0 1rem 0;
   gap: 2.5rem;
@@ -284,10 +284,20 @@ div.section.first-section {
       margin-left: 10rem;
     }
   }
+
+  & > div:last-of-type {
+    margin-right: 1rem;
+    @media (min-width: 1440px) {
+      margin-right: 5rem;
+    }
+    @media (min-width: 2560px) {
+      margin-right: 10rem;
+    }
+  }
 }
 
 @-moz-document url-prefix() {
-  .section-items .section-items {
+  .section-items .virtualized-list {
     padding-bottom: 1.5rem;
     scrollbar-width: initial;
   }
@@ -993,7 +1003,7 @@ const Anime = () => {
               <div className="section-items">
                 <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
                   <Grid
-                    className="section-items"
+                    className="virtualized-list"
                     height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
                     columnCount={watchingCards?.length ?? 0}
                     columnWidth={listWidth / (listWidth / titleCardWidth)}
@@ -1038,7 +1048,7 @@ const Anime = () => {
           <div className="section-items">
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
               <Grid
-                className="section-items"
+                className="virtualized-list"
                 height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
                 columnCount={titleCards?.length ?? 0}
                 columnWidth={listWidth / (listWidth / titleCardWidth)}
@@ -1081,7 +1091,7 @@ const Anime = () => {
           <div className="section-items">
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
               <Grid
-                className="section-items"
+                className="virtualized-list"
                 height={episodeCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
                 columnCount={episodeCards?.length ?? 0}
                 columnWidth={listWidth / (listWidth / episodeCardWidth)}
