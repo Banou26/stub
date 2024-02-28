@@ -937,9 +937,22 @@ const Anime = () => {
       : window.matchMedia('(min-width: 1440px)').matches
         ? 360
         : 180
+
+  const [showHeaderBg, setShowHeaderBg] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowHeaderBg(window.scrollY > 0)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
     <>
-      <Header css={headerStyle}/>
+      <Header css={headerStyle} style={{ backgroundColor: showHeaderBg ? 'rgb(35, 35, 35)' : 'transparent' }}/>
       <div css={style}>
         <div className="header-serie">
           {
