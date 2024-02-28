@@ -1041,6 +1041,7 @@ export type ResourceEdge = HandleEdge & {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  dummy?: Maybe<Scalars['String']>;
   mediaPage?: Maybe<MediaPage>;
 };
 
