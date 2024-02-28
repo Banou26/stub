@@ -4,7 +4,7 @@ import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
-import { useQuery } from 'urql'
+import { useQuery, useSubscription } from 'urql'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
 import { Link, useLocation, useSearch } from 'wouter'
 import { Grid } from 'react-virtualized'
@@ -663,13 +663,95 @@ const Draggable = (
   )
 }
 
+
+export const GET_CURRENT_SEASON_SUBSCRIPTION = `#graphql
+  fragment GetMediaTestFragment on Media {
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    episodes {
+      edges {
+        node {
+          origin
+          id
+          uri
+          url
+          number
+          airingAt
+          title {
+            romanized
+            english
+            native
+          }
+          description
+          thumbnail
+        }
+      }
+    }
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+  }
+
+  subscription GetCurrentSeason($input: MediaPageInput!) {
+    mediaPage(input: $input) {
+      nodes {
+        handles {
+          edges {
+            node {
+              ...GetMediaTestFragment
+            }
+          }
+        }
+        ...GetMediaTestFragment
+      }
+    }
+  }
+`
+
 const Anime = () => {
   const searchParams = new URLSearchParams(useSearch())
   const mediaUriModal = searchParams.get('details')
   const currentSeason = useMemo(() => getCurrentSeason(), [])
-  const [currentSeasonResult] = useQuery(
+  const [currentSeasonResult] = useSubscription(
     {
-      query: GET_CURRENT_SEASON,
+      query: GET_CURRENT_SEASON_SUBSCRIPTION,
       variables: {
         input: {
           season: currentSeason.season,

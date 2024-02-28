@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { gql, useQuery } from 'urql'
+import { gql, useQuery, useSubscription } from 'urql'
 
 import { GraphQLTypes } from 'scannarr'
 import { GET_CURRENT_SEASON } from './anime/season'
@@ -123,21 +123,28 @@ export default () => {
   // )
 
 
-  const currentSeason = useMemo(() => getCurrentSeason(), [])
-  const [currentSeasonResult] = useQuery(
+  // const currentSeason = useMemo(() => getCurrentSeason(), [])
+  // const [currentSeasonResult] = useQuery(
+  //   {
+  //     query: GET_CURRENT_SEASON,
+  //     variables: {
+  //       input: {
+  //         season: currentSeason.season,
+  //         seasonYear: currentSeason.year,
+  //         sorts: [GraphQLTypes.MediaSort.Popularity]
+  //       }
+  //     }
+  //   }
+  // )
+
+  // console.log('currentSeasonResult', currentSeasonResult.data)
+
+  const [fooResult] = useSubscription(
     {
-      query: GET_CURRENT_SEASON,
-      variables: {
-        input: {
-          season: currentSeason.season,
-          seasonYear: currentSeason.year,
-          sorts: [GraphQLTypes.MediaSort.Popularity]
-        }
-      }
+      query: `subscription { foo { bar } }`
     }
   )
-
-  console.log('currentSeasonResult', currentSeasonResult.data)
+  console.log('fooResult', fooResult)
   return
 
 

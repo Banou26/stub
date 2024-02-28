@@ -820,6 +820,7 @@ export type OriginUserMediaPage = {
 
 export type OriginUserMediaPageInput = {
   authentications: Array<OriginUserMediaPageInputAuthentication>;
+  status?: InputMaybe<Array<OriginUserMediaStatus>>;
 };
 
 export type OriginUserMediaPageInputAuthentication = {
@@ -827,6 +828,20 @@ export type OriginUserMediaPageInputAuthentication = {
   origin: Scalars['String'];
   type: OriginAuthenticationMethodType;
 };
+
+/** The current releasing status of the media */
+export enum OriginUserMediaStatus {
+  /** Has completed */
+  Completed = 'COMPLETED',
+  /** Dropped */
+  Dropped = 'DROPPED',
+  /** Put on hold */
+  OnHold = 'ON_HOLD',
+  /** Planning to watch */
+  PlanToWatch = 'PLAN_TO_WATCH',
+  /** Currently watching */
+  Watching = 'WATCHING'
+}
 
 export type PlaybackSource = Handle & {
   __typename?: 'PlaybackSource';
@@ -1022,6 +1037,16 @@ export type ResourceEdge = HandleEdge & {
   /** The relation between the two handles */
   handleRelationType: HandleRelation;
   node: Resource;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  mediaPage?: Maybe<MediaPage>;
+};
+
+
+export type SubscriptionMediaPageArgs = {
+  input: MediaPageInput;
 };
 
 export type Team = Handle & {
