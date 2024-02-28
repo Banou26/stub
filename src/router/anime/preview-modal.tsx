@@ -338,17 +338,20 @@ export const GET_ORIGINS = gql(`#graphql
 // http://localhost:4560/test?details=scannarr%3AbWFsOjQ2NTY5LGFuaWxpc3Q6MTI4ODkz
 
 const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => {
-  const airingAt = new Date(node.airingAt)
+  const rtf = useMemo(() => new Intl.RelativeTimeFormat('en', { numeric: 'auto' }), [])
+  const airingAt = new Date(node.airingAt ?? Date.now() + node.timeUntilAiring * 1000)
+  const airingAtInPast = Date.now() - airingAt.getTime() > 0
+  const delta = airingAtInPast ? -(Date.now() - airingAt.getTime()) : Date.now() - airingAt.getTime()
+  const daysRelativeAiring = delta / 1000 / 60 / 60 / 24
+  const monthsRelativeAiring = delta / 1000 / 60 / 60 / 24 / 30
+  const yearsRelativeAiring = monthsRelativeAiring / 12
   const airingAtString =
-    new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-      .format(Math.round((airingAt.getTime() - Date.now()) / 60 / 60 / 24 / 1000), 'days')// airingAt.toLocaleString('en-US', { timeZone: 'UTC' })
-  const timeUntilAiringString =
-    new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-      .format(Math.round(node.timeUntilAiring / 60 / 60 / 24), 'days')
-  const relativeTime =
-    airingAt ? airingAtString
-    : node.timeUntilAiring && !isNaN(node.timeUntilAiring) && isFinite(node.timeUntilAiring) ? timeUntilAiringString
-    : undefined
+    Math.abs(yearsRelativeAiring) > 1 ? rtf.format(Math.round(yearsRelativeAiring), 'years')
+    : Math.abs(monthsRelativeAiring) > 1 ? rtf.format(Math.round(monthsRelativeAiring), 'months')
+    : Math.abs(daysRelativeAiring) > 1 ? rtf.format(Math.round(daysRelativeAiring), 'days')
+    : airingAt.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
+
+  const title = airingAt?.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
 
   if (
     (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
@@ -423,7 +426,7 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
           }
         </div>
       </div>
-      <div className="date">{relativeTime}</div>
+      <div className="date" title={title}>{airingAtString}</div>
     </Link>
   )
 }
