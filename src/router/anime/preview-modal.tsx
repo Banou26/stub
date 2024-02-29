@@ -436,7 +436,7 @@ export default () => {
   const searchParams = new URLSearchParams(useSearch())
   const setSearchParams =
     (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
-      setLocation(`${location}?${new URLSearchParams(init).toString()}`)
+      setLocation(`${location}?${new URLSearchParams(init).toString()}`, { replace: true })
   // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
