@@ -13,6 +13,7 @@ import { Route, getRoutePath } from '../path'
 import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr/src/utils/uri2'
 import { Episode } from 'scannarr'
 import { Link, useLocation, useSearch } from 'wouter'
+import { Pagination } from '../../components/pagination'
 
 const style = css`
 overflow: auto;
@@ -146,7 +147,7 @@ pointer-events: none;
 
       .episode {
         display: grid;
-        grid-template-columns: 5rem auto 10rem;
+        grid-template-columns: 7rem auto 10rem;
         height: 10rem;
         border-bottom: .1rem solid rgba(255, 255, 255, .1);
         color: #fff;
@@ -495,6 +496,8 @@ export default () => {
     setSearchParams(rest)
   }
 
+  const [currentPage, setCurrentPage] = useState(0)
+
   if (!media) {
     return (
       <Dialog.Root open={Boolean(mediaUri)}>
@@ -541,7 +544,7 @@ export default () => {
               </div>
               <div className="content">
                 <div className="title">
-                  <h2>{media?.title?.romanized}</h2>
+                  <h2>{media?.title?.english}</h2>
                   <div className="origins">
                     {
                       mediaTargets
@@ -579,14 +582,22 @@ export default () => {
                     : undefined
                 }
                 <div className="episodes">
-                  {
-                    [...media
-                      ?.episodes
-                      ?.edges ?? []
-                    ]
-                      ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
-                      .map(({ node }) => <EpisodeRow key={node.uri} mediaUri={mediaUri} node={node}/>)
-                  }
+                  <Pagination
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    itemsPerPage={15}
+                    totalPages={Math.ceil(media.episodes.edges.length / 15)}
+                  >
+                    {
+                      media
+                        .episodes
+                        .edges
+                        ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
+                        ?.slice(currentPage * 15, currentPage * 15 + 15)
+                        ?.map(({ node }) => <EpisodeRow key={node.uri} mediaUri={mediaUri} node={node}/>)
+                      ?? []
+                    }
+                  </Pagination>
                 </div>
               </div>
             </div>
