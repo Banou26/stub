@@ -9,7 +9,7 @@ import { getCurrentSeason } from 'laserr/src/targets/anilist'
 import { Link, useLocation, useSearch } from 'wouter'
 import { Grid } from 'react-virtualized'
 
-import { Media, MediaSort } from '../../generated/graphql'
+import { Media, MediaSort, UserMediaStatus } from '../../generated/graphql'
 import { GET_CURRENT_SEASON } from '../anime/season'
 import { Route, getRoutePath } from '../path'
 import Title2 from '../../components/title2'
@@ -23,7 +23,6 @@ import EpisodeCard from '../../components/episode-card'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { AuthResponse } from '../auth/mal'
 import { useLocalStorageAuthStates } from '../auth/utils'
-import { OriginUserMediaStatus } from 'scannarr/src/generated/graphql'
 import SkeletonCard from '../../components/skeleton/skeleton-card'
 import SkeletonSizable from '../../components/skeleton/skeleton-sizable'
 
@@ -543,8 +542,8 @@ export const GET_USER_MEDIA_LIST = `#graphql
     }
   }
 
-  query GetOriginUserMediaPage($input: OriginUserMediaPageInput!) {
-    originUserMediaPage(input: $input) {
+  query GetUserMediaPage($input: UserMediaPageInput!) {
+    userMediaPage(input: $input) {
       nodes {
         handles {
           edges {
@@ -834,12 +833,12 @@ const Anime = () => {
 
   const authStates = useLocalStorageAuthStates()
 
-  const [{ data: originUserMediaPageData }] = useQuery(
+  const [{ data: userMediaPageData }] = useQuery(
     {
       query: GET_USER_MEDIA_LIST,
       variables: {
         input: {
-          status: OriginUserMediaStatus.Watching,
+          status: UserMediaStatus.Watching,
           authentications:
             authStates
               .map(authState => ({
@@ -856,10 +855,10 @@ const Anime = () => {
     }
   )
 
-  const originUserMediaPage = originUserMediaPageData?.originUserMediaPage
+  const userMediaPage = userMediaPageData?.userMediaPage
 
   const watchingCards = useMemo(() =>
-    originUserMediaPage?.nodes?.map(media =>
+    userMediaPage?.nodes?.map(media =>
       <Title2
         key={media.uri}
         media={media}
@@ -871,7 +870,7 @@ const Anime = () => {
         }}
       />
     )
-  , [originUserMediaPage?.nodes])
+  , [userMediaPage?.nodes])
 
   const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
   const mediaPage = useMemo(() =>
