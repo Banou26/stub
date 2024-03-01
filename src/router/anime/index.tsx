@@ -733,7 +733,7 @@ const Draggable = (
 }
 
 
-export const GET_CURRENT_SEASON_SUBSCRIPTION = `#graphql
+export const GET_CURRENT_SEASON_SUBSCRIPTION = /* GraphQL */`
   fragment GetMediaTestFragment on Media {
     origin
     id
