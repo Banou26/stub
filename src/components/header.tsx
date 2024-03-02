@@ -274,16 +274,17 @@ const Header = ({ ...rest }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === 'f') {
+      if (event.key === 's' && showSearchResults === false) {
         event.preventDefault()
         searchRef?.current?.focus()
+        setShowSearchResults(true)
       }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [showSearchResults])
 
   useDebounce(() => {
     if (!search?.length) return
