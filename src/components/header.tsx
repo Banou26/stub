@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
-import { FocusEvent, useState } from 'react'
+import { FocusEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
 import { useQuery } from 'urql'
@@ -40,26 +40,31 @@ const style = css`
   .left {
     display: grid;
     grid-template-columns: auto auto auto;
-    gap: .5rem;
     margin-right: .5rem;
+    gap: .5rem;
     @media (min-width: 960px) {
-      grid-template-columns: 15rem 15rem 15rem auto;
-      gap: 2rem;
+      grid-template-columns: 12rem 12rem 12rem auto;
       margin-right: 0;
+      gap: 0;
+    }
+    @media (min-width: 2560px) {
+      grid-template-columns: 15rem 15rem 15rem auto;
+      gap: .5rem;
     }
 
     .logo-link {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
+      gap: .5rem;
       width: 100%;
 
-      font-size: 2rem;
-      font-weight: 600;
+      font-size: 1.8rem;
+      font-weight: 500;
       text-decoration: none;
       @media (min-width: 2560px) {
         font-size: 2.2rem;
+        font-weight: 600;
         font-weight: bold;  
       }
 
@@ -67,12 +72,12 @@ const style = css`
         height: 2rem;
         width: 2rem;
         @media (min-width: 960px) {
-          height: 2.5rem;
-          width: 2.5rem;  
+          height: 2.2rem;
+          width: 2.2rem;  
         }
         @media (min-width: 2560px) {
-          height: 5rem;
-          width: 5rem;
+          height: 4rem;
+          width: 4rem;
         }
       }
 
@@ -171,10 +176,11 @@ const style = css`
         }
       }
       font-size: 1.5rem;
-      font-weight: 600;
+      font-weight: 500;
       text-decoration: none;
       @media (min-width: 2560px) {
         font-size: 2rem;
+        font-weight: 600;
       }
 
       img {
@@ -257,18 +263,27 @@ export const SEARCH_MEDIA = `#graphql
 `
 
 const Header = ({ ...rest }) => {
-  const [category, setCategory] = useState<Category>('ANIME')
   const [showSearchResults, setShowSearchResults] = useState(false)
-  const { register, watch, handleSubmit, getFieldState } = useForm()
+  const { register, watch, handleSubmit } = useForm()
+  const searchRef = useRef<HTMLInputElement>(null)
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
   const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { input: { search: searchValue } }, pause: !searchValue })
+  const { ref, ...restForm } = register('search')
 
-  // const { completed, value: data } = useObservable(() => searchSeries({ categories: [category], search: searchValue }, { fetch: fetch }), [searchValue])
-  const completed = true
-  const data = []
-  const loading = !completed
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault()
+        searchRef?.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   useDebounce(() => {
     if (!search?.length) return
@@ -278,7 +293,7 @@ const Header = ({ ...rest }) => {
 
   const onSubmit = (v) => {
   }
-  
+
   const _showSearchResults = () => setShowSearchResults(true)
 
   const hideSearchResults = (ev: FocusEvent<HTMLInputElement>) => {
@@ -315,8 +330,15 @@ const Header = ({ ...rest }) => {
       <div className="middle">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
+            {...restForm}
             type="text"
-            placeholder='Search' {...register('search', { onBlur: hideSearchResults })}
+            name="search"
+            placeholder="Search"
+            ref={(e) => {
+              ref(e)
+              searchRef.current = e
+            }}
+            onBlur={hideSearchResults}
             onFocus={_showSearchResults}
             autoComplete="off"
           />
