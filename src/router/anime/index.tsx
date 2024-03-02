@@ -884,7 +884,7 @@ const Anime = () => {
   
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
-  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
+  const [getMediaResult] = useSubscription({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
   const { error: error2, data: { media } = {} } = getMediaResult
 
   if (error) console.error(error)

@@ -1,5 +1,5 @@
 import { getIntrospectionQuery } from 'graphql'
-import { makeScannarrClient } from 'scannarr'
+import { makeScannarrClient } from '../node_modules/scannarr'
 import { call, makeCallListener, registerListener } from 'osra'
 
 import WorkerUrl from './yoga-worker?worker&url'

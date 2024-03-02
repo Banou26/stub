@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { targets } from 'laserr'
-import { useQuery } from 'urql'
+import { useQuery, useSubscription } from 'urql'
 
 // import './preview-modal.css'
 import { gql } from '../../generated'
@@ -12,7 +12,7 @@ import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
 import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr'
 import { Episode } from 'scannarr'
-import { Link, useLocation, useSearch } from 'wouter'
+import { Link, Redirect, useLocation, useSearch } from 'wouter'
 import { Pagination } from '../../components/pagination'
 
 const style = css`
@@ -228,11 +228,11 @@ pointer-events: none;
 
 `
 
-export const GET_PREVIEW_MODAL_MEDIA = gql(`#graphql
-  query GetPreviewModalMedia($input: MediaInput!) {
+export const GET_PREVIEW_MODAL_MEDIA = `#graphql
+  subscription GetPreviewModalMedia($input: MediaInput!) {
     media(input: $input) {
       handles {
-        edges @stream {
+        edges {
           node {
             handles {
               edges {
@@ -322,7 +322,7 @@ export const GET_PREVIEW_MODAL_MEDIA = gql(`#graphql
       }
     }
   }
-`)
+`
 
 
 export const GET_ORIGINS = gql(`#graphql
@@ -441,7 +441,11 @@ export default () => {
   // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const [{ fetching, hasNext, error, data: { media } = {} }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { input: { uri: mediaUri! } }, pause: !mediaUri })
+  const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
+    query: GET_PREVIEW_MODAL_MEDIA,
+    variables: { input: { uri: mediaUri! } },
+    pause: !mediaUri
+  })
   // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
@@ -450,6 +454,24 @@ export default () => {
   // console.log('originPage', originPage)
 
   useEffect(() => {
+    console.log('media', media)
+    console.log('mediaUri', mediaUri)
+    console.log('media?.uri', media?.uri)
+    console.log('fetching', fetching)
+    if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
+
+    console.log(
+      'uris', 
+      media
+        .handles
+        .edges
+        .flatMap(edge =>
+          edge
+          .node
+          .handles
+          .edges.map(edge => edge.node.uri)
+        )
+    )
     const newUri = media && mergeScannarrUris([
       media.uri,
       toScannarrUri(
@@ -464,10 +486,12 @@ export default () => {
           )
       )
     ])
-
-    if (!media || fetching || hasNext || hasNext === undefined || !media?.uri || mediaUri === newUri || !mediaUri) return
-    setTimeout(() => setSearchParams({ details: newUri }), 0)
-  }, [hasNext, media, setSearchParams])
+    console.log('newUri', newUri)
+    if (mediaUri === newUri) return
+    setTimeout(() => {
+      setSearchParams({ details: newUri as string })
+    }, 100)
+  }, [media, setSearchParams])
 
   if (error) {
     console.log('preview modal error', error)
@@ -531,6 +555,21 @@ export default () => {
   // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
 
   // const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
+
+  const newUri = media && mergeScannarrUris([
+    media.uri,
+    toScannarrUri(
+      media
+        .handles
+        .edges
+        .flatMap(edge =>
+          edge
+          .node
+          .handles
+          .edges.map(edge => edge.node.uri)
+        )
+    )
+  ])
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
