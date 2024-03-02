@@ -477,7 +477,22 @@ div.section.first-section {
 }
 `
 
-export const GET_USER_MEDIA_LIST = `#graphql
+export const GET_USER_MEDIA_LIST = gql(`#graphql
+  query GetUserMediaPage($input: UserMediaPageInput!) {
+    userMediaPage(input: $input) {
+      nodes {
+        handles {
+          edges {
+            node {
+              ...GetUserMediaListFragment
+            }
+          }
+        }
+        ...GetUserMediaListFragment
+      }
+    }
+  }
+
   fragment GetUserMediaListFragment on Media {
     origin
     id
@@ -541,22 +556,7 @@ export const GET_USER_MEDIA_LIST = `#graphql
       day
     }
   }
-
-  query GetUserMediaPage($input: UserMediaPageInput!) {
-    userMediaPage(input: $input) {
-      nodes {
-        handles {
-          edges {
-            node {
-              ...GetUserMediaListFragment
-            }
-          }
-        }
-        ...GetUserMediaListFragment
-      }
-    }
-  }
-`
+`)
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
@@ -733,7 +733,22 @@ const Draggable = (
 }
 
 
-export const GET_CURRENT_SEASON_SUBSCRIPTION = /* GraphQL */`
+export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
+  subscription GetCurrentSeason($input: MediaPageInput!) {
+    mediaPage(input: $input) {
+      nodes {
+        handles {
+          edges {
+            node {
+              ...GetMediaTestFragment
+            }
+          }
+        }
+        ...GetMediaTestFragment
+      }
+    }
+  }
+
   fragment GetMediaTestFragment on Media {
     origin
     id
@@ -797,22 +812,7 @@ export const GET_CURRENT_SEASON_SUBSCRIPTION = /* GraphQL */`
       day
     }
   }
-
-  subscription GetCurrentSeason($input: MediaPageInput!) {
-    mediaPage(input: $input) {
-      nodes {
-        handles {
-          edges {
-            node {
-              ...GetMediaTestFragment
-            }
-          }
-        }
-        ...GetMediaTestFragment
-      }
-    }
-  }
-`
+`)
 
 const Anime = () => {
   const searchParams = new URLSearchParams(useSearch())

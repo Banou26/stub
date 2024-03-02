@@ -228,7 +228,30 @@ pointer-events: none;
 
 `
 
-export const GET_PREVIEW_MODAL_MEDIA = `#graphql
+export const GET_PREVIEW_MODAL_MEDIA = gql(`#graphql
+  query GetPreviewModalMedia($input: MediaInput!) {
+    media(input: $input) {
+      handles {
+        edges @stream {
+          node {
+            handles {
+              edges {
+                node {
+                  origin
+                  id
+                  uri
+                  url
+                }
+              }
+            }
+            ...GetPreviewModalMediaFragment
+          }
+        }
+      }
+      ...GetPreviewModalMediaFragment
+    }
+  }
+
   fragment GetPreviewModalMediaEpisodeFragment on Episode {
     origin
     id
@@ -299,30 +322,7 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
       }
     }
   }
-
-  query GetPreviewModalMedia($input: MediaInput!) {
-    media(input: $input) {
-      handles {
-        edges @stream {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                  url
-                }
-              }
-            }
-            ...GetPreviewModalMediaFragment
-          }
-        }
-      }
-      ...GetPreviewModalMediaFragment
-    }
-  }
-`
+`)
 
 
 export const GET_ORIGINS = gql(`#graphql
