@@ -1,11 +1,12 @@
-import { call, makeCallListener, registerListener } from 'osra'
-import { makeScannarrServer } from '../node_modules/scannarr'
+import type { ServerContext } from '../node_modules/scannarr'
+
+import { makeScannarrServer, merge } from '../node_modules/scannarr'
 import { targets } from 'laserr'
+import { call, makeCallListener, registerListener } from 'osra'
 
 import type { Resolvers as ParentResolvers } from './urql'
 
 const target = call<ParentResolvers>(globalThis as unknown as Worker, { key: 'yoga-fetch' })
-
 const { yoga } = makeScannarrServer({
   origins: targets,
   context: async () => ({
@@ -27,7 +28,27 @@ const { yoga } = makeScannarrServer({
         rest
       )
     }
-  })
+  }) as ServerContext,
+  mergeHandles: (handles) => {
+    const result = merge(
+      ...handles
+        .sort((a, b) =>
+          a.id.localeCompare(b.id)
+        ),
+      {
+        handles: {
+          edges:
+            handles
+              .sort((a, b) =>
+                a.id.localeCompare(b.id)
+              )
+              .map(handle => ({
+                node: handle
+              }))
+        }
+      })
+    return result
+  }
 })
 
 const resolvers = {

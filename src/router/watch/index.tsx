@@ -6,7 +6,7 @@ import { Buffer } from 'buffer'
 import Bencode from 'bencode'
 import parseTorrent from 'parse-torrent'
 import { useQuery } from 'urql'
-import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri2'
+import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri'
 
 import { fetch } from '../../utils/fetch'
 import { Route, getRoutePath } from '../path'

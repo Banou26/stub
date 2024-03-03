@@ -453,50 +453,50 @@ export default () => {
   // console.log('media', media)
   // console.log('originPage', originPage)
 
-  useEffect(() => {
-    console.log('media', media)
-    console.log('mediaUri', mediaUri)
-    console.log('media?.uri', media?.uri)
-    console.log('fetching', fetching)
-    if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
+  // useEffect(() => {
+  //   console.log('media', media)
+  //   console.log('mediaUri', mediaUri)
+  //   console.log('media?.uri', media?.uri)
+  //   console.log('fetching', fetching)
+  //   if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
 
-    console.log(
-      'uris', 
-      media
-        .handles
-        .edges
-        .flatMap(edge =>
-          edge
-          .node
-          .handles
-          .edges.map(edge => edge.node.uri)
-        )
-    )
-    const newUri = media && mergeScannarrUris([
-      media.uri,
-      toScannarrUri(
-        media
-          .handles
-          .edges
-          .flatMap(edge =>
-            edge
-            .node
-            .handles
-            .edges.map(edge => edge.node.uri)
-          )
-      )
-    ])
-    console.log('newUri', newUri)
-    if (mediaUri === newUri) return
-    setTimeout(() => {
-      setSearchParams({ details: newUri as string })
-    }, 100)
-  }, [media, setSearchParams])
+  //   console.log(
+  //     'uris', 
+  //     media
+  //       .handles
+  //       .edges
+  //       .flatMap(edge =>
+  //         edge
+  //         .node
+  //         .handles
+  //         .edges.map(edge => edge.node.uri)
+  //       )
+  //   )
+  //   const newUri = media && mergeScannarrUris([
+  //     media.uri,
+  //     toScannarrUri(
+  //       media
+  //         .handles
+  //         .edges
+  //         .flatMap(edge =>
+  //           edge
+  //           .node
+  //           .handles
+  //           .edges.map(edge => edge.node.uri)
+  //         )
+  //     )
+  //   ])
+  //   console.log('newUri', newUri)
+  //   if (mediaUri === newUri) return
+  //   setTimeout(() => {
+  //     setSearchParams({ details: newUri as string })
+  //   }, 100)
+  // }, [media, setSearchParams])
 
-  if (error) {
-    console.log('preview modal error', error)
-    console.error(error)
-  }
+  // if (error) {
+  //   console.log('preview modal error', error)
+  //   console.error(error)
+  // }
 
   // if (error2) {
   //   console.log('preview modal error', error2)
