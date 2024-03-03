@@ -96,7 +96,7 @@ const minimalPlayerStyle = css`
 }
 `
 
-export const MinimalPlayer = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { media: Media, redirectTo?: To, paused?: boolean }>(({ media, redirectTo, paused = false, ...rest }, ref) => {
+export const MinimalPlayer = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { media: Media | undefined, redirectTo?: To, paused?: boolean }>(({ media, redirectTo, paused = false, ...rest }, ref) => {
   const [playerVolume, setPlayerVolume] = useState(1)
   const [isReady, setIsReady] = useState(false)
 
@@ -146,7 +146,7 @@ export const MinimalPlayer = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEl
               <ReactPlayer
                 onReady={onReady}
                 controls={false}
-                url={`https://www.youtube.com/watch?v=${media.trailers?.at(0)?.id}`}
+                url={`https://www.youtube.com/watch?v=${media?.trailers?.at(0)?.id}`}
                 loop={true}
                 playing={!paused}
                 volume={isReady ? playerVolume : undefined}
@@ -160,7 +160,7 @@ export const MinimalPlayer = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEl
             <ReactPlayer
               onReady={onReady}
               controls={false}
-              url={`https://www.youtube.com/watch?v=${media.trailers?.at(0)?.id}`}
+              url={`https://www.youtube.com/watch?v=${media?.trailers?.at(0)?.id}`}
               loop={true}
               playing={!paused}
               volume={isReady ? playerVolume : undefined}
