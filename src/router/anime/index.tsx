@@ -24,6 +24,8 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { AuthResponse } from '../auth/mal'
 import { useLocalStorageAuthStates } from '../auth/utils'
 import { OriginUserMediaStatus } from 'scannarr/src/generated/graphql'
+import SkeletonCard from '../../components/skeleton/skeleton-card'
+import SkeletonSizable from '../../components/skeleton/skeleton-sizable'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -1024,7 +1026,8 @@ const Anime = () => {
       <div css={style}>
         <div className="header-serie">
           {
-            media && (
+            media
+              ? (
                 <div className="player-wrapper">
                   <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
                   <div className="shadow"/>
@@ -1049,7 +1052,26 @@ const Anime = () => {
                     </Link>
                   </div>
                 </div>
-
+            )
+            : (
+                <div className="player-wrapper">
+                  <MinimalPlayer ref={setHeaderTrailerRef} media={media} paused={headerTrailerPaused} className="player"/>
+                  <div className="shadow"/>
+                  <div className="header-serie-content">
+                    <div className="header-serie-title">
+                      <SkeletonSizable height={30} length={20}/>
+                    </div>
+                    <div className="header-serie-description">
+                      <SkeletonSizable width={300} height={50}/>
+                    </div>
+                    <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media?.uri }).toString()}`}>
+                      <button className="watch">
+                        <Play/>
+                        Watch
+                      </button>
+                    </Link>
+                  </div>
+                </div>
             )
           }
         </div>
@@ -1136,40 +1158,52 @@ const Anime = () => {
           </Link>
           <div className="section-items">
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
-              <Grid
-                className="virtualized-list"
-                height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
-                columnCount={titleCards?.length ?? 0}
-                columnWidth={listWidth / (listWidth / titleCardWidth)}
-                rowCount={1}
-                rowHeight={titleCardHeight}
-                rowWidth={titleCardWidth}
-                width={listWidth}
-                // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
-                overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
-                  overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
-                  overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
-                })}
-                cellRenderer={({ columnIndex, key, rowIndex, style: { height, width, ...style } }) =>
-                  <div key={key} style={style}>
-                    {titleCards?.[columnIndex]}
-                  </div>
-                }
-              />
+              {
+                titleCards?.length
+                  ? (
+                    <Grid
+                      className="virtualized-list"
+                      height={titleCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
+                      columnCount={titleCards.length}
+                      columnWidth={listWidth / (listWidth / titleCardWidth)}
+                      rowCount={1}
+                      rowHeight={titleCardHeight}
+                      rowWidth={titleCardWidth}
+                      width={listWidth}
+                      // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
+                      overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
+                        overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
+                        overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
+                      })}
+                      cellRenderer={({ columnIndex, key, rowIndex, style: { height, width, ...style } }) =>
+                        <div key={key} style={style}>
+                          {titleCards?.[columnIndex]}
+                        </div>
+                      }
+                    />
+                )
+                : (
+                  <SkeletonCard
+                    count={Math.ceil(listWidth / titleCardWidth) - 1}
+                    height={titleCardHeight}
+                    width={titleCardWidth - 10}
+                  />
+                )
+              }
             </Draggable>
             {
               !isDragging && hoverCardMedia && (
-                <TitleHoverCard
-                  media={hoverCardMedia}
-                  ref={refs.setFloating}
-                  onMouseLeave={onHoverCardMouseLeave}
-                  style={{
-                    position: strategy,
-                    top: y ?? 0,
-                    left: x ?? 0
-                  }}
-                />
-              )
+                  <TitleHoverCard
+                    media={hoverCardMedia}
+                    ref={refs.setFloating}
+                    onMouseLeave={onHoverCardMouseLeave}
+                    style={{
+                      position: strategy,
+                      top: y ?? 0,
+                      left: x ?? 0
+                    }}
+                  />
+                )
             }
           </div>
         </div>
@@ -1179,26 +1213,38 @@ const Anime = () => {
           </Link>
           <div className="section-items">
             <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
-              <Grid
-                className="virtualized-list"
-                height={episodeCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
-                columnCount={episodeCards?.length ?? 0}
-                columnWidth={listWidth / (listWidth / episodeCardWidth)}
-                rowCount={1}
-                rowHeight={episodeCardHeight}
-                rowWidth={episodeCardWidth}
-                width={listWidth}
-                // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
-                overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
-                  overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
-                  overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
-                })}
-                cellRenderer={({ columnIndex, key, rowIndex, style }) =>
-                  <div key={key} style={style}>
-                    {episodeCards?.[columnIndex]}
-                  </div>
-                }
-              />
+              {
+                episodeCards?.length
+                ? (
+                  <Grid
+                    className="virtualized-list"
+                    height={episodeCardHeight + (window.matchMedia('(min-width: 2560px)').matches ? 20 : 25)}
+                    columnCount={episodeCards?.length ?? 0}
+                    columnWidth={listWidth / (listWidth / episodeCardWidth)}
+                    rowCount={1}
+                    rowHeight={episodeCardHeight}
+                    rowWidth={episodeCardWidth}
+                    width={listWidth}
+                    // https://github.com/bvaughn/react-virtualized/blob/master/docs/Grid.md#overscanindicesgetter
+                    overscanIndicesGetter={({ cellCount, overscanCellsCount, startIndex, stopIndex, }) => ({
+                      overscanStartIndex: Math.max(0, startIndex - overscanCellsCount - 1),
+                      overscanStopIndex: Math.min(cellCount - 1, stopIndex + overscanCellsCount),
+                    })}
+                    cellRenderer={({ columnIndex, key, rowIndex, style }) =>
+                      <div key={key} style={style}>
+                        {episodeCards?.[columnIndex]}
+                      </div>
+                    }
+                  />
+                )
+                : (
+                  <SkeletonCard
+                    count={Math.ceil(listWidth / episodeCardWidth) - 1}
+                    height={episodeCardHeight}
+                    width={episodeCardWidth - 10}
+                  />
+                )
+              }
             </Draggable>
           </div>
         </div>
