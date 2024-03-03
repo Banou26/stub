@@ -28,10 +28,6 @@ const style = css`
     inset: 0;
   }
 
-  &.link:hover + .information .title-text {
-    text-decoration: underline;
-  }
-
   .origin-icon {
     display: inline-flex;
     margin-top: auto;
