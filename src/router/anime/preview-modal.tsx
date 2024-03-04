@@ -148,7 +148,7 @@ pointer-events: none;
 
       .episode {
         display: grid;
-        grid-template-columns: 7rem auto 10rem;
+        grid-template-columns: 7rem auto 12.5rem;
         height: 10rem;
         border-bottom: .1rem solid rgba(255, 255, 255, .1);
         color: #fff;
@@ -169,6 +169,10 @@ pointer-events: none;
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+
+        .date {
+          justify-content: end;
         }
 
         .content {

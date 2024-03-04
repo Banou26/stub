@@ -935,7 +935,7 @@ const Anime = () => {
         <EpisodeCard
           key={episode.uri}
           to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
-          style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          style={{ backgroundImage: `url(${episode.media.coverImage?.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
           episode={episode}
         />
       )
@@ -1072,7 +1072,7 @@ const Anime = () => {
           {
             media && (
               <>
-                <img src={media.coverImage.at(0)?.default} alt={media.title.english} />
+                <img src={media.coverImage?.at(0)?.default} alt={media.title?.english} />
                 <div className="content">
                   <div className="title">
                     <p>
