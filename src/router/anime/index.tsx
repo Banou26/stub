@@ -482,13 +482,6 @@ export const GET_USER_MEDIA_LIST = gql(`#graphql
   query GetUserMediaPage($input: UserMediaPageInput!) {
     userMediaPage(input: $input) {
       nodes {
-        handles {
-          edges {
-            node {
-              ...GetUserMediaListFragment
-            }
-          }
-        }
         ...GetUserMediaListFragment
       }
     }
