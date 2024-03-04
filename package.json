@@ -97,6 +97,5 @@
     "util": "^0.12.4",
     "wouter": "^3.0.0-rc.2",
     "zustand": "^4.4.7"
-  },
-  "type": "module"
+  }
 }

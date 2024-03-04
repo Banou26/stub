@@ -25,6 +25,7 @@ import { AuthResponse } from '../auth/mal'
 import { useLocalStorageAuthStates } from '../auth/utils'
 import SkeletonCard from '../../components/skeleton/skeleton-card'
 import SkeletonSizable from '../../components/skeleton/skeleton-sizable'
+import { gql } from '../../generated'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;

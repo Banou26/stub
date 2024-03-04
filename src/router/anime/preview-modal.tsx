@@ -14,6 +14,7 @@ import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr'
 import { Episode } from 'scannarr'
 import { Link, Redirect, useLocation, useSearch } from 'wouter'
 import { Pagination } from '../../components/pagination'
+import { fromScannarrUri } from 'scannarr'
 
 const style = css`
 overflow: auto;
@@ -257,7 +258,16 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
     id
     uri
     url
-
+    handles {
+      edges {
+        node {
+          origin
+          id
+          uri
+          url
+        }
+      }
+    }
     airingAt
     number
     mediaUri
@@ -453,55 +463,29 @@ export default () => {
   // console.log('media', media)
   // console.log('originPage', originPage)
 
-  // useEffect(() => {
-  //   console.log('media', media)
-  //   console.log('mediaUri', mediaUri)
-  //   console.log('media?.uri', media?.uri)
-  //   console.log('fetching', fetching)
-  //   if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
-
-  //   console.log(
-  //     'uris', 
-  //     media
-  //       .handles
-  //       .edges
-  //       .flatMap(edge =>
-  //         edge
-  //         .node
-  //         .handles
-  //         .edges.map(edge => edge.node.uri)
-  //       )
-  //   )
-  //   const newUri = media && mergeScannarrUris([
-  //     media.uri,
-  //     toScannarrUri(
-  //       media
-  //         .handles
-  //         .edges
-  //         .flatMap(edge =>
-  //           edge
-  //           .node
-  //           .handles
-  //           .edges.map(edge => edge.node.uri)
-  //         )
-  //     )
-  //   ])
-  //   console.log('newUri', newUri)
-  //   if (mediaUri === newUri) return
-  //   setTimeout(() => {
-  //     setSearchParams({ details: newUri as string })
-  //   }, 100)
-  // }, [media, setSearchParams])
-
-  // if (error) {
-  //   console.log('preview modal error', error)
-  //   console.error(error)
-  // }
-
-  // if (error2) {
-  //   console.log('preview modal error', error2)
-  //   console.error(error2)
-  // }
+  useEffect(() => {
+    if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
+    const newUri = media && mergeScannarrUris([
+      media.uri,
+      toScannarrUri([
+        ...new Set(
+          media
+            .handles
+            .edges
+            .flatMap(edge =>
+              edge
+              .node
+              .handles
+              .edges.map(edge => edge.node.uri)
+            )
+        )
+      ])
+    ])
+    if (mediaUri === newUri) return
+    setTimeout(() => {
+      setSearchParams({ details: newUri as string })
+    }, 100)
+  }, [media, setSearchParams])
 
   const mediaTargets =
     media &&
@@ -556,20 +540,20 @@ export default () => {
 
   // const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
 
-  const newUri = media && mergeScannarrUris([
-    media.uri,
-    toScannarrUri(
-      media
-        .handles
-        .edges
-        .flatMap(edge =>
-          edge
-          .node
-          .handles
-          .edges.map(edge => edge.node.uri)
-        )
-    )
-  ])
+  // const newUri = media && mergeScannarrUris([
+  //   media.uri,
+  //   toScannarrUri(
+  //     media
+  //       .handles
+  //       .edges
+  //       .flatMap(edge =>
+  //         edge
+  //         .node
+  //         .handles
+  //         .edges.map(edge => edge.node.uri)
+  //       )
+  //   )
+  // ])
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
@@ -625,12 +609,12 @@ export default () => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={15}
-                    totalPages={Math.ceil(media.episodes.edges.length / 15)}
+                    totalPages={media?.episodes?.edges ? Math.ceil(media.episodes.edges.length / 15) : 0}
                   >
                     {
                       media
-                        .episodes
-                        .edges
+                        ?.episodes
+                        ?.edges
                         ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
                         ?.slice(currentPage * 15, currentPage * 15 + 15)
                         ?.map(({ node }) => <EpisodeRow key={node.uri} mediaUri={mediaUri} node={node}/>)
