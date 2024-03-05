@@ -245,7 +245,6 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
                   origin
                   id
                   uri
-                  url
                 }
               }
             }
