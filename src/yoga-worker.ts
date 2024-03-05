@@ -85,27 +85,25 @@ const { yoga } = makeScannarrServer({
             ?? []
           )
 
-      const { handleGroups } = groupRelatedHandles({
-        results: episodeNodes
-      })
+      const { handleGroups: episodeHandleGrouos } = groupRelatedHandles({ results: episodeNodes })
 
-      const scannarrHandles =
-        handleGroups
-          .map(handles =>
-            makeScannarrHandle2({
-              handles,
-              mergeHandles
-            })
-          )
+      const scannarrEpisodeHandles =
+        episodeHandleGrouos
+            .map(handles =>
+              makeScannarrHandle2({
+                handles,
+                mergeHandles
+              })
+            )
 
       return {
         ...result,
         episodes: {
-          edges: scannarrHandles.map(episode => ({
+          edges: scannarrEpisodeHandles.map(episode => ({
             handleRelationType: HandleRelation.Identical,
             node: episode
           })),
-          nodes: scannarrHandles
+          nodes: scannarrEpisodeHandles
         }
       }
     }
