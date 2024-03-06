@@ -353,7 +353,7 @@ export const GET_ORIGINS = gql(`#graphql
 
 const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => {
   const rtf = useMemo(() => new Intl.RelativeTimeFormat('en', { numeric: 'auto' }), [])
-  const airingAt = new Date(node.airingAt ?? Date.now() + node.timeUntilAiring * 1000)
+  const airingAt = new Date(node.airingAt ?? (Date.now() + node.timeUntilAiring * 1000))
   const airingAtInPast = Date.now() - airingAt.getTime() > 0
   const delta = airingAtInPast ? -(Date.now() - airingAt.getTime()) : Date.now() - airingAt.getTime()
   const daysRelativeAiring = delta / 1000 / 60 / 60 / 24
@@ -362,7 +362,7 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
   const airingAtString =
     Math.abs(yearsRelativeAiring) > 1 ? rtf.format(Math.round(yearsRelativeAiring), 'years')
     : Math.abs(monthsRelativeAiring) > 1 ? rtf.format(Math.round(monthsRelativeAiring), 'months')
-    : Math.abs(daysRelativeAiring) > 1 ? rtf.format(Math.round(daysRelativeAiring), 'days')
+    : Math.abs(daysRelativeAiring) >= 0 ? rtf.format(Math.round(daysRelativeAiring), 'days')
     : airingAt.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
 
   const title = airingAt?.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
