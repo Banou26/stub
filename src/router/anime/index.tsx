@@ -1,31 +1,30 @@
+import type { Media } from '../../generated/graphql'
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
-import { useQuery, useSubscription } from 'urql'
+import { useSubscription } from 'urql'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
-import { Link, useLocation, useSearch } from 'wouter'
+import { Link, useSearch } from 'wouter'
 import { Grid } from 'react-virtualized'
 
-import { Media, MediaSort, UserMediaStatus } from '../../generated/graphql'
-import { GET_CURRENT_SEASON } from '../anime/season'
+import { MediaSort, UserMediaStatus } from '../../generated/graphql'
 import { Route, getRoutePath } from '../path'
 import Title2 from '../../components/title2'
-
-import './index.css'
 import PreviewModal, { GET_PREVIEW_MODAL_MEDIA as GET_MEDIA } from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { AuthResponse } from '../auth/mal'
 import { useLocalStorageAuthStates } from '../auth/utils'
 import SkeletonCard from '../../components/skeleton/skeleton-card'
 import SkeletonSizable from '../../components/skeleton/skeleton-sizable'
 import { gql } from '../../generated'
+
+import './index.css'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;

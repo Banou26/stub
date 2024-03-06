@@ -1,12 +1,9 @@
-import { getTarget, Series } from '../../../../scannarr/src'
-
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Heart, Users } from 'react-feather'
 import { css } from '@emotion/react'
 
 import Title from './title'
 import Sources from './sources'
-import Schedule from './schedule'
 import { Media } from '../generated/graphql'
 
 const style = css`

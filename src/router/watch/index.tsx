@@ -296,6 +296,7 @@ const Watch = () => {
     [playbackSourcePage?.nodes]
   )
 
+  // todo: remove this and put in laserr
   useEffect(() => {
     if (!torrentSourcesInfoHashes?.length) return
     const infoHashes = torrentSourcesInfoHashes?.map(([, binStr]) => binStr)

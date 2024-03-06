@@ -1,6 +1,4 @@
-import type { Series } from '../../../../scannarr/src'
-
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 export default ({ series }: { series: Series }) => {
   const isUnreleased = useMemo(() =>
