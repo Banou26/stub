@@ -6,106 +6,106 @@ import { GET_CURRENT_SEASON } from './anime/season'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
 
 
-export const GET_LATEST_EPISODES = `#graphql
-  fragment GetLatestEpisodesEpisodeFragment on Episode {
-    origin
-    id
-    uri
-    url
+// export const GET_LATEST_EPISODES = `#graphql
+//   fragment GetLatestEpisodesEpisodeFragment on Episode {
+//     origin
+//     id
+//     uri
+//     url
 
-    number
-    mediaUri
-    media {
-      handles {
-        edges {
-          node {
-            uri
-          }
-        }
-      }
+//     number
+//     mediaUri
+//     media {
+//       handles {
+//         edges {
+//           node {
+//             uri
+//           }
+//         }
+//       }
 
-      origin
-      id
-      uri
+//       origin
+//       id
+//       uri
 
-      url
-      title {
-        romanized
-        english
-        native
-      }
-      coverImage {
-        color
-        default
-        extraLarge
-        large
-        medium
-        small
-      }
-      bannerImage
-    }
-    title {
-      romanized
-      english
-      native
-    }
-    description
-    airingAt
-    thumbnail
-  }
+//       url
+//       title {
+//         romanized
+//         english
+//         native
+//       }
+//       coverImage {
+//         color
+//         default
+//         extraLarge
+//         large
+//         medium
+//         small
+//       }
+//       bannerImage
+//     }
+//     title {
+//       romanized
+//       english
+//       native
+//     }
+//     description
+//     airingAt
+//     thumbnail
+//   }
 
-  query GetLatestEpisodes($input: EpisodePageInput!) {
-    episodePage(input: $input) {
-      nodes {
-        handles {
-          edges @stream {
-            node {
-              handles {
-                edges {
-                  node {
-                    uri
-                  }
-                }
-              }
-              ...GetLatestEpisodesEpisodeFragment
-            }
-          }
-        }
-        ...GetLatestEpisodesEpisodeFragment
-      }
-    }
-  }
-`
+//   query GetLatestEpisodes($input: EpisodePageInput!) {
+//     episodePage(input: $input) {
+//       nodes {
+//         handles {
+//           edges @stream {
+//             node {
+//               handles {
+//                 edges {
+//                   node {
+//                     uri
+//                   }
+//                 }
+//               }
+//               ...GetLatestEpisodesEpisodeFragment
+//             }
+//           }
+//         }
+//         ...GetLatestEpisodesEpisodeFragment
+//       }
+//     }
+//   }
+// `
 
-const query = gql`
-  query GetEpisodeTest($input: EpisodePageInput!) {
-    episodePage(input: $input) {
-      nodes {
-        uri
-        handles {
-          edges @stream {
-            node {
-              uri
-              media {
-                uri
-              }
-            }
-          }
-        }
-        media {
-          uri
-          handles {
-            edges {
-              node {
-                uri
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`
+// const query = gql`
+//   query GetEpisodeTest($input: EpisodePageInput!) {
+//     episodePage(input: $input) {
+//       nodes {
+//         uri
+//         handles {
+//           edges @stream {
+//             node {
+//               uri
+//               media {
+//                 uri
+//               }
+//             }
+//           }
+//         }
+//         media {
+//           uri
+//           handles {
+//             edges {
+//               node {
+//                 uri
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// `
 
 
 export default () => {
