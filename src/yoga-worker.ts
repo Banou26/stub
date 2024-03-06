@@ -1,6 +1,6 @@
-import type { ServerContext } from '../node_modules/scannarr'
+import type { ServerContext } from 'scannarr'
 
-import { makeScannarrServer, merge, groupRelatedHandles, makeScannarrHandle2 } from '../node_modules/scannarr'
+import { makeScannarrServer, merge, groupRelatedHandles, makeScannarrHandle2 } from 'scannarr'
 import { targets } from 'laserr'
 import { call, makeCallListener, registerListener } from 'osra'
 

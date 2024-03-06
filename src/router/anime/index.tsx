@@ -478,8 +478,8 @@ div.section.first-section {
 }
 `
 
-export const GET_USER_MEDIA_LIST = gql(`#graphql
-  query GetUserMediaPage($input: UserMediaPageInput!) {
+export const GET_USER_MEDIA_LIST = `#graphql
+  subscription GetUserMediaPage($input: UserMediaPageInput!) {
     userMediaPage(input: $input) {
       nodes {
         ...GetUserMediaListFragment
@@ -550,7 +550,7 @@ export const GET_USER_MEDIA_LIST = gql(`#graphql
       day
     }
   }
-`)
+`
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
@@ -827,7 +827,7 @@ const Anime = () => {
 
   const authStates = useLocalStorageAuthStates()
 
-  const [{ data: userMediaPageData }] = useQuery(
+  const [userMediaResult] = useSubscription(
     {
       query: GET_USER_MEDIA_LIST,
       variables: {
@@ -849,7 +849,7 @@ const Anime = () => {
     }
   )
 
-  const userMediaPage = userMediaPageData?.userMediaPage
+  const userMediaPage = userMediaResult?.data?.userMediaPage
 
   const watchingCards = useMemo(() =>
     userMediaPage?.nodes?.map(media =>
