@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { targets } from 'laserr'
-import { useQuery } from 'urql'
+import { useQuery, useSubscription } from 'urql'
 
 // import './preview-modal.css'
 import { gql } from '../../generated'
@@ -10,10 +10,11 @@ import { useEffect, useMemo, useState } from 'react'
 // import { Link, useSearchParams } from 'react-router-dom'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { Route, getRoutePath } from '../path'
-import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr/src/utils/uri2'
+import { mergeScannarrUris, toScannarrUri, toUriEpisodeId } from 'scannarr'
 import { Episode } from 'scannarr'
-import { Link, useLocation, useSearch } from 'wouter'
+import { Link, Redirect, useLocation, useSearch } from 'wouter'
 import { Pagination } from '../../components/pagination'
+import { fromScannarrUri } from 'scannarr'
 
 const style = css`
 overflow: auto;
@@ -147,7 +148,7 @@ pointer-events: none;
 
       .episode {
         display: grid;
-        grid-template-columns: 7rem auto 10rem;
+        grid-template-columns: 7rem auto 12.5rem;
         height: 10rem;
         border-bottom: .1rem solid rgba(255, 255, 255, .1);
         color: #fff;
@@ -168,6 +169,10 @@ pointer-events: none;
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+
+        .date {
+          justify-content: end;
         }
 
         .content {
@@ -229,12 +234,43 @@ pointer-events: none;
 `
 
 export const GET_PREVIEW_MODAL_MEDIA = `#graphql
+  subscription GetPreviewModalMedia($input: MediaInput!) {
+    media(input: $input) {
+      handles {
+        edges {
+          node {
+            handles {
+              edges {
+                node {
+                  origin
+                  id
+                  uri
+                }
+              }
+            }
+            ...GetPreviewModalMediaFragment
+          }
+        }
+      }
+      ...GetPreviewModalMediaFragment
+    }
+  }
+
   fragment GetPreviewModalMediaEpisodeFragment on Episode {
     origin
     id
     uri
     url
-
+    handles {
+      edges {
+        node {
+          origin
+          id
+          uri
+          url
+        }
+      }
+    }
     airingAt
     number
     mediaUri
@@ -299,29 +335,6 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
       }
     }
   }
-
-  query GetPreviewModalMedia($input: MediaInput!) {
-    media(input: $input) {
-      handles {
-        edges @stream {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                  url
-                }
-              }
-            }
-            ...GetPreviewModalMediaFragment
-          }
-        }
-      }
-      ...GetPreviewModalMediaFragment
-    }
-  }
 `
 
 
@@ -340,7 +353,7 @@ export const GET_ORIGINS = gql(`#graphql
 
 const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => {
   const rtf = useMemo(() => new Intl.RelativeTimeFormat('en', { numeric: 'auto' }), [])
-  const airingAt = new Date(node.airingAt ?? Date.now() + node.timeUntilAiring * 1000)
+  const airingAt = new Date(node.airingAt ?? (Date.now() + node.timeUntilAiring * 1000))
   const airingAtInPast = Date.now() - airingAt.getTime() > 0
   const delta = airingAtInPast ? -(Date.now() - airingAt.getTime()) : Date.now() - airingAt.getTime()
   const daysRelativeAiring = delta / 1000 / 60 / 60 / 24
@@ -349,10 +362,10 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
   const airingAtString =
     Math.abs(yearsRelativeAiring) > 1 ? rtf.format(Math.round(yearsRelativeAiring), 'years')
     : Math.abs(monthsRelativeAiring) > 1 ? rtf.format(Math.round(monthsRelativeAiring), 'months')
-    : Math.abs(daysRelativeAiring) > 1 ? rtf.format(Math.round(daysRelativeAiring), 'days')
+    : Math.abs(daysRelativeAiring) >= 0 ? rtf.format(Math.round(daysRelativeAiring), 'days')
     : airingAt.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
 
-  const title = airingAt?.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
+  const title = airingAt?.toLocaleString('en-US', { timeZone: 'UTC' })
 
   if (
     (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
@@ -363,8 +376,8 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
   const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
 
   const usedTitle =
-    node.title?.romanized
-    ?? node.title?.english
+    node.title?.english
+    ?? node.title?.romanized
     ?? node.title?.native
 
   const [thumbnailErrored, setThumbnailErrored] = useState(false)
@@ -441,7 +454,11 @@ export default () => {
   // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
-  const [{ fetching, hasNext, error, data: { media } = {} }] = useQuery({ query: GET_PREVIEW_MODAL_MEDIA, variables: { input: { uri: mediaUri! } }, pause: !mediaUri })
+  const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
+    query: GET_PREVIEW_MODAL_MEDIA,
+    variables: { input: { uri: mediaUri! } },
+    pause: !mediaUri
+  })
   // console.log('media', media)
   const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
   // console.log('foundSources', foundSources)
@@ -450,34 +467,28 @@ export default () => {
   // console.log('originPage', originPage)
 
   useEffect(() => {
+    if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
     const newUri = media && mergeScannarrUris([
       media.uri,
-      toScannarrUri(
-        media
-          .handles
-          .edges
-          .flatMap(edge =>
-            edge
-            .node
+      toScannarrUri([
+        ...new Set(
+          media
             .handles
-            .edges.map(edge => edge.node.uri)
-          )
-      )
+            .edges
+            .flatMap(edge =>
+              edge
+              .node
+              .handles
+              .edges.map(edge => edge.node.uri)
+            )
+        )
+      ])
     ])
-
-    if (!media || fetching || hasNext || hasNext === undefined || !media?.uri || mediaUri === newUri || !mediaUri) return
-    setTimeout(() => setSearchParams({ details: newUri }), 0)
-  }, [hasNext, media, setSearchParams])
-
-  if (error) {
-    console.log('preview modal error', error)
-    console.error(error)
-  }
-
-  // if (error2) {
-  //   console.log('preview modal error', error2)
-  //   console.error(error2)
-  // }
+    if (mediaUri === newUri) return
+    setTimeout(() => {
+      setSearchParams({ details: newUri as string })
+    }, 100)
+  }, [media, setSearchParams])
 
   const mediaTargets =
     media &&
@@ -531,6 +542,21 @@ export default () => {
   // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
 
   // const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
+
+  // const newUri = media && mergeScannarrUris([
+  //   media.uri,
+  //   toScannarrUri(
+  //     media
+  //       .handles
+  //       .edges
+  //       .flatMap(edge =>
+  //         edge
+  //         .node
+  //         .handles
+  //         .edges.map(edge => edge.node.uri)
+  //       )
+  //   )
+  // ])
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
@@ -586,12 +612,12 @@ export default () => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={15}
-                    totalPages={Math.ceil(media.episodes.edges.length / 15)}
+                    totalPages={media?.episodes?.edges ? Math.ceil(media.episodes.edges.length / 15) : 0}
                   >
                     {
                       media
-                        .episodes
-                        .edges
+                        ?.episodes
+                        ?.edges
                         ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
                         ?.slice(currentPage * 15, currentPage * 15 + 15)
                         ?.map(({ node }) => <EpisodeRow key={node.uri} mediaUri={mediaUri} node={node}/>)

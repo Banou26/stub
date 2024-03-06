@@ -112,9 +112,9 @@ export default forwardRef<HTMLDivElement, React.ButtonHTMLAttributes<HTMLDivElem
           <Link to={to} className="title-text">
             <span>
               {
-                (episode.media?.title?.romanized?.length ?? 0) > 30
-                  ? episode.media?.title?.romanized?.slice(0, 30) + '...'
-                  : episode.media?.title?.romanized
+                (episode.media?.title?.english?.length ?? 0) > 30
+                  ? episode.media?.title?.english?.slice(0, 30) + '...'
+                  : episode.media?.title?.english
               }
             </span>
             <br />

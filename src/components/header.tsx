@@ -3,7 +3,7 @@ import { Link } from 'wouter'
 import { FocusEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDebounce } from 'react-use'
-import { useQuery } from 'urql'
+import { useQuery, useSubscription } from 'urql'
 
 import { getRoutePath, Route } from '../router/path'
 import DiscordIconUrl from '../images/discord-mark-blue.svg'
@@ -246,7 +246,7 @@ export const SEARCH_MEDIA = `#graphql
     }
   }
 
-  query SearchMedia($input: MediaPageInput!) {
+  subscription SearchMedia($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
         ...SearchMediaFragment
@@ -269,7 +269,7 @@ const Header = ({ ...rest }) => {
   const search = watch('search')
   // We use a state here because we want to debounce the search
   const [searchValue, setSearchValue] = useState('')
-  const [searchResult] = useQuery({ query: SEARCH_MEDIA, variables: { input: { search: searchValue } }, pause: !searchValue })
+  const [searchResult] = useSubscription({ query: SEARCH_MEDIA, variables: { input: { search: searchValue } }, pause: !searchValue })
   const { ref, ...restForm } = register('search')
 
   useEffect(() => {
@@ -351,7 +351,7 @@ const Header = ({ ...rest }) => {
                 searchResult?.data?.mediaPage?.nodes.map(media =>
                   <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
                     <img src={media.coverImage.at(0)?.default} alt="" referrer-policy="same-origin"/>
-                    <span style={{ color: 'white' }}>{media.title.romanized}</span>
+                    <span style={{ color: 'white' }}>{media.title.english}</span>
                   </Link>
                 )
               }

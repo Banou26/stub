@@ -45,8 +45,8 @@ const style = css`
 `
 
 const GET_ORIGIN_AUTHENTICATION = `#graphql
-  query GetOriginAuthentication {
-    originAuthentication {
+  query GetAuthentication {
+    authentication {
       origin {
         id
         name
@@ -68,8 +68,8 @@ const GET_ORIGIN_AUTHENTICATION = `#graphql
 `
 
 const GET_ORIGIN_AUTHENTICATE = `#graphql
-  mutation GetOriginAuthenticate($input: OriginAuthenticateInput!) {
-    originAuthenticate(input: $input) {
+  mutation GetAuthenticate($input: AuthenticateInput!) {
+    authenticate(input: $input) {
       oauth2 {
         accessToken
         refreshToken
@@ -120,10 +120,10 @@ export default () => {
         origin: originId,
         type: 'OAUTH2',
         oauth2: {
-          accessToken: res.data.originAuthenticate.oauth2.accessToken,
-          refreshToken: res.data.originAuthenticate.oauth2.refreshToken,
-          expiresIn: res.data.originAuthenticate.oauth2.expiresIn,
-          tokenType: res.data.originAuthenticate.oauth2.tokenType
+          accessToken: res.data.authenticate.oauth2.accessToken,
+          refreshToken: res.data.authenticate.oauth2.refreshToken,
+          expiresIn: res.data.authenticate.oauth2.expiresIn,
+          tokenType: res.data.authenticate.oauth2.tokenType
         }
       })
       setLocation(getRoutePath(Route.AUTH))

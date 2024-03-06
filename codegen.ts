@@ -27,10 +27,6 @@ const config: CodegenConfig = {
   generates: {
     './src/generated/': {
       preset: 'client',
-      config: {
-        withComponent: true,
-        dedupeFragments: true
-      },
       presetConfig: {
         gqlTagName: 'gql',
         fragmentMasking: false

@@ -5,8 +5,8 @@ import { hex2bin } from 'uint8-util'
 import { Buffer } from 'buffer'
 import Bencode from 'bencode'
 import parseTorrent from 'parse-torrent'
-import { useQuery } from 'urql'
-import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri2'
+import { useSubscription } from 'urql'
+import { Uri, mergeScannarrUris, fromUriEpisodeId } from 'scannarr/src/utils/uri'
 
 import { fetch } from '../../utils/fetch'
 import { Route, getRoutePath } from '../path'
@@ -76,6 +76,31 @@ const style = css`
 
 
 export const GET_PLAYBACK_SOURCES = `#graphql
+  subscription GetPlaybackSources($input: PlaybackSourcePageInput!) {
+    playbackSourcePage(input: $input) {
+      nodes {
+        handles {
+          edges {
+            node {
+              handles {
+                edges {
+                  node {
+                    origin
+                    id
+                    uri
+                    url
+                  }
+                }
+              }
+              ...PlaybackSourceFragment
+            }
+          }
+        }
+        ...PlaybackSourceFragment
+      }
+    }
+  }
+
   fragment PlaybackSourceFragment on PlaybackSource {
     origin
     id
@@ -106,35 +131,32 @@ export const GET_PLAYBACK_SOURCES = `#graphql
     episodeRange
     data
   }
-
-  query GetPlaybackSources($input: PlaybackSourcePageInput!) {
-    playbackSourcePage(input: $input) {
-      nodes {
-        handles {
-          edges @stream {
-            node {
-              handles {
-                edges {
-                  node {
-                    origin
-                    id
-                    uri
-                    url
-                  }
-                }
-              }
-              ...PlaybackSourceFragment
-            }
-          }
-        }
-        ...PlaybackSourceFragment
-      }
-    }
-  }
 `
 
-
 export const GET_WATCH_MEDIA = `#graphql
+  subscription GetWatchMedia($input: MediaPageInput!) {
+    media(input: $input) {
+      handles {
+        edges {
+          node {
+            handles {
+              edges {
+                node {
+                  origin
+                  id
+                  uri
+                  url
+                }
+              }
+            }
+            ...GetWatchMediaFragment
+          }
+        }
+      }
+      ...GetWatchMediaFragment
+    }
+  }
+
   fragment GetWatchMediaEpisodeFragment on Episode {
     origin
     id
@@ -205,29 +227,6 @@ export const GET_WATCH_MEDIA = `#graphql
       }
     }
   }
-
-  query GetWatchMedia($input: MediaPageInput!) {
-    media(input: $input) {
-      handles {
-        edges @stream {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                  url
-                }
-              }
-            }
-            ...GetWatchMediaFragment
-          }
-        }
-      }
-      ...GetWatchMediaFragment
-    }
-  }
 `
 
 
@@ -240,7 +239,7 @@ const Watch = () => {
   const uri = mergeScannarrUris([mediaUri, episodeUri])
   const episodeId = fromUriEpisodeId(episodeUri).episodeId
   
-  const [{ data: { media } = { media: undefined } }] = useQuery({
+  const [{ data: { media } = { media: undefined } }] = useSubscription({
     query: GET_WATCH_MEDIA,
     variables: {
       input: {
@@ -250,7 +249,7 @@ const Watch = () => {
     pause: !mediaUri
   })
 
-  const [{ error, data: { playbackSourcePage } = { playbackSourcePage: undefined } }] = useQuery(
+  const [{ error, data: { playbackSourcePage } = { playbackSourcePage: undefined } }] = useSubscription(
     {
       query: GET_PLAYBACK_SOURCES,
       variables: {
@@ -297,6 +296,7 @@ const Watch = () => {
     [playbackSourcePage?.nodes]
   )
 
+  // todo: remove this and put in laserr
   useEffect(() => {
     if (!torrentSourcesInfoHashes?.length) return
     const infoHashes = torrentSourcesInfoHashes?.map(([, binStr]) => binStr)
@@ -411,8 +411,8 @@ const Watch = () => {
                   <span>Loading...</span>
                   <span className='title'>
                     {
-                      media?.title?.romanized
-                      ?? media?.title?.english
+                      media?.title?.english
+                      ?? media?.title?.romanized
                       ?? media?.title?.native
                     } - {episodeId}
                   </span>

@@ -1,8 +1,7 @@
+import type { GraphQLTypes } from 'scannarr'
 import { Link } from 'wouter'
-import type { Media } from '../../../../scannarr/src'
 
 import { css } from '@emotion/react'
-// import { Link } from 'react-router-dom'
 
 const style = css`
 align-items: center;
@@ -29,7 +28,7 @@ span {
 }
 `
 
-export default ({ media, ...rest }: { media: Media }) => (
+export default ({ media, ...rest }: { media: GraphQLTypes.Media }) => (
   <Link
     css={style}
     key={media.uri}
@@ -38,6 +37,6 @@ export default ({ media, ...rest }: { media: Media }) => (
     style={{ backgroundImage: `url(${media.coverImage?.at(0)?.default})` }}
     {...rest}
   >
-    <span style={{ color: 'white' }}>{media.title?.romanized}</span>
+    <span style={{ color: 'white' }}>{media.title?.english}</span>
   </Link>
 )

@@ -1,31 +1,30 @@
+import type { Media } from '../../generated/graphql'
 import { css } from '@emotion/react'
 import { useState, useEffect, useMemo, HTMLAttributes, forwardRef, useRef } from 'react'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react'
 import { Play } from 'react-feather'
 import DOMPurify from 'dompurify'
 import * as marked from 'marked'
-import { useQuery, useSubscription } from 'urql'
+import { useSubscription } from 'urql'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
-import { Link, useLocation, useSearch } from 'wouter'
+import { Link, useSearch } from 'wouter'
 import { Grid } from 'react-virtualized'
 
-import { Media, MediaSort } from '../../generated/graphql'
-import { GET_CURRENT_SEASON } from '../anime/season'
+import { MediaSort, UserMediaStatus } from '../../generated/graphql'
 import { Route, getRoutePath } from '../path'
 import Title2 from '../../components/title2'
-
-import './index.css'
 import PreviewModal, { GET_PREVIEW_MODAL_MEDIA as GET_MEDIA } from './preview-modal'
 import { MinimalPlayer } from '../../components/minimal-player'
 import { getSeason } from '../../utils/date'
 import Header from '../../components/header'
 import EpisodeCard from '../../components/episode-card'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { AuthResponse } from '../auth/mal'
 import { useLocalStorageAuthStates } from '../auth/utils'
-import { OriginUserMediaStatus } from 'scannarr/src/generated/graphql'
 import SkeletonCard from '../../components/skeleton/skeleton-card'
 import SkeletonSizable from '../../components/skeleton/skeleton-sizable'
+import { gql } from '../../generated'
+
+import './index.css'
 
 const headerStyle = css`
 animation-name: showBackgroundAnimation;
@@ -479,6 +478,14 @@ div.section.first-section {
 `
 
 export const GET_USER_MEDIA_LIST = `#graphql
+  subscription GetUserMediaPage($input: UserMediaPageInput!) {
+    userMediaPage(input: $input) {
+      nodes {
+        ...GetUserMediaListFragment
+      }
+    }
+  }
+
   fragment GetUserMediaListFragment on Media {
     origin
     id
@@ -542,21 +549,6 @@ export const GET_USER_MEDIA_LIST = `#graphql
       day
     }
   }
-
-  query GetOriginUserMediaPage($input: OriginUserMediaPageInput!) {
-    originUserMediaPage(input: $input) {
-      nodes {
-        handles {
-          edges {
-            node {
-              ...GetUserMediaListFragment
-            }
-          }
-        }
-        ...GetUserMediaListFragment
-      }
-    }
-  }
 `
 
 const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElement> & { media: Media }>(({ media, ...rest }, ref) => {
@@ -616,8 +608,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         <div className="content">
           <div className='title'>
             {
-                media.title?.romanized
-                ?? media.title?.english
+                media.title?.english
+                ?? media.title?.romanized
                 ?? media.title?.native
             }
           </div>
@@ -734,7 +726,22 @@ const Draggable = (
 }
 
 
-export const GET_CURRENT_SEASON_SUBSCRIPTION = `#graphql
+export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
+  subscription GetCurrentSeason($input: MediaPageInput!) {
+    mediaPage(input: $input) {
+      nodes {
+        handles {
+          edges {
+            node {
+              ...GetMediaTestFragment
+            }
+          }
+        }
+        ...GetMediaTestFragment
+      }
+    }
+  }
+
   fragment GetMediaTestFragment on Media {
     origin
     id
@@ -798,22 +805,7 @@ export const GET_CURRENT_SEASON_SUBSCRIPTION = `#graphql
       day
     }
   }
-
-  subscription GetCurrentSeason($input: MediaPageInput!) {
-    mediaPage(input: $input) {
-      nodes {
-        handles {
-          edges {
-            node {
-              ...GetMediaTestFragment
-            }
-          }
-        }
-        ...GetMediaTestFragment
-      }
-    }
-  }
-`
+`)
 
 const Anime = () => {
   const searchParams = new URLSearchParams(useSearch())
@@ -834,12 +826,12 @@ const Anime = () => {
 
   const authStates = useLocalStorageAuthStates()
 
-  const [{ data: originUserMediaPageData }] = useQuery(
+  const [userMediaResult] = useSubscription(
     {
       query: GET_USER_MEDIA_LIST,
       variables: {
         input: {
-          status: OriginUserMediaStatus.Watching,
+          status: UserMediaStatus.Watching,
           authentications:
             authStates
               .map(authState => ({
@@ -856,10 +848,10 @@ const Anime = () => {
     }
   )
 
-  const originUserMediaPage = originUserMediaPageData?.originUserMediaPage
+  const userMediaPage = userMediaResult?.data?.userMediaPage
 
   const watchingCards = useMemo(() =>
-    originUserMediaPage?.nodes?.map(media =>
+    userMediaPage?.nodes?.map(media =>
       <Title2
         key={media.uri}
         media={media}
@@ -871,7 +863,7 @@ const Anime = () => {
         }}
       />
     )
-  , [originUserMediaPage?.nodes])
+  , [userMediaPage?.nodes])
 
   const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
   const mediaPage = useMemo(() =>
@@ -885,7 +877,7 @@ const Anime = () => {
   
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
-  const [getMediaResult] = useQuery({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
+  const [getMediaResult] = useSubscription({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
   const { error: error2, data: { media } = {} } = getMediaResult
 
   if (error) console.error(error)
@@ -942,7 +934,7 @@ const Anime = () => {
         <EpisodeCard
           key={episode.uri}
           to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}
-          style={{ backgroundImage: `url(${episode.media.coverImage.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          style={{ backgroundImage: `url(${episode.media.coverImage?.at(0).default})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
           episode={episode}
         />
       )
@@ -1079,7 +1071,7 @@ const Anime = () => {
           {
             media && (
               <>
-                <img src={media.coverImage.at(0)?.default} alt={media.title.english} />
+                <img src={media.coverImage?.at(0)?.default} alt={media.title?.english} />
                 <div className="content">
                   <div className="title">
                     <p>
