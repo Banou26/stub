@@ -365,7 +365,7 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
     : Math.abs(daysRelativeAiring) >= 0 ? rtf.format(Math.round(daysRelativeAiring), 'days')
     : airingAt.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
 
-  const title = airingAt?.toLocaleString('en-US', { timeZone: 'UTC' }).split(',').at(0)
+  const title = airingAt?.toLocaleString('en-US', { timeZone: 'UTC' })
 
   if (
     (node.timeUntilAiring ? node.timeUntilAiring > 0 : false)
