@@ -410,8 +410,8 @@ const Watch = () => {
                   <span>Loading...</span>
                   <span className='title'>
                     {
-                      media?.title?.romanized
-                      ?? media?.title?.english
+                      media?.title?.english
+                      ?? media?.title?.romanized
                       ?? media?.title?.native
                     } - {episodeId}
                   </span>

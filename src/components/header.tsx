@@ -351,7 +351,7 @@ const Header = ({ ...rest }) => {
                 searchResult?.data?.mediaPage?.nodes.map(media =>
                   <Link to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}>
                     <img src={media.coverImage.at(0)?.default} alt="" referrer-policy="same-origin"/>
-                    <span style={{ color: 'white' }}>{media.title.romanized}</span>
+                    <span style={{ color: 'white' }}>{media.title.english}</span>
                   </Link>
                 )
               }

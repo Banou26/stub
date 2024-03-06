@@ -376,8 +376,8 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
   const episodeScannarrUri = toUriEpisodeId(node.uri, node.number)
 
   const usedTitle =
-    node.title?.romanized
-    ?? node.title?.english
+    node.title?.english
+    ?? node.title?.romanized
     ?? node.title?.native
 
   const [thumbnailErrored, setThumbnailErrored] = useState(false)

@@ -609,8 +609,8 @@ const TitleHoverCard = forwardRef<HTMLInputElement, HTMLAttributes<HTMLDivElemen
         <div className="content">
           <div className='title'>
             {
-                media.title?.romanized
-                ?? media.title?.english
+                media.title?.english
+                ?? media.title?.romanized
                 ?? media.title?.native
             }
           </div>
