@@ -1240,7 +1240,7 @@ const Anime = () => {
             </Draggable>
           </div>
         </div>
-        <PreviewModal/>
+        { mediaUriModal ? <PreviewModal/> : null }
       </div>
     </>
   )
