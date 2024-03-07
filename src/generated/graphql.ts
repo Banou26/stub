@@ -719,11 +719,17 @@ export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']['output']>;
   authenticate: Authenticate;
+  updateUserMedia: UserMedia;
 };
 
 
 export type MutationAuthenticateArgs = {
   input: AuthenticateInput;
+};
+
+
+export type MutationUpdateUserMediaArgs = {
+  input: UserMediaInput;
 };
 
 /**
@@ -886,7 +892,7 @@ export enum PlaybackSourceType {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
-  authentication: Array<Authentication>;
+  authentications: Array<Authentication>;
   origin?: Maybe<Origin>;
   originPage: Array<Origin>;
   user: User;
@@ -1010,7 +1016,11 @@ export type UserInputOauth2 = {
 export type UserMedia = {
   __typename?: 'UserMedia';
   episodes: Array<UserMediaEpisode>;
+  isRewatching?: Maybe<Scalars['Boolean']['output']>;
   media: Media;
+  progress?: Maybe<Scalars['Int']['output']>;
+  rewatchCount?: Maybe<Scalars['Int']['output']>;
+  score?: Maybe<Scalars['Float']['output']>;
   status: UserMediaStatus;
 };
 
@@ -1018,9 +1028,19 @@ export type UserMediaEpisode = {
   __typename?: 'UserMediaEpisode';
   episode: Episode;
   origin: Origin;
-  progress?: Maybe<Scalars['Int']['output']>;
+  progress?: Maybe<Scalars['Float']['output']>;
   uri: Scalars['Uri']['output'];
   watched: Scalars['Boolean']['output'];
+};
+
+export type UserMediaInput = {
+  isRewatching?: InputMaybe<Scalars['Boolean']['input']>;
+  mediaUri: Scalars['Uri']['input'];
+  origin: Scalars['String']['input'];
+  progress?: InputMaybe<Scalars['Int']['input']>;
+  rewatchCount?: InputMaybe<Scalars['Int']['input']>;
+  score?: InputMaybe<Scalars['Float']['input']>;
+  status?: InputMaybe<UserMediaStatus>;
 };
 
 export type UserMediaPage = {

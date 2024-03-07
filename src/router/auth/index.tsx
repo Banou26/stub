@@ -45,7 +45,7 @@ const style = css`
 
 const GET_ORIGIN_AUTHENTICATION = `#graphql
   query GetAuthentication {
-    authentication {
+    authentications {
       origin {
         id
         name
@@ -112,7 +112,8 @@ const OriginCard = ({ authentication }: { authentication: Authentication }) => {
           tokenType: authState.oauth2.tokenType
         }
       }
-    }
+    },
+    pause: !authState?.oauth2
   })
 
   const user = data?.user
@@ -157,7 +158,7 @@ const OriginCard = ({ authentication }: { authentication: Authentication }) => {
 }
 
 export default () => {
-  const [{ data: { authentication } = {} }] = useQuery({ query: GET_ORIGIN_AUTHENTICATION })
+  const [{ data: { authentications } = {} }] = useQuery({ query: GET_ORIGIN_AUTHENTICATION })
   useEffect(() => {
     localStorage.removeItem('auth-oauth2-state')
   }, [])
@@ -165,7 +166,7 @@ export default () => {
   return (
     <div css={style}>
       {
-        authentication?.map((authentication, i) =>
+        authentications?.map((authentication, i) =>
           <OriginCard key={i} authentication={authentication} />
         )
       }

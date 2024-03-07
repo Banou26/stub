@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { targets } from 'laserr'
-import { useQuery, useSubscription } from 'urql'
+import { useMutation, useQuery, useSubscription } from 'urql'
 
 // import './preview-modal.css'
 import { gql } from '../../generated'
@@ -15,6 +15,9 @@ import { Episode } from 'scannarr'
 import { Link, Redirect, useLocation, useSearch } from 'wouter'
 import { Pagination } from '../../components/pagination'
 import { fromScannarrUri } from 'scannarr'
+import { UserMedia } from '../../generated/graphql'
+import { Eye, EyeOff } from 'react-feather'
+import { useLocalStorageAuthStates } from '../auth/utils'
 
 const style = css`
 overflow: auto;
@@ -148,12 +151,38 @@ pointer-events: none;
 
       .episode {
         display: grid;
-        grid-template-columns: 7rem auto 12.5rem;
+        grid-template-columns: 7rem auto 2.5rem 12.5rem;
         height: 10rem;
         border-bottom: .1rem solid rgba(255, 255, 255, .1);
         color: #fff;
         text-decoration: none;
         overflow: hidden;
+
+        .watched-button {
+          display: flex;
+          height: 2.4rem;
+          margin: auto;
+          justify-content: center;
+          align-items: center;
+          color: #fff;
+          font-size: 2rem;
+          opacity: 0;
+        }
+
+        &.watched {
+          .watched-button {
+            opacity: 1;
+            .not-watched {
+              display: none;
+            }
+          }
+
+          .thumbnail {
+            border-bottom: .3rem solid #ff0000;
+            border-bottom-left-radius: .2rem;
+            border-bottom-right-radius: .2rem;
+          }
+        }
 
         &:last-of-type {
           border-bottom: none;
@@ -162,6 +191,45 @@ pointer-events: none;
         &:hover {
           .title {
             text-decoration: underline;
+          }
+
+          .watched-button {
+            opacity: 1;
+
+            .not-watched {
+              display: none;
+            }
+
+            .watched {
+              display: flex;
+            }
+          }
+        }
+
+        &.watched:hover {
+          .watched-button {
+            opacity: 1;
+          }
+        }
+
+        .watched-button:hover {
+          .not-watched {
+            display: flex;
+          }
+
+          .watched {
+            display: none;
+          }
+        }
+
+        &:not(.watched) .watched-button:hover {
+          .not-watched {
+            display: none;
+          }
+
+          .watched {
+            display: flex;
+            color: #ff0000;
           }
         }
 
@@ -349,9 +417,29 @@ export const GET_ORIGINS = gql(`#graphql
   }
 `)
 
+const UPDATE_USER_MEDIA = `#graphql
+  mutation UpdateUserMedia($input: UpdateUserMediaInput!) {
+    updateUserMedia(input: $input) {
+      origin
+      id
+      uri
+
+      status
+      isRewatching
+      rewatchCount
+      score
+      progress
+      updatedAt
+      # episodes {
+      #   uri
+      # }
+    }
+  }
+`
+
 // http://localhost:4560/test?details=scannarr%3AbWFsOjQ2NTY5LGFuaWxpc3Q6MTI4ODkz
 
-const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => {
+const EpisodeRow = ({ updateWatched, userMedia, mediaUri, node }: { updateWatched: (ev: MouseEvent, episodeNumber: number) => any, userMedia?: UserMedia, mediaUri: string, node: Episode }) => {
   const rtf = useMemo(() => new Intl.RelativeTimeFormat('en', { numeric: 'auto' }), [])
   const airingAt = new Date(node.airingAt ?? (Date.now() + node.timeUntilAiring * 1000))
   const airingAtInPast = Date.now() - airingAt.getTime() > 0
@@ -406,9 +494,11 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
     return () => clearInterval(interval)
   }, [thumbnailRef, node.thumbnail, thumbnailErrored])
 
+  const isWatched = userMedia?.progress !== null && userMedia?.progress !== undefined && userMedia.progress >= node.number
+
   return (
     <Link
-      className="episode"
+      className={`episode ${isWatched ? 'watched' : ''}`}
       to={getRoutePath(Route.WATCH, { mediaUri: mediaUri, episodeUri: episodeScannarrUri })}
     >
       <div className="episode-number">{usedTitle !== undefined && usedTitle !== null ? node.number : undefined}</div>
@@ -440,12 +530,22 @@ const EpisodeRow = ({ mediaUri, node }: { mediaUri: string, node: Episode }) => 
           }
         </div>
       </div>
+      {
+        userMedia
+          ? (
+            <div className='watched-button' onClick={(ev) => updateWatched(ev, node.number)}>
+              <Eye className='watched' size={24}/>
+              <EyeOff className='not-watched' size={24}/>
+            </div>
+          )
+          : <div/>
+      }
       <div className="date" title={title}>{airingAtString}</div>
     </Link>
   )
 }
 
-export default () => {
+export default ({ userMedia }: { userMedia?: UserMedia }) => {
   const [location, setLocation] = useLocation()
   const searchParams = new URLSearchParams(useSearch())
   const setSearchParams =
@@ -454,6 +554,7 @@ export default () => {
   // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
   // console.log('mediaUri', mediaUri)
+  const [{ data: updateUserMediaData }, updateUserMedia] = useMutation(UPDATE_USER_MEDIA)
   const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
     query: GET_PREVIEW_MODAL_MEDIA,
     variables: { input: { uri: mediaUri! } },
@@ -508,6 +609,33 @@ export default () => {
   }
 
   const [currentPage, setCurrentPage] = useState(0)
+
+  const authStates = useLocalStorageAuthStates()
+
+  const updateWatched = (ev: MouseEvent, episodeNumber: number) => {
+    ev.preventDefault()
+    if (!userMedia) return
+    const isWatched = userMedia?.progress !== null && userMedia?.progress !== undefined && userMedia.progress >= episodeNumber
+
+    updateUserMedia({
+      input: {
+        origin: 'mal',
+        mediaUri,
+        progress: isWatched ? episodeNumber - 1 : episodeNumber,
+
+        authentications:
+          authStates
+            .map(authState => ({
+              origin: authState.origin,
+              type: authState.type,
+              oauth2: authState.oauth2 && {
+                accessToken: authState.oauth2.accessToken,
+                tokenType: authState.oauth2.tokenType
+              }
+            }))
+      }
+    })
+  }
 
   if (!media) {
     return (
@@ -620,7 +748,7 @@ export default () => {
                         ?.edges
                         ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
                         ?.slice(currentPage * 15, currentPage * 15 + 15)
-                        ?.map(({ node }) => <EpisodeRow key={node.uri} mediaUri={mediaUri} node={node}/>)
+                        ?.map(({ node }) => <EpisodeRow key={node.uri} updateWatched={updateWatched} userMedia={updateUserMediaData?.updateUserMedia ?? userMedia} mediaUri={mediaUri} node={node}/>)
                       ?? []
                     }
                   </Pagination>

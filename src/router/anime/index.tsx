@@ -486,17 +486,51 @@ export const GET_USER_MEDIA_LIST = `#graphql
     }
   }
 
-  fragment GetUserMediaListFragment on Media {
+  fragment GetUserMediaListFragment on UserMedia {
     origin
     id
     uri
-    url
+    # url
+
+    media {
+      ...GetUserMediaListMediaFragment
+    }
+    status
+    isRewatching
+    rewatchCount
+    score
+    progress
+    # episodes {
+    #   uri
+    #   episode {
+    #     uri
+    #     id
+    #     number
+    #     title {
+    #       romanized
+    #       english
+    #       native
+    #     }
+    #     description
+    #     thumbnail
+    #   }
+    #   watched
+    #   progress
+    #   origin
+    # }
+  }
+
+  fragment GetUserMediaListMediaFragment on Media {
+    origin
+    id
+    uri
+    # url
     title {
       romanized
       english
       native
     }
-    bannerImage
+    # bannerImage
     coverImage {
       color
       default
@@ -507,47 +541,47 @@ export const GET_USER_MEDIA_LIST = `#graphql
     }
     description
     shortDescription
-    season
-    seasonYear
-    popularity
-    averageScore
-    episodeCount
-    episodes {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-          number
-          airingAt
-          title {
-            romanized
-            english
-            native
-          }
-          description
-          thumbnail
-        }
-      }
-    }
-    trailers {
-      origin
-      id
-      uri
-      url
-      thumbnail
-    }
-    startDate {
-      year
-      month
-      day
-    }
-    endDate {
-      year
-      month
-      day
-    }
+    # season
+    # seasonYear
+    # popularity
+    # averageScore
+    # episodeCount
+    # episodes {
+    #   edges {
+    #     node {
+    #       origin
+    #       id
+    #       uri
+    #       url
+    #       number
+    #       airingAt
+    #       title {
+    #         romanized
+    #         english
+    #         native
+    #       }
+    #       description
+    #       thumbnail
+    #     }
+    #   }
+    # }
+    # trailers {
+    #   origin
+    #   id
+    #   uri
+    #   url
+    #   thumbnail
+    # }
+    # startDate {
+    #   year
+    #   month
+    #   day
+    # }
+    # endDate {
+    #   year
+    #   month
+    #   day
+    # }
   }
 `
 
@@ -823,6 +857,7 @@ const Anime = () => {
       }
     }
   )
+  const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
 
   const authStates = useLocalStorageAuthStates()
 
@@ -850,8 +885,15 @@ const Anime = () => {
 
   const userMediaPage = userMediaResult?.data?.userMediaPage
 
+  if (userMediaResult.error) console.error(userMediaResult.error)
+
+  const previewedUserMedia = useMemo(() =>
+    userMediaPage?.nodes?.find(({ media }) => mediaUriModal?.includes(media.id)),
+    [userMediaPage?.nodes, mediaUriModal]
+  )
+
   const watchingCards = useMemo(() =>
-    userMediaPage?.nodes?.map(media =>
+    userMediaPage?.nodes?.map(({ media }) =>
       <Title2
         key={media.uri}
         media={media}
@@ -865,7 +907,6 @@ const Anime = () => {
     )
   , [userMediaPage?.nodes])
 
-  const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
   const mediaPage = useMemo(() =>
     _mediaPage?.nodes && ({
       nodes:
@@ -1240,7 +1281,7 @@ const Anime = () => {
             </Draggable>
           </div>
         </div>
-        { mediaUriModal ? <PreviewModal/> : null }
+        { mediaUriModal ? <PreviewModal userMedia={previewedUserMedia} /> : null }
       </div>
     </>
   )
