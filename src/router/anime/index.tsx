@@ -912,6 +912,7 @@ const Anime = () => {
       nodes:
         _mediaPage
           ?.nodes
+          ?.filter(media => media.startDate && media.startDate.year ? media.startDate.year >= new Date().getFullYear() - 5 : true)
           ?.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)) }),
     [_mediaPage?.nodes]
   )
