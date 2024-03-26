@@ -115,6 +115,21 @@ pointer-events: none;
           }
         }
       }
+
+      .details {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 1rem;
+        border: .1rem solid rgba(255, 255, 255, .15);
+        border-radius: .5rem;
+        padding: 1rem 1rem;
+        color: #fff;
+        :hover {
+          background-color: rgba(255, 255, 255, .05);
+          color: #e9ecef;
+        }
+      }
     }
 
     & > .description {
@@ -710,6 +725,7 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
                         ))
                     }
                   </div>
+                  <Link className='details' to={getRoutePath(Route.ANIME_DETAILS, { uri: media.uri })}>More details</Link>
                 </div>
                 <div className="description" dangerouslySetInnerHTML={{ __html: media?.description }}></div>
                 {

@@ -8,6 +8,7 @@ export enum Route {
   WATCH = 'WATCH',
   // CATEGORY = 'CATEGORY',
   ANIME = 'ANIME',
+  ANIME_DETAILS = 'ANIME_DETAILS',
   ANIME_SEASON = 'ANIME_SEASON',
   TEST = 'TEST',
 }
@@ -22,6 +23,7 @@ const Routes = {
     `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
   // [Route.CATEGORY]: ({ category }: { category: Category }) => `/category/${category.toLowerCase()}`,
   [Route.ANIME]: () => `/anime`,
+  [Route.ANIME_DETAILS]: ({ uri }: { uri: string }) => `/anime/details/${uri}`,
   [Route.ANIME_SEASON]: () => `/anime/season`,
   [Route.TEST]: () => `/test`,
 }
@@ -35,6 +37,7 @@ const RouterRoutes = {
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',
   // [Route.CATEGORY]: '/category/:category',
   [Route.ANIME]: `/anime`,
+  [Route.ANIME_DETAILS]: `/anime/details/:uri`,
   [Route.ANIME_SEASON]: `/anime/season`,
   [Route.TEST]: `/test`,
 }
