@@ -251,11 +251,7 @@ export const SEARCH_MEDIA = `#graphql
       nodes {
         ...SearchMediaFragment
         handles {
-          edges {
-            node {
-              ...SearchMediaFragment
-            }
-          }
+          ...SearchMediaFragment
         }
       }
     }

@@ -305,20 +305,12 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
     media(input: $input) {
       handles {
-        edges {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                }
-              }
-            }
-            ...GetPreviewModalMediaFragment
-          }
+        handles {
+          origin
+          id
+          uri
         }
+        ...GetPreviewModalMediaFragment
       }
       ...GetPreviewModalMediaFragment
     }
@@ -330,14 +322,10 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
     uri
     url
     handles {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-        }
-      }
+      origin
+      id
+      uri
+      url
     }
     airingAt
     number
@@ -353,6 +341,7 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   }
 
   fragment GetPreviewModalMediaFragment on Media {
+    _id
     origin
     id
     uri
@@ -396,11 +385,7 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
       day
     }
     episodes {
-      edges {
-        node {
-          ...GetPreviewModalMediaEpisodeFragment
-        }
-      }
+      ...GetPreviewModalMediaEpisodeFragment
     }
   }
 `
@@ -560,27 +545,25 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
     variables: { input: { uri: mediaUri! } },
     pause: !mediaUri
   })
-  // console.log('media', media)
-  const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
+  console.log('media', media)
+  const foundSources = [...new Set(media?.handles.map(handle => handle.origin))]
   // console.log('foundSources', foundSources)
   // const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
   // console.log('media', media)
   // console.log('originPage', originPage)
 
   useEffect(() => {
-    if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
+    if (!media || fetching || !media?.uri || !media.handles.length || !mediaUri) return
     const newUri = media && mergeScannarrUris([
       media.uri,
       toScannarrUri([
         ...new Set(
           media
             .handles
-            .edges
-            .flatMap(edge =>
-              edge
-              .node
-              .handles
-              .edges.map(edge => edge.node.uri)
+            .flatMap(node =>
+              node
+                .handles
+                .map(node => node.uri)
             )
         )
       ])
@@ -594,10 +577,10 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
   const mediaTargets =
     media &&
     targets
-      .filter(target => media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node)
+      .filter(target => media.handles.find((handle) => handle.origin === target.origin))
       .map(target => ({
         target,
-        media: media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node
+        media: media.handles.find((handle) => handle.origin === target.origin)
       }))
 
   // console.log('mediaTargets', mediaTargets)
@@ -740,15 +723,14 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={15}
-                    totalPages={media?.episodes?.edges ? Math.ceil(media.episodes.edges.length / 15) : 0}
+                    totalPages={media?.episodes ? Math.ceil(media.episodes.length / 15) : 0}
                   >
                     {
                       media
                         ?.episodes
-                        ?.edges
                         ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
                         ?.slice(currentPage * 15, currentPage * 15 + 15)
-                        ?.map(({ node }) => <EpisodeRow key={node.uri} updateWatched={updateWatched} userMedia={updateUserMediaData?.updateUserMedia ?? userMedia} mediaUri={mediaUri} node={node}/>)
+                        ?.map((node) => <EpisodeRow key={node.uri} updateWatched={updateWatched} userMedia={updateUserMediaData?.updateUserMedia ?? userMedia} mediaUri={mediaUri} node={node}/>)
                       ?? []
                     }
                   </Pagination>

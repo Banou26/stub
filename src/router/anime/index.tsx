@@ -760,16 +760,12 @@ const Draggable = (
 }
 
 
-export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
+const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
   subscription GetCurrentSeason($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
         handles {
-          edges {
-            node {
-              ...GetMediaTestFragment
-            }
-          }
+          ...GetMediaTestFragment
         }
         ...GetMediaTestFragment
       }
@@ -777,6 +773,7 @@ export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
   }
 
   fragment GetMediaTestFragment on Media {
+    _id
     origin
     id
     uri
@@ -803,23 +800,19 @@ export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
     averageScore
     episodeCount
     episodes {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-          number
-          airingAt
-          title {
-            romanized
-            english
-            native
-          }
-          description
-          thumbnail
-        }
+      origin
+      id
+      uri
+      url
+      number
+      airingAt
+      title {
+        romanized
+        english
+        native
       }
+      description
+      thumbnail
     }
     trailers {
       origin
@@ -858,30 +851,34 @@ const Anime = () => {
     }
   )
   const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
+  console.log('_mediaPage', _mediaPage)
+  if (error) console.error(error)
 
   const authStates = useLocalStorageAuthStates()
 
-  const [userMediaResult] = useSubscription(
-    {
-      query: GET_USER_MEDIA_LIST,
-      variables: {
-        input: {
-          status: UserMediaStatus.Watching,
-          authentications:
-            authStates
-              .map(authState => ({
-                origin: authState.origin,
-                type: authState.type,
-                oauth2: authState.oauth2 && {
-                  accessToken: authState.oauth2.accessToken,
-                  tokenType: authState.oauth2.tokenType
-                }
-              }))
-        }
-      },
-      pause: !authStates.length
-    }
-  )
+  // const [userMediaResult] = useSubscription(
+  //   {
+  //     query: GET_USER_MEDIA_LIST,
+  //     variables: {
+  //       input: {
+  //         status: UserMediaStatus.Watching,
+  //         authentications:
+  //           authStates
+  //             .map(authState => ({
+  //               origin: authState.origin,
+  //               type: authState.type,
+  //               oauth2: authState.oauth2 && {
+  //                 accessToken: authState.oauth2.accessToken,
+  //                 tokenType: authState.oauth2.tokenType
+  //               }
+  //             }))
+  //       }
+  //     },
+  //     pause: !authStates.length
+  //   }
+  // )
+
+  const userMediaResult = {}
 
   const userMediaPage = userMediaResult?.data?.userMediaPage
 
@@ -898,11 +895,8 @@ const Anime = () => {
         key={media.uri}
         media={media}
         to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
-        onMouseEnter={e => {
-        }}
-        onMouseLeave={(e) => {
-
-        }}
+        onMouseEnter={e => {}}
+        onMouseLeave={(e) => {}}
       />
     )
   , [userMediaPage?.nodes])
@@ -968,11 +962,11 @@ const Anime = () => {
   const episodeCards = useMemo(() =>
     mediaPage
       ?.nodes
-      ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-      .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
-      .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
-      .sort((a, b) => b.node.airingAt - a.node.airingAt)
-      .map(({ node: episode }) =>
+      ?.flatMap(media => media.episodes?.map(handle => ({ ...handle, media })) ?? [])
+      .filter((handle) => handle.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+      .filter((handle) => handle.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
+      .sort((a, b) => b.airingAt - a.airingAt)
+      .map((episode) =>
         <EpisodeCard
           key={episode.uri}
           to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}

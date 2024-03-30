@@ -85,11 +85,12 @@ export enum AuthenticationMethodType {
 
 export type Episode = Handle & {
   __typename?: 'Episode';
+  _id?: Maybe<Scalars['String']['output']>;
   /** The time the episode airs at */
   airingAt?: Maybe<Scalars['Float']['output']>;
   /** The description of the episode */
   description?: Maybe<Scalars['String']['output']>;
-  handles: EpisodeConnection;
+  handles: Array<Episode>;
   id: Scalars['String']['output'];
   /** The associate media of the episode */
   media?: Maybe<Media>;
@@ -99,7 +100,7 @@ export type Episode = Handle & {
   number?: Maybe<Scalars['Float']['output']>;
   origin: Scalars['String']['output'];
   /** The playback information for the episode */
-  playback?: Maybe<PlaybackSourceConnection>;
+  playback: Array<PlaybackSource>;
   /** The url for the thumbnail image of the video */
   thumbnail?: Maybe<Scalars['String']['output']>;
   /** Seconds until episode starts airing */
@@ -108,22 +109,6 @@ export type Episode = Handle & {
   title?: Maybe<MediaTitle>;
   uri: Scalars['Uri']['output'];
   url?: Maybe<Scalars['String']['output']>;
-};
-
-export type EpisodeConnection = HandleConnection & {
-  __typename?: 'EpisodeConnection';
-  edges: Array<EpisodeEdge>;
-  nodes: Array<Episode>;
-};
-
-/** Episode connection edge */
-export type EpisodeEdge = HandleEdge & {
-  __typename?: 'EpisodeEdge';
-  /** The relation between the two handles */
-  handleRelationType: HandleRelation;
-  node: Episode;
-  /** The uri of the connection */
-  uri?: Maybe<Scalars['Int']['output']>;
 };
 
 export type EpisodeInput = {
@@ -241,7 +226,8 @@ export type FuzzyDateInput = {
 
 /**  A Handle represents a unique identifier for a resource.  */
 export type Handle = {
-  handles: HandleConnection;
+  _id?: Maybe<Scalars['String']['output']>;
+  handles: Array<Handle>;
   /**  The id of the resource, e.g: 'react' for the React package  */
   id: Scalars['String']['output'];
   /**  The origin of the resource, e.g: 'npm', generally the host of the resource  */
@@ -256,27 +242,13 @@ export type Handle = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
-export type HandleConnection = {
-  edges: Array<HandleEdge>;
-  nodes: Array<Handle>;
-};
-
-export type HandleEdge = {
-  /** The relation between the two handles */
-  handleRelationType: HandleRelation;
-  node: Handle;
-};
-
-export enum HandleRelation {
-  Identical = 'IDENTICAL'
-}
-
 /**
  * Media is a type of handle that represents a media.
  * It generally represents a Movie, TV Show, Game, Package, ect...
  */
 export type Media = Handle & {
   __typename?: 'Media';
+  _id?: Maybe<Scalars['String']['output']>;
   /** The average score of the media */
   averageScore?: Maybe<Scalars['Float']['output']>;
   /** The banner image of the media */
@@ -288,11 +260,11 @@ export type Media = Handle & {
   /** The last official release date of the media */
   endDate?: Maybe<FuzzyDate>;
   episodeCount?: Maybe<Scalars['Int']['output']>;
-  episodes?: Maybe<EpisodeConnection>;
+  episodes: Array<Episode>;
   /** External links to another site related to the media */
   externalLinks?: Maybe<Array<Maybe<MediaExternalLink>>>;
   format?: Maybe<MediaFormat>;
-  handles: MediaConnection;
+  handles: Array<Media>;
   id: Scalars['String']['output'];
   /** If the media is intended only for 18+ adult audiences */
   isAdult?: Maybe<Scalars['Boolean']['output']>;
@@ -353,13 +325,14 @@ export type MediaShortDescriptionArgs = {
 /** Media Airing Schedule. NOTE: We only aim to guarantee that FUTURE airing data is present and accurate. */
 export type MediaAiringSchedule = Handle & {
   __typename?: 'MediaAiringSchedule';
+  _id?: Maybe<Scalars['String']['output']>;
   /** The time the episode airs at */
   airingAt?: Maybe<Scalars['Float']['output']>;
   /** The description of the episode */
   description?: Maybe<Scalars['String']['output']>;
   /** The airing episode number */
   episodeNumber: Scalars['Int']['output'];
-  handles: HandleConnection;
+  handles: Array<MediaAiringSchedule>;
   id: Scalars['String']['output'];
   /** The associate media of the airing episode */
   media?: Maybe<Media>;
@@ -374,26 +347,6 @@ export type MediaAiringSchedule = Handle & {
   title?: Maybe<MediaTitle>;
   uri: Scalars['Uri']['output'];
   url?: Maybe<Scalars['String']['output']>;
-};
-
-export type MediaAiringScheduleConnection = {
-  __typename?: 'MediaAiringScheduleConnection';
-  edges?: Maybe<Array<Maybe<MediaAiringScheduleEdge>>>;
-  nodes?: Maybe<Array<Maybe<MediaAiringSchedule>>>;
-};
-
-/** MediaAiringSchedule connection edge */
-export type MediaAiringScheduleEdge = {
-  __typename?: 'MediaAiringScheduleEdge';
-  node?: Maybe<MediaAiringSchedule>;
-  /** The uri of the connection */
-  uri?: Maybe<Scalars['Int']['output']>;
-};
-
-export type MediaConnection = HandleConnection & {
-  __typename?: 'MediaConnection';
-  edges: Array<MediaEdge>;
-  nodes: Array<Media>;
 };
 
 /** The cover images of the media */
@@ -413,18 +366,12 @@ export type MediaCoverImage = {
   small?: Maybe<Scalars['String']['output']>;
 };
 
-export type MediaEdge = HandleEdge & {
-  __typename?: 'MediaEdge';
-  /** The relation between the two handles */
-  handleRelationType: HandleRelation;
-  node: Media;
-};
-
 /** An external link to another site related to the media or its properties */
 export type MediaExternalLink = Handle & {
   __typename?: 'MediaExternalLink';
+  _id?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
-  handles: HandleConnection;
+  handles: Array<MediaExternalLink>;
   /** The icon image url of the site. Not available for all links */
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -650,7 +597,8 @@ export type MediaTitleLanguageArgs = {
 /** Media trailer or advertisement */
 export type MediaTrailer = Handle & {
   __typename?: 'MediaTrailer';
-  handles: HandleConnection;
+  _id?: Maybe<Scalars['String']['output']>;
+  handles: Array<MediaTrailer>;
   id: Scalars['String']['output'];
   origin: Scalars['String']['output'];
   /** The url for the thumbnail image of the video */
@@ -729,7 +677,7 @@ export type MutationAuthenticateArgs = {
 
 
 export type MutationUpdateUserMediaArgs = {
-  input: UserMediaInput;
+  input: UpdateUserMediaInput;
 };
 
 /**
@@ -785,6 +733,7 @@ export type OriginPageInput = {
 
 export type PlaybackSource = Handle & {
   __typename?: 'PlaybackSource';
+  _id?: Maybe<Scalars['String']['output']>;
   bytes?: Maybe<Scalars['Float']['output']>;
   /** Stringified (json?) data for the playback, useful for custom players */
   data?: Maybe<Scalars['String']['output']>;
@@ -793,7 +742,7 @@ export type PlaybackSource = Handle & {
   filename?: Maybe<Scalars['String']['output']>;
   filesCount?: Maybe<Scalars['Int']['output']>;
   format?: Maybe<Scalars['String']['output']>;
-  handles: PlaybackSourceConnection;
+  handles: Array<PlaybackSource>;
   hash?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   media?: Maybe<Media>;
@@ -808,22 +757,6 @@ export type PlaybackSource = Handle & {
   uploadDate?: Maybe<Scalars['Float']['output']>;
   uri: Scalars['Uri']['output'];
   url?: Maybe<Scalars['String']['output']>;
-};
-
-export type PlaybackSourceConnection = HandleConnection & {
-  __typename?: 'PlaybackSourceConnection';
-  edges: Array<PlaybackSourceEdge>;
-  nodes: Array<PlaybackSource>;
-};
-
-/** PlaybackSource connection edge */
-export type PlaybackSourceEdge = HandleEdge & {
-  __typename?: 'PlaybackSourceEdge';
-  /** The relation between the two handles */
-  handleRelationType: HandleRelation;
-  node: PlaybackSource;
-  /** The uri of the connection */
-  uri?: Maybe<Scalars['Int']['output']>;
 };
 
 export enum PlaybackSourceFileStructure {
@@ -915,26 +848,14 @@ export type QueryUserArgs = {
 
 export type Resource = Handle & {
   __typename?: 'Resource';
-  batchResources: Array<ResourceConnection>;
-  handles: ResourceConnection;
+  _id?: Maybe<Scalars['String']['output']>;
+  batchResources: Array<Resource>;
+  handles: Array<Resource>;
   id: Scalars['String']['output'];
   isBatch?: Maybe<Scalars['Boolean']['output']>;
   origin: Scalars['String']['output'];
   uri: Scalars['Uri']['output'];
   url?: Maybe<Scalars['String']['output']>;
-};
-
-export type ResourceConnection = HandleConnection & {
-  __typename?: 'ResourceConnection';
-  edges: Array<ResourceEdge>;
-  nodes: Array<Resource>;
-};
-
-export type ResourceEdge = HandleEdge & {
-  __typename?: 'ResourceEdge';
-  /** The relation between the two handles */
-  handleRelationType: HandleRelation;
-  node: Resource;
 };
 
 export type Subscription = {
@@ -986,12 +907,24 @@ export type SubscriptionUserMediaPageArgs = {
 
 export type Team = Handle & {
   __typename?: 'Team';
-  handles: HandleConnection;
+  _id?: Maybe<Scalars['String']['output']>;
+  handles: Array<Team>;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   origin: Scalars['String']['output'];
   uri: Scalars['Uri']['output'];
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type UpdateUserMediaInput = {
+  authentications: Array<UserMediaPageInputAuthentication>;
+  isRewatching?: InputMaybe<Scalars['Boolean']['input']>;
+  mediaUri: Scalars['Uri']['input'];
+  origin: Scalars['String']['input'];
+  progress?: InputMaybe<Scalars['Int']['input']>;
+  rewatchCount?: InputMaybe<Scalars['Int']['input']>;
+  score?: InputMaybe<Scalars['Float']['input']>;
+  status?: InputMaybe<UserMediaStatus>;
 };
 
 export type User = {
@@ -1015,13 +948,20 @@ export type UserInputOauth2 = {
 
 export type UserMedia = {
   __typename?: 'UserMedia';
+  _id?: Maybe<Scalars['String']['output']>;
   episodes: Array<UserMediaEpisode>;
+  handles: Array<Media>;
+  id: Scalars['String']['output'];
   isRewatching?: Maybe<Scalars['Boolean']['output']>;
   media: Media;
+  origin: Scalars['String']['output'];
   progress?: Maybe<Scalars['Int']['output']>;
   rewatchCount?: Maybe<Scalars['Int']['output']>;
   score?: Maybe<Scalars['Float']['output']>;
   status: UserMediaStatus;
+  updatedAt?: Maybe<Scalars['Float']['output']>;
+  uri: Scalars['Uri']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserMediaEpisode = {
@@ -1034,13 +974,8 @@ export type UserMediaEpisode = {
 };
 
 export type UserMediaInput = {
-  isRewatching?: InputMaybe<Scalars['Boolean']['input']>;
-  mediaUri: Scalars['Uri']['input'];
-  origin: Scalars['String']['input'];
-  progress?: InputMaybe<Scalars['Int']['input']>;
-  rewatchCount?: InputMaybe<Scalars['Int']['input']>;
-  score?: InputMaybe<Scalars['Float']['input']>;
-  status?: InputMaybe<UserMediaStatus>;
+  authentications: Array<UserMediaPageInputAuthentication>;
+  uri: Scalars['Uri']['input'];
 };
 
 export type UserMediaPage = {
@@ -1056,7 +991,7 @@ export type UserMediaPage = {
   /** The current page */
   nextPageCursor?: Maybe<Scalars['String']['output']>;
   /** The media page nodes */
-  nodes: Array<Media>;
+  nodes: Array<UserMedia>;
   /** The current page */
   previousPageCursor?: Maybe<Scalars['String']['output']>;
   /** The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic */
@@ -1097,9 +1032,9 @@ export type GetCurrentSeasonSubscriptionVariables = Exact<{
 }>;
 
 
-export type GetCurrentSeasonSubscription = { __typename?: 'Subscription', mediaPage?: { __typename?: 'MediaPage', nodes: Array<{ __typename?: 'Media', origin: string, id: string, uri: any, url?: string | null, bannerImage?: Array<string | null> | null, description?: string | null, shortDescription?: string | null, season?: MediaSeason | null, seasonYear?: number | null, popularity?: number | null, averageScore?: number | null, episodeCount?: number | null, handles: { __typename?: 'MediaConnection', edges: Array<{ __typename?: 'MediaEdge', node: { __typename?: 'Media', origin: string, id: string, uri: any, url?: string | null, bannerImage?: Array<string | null> | null, description?: string | null, shortDescription?: string | null, season?: MediaSeason | null, seasonYear?: number | null, popularity?: number | null, averageScore?: number | null, episodeCount?: number | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null, extraLarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null> | null, episodes?: { __typename?: 'EpisodeConnection', edges: Array<{ __typename?: 'EpisodeEdge', node: { __typename?: 'Episode', origin: string, id: string, uri: any, url?: string | null, number?: number | null, airingAt?: number | null, description?: string | null, thumbnail?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } }> } | null, trailers?: Array<{ __typename?: 'MediaTrailer', origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, startDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null, endDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null } }> }, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null, extraLarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null> | null, episodes?: { __typename?: 'EpisodeConnection', edges: Array<{ __typename?: 'EpisodeEdge', node: { __typename?: 'Episode', origin: string, id: string, uri: any, url?: string | null, number?: number | null, airingAt?: number | null, description?: string | null, thumbnail?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } }> } | null, trailers?: Array<{ __typename?: 'MediaTrailer', origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, startDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null, endDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null }> } | null };
+export type GetCurrentSeasonSubscription = { __typename?: 'Subscription', mediaPage?: { __typename?: 'MediaPage', nodes: Array<{ __typename?: 'Media', _id?: string | null, origin: string, id: string, uri: any, url?: string | null, bannerImage?: Array<string | null> | null, description?: string | null, shortDescription?: string | null, season?: MediaSeason | null, seasonYear?: number | null, popularity?: number | null, averageScore?: number | null, episodeCount?: number | null, handles: Array<{ __typename?: 'Media', _id?: string | null, origin: string, id: string, uri: any, url?: string | null, bannerImage?: Array<string | null> | null, description?: string | null, shortDescription?: string | null, season?: MediaSeason | null, seasonYear?: number | null, popularity?: number | null, averageScore?: number | null, episodeCount?: number | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null, extraLarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null> | null, episodes: Array<{ __typename?: 'Episode', origin: string, id: string, uri: any, url?: string | null, number?: number | null, airingAt?: number | null, description?: string | null, thumbnail?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null }>, trailers?: Array<{ __typename?: 'MediaTrailer', origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, startDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null, endDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null }>, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null, extraLarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null> | null, episodes: Array<{ __typename?: 'Episode', origin: string, id: string, uri: any, url?: string | null, number?: number | null, airingAt?: number | null, description?: string | null, thumbnail?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null }>, trailers?: Array<{ __typename?: 'MediaTrailer', origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, startDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null, endDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null }> } | null };
 
-export type GetMediaTestFragmentFragment = { __typename?: 'Media', origin: string, id: string, uri: any, url?: string | null, bannerImage?: Array<string | null> | null, description?: string | null, shortDescription?: string | null, season?: MediaSeason | null, seasonYear?: number | null, popularity?: number | null, averageScore?: number | null, episodeCount?: number | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null, extraLarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null> | null, episodes?: { __typename?: 'EpisodeConnection', edges: Array<{ __typename?: 'EpisodeEdge', node: { __typename?: 'Episode', origin: string, id: string, uri: any, url?: string | null, number?: number | null, airingAt?: number | null, description?: string | null, thumbnail?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null } }> } | null, trailers?: Array<{ __typename?: 'MediaTrailer', origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, startDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null, endDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null };
+export type GetMediaTestFragmentFragment = { __typename?: 'Media', _id?: string | null, origin: string, id: string, uri: any, url?: string | null, bannerImage?: Array<string | null> | null, description?: string | null, shortDescription?: string | null, season?: MediaSeason | null, seasonYear?: number | null, popularity?: number | null, averageScore?: number | null, episodeCount?: number | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null, coverImage?: Array<{ __typename?: 'MediaCoverImage', color?: string | null, default?: string | null, extraLarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null> | null, episodes: Array<{ __typename?: 'Episode', origin: string, id: string, uri: any, url?: string | null, number?: number | null, airingAt?: number | null, description?: string | null, thumbnail?: string | null, title?: { __typename?: 'MediaTitle', romanized?: string | null, english?: string | null, native?: string | null } | null }>, trailers?: Array<{ __typename?: 'MediaTrailer', origin: string, id: string, uri: any, url?: string | null, thumbnail?: string | null } | null> | null, startDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null, endDate?: { __typename?: 'FuzzyDate', year?: number | null, month?: number | null, day?: number | null } | null };
 
 export type GetOriginsQueryVariables = Exact<{
   input: OriginPageInput;
@@ -1108,6 +1043,6 @@ export type GetOriginsQueryVariables = Exact<{
 
 export type GetOriginsQuery = { __typename?: 'Query', originPage: Array<{ __typename?: 'Origin', id: string, name: string, official?: boolean | null, metadataOnly?: boolean | null }> };
 
-export const GetMediaTestFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GetMediaTestFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Media"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}},{"kind":"Field","name":{"kind":"Name","value":"extraLarge"}},{"kind":"Field","name":{"kind":"Name","value":"large"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"small"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonYear"}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"averageScore"}},{"kind":"Field","name":{"kind":"Name","value":"episodeCount"}},{"kind":"Field","name":{"kind":"Name","value":"episodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"airingAt"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"startDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}},{"kind":"Field","name":{"kind":"Name","value":"endDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}}]}}]} as unknown as DocumentNode<GetMediaTestFragmentFragment, unknown>;
-export const GetCurrentSeasonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"GetCurrentSeason"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MediaPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mediaPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetMediaTestFragment"}}]}}]}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetMediaTestFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GetMediaTestFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Media"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}},{"kind":"Field","name":{"kind":"Name","value":"extraLarge"}},{"kind":"Field","name":{"kind":"Name","value":"large"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"small"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonYear"}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"averageScore"}},{"kind":"Field","name":{"kind":"Name","value":"episodeCount"}},{"kind":"Field","name":{"kind":"Name","value":"episodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"airingAt"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"startDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}},{"kind":"Field","name":{"kind":"Name","value":"endDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}}]}}]} as unknown as DocumentNode<GetCurrentSeasonSubscription, GetCurrentSeasonSubscriptionVariables>;
+export const GetMediaTestFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GetMediaTestFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Media"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}},{"kind":"Field","name":{"kind":"Name","value":"extraLarge"}},{"kind":"Field","name":{"kind":"Name","value":"large"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"small"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonYear"}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"averageScore"}},{"kind":"Field","name":{"kind":"Name","value":"episodeCount"}},{"kind":"Field","name":{"kind":"Name","value":"episodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"airingAt"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"startDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}},{"kind":"Field","name":{"kind":"Name","value":"endDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}}]}}]} as unknown as DocumentNode<GetMediaTestFragmentFragment, unknown>;
+export const GetCurrentSeasonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"GetCurrentSeason"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MediaPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mediaPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetMediaTestFragment"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetMediaTestFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GetMediaTestFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Media"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"coverImage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"default"}},{"kind":"Field","name":{"kind":"Name","value":"extraLarge"}},{"kind":"Field","name":{"kind":"Name","value":"large"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"small"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonYear"}},{"kind":"Field","name":{"kind":"Name","value":"popularity"}},{"kind":"Field","name":{"kind":"Name","value":"averageScore"}},{"kind":"Field","name":{"kind":"Name","value":"episodeCount"}},{"kind":"Field","name":{"kind":"Name","value":"episodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"airingAt"}},{"kind":"Field","name":{"kind":"Name","value":"title"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"romanized"}},{"kind":"Field","name":{"kind":"Name","value":"english"}},{"kind":"Field","name":{"kind":"Name","value":"native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trailers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"startDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}},{"kind":"Field","name":{"kind":"Name","value":"endDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"month"}},{"kind":"Field","name":{"kind":"Name","value":"day"}}]}}]}}]} as unknown as DocumentNode<GetCurrentSeasonSubscription, GetCurrentSeasonSubscriptionVariables>;
 export const GetOriginsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrigins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"OriginPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"official"}},{"kind":"Field","name":{"kind":"Name","value":"metadataOnly"}}]}}]}}]} as unknown as DocumentNode<GetOriginsQuery, GetOriginsQueryVariables>;

@@ -43,7 +43,8 @@ const user2 = db.insertOne({
   __typename: 'User',
   uri: 'user2',
   foo: 'foo2',
-  friends: [user1]
+  friends: []
+  // friends: [user1]
 }, { returnNode: true })
 
 db.updateOne({ _id: user1._id }, { $set: { friends: [user2] } })
@@ -68,3 +69,4 @@ userWithFriendsMap.subscribe(res => {
 })
 
 console.log('findOne', db.findOne({ uri: 'user1' }))
+db.updateOne({ _id: user2._id }, { $set: { friends: [user1] } })

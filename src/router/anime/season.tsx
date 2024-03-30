@@ -79,23 +79,19 @@ export const GET_CURRENT_SEASON = `#graphql
     averageScore
     episodeCount
     episodes {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-          number
-          airingAt
-          title {
-            romanized
-            english
-            native
-          }
-          description
-          thumbnail
-        }
+      origin
+      id
+      uri
+      url
+      number
+      airingAt
+      title {
+        romanized
+        english
+        native
       }
+      description
+      thumbnail
     }
     trailers {
       origin
@@ -120,11 +116,7 @@ export const GET_CURRENT_SEASON = `#graphql
     mediaPage(input: $input) {
       nodes {
         handles {
-          edges {
-            node {
-              ...GetMediaTestFragment
-            }
-          }
+          ...GetMediaTestFragment
         }
         ...GetMediaTestFragment
       }
