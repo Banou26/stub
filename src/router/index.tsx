@@ -13,9 +13,12 @@ import AuthOauth2 from './auth/oauth2'
 import AnimeDetails from './anime/details'
 
 const contentStyle = css`
-  padding-top: 6rem;
+  padding-top: 4rem;
 
   @media (min-width: 2560px) {
+    padding-top: 6rem;
+  }
+  @media (min-width: 3840px) {
     padding-top: 8rem;
   }
 `
