@@ -5,6 +5,8 @@ import { useSubscription } from "urql"
 import { Link, useParams } from "wouter"
 
 import { Route, getRoutePath } from "../path"
+import ALIconUrl from '../../images/al-icon.webp'
+import MALIconUrl from '../../images/mal-icon.webp'
 
 export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
@@ -170,12 +172,47 @@ h3 {
         > div {
           display: flex;
           align-items: center;
-          gap: 3rem;
+          gap: 2rem;
     
           span {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+          }
+        }
+
+        button {
+          color: white;
+          font-size: 1.5rem;
+          font-weight: 600;
+          border: .1rem solid rgba(255, 255, 255, .15);
+          border-radius: .5rem;
+          background: transparent;
+          padding: .75rem 1.25rem;
+          :hover {
+            background-color: rgba(255, 255, 255, .05);
+            color: #e9ecef;
+            cursor: pointer;
+          }
+        }
+
+        .icon {
+          width: 3rem;
+          height: 3rem;
+          object-fit: cover;
+          border-radius: .5rem;
+        }
+
+        a {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: white;
+          text-decoration: none;
+          transition: color 0.2s;
+
+          :hover {
+            transition: color 0.2s;
           }
         }
       }
@@ -284,7 +321,8 @@ const AnimeDetails = () => {
     pause: !uri
   })
 
-  console.log('uri1', uri, media)
+  const anilistUri = media?.handles.edges.find((edge) => edge.node.origin === 'anilist').node.url
+  const malUri = media?.handles.edges.find((edge) => edge.node.origin === 'mal').node.url
 
   return (
     <div css={style}>
@@ -312,6 +350,17 @@ const AnimeDetails = () => {
                 <span><User /> {media?.popularity}</span>
                 <span><BarChart /> {media?.averageScore}</span>
                 <span>Episodes: {media?.episodeCount}</span>
+              </div>
+              <div>
+                <a href={media?.trailers.at(0).url} target="_blank">
+                  <button>Trailer</button>
+                </a>
+                <a href={malUri} target="_blank">
+                  <img src={MALIconUrl} alt="myanimelist" className="icon"/>
+                </a>
+                <a href={anilistUri} target="_blank">
+                  <img src={ALIconUrl} alt="anilist" className="icon"/>
+                </a>
               </div>
             </div>
           </div>
