@@ -1,7 +1,10 @@
 import { css } from "@emotion/react"
 import { ArrowRight, BarChart, Calendar, Cloud, User } from "react-feather"
+import { toUriEpisodeId } from "scannarr"
 import { useSubscription } from "urql"
-import { useParams } from "wouter"
+import { Link, useParams } from "wouter"
+
+import { Route, getRoutePath } from "../path"
 
 export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
@@ -215,24 +218,24 @@ h3 {
 
 .episode {
   display: flex;
-  gap: 2rem;
   flex-direction: column;
-
+  gap: 2rem;
+  margin-bottom: 2rem;
   .card {
     display: grid;
     grid-template-columns: 1fr 1fr;
     border-radius: .5rem;
     background-color: #17191C;
-    transition: transform 0.2s; 
+    transition: transform 0.1s; 
 
     .info {
       padding: 1rem;
+      color: white;
     }
     :hover {
-      background-color: #1F2124;
       cursor: pointer;
       transform: scale(1.05);
-      transition: transform 0.2s; 
+      transition: transform 0.1s; 
     }
   }
 
@@ -319,16 +322,30 @@ const AnimeDetails = () => {
         </div>
         <div>
           <div className="episode">
-            {media?.episodes?.edges.map((episode) => (
-              <div className="card" key={episode.node.id}>
-                <img src={episode.node.thumbnail} alt={episode.node.title?.english} />
-                <div className="info">
-                  <h3>{episode.node.number}. {episode.node.title?.english}</h3>
-                  <span>{episode.node.description}</span>
-                  <span>{timeUntilOrSince(episode.node.airingAt)}</span>
-                </div>
-              </div>
-            ))}
+            {
+              media?.episodes?.edges.map((episode) => {
+                const episodeScannarrUri = toUriEpisodeId(episode.node.uri, episode.node.number)
+                if (!episode.node.title?.english || !episode.node.airingAt) return
+                return (
+                  <Link
+                    className="card"
+                    to={getRoutePath(Route.WATCH, { mediaUri: episode.node.mediaUri, episodeUri: episodeScannarrUri })}
+                    key={episode.node.id}
+                  >
+                    {
+                      episode.node.thumbnail && (
+                        <img src={episode.node.thumbnail} alt={episode.node.title?.english} />
+                      )
+                    }
+                    <div className="info">
+                      <h3>{episode.node.number}. {episode.node.title?.english}</h3>
+                      <span>{episode.node.description}</span>
+                      <span>{timeUntilOrSince(episode.node.airingAt)}</span>
+                    </div>
+                  </Link>
+                )
+              })
+            }
           </div>
         </div>
       </div>
