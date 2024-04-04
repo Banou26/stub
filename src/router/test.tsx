@@ -4,6 +4,8 @@ import { gql, useQuery, useSubscription } from 'urql'
 import { GraphQLTypes } from 'scannarr'
 import { GET_CURRENT_SEASON } from './anime/season'
 import { getCurrentSeason } from 'laserr/src/targets/anilist'
+import { GET_PREVIEW_MODAL_MEDIA } from './anime/preview-modal'
+import { useLocation, useSearch } from 'wouter'
 
 
 // export const GET_LATEST_EPISODES = `#graphql
@@ -138,13 +140,16 @@ export default () => {
   // )
 
   // console.log('currentSeasonResult', currentSeasonResult.data)
-
+  const searchParams = new URLSearchParams(useSearch())
+  const mediaUri = searchParams.get('details')
   const [fooResult] = useSubscription(
     {
-      query: `subscription { foo { bar } }`
+      query: GET_PREVIEW_MODAL_MEDIA,
+      variables: { input: { uri: mediaUri! } },
+      pause: !mediaUri
     }
   )
-  console.log('fooResult', fooResult)
+  console.log('fooResult', fooResult?.data?.media?.episodes, fooResult?.data?.media, fooResult.error)
   return
 
 

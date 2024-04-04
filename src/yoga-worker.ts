@@ -47,6 +47,8 @@ const { yoga } = makeScannarrServer({
       }
     )
     const { handleGroups } = groupRelatedHandles({ results: handles })
+    
+    // console.log('mergeHandles', handles, handleGroups)
 
     if (result.origin === 'scannarr') {
       const scannarrHandle = handleGroups[0].find(handle => handle.origin === 'scannarr')
@@ -56,26 +58,41 @@ const { yoga } = makeScannarrServer({
     }
 
     if (nodes[0]?.__typename === 'Media') {
-        const episodeNodes =
-          (nodes as Media[])
-            .flatMap((media) => media.episodes)
+      const episodeNodes =
+        (nodes as Media[])
+          .flatMap((media) => media.episodes ?? [])
 
-        const { handleGroups: episodeHandleGroups } = groupRelatedHandles({ results: episodeNodes })
+      // const { handleGroups: episodeHandleGroups } = groupRelatedHandles({ results: episodeNodes })
 
-        const scannarrEpisodeHandles =
-          episodeHandleGroups
-              .map(handles =>
-                makeScannarrHandle2({
-                  handles,
-                  mergeHandles
-                })
-              )
-
-        return {
-          ...result,
-          handles: handleGroups[0],
-          episodes: scannarrEpisodeHandles
+      const groupEpisodesByEpisodeNumber = (episodes: Media[]) => {
+        const episodesByEpisodeNumber = new Map<number, Media[]>()
+        for (const episode of episodes) {
+          if (!episodesByEpisodeNumber.has(episode.number)) {
+            episodesByEpisodeNumber.set(episode.number, [])
+          }
+          episodesByEpisodeNumber.get(episode.number)?.push(episode)
         }
+        return [...episodesByEpisodeNumber.values()]
+      }
+
+      const episodesByEpisodeNumber = groupEpisodesByEpisodeNumber(episodeNodes)
+
+      const scannarrEpisodeHandles =
+        episodesByEpisodeNumber
+            .map(handles =>
+              makeScannarrHandle2({
+                handles,
+                mergeHandles
+              })
+            )
+
+      // console.log('scannarrEpisodeHandles', episodeNodes, scannarrEpisodeHandles, handles)
+
+      return {
+        ...result,
+        handles: handleGroups[0],
+        episodes: scannarrEpisodeHandles
+      }
     }
 
     return {
