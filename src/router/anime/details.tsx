@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { css } from "@emotion/react"
 import { ArrowRight, BarChart, Calendar, Cloud, User } from "react-feather"
 import { toUriEpisodeId } from "scannarr"
@@ -6,6 +7,7 @@ import { Link, useParams } from "wouter"
 import { targets } from "laserr"
 
 import { Route, getRoutePath } from "../path"
+import { Pagination } from "../../components/pagination"
 
 export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
@@ -253,10 +255,15 @@ h3 {
 }
 
 .episode {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  > div { // Pagination
+    > ul {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+  }
+
   .card {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -278,7 +285,7 @@ h3 {
   img {
     border-radius: .5rem 0 0 .5rem;
     width: 100%;
-    height: auto;
+    height: 16rem;
     object-fit: cover;
   }
 }
@@ -313,6 +320,8 @@ function timeUntilOrSince(timestamp: number): string {
 
 const AnimeDetails = () => {
   const { uri } = useParams()
+  const [currentPage, setCurrentPage] = useState(0)
+  const itemsPerPage = 8
 
   const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
     query: GET_PREVIEW_MODAL_MEDIA,
@@ -384,7 +393,48 @@ const AnimeDetails = () => {
         </div>
         <div>
           <div className="episode">
-            {
+            <Pagination
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              totalPages={
+                media?.episodes?.edges
+                ? Math.ceil(media.episodes.edges.filter(episode => episode.node?.title?.english && episode.node.airingAt).length / itemsPerPage)
+                : 0
+              }
+              position="bottom"
+            >
+              {
+                media?.episodes?.edges
+                  ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
+                  ?.filter((episode) => episode.node.title?.english && episode.node.airingAt)
+                  ?.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage)
+                  .map((episode) => {
+                    const episodeScannarrUri = toUriEpisodeId(episode.node.uri, episode.node.number)
+                    if (!episode.node.title?.english || !episode.node.airingAt) return
+                    return (
+                      <Link
+                        className="card"
+                        to={getRoutePath(Route.WATCH, { mediaUri: episode.node.mediaUri, episodeUri: episodeScannarrUri })}
+                        key={episode.node.id}
+                      >
+                        {
+                          episode.node.thumbnail && (
+                            <img src={episode.node.thumbnail} alt={episode.node.title?.english} />
+                          )
+                        }
+                        <div className="info">
+                          <h3>{episode.node.number}. {episode.node.title?.english}</h3>
+                          <span>{episode.node.description}</span>
+                          <span>{timeUntilOrSince(episode.node.airingAt)}</span>
+                        </div>
+                      </Link>
+                    )
+                  })
+              }
+            </Pagination>
+
+            {/* {
               media?.episodes?.edges.map((episode) => {
                 const episodeScannarrUri = toUriEpisodeId(episode.node.uri, episode.node.number)
                 if (!episode.node.title?.english || !episode.node.airingAt) return
@@ -407,7 +457,7 @@ const AnimeDetails = () => {
                   </Link>
                 )
               })
-            }
+            } */}
           </div>
         </div>
       </div>
