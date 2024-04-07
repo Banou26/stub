@@ -720,7 +720,7 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
                         ?.filter(({ media, target }) => media?.url && target.icon && target.official)
                         ?.map(({ target, media }) => (
                           <a key={target.origin} href={media.url ?? target.originUrl} className="origin-icon" target="_blank" rel="noopener noreferrer">
-                            <img src={target.icon} alt=""/>
+                            <img src={target.icon} alt={target.name} />
                           </a>
                         ))
                     }

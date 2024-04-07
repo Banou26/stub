@@ -3,10 +3,9 @@ import { ArrowRight, BarChart, Calendar, Cloud, User } from "react-feather"
 import { toUriEpisodeId } from "scannarr"
 import { useSubscription } from "urql"
 import { Link, useParams } from "wouter"
+import { targets } from "laserr"
 
 import { Route, getRoutePath } from "../path"
-import ALIconUrl from '../../images/al-icon.webp'
-import MALIconUrl from '../../images/mal-icon.webp'
 
 export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
@@ -321,8 +320,14 @@ const AnimeDetails = () => {
     pause: !uri
   })
 
-  const anilistUri = media?.handles.edges.find((edge) => edge.node.origin === 'anilist').node.url
-  const malUri = media?.handles.edges.find((edge) => edge.node.origin === 'mal').node.url
+  const mediaTargets =
+    media &&
+    targets
+      .filter(target => media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node)
+      .map(target => ({
+        target,
+        media: media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node
+      }))
 
   return (
     <div css={style}>
@@ -355,12 +360,20 @@ const AnimeDetails = () => {
                 <a href={media?.trailers.at(0).url} target="_blank">
                   <button>Trailer</button>
                 </a>
-                <a href={malUri} target="_blank">
-                  <img src={MALIconUrl} alt="myanimelist" className="icon"/>
-                </a>
-                <a href={anilistUri} target="_blank">
-                  <img src={ALIconUrl} alt="anilist" className="icon"/>
-                </a>
+                {
+                  mediaTargets
+                    ?.filter(({ media, target }) => media?.url && target.icon && target.official)
+                    ?.map(({ target, media }) => (
+                      <a
+                        key={target.origin}
+                        href={media.url ?? target.originUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img src={target.icon} alt={target.name} className="icon" />
+                      </a>
+                    ))
+                }
               </div>
             </div>
           </div>
