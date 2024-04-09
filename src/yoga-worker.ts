@@ -47,8 +47,6 @@ const { yoga } = makeScannarrServer({
       }
     )
     const { handleGroups } = groupRelatedHandles({ results: handles })
-    
-    // console.log('mergeHandles', handles, handleGroups)
 
     if (result.origin === 'scannarr') {
       const scannarrHandle = handleGroups[0].find(handle => handle.origin === 'scannarr')
