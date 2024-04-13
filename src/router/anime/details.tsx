@@ -115,7 +115,13 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
 
 const style = css`
 h1 {
-  font-size: 2.5rem;
+  font-size: 1.3rem;
+  @media (min-width: 640px) {
+    font-size: 1.5rem;
+  }
+  @media (min-width: 1440px) {
+    font-size: 2.5rem;
+  }
   @media (min-width: 2560px) {
     font-size: 3rem;
   }
@@ -123,7 +129,10 @@ h1 {
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 1.25rem;
+  @media (min-width: 1440px) {
+    font-size: 2rem;
+  }
   @media (min-width: 2560px) {
     font-size: 2.5rem;
   }
@@ -131,7 +140,10 @@ h2 {
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  @media (min-width: 1440px) {
+    font-size: 1.5rem;
+  }
   @media (min-width: 2560px) {
     font-size: 2rem;
   }
@@ -145,11 +157,23 @@ h3 {
 }
 
 .body {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 1rem;
-  margin: 0 5rem;
-  margin-top: -7rem;
+  @media (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 1440px) {
+    grid-template-columns: 3fr 1fr;
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 0 1rem;
+  margin-top: -5rem;
+  @media (min-width: 640px) {
+    margin: 0 5rem;
+    margin-top: -7rem;
+  }
 
   .main {
     .top {
@@ -160,7 +184,13 @@ h3 {
 
       img {
         width: auto;
-        height: 50rem;
+        height: 20rem;
+        @media (min-width: 960px) {
+          height: 30rem;
+        }
+        @media (min-width: 1440px) {
+          height: 50rem;
+        }
         object-fit: cover;
         border-radius: .5rem;
       }
@@ -173,23 +203,43 @@ h3 {
         > div {
           display: flex;
           align-items: center;
-          gap: 2rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+          @media (min-width: 960px) {
+            gap: 2rem;
+          }
     
           span {
+            font-size: 1.2rem;
+            @media (min-width: 1440px) {
+              font-size: 1.6rem;
+            }
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            svg {
+              width: 1.5rem;
+              height: 1.5rem;
+              @media (min-width: 1440px) {
+                width: 2.5rem;
+                height: 2.5rem;
+              }
+            }
           }
         }
 
         button {
           color: white;
-          font-size: 1.5rem;
+          font-size: 1.25rem;
+          padding: .5rem 1rem;
+          @media (min-width: 960px) {
+            padding: .75rem 1.25rem;
+            font-size: 1.5rem;
+          }
           font-weight: 600;
           border: .1rem solid rgba(255, 255, 255, .15);
           border-radius: .5rem;
           background: transparent;
-          padding: .75rem 1.25rem;
           :hover {
             background-color: rgba(255, 255, 255, .05);
             color: #e9ecef;
@@ -198,8 +248,12 @@ h3 {
         }
 
         .icon {
-          width: 3rem;
-          height: 3rem;
+          width: 1.5rem;
+          height: 1.5rem;
+          @media (min-width: 960px) {
+            width: 3rem;
+            height: 3rem;
+          }
           object-fit: cover;
           border-radius: .5rem;
         }
@@ -246,8 +300,11 @@ h3 {
       p {
         font-size: 1.25rem;
         line-height: 1.5;
-        @media (min-width: 2560px) {
+        @media (min-width: 1440px) {
           font-size: 1.5rem;
+        }
+        @media (min-width: 2560px) {
+          font-size: 2rem;
         }
       }
     }
@@ -274,6 +331,13 @@ h3 {
     .info {
       padding: 1rem;
       color: white;
+      span {
+        font-size: 1rem;
+        @media (min-width: 1440px) {
+          font-size: 1.5rem;
+        }
+        display: block;
+      }
     }
     :hover {
       cursor: pointer;
@@ -285,7 +349,10 @@ h3 {
   img {
     border-radius: .5rem 0 0 .5rem;
     width: 100%;
-    height: 16rem;
+    height: 12rem;
+    @media (min-width: 1440px) {
+      height: 16rem;
+    }
     object-fit: cover;
   }
 }
