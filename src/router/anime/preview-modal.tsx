@@ -756,7 +756,11 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={15}
-                    totalPages={media?.episodes?.edges ? Math.ceil(media.episodes.edges.length / 15) : 0}
+                    totalPages={
+                      media?.episodes?.edges
+                      ? Math.ceil(media.episodes.edges.filter(episode => episode.node?.title?.english && episode.node.airingAt).length / 15)
+                      : 0
+                    }
                   >
                     {
                       media
