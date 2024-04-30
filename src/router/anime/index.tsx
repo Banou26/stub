@@ -760,7 +760,7 @@ const Draggable = (
 }
 
 
-const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
+const GET_CURRENT_SEASON_SUBSCRIPTION = /* GraphQL */`
   subscription GetCurrentSeason($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
@@ -800,6 +800,7 @@ const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
     averageScore
     episodeCount
     episodes {
+      _id
       origin
       id
       uri
@@ -832,7 +833,7 @@ const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
       day
     }
   }
-`)
+`
 
 const Anime = () => {
   const searchParams = new URLSearchParams(useSearch())
