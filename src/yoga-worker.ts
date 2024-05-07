@@ -6,23 +6,7 @@ import { call, makeCallListener, registerListener } from 'osra'
 
 import type { Resolvers as ParentResolvers } from './urql'
 import { HandleRelation, Media } from './generated/graphql'
-
-const recursiveRemoveNullable = (obj) =>
-  Array.isArray(obj)
-    ? obj.map(recursiveRemoveNullable)
-    : (
-      typeof obj === 'object'
-        ? (
-          Object
-            .fromEntries(
-              Object
-                .entries(obj)
-                .filter(([_, value]) => value !== null && value !== undefined)
-                .map(([key, value]) => [key, recursiveRemoveNullable(value)])
-            )
-        )
-        : obj
-    )
+import { RemoveNullable, recursiveRemoveNullable } from 'scannarr/src/urql/__graph'
 
 const target = call<ParentResolvers>(globalThis as unknown as Worker, { key: 'yoga-fetch' })
 const { yoga } = makeScannarrServer({
@@ -57,38 +41,42 @@ const { yoga } = makeScannarrServer({
         )
 
     const result = merge(
-      ...recursiveRemoveNullable(nodes),
+      ...recursiveRemoveNullable(nodes).filter(Boolean),
       {
-        handles: {
-          edges: nodes.map(handle => ({
-            handleRelationType: HandleRelation.Identical,
-            node: handle
-          })),
-          nodes: nodes
-        }
+        handles: nodes.filter(Boolean)
       }
     )
+    const { handleGroups } = groupRelatedHandles({ results: handles })
+
+    if (result.origin === 'scannarr') {
+      const scannarrHandle = handleGroups[0].find(handle => handle.origin === 'scannarr')
+      if (scannarrHandle) {
+        handleGroups[0].splice(handleGroups[0].indexOf(scannarrHandle), 1)
+      }
+    }
 
     if (nodes[0]?.__typename === 'Media') {
       const episodeNodes =
         (nodes as Media[])
-          .flatMap((media) =>
-            media
-              .episodes
-              ?.edges
-              ?.map(edge => edge.node)
-            ?? (
-              media
-                .episodes
-                ?.nodes
-            )
-            ?? []
-          )
+          .flatMap((media) => media.episodes ?? [])
 
-      const { handleGroups: episodeHandleGrouos } = groupRelatedHandles({ results: episodeNodes })
+      // const { handleGroups: episodeHandleGroups } = groupRelatedHandles({ results: episodeNodes })
+
+      const groupEpisodesByEpisodeNumber = (episodes: Media[]) => {
+        const episodesByEpisodeNumber = new Map<number, Media[]>()
+        for (const episode of episodes) {
+          if (!episodesByEpisodeNumber.has(episode.number)) {
+            episodesByEpisodeNumber.set(episode.number, [])
+          }
+          episodesByEpisodeNumber.get(episode.number)?.push(episode)
+        }
+        return [...episodesByEpisodeNumber.values()]
+      }
+
+      const episodesByEpisodeNumber = groupEpisodesByEpisodeNumber(episodeNodes)
 
       const scannarrEpisodeHandles =
-        episodeHandleGrouos
+        episodesByEpisodeNumber
             .map(handles =>
               makeScannarrHandle2({
                 handles,
@@ -96,19 +84,19 @@ const { yoga } = makeScannarrServer({
               })
             )
 
+      // console.log('scannarrEpisodeHandles', episodeNodes, scannarrEpisodeHandles, handles)
+
       return {
         ...result,
-        episodes: {
-          edges: scannarrEpisodeHandles.map(episode => ({
-            handleRelationType: HandleRelation.Identical,
-            node: episode
-          })),
-          nodes: scannarrEpisodeHandles
-        }
+        handles: handleGroups[0],
+        episodes: scannarrEpisodeHandles
       }
     }
 
-    return result
+    return {
+      ...result,
+      handles: handleGroups[0]
+    }
   }
 })
 

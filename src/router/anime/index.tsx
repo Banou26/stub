@@ -521,6 +521,7 @@ export const GET_USER_MEDIA_LIST = `#graphql
   }
 
   fragment GetUserMediaListMediaFragment on Media {
+    _id
     origin
     id
     uri
@@ -760,23 +761,20 @@ const Draggable = (
 }
 
 
-export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
-  subscription GetCurrentSeason($input: MediaPageInput!) {
+const GET_CURRENT_SEASON_SUBSCRIPTION = /* GraphQL */`
+  subscription GetHomepageCurrentSeason($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
         handles {
-          edges {
-            node {
-              ...GetMediaTestFragment
-            }
-          }
+          ...GetHomepageCurrentSeasonMediaFragment
         }
-        ...GetMediaTestFragment
+        ...GetHomepageCurrentSeasonMediaFragment
       }
     }
   }
 
-  fragment GetMediaTestFragment on Media {
+  fragment GetHomepageCurrentSeasonMediaFragment on Media {
+    _id
     origin
     id
     uri
@@ -803,23 +801,20 @@ export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
     averageScore
     episodeCount
     episodes {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-          number
-          airingAt
-          title {
-            romanized
-            english
-            native
-          }
-          description
-          thumbnail
-        }
+      _id
+      origin
+      id
+      uri
+      url
+      number
+      airingAt
+      title {
+        romanized
+        english
+        native
       }
+      description
+      thumbnail
     }
     trailers {
       origin
@@ -839,7 +834,97 @@ export const GET_CURRENT_SEASON_SUBSCRIPTION = gql(/* GraphQL */`
       day
     }
   }
-`)
+`
+
+
+export const GET_THEATHER_MEDIA = `#graphql
+  subscription GetTheatherMedia($input: MediaInput!) {
+    media(input: $input) {
+      handles {
+        handles {
+          origin
+          id
+          uri
+        }
+        ...GetTheatherMediaFragment
+      }
+      ...GetTheatherMediaFragment
+    }
+  }
+
+  fragment GetTheatherMediaEpisodeFragment on Episode {
+    origin
+    id
+    uri
+    url
+    handles {
+      origin
+      id
+      uri
+      url
+    }
+    airingAt
+    number
+    mediaUri
+    timeUntilAiring
+    thumbnail
+    title {
+      romanized
+      english
+      native
+    }
+    description
+  }
+
+  fragment GetTheatherMediaFragment on Media {
+    _id
+    origin
+    id
+    uri
+    url
+    title {
+      romanized
+      english
+      native
+    }
+    bannerImage
+    coverImage {
+      color
+      default
+      extraLarge
+      large
+      medium
+      small
+    }
+    description
+    shortDescription
+    season
+    seasonYear
+    popularity
+    averageScore
+    episodeCount
+    trailers {
+      origin
+      id
+      uri
+      url
+      thumbnail
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+    episodes {
+      ...GetTheatherMediaEpisodeFragment
+    }
+  }
+`
 
 const Anime = () => {
   const searchParams = new URLSearchParams(useSearch())
@@ -858,6 +943,7 @@ const Anime = () => {
     }
   )
   const { error, data: { mediaPage: _mediaPage } = {} } = currentSeasonResult
+  if (error) console.error(error)
 
   const authStates = useLocalStorageAuthStates()
 
@@ -898,11 +984,8 @@ const Anime = () => {
         key={media.uri}
         media={media}
         to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: media.uri }).toString()}`}
-        onMouseEnter={e => {
-        }}
-        onMouseLeave={(e) => {
-
-        }}
+        onMouseEnter={e => {}}
+        onMouseLeave={(e) => {}}
       />
     )
   , [userMediaPage?.nodes])
@@ -919,10 +1002,9 @@ const Anime = () => {
   
   const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaPage?.nodes?.length ?? 0)), [mediaPage?.nodes?.length])
   const theaterMedia = useMemo(() => mediaPage?.nodes.at(randomNum), [mediaPage, randomNum])
-  const [getMediaResult] = useSubscription({ query: GET_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
+  const [getMediaResult] = useSubscription({ query: GET_THEATHER_MEDIA, variables: { input: { uri: theaterMedia?.uri } }, pause: !theaterMedia })
   const { error: error2, data: { media } = {} } = getMediaResult
 
-  if (error) console.error(error)
   if (error2) console.error(error2)
 
   const descriptionText = useMemo(
@@ -968,11 +1050,11 @@ const Anime = () => {
   const episodeCards = useMemo(() =>
     mediaPage
       ?.nodes
-      ?.flatMap(media => media.episodes?.edges.map(edge => ({ node: { ...edge.node, media } })) ?? [])
-      .filter(({ node }) => node.airingAt < Date.now() + 1000 * 60 * 60 * 12)
-      .filter(({ node }) => node.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
-      .sort((a, b) => b.node.airingAt - a.node.airingAt)
-      .map(({ node: episode }) =>
+      ?.flatMap(media => media.episodes?.map(handle => ({ ...handle, media })) ?? [])
+      .filter((handle) => handle.airingAt < Date.now() + 1000 * 60 * 60 * 12)
+      .filter((handle) => handle.airingAt > Date.now() - 1000 * 60 * 60 * 24 * 7)
+      .sort((a, b) => b.airingAt - a.airingAt)
+      .map((episode) =>
         <EpisodeCard
           key={episode.uri}
           to={`${getRoutePath(Route.ANIME)}?${new URLSearchParams({ details: episode.media.uri }).toString()}`}

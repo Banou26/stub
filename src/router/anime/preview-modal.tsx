@@ -316,24 +316,16 @@ pointer-events: none;
 
 `
 
-export const GET_PREVIEW_MODAL_MEDIA = `#graphql
+const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
     media(input: $input) {
       handles {
-        edges {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                }
-              }
-            }
-            ...GetPreviewModalMediaFragment
-          }
+        handles {
+          origin
+          id
+          uri
         }
+        ...GetPreviewModalMediaFragment
       }
       ...GetPreviewModalMediaFragment
     }
@@ -345,14 +337,10 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
     uri
     url
     handles {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-        }
-      }
+      origin
+      id
+      uri
+      url
     }
     airingAt
     number
@@ -368,6 +356,7 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   }
 
   fragment GetPreviewModalMediaFragment on Media {
+    _id
     origin
     id
     uri
@@ -411,11 +400,7 @@ export const GET_PREVIEW_MODAL_MEDIA = `#graphql
       day
     }
     episodes {
-      edges {
-        node {
-          ...GetPreviewModalMediaEpisodeFragment
-        }
-      }
+      ...GetPreviewModalMediaEpisodeFragment
     }
   }
 `
@@ -566,36 +551,27 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
   const setSearchParams =
     (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
       setLocation(`${location}?${new URLSearchParams(init).toString()}`, { replace: true })
-  // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
-  // console.log('mediaUri', mediaUri)
   const [{ data: updateUserMediaData }, updateUserMedia] = useMutation(UPDATE_USER_MEDIA)
   const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
     query: GET_PREVIEW_MODAL_MEDIA,
     variables: { input: { uri: mediaUri! } },
     pause: !mediaUri
   })
-  // console.log('media', media)
-  const foundSources = [...new Set(media?.handles.edges.map(edge => edge.node.origin))]
-  // console.log('foundSources', foundSources)
-  // const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
-  // console.log('media', media)
-  // console.log('originPage', originPage)
+  if (error) console.error(error)
 
   useEffect(() => {
-    if (!media || fetching || !media?.uri || !media.handles.edges.length || !mediaUri) return
+    if (!media || fetching || !media?.uri || !media.handles.length || !mediaUri) return
     const newUri = media && mergeScannarrUris([
       media.uri,
       toScannarrUri([
         ...new Set(
           media
             .handles
-            .edges
-            .flatMap(edge =>
-              edge
-              .node
-              .handles
-              .edges.map(edge => edge.node.uri)
+            .flatMap(node =>
+              node
+                .handles
+                .map(node => node.uri)
             )
         )
       ])
@@ -609,13 +585,11 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
   const mediaTargets =
     media &&
     targets
-      .filter(target => media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node)
+      .filter(target => media.handles.find((handle) => handle.origin === target.origin))
       .map(target => ({
         target,
-        media: media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node
+        media: media.handles.find((handle) => handle.origin === target.origin)
       }))
-
-  // console.log('mediaTargets', mediaTargets)
 
   const onOverlayClick = (ev) => {
     if (ev.target !== ev.currentTarget) return
@@ -682,25 +656,6 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
     )
   }
 
-  // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
-
-  // const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
-
-  // const newUri = media && mergeScannarrUris([
-  //   media.uri,
-  //   toScannarrUri(
-  //     media
-  //       .handles
-  //       .edges
-  //       .flatMap(edge =>
-  //         edge
-  //         .node
-  //         .handles
-  //         .edges.map(edge => edge.node.uri)
-  //       )
-  //   )
-  // ])
-
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
       <Dialog.Portal>
@@ -765,10 +720,9 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
                     {
                       media
                         ?.episodes
-                        ?.edges
                         ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
                         ?.slice(currentPage * 15, currentPage * 15 + 15)
-                        ?.map(({ node }) => <EpisodeRow key={node.uri} updateWatched={updateWatched} userMedia={updateUserMediaData?.updateUserMedia ?? userMedia} mediaUri={mediaUri} node={node}/>)
+                        ?.map((node) => <EpisodeRow key={node.uri} updateWatched={updateWatched} userMedia={updateUserMediaData?.updateUserMedia ?? userMedia} mediaUri={mediaUri} node={node}/>)
                       ?? []
                     }
                   </Pagination>

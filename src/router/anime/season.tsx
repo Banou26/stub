@@ -51,8 +51,8 @@ screen and (max-height : 1440px) {
 }
 `
 
-export const GET_CURRENT_SEASON = `#graphql
-  fragment GetMediaTestFragment on Media {
+const GET_CURRENT_SEASON = `#graphql
+  fragment GetSeasonPageCurrentSeasonMediaFragment on Media {
     origin
     id
     uri
@@ -79,23 +79,19 @@ export const GET_CURRENT_SEASON = `#graphql
     averageScore
     episodeCount
     episodes {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-          number
-          airingAt
-          title {
-            romanized
-            english
-            native
-          }
-          description
-          thumbnail
-        }
+      origin
+      id
+      uri
+      url
+      number
+      airingAt
+      title {
+        romanized
+        english
+        native
       }
+      description
+      thumbnail
     }
     trailers {
       origin
@@ -116,17 +112,13 @@ export const GET_CURRENT_SEASON = `#graphql
     }
   }
 
-  query GetCurrentSeason($input: MediaPageInput!) {
+  query GetSeasonPageCurrentSeason($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
         handles {
-          edges {
-            node {
-              ...GetMediaTestFragment
-            }
-          }
+          ...GetSeasonPageCurrentSeasonMediaFragment
         }
-        ...GetMediaTestFragment
+        ...GetSeasonPageCurrentSeasonMediaFragment
       }
     }
   }

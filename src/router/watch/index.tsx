@@ -80,21 +80,13 @@ export const GET_PLAYBACK_SOURCES = `#graphql
     playbackSourcePage(input: $input) {
       nodes {
         handles {
-          edges {
-            node {
-              handles {
-                edges {
-                  node {
-                    origin
-                    id
-                    uri
-                    url
-                  }
-                }
-              }
-              ...PlaybackSourceFragment
-            }
+          handles {
+            origin
+            id
+            uri
+            url
           }
+          ...PlaybackSourceFragment
         }
         ...PlaybackSourceFragment
       }
@@ -137,21 +129,13 @@ export const GET_WATCH_MEDIA = `#graphql
   subscription GetWatchMedia($input: MediaPageInput!) {
     media(input: $input) {
       handles {
-        edges {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                  url
-                }
-              }
-            }
-            ...GetWatchMediaFragment
-          }
+        handles {
+          origin
+          id
+          uri
+          url
         }
+        ...GetWatchMediaFragment
       }
       ...GetWatchMediaFragment
     }
@@ -220,11 +204,7 @@ export const GET_WATCH_MEDIA = `#graphql
       day
     }
     episodes {
-      edges {
-        node {
-          ...GetWatchMediaEpisodeFragment
-        }
-      }
+      ...GetWatchMediaEpisodeFragment
     }
   }
 `
