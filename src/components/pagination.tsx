@@ -94,8 +94,8 @@ const style = css`
 const DEFAULT_ITEMS_PER_PAGE = 10
 
 export const Pagination = (
-  { children, currentPage = 0, itemsPerPage = DEFAULT_ITEMS_PER_PAGE, setCurrentPage = () => {}, totalPages, itemInPagination = 2, ...rest }:
-  { children: React.ReactNode, currentPage: number, itemsPerPage: number, setCurrentPage: (newPage: number) => void, totalPages: number, itemInPagination?: number }
+  { children, currentPage = 0, itemsPerPage = DEFAULT_ITEMS_PER_PAGE, setCurrentPage = () => {}, totalPages, itemInPagination = 2, position = "top", ...rest }:
+  { children: React.ReactNode, currentPage: number, itemsPerPage: number, setCurrentPage: (newPage: number) => void, totalPages: number, itemInPagination?: number, position?: 'top' | 'bottom' }
 ) => {
   const inputPagination = useRef(null)
 
@@ -128,7 +128,7 @@ export const Pagination = (
     ) return
     setCurrentPage(Number(inputPagination.current.value) - 1)
   }
-
+  
   if (totalPages === 1)
     return (
       <div css={style} {...rest}>
@@ -140,6 +140,13 @@ export const Pagination = (
 
   return (
     <div css={style} {...rest}>
+      {
+        position === 'bottom' && (
+          <ul>
+            {children}
+          </ul>
+        )
+      }
       <div className="pagination">
         {
           totalPages && currentPage >= 1
@@ -193,9 +200,13 @@ export const Pagination = (
           )
         }
       </div>
-      <ul>
-        {children}
-      </ul>
+      {
+        position === 'top' && (
+          <ul>
+            {children}
+          </ul>
+        )
+      }
     </div>
   )
 }
