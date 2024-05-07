@@ -1,12 +1,12 @@
-import type { ServerContext } from '../node_modules/scannarr'
+import type { ServerContext } from 'scannarr'
 
-import { makeScannarrServer, merge, groupRelatedHandles, makeScannarrHandle2 } from '../node_modules/scannarr'
-import { targets } from '../node_modules/laserr'
+import { makeScannarrServer, merge, groupRelatedHandles, makeScannarrHandle2 } from 'scannarr'
+import { targets } from 'laserr'
 import { call, makeCallListener, registerListener } from 'osra'
 
 import type { Resolvers as ParentResolvers } from './urql'
 import { HandleRelation, Media } from './generated/graphql'
-import { RemoveNullable, recursiveRemoveNullable } from '../node_modules/scannarr/src/urql/__graph'
+import { RemoveNullable, recursiveRemoveNullable } from 'scannarr/src/urql/__graph'
 
 const target = call<ParentResolvers>(globalThis as unknown as Worker, { key: 'yoga-fetch' })
 const { yoga } = makeScannarrServer({
