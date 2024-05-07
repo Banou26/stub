@@ -51,8 +51,8 @@ screen and (max-height : 1440px) {
 }
 `
 
-export const GET_CURRENT_SEASON = `#graphql
-  fragment GetMediaTestFragment on Media {
+const GET_CURRENT_SEASON = `#graphql
+  fragment GetSeasonPageCurrentSeasonMediaFragment on Media {
     origin
     id
     uri
@@ -112,13 +112,13 @@ export const GET_CURRENT_SEASON = `#graphql
     }
   }
 
-  query GetCurrentSeason($input: MediaPageInput!) {
+  query GetSeasonPageCurrentSeason($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
         handles {
-          ...GetMediaTestFragment
+          ...GetSeasonPageCurrentSeasonMediaFragment
         }
-        ...GetMediaTestFragment
+        ...GetSeasonPageCurrentSeasonMediaFragment
       }
     }
   }

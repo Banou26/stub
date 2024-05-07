@@ -301,7 +301,7 @@ pointer-events: none;
 
 `
 
-export const GET_PREVIEW_MODAL_MEDIA = `#graphql
+const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
     media(input: $input) {
       handles {
@@ -536,21 +536,14 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
   const setSearchParams =
     (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
       setLocation(`${location}?${new URLSearchParams(init).toString()}`, { replace: true })
-  // const [searchParams, setSearchParams] = useSearchParams()
   const mediaUri = searchParams.get('details')
-  // console.log('mediaUri', mediaUri)
   const [{ data: updateUserMediaData }, updateUserMedia] = useMutation(UPDATE_USER_MEDIA)
   const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
     query: GET_PREVIEW_MODAL_MEDIA,
     variables: { input: { uri: mediaUri! } },
     pause: !mediaUri
   })
-  console.log('media', media)
-  const foundSources = [...new Set(media?.handles.map(handle => handle.origin))]
-  // console.log('foundSources', foundSources)
-  // const [{ error: error2, data: { Page: originPage } = {} }] = useQuery({ query: GET_ORIGINS, variables: { ids: foundSources }, skip: !foundSources })
-  // console.log('media', media)
-  // console.log('originPage', originPage)
+  if (error) console.error(error)
 
   useEffect(() => {
     if (!media || fetching || !media?.uri || !media.handles.length || !mediaUri) return
@@ -582,8 +575,6 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
         target,
         media: media.handles.find((handle) => handle.origin === target.origin)
       }))
-
-  // console.log('mediaTargets', mediaTargets)
 
   const onOverlayClick = (ev) => {
     if (ev.target !== ev.currentTarget) return
@@ -649,25 +640,6 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
       </Dialog.Root>
     )
   }
-
-  // console.log('AAAAAAAAAAAAAAA', media.trailers?.at(0)?.id)
-
-  // const onlyMetadataOrigins = originPage?.origin?.every(origin => origin.metadataOnly)
-
-  // const newUri = media && mergeScannarrUris([
-  //   media.uri,
-  //   toScannarrUri(
-  //     media
-  //       .handles
-  //       .edges
-  //       .flatMap(edge =>
-  //         edge
-  //         .node
-  //         .handles
-  //         .edges.map(edge => edge.node.uri)
-  //       )
-  //   )
-  // ])
 
   return (
     <Dialog.Root open={Boolean(mediaUri)}>
