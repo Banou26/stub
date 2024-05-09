@@ -561,25 +561,8 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
   if (error) console.error(error)
 
   useEffect(() => {
-    if (!media || fetching || !media?.uri || !media.handles.length || !mediaUri) return
-    const newUri = media && mergeScannarrUris([
-      media.uri,
-      toScannarrUri([
-        ...new Set(
-          media
-            .handles
-            .flatMap(node =>
-              node
-                .handles
-                .map(node => node.uri)
-            )
-        )
-      ])
-    ])
-    if (mediaUri === newUri) return
-    setTimeout(() => {
-      setSearchParams({ details: newUri as string })
-    }, 100)
+    if (!media || fetching || !media?.uri || mediaUri === media.uri) return
+    setSearchParams({ details: media.uri as string })
   }, [media, setSearchParams])
 
   const mediaTargets =
