@@ -81,6 +81,7 @@ export const GET_PLAYBACK_SOURCES = `#graphql
       nodes {
         handles {
           handles {
+            _id
             origin
             id
             uri
@@ -94,6 +95,7 @@ export const GET_PLAYBACK_SOURCES = `#graphql
   }
 
   fragment PlaybackSourceFragment on PlaybackSource {
+    _id
     origin
     id
     uri
@@ -111,6 +113,7 @@ export const GET_PLAYBACK_SOURCES = `#graphql
     uploadDate
     thumbnails
     team {
+      _id
       origin
       id
       uri
@@ -126,10 +129,11 @@ export const GET_PLAYBACK_SOURCES = `#graphql
 `
 
 export const GET_WATCH_MEDIA = `#graphql
-  subscription GetWatchMedia($input: MediaPageInput!) {
+  subscription GetWatchMedia($input: MediaInput!) {
     media(input: $input) {
       handles {
         handles {
+          _id
           origin
           id
           uri
@@ -142,6 +146,7 @@ export const GET_WATCH_MEDIA = `#graphql
   }
 
   fragment GetWatchMediaEpisodeFragment on Episode {
+    _id
     origin
     id
     uri
@@ -161,6 +166,7 @@ export const GET_WATCH_MEDIA = `#graphql
   }
 
   fragment GetWatchMediaFragment on Media {
+    _id
     origin
     id
     uri
@@ -187,6 +193,7 @@ export const GET_WATCH_MEDIA = `#graphql
     averageScore
     episodeCount
     trailers {
+      _id
       origin
       id
       uri
@@ -216,10 +223,9 @@ const Watch = () => {
   const setSearchParams =
     (init?: string | string[][] | Record<string, string> | URLSearchParams | undefined) =>
       setLocation(`${location}?${new URLSearchParams(init).toString()}`)
-  const uri = mergeScannarrUris([mediaUri, episodeUri])
   const episodeId = fromUriEpisodeId(episodeUri).episodeId
   
-  const [{ data: { media } = { media: undefined } }] = useSubscription({
+  const [{ error: mediaError, data: { media } = { media: undefined } }] = useSubscription({
     query: GET_WATCH_MEDIA,
     variables: {
       input: {
@@ -228,19 +234,21 @@ const Watch = () => {
     },
     pause: !mediaUri
   })
+  if (mediaError) console.error('mediaError', mediaError)
 
-  const [{ error, data: { playbackSourcePage } = { playbackSourcePage: undefined } }] = useSubscription(
+  const [{ error, data, data: { playbackSourcePage } = { playbackSourcePage: undefined } }] = useSubscription(
     {
       query: GET_PLAYBACK_SOURCES,
       variables: {
         input: {
-          uri,
+          uri: mediaUri,
           number: Number(episodeId)
         }
       },
-      pause: !uri
+      pause: !mediaUri
     }
   )
+  if (error) console.error('error', error)
 
   const currentSource = useMemo(
     () => playbackSourcePage?.nodes?.find((source) => source.uri === sourceUri),
