@@ -695,17 +695,33 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={15}
                     totalPages={
-                      media?.episodes?.edges
-                      ? Math.ceil(media.episodes.edges.filter(episode => episode.node?.title?.english && episode.node.airingAt).length / 15)
-                      : 0
+                      media?.episodes.length
+                        ? (
+                          Math.ceil(
+                            media
+                              .episodes
+                              .filter(episode => episode?.title?.english && episode.airingAt)
+                              .length
+                            / 15
+                          )
+                        )
+                        : 0
                     }
                   >
                     {
                       media
                         ?.episodes
-                        ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
+                        ?.sort((a, b) => (a?.number ?? 0) - (b?.number ?? 0))
                         ?.slice(currentPage * 15, currentPage * 15 + 15)
-                        ?.map((node) => <EpisodeRow key={node.uri} updateWatched={updateWatched} userMedia={updateUserMediaData?.updateUserMedia ?? userMedia} mediaUri={mediaUri} node={node}/>)
+                        ?.map((node) =>
+                          <EpisodeRow
+                            key={node.uri}
+                            updateWatched={updateWatched}
+                            userMedia={updateUserMediaData?.updateUserMedia ?? userMedia}
+                            mediaUri={mediaUri}
+                            node={node}
+                          />
+                        )
                       ?? []
                     }
                   </Pagination>
