@@ -6,112 +6,9 @@ import { useSubscription } from "urql"
 import { Link, useParams } from "wouter"
 import { targets } from "laserr"
 
-import { Route, getRoutePath } from "../path"
+import { GET_PREVIEW_MODAL_MEDIA } from "./preview-modal"
 import { Pagination } from "../../components/pagination"
-
-export const GET_PREVIEW_MODAL_MEDIA = `#graphql
-  subscription GetPreviewModalMedia($input: MediaInput!) {
-    media(input: $input) {
-      handles {
-        edges {
-          node {
-            handles {
-              edges {
-                node {
-                  origin
-                  id
-                  uri
-                }
-              }
-            }
-            ...GetPreviewModalMediaFragment
-          }
-        }
-      }
-      ...GetPreviewModalMediaFragment
-    }
-  }
-
-  fragment GetPreviewModalMediaEpisodeFragment on Episode {
-    origin
-    id
-    uri
-    url
-    handles {
-      edges {
-        node {
-          origin
-          id
-          uri
-          url
-        }
-      }
-    }
-    airingAt
-    number
-    mediaUri
-    timeUntilAiring
-    thumbnail
-    title {
-      romanized
-      english
-      native
-    }
-    description
-  }
-
-  fragment GetPreviewModalMediaFragment on Media {
-    origin
-    id
-    uri
-    url
-    title {
-      romanized
-      english
-      native
-    }
-    bannerImage
-    coverImage {
-      color
-      default
-      extraLarge
-      large
-      medium
-      small
-    }
-    description
-    shortDescription
-    season
-    seasonYear
-    popularity
-    averageScore
-    episodeCount
-    trailers {
-      origin
-      id
-      uri
-      url
-      thumbnail
-    }
-    startDate {
-      year
-      month
-      day
-    }
-    endDate {
-      year
-      month
-      day
-    }
-    episodes {
-      edges {
-        node {
-          ...GetPreviewModalMediaEpisodeFragment
-        }
-      }
-    }
-  }
-`
+import { Route, getRoutePath } from "../path"
 
 const style = css`
 h1 {
@@ -390,21 +287,22 @@ const AnimeDetails = () => {
   const [currentPage, setCurrentPage] = useState(0)
   const itemsPerPage = 8
 
-  const [{ fetching, error, data: { media } = { media: undefined } }] = useSubscription({
+  const [{ error, data: { media } = { media: undefined } }] = useSubscription({
     query: GET_PREVIEW_MODAL_MEDIA,
     variables: { input: { uri: uri! } },
     pause: !uri
   })
+  if (error) console.error(error)
 
-  const mediaTargets =
+    const mediaTargets =
     media &&
     targets
-      .filter(target => media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node)
+      .filter(target => media.handles.find((handle) => handle.origin === target.origin))
       .map(target => ({
         target,
-        media: media.handles.edges.find((edge) => edge.node.origin === target.origin)?.node
+        media: media.handles.find((handle) => handle.origin === target.origin)
       }))
-
+      
   return (
     <div css={style}>
       <img className="header" src={media?.coverImage.at(0)?.extraLarge} alt={media?.title?.english} />
@@ -415,7 +313,11 @@ const AnimeDetails = () => {
             <div className="right">
               <h1 className="title">{media?.title?.english}</h1>
               <div>
-                <span><Cloud /> {media?.season}</span>
+                {
+                  media?.season
+                    ? <span><Cloud /> {media?.season}</span>
+                    : null
+                }
                 <span>
                   <Calendar />
                   {media?.startDate.year}-{media?.startDate.month}-{media?.startDate.day}
@@ -430,7 +332,11 @@ const AnimeDetails = () => {
               <div>
                 <span><User /> {media?.popularity}</span>
                 <span><BarChart /> {media?.averageScore}</span>
-                <span>Episodes: {media?.episodeCount}</span>
+                {
+                  media?.episodeCount
+                    ? <span>Episodes: {media?.episodeCount}</span>
+                    : null
+                }
               </div>
               <div>
                 <a href={media?.trailers.at(0).url} target="_blank">
@@ -465,66 +371,40 @@ const AnimeDetails = () => {
               setCurrentPage={setCurrentPage}
               itemsPerPage={itemsPerPage}
               totalPages={
-                media?.episodes?.edges
-                ? Math.ceil(media.episodes.edges.filter(episode => episode.node?.title?.english && episode.node.airingAt).length / itemsPerPage)
+                media?.episodes
+                ? Math.ceil(media.episodes.filter(episode => episode?.title?.english && episode.airingAt).length / itemsPerPage)
                 : 0
               }
               position="bottom"
             >
               {
-                media?.episodes?.edges
-                  ?.sort((a, b) => (a?.node?.number ?? 0) - (b?.node?.number ?? 0))
-                  ?.filter((episode) => episode.node.title?.english && episode.node.airingAt)
+                media?.episodes
+                  ?.sort((a, b) => (a?.number ?? 0) - (b?.number ?? 0))
+                  ?.filter((episode) => episode.airingAt)
                   ?.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage)
                   .map((episode) => {
-                    const episodeScannarrUri = toUriEpisodeId(episode.node.uri, episode.node.number)
-                    if (!episode.node.title?.english || !episode.node.airingAt) return
+                    const episodeScannarrUri = toUriEpisodeId(episode.uri, episode.number)
                     return (
                       <Link
                         className="card"
-                        to={getRoutePath(Route.WATCH, { mediaUri: episode.node.mediaUri, episodeUri: episodeScannarrUri })}
-                        key={episode.node.id}
+                        to={getRoutePath(Route.WATCH, { mediaUri: episode.mediaUri, episodeUri: episodeScannarrUri })}
+                        key={episode.id}
                       >
                         {
-                          episode.node.thumbnail && (
-                            <img src={episode.node.thumbnail} alt={episode.node.title?.english} />
+                          episode.thumbnail && (
+                            <img src={episode.thumbnail} alt={episode.title?.english} />
                           )
                         }
                         <div className="info">
-                          <h3>{episode.node.number}. {episode.node.title?.english}</h3>
-                          <span>{episode.node.description}</span>
-                          <span>{timeUntilOrSince(episode.node.airingAt)}</span>
+                          <h3>{episode.number}. {episode.title?.english ?? "N/A"}</h3>
+                          <span>{episode.description}</span>
+                          <span>{timeUntilOrSince(episode.airingAt)}</span>
                         </div>
                       </Link>
                     )
                   })
               }
             </Pagination>
-
-            {/* {
-              media?.episodes?.edges.map((episode) => {
-                const episodeScannarrUri = toUriEpisodeId(episode.node.uri, episode.node.number)
-                if (!episode.node.title?.english || !episode.node.airingAt) return
-                return (
-                  <Link
-                    className="card"
-                    to={getRoutePath(Route.WATCH, { mediaUri: episode.node.mediaUri, episodeUri: episodeScannarrUri })}
-                    key={episode.node.id}
-                  >
-                    {
-                      episode.node.thumbnail && (
-                        <img src={episode.node.thumbnail} alt={episode.node.title?.english} />
-                      )
-                    }
-                    <div className="info">
-                      <h3>{episode.node.number}. {episode.node.title?.english}</h3>
-                      <span>{episode.node.description}</span>
-                      <span>{timeUntilOrSince(episode.node.airingAt)}</span>
-                    </div>
-                  </Link>
-                )
-              })
-            } */}
           </div>
         </div>
       </div>
