@@ -316,7 +316,7 @@ pointer-events: none;
 
 `
 
-const GET_PREVIEW_MODAL_MEDIA = `#graphql
+export const GET_PREVIEW_MODAL_MEDIA = `#graphql
   subscription GetPreviewModalMedia($input: MediaInput!) {
     media(input: $input) {
       handles {
