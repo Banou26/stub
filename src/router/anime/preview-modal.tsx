@@ -18,8 +18,9 @@ import { fromScannarrUri } from 'scannarr'
 import { UserMedia } from '../../generated/graphql'
 import { Eye, EyeOff } from 'react-feather'
 import { useLocalStorageAuthStates } from '../auth/utils'
+import { useWindowSize } from '../../utils/use-window-size'
 
-const style = css`
+const style = (width: number) => css`
 overflow: auto;
 ${overlayStyle}
 /* position: fixed;
@@ -71,7 +72,7 @@ pointer-events: none;
     position: relative;
     display: grid;
     grid-template:"container";
-    height: 67.5rem;
+    height: ${width >= 1350 ? '67.5' : 1 + (62.5 * (width - 320) / (1225 - 320))}rem;
     width: 100%;
     background-color: rgb(35, 35, 35);
     overflow: hidden;
@@ -79,7 +80,7 @@ pointer-events: none;
 
     & > div:first-of-type {
       grid-area: container;
-      height: 89.25rem !important;
+      height: ${width >= 1350 ? '89.25rem' : `${20 + (79.25 * (width - 320) / (1400 - 320))}rem`} !important;
       width: 100% !important;
       margin-top: -11rem;
       pointer-events: none;
@@ -91,18 +92,30 @@ pointer-events: none;
     
     .title {
       display: flex;
-      justify-content: start;
+      justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
 
       h2 {
-        font-size: 3rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        @media (min-width: 960px) {
+          font-size: 1.6rem;
+        }
+        @media (min-width: 1920px) {
+          font-size: 2rem;
+        }
+        @media (min-width: 2560px) {
+          font-size: 3rem;
+        }
       }
 
       .origins {
         display: flex;
         justify-content: start;
         align-items: center;
-        margin-left: 1rem;
+        flex: 1;
 
         a {
           display: flex;
@@ -120,7 +133,6 @@ pointer-events: none;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-left: 1rem;
         border: .1rem solid rgba(255, 255, 255, .15);
         border-radius: .5rem;
         padding: 1rem 1rem;
@@ -133,7 +145,13 @@ pointer-events: none;
     }
 
     & > .description {
-      margin-top: 2.5rem;
+      margin-top: 1rem;
+      @media (min-width: 1920px) {
+        margin-top: 1.5rem;
+      }
+      @media (min-width: 2560px) {
+        margin-top: 2.5rem;
+      }
     }
 
     .metadata-only {
@@ -161,13 +179,33 @@ pointer-events: none;
     }
 
     .episodes {
-      margin-top: 4rem;
+      margin-top: 2rem;
+      @media (min-width: 1920px) {
+        margin-top: 3rem;
+      }
+      @media (min-width: 2560px) {
+        margin-top: 4rem;
+      }
+
       border-top: .1rem solid rgba(255, 255, 255, .1);
 
       .episode {
         display: grid;
-        grid-template-columns: 7rem auto 2.5rem 12.5rem;
-        height: 10rem;
+
+        grid-template-columns: 2rem auto 2.5rem 9rem;
+        @media (min-width: 1920px) {
+          grid-template-columns: 7rem auto 2.5rem 12.5rem;
+        }
+
+
+        height: 7rem;
+        @media (min-width: 1920px) {
+          height: 8rem;
+        }
+        @media (min-width: 2560px) {
+          height: 10rem;
+        }
+
         border-bottom: .1rem solid rgba(255, 255, 255, .1);
         color: #fff;
         text-decoration: none;
@@ -273,10 +311,13 @@ pointer-events: none;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-left: 2.5rem;
-            padding-top: 1rem;
-            padding-right: 1rem;
-            /* justify-content: start; */
+            padding-left: 1rem;
+            @media (min-width: 960px) {
+              padding-left: 1.5rem;
+            }
+            @media (min-width: 1920px) {
+              padding-left: 2.5rem;
+            }
 
             &:has(.empty) {
               padding-left: 0;
@@ -284,8 +325,16 @@ pointer-events: none;
 
             .title {
               margin-right: auto;
-              font-size: 2rem;
-              font-weight: bold;
+
+              font-size: 1.6rem;
+              font-weight: 500;
+              @media (min-width: 1920px) {
+                font-size: 1.8rem;
+              }
+              @media (min-width: 2560px) {
+                font-size: 2rem;
+                font-weight: bold;
+              }
 
               &.empty {
                 font-weight: normal;
@@ -306,8 +355,18 @@ pointer-events: none;
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 3rem;
           vertical-align: middle;
+
+          font-size: 1.6rem;
+          @media (min-width: 960px) {
+            font-size: 1.8rem;
+          }
+          @media (min-width: 1920px) {
+            font-size: 2rem;
+          }
+          @media (min-width: 2560px) {
+            font-size: 3rem;
+          }
         }
       }
     }
@@ -546,6 +605,7 @@ const EpisodeRow = ({ updateWatched, userMedia, mediaUri, node }: { updateWatche
 }
 
 export default ({ userMedia }: { userMedia?: UserMedia }) => {
+  const [height, width] = useWindowSize()
   const [location, setLocation] = useLocation()
   const searchParams = new URLSearchParams(useSearch())
   const setSearchParams =
@@ -615,7 +675,7 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
         <Dialog.Portal>
           {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
           <Dialog.Content asChild={true}>
-            <div css={style} onClick={onOverlayClick}>
+            <div css={style(width)} onClick={onOverlayClick}>
               <div className="modal">
                 <div className="trailer">
                   {/* <MinimalPlayer className="player"/> */}
@@ -644,7 +704,7 @@ export default ({ userMedia }: { userMedia?: UserMedia }) => {
       <Dialog.Portal>
         {/* <Dialog.Overlay css={overlayStyle} onClick={onOverlayClick}/> */}
         <Dialog.Content asChild={true}>
-          <div css={style} onClick={onOverlayClick}>
+          <div css={style(width)} onClick={onOverlayClick}>
             <div className="modal">
               <div className="trailer">
                 <MinimalPlayer media={media} className="player"/>
