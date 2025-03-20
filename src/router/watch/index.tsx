@@ -385,8 +385,7 @@ const Watch = () => {
             <div className='fullscreen'>
               <iframe
                 src={`https://torrent.fkn.app/embed?${new URLSearchParams({ fileIndex: 0, magnet: btoa(currentSourceObject?.magnetUri) })}`}
-                allow="fullscreen"
-                allowFullScreen
+                allow="fullscreen; autoplay *"
               />
               <div>
                 <button className='source' onClick={onSourcesClick}>Select sources manually</button>
