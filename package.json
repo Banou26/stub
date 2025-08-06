@@ -12,21 +12,17 @@
   ],
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
+    "drizzle-kit": "^0.31.4",
     "shx": "^0.4.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6",
     "vite-plugin-top-level-await": "^1.6.0"
   },
   "scripts": {
-    "codegen": "concurrently \"npm run _codegen\"",
-    "codegen-watch": "concurrently \"npm run _codegen-watch\"",
-    "_codegen": "node _codegen.mjs && graphql-codegen --config codegen.ts & node _codegen.js",
-    "_codegen-watch": "node _codegen.mjs && graphql-codegen -w --config codegen.ts & node _codegen.js",
-    "dev": "concurrently \"vite --port 4560\" \"npm run _codegen-watch\"",
+    "codegen": "npx drizzle-kit generate",
+    "dev": "concurrently \"vite --port 4560\" \"npm run codegen\"",
     "_dev": "vite --port 4560",
-    "build": "vite build",
-    "copy-html": "shx cp src/index.html build/index.html && shx cp package.json build/package.json && shx cp src/app.webmanifest build/app.webmanifest && copyfiles -u 2 ./src/assets/* build/assets",
-    "serve": "serve -s -C -p 4560 build"
+    "build": "vite build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

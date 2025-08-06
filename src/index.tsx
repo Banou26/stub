@@ -2,7 +2,6 @@ import { css, Global } from '@emotion/react'
 import { createRoot } from 'react-dom/client'
 import { Provider, Client } from 'urql'
 
-import Mount from './components'
 import './worker.ts'
 
 const style = css`
@@ -66,7 +65,6 @@ root.render(
   // <StrictMode>
   <Provider value={client}>
     <Global styles={style}/>
-    <Mount/>
   </Provider>
   // </StrictMode>
 )

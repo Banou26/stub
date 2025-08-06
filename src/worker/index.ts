@@ -1,4 +1,5 @@
 import { expose } from 'osra'
+import './database'
 
 export const resolvers = {
   HANDLE_REQUEST: async (request: { foo: string }) => {
