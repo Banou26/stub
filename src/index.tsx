@@ -1,14 +1,9 @@
-/// <reference types="@emotion/react/types/css-prop" />
-import './polyfill'
-import './vite-hmr'
 import { css, Global } from '@emotion/react'
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Provider } from 'urql'
+import { Provider, Client } from 'urql'
 
 import Mount from './components'
-import { client } from './urql'
-
+import './worker.ts'
 
 const style = css`
   @import url('/style.css');
@@ -60,8 +55,12 @@ const style = css`
   }
 `
 
-
 const root = createRoot(document.body.appendChild(document.createElement('div')))
+
+const client = new Client({
+  exchanges: [],
+  url: 'http://localhost:3000/graphql'
+})
 
 root.render(
   // <StrictMode>

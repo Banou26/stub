@@ -1,9 +1,2 @@
 node_modules
-.parcel-cache
-dist
-release
-/lib
-gh-actions.secrets
-build
-video3.mkv
 .env
