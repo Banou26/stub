@@ -1,3 +1,5 @@
 node_modules
 .env
 drizzle
+test-results
+build

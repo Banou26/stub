@@ -1,6 +1,7 @@
 {
   "name": "@banou/stub",
   "version": "0.0.15",
+  "type": "module",
   "license": "MIT",
   "main": "build/index.js",
   "keywords": [
@@ -11,8 +12,13 @@
     "build"
   ],
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@vitejs/plugin-react": "^4.7.0",
+    "chai": "^5.2.1",
+    "chai-as-promised": "^8.0.1",
+    "concurrently": "^9.2.0",
     "drizzle-kit": "^0.31.4",
+    "playwright": "^1.54.2",
     "shx": "^0.4.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6",
@@ -22,7 +28,12 @@
     "codegen": "npx drizzle-kit generate",
     "dev": "concurrently \"vite --port 4560\" \"npm run codegen\"",
     "_dev": "vite --port 4560",
-    "build": "vite build"
+    "build": "vite build",
+    "build-test": "vite build --config vite.test.config.ts",
+    "build-test-watch": "vite build --config vite.test.config.ts --watch",
+    "test": "npm run build-test && npx playwright test",
+    "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
+    "test-watch-headful": "npx playwright test --ui"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
