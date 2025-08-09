@@ -4,9 +4,6 @@ import { drizzle } from 'drizzle-orm/sqlite-proxy'
 import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs'
 import * as SQLite from 'wa-sqlite'
 
-// @ts-expect-error
-// import SQLiteWasm from 'wa-sqlite/dist/wa-sqlite.wasm?url'
-
 type WaSQLiteValue = string | number | bigint | boolean | null | Uint8Array
 
 // Type definitions for wa-sqlite API (using any for flexibility with the actual API)
