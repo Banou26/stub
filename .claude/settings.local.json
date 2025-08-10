@@ -9,7 +9,8 @@
       "Bash(npx playwright test:*)",
       "Bash(more:*)",
       "Bash(npm run:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": []
   }
