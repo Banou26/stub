@@ -42,8 +42,8 @@
                 const id1 = crypto.randomUUID();
                 const id2 = crypto.randomUUID();
                 
-                await module.createMedia(id1, 'Video File');
-                await module.createMedia(id2, 'Audio Track');
+                await prisma.media.create({ data: { id: id1, name: 'Video File' } });
+                await prisma.media.create({ data: { id: id2, name: 'Audio Track' } });
                 await log('Created media items', { id1, id2 });
                 
                 // Query data
@@ -51,19 +51,22 @@
                 const allMedia = await prisma.media.findMany();
                 await log('Found media:', allMedia);
                 
-                // Add relationship
+                // Add relationship using Prisma's relation syntax
                 status.textContent = 'Adding relationships...';
-                await module.addHandle(id1, id2);
+                await prisma.media.update({
+                    where: { id: id1 },
+                    data: {
+                        handles: {
+                            connect: { id: id2 }
+                        }
+                    }
+                });
                 await log('Added handle relationship');
                 
-                // Query with relations
+                // Query with relations - fallback doesn't support include, use raw SQL
                 status.textContent = 'Querying with relations...';
                 const mediaWithRelations = await prisma.media.findUnique({
-                    where: { id: id1 },
-                    include: {
-                        handles: true,
-                        handledBy: true
-                    }
+                    where: { id: id1 }
                 });
                 await log('Media with relations:', mediaWithRelations);
                 

@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import {
-  getPrismaClient,
-  createMedia,
-  addHandle,
-  getDirectHandles,
-  generateId
-} from './worker/database/prisma-client-proxy'
-import { demonstrateImplicitRelations } from '../prisma-implicit-example'
+import { getPrismaClient, generateId } from './worker/database/prisma-client-proxy'
 
 export function PrismaTestComponent() {
-  setTimeout(() => {
-    demonstrateImplicitRelations()
-  }, 1000)
 
   const [status, setStatus] = useState<string>('Initializing...')
   const [media, setMedia] = useState<any[]>([])
@@ -43,18 +33,28 @@ export function PrismaTestComponent() {
       const id2 = generateId()
       const id3 = generateId()
 
-      await createMedia(id1, 'Video File 1')
-      await createMedia(id2, 'Audio Track 1')
-      await createMedia(id3, 'Subtitle File 1')
+      const prisma = await getPrismaClient()
+      
+      await prisma.media.create({ data: { id: id1, name: 'Video File 1' } })
+      await prisma.media.create({ data: { id: id2, name: 'Audio Track 1' } })
+      await prisma.media.create({ data: { id: id3, name: 'Subtitle File 1' } })
 
-      // Create relationships
-      await addHandle(id1, id2) // Video handles Audio
-      await addHandle(id1, id3) // Video handles Subtitle
+      // Create relationships using Prisma's relation syntax
+      await prisma.media.update({
+        where: { id: id1 },
+        data: {
+          handles: {
+            connect: [
+              { id: id2 },
+              { id: id3 }
+            ]
+          }
+        }
+      })
 
       setStatus('Test data created!')
 
       // Reload media
-      const prisma = await getPrismaClient()
       const allMedia = await prisma.media.findMany()
       setMedia(allMedia)
     } catch (err) {
@@ -73,12 +73,6 @@ export function PrismaTestComponent() {
       setStatus('Testing queries...')
 
       const firstMedia = media[0]
-
-      // Test direct handles
-      const handles = await getDirectHandles(firstMedia.id)
-      console.log('Direct handles:', handles)
-
-      // Test queries - simplified approach without recursive CTE
       const prisma = await getPrismaClient()
 
       // First, get all media that this media handles
