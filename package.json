@@ -36,7 +36,10 @@
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
     "test": "npm run build-test && npx playwright test",
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
-    "test-watch-headful": "npx playwright test --ui"
+    "test-watch-headful": "npx playwright test --ui",
+    "generate": "prisma generate --sql && shx rm prisma/generated/runtime/library.js && shx cp src/prisma-runtime-library.js prisma/generated/runtime/library.js",
+    "generate2": "shx rm -rf prisma/generated && prisma generate --sql && shx rm prisma/generated/runtime/library.js && shx cp src/prisma-runtime-library.js prisma/generated/runtime/library.js",
+    "migrate": "npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/init.sql",
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
