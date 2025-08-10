@@ -12,7 +12,9 @@
       "Bash(dir:*)",
       "Bash(npx tsc:*)",
       "Bash(mv:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

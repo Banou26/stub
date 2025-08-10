@@ -1,20 +1,7 @@
 // Proxy-based approach to hack Prisma Client for browser usage
 import './browser-polyfills-enhanced'
-import type {
-  PrismaClient,
-  Media,
-  MediaDelegate,
-  MediaCreateInput,
-  MediaUpdateInput,
-  MediaWhereInput,
-  MediaWhereUniqueInput,
-  MediaFindManyArgs,
-  MediaFindUniqueArgs,
-  BatchPayload,
-  TransactionClient,
-  TransactionOptions,
-  Prisma
-} from './prisma-client-types'
+import { PrismaClient, Prisma } from '@prisma/client'
+import type { DefaultArgs } from '@prisma/client/runtime/library'
 
 let prismaClient: PrismaClient | null = null
 
@@ -161,30 +148,6 @@ export async function getPrismaClient(dbName: string = 'myDB'): Promise<PrismaCl
   }
 
   try {
-    // Try to import and patch Prisma Client
-    const prismaModule = await import('@prisma/client')
-    
-    // Patch the PrismaClient constructor
-    const OriginalPrismaClient = prismaModule.PrismaClient
-    
-    // Create a patched version
-    const PatchedPrismaClient = new Proxy(OriginalPrismaClient, {
-      construct(target, args) {
-        try {
-          // Try to create the real client
-          const instance = new target(...args)
-          // Wrap it in a proxy to catch runtime errors
-          return createPrismaProxy(instance)
-        } catch (error: any) {
-          if (error.message && error.message.includes('browser environment')) {
-            console.warn('PrismaClient constructor failed, using mock')
-            return createMockPrismaClient()
-          }
-          throw error
-        }
-      }
-    })
-    
     // Import the adapter
     const { createWaSQLitePrismaAdapter } = await import('./prisma-wa-sqlite-adapter')
     
@@ -195,15 +158,33 @@ export async function getPrismaClient(dbName: string = 'myDB'): Promise<PrismaCl
 
     // Try to create Prisma Client with the adapter
     try {
+      // Create a patched version using the real PrismaClient from @prisma/client
+      const PatchedPrismaClient = new Proxy(PrismaClient, {
+        construct(target, args) {
+          try {
+            // Try to create the real client
+            const instance = new target(...args)
+            // Wrap it in a proxy to catch runtime errors
+            return createPrismaProxy(instance)
+          } catch (error: any) {
+            if (error.message && error.message.includes('browser environment')) {
+              console.warn('PrismaClient constructor failed, using custom implementation')
+              return createCustomPrismaClient(adapter)
+            }
+            throw error
+          }
+        }
+      })
+      
       prismaClient = new PatchedPrismaClient({
         adapter,
         log: ['query', 'info', 'warn', 'error'],
-      })
+      }) as PrismaClient
     } catch (error: any) {
       console.warn('Failed to create Prisma Client, using direct adapter approach')
       
       // If that fails, create a custom client that uses the adapter directly
-      prismaClient = createCustomPrismaClient(adapter)
+      prismaClient = createCustomPrismaClient(adapter) as PrismaClient
     }
 
     // Initialize the database schema
@@ -216,7 +197,7 @@ export async function getPrismaClient(dbName: string = 'myDB'): Promise<PrismaCl
     // Last resort: return a fully custom implementation
     const { createWaSQLitePrismaAdapter } = await import('./prisma-wa-sqlite-adapter')
     const adapter = await createWaSQLitePrismaAdapter(dbName)
-    prismaClient = createCustomPrismaClient(adapter)
+    prismaClient = createCustomPrismaClient(adapter) as PrismaClient
     await initializeSchema(prismaClient)
     return prismaClient
   }
@@ -224,7 +205,8 @@ export async function getPrismaClient(dbName: string = 'myDB'): Promise<PrismaCl
 
 // Create a custom Prisma-like client that directly uses the adapter
 function createCustomPrismaClient(adapter: any): PrismaClient {
-  const client: PrismaClient = {
+  // Create a client that implements the PrismaClient interface
+  const client = {
     $executeRaw: async (query: any, ...values: any[]) => {
       let sql: string
       let params: any[] = []
@@ -331,10 +313,11 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
       return await client.$queryRaw([query], ...values)
     },
     
-    $transaction: async (fn: any) => {
+    $transaction: async (fn: any, options?: any) => {
       const tx = await adapter.startTransaction()
       try {
         const result = await fn({
+          ...client,
           $executeRaw: tx.executeRaw.bind(tx),
           $queryRaw: tx.queryRaw.bind(tx)
         })
@@ -356,14 +339,13 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
       }
     },
     
-    // Model-specific methods
+    // Model-specific methods - implementing the Prisma client interface
     media: {
-      findFirst: async (args?: MediaFindManyArgs): Promise<Media | null> => {
+      findFirst: async (args?: Prisma.MediaFindFirstArgs) => {
         let sql = 'SELECT * FROM media'
         const params: any[] = []
         
         if (args?.where) {
-          // Simplified where clause handling
           const whereClause = buildWhereClause(args.where)
           if (whereClause) {
             sql += ' WHERE ' + whereClause
@@ -375,13 +357,13 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return result.rows?.[0] || null
       },
       
-      findFirstOrThrow: async (args?: MediaFindManyArgs): Promise<Media> => {
+      findFirstOrThrow: async (args?: Prisma.MediaFindFirstArgs) => {
         const result = await client.media.findFirst(args)
         if (!result) throw new Error('No Media found')
         return result
       },
       
-      findMany: async (args?: MediaFindManyArgs): Promise<Media[]> => {
+      findMany: async (args?: Prisma.MediaFindManyArgs) => {
         let sql = 'SELECT * FROM media'
         const params: any[] = []
         
@@ -404,27 +386,27 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return result.rows || []
       },
       
-      findUnique: async (args: MediaFindUniqueArgs): Promise<Media | null> => {
+      findUnique: async (args: Prisma.MediaFindUniqueArgs) => {
         if (!args?.where?.id) return null
         const result = await adapter.queryRaw('SELECT * FROM media WHERE id = ?', [args.where.id])
         return result.rows?.[0] || null
       },
       
-      findUniqueOrThrow: async (args: MediaFindUniqueArgs): Promise<Media> => {
+      findUniqueOrThrow: async (args: Prisma.MediaFindUniqueArgs) => {
         const result = await client.media.findUnique(args)
         if (!result) throw new Error('No Media found')
         return result
       },
       
-      create: async (args: { data: MediaCreateInput }): Promise<Media> => {
-        const { id, name } = args.data
+      create: async (args: Prisma.MediaCreateArgs) => {
+        const { id, name } = args.data as any
         await adapter.executeRaw('INSERT INTO media (id, name) VALUES (?, ?)', [id, name])
         
         // Handle relations if provided
-        if (args.data.handles?.connect) {
-          const connects = Array.isArray(args.data.handles.connect) 
-            ? args.data.handles.connect 
-            : [args.data.handles.connect]
+        if ((args.data as any).handles?.connect) {
+          const connects = Array.isArray((args.data as any).handles.connect) 
+            ? (args.data as any).handles.connect 
+            : [(args.data as any).handles.connect]
           
           for (const connect of connects) {
             if (connect.id) {
@@ -441,13 +423,13 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return { id, name }
       },
       
-      createMany: async (args: { data: MediaCreateInput | MediaCreateInput[], skipDuplicates?: boolean }): Promise<BatchPayload> => {
+      createMany: async (args: Prisma.MediaCreateManyArgs) => {
         const dataArray = Array.isArray(args.data) ? args.data : [args.data]
         let count = 0
         
         for (const item of dataArray) {
           try {
-            await adapter.executeRaw('INSERT INTO media (id, name) VALUES (?, ?)', [item.id, item.name])
+            await adapter.executeRaw('INSERT INTO media (id, name) VALUES (?, ?)', [(item as any).id, (item as any).name])
             count++
           } catch (error) {
             if (!args.skipDuplicates) throw error
@@ -457,14 +439,14 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return { count }
       },
       
-      update: async (args: { where: MediaWhereUniqueInput, data: MediaUpdateInput }): Promise<Media> => {
+      update: async (args: Prisma.MediaUpdateArgs) => {
         const { id } = args.where
         const updates: string[] = []
         const params: any[] = []
         
-        if (args.data.name !== undefined) {
+        if ((args.data as any).name !== undefined) {
           updates.push('name = ?')
-          params.push(args.data.name)
+          params.push((args.data as any).name)
         }
         
         if (updates.length > 0) {
@@ -473,12 +455,12 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         }
         
         // Handle relation updates
-        if (args.data.handles) {
+        if ((args.data as any).handles) {
           // Handle disconnects
-          if (args.data.handles.disconnect) {
-            const disconnects = Array.isArray(args.data.handles.disconnect)
-              ? args.data.handles.disconnect
-              : [args.data.handles.disconnect]
+          if ((args.data as any).handles.disconnect) {
+            const disconnects = Array.isArray((args.data as any).handles.disconnect)
+              ? (args.data as any).handles.disconnect
+              : [(args.data as any).handles.disconnect]
             
             for (const disconnect of disconnects) {
               if (disconnect.id) {
@@ -491,10 +473,10 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
           }
           
           // Handle connects
-          if (args.data.handles.connect) {
-            const connects = Array.isArray(args.data.handles.connect)
-              ? args.data.handles.connect
-              : [args.data.handles.connect]
+          if ((args.data as any).handles.connect) {
+            const connects = Array.isArray((args.data as any).handles.connect)
+              ? (args.data as any).handles.connect
+              : [(args.data as any).handles.connect]
             
             for (const connect of connects) {
               if (connect.id) {
@@ -511,14 +493,14 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return await client.media.findUniqueOrThrow({ where: { id } })
       },
       
-      updateMany: async (args: { where?: MediaWhereInput, data: MediaUpdateInput }): Promise<BatchPayload> => {
+      updateMany: async (args: Prisma.MediaUpdateManyArgs) => {
         let sql = 'UPDATE media SET '
         const updates: string[] = []
         const params: any[] = []
         
-        if (args.data.name !== undefined) {
+        if ((args.data as any).name !== undefined) {
           updates.push('name = ?')
-          params.push(args.data.name)
+          params.push((args.data as any).name)
         }
         
         if (updates.length === 0) return { count: 0 }
@@ -536,7 +518,7 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return { count: result }
       },
       
-      upsert: async (args: { where: MediaWhereUniqueInput, create: MediaCreateInput, update: MediaUpdateInput }): Promise<Media> => {
+      upsert: async (args: Prisma.MediaUpsertArgs) => {
         const existing = await client.media.findUnique({ where: args.where })
         
         if (existing) {
@@ -546,7 +528,7 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         }
       },
       
-      delete: async (args: { where: MediaWhereUniqueInput }): Promise<Media> => {
+      delete: async (args: Prisma.MediaDeleteArgs) => {
         const { id } = args.where
         const media = await client.media.findUniqueOrThrow({ where: { id } })
         
@@ -561,7 +543,7 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return media
       },
       
-      deleteMany: async (args?: { where?: MediaWhereInput }): Promise<BatchPayload> => {
+      deleteMany: async (args?: Prisma.MediaDeleteManyArgs) => {
         let sql = 'DELETE FROM media'
         const params: any[] = []
         
@@ -576,7 +558,7 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return { count: result }
       },
       
-      count: async (args?: { where?: MediaWhereInput }): Promise<number> => {
+      count: async (args?: Prisma.MediaCountArgs) => {
         let sql = 'SELECT COUNT(*) as count FROM media'
         const params: any[] = []
         
@@ -591,23 +573,23 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         return result.rows?.[0]?.count || 0
       },
       
-      aggregate: async (args: any): Promise<any> => {
+      aggregate: async (args: Prisma.MediaAggregateArgs) => {
         // Simplified aggregate implementation
-        return {}
+        return {} as any
       },
       
-      groupBy: async (args: any): Promise<any[]> => {
+      groupBy: async (args: any) => {
         // Simplified groupBy implementation
         return []
       }
-    } as MediaDelegate
-  }
+    }
+  } as any // Cast to any to bypass strict type checking since we're implementing a subset
   
-  return client
+  return client as PrismaClient
 }
 
 // Helper function to build WHERE clause from Prisma where conditions
-function buildWhereClause(where: any, tableName?: string): string {
+function buildWhereClause(where: any): string {
   if (!where) return ''
   
   const conditions: string[] = []
@@ -615,7 +597,7 @@ function buildWhereClause(where: any, tableName?: string): string {
   // Handle AND conditions
   if (where.AND) {
     const andConditions = Array.isArray(where.AND) ? where.AND : [where.AND]
-    const andClauses = andConditions.map((w: any) => buildWhereClause(w, tableName)).filter(Boolean)
+    const andClauses = andConditions.map((w: any) => buildWhereClause(w)).filter(Boolean)
     if (andClauses.length > 0) {
       conditions.push('(' + andClauses.join(' AND ') + ')')
     }
@@ -624,7 +606,7 @@ function buildWhereClause(where: any, tableName?: string): string {
   // Handle OR conditions
   if (where.OR) {
     const orConditions = Array.isArray(where.OR) ? where.OR : [where.OR]
-    const orClauses = orConditions.map((w: any) => buildWhereClause(w, tableName)).filter(Boolean)
+    const orClauses = orConditions.map((w: any) => buildWhereClause(w)).filter(Boolean)
     if (orClauses.length > 0) {
       conditions.push('(' + orClauses.join(' OR ') + ')')
     }
@@ -632,7 +614,7 @@ function buildWhereClause(where: any, tableName?: string): string {
   
   // Handle NOT conditions
   if (where.NOT) {
-    const notClause = buildWhereClause(where.NOT, tableName)
+    const notClause = buildWhereClause(where.NOT)
     if (notClause) {
       conditions.push('NOT (' + notClause + ')')
     }
@@ -642,7 +624,6 @@ function buildWhereClause(where: any, tableName?: string): string {
   for (const [field, value] of Object.entries(where)) {
     if (field === 'AND' || field === 'OR' || field === 'NOT') continue
     
-    // Map field names to column names
     let columnName = field
     
     if (typeof value === 'object' && value !== null) {
@@ -696,41 +677,41 @@ function buildWhereClause(where: any, tableName?: string): string {
   return conditions.join(' AND ')
 }
 
-async function initializeSchema(prisma: any) {
+async function initializeSchema(prisma: PrismaClient) {
   try {
     // Check if tables exist by trying to query them
-    await prisma.$queryRaw(['SELECT 1 FROM media LIMIT 1'], [])
+    await prisma.$queryRaw`SELECT 1 FROM media LIMIT 1`
   } catch (error) {
     console.log('Tables do not exist, creating schema...')
     
     // Create the media table
-    await prisma.$executeRaw([`
+    await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS media (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL
       )
-    `], [])
+    `
 
     // Create the implicit many-to-many junction table
     // Prisma names it _MediaHandles for the relation name "MediaHandles"
-    await prisma.$executeRaw([`
+    await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS _MediaHandles (
         A TEXT NOT NULL,
         B TEXT NOT NULL,
         FOREIGN KEY (A) REFERENCES media(id) ON DELETE CASCADE,
         FOREIGN KEY (B) REFERENCES media(id) ON DELETE CASCADE
       )
-    `], [])
+    `
 
     // Create unique index on the junction table
-    await prisma.$executeRaw([`
+    await prisma.$executeRaw`
       CREATE UNIQUE INDEX IF NOT EXISTS _MediaHandles_AB_unique ON _MediaHandles(A, B)
-    `], [])
+    `
 
     // Create indexes for performance
-    await prisma.$executeRaw([`
+    await prisma.$executeRaw`
       CREATE INDEX IF NOT EXISTS _MediaHandles_B_index ON _MediaHandles(B)
-    `], [])
+    `
 
     console.log('Schema created successfully')
   }
@@ -762,7 +743,7 @@ export async function getDirectHandles(mediaId: string) {
   
   // Use raw SQL for the implicit many-to-many relationship
   // The junction table is named _MediaHandles with columns A and B
-  const result = await prisma.$queryRaw`
+  const result = await prisma.$queryRaw<any[]>`
     SELECT m.* FROM media m
     INNER JOIN _MediaHandles mh ON mh.B = m.id
     WHERE mh.A = ${mediaId}
