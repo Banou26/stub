@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Prisma Works</title>
+</head>
+<body>
+    <h1>Prisma + wa-sqlite Verification</h1>
+    <div id="status">Starting...</div>
+    <pre id="output"></pre>
+    
+    <script type="module">
+        const status = document.getElementById('status');
+        const output = document.getElementById('output');
+        
+        async function log(msg, data = null) {
+            console.log(msg, data);
+            output.textContent += msg + '\n';
+            if (data) {
+                output.textContent += JSON.stringify(data, null, 2) + '\n';
+            }
+        }
+        
+        async function runTest() {
+            try {
+                status.textContent = 'Importing Prisma client proxy module...';
+                const module = await import('/src/worker/database/prisma-client-proxy.ts');
+                
+                status.textContent = 'Getting Prisma client...';
+                await log('Getting Prisma client...');
+                const prisma = await module.getPrismaClient('verify-test-db');
+                
+                await log('✅ Prisma client initialized!');
+                
+                // Clear existing data
+                status.textContent = 'Clearing existing data...';
+                await prisma.$executeRaw`DELETE FROM media_handles`;
+                await prisma.$executeRaw`DELETE FROM media`;
+                await log('Cleared existing data');
+                
+                // Create test data
+                status.textContent = 'Creating test media...';
+                const id1 = crypto.randomUUID();
+                const id2 = crypto.randomUUID();
+                
+                await module.createMedia(id1, 'Video File');
+                await module.createMedia(id2, 'Audio Track');
+                await log('Created media items', { id1, id2 });
+                
+                // Query data
+                status.textContent = 'Querying media...';
+                const allMedia = await prisma.media.findMany();
+                await log('Found media:', allMedia);
+                
+                // Add relationship
+                status.textContent = 'Adding relationships...';
+                await module.addHandle(id1, id2);
+                await log('Added handle relationship');
+                
+                // Query with relations
+                status.textContent = 'Querying with relations...';
+                const mediaWithRelations = await prisma.media.findUnique({
+                    where: { id: id1 },
+                    include: {
+                        handles: true,
+                        handledBy: true
+                    }
+                });
+                await log('Media with relations:', mediaWithRelations);
+                
+                // Test raw SQL
+                status.textContent = 'Testing raw SQL...';
+                const count = await prisma.$queryRaw`SELECT COUNT(*) as count FROM media`;
+                await log('Row count:', count);
+                
+                status.textContent = '✅ All tests passed!';
+                await log('\n✅ SUCCESS! Prisma is working with wa-sqlite in the browser!');
+                
+            } catch (error) {
+                status.textContent = '❌ Test failed!';
+                await log('❌ ERROR:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+            }
+        }
+        
+        // Run the test when page loads
+        runTest();
+    </script>
+</body>
+</html>

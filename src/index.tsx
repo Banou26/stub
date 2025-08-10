@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider, Client } from 'urql'
 
 import './worker.ts'
+import PrismaTestComponent from './test-prisma'
 
 const style = css`
   @import url('/style.css');
@@ -65,6 +66,7 @@ root.render(
   // <StrictMode>
   <Provider value={client}>
     <Global styles={style}/>
+    <PrismaTestComponent />
   </Provider>
   // </StrictMode>
 )

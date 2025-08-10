@@ -13,17 +13,21 @@
   ],
   "devDependencies": {
     "@playwright/test": "^1.54.2",
+    "@prisma/client": "^6.13.0",
+    "@prisma/driver-adapter-utils": "^6.13.0",
     "@vitejs/plugin-react": "^4.7.0",
     "chai": "^5.2.1",
     "chai-as-promised": "^8.0.1",
     "drizzle-kit": "^0.31.4",
     "playwright": "^1.54.2",
+    "prisma": "^6.13.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6"
   },
   "scripts": {
     "codegen": "npx drizzle-kit generate --name=init",
-    "dev": "npm run codegen && vite --port 4560",
+    "prisma:generate": "npx prisma generate",
+    "dev": "npm run codegen && npm run prisma:generate && vite --port 4560",
     "_dev": "vite --port 4560",
     "build": "vite build",
     "build-test": "vite build --config vite.test.config.ts",

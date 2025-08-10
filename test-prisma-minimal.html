@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prisma Browser Test</title>
+</head>
+<body>
+    <h1>Prisma + wa-sqlite Browser Test</h1>
+    <div id="status">Loading...</div>
+    <div id="results"></div>
+    
+    <script type="module">
+        // Import the polyfills and Prisma client
+        import './src/worker/database/browser-polyfills-enhanced.js';
+        import { restoreBrowserGlobals } from './src/worker/database/browser-polyfills-enhanced.js';
+        
+        const statusEl = document.getElementById('status');
+        const resultsEl = document.getElementById('results');
+        
+        async function testPrisma() {
+            try {
+                statusEl.textContent = 'Loading Prisma Client...';
+                
+                // Dynamic import to ensure polyfills are loaded
+                const { PrismaClient } = await import('@prisma/client');
+                restoreBrowserGlobals();
+                
+                statusEl.textContent = 'Loading wa-sqlite adapter...';
+                const { createWaSQLitePrismaAdapter } = await import('./src/worker/database/prisma-wa-sqlite-adapter.js');
+                
+                statusEl.textContent = 'Creating adapter...';
+                const adapter = await createWaSQLitePrismaAdapter('test-db');
+                
+                statusEl.textContent = 'Creating Prisma Client...';
+                const prisma = new PrismaClient({
+                    adapter,
+                    log: ['query', 'info', 'warn', 'error'],
+                });
+                
+                statusEl.textContent = 'Initializing schema...';
+                
+                // Initialize tables
+                await prisma.$executeRaw`
+                    CREATE TABLE IF NOT EXISTS media (
+                        id TEXT PRIMARY KEY,
+                        name TEXT NOT NULL
+                    )
+                `;
+                
+                await prisma.$executeRaw`
+                    CREATE TABLE IF NOT EXISTS media_handles (
+                        media_id TEXT NOT NULL,
+                        handles_id TEXT NOT NULL,
+                        PRIMARY KEY (media_id, handles_id),
+                        FOREIGN KEY (media_id) REFERENCES media(id) ON DELETE CASCADE,
+                        FOREIGN KEY (handles_id) REFERENCES media(id) ON DELETE CASCADE
+                    )
+                `;
+                
+                statusEl.textContent = 'Testing basic operations...';
+                
+                // Test basic operations
+                const id = crypto.randomUUID();
+                await prisma.media.create({
+                    data: { id, name: 'Test Media' }
+                });
+                
+                const media = await prisma.media.findUnique({
+                    where: { id }
+                });
+                
+                resultsEl.innerHTML = `
+                    <h2>✅ Success!</h2>
+                    <p>Prisma Client is working in the browser with wa-sqlite!</p>
+                    <pre>${JSON.stringify(media, null, 2)}</pre>
+                `;
+                
+                statusEl.textContent = 'Test completed successfully!';
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                statusEl.textContent = 'Test failed!';
+                resultsEl.innerHTML = `
+                    <h2>❌ Error</h2>
+                    <pre>${error.message}\n${error.stack}</pre>
+                `;
+            }
+        }
+        
+        // Run the test
+        testPrisma();
+    </script>
+</body>
+</html>

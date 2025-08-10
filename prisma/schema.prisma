@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Media {
+  id           String         @id
+  name         String
+  
+  // Self-referential many-to-many relationship
+  handles      MediaHandle[]  @relation("handler")
+  handledBy    MediaHandle[]  @relation("handled")
+  
+  @@map("media")
+}
+
+model MediaHandle {
+  mediaId    String
+  handlesId  String
+  
+  handler    Media @relation("handler", fields: [mediaId], references: [id], onDelete: Cascade)
+  handled    Media @relation("handled", fields: [handlesId], references: [id], onDelete: Cascade)
+  
+  @@id([mediaId, handlesId])
+  @@map("media_handles")
+}
