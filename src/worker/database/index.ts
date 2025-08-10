@@ -3,6 +3,7 @@
 // import * as schema from './schema'
 // @ts-expect-error
 // import SQLInit from '../../../drizzle/0000_init.sql?raw'
+console.log('aaa')
 
 import { getPrismaClient } from './prisma-client-proxy'
 const client = await getPrismaClient()
