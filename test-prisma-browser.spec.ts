@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('Prisma works in browser with wa-sqlite', async ({ page }) => {
   // Navigate to the verification page
-  await page.goto('http://localhost:4560/verify-prisma.html')
+  await page.goto('http://localhost:4563/verify-prisma.html')
   
   // Wait for the test to complete
   await page.waitForTimeout(5000)

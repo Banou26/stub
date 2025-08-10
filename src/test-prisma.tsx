@@ -73,20 +73,29 @@ export function PrismaTestComponent() {
       const handles = await getDirectHandles(firstMedia.id)
       console.log('Direct handles:', handles)
       
-      // Test recursive query using raw SQL
+      // Test queries - simplified approach without recursive CTE
       const prisma = await getPrismaClient()
-      const allRelated = await prisma.$queryRaw`
-        WITH RECURSIVE related_media AS (
-          SELECT id, name FROM media WHERE id = ${firstMedia.id}
-          UNION
-          SELECT DISTINCT m.id, m.name
-          FROM media m
-          INNER JOIN media_handles mh ON m.id = mh.handles_id
-          INNER JOIN related_media rm ON mh.media_id = rm.id
-        )
-        SELECT DISTINCT * FROM related_media
+      
+      // First, get all media that this media handles
+      const handledMedia = await prisma.$queryRaw`
+        SELECT m.* 
+        FROM media m
+        INNER JOIN media_handles mh ON m.id = mh.handles_id
+        WHERE mh.media_id = ${firstMedia.id}
       `
-      console.log('All related media:', allRelated)
+      console.log('Media handled by', firstMedia.name, ':', handledMedia)
+      
+      // Also get all media that handle this media
+      const handlingMedia = await prisma.$queryRaw`
+        SELECT m.* 
+        FROM media m
+        INNER JOIN media_handles mh ON m.id = mh.media_id
+        WHERE mh.handles_id = ${firstMedia.id}
+      `
+      console.log('Media that handles', firstMedia.name, ':', handlingMedia)
+      
+      // Combine results for display
+      const allRelated = [...handledMedia, ...handlingMedia]
       setRelatedMedia(allRelated as any[])
       
       setStatus('Queries executed successfully!')

@@ -211,14 +211,101 @@ export async function getPrismaClient(dbName: string = 'myDB'): Promise<any> {
 function createCustomPrismaClient(adapter: any) {
   return {
     $executeRaw: async (query: any, ...values: any[]) => {
-      const sql = typeof query === 'string' ? query : query[0]
-      return await adapter.executeRaw(sql, values)
+      let sql: string
+      let params: any[] = []
+      
+      // Handle template literal calls
+      if (Array.isArray(query)) {
+        // This is a tagged template literal
+        const strings = query
+        const interpolations = values
+        
+        // Build the SQL directly with values interpolated (for wa-sqlite)
+        // Note: This is less secure but necessary for wa-sqlite compatibility
+        sql = strings[0] || ''
+        for (let i = 0; i < interpolations.length; i++) {
+          const value = interpolations[i]
+          // Escape and quote string values
+          if (typeof value === 'string') {
+            sql += `'${value.replace(/'/g, "''")}'`
+          } else if (value === null || value === undefined) {
+            sql += 'NULL'
+          } else {
+            sql += String(value)
+          }
+          sql += strings[i + 1] || ''
+        }
+        params = [] // No separate params for inline values
+      } else if (typeof query === 'string') {
+        sql = query
+        params = values
+      } else if (query && typeof query === 'object' && 'sql' in query) {
+        // Handle Prisma SQL objects
+        sql = query.sql
+        params = query.values || []
+      } else {
+        sql = String(query)
+        params = values
+      }
+      
+      // Clean up the SQL
+      sql = sql.trim().replace(/\s+/g, ' ')
+      
+      try {
+        return await adapter.executeRaw(sql, params)
+      } catch (error: any) {
+        console.error('Execute failed:', { sql, params, error })
+        throw new Error(`Execute failed: ${error.message}`)
+      }
     },
     
     $queryRaw: async (query: any, ...values: any[]) => {
-      const sql = typeof query === 'string' ? query : query[0]
-      const result = await adapter.queryRaw(sql, values)
-      return result.rows || []
+      let sql: string
+      let params: any[] = []
+      
+      // Handle template literal calls
+      if (Array.isArray(query)) {
+        // This is a tagged template literal
+        const strings = query
+        const interpolations = values
+        
+        // Build the SQL directly with values interpolated (for wa-sqlite)
+        sql = strings[0] || ''
+        for (let i = 0; i < interpolations.length; i++) {
+          const value = interpolations[i]
+          // Escape and quote string values
+          if (typeof value === 'string') {
+            sql += `'${value.replace(/'/g, "''")}'`
+          } else if (value === null || value === undefined) {
+            sql += 'NULL'
+          } else {
+            sql += String(value)
+          }
+          sql += strings[i + 1] || ''
+        }
+        params = [] // No separate params for inline values
+      } else if (typeof query === 'string') {
+        sql = query
+        params = values
+      } else if (query && typeof query === 'object' && 'sql' in query) {
+        // Handle Prisma SQL objects
+        sql = query.sql
+        params = query.values || []
+      } else {
+        sql = String(query)
+        params = values
+      }
+      
+      // Clean up the SQL (remove extra whitespace)
+      sql = sql.trim().replace(/\s+/g, ' ')
+      
+      try {
+        const result = await adapter.queryRaw(sql, params)
+        return result.rows || []
+      } catch (error: any) {
+        console.error('Query execution failed:', { sql, params, error })
+        throw new Error(`Query failed: ${error.message}`)
+      }
     },
     
     $transaction: async (fn: any) => {
@@ -363,20 +450,20 @@ function createCustomPrismaClient(adapter: any) {
 async function initializeSchema(prisma: any) {
   try {
     // Check if tables exist by trying to query them
-    await prisma.$queryRaw`SELECT 1 FROM media LIMIT 1`
+    await prisma.$queryRaw(['SELECT 1 FROM media LIMIT 1'], [])
   } catch (error) {
     console.log('Tables do not exist, creating schema...')
     
     // Create the media table
-    await prisma.$executeRaw`
+    await prisma.$executeRaw([`
       CREATE TABLE IF NOT EXISTS media (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL
       )
-    `
+    `], [])
 
     // Create the media_handles junction table
-    await prisma.$executeRaw`
+    await prisma.$executeRaw([`
       CREATE TABLE IF NOT EXISTS media_handles (
         media_id TEXT NOT NULL,
         handles_id TEXT NOT NULL,
@@ -384,16 +471,16 @@ async function initializeSchema(prisma: any) {
         FOREIGN KEY (media_id) REFERENCES media(id) ON DELETE CASCADE,
         FOREIGN KEY (handles_id) REFERENCES media(id) ON DELETE CASCADE
       )
-    `
+    `], [])
 
     // Create indexes
-    await prisma.$executeRaw`
+    await prisma.$executeRaw([`
       CREATE INDEX IF NOT EXISTS idx_media_handles_media_id ON media_handles(media_id)
-    `
+    `], [])
 
-    await prisma.$executeRaw`
+    await prisma.$executeRaw([`
       CREATE INDEX IF NOT EXISTS idx_media_handles_handles_id ON media_handles(handles_id)
-    `
+    `], [])
 
     console.log('Schema created successfully')
   }
