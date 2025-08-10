@@ -33,7 +33,7 @@
                 
                 // Clear existing data
                 status.textContent = 'Clearing existing data...';
-                await prisma.$executeRaw`DELETE FROM media_handles`;
+                await prisma.$executeRaw`DELETE FROM _MediaHandles`;
                 await prisma.$executeRaw`DELETE FROM media`;
                 await log('Cleared existing data');
                 

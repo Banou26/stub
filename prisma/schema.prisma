@@ -9,23 +9,12 @@ datasource db {
 }
 
 model Media {
-  id           String         @id
+  id           String   @id @unique
   name         String
-  
-  // Self-referential many-to-many relationship
-  handles      MediaHandle[]  @relation("handler")
-  handledBy    MediaHandle[]  @relation("handled")
-  
-  @@map("media")
-}
 
-model MediaHandle {
-  mediaId    String
-  handlesId  String
-  
-  handler    Media @relation("handler", fields: [mediaId], references: [id], onDelete: Cascade)
-  handled    Media @relation("handled", fields: [handlesId], references: [id], onDelete: Cascade)
-  
-  @@id([mediaId, handlesId])
-  @@map("media_handles")
+  // Implicit many-to-many self relationship
+  handles      Media[]  @relation("MediaHandles")
+  handledBy    Media[]  @relation("MediaHandles")
+
+  @@map("media")
 }

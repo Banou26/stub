@@ -3,30 +3,13 @@ import './browser-polyfills-enhanced'
 import type {
   PrismaClient,
   Media,
-  MediaHandle,
   MediaDelegate,
-  MediaHandleDelegate,
   MediaCreateInput,
   MediaUpdateInput,
   MediaWhereInput,
   MediaWhereUniqueInput,
   MediaFindManyArgs,
   MediaFindUniqueArgs,
-  MediaHandleCreateInput,
-  MediaHandleUpdateInput,
-  MediaHandleWhereInput,
-  MediaHandleWhereUniqueInput,
-  MediaHandleFindFirstArgs,
-  MediaHandleFindManyArgs,
-  MediaHandleFindUniqueArgs,
-  MediaHandleCreateArgs,
-  MediaHandleCreateManyArgs,
-  MediaHandleUpdateArgs,
-  MediaHandleUpdateManyArgs,
-  MediaHandleUpsertArgs,
-  MediaHandleDeleteArgs,
-  MediaHandleDeleteManyArgs,
-  MediaHandleCountArgs,
   BatchPayload,
   TransactionClient,
   TransactionOptions,
@@ -139,7 +122,7 @@ function createMockPrismaClient() {
   }
   
   // Add model proxies
-  const models = ['media', 'mediaHandle']
+  const models = ['media']
   for (const model of models) {
     mockClient[model] = {
       findMany: async () => [],
@@ -436,6 +419,25 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
       create: async (args: { data: MediaCreateInput }): Promise<Media> => {
         const { id, name } = args.data
         await adapter.executeRaw('INSERT INTO media (id, name) VALUES (?, ?)', [id, name])
+        
+        // Handle relations if provided
+        if (args.data.handles?.connect) {
+          const connects = Array.isArray(args.data.handles.connect) 
+            ? args.data.handles.connect 
+            : [args.data.handles.connect]
+          
+          for (const connect of connects) {
+            if (connect.id) {
+              // Insert into junction table (A should be less than B for consistency)
+              const [a, b] = id < connect.id ? [id, connect.id] : [connect.id, id]
+              await adapter.executeRaw(
+                'INSERT OR IGNORE INTO _MediaHandles (A, B) VALUES (?, ?)',
+                [a, b]
+              )
+            }
+          }
+        }
+        
         return { id, name }
       },
       
@@ -465,12 +467,47 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
           params.push(args.data.name)
         }
         
-        if (updates.length === 0) {
-          return await client.media.findUniqueOrThrow({ where: { id } })
+        if (updates.length > 0) {
+          params.push(id)
+          await adapter.executeRaw(`UPDATE media SET ${updates.join(', ')} WHERE id = ?`, params)
         }
         
-        params.push(id)
-        await adapter.executeRaw(`UPDATE media SET ${updates.join(', ')} WHERE id = ?`, params)
+        // Handle relation updates
+        if (args.data.handles) {
+          // Handle disconnects
+          if (args.data.handles.disconnect) {
+            const disconnects = Array.isArray(args.data.handles.disconnect)
+              ? args.data.handles.disconnect
+              : [args.data.handles.disconnect]
+            
+            for (const disconnect of disconnects) {
+              if (disconnect.id) {
+                await adapter.executeRaw(
+                  'DELETE FROM _MediaHandles WHERE (A = ? AND B = ?) OR (A = ? AND B = ?)',
+                  [id, disconnect.id, disconnect.id, id]
+                )
+              }
+            }
+          }
+          
+          // Handle connects
+          if (args.data.handles.connect) {
+            const connects = Array.isArray(args.data.handles.connect)
+              ? args.data.handles.connect
+              : [args.data.handles.connect]
+            
+            for (const connect of connects) {
+              if (connect.id) {
+                const [a, b] = id < connect.id ? [id, connect.id] : [connect.id, id]
+                await adapter.executeRaw(
+                  'INSERT OR IGNORE INTO _MediaHandles (A, B) VALUES (?, ?)',
+                  [a, b]
+                )
+              }
+            }
+          }
+        }
+        
         return await client.media.findUniqueOrThrow({ where: { id } })
       },
       
@@ -512,6 +549,14 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
       delete: async (args: { where: MediaWhereUniqueInput }): Promise<Media> => {
         const { id } = args.where
         const media = await client.media.findUniqueOrThrow({ where: { id } })
+        
+        // Delete from junction table first
+        await adapter.executeRaw(
+          'DELETE FROM _MediaHandles WHERE A = ? OR B = ?',
+          [id, id]
+        )
+        
+        // Then delete the media
         await adapter.executeRaw('DELETE FROM media WHERE id = ?', [id])
         return media
       },
@@ -555,210 +600,7 @@ function createCustomPrismaClient(adapter: any): PrismaClient {
         // Simplified groupBy implementation
         return []
       }
-    } as MediaDelegate,
-    
-    mediaHandle: {
-      findFirst: async (args?: MediaHandleFindFirstArgs): Promise<MediaHandle | null> => {
-        let sql = 'SELECT * FROM media_handles'
-        const params: any[] = []
-        
-        if (args?.where) {
-          const whereClause = buildWhereClause(args.where, 'media_handles')
-          if (whereClause) {
-            sql += ' WHERE ' + whereClause
-          }
-        }
-        
-        sql += ' LIMIT 1'
-        const result = await adapter.queryRaw(sql, params)
-        return result.rows?.[0] || null
-      },
-      
-      findFirstOrThrow: async (args?: MediaHandleFindFirstArgs): Promise<MediaHandle> => {
-        const result = await client.mediaHandle.findFirst(args)
-        if (!result) throw new Error('No MediaHandle found')
-        return result
-      },
-      
-      findMany: async (args?: MediaHandleFindManyArgs): Promise<MediaHandle[]> => {
-        let sql = 'SELECT * FROM media_handles'
-        const params: any[] = []
-        
-        if (args?.where) {
-          const whereClause = buildWhereClause(args.where, 'media_handles')
-          if (whereClause) {
-            sql += ' WHERE ' + whereClause
-          }
-        }
-        
-        if (args?.take) {
-          sql += ` LIMIT ${args.take}`
-        }
-        
-        if (args?.skip) {
-          sql += ` OFFSET ${args.skip}`
-        }
-        
-        const result = await adapter.queryRaw(sql, params)
-        return result.rows || []
-      },
-      
-      findUnique: async (args: MediaHandleFindUniqueArgs): Promise<MediaHandle | null> => {
-        if (!args?.where) return null
-        
-        const conditions: string[] = []
-        const params: any[] = []
-        
-        if (args.where.mediaId_handlesId) {
-          conditions.push('media_id = ? AND handles_id = ?')
-          params.push(args.where.mediaId_handlesId.mediaId, args.where.mediaId_handlesId.handlesId)
-        }
-        
-        if (conditions.length === 0) return null
-        
-        const sql = 'SELECT * FROM media_handles WHERE ' + conditions.join(' AND ')
-        const result = await adapter.queryRaw(sql, params)
-        return result.rows?.[0] || null
-      },
-      
-      findUniqueOrThrow: async (args: MediaHandleFindUniqueArgs): Promise<MediaHandle> => {
-        const result = await client.mediaHandle.findUnique(args)
-        if (!result) throw new Error('No MediaHandle found')
-        return result
-      },
-      
-      create: async (args: MediaHandleCreateArgs): Promise<MediaHandle> => {
-        const { mediaId, handlesId } = args.data
-        await adapter.executeRaw(
-          'INSERT INTO media_handles (media_id, handles_id) VALUES (?, ?)',
-          [mediaId, handlesId]
-        )
-        return { mediaId, handlesId }
-      },
-      
-      createMany: async (args: MediaHandleCreateManyArgs): Promise<BatchPayload> => {
-        const dataArray = Array.isArray(args.data) ? args.data : [args.data]
-        let count = 0
-        
-        for (const item of dataArray) {
-          try {
-            await adapter.executeRaw(
-              'INSERT INTO media_handles (media_id, handles_id) VALUES (?, ?)',
-              [item.mediaId, item.handlesId]
-            )
-            count++
-          } catch (error) {
-            if (!args.skipDuplicates) throw error
-          }
-        }
-        
-        return { count }
-      },
-      
-      update: async (args: MediaHandleUpdateArgs): Promise<MediaHandle> => {
-        const { where, data } = args
-        
-        if (!where.mediaId_handlesId) {
-          throw new Error('MediaHandle update requires unique identifier')
-        }
-        
-        const { mediaId: oldMediaId, handlesId: oldHandlesId } = where.mediaId_handlesId
-        const newMediaId = data.mediaId ?? oldMediaId
-        const newHandlesId = data.handlesId ?? oldHandlesId
-        
-        // Delete old record and insert new one (since we're updating primary key)
-        await adapter.executeRaw(
-          'DELETE FROM media_handles WHERE media_id = ? AND handles_id = ?',
-          [oldMediaId, oldHandlesId]
-        )
-        await adapter.executeRaw(
-          'INSERT INTO media_handles (media_id, handles_id) VALUES (?, ?)',
-          [newMediaId, newHandlesId]
-        )
-        
-        return { mediaId: newMediaId, handlesId: newHandlesId }
-      },
-      
-      updateMany: async (args: MediaHandleUpdateManyArgs): Promise<BatchPayload> => {
-        // MediaHandle has composite primary key, so updateMany is complex
-        // For simplicity, we'll throw an error
-        throw new Error('updateMany not supported for MediaHandle due to composite primary key')
-      },
-      
-      upsert: async (args: MediaHandleUpsertArgs): Promise<MediaHandle> => {
-        const existing = await client.mediaHandle.findUnique({ where: args.where })
-        
-        if (existing) {
-          return await client.mediaHandle.update({ where: args.where, data: args.update })
-        } else {
-          return await client.mediaHandle.create({ data: args.create })
-        }
-      },
-      
-      delete: async (args: MediaHandleDeleteArgs): Promise<MediaHandle> => {
-        const { where } = args
-        const handle = await client.mediaHandle.findUniqueOrThrow({ where })
-        
-        if (where.mediaId_handlesId) {
-          await adapter.executeRaw(
-            'DELETE FROM media_handles WHERE media_id = ? AND handles_id = ?',
-            [where.mediaId_handlesId.mediaId, where.mediaId_handlesId.handlesId]
-          )
-        }
-        
-        return handle
-      },
-      
-      deleteMany: async (args?: MediaHandleDeleteManyArgs): Promise<BatchPayload> => {
-        let sql = 'DELETE FROM media_handles'
-        const params: any[] = []
-        
-        if (args?.where) {
-          const conditions: string[] = []
-          if (args.where.OR) {
-            // Handle OR conditions
-            const orConditions = args.where.OR.map((cond: any) => {
-              const subConds: string[] = []
-              const subParams: any[] = []
-              
-              if (cond.mediaId) {
-                subConds.push('media_id = ?')
-                subParams.push(cond.mediaId)
-              }
-              if (cond.handlesId) {
-                subConds.push('handles_id = ?')
-                subParams.push(cond.handlesId)
-              }
-              
-              params.push(...subParams)
-              return '(' + subConds.join(' AND ') + ')'
-            })
-            
-            if (orConditions.length > 0) {
-              sql += ' WHERE ' + orConditions.join(' OR ')
-            }
-          }
-        }
-        
-        const result = await adapter.executeRaw(sql, params)
-        return { count: result }
-      },
-      
-      count: async (args?: MediaHandleCountArgs): Promise<number> => {
-        let sql = 'SELECT COUNT(*) as count FROM media_handles'
-        const params: any[] = []
-        
-        if (args?.where) {
-          const whereClause = buildWhereClause(args.where, 'media_handles')
-          if (whereClause) {
-            sql += ' WHERE ' + whereClause
-          }
-        }
-        
-        const result = await adapter.queryRaw(sql, params)
-        return result.rows?.[0]?.count || 0
-      }
-    } as MediaHandleDelegate
+    } as MediaDelegate
   }
   
   return client
@@ -802,10 +644,6 @@ function buildWhereClause(where: any, tableName?: string): string {
     
     // Map field names to column names
     let columnName = field
-    if (tableName === 'media_handles') {
-      if (field === 'mediaId') columnName = 'media_id'
-      else if (field === 'handlesId') columnName = 'handles_id'
-    }
     
     if (typeof value === 'object' && value !== null) {
       // Handle filter operators
@@ -873,24 +711,25 @@ async function initializeSchema(prisma: any) {
       )
     `], [])
 
-    // Create the media_handles junction table
+    // Create the implicit many-to-many junction table
+    // Prisma names it _MediaHandles for the relation name "MediaHandles"
     await prisma.$executeRaw([`
-      CREATE TABLE IF NOT EXISTS media_handles (
-        media_id TEXT NOT NULL,
-        handles_id TEXT NOT NULL,
-        PRIMARY KEY (media_id, handles_id),
-        FOREIGN KEY (media_id) REFERENCES media(id) ON DELETE CASCADE,
-        FOREIGN KEY (handles_id) REFERENCES media(id) ON DELETE CASCADE
+      CREATE TABLE IF NOT EXISTS _MediaHandles (
+        A TEXT NOT NULL,
+        B TEXT NOT NULL,
+        FOREIGN KEY (A) REFERENCES media(id) ON DELETE CASCADE,
+        FOREIGN KEY (B) REFERENCES media(id) ON DELETE CASCADE
       )
     `], [])
 
-    // Create indexes
+    // Create unique index on the junction table
     await prisma.$executeRaw([`
-      CREATE INDEX IF NOT EXISTS idx_media_handles_media_id ON media_handles(media_id)
+      CREATE UNIQUE INDEX IF NOT EXISTS _MediaHandles_AB_unique ON _MediaHandles(A, B)
     `], [])
 
+    // Create indexes for performance
     await prisma.$executeRaw([`
-      CREATE INDEX IF NOT EXISTS idx_media_handles_handles_id ON media_handles(handles_id)
+      CREATE INDEX IF NOT EXISTS _MediaHandles_B_index ON _MediaHandles(B)
     `], [])
 
     console.log('Schema created successfully')
@@ -907,10 +746,13 @@ export async function createMedia(id: string, name: string): Promise<void> {
 
 export async function addHandle(handlerId: string, handledId: string): Promise<void> {
   const prisma = await getPrismaClient()
-  await prisma.mediaHandle.create({
+  // Using the implicit many-to-many relationship
+  await prisma.media.update({
+    where: { id: handlerId },
     data: {
-      mediaId: handlerId,
-      handlesId: handledId
+      handles: {
+        connect: { id: handledId }
+      }
     }
   })
 }
@@ -918,11 +760,12 @@ export async function addHandle(handlerId: string, handledId: string): Promise<v
 export async function getDirectHandles(mediaId: string) {
   const prisma = await getPrismaClient()
   
-  // Use raw SQL since our custom client might not support complex queries
+  // Use raw SQL for the implicit many-to-many relationship
+  // The junction table is named _MediaHandles with columns A and B
   const result = await prisma.$queryRaw`
     SELECT m.* FROM media m
-    INNER JOIN media_handles mh ON mh.handles_id = m.id
-    WHERE mh.media_id = ${mediaId}
+    INNER JOIN _MediaHandles mh ON mh.B = m.id
+    WHERE mh.A = ${mediaId}
   `
   
   return result

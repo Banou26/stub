@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { 
-  getPrismaClient, 
-  createMedia, 
-  addHandle, 
+import {
+  getPrismaClient,
+  createMedia,
+  addHandle,
   getDirectHandles,
   generateId
 } from './worker/database/prisma-client-proxy'
+import { demonstrateImplicitRelations } from '../prisma-implicit-example'
 
 export function PrismaTestComponent() {
+  setTimeout(() => {
+    demonstrateImplicitRelations()
+  }, 1000)
+
   const [status, setStatus] = useState<string>('Initializing...')
   const [media, setMedia] = useState<any[]>([])
   const [relatedMedia, setRelatedMedia] = useState<any[]>([])
@@ -18,7 +23,7 @@ export function PrismaTestComponent() {
       setStatus('Initializing Prisma with wa-sqlite...')
       const prisma = await getPrismaClient('test-prisma-db')
       setStatus('Prisma initialized successfully!')
-      
+
       // Load existing media
       const allMedia = await prisma.media.findMany()
       setMedia(allMedia)
@@ -32,22 +37,22 @@ export function PrismaTestComponent() {
   const createTestData = async () => {
     try {
       setStatus('Creating test data...')
-      
+
       // Create some test media
       const id1 = generateId()
       const id2 = generateId()
       const id3 = generateId()
-      
+
       await createMedia(id1, 'Video File 1')
       await createMedia(id2, 'Audio Track 1')
       await createMedia(id3, 'Subtitle File 1')
-      
+
       // Create relationships
       await addHandle(id1, id2) // Video handles Audio
       await addHandle(id1, id3) // Video handles Subtitle
-      
+
       setStatus('Test data created!')
-      
+
       // Reload media
       const prisma = await getPrismaClient()
       const allMedia = await prisma.media.findMany()
@@ -64,40 +69,40 @@ export function PrismaTestComponent() {
         setStatus('No media to test with. Create test data first.')
         return
       }
-      
+
       setStatus('Testing queries...')
-      
+
       const firstMedia = media[0]
-      
+
       // Test direct handles
       const handles = await getDirectHandles(firstMedia.id)
       console.log('Direct handles:', handles)
-      
+
       // Test queries - simplified approach without recursive CTE
       const prisma = await getPrismaClient()
-      
+
       // First, get all media that this media handles
       const handledMedia = await prisma.$queryRaw`
-        SELECT m.* 
+        SELECT m.*
         FROM media m
-        INNER JOIN media_handles mh ON m.id = mh.handles_id
-        WHERE mh.media_id = ${firstMedia.id}
+        INNER JOIN _MediaHandles mh ON m.id = mh.B
+        WHERE mh.A = ${firstMedia.id}
       `
       console.log('Media handled by', firstMedia.name, ':', handledMedia)
-      
+
       // Also get all media that handle this media
       const handlingMedia = await prisma.$queryRaw`
-        SELECT m.* 
+        SELECT m.*
         FROM media m
-        INNER JOIN media_handles mh ON m.id = mh.media_id
-        WHERE mh.handles_id = ${firstMedia.id}
+        INNER JOIN _MediaHandles mh ON m.id = mh.A
+        WHERE mh.B = ${firstMedia.id}
       `
       console.log('Media that handles', firstMedia.name, ':', handlingMedia)
-      
+
       // Combine results for display
       const allRelated = [...handledMedia, ...handlingMedia]
       setRelatedMedia(allRelated as any[])
-      
+
       setStatus('Queries executed successfully!')
     } catch (err) {
       console.error('Query error:', err)
@@ -109,13 +114,10 @@ export function PrismaTestComponent() {
     try {
       setStatus('Clearing database...')
       const prisma = await getPrismaClient()
-      
-      // Delete all media handles first (due to foreign keys)
-      await prisma.mediaHandle.deleteMany()
-      
-      // Then delete all media
+
+      // Delete all media (this will cascade delete relationships)
       await prisma.media.deleteMany()
-      
+
       setMedia([])
       setRelatedMedia([])
       setStatus('Database cleared!')
@@ -132,17 +134,17 @@ export function PrismaTestComponent() {
   return (
     <div style={{ padding: '20px', fontFamily: 'monospace' }}>
       <h1>Prisma + wa-sqlite Browser Test</h1>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <strong>Status:</strong> {status}
       </div>
-      
+
       {error && (
         <div style={{ color: 'red', marginBottom: '20px' }}>
           <strong>Error:</strong> {error}
         </div>
       )}
-      
+
       <div style={{ marginBottom: '20px' }}>
         <button onClick={initializePrisma} style={{ marginRight: '10px' }}>
           Re-initialize Prisma
@@ -157,14 +159,14 @@ export function PrismaTestComponent() {
           Clear Database
         </button>
       </div>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <h3>Media ({media.length} items)</h3>
         <pre style={{ background: '#f0f0f0', padding: '10px', overflow: 'auto' }}>
           {JSON.stringify(media, null, 2)}
         </pre>
       </div>
-      
+
       {relatedMedia.length > 0 && (
         <div>
           <h3>Related Media Query Result</h3>

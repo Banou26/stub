@@ -12,107 +12,62 @@ export { Prisma } from '@prisma/client'
 export interface Media {
   id: string
   name: string
-}
-
-export interface MediaHandle {
-  mediaId: string
-  handlesId: string
+  handles?: Media[]
+  handledBy?: Media[]
 }
 
 // Input types for operations
 export interface MediaCreateInput {
   id: string
   name: string
-  handles?: MediaHandleCreateNestedManyWithoutHandlerInput
-  handledBy?: MediaHandleCreateNestedManyWithoutHandledInput
+  handles?: MediaCreateNestedManyWithoutHandledByInput
+  handledBy?: MediaCreateNestedManyWithoutHandlesInput
 }
 
 export interface MediaUpdateInput {
   id?: string
   name?: string
-  handles?: MediaHandleUpdateManyWithoutHandlerNestedInput
-  handledBy?: MediaHandleUpdateManyWithoutHandledNestedInput
+  handles?: MediaUpdateManyWithoutHandledByNestedInput
+  handledBy?: MediaUpdateManyWithoutHandlesNestedInput
 }
 
-export interface MediaHandleCreateInput {
-  mediaId: string
-  handlesId: string
-  handler?: MediaCreateNestedOneWithoutHandlesInput
-  handled?: MediaCreateNestedOneWithoutHandledByInput
+// Nested input types for implicit many-to-many
+export interface MediaCreateNestedManyWithoutHandledByInput {
+  create?: MediaCreateWithoutHandledByInput | MediaCreateWithoutHandledByInput[]
+  connectOrCreate?: MediaCreateOrConnectWithoutHandledByInput | MediaCreateOrConnectWithoutHandledByInput[]
+  connect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
 }
 
-export interface MediaHandleUpdateInput {
-  mediaId?: string
-  handlesId?: string
-  handler?: MediaUpdateOneRequiredWithoutHandlesNestedInput
-  handled?: MediaUpdateOneRequiredWithoutHandledByNestedInput
+export interface MediaCreateNestedManyWithoutHandlesInput {
+  create?: MediaCreateWithoutHandlesInput | MediaCreateWithoutHandlesInput[]
+  connectOrCreate?: MediaCreateOrConnectWithoutHandlesInput | MediaCreateOrConnectWithoutHandlesInput[]
+  connect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
 }
 
-// Nested input types
-export interface MediaHandleCreateNestedManyWithoutHandlerInput {
-  create?: MediaHandleCreateWithoutHandlerInput | MediaHandleCreateWithoutHandlerInput[]
-  connectOrCreate?: MediaHandleCreateOrConnectWithoutHandlerInput | MediaHandleCreateOrConnectWithoutHandlerInput[]
-  connect?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
+export interface MediaUpdateManyWithoutHandledByNestedInput {
+  create?: MediaCreateWithoutHandledByInput | MediaCreateWithoutHandledByInput[]
+  connectOrCreate?: MediaCreateOrConnectWithoutHandledByInput | MediaCreateOrConnectWithoutHandledByInput[]
+  upsert?: MediaUpsertWithWhereUniqueWithoutHandledByInput | MediaUpsertWithWhereUniqueWithoutHandledByInput[]
+  set?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  disconnect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  delete?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  connect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  update?: MediaUpdateWithWhereUniqueWithoutHandledByInput | MediaUpdateWithWhereUniqueWithoutHandledByInput[]
+  updateMany?: MediaUpdateManyWithWhereWithoutHandledByInput | MediaUpdateManyWithWhereWithoutHandledByInput[]
+  deleteMany?: MediaScalarWhereInput | MediaScalarWhereInput[]
 }
 
-export interface MediaHandleCreateNestedManyWithoutHandledInput {
-  create?: MediaHandleCreateWithoutHandledInput | MediaHandleCreateWithoutHandledInput[]
-  connectOrCreate?: MediaHandleCreateOrConnectWithoutHandledInput | MediaHandleCreateOrConnectWithoutHandledInput[]
-  connect?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-}
-
-export interface MediaHandleUpdateManyWithoutHandlerNestedInput {
-  create?: MediaHandleCreateWithoutHandlerInput | MediaHandleCreateWithoutHandlerInput[]
-  connectOrCreate?: MediaHandleCreateOrConnectWithoutHandlerInput | MediaHandleCreateOrConnectWithoutHandlerInput[]
-  upsert?: MediaHandleUpsertWithWhereUniqueWithoutHandlerInput | MediaHandleUpsertWithWhereUniqueWithoutHandlerInput[]
-  set?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  disconnect?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  delete?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  connect?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  update?: MediaHandleUpdateWithWhereUniqueWithoutHandlerInput | MediaHandleUpdateWithWhereUniqueWithoutHandlerInput[]
-  updateMany?: MediaHandleUpdateManyWithWhereWithoutHandlerInput | MediaHandleUpdateManyWithWhereWithoutHandlerInput[]
-  deleteMany?: MediaHandleScalarWhereInput | MediaHandleScalarWhereInput[]
-}
-
-export interface MediaHandleUpdateManyWithoutHandledNestedInput {
-  create?: MediaHandleCreateWithoutHandledInput | MediaHandleCreateWithoutHandledInput[]
-  connectOrCreate?: MediaHandleCreateOrConnectWithoutHandledInput | MediaHandleCreateOrConnectWithoutHandledInput[]
-  upsert?: MediaHandleUpsertWithWhereUniqueWithoutHandledInput | MediaHandleUpsertWithWhereUniqueWithoutHandledInput[]
-  set?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  disconnect?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  delete?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  connect?: MediaHandleWhereUniqueInput | MediaHandleWhereUniqueInput[]
-  update?: MediaHandleUpdateWithWhereUniqueWithoutHandledInput | MediaHandleUpdateWithWhereUniqueWithoutHandledInput[]
-  updateMany?: MediaHandleUpdateManyWithWhereWithoutHandledInput | MediaHandleUpdateManyWithWhereWithoutHandledInput[]
-  deleteMany?: MediaHandleScalarWhereInput | MediaHandleScalarWhereInput[]
-}
-
-export interface MediaCreateNestedOneWithoutHandlesInput {
-  create?: MediaCreateWithoutHandlesInput
-  connectOrCreate?: MediaCreateOrConnectWithoutHandlesInput
-  connect?: MediaWhereUniqueInput
-}
-
-export interface MediaCreateNestedOneWithoutHandledByInput {
-  create?: MediaCreateWithoutHandledByInput
-  connectOrCreate?: MediaCreateOrConnectWithoutHandledByInput
-  connect?: MediaWhereUniqueInput
-}
-
-export interface MediaUpdateOneRequiredWithoutHandlesNestedInput {
-  create?: MediaCreateWithoutHandlesInput
-  connectOrCreate?: MediaCreateOrConnectWithoutHandlesInput
-  upsert?: MediaUpsertWithoutHandlesInput
-  connect?: MediaWhereUniqueInput
-  update?: MediaUpdateWithoutHandlesInput
-}
-
-export interface MediaUpdateOneRequiredWithoutHandledByNestedInput {
-  create?: MediaCreateWithoutHandledByInput
-  connectOrCreate?: MediaCreateOrConnectWithoutHandledByInput
-  upsert?: MediaUpsertWithoutHandledByInput
-  connect?: MediaWhereUniqueInput
-  update?: MediaUpdateWithoutHandledByInput
+export interface MediaUpdateManyWithoutHandlesNestedInput {
+  create?: MediaCreateWithoutHandlesInput | MediaCreateWithoutHandlesInput[]
+  connectOrCreate?: MediaCreateOrConnectWithoutHandlesInput | MediaCreateOrConnectWithoutHandlesInput[]
+  upsert?: MediaUpsertWithWhereUniqueWithoutHandlesInput | MediaUpsertWithWhereUniqueWithoutHandlesInput[]
+  set?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  disconnect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  delete?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  connect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  update?: MediaUpdateWithWhereUniqueWithoutHandlesInput | MediaUpdateWithWhereUniqueWithoutHandlesInput[]
+  updateMany?: MediaUpdateManyWithWhereWithoutHandlesInput | MediaUpdateManyWithWhereWithoutHandlesInput[]
+  deleteMany?: MediaScalarWhereInput | MediaScalarWhereInput[]
 }
 
 // Where input types
@@ -122,18 +77,8 @@ export interface MediaWhereInput {
   NOT?: MediaWhereInput | MediaWhereInput[]
   id?: StringFilter | string
   name?: StringFilter | string
-  handles?: MediaHandleListRelationFilter
-  handledBy?: MediaHandleListRelationFilter
-}
-
-export interface MediaHandleWhereInput {
-  AND?: MediaHandleWhereInput | MediaHandleWhereInput[]
-  OR?: MediaHandleWhereInput | MediaHandleWhereInput[]
-  NOT?: MediaHandleWhereInput | MediaHandleWhereInput[]
-  mediaId?: StringFilter | string
-  handlesId?: StringFilter | string
-  handler?: MediaRelationFilter | MediaWhereInput
-  handled?: MediaRelationFilter | MediaWhereInput
+  handles?: MediaListRelationFilter
+  handledBy?: MediaListRelationFilter
 }
 
 export interface MediaWhereUniqueInput {
@@ -142,22 +87,8 @@ export interface MediaWhereUniqueInput {
   OR?: MediaWhereInput | MediaWhereInput[]
   NOT?: MediaWhereInput | MediaWhereInput[]
   name?: StringFilter | string
-  handles?: MediaHandleListRelationFilter
-  handledBy?: MediaHandleListRelationFilter
-}
-
-export interface MediaHandleWhereUniqueInput {
-  mediaId_handlesId?: {
-    mediaId: string
-    handlesId: string
-  }
-  AND?: MediaHandleWhereInput | MediaHandleWhereInput[]
-  OR?: MediaHandleWhereInput | MediaHandleWhereInput[]
-  NOT?: MediaHandleWhereInput | MediaHandleWhereInput[]
-  mediaId?: StringFilter | string
-  handlesId?: StringFilter | string
-  handler?: MediaRelationFilter | MediaWhereInput
-  handled?: MediaRelationFilter | MediaWhereInput
+  handles?: MediaListRelationFilter
+  handledBy?: MediaListRelationFilter
 }
 
 // Filter types
@@ -189,10 +120,10 @@ export interface NestedStringFilter {
   not?: NestedStringFilter | string
 }
 
-export interface MediaHandleListRelationFilter {
-  every?: MediaHandleWhereInput
-  some?: MediaHandleWhereInput
-  none?: MediaHandleWhereInput
+export interface MediaListRelationFilter {
+  every?: MediaWhereInput
+  some?: MediaWhereInput
+  none?: MediaWhereInput
 }
 
 export interface MediaRelationFilter {
@@ -204,79 +135,59 @@ export interface MediaRelationFilter {
 export interface MediaCreateWithoutHandlesInput {
   id: string
   name: string
-  handledBy?: MediaHandleCreateNestedManyWithoutHandledInput
+  handledBy?: MediaCreateNestedManyWithoutHandlesInput
 }
 
 export interface MediaCreateWithoutHandledByInput {
   id: string
   name: string
-  handles?: MediaHandleCreateNestedManyWithoutHandlerInput
-}
-
-export interface MediaHandleCreateWithoutHandlerInput {
-  handlesId: string
-  handled?: MediaCreateNestedOneWithoutHandledByInput
-}
-
-export interface MediaHandleCreateWithoutHandledInput {
-  mediaId: string
-  handler?: MediaCreateNestedOneWithoutHandlesInput
+  handles?: MediaCreateNestedManyWithoutHandledByInput
 }
 
 // Update types
 export interface MediaUpdateWithoutHandlesInput {
   id?: string
   name?: string
-  handledBy?: MediaHandleUpdateManyWithoutHandledNestedInput
+  handledBy?: MediaUpdateManyWithoutHandlesNestedInput
 }
 
 export interface MediaUpdateWithoutHandledByInput {
   id?: string
   name?: string
-  handles?: MediaHandleUpdateManyWithoutHandlerNestedInput
+  handles?: MediaUpdateManyWithoutHandledByNestedInput
 }
 
-export interface MediaHandleUpdateWithWhereUniqueWithoutHandlerInput {
-  where: MediaHandleWhereUniqueInput
-  data: MediaHandleUpdateWithoutHandlerInput
+export interface MediaUpdateWithWhereUniqueWithoutHandlesInput {
+  where: MediaWhereUniqueInput
+  data: MediaUpdateWithoutHandlesInput
 }
 
-export interface MediaHandleUpdateWithWhereUniqueWithoutHandledInput {
-  where: MediaHandleWhereUniqueInput
-  data: MediaHandleUpdateWithoutHandledInput
+export interface MediaUpdateWithWhereUniqueWithoutHandledByInput {
+  where: MediaWhereUniqueInput
+  data: MediaUpdateWithoutHandledByInput
 }
 
-export interface MediaHandleUpdateWithoutHandlerInput {
-  handlesId?: string
-  handled?: MediaUpdateOneRequiredWithoutHandledByNestedInput
+export interface MediaUpdateManyWithWhereWithoutHandlesInput {
+  where: MediaScalarWhereInput
+  data: MediaUpdateManyMutationInput
 }
 
-export interface MediaHandleUpdateWithoutHandledInput {
-  mediaId?: string
-  handler?: MediaUpdateOneRequiredWithoutHandlesNestedInput
+export interface MediaUpdateManyWithWhereWithoutHandledByInput {
+  where: MediaScalarWhereInput
+  data: MediaUpdateManyMutationInput
 }
 
-export interface MediaHandleUpdateManyWithWhereWithoutHandlerInput {
-  where: MediaHandleScalarWhereInput
-  data: MediaHandleUpdateManyMutationInput
+export interface MediaUpdateManyMutationInput {
+  id?: string
+  name?: string
 }
 
-export interface MediaHandleUpdateManyWithWhereWithoutHandledInput {
-  where: MediaHandleScalarWhereInput
-  data: MediaHandleUpdateManyMutationInput
-}
-
-export interface MediaHandleUpdateManyMutationInput {
-  mediaId?: string
-  handlesId?: string
-}
-
-export interface MediaHandleScalarWhereInput {
-  AND?: MediaHandleScalarWhereInput | MediaHandleScalarWhereInput[]
-  OR?: MediaHandleScalarWhereInput | MediaHandleScalarWhereInput[]
-  NOT?: MediaHandleScalarWhereInput | MediaHandleScalarWhereInput[]
-  mediaId?: StringFilter | string
-  handlesId?: StringFilter | string
+export interface MediaScalarWhereInput {
+  AND?: MediaScalarWhereInput | MediaScalarWhereInput[]
+  OR?: MediaScalarWhereInput | MediaScalarWhereInput[]
+  NOT?: MediaScalarWhereInput | MediaScalarWhereInput[]
+  id?: StringFilter | string
+  name?: StringFilter | string
 }
 
 // Create or connect types
@@ -288,16 +199,6 @@ export interface MediaCreateOrConnectWithoutHandlesInput {
 export interface MediaCreateOrConnectWithoutHandledByInput {
   where: MediaWhereUniqueInput
   create: MediaCreateWithoutHandledByInput
-}
-
-export interface MediaHandleCreateOrConnectWithoutHandlerInput {
-  where: MediaHandleWhereUniqueInput
-  create: MediaHandleCreateWithoutHandlerInput
-}
-
-export interface MediaHandleCreateOrConnectWithoutHandledInput {
-  where: MediaHandleWhereUniqueInput
-  create: MediaHandleCreateWithoutHandledInput
 }
 
 // Upsert types
@@ -313,34 +214,27 @@ export interface MediaUpsertWithoutHandledByInput {
   where?: MediaWhereInput
 }
 
-export interface MediaHandleUpsertWithWhereUniqueWithoutHandlerInput {
-  where: MediaHandleWhereUniqueInput
-  update: MediaHandleUpdateWithoutHandlerInput
-  create: MediaHandleCreateWithoutHandlerInput
+export interface MediaUpsertWithWhereUniqueWithoutHandlesInput {
+  where: MediaWhereUniqueInput
+  update: MediaUpdateWithoutHandlesInput
+  create: MediaCreateWithoutHandlesInput
 }
 
-export interface MediaHandleUpsertWithWhereUniqueWithoutHandledInput {
-  where: MediaHandleWhereUniqueInput
-  update: MediaHandleUpdateWithoutHandledInput
-  create: MediaHandleCreateWithoutHandledInput
+export interface MediaUpsertWithWhereUniqueWithoutHandledByInput {
+  where: MediaWhereUniqueInput
+  update: MediaUpdateWithoutHandledByInput
+  create: MediaCreateWithoutHandledByInput
 }
 
 // Order by types
 export interface MediaOrderByWithRelationInput {
   id?: SortOrder
   name?: SortOrder
-  handles?: MediaHandleOrderByRelationAggregateInput
-  handledBy?: MediaHandleOrderByRelationAggregateInput
+  handles?: MediaOrderByRelationAggregateInput
+  handledBy?: MediaOrderByRelationAggregateInput
 }
 
-export interface MediaHandleOrderByWithRelationInput {
-  mediaId?: SortOrder
-  handlesId?: SortOrder
-  handler?: MediaOrderByWithRelationInput
-  handled?: MediaOrderByWithRelationInput
-}
-
-export interface MediaHandleOrderByRelationAggregateInput {
+export interface MediaOrderByRelationAggregateInput {
   _count?: SortOrder
 }
 
@@ -350,27 +244,15 @@ export type SortOrder = 'asc' | 'desc'
 export interface MediaSelect {
   id?: boolean
   name?: boolean
-  handles?: boolean | MediaHandleFindManyArgs
-  handledBy?: boolean | MediaHandleFindManyArgs
+  handles?: boolean | MediaFindManyArgs
+  handledBy?: boolean | MediaFindManyArgs
   _count?: boolean | MediaCountOutputTypeArgs
 }
 
 export interface MediaInclude {
-  handles?: boolean | MediaHandleFindManyArgs
-  handledBy?: boolean | MediaHandleFindManyArgs
+  handles?: boolean | MediaFindManyArgs
+  handledBy?: boolean | MediaFindManyArgs
   _count?: boolean | MediaCountOutputTypeArgs
-}
-
-export interface MediaHandleSelect {
-  mediaId?: boolean
-  handlesId?: boolean
-  handler?: boolean | MediaFindUniqueArgs
-  handled?: boolean | MediaFindUniqueArgs
-}
-
-export interface MediaHandleInclude {
-  handler?: boolean | MediaFindUniqueArgs
-  handled?: boolean | MediaFindUniqueArgs
 }
 
 export interface MediaCountOutputTypeArgs {
@@ -551,87 +433,6 @@ export interface NestedIntFilter {
   not?: NestedIntFilter | number
 }
 
-// MediaHandle args types
-export interface MediaHandleFindFirstArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  where?: MediaHandleWhereInput
-  orderBy?: MediaHandleOrderByWithRelationInput | MediaHandleOrderByWithRelationInput[]
-  cursor?: MediaHandleWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Array<keyof MediaHandle>
-}
-
-export interface MediaHandleFindFirstOrThrowArgs extends MediaHandleFindFirstArgs {}
-
-export interface MediaHandleFindManyArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  where?: MediaHandleWhereInput
-  orderBy?: MediaHandleOrderByWithRelationInput | MediaHandleOrderByWithRelationInput[]
-  cursor?: MediaHandleWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Array<keyof MediaHandle>
-}
-
-export interface MediaHandleFindUniqueArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  where: MediaHandleWhereUniqueInput
-}
-
-export interface MediaHandleFindUniqueOrThrowArgs extends MediaHandleFindUniqueArgs {}
-
-export interface MediaHandleCreateArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  data: MediaHandleCreateInput
-}
-
-export interface MediaHandleCreateManyArgs {
-  data: MediaHandleCreateInput | MediaHandleCreateInput[]
-  skipDuplicates?: boolean
-}
-
-export interface MediaHandleUpdateArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  data: MediaHandleUpdateInput
-  where: MediaHandleWhereUniqueInput
-}
-
-export interface MediaHandleUpdateManyArgs {
-  data: MediaHandleUpdateInput
-  where?: MediaHandleWhereInput
-}
-
-export interface MediaHandleUpsertArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  where: MediaHandleWhereUniqueInput
-  create: MediaHandleCreateInput
-  update: MediaHandleUpdateInput
-}
-
-export interface MediaHandleDeleteArgs {
-  select?: MediaHandleSelect
-  include?: MediaHandleInclude
-  where: MediaHandleWhereUniqueInput
-}
-
-export interface MediaHandleDeleteManyArgs {
-  where?: MediaHandleWhereInput
-}
-
-export interface MediaHandleCountArgs {
-  where?: MediaHandleWhereInput
-  cursor?: MediaHandleWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Array<keyof MediaHandle>
-}
 
 // Batch payload type
 export interface BatchPayload {
@@ -666,21 +467,6 @@ export interface MediaDelegate {
   groupBy<T extends MediaGroupByArgs>(args: T): Promise<any[]>
 }
 
-export interface MediaHandleDelegate {
-  findFirst<T extends MediaHandleFindFirstArgs>(args?: T): Promise<MediaHandle | null>
-  findFirstOrThrow<T extends MediaHandleFindFirstOrThrowArgs>(args?: T): Promise<MediaHandle>
-  findMany<T extends MediaHandleFindManyArgs>(args?: T): Promise<MediaHandle[]>
-  findUnique<T extends MediaHandleFindUniqueArgs>(args: T): Promise<MediaHandle | null>
-  findUniqueOrThrow<T extends MediaHandleFindUniqueOrThrowArgs>(args: T): Promise<MediaHandle>
-  create<T extends MediaHandleCreateArgs>(args: T): Promise<MediaHandle>
-  createMany<T extends MediaHandleCreateManyArgs>(args: T): Promise<BatchPayload>
-  update<T extends MediaHandleUpdateArgs>(args: T): Promise<MediaHandle>
-  updateMany<T extends MediaHandleUpdateManyArgs>(args: T): Promise<BatchPayload>
-  upsert<T extends MediaHandleUpsertArgs>(args: T): Promise<MediaHandle>
-  delete<T extends MediaHandleDeleteArgs>(args: T): Promise<MediaHandle>
-  deleteMany<T extends MediaHandleDeleteManyArgs>(args?: T): Promise<BatchPayload>
-  count<T extends MediaHandleCountArgs>(args?: T): Promise<number>
-}
 
 // Main PrismaClient interface
 export interface PatchedPrismaClient {
@@ -700,7 +486,6 @@ export interface PatchedPrismaClient {
   
   // Model delegates
   media: MediaDelegate
-  mediaHandle: MediaHandleDelegate
 }
 
 // Utility type to unwrap tuple of promises
@@ -711,10 +496,6 @@ type UnwrapTuple<T extends readonly unknown[]> = {
 // Type guard functions
 export function isMedia(obj: any): obj is Media {
   return obj && typeof obj === 'object' && 'id' in obj && 'name' in obj
-}
-
-export function isMediaHandle(obj: any): obj is MediaHandle {
-  return obj && typeof obj === 'object' && 'mediaId' in obj && 'handlesId' in obj
 }
 
 // Export the main client type
