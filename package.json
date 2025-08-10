@@ -21,13 +21,16 @@
     "drizzle-kit": "^0.31.4",
     "playwright": "^1.54.2",
     "prisma": "^6.13.0",
+    "shx": "^0.4.0",
     "typescript": "^5.9.2",
-    "vite": "^7.0.6"
+    "vite": "^7.0.6",
+    "vite-plugin-node-polyfills": "^0.24.0"
   },
   "scripts": {
     "prisma:generate": "npx prisma generate",
-    "dev": "npm run prisma:generate && vite --port 4560",
-    "_dev": "vite --port 4560",
+    "dev": "npm run prisma:generate && npm run patch-prisma && vite --port 4560",
+    "patch-prisma": "shx rm ./prisma/generated/package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
+    "test-server": "npm run build-test && vite --port 7357 --config vite.test.config.ts",
     "build": "vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
@@ -47,6 +50,7 @@
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.1",
     "urql": "^4.2.2",
+    "vite-plugin-commonjs": "^0.10.4",
     "wa-sqlite": "^1.0.0",
     "wouter": "^3.7.1"
   }

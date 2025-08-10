@@ -13,11 +13,10 @@
 
 // export default db
 
-console.log('aa')
 try {
   const { getPrismaClient } = await import('./prisma-client-proxy')
   const client = await getPrismaClient()
-  console.log('media count', client.media.count())
+  console.log('media count', await client.media.count())
 } catch (err) {
   console.log('err')
   console.error(err)
