@@ -1,6 +1,6 @@
 {
   "name": "prisma-client-generated",
-  "main": "index.js",
+  "main": "wasm.js",
   "types": "index.d.ts",
   "version": "6.13.0",
   "sideEffects": false

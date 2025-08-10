@@ -29,7 +29,7 @@
   "scripts": {
     "prisma:generate": "npx prisma generate",
     "dev": "npm run prisma:generate && npm run patch-prisma && vite --port 4560",
-    "patch-prisma": "shx rm ./prisma/generated/package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
+    "patch-prisma": "shx mv ./prisma/generated/package.json ./prisma/generated/_package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
     "test-server": "npm run build-test && vite --port 7357 --config vite.test.config.ts",
     "build": "vite build",
     "build-test": "vite build --config vite.test.config.ts",
@@ -42,6 +42,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fkn/lib": "^0.2.1",
+    "@prisma/adapter-d1": "^6.13.0",
     "drizzle-orm": "^0.44.4",
     "lucide-react": "^0.536.0",
     "osra": "^0.1.2",

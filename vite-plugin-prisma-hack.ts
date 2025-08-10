@@ -28,6 +28,31 @@ export function prismaBrowserHack(): Plugin {
         )
 
         code = code.replace(
+          /#wasm-engine-loader/g,
+          './wasm-worker-loader.mjs'
+        )
+
+        code = code.replace(
+          /#wasm-compiler-loader/g,
+          './wasm-worker-loader.mjs'
+        )
+
+        code = code.replace(
+          /query_compiler_bg.wasm/g,
+          'query_compiler_bg.wasm?init'
+        )
+
+        code = code.replace(
+          /query_engine_bg\.wasm/g,
+          'query_engine_bg.wasm?init'
+        )
+
+        code = code.replace(
+          `(await loader).default`,
+          `new WebAssembly.Module(await fetch('/prisma/generated/query_compiler_bg.wasm?url').then(res => res.arrayBuffer()))`
+        )
+
+        code = code.replace(
           /fs\.existsSync/g,
           `(() => false)`
         )
