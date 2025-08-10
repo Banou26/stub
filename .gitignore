@@ -3,3 +3,4 @@ node_modules
 drizzle
 test-results
 build
+prisma/generated/
