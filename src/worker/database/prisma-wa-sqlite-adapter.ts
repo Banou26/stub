@@ -16,7 +16,6 @@ import {
 } from '@prisma/driver-adapter-utils'
 import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs'
 import * as SQLite from 'wa-sqlite'
-// import type { SQLiteAPI } from 'wa-sqlite'
 
 const debug = Debug('prisma:driver-adapter:wa-sqlite')
 
@@ -25,10 +24,10 @@ const MAX_BIND_VALUES = 32766 // SQLite limit
 
 // Type definitions for wa-sqlite
 type WaSQLiteDB = number
-type WaSQLiteStmt = number
+type WaSQLiteStmt = any // wa-sqlite uses object with stmt property
 
 interface WaSQLiteAdapter {
-  sqlite3: SQLiteAPI
+  sqlite3: any // wa-sqlite Factory result
   db: WaSQLiteDB
 }
 
@@ -42,6 +41,26 @@ function cleanArg(arg: unknown, argType?: unknown): unknown {
 }
 
 function convertDriverError(error: Error): any {
+  // Check if it's a SQLiteError with a code
+  if ('code' in error && typeof (error as any).code === 'number') {
+    const code = (error as any).code
+
+    // Map SQLite error codes to Prisma error kinds
+    if (code === SQLite.SQLITE_CONSTRAINT) {
+      return {
+        kind: 'UniqueConstraintViolation',
+        message: error.message,
+      }
+    }
+
+    if (code === SQLite.SQLITE_BUSY) {
+      return {
+        kind: 'DatabaseTimeout',
+        message: error.message,
+      }
+    }
+  }
+
   return {
     kind: 'GenericDatabaseError',
     message: error.message,
@@ -177,92 +196,141 @@ class WaSQLiteQueryable implements SqlQueryable {
     const { sqlite3, db } = this.adapter
 
     try {
+      // Log the query for debugging
+      console.log('[wa-sqlite] SQL:', query.sql)
+      console.log('[wa-sqlite] Args:', query.args)
+
       // Clean arguments
       const cleanedArgs = query.args.map((arg, i) => cleanArg(arg, query.argTypes?.[i]))
 
-      // Prepare statement
-      const stmtPtr = sqlite3.prepare_v2(db, query.sql)
-
-      if (!stmtPtr) {
-        throw new Error('Failed to prepare statement')
-      }
-
-      try {
-        // Bind parameters
-        cleanedArgs.forEach((arg, index) => {
-          const paramIndex = index + 1 // SQLite uses 1-based indexing
-
-          if (arg === null || arg === undefined) {
-            sqlite3.bind_null(stmtPtr, paramIndex)
-          } else if (typeof arg === 'number') {
-            if (Number.isInteger(arg)) {
-              sqlite3.bind_int(stmtPtr, paramIndex, arg)
-            } else {
-              sqlite3.bind_double(stmtPtr, paramIndex, arg)
-            }
-          } else if (typeof arg === 'string') {
-            sqlite3.bind_text(stmtPtr, paramIndex, arg)
-          } else if (arg instanceof Uint8Array) {
-            sqlite3.bind_blob(stmtPtr, paramIndex, arg)
-          } else if (Array.isArray(arg)) {
-            sqlite3.bind_blob(stmtPtr, paramIndex, new Uint8Array(arg))
-          } else {
-            // Convert to string as fallback
-            sqlite3.bind_text(stmtPtr, paramIndex, String(arg))
-          }
-        })
-
+      // Use high-level API for better compatibility
+      if (cleanedArgs.length === 0) {
+        // No parameters - use exec
         if (executeRaw) {
-          // Execute and return affected rows
-          sqlite3.step(stmtPtr)
-          const changes = sqlite3.changes(db)
-          return changes
+          await sqlite3.exec(db, query.sql)
+          return sqlite3.changes(db)
         } else {
-          // Query and return results
-          const columnNames: string[] = []
+          // For SELECT queries, use exec with callback
           const rows: unknown[][] = []
+          const columnNames: string[] = []
+          let firstRow = true
 
-          // Get column names
-          const columnCount = sqlite3.column_count(stmtPtr)
-          for (let i = 0; i < columnCount; i++) {
-            columnNames.push(sqlite3.column_name(stmtPtr, i))
-          }
-
-          // Fetch all rows
-          while (sqlite3.step(stmtPtr) === SQLite.SQLITE_ROW) {
-            const row: unknown[] = []
-            for (let i = 0; i < columnCount; i++) {
-              const type = sqlite3.column_type(stmtPtr, i)
-
-              switch (type) {
-                case SQLite.SQLITE_INTEGER:
-                  row.push(sqlite3.column_int(stmtPtr, i))
-                  break
-                case SQLite.SQLITE_FLOAT:
-                  row.push(sqlite3.column_double(stmtPtr, i))
-                  break
-                case SQLite.SQLITE_TEXT:
-                  row.push(sqlite3.column_text(stmtPtr, i))
-                  break
-                case SQLite.SQLITE_BLOB:
-                  row.push(sqlite3.column_blob(stmtPtr, i))
-                  break
-                case SQLite.SQLITE_NULL:
-                default:
-                  row.push(null)
-                  break
-              }
+          await sqlite3.exec(db, query.sql, (row: unknown[], columns: string[]) => {
+            if (firstRow) {
+              columnNames.push(...columns)
+              firstRow = false
             }
             rows.push(row)
-          }
+          })
 
           return [columnNames, rows]
         }
-      } finally {
-        // Always finalize the statement
-        sqlite3.finalize(stmtPtr)
+      } else {
+        // With parameters - use the prepared statement approach
+        let stmt: any = null
+        let str: number | null = null
+
+        try {
+          // Create string buffer for SQL
+          str = sqlite3.str_new(db, query.sql)
+          const prepared = await sqlite3.prepare_v2(db, sqlite3.str_value(str))
+
+          if (!prepared || !prepared.stmt) {
+            throw new Error(`Failed to prepare statement: ${query.sql}`)
+          }
+
+          stmt = prepared.stmt
+
+          // Bind parameters
+          cleanedArgs.forEach((arg, index) => {
+            const paramIndex = index + 1 // SQLite uses 1-based indexing
+
+            if (arg === null || arg === undefined) {
+              sqlite3.bind_null(stmt, paramIndex)
+            } else if (typeof arg === 'number') {
+              if (Number.isInteger(arg)) {
+                sqlite3.bind_int(stmt, paramIndex, arg)
+              } else {
+                sqlite3.bind_double(stmt, paramIndex, arg)
+              }
+            } else if (typeof arg === 'string') {
+              sqlite3.bind_text(stmt, paramIndex, arg)
+            } else if (arg instanceof Uint8Array) {
+              sqlite3.bind_blob(stmt, paramIndex, arg)
+            } else if (Array.isArray(arg)) {
+              sqlite3.bind_blob(stmt, paramIndex, new Uint8Array(arg))
+            } else {
+              // Convert to string as fallback
+              sqlite3.bind_text(stmt, paramIndex, String(arg))
+            }
+          })
+
+          if (executeRaw) {
+            // Execute and return affected rows
+            const stepResult = await sqlite3.step(stmt)
+            if (stepResult !== SQLite.SQLITE_DONE && stepResult !== SQLite.SQLITE_ROW) {
+              throw new Error(`Failed to execute statement. Result code: ${stepResult}`)
+            }
+            return sqlite3.changes(db)
+          } else {
+            // Query and return results
+            const columnNames: string[] = []
+            const rows: unknown[][] = []
+
+            // Get column names
+            const columnCount = sqlite3.column_count(stmt)
+            for (let i = 0; i < columnCount; i++) {
+              columnNames.push(sqlite3.column_name(stmt, i))
+            }
+
+            // Fetch all rows
+            let stepResult = await sqlite3.step(stmt)
+            while (stepResult === SQLite.SQLITE_ROW) {
+              const row: unknown[] = []
+              for (let i = 0; i < columnCount; i++) {
+                const type = sqlite3.column_type(stmt, i)
+
+                switch (type) {
+                  case SQLite.SQLITE_INTEGER:
+                    row.push(sqlite3.column_int(stmt, i))
+                    break
+                  case SQLite.SQLITE_FLOAT:
+                    row.push(sqlite3.column_double(stmt, i))
+                    break
+                  case SQLite.SQLITE_TEXT:
+                    row.push(sqlite3.column_text(stmt, i))
+                    break
+                  case SQLite.SQLITE_BLOB:
+                    row.push(sqlite3.column_blob(stmt, i))
+                    break
+                  case SQLite.SQLITE_NULL:
+                  default:
+                    row.push(null)
+                    break
+                }
+              }
+              rows.push(row)
+              stepResult = await sqlite3.step(stmt)
+            }
+
+            if (stepResult !== SQLite.SQLITE_DONE) {
+              throw new Error(`Error fetching results. Result code: ${stepResult}`)
+            }
+
+            return [columnNames, rows]
+          }
+        } finally {
+          // Clean up
+          if (stmt) {
+            await sqlite3.finalize(stmt)
+          }
+          if (str !== null) {
+            sqlite3.str_finish(str)
+          }
+        }
       }
     } catch (e) {
+      console.error('[wa-sqlite] Error in performIO:', e)
       onError(e as Error)
     }
   }
@@ -279,13 +347,13 @@ class WaSQLiteTransaction extends WaSQLiteQueryable implements Transaction {
   async commit(): Promise<void> {
     debug(`[js::commit]`)
     const { sqlite3, db } = this.adapter
-    sqlite3.exec(db, 'COMMIT')
+    await sqlite3.exec(db, 'COMMIT')
   }
 
   async rollback(): Promise<void> {
     debug(`[js::rollback]`)
     const { sqlite3, db } = this.adapter
-    sqlite3.exec(db, 'ROLLBACK')
+    await sqlite3.exec(db, 'ROLLBACK')
   }
 }
 
@@ -307,8 +375,10 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
   async executeScript(script: string): Promise<void> {
     try {
       const { sqlite3, db } = this.adapter
-      sqlite3.exec(db, script)
+      console.log('[wa-sqlite] Executing script:', script.substring(0, 100), '...')
+      await sqlite3.exec(db, script)
     } catch (error) {
+      console.error('[wa-sqlite] Error executing script:', error)
       onError(error as Error)
     }
   }
@@ -337,7 +407,7 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
 
     // Start transaction in SQLite
     const { sqlite3, db } = this.adapter
-    sqlite3.exec(db, 'BEGIN')
+    await sqlite3.exec(db, 'BEGIN')
 
     return new WaSQLiteTransaction(this.adapter, options)
   }
@@ -360,7 +430,7 @@ export class PrismaWaSQLiteAdapterFactory implements SqlDriverAdapterFactory {
     return new PrismaWaSQLiteAdapter(this.adapter, async () => {
       // Cleanup if needed
       const { sqlite3, db } = this.adapter
-      sqlite3.close(db)
+      await sqlite3.close(db)
     })
   }
 }
@@ -379,29 +449,48 @@ export async function createWaSQLitePrismaAdapter(
 ): Promise<PrismaWaSQLiteAdapterFactory> {
   logger?.('Initializing wa-sqlite...')
 
-  // Initialize wa-sqlite
-  const { default: SQLiteWasm } = await import('wa-sqlite/dist/wa-sqlite.wasm?url')
-  const module = await SQLiteESMFactory({ locateFile: () => SQLiteWasm })
-  const sqlite3 = SQLite.Factory(module)
+  try {
+    // Initialize wa-sqlite
+    const { default: SQLiteWasm } = await import('wa-sqlite/dist/wa-sqlite.wasm?url')
+    const module = await SQLiteESMFactory({ locateFile: () => SQLiteWasm })
+    const sqlite3 = SQLite.Factory(module)
 
-  logger?.('Opening database...')
+    logger?.('Opening database...')
 
-  // Open database
-  const db = await sqlite3.open_v2(dbName, SQLite.SQLITE_OPEN_CREATE | SQLite.SQLITE_OPEN_READWRITE)
+    // Open database - use in-memory database for browser
+    // wa-sqlite returns the db handle directly, not wrapped in a promise
+    const db = await sqlite3.open_v2(':memory:')
 
-  if (!db) {
-    throw new Error(`Failed to open database: ${dbName}`)
+    if (!db || db === 0) {
+      throw new Error(`Failed to open database: ${dbName}`)
+    }
+
+    logger?.('Database opened successfully')
+
+    // Set pragmas for better performance and compatibility
+    try {
+      await sqlite3.exec(db, 'PRAGMA foreign_keys = ON')
+      logger?.('Foreign keys enabled')
+    } catch (e) {
+      console.warn('[wa-sqlite] Failed to enable foreign keys:', e)
+    }
+
+    // Test the connection with a simple query
+    try {
+      await sqlite3.exec(db, 'SELECT 1')
+      logger?.('Database connection verified')
+    } catch (e) {
+      throw new Error(`Database connection test failed: ${e}`)
+    }
+
+    const adapter: WaSQLiteAdapter = {
+      sqlite3,
+      db,
+    }
+
+    return new PrismaWaSQLiteAdapterFactory(adapter)
+  } catch (error) {
+    logger?.(`Failed to initialize wa-sqlite: ${error}`)
+    throw error
   }
-
-  logger?.('Database opened successfully')
-
-  // Enable foreign keys
-  sqlite3.exec(db, 'PRAGMA foreign_keys = ON')
-
-  const adapter: WaSQLiteAdapter = {
-    sqlite3,
-    db,
-  }
-
-  return new PrismaWaSQLiteAdapterFactory(adapter)
 }
