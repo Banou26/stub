@@ -9,9 +9,7 @@ export const test = async () => {
 
   try {
     console.log('Fetching Prisma client...')
-    const defaultImport = await import('../src/worker/database/prisma-client-proxy')
-    console.log('Getting Prisma client...')
-    const client = await defaultImport.getPrismaClient()
+    const { default: client } = await import('../src/worker/database/prisma-client')
     console.log('Prisma client created:', client)
 
     const count = await client.media.count()

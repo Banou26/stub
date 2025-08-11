@@ -4,3 +4,4 @@ drizzle
 test-results
 build
 prisma/generated/
+init.sql

@@ -7,8 +7,8 @@ type TestObject = {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('about:blank')
-  await page.addScriptTag({ path: './build/test.js', type: 'module' })
+  await page.goto('http://localhost:7357')
+  // await page.addScriptTag({ path: './build/test.js', type: 'module' })
 })
 
 const recurseTests = (tests: TestObject, path: string[] = []) => {

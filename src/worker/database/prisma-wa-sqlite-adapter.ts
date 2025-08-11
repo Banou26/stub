@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
-
 import {
   ConnectionInfo,
   Debug,
@@ -12,7 +10,7 @@ import {
   SqlResultSet,
   Transaction,
   TransactionOptions,
-  // ColumnType,
+  ColumnTypeEnum,
 } from '@prisma/driver-adapter-utils'
 import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs'
 import * as SQLite from 'wa-sqlite'
@@ -67,8 +65,8 @@ function convertDriverError(error: Error): any {
   }
 }
 
-function getColumnTypes(columnNames: string[], rows: unknown[][]): Record<string, ColumnType> {
-  const columnTypes: Record<string, ColumnType> = {}
+function getColumnTypeEnums(columnNames: string[], rows: unknown[][]): Record<string, ColumnTypeEnum> {
+  const columnTypes: Record<string, ColumnTypeEnum> = {}
 
   if (rows.length === 0) {
     return columnTypes
@@ -81,34 +79,34 @@ function getColumnTypes(columnNames: string[], rows: unknown[][]): Record<string
 
   columnNames.forEach((name, index) => {
     const value = firstRow[index]
-    // Map to Prisma ColumnType
+    // Map to Prisma ColumnTypeEnum
     if (value === null || value === undefined) {
-      columnTypes[name] = ColumnType.INT32 // Default for NULL
+      columnTypes[name] = ColumnTypeEnum.Int32 // Default for NULL
     } else if (typeof value === 'number') {
       if (Number.isInteger(value)) {
-        columnTypes[name] = ColumnType.INT32
+        columnTypes[name] = ColumnTypeEnum.Int32
       } else {
-        columnTypes[name] = ColumnType.DOUBLE
+        columnTypes[name] = ColumnTypeEnum.Double
       }
     } else if (typeof value === 'string') {
-      columnTypes[name] = ColumnType.TEXT
+      columnTypes[name] = ColumnTypeEnum.Text
     } else if (typeof value === 'bigint') {
-      columnTypes[name] = ColumnType.INT64
+      columnTypes[name] = ColumnTypeEnum.Int64
     } else if (value instanceof Uint8Array || Array.isArray(value)) {
-      columnTypes[name] = ColumnType.BYTES
+      columnTypes[name] = ColumnTypeEnum.Bytes
     } else if (value instanceof Date) {
-      columnTypes[name] = ColumnType.DATETIME
+      columnTypes[name] = ColumnTypeEnum.DateTime
     } else if (typeof value === 'boolean') {
-      columnTypes[name] = ColumnType.BOOL
+      columnTypes[name] = ColumnTypeEnum.Boolean
     } else {
-      columnTypes[name] = ColumnType.TEXT // Default
+      columnTypes[name] = ColumnTypeEnum.Text // Default
     }
   })
 
   return columnTypes
 }
 
-function mapRow(row: unknown[], columnTypes: ColumnType[]): unknown[] {
+function mapRow(row: unknown[], columnTypes: ColumnTypeEnum[]): unknown[] {
   return row.map((value, index) => {
     const type = columnTypes[index]
 
@@ -117,12 +115,12 @@ function mapRow(row: unknown[], columnTypes: ColumnType[]): unknown[] {
     }
 
     // Handle blob data
-    if (type === ColumnType.BYTES && Array.isArray(value)) {
+    if (type === ColumnTypeEnum.Bytes && Array.isArray(value)) {
       return new Uint8Array(value)
     }
 
     // Handle dates stored as ISO strings
-    if (type === ColumnType.DATETIME && typeof value === 'string') {
+    if (type === ColumnTypeEnum.DateTime && typeof value === 'string') {
       // Check if it's a date string
       const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
       if (dateRegex.test(value)) {
@@ -131,7 +129,7 @@ function mapRow(row: unknown[], columnTypes: ColumnType[]): unknown[] {
     }
 
     // Handle bigint conversion
-    if (type === ColumnType.INT64 && typeof value === 'number') {
+    if (type === ColumnTypeEnum.Int64 && typeof value === 'number') {
       return BigInt(value)
     }
 
@@ -170,7 +168,7 @@ class WaSQLiteQueryable implements SqlQueryable {
       }
     }
 
-    const columnTypes = Object.values(getColumnTypes(columnNames, results))
+    const columnTypes = Object.values(getColumnTypeEnums(columnNames, results))
     const rows = results.map((row) => mapRow(row, columnTypes))
 
     return {
@@ -196,10 +194,6 @@ class WaSQLiteQueryable implements SqlQueryable {
     const { sqlite3, db } = this.adapter
 
     try {
-      // Log the query for debugging
-      console.log('[wa-sqlite] SQL:', query.sql)
-      console.log('[wa-sqlite] Args:', query.args)
-
       // Clean arguments
       const cleanedArgs = query.args.map((arg, i) => cleanArg(arg, query.argTypes?.[i]))
 
@@ -375,10 +369,10 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
   async executeScript(script: string): Promise<void> {
     try {
       const { sqlite3, db } = this.adapter
-      console.log('[wa-sqlite] Executing script:', script.substring(0, 100), '...')
+      // console.log('[wa-sqlite] Executing script:', script.substring(0, 100), '...')
       await sqlite3.exec(db, script)
     } catch (error) {
-      console.error('[wa-sqlite] Error executing script:', error)
+      // console.error('[wa-sqlite] Error executing script:', error)
       onError(error as Error)
     }
   }
