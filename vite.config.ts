@@ -1,7 +1,10 @@
-import { defineConfig, normalizePath } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import commonjs from 'vite-plugin-commonjs'
 
-export default defineConfig((env) => ({
+import { prismaBrowserHack } from './vite-plugin-prisma-hack'
+
+export default defineConfig((_) => ({
   build: {
     target: 'esnext',
     outDir: 'build'
@@ -9,10 +12,12 @@ export default defineConfig((env) => ({
   worker: {
     format: 'es'
   },
-  define: env.mode === 'development' ? {} : {
-    'process.env.NODE_ENV': JSON.stringify('production')
+  optimizeDeps: {
+    include: ['wa-sqlite']
   },
   plugins: [
+    prismaBrowserHack(),
+    commonjs(),
     react({
       jsxImportSource: '@emotion/react'
     })

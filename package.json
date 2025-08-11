@@ -13,30 +13,37 @@
   ],
   "devDependencies": {
     "@playwright/test": "^1.54.2",
+    "@prisma/client": "^6.13.0",
+    "@prisma/driver-adapter-utils": "^6.13.0",
     "@vitejs/plugin-react": "^4.7.0",
     "chai": "^5.2.1",
     "chai-as-promised": "^8.0.1",
     "drizzle-kit": "^0.31.4",
     "playwright": "^1.54.2",
+    "prisma": "^6.13.0",
+    "shx": "^0.4.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6"
   },
   "scripts": {
-    "codegen": "npx drizzle-kit generate --name=init",
-    "dev": "npm run codegen && vite --port 4560",
-    "_dev": "vite --port 4560",
+    "prisma:generate": "npx prisma generate",
+    "dev": "npm run prisma:generate && npm run patch-prisma && vite --port 4560",
+    "patch-prisma": "shx mv ./prisma/generated/package.json ./prisma/generated/_package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
+    "test-server": "npm run build-test && vite --port 7357 --config vite.test.config.ts",
     "build": "vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
     "test": "npm run build-test && npx playwright test",
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
-    "test-watch-headful": "npx playwright test --ui"
+    "test-watch-headful": "npx playwright test --ui",
+    "generate": "prisma generate --sql && shx rm prisma/generated/runtime/library.js && shx cp src/prisma-runtime-library.js prisma/generated/runtime/library.js",
+    "generate2": "shx rm -rf prisma/generated && prisma generate --sql && shx rm prisma/generated/runtime/library.js && shx cp src/prisma-runtime-library.js prisma/generated/runtime/library.js",
+    "migrate": "npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/init.sql"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fkn/lib": "^0.2.1",
-    "drizzle-orm": "^0.44.4",
     "lucide-react": "^0.536.0",
     "osra": "^0.1.2",
     "react": "^19.1.1",
@@ -44,6 +51,7 @@
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.1",
     "urql": "^4.2.2",
+    "vite-plugin-commonjs": "^0.10.4",
     "wa-sqlite": "^1.0.0",
     "wouter": "^3.7.1"
   }

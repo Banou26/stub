@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["queryCompiler", "driverAdapters", "typedSql"]
+  output   = "./generated"
+  runtime                = "workerd"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Media {
+  id           String   @id @unique
+  name         String
+
+  // Implicit many-to-many self relationship
+  handles      Media[]  @relation("MediaHandles")
+  handledBy    Media[]  @relation("MediaHandles")
+
+  @@map("media")
+}
