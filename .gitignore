@@ -1,7 +1,7 @@
 node_modules
 .env
-drizzle
 test-results
 build
 prisma/generated/
-init.sql
+prisma/migrations
+prisma/dev.db

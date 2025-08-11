@@ -26,19 +26,18 @@
     "vite": "^7.0.6"
   },
   "scripts": {
-    "prisma:generate": "npx prisma generate",
-    "dev": "npm run prisma:generate && npm run patch-prisma && vite --port 4560",
-    "patch-prisma": "shx mv ./prisma/generated/package.json ./prisma/generated/_package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
+    "dev": "npm run build-prisma && vite --port 4560",
     "test-server": "npm run build-test && vite --port 7357 --config vite.test.config.ts",
-    "build": "vite build",
+    "build": "npm run build-prisma && vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
-    "test": "npm run build-test && npx playwright test",
+    "test": "npm run build-prisma && npm run build-test && npx playwright test",
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
     "test-watch-headful": "npx playwright test --ui",
-    "generate": "prisma generate --sql && shx rm prisma/generated/runtime/library.js && shx cp src/prisma-runtime-library.js prisma/generated/runtime/library.js",
-    "generate2": "shx rm -rf prisma/generated && prisma generate --sql && shx rm prisma/generated/runtime/library.js && shx cp src/prisma-runtime-library.js prisma/generated/runtime/library.js",
-    "migrate": "npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/init.sql"
+    "build-prisma": "npm run migrate-prisma && npm run generate-prisma && npm run patch-prisma",
+    "patch-prisma": "shx mv ./prisma/generated/package.json ./prisma/generated/_package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
+    "generate-prisma": "npx prisma migrate dev && prisma generate --sql",
+    "migrate-prisma": "shx mkdir -p prisma/migrations/0_init && prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/0_init/migration.sql"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
