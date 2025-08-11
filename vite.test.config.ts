@@ -13,13 +13,31 @@ export default defineConfig({
       fileName: 'test',
       entry: 'tests/_tests_.ts',
       formats: ['es']
-    },
+    }
   },
   optimizeDeps: {
     include: ['wa-sqlite']
   },
   plugins: [
     prismaBrowserHack(),
-    commonjs()
+    commonjs(),
+    {
+      name: 'custom-index-html',
+      transformIndexHtml(html) {
+        return `
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <title>Stub Test</title>
+            </head>
+            <body>
+              <script type="module" src="./tests/_tests_.ts"></script>
+            </body>
+          </html>
+        `
+      }
+    }
   ]
 })

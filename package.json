@@ -27,7 +27,7 @@
   },
   "scripts": {
     "dev": "npm run build-prisma && vite --port 4560",
-    "test-server": "npm run build-test && vite --port 7357 --config vite.test.config.ts",
+    "test-server": "vite --port 7357 --config vite.test.config.ts",
     "build": "npm run build-prisma && vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",

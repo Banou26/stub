@@ -20,7 +20,8 @@ export const prismaBrowserHack = (): Plugin => ({
         `new WebAssembly.Module(await fetch('/prisma/generated/query_compiler_bg.wasm?url').then(res => res.arrayBuffer()))`
       )
 
-      return { code }
+      return { code, map: null }
     }
+    return null
   }
 })
