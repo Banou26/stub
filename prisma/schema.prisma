@@ -53,6 +53,10 @@ model Media {
 
   episodes Episode[]
 
+  @@index([uid])
+  @@index([uri])
+  @@index([origin, id])
+  @@index([origin, id, language])
   @@map("media")
 }
 
@@ -159,6 +163,10 @@ model Episode {
   Media    Media?  @relation(fields: [mediaUid], references: [uid])
   mediaUid String?
 
+  @@index([uid])
+  @@index([uri])
+  @@index([origin, id])
+  @@index([origin, id, language])
   @@map("episode")
 }
 
@@ -199,6 +207,10 @@ model PlaybackSource {
   Episode    Episode? @relation(fields: [episodeUid], references: [uid])
   episodeUid String?
 
+  @@index([uid])
+  @@index([uri])
+  @@index([origin, id])
+  @@index([origin, id, language])
   @@map("playbackSource")
 }
 
