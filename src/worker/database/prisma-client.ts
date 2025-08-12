@@ -3,7 +3,7 @@ import { createWaSQLitePrismaAdapter } from './prisma-wa-sqlite-adapter'
 import SQLSchema from '../../../prisma/migrations/0_init/migration.sql?raw'
 import { PrismaClient } from '../../../prisma/generated'
 
-const adapter = await createWaSQLitePrismaAdapter()
+const adapter = await createWaSQLitePrismaAdapter({})
 const prismaClient =
   new PrismaClient({
     adapter,

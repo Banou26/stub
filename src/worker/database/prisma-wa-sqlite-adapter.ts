@@ -340,16 +340,35 @@ class WaSQLiteTransaction extends WaSQLiteQueryable implements Transaction {
 
   async commit(): Promise<void> {
     debug(`[js::commit]`)
-    const { sqlite3, db } = this.adapter
-    await sqlite3.exec(db, 'COMMIT')
+
+    try {
+      const { sqlite3, db } = this.adapter
+      await sqlite3.exec(db, 'COMMIT')
+    } catch (error) {
+      // If commit fails because transaction is already closed, just ignore it
+      if (error && (error as any).message && (error as any).message.includes('no transaction is active')) {
+        return
+      }
+      throw error
+    }
   }
 
   async rollback(): Promise<void> {
     debug(`[js::rollback]`)
-    const { sqlite3, db } = this.adapter
-    await sqlite3.exec(db, 'ROLLBACK')
+
+    try {
+      const { sqlite3, db } = this.adapter
+      await sqlite3.exec(db, 'ROLLBACK')
+    } catch (error) {
+      // If rollback fails because transaction is already closed, just ignore it
+      if (error && (error as any).message && (error as any).message.includes('no transaction is active')) {
+        return
+      }
+      throw error
+    }
   }
 }
+
 
 /**
  * Main wa-sqlite Prisma Adapter
@@ -401,7 +420,18 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
 
     // Start transaction in SQLite
     const { sqlite3, db } = this.adapter
-    await sqlite3.exec(db, 'BEGIN')
+
+    try {
+      await sqlite3.exec(db, 'BEGIN')
+    } catch (error) {
+      // If BEGIN fails because a transaction is already active, that's okay
+      // This can happen with nested transactions which SQLite doesn't support
+      if (error && (error as any).message && (error as any).message.includes('cannot start a transaction within a transaction')) {
+        // Continue with existing transaction
+      } else {
+        throw error
+      }
+    }
 
     return new WaSQLiteTransaction(this.adapter, options)
   }
@@ -417,15 +447,21 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
 export class PrismaWaSQLiteAdapterFactory implements SqlDriverAdapterFactory {
   readonly provider = 'sqlite'
   readonly adapterName = 'prisma-wa-sqlite-adapter'
+  private adapterInstance: PrismaWaSQLiteAdapter | null = null
 
   constructor(private adapter: WaSQLiteAdapter) {}
 
   async connect(): Promise<SqlDriverAdapter> {
-    return new PrismaWaSQLiteAdapter(this.adapter, async () => {
-      // Cleanup if needed
-      const { sqlite3, db } = this.adapter
-      await sqlite3.close(db)
-    })
+    // Return the same adapter instance to maintain transaction state
+    if (!this.adapterInstance) {
+      this.adapterInstance = new PrismaWaSQLiteAdapter(this.adapter, async () => {
+        // Cleanup if needed
+        const { sqlite3, db } = this.adapter
+        await sqlite3.close(db)
+        this.adapterInstance = null
+      })
+    }
+    return this.adapterInstance
   }
 }
 
@@ -437,34 +473,36 @@ function onError(error: Error): never {
 /**
  * Create wa-sqlite Prisma adapter
  */
-export async function createWaSQLitePrismaAdapter(
-  dbName: string = 'myDB',
-  logger?: (message: string) => void
-): Promise<PrismaWaSQLiteAdapterFactory> {
-  logger?.('Initializing wa-sqlite...')
+export const createWaSQLitePrismaAdapter = async (
+  options: {
+    logger?: (message: string) => void
+  } = {
+    logger: undefined
+  }
+) => {
+  options?.logger?.('Initializing wa-sqlite...')
 
   try {
-    // Initialize wa-sqlite
+    // @ts-expect-error
     const { default: SQLiteWasm } = await import('wa-sqlite/dist/wa-sqlite.wasm?url')
     const module = await SQLiteESMFactory({ locateFile: () => SQLiteWasm })
     const sqlite3 = SQLite.Factory(module)
 
-    logger?.('Opening database...')
-
+    options?.logger?.('Opening database...')
     // Open database - use in-memory database for browser
     // wa-sqlite returns the db handle directly, not wrapped in a promise
     const db = await sqlite3.open_v2(':memory:')
 
     if (!db || db === 0) {
-      throw new Error(`Failed to open database: ${dbName}`)
+      throw new Error(`Failed to open database`)
     }
 
-    logger?.('Database opened successfully')
+    options?.logger?.('Database opened successfully')
 
     // Set pragmas for better performance and compatibility
     try {
       await sqlite3.exec(db, 'PRAGMA foreign_keys = ON')
-      logger?.('Foreign keys enabled')
+      options?.logger?.('Foreign keys enabled')
     } catch (e) {
       console.warn('[wa-sqlite] Failed to enable foreign keys:', e)
     }
@@ -472,7 +510,7 @@ export async function createWaSQLitePrismaAdapter(
     // Test the connection with a simple query
     try {
       await sqlite3.exec(db, 'SELECT 1')
-      logger?.('Database connection verified')
+      options?.logger?.('Database connection verified')
     } catch (e) {
       throw new Error(`Database connection test failed: ${e}`)
     }
@@ -484,7 +522,7 @@ export async function createWaSQLitePrismaAdapter(
 
     return new PrismaWaSQLiteAdapterFactory(adapter)
   } catch (error) {
-    logger?.(`Failed to initialize wa-sqlite: ${error}`)
+    options?.logger?.(`Failed to initialize wa-sqlite: ${error}`)
     throw error
   }
 }

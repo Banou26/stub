@@ -1,5 +1,5 @@
 generator client {
-  provider               = "prisma-client-js"
+  provider               = "prisma-client"
   previewFeatures        = ["queryCompiler", "driverAdapters", "typedSql"]
   output                 = "./generated"
   runtime                = "workerd"
