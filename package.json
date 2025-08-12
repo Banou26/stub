@@ -34,8 +34,8 @@
     "test": "npm run build-prisma && npm run build-test && npx playwright test",
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
     "test-watch-headful": "npx playwright test --ui",
-    "build-prisma": "npm run migrate-prisma && npm run generate-prisma && npm run patch-prisma",
-    "patch-prisma": "shx mv ./prisma/generated/package.json ./prisma/generated/_package.json && shx cp ./prisma/_prisma_package_.json ./prisma/generated/package.json",
+    "build-prisma": "npm run migrate-prisma && npm run generate-prisma",
+    "patch-prisma": "shx mv ./src/worker/prisma/generated/package.json ./src/worker/prisma/generated/_package.json && shx cp ./prisma/_prisma_package_.json ./src/worker/prisma/generated/package.json",
     "generate-prisma": "prisma migrate reset -f && npx prisma migrate dev && prisma generate --sql",
     "migrate-prisma": "shx mkdir -p prisma/migrations/0_init && prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/0_init/migration.sql"
   },

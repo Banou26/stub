@@ -1,7 +1,7 @@
 generator client {
   provider               = "prisma-client"
   previewFeatures        = ["queryCompiler", "driverAdapters", "typedSql"]
-  output                 = "./generated"
+  output                 = "../src/worker/prisma/generated"
   runtime                = "workerd"
   moduleFormat           = "esm"
   generatedFileExtension = "ts"
