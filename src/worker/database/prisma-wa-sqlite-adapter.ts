@@ -331,41 +331,75 @@ class WaSQLiteQueryable implements SqlQueryable {
 }
 
 /**
- * wa-sqlite Transaction implementation
+ * wa-sqlite Transaction implementation  
  */
 class WaSQLiteTransaction extends WaSQLiteQueryable implements Transaction {
-  constructor(adapter: WaSQLiteAdapter, readonly options: TransactionOptions) {
+  private state: 'open' | 'committed' | 'rolledback' = 'open'
+  
+  constructor(
+    adapter: WaSQLiteAdapter, 
+    readonly options: TransactionOptions,
+    private readonly isNested: boolean = false
+  ) {
     super(adapter)
   }
 
   async commit(): Promise<void> {
-    debug(`[js::commit]`)
-
-    try {
-      const { sqlite3, db } = this.adapter
-      await sqlite3.exec(db, 'COMMIT')
-    } catch (error) {
-      // If commit fails because transaction is already closed, just ignore it
-      if (error && (error as any).message && (error as any).message.includes('no transaction is active')) {
-        return
-      }
-      throw error
+    debug(`[js::commit] state: ${this.state}, isNested: ${this.isNested}`)
+    
+    // If already processed, return silently (idempotent)
+    if (this.state !== 'open') {
+      debug(`[js::commit] Transaction already ${this.state}`)
+      return
     }
+
+    const { sqlite3, db } = this.adapter
+    
+    // Only actually commit if this is not a nested transaction
+    // For nested transactions, we just mark as committed but don't execute DB commands
+    if (!this.isNested) {
+      // Check if there's actually a transaction to commit
+      try {
+        await sqlite3.exec(db, 'COMMIT')
+      } catch (error: any) {
+        // If there's no transaction to commit, that's fine - it might have been
+        // committed by another transaction object
+        if (!error?.message?.includes('no transaction is active')) {
+          throw error
+        }
+      }
+    }
+    
+    this.state = 'committed'
   }
 
   async rollback(): Promise<void> {
-    debug(`[js::rollback]`)
-
-    try {
-      const { sqlite3, db } = this.adapter
-      await sqlite3.exec(db, 'ROLLBACK')
-    } catch (error) {
-      // If rollback fails because transaction is already closed, just ignore it
-      if (error && (error as any).message && (error as any).message.includes('no transaction is active')) {
-        return
-      }
-      throw error
+    debug(`[js::rollback] state: ${this.state}, isNested: ${this.isNested}`)
+    
+    // If already processed, return silently (idempotent)
+    if (this.state !== 'open') {
+      debug(`[js::rollback] Transaction already ${this.state}`)
+      return
     }
+
+    const { sqlite3, db } = this.adapter
+    
+    // Only actually rollback if this is not a nested transaction
+    // For nested transactions, we just mark as rolled back but don't execute DB commands
+    if (!this.isNested) {
+      // Check if there's actually a transaction to rollback
+      try {
+        await sqlite3.exec(db, 'ROLLBACK')
+      } catch (error: any) {
+        // If there's no transaction to rollback, that's fine - it might have been
+        // committed or rolled back by another transaction object
+        if (!error?.message?.includes('no transaction is active')) {
+          throw error
+        }
+      }
+    }
+    
+    this.state = 'rolledback'
   }
 }
 
@@ -380,6 +414,9 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
     info: '[prisma:info]',
     query: '[prisma:query]',
   }
+  
+  private transactionCount = 0
+  private hasActiveTransaction = false
 
   constructor(adapter: WaSQLiteAdapter, private readonly release?: () => Promise<void>) {
     super(adapter)
@@ -418,22 +455,45 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
     const tag = '[js::startTransaction]'
     debug('%s options: %O', tag, options)
 
-    // Start transaction in SQLite
     const { sqlite3, db } = this.adapter
-
-    try {
+    
+    // Track if this is a nested transaction
+    const isNested = this.hasActiveTransaction
+    
+    if (!isNested) {
+      // Start a new database transaction
       await sqlite3.exec(db, 'BEGIN')
-    } catch (error) {
-      // If BEGIN fails because a transaction is already active, that's okay
-      // This can happen with nested transactions which SQLite doesn't support
-      if (error && (error as any).message && (error as any).message.includes('cannot start a transaction within a transaction')) {
-        // Continue with existing transaction
-      } else {
-        throw error
+      this.hasActiveTransaction = true
+      this.transactionCount = 1
+    } else {
+      // This is a nested transaction request
+      this.transactionCount++
+    }
+    
+    // Create transaction object that knows if it's nested
+    const tx = new WaSQLiteTransaction(this.adapter, options, isNested)
+    
+    // Track when transactions complete
+    const originalCommit = tx.commit.bind(tx)
+    const originalRollback = tx.rollback.bind(tx)
+    
+    tx.commit = async () => {
+      await originalCommit()
+      this.transactionCount--
+      if (this.transactionCount === 0) {
+        this.hasActiveTransaction = false
       }
     }
-
-    return new WaSQLiteTransaction(this.adapter, options)
+    
+    tx.rollback = async () => {
+      await originalRollback()
+      this.transactionCount--
+      if (this.transactionCount === 0) {
+        this.hasActiveTransaction = false
+      }
+    }
+    
+    return tx
   }
 
   async dispose(): Promise<void> {
