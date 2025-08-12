@@ -66,6 +66,7 @@ model MediaTrailer {
   thumbnail String?
 
   Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
   mediaUid String?
 
   @@map("mediaTrailer")
@@ -81,6 +82,7 @@ model MediaCover {
   color  String?
 
   Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
   mediaUid String?
 
   @@map("mediaCover")
@@ -96,6 +98,7 @@ model MediaBanner {
   color  String?
 
   Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
   mediaUid String?
 
   @@map("mediaBanner")
@@ -158,6 +161,7 @@ model Episode {
   playbackSources PlaybackSource[]
 
   Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
   mediaUid String?
 
   @@unique([origin, id])
@@ -178,6 +182,7 @@ model EpisodeThumbnail {
   color  String?
 
   Episode    Episode? @relation(fields: [episodeUid], references: [uid])
+  /// gql-omit
   episodeUid String?
 
   @@map("episodeThumbnail")
@@ -201,6 +206,7 @@ model PlaybackSource {
   data Json?
 
   Episode    Episode? @relation(fields: [episodeUid], references: [uid])
+  /// gql-omit
   episodeUid String?
 
   @@unique([origin, id])

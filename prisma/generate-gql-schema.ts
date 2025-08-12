@@ -1,3 +1,6 @@
+import type { Field, Model } from '@prisma/dmmf'
+
+// @ts-expect-error
 import { readFile, writeFile } from 'fs/promises'
 import internals from '@prisma/internals'
 
@@ -33,7 +36,7 @@ async function generateGraphQLSchema() {
     return `enum ${enumType.name} {\n${values}\n}`
   }
 
-  function generateFieldType(field: any, model: any): string {
+  function generateFieldType(field: Field, model: Model): string {
     let type: string
 
     if (field.kind === 'scalar') {
@@ -60,12 +63,20 @@ async function generateGraphQLSchema() {
     return type
   }
 
-  function generateModelType(model: any): string {
-    const fields = model.fields.map((field: any) => {
-      const documentation = field.documentation ? `  """${field.documentation}"""\n  ` : '  '
-      const fieldType = generateFieldType(field, model)
-      return `${documentation}${field.name}: ${fieldType}`
-    }).join('\n')
+  function generateModelType(model: Model): string {
+    const fields =
+      model
+        .fields
+        .filter(field => !field.documentation?.includes('gql-omit'))
+        .map((field) => {
+          const documentation =
+            field.documentation
+              ? `"""${field.documentation}"""\n  `
+              : ''
+          const fieldType = generateFieldType(field, model)
+          return `  ${documentation}${field.name}: ${fieldType}`
+        })
+        .join('\n')
 
     return `type ${model.name} {\n${fields}\n}`
   }
