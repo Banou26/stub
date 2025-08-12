@@ -9,22 +9,22 @@ const prismaClient =
     adapter,
     omit: {
       mediaTrailer: {
-        mediaUuid: true
+        mediaUid: true
       },
       mediaCover: {
-        mediaUuid: true
+        mediaUid: true
       },
       mediaBanner: {
-        mediaUuid: true
+        mediaUid: true
       },
       episode: {
-        mediaUuid: true
+        mediaUid: true
       },
       episodeThumbnail: {
-        episodeUuid: true
+        episodeUid: true
       },
       playbackSource: {
-        episodeUuid: true
+        episodeUid: true
       }
     } as const
   })

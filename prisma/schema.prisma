@@ -16,8 +16,6 @@ datasource db {
 model Media {
   /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
   uid      String  @id @unique
-  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
-  uri      String  @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
   origin   String
   /// An id that references a specific resource within the origin space
@@ -32,10 +30,10 @@ model Media {
   handleOf Media[] @relation("mediaHandles")
 
   title            String
-  type             MediaType
-  status           MediaStatus
-  shortDescription String
-  description      String
+  type             MediaType?
+  status           MediaStatus?
+  shortDescription String?
+  description      String?
 
   trailers      MediaTrailer[]
   covers        MediaCover[]
@@ -45,23 +43,24 @@ model Media {
   averageScore Int?
   popularity   Int?
 
-  initialReleaseDate DateTime
-  startDate          DateTime
-  endDate            DateTime
-  isAdult            Boolean
-  episodeCount       Int
+  initialReleaseDate DateTime?
+  startDate          DateTime?
+  endDate            DateTime?
+  isAdult            Boolean?
+  episodeCount       Int?
 
   episodes Episode[]
 
+  @@unique([origin, id])
+  @@unique([origin, id, language])
   @@index([uid])
-  @@index([uri])
   @@index([origin, id])
   @@index([origin, id, language])
   @@map("media")
 }
 
 model MediaTrailer {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   url       String
   thumbnail String?
@@ -73,7 +72,7 @@ model MediaTrailer {
 }
 
 model MediaCover {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   url    String
   height Int?
@@ -88,7 +87,7 @@ model MediaCover {
 }
 
 model MediaBanner {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   url    String
   height Int?
@@ -138,8 +137,6 @@ enum MediaStatus {
 model Episode {
   /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
   uid      String  @id @unique
-  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
-  uri      String  @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
   origin   String
   /// An id that references a specific resource within the origin space
@@ -163,15 +160,16 @@ model Episode {
   Media    Media?  @relation(fields: [mediaUid], references: [uid])
   mediaUid String?
 
+  @@unique([origin, id])
+  @@unique([origin, id, language])
   @@index([uid])
-  @@index([uri])
   @@index([origin, id])
   @@index([origin, id, language])
   @@map("episode")
 }
 
 model EpisodeThumbnail {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   url    String
   height Int?
@@ -188,8 +186,6 @@ model EpisodeThumbnail {
 model PlaybackSource {
   /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
   uid      String  @id @unique
-  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
-  uri      String  @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
   origin   String
   /// An id that references a specific resource within the origin space
@@ -207,8 +203,9 @@ model PlaybackSource {
   Episode    Episode? @relation(fields: [episodeUid], references: [uid])
   episodeUid String?
 
+  @@unique([origin, id])
+  @@unique([origin, id, language])
   @@index([uid])
-  @@index([uri])
   @@index([origin, id])
   @@index([origin, id, language])
   @@map("playbackSource")
