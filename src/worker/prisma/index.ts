@@ -1,4 +1,4 @@
-import { createWaSQLitePrismaAdapter } from './prisma-wa-sqlite-adapter'
+import { createWaSQLitePrismaAdapter } from './wa-sqlite-adapter'
 // @ts-expect-error
 import SQLSchema from '../../../prisma/migrations/0_init/migration.sql?raw'
 import { PrismaClient } from '../../../prisma/generated'

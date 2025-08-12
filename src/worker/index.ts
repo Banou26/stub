@@ -1,5 +1,5 @@
 import { expose } from 'osra'
-import './database'
+import './prisma'
 
 export const resolvers = {
   HANDLE_REQUEST: async (request: { foo: string }) => {
