@@ -1,7 +1,7 @@
 import type { KeyingConfig } from '@urql/exchange-graphcache'
 import type { Exchange } from 'urql'
 
-import type { Episode, Media, MediaTrailer, PlaybackSource } from './generated/graphql'
+import type { Episode, Media, PlaybackSource } from './generated/schema/types.generated'
 
 import { Client, fetchExchange } from 'urql'
 import { devtoolsExchange } from '@urql/devtools'
