@@ -1,59 +1,28 @@
--- Recursively get all Media handles related to a specific Media item
--- This query traverses the handles relationship in both directions
--- Usage: Replace :mediaUid with the actual UID of the media you want to query
+-- Recursively get all related Media handles
+-- Replace :mediaUid with the actual UID parameter
 
-WITH RECURSIVE related_media AS (
-  -- Base case: Start with the specified media
-  SELECT 
-    uid,
-    title,
-    origin,
-    id,
-    language,
-    0 as depth,
-    uid as root_uid
-  FROM media
-  WHERE uid = :mediaUid
+WITH RECURSIVE related AS (
+  -- Start with the requested media
+  SELECT m.*, 0 as depth
+  FROM media m
+  WHERE m.uid = :mediaUid
   
   UNION
   
-  -- Recursive case: Find all media related through handles (forward direction)
-  SELECT 
-    m.uid,
-    m.title,
-    m.origin,
-    m.id,
-    m.language,
-    rm.depth + 1,
-    rm.root_uid
+  -- Find connected media (both directions)
+  SELECT m.*, r.depth + 1
   FROM media m
-  INNER JOIN _mediaHandles mh ON m.uid = mh.B
-  INNER JOIN related_media rm ON rm.uid = mh.A
-  WHERE rm.depth < 10  -- Prevent infinite recursion, adjust depth as needed
-  
-  UNION
-  
-  -- Recursive case: Find all media related through handleOf (reverse direction)
-  SELECT 
-    m.uid,
-    m.title,
-    m.origin,
-    m.id,
-    m.language,
-    rm.depth + 1,
-    rm.root_uid
-  FROM media m
-  INNER JOIN _mediaHandles mh ON m.uid = mh.A
-  INNER JOIN related_media rm ON rm.uid = mh.B
-  WHERE rm.depth < 10  -- Prevent infinite recursion, adjust depth as needed
+  INNER JOIN _mediaHandles mh ON (m.uid = mh.A OR m.uid = mh.B)
+  INNER JOIN related r ON (
+    (r.uid = mh.A AND m.uid = mh.B) OR 
+    (r.uid = mh.B AND m.uid = mh.A)
+  )
+  WHERE r.depth < 10  -- Prevent infinite recursion
 )
-SELECT DISTINCT
-  uid,
-  title,
-  origin,
-  id,
-  language,
-  MIN(depth) as min_depth
-FROM related_media
-GROUP BY uid, title, origin, id, language
-ORDER BY min_depth, title;
+SELECT DISTINCT * FROM (
+  SELECT uid, origin, id, url, language, title, type, status, 
+         shortDescription, description, externalLinks, averageScore, 
+         popularity, initialReleaseDate, startDate, endDate, 
+         isAdult, episodeCount
+  FROM related
+) ORDER BY uid;

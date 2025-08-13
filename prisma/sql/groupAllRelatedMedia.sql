@@ -1,75 +1,46 @@
--- Group all Media items in the database by their relationships
--- This query identifies connected components of related media items
--- Each group represents a set of media items that are all related to each other
+-- Group all Media items by their relationships
 
-WITH RECURSIVE media_groups AS (
-  -- Base case: Start with all media items as their own root
-  SELECT 
-    m.uid,
-    m.title,
-    m.origin,
-    m.id,
-    m.language,
-    m.uid as group_root,
-    0 as depth
+WITH RECURSIVE graph AS (
+  -- Start with nodes that have the smallest UID in their component
+  SELECT m.uid, m.uid as group_id, 0 as depth
   FROM media m
   WHERE NOT EXISTS (
-    -- Start only with media that aren't already handled by another media with a "smaller" uid
-    SELECT 1 
-    FROM _mediaHandles mh 
+    SELECT 1 FROM _mediaHandles mh 
     WHERE (mh.B = m.uid AND mh.A < m.uid) 
        OR (mh.A = m.uid AND mh.B < m.uid)
   )
   
   UNION
   
-  -- Recursive case: Find all related media
-  SELECT 
-    m.uid,
-    m.title,
-    m.origin,
-    m.id,
-    m.language,
-    mg.group_root,
-    mg.depth + 1
+  -- Traverse the graph
+  SELECT m.uid, g.group_id, g.depth + 1
   FROM media m
-  INNER JOIN _mediaHandles mh ON (m.uid = mh.B OR m.uid = mh.A)
-  INNER JOIN media_groups mg ON (
-    (mg.uid = mh.A AND m.uid = mh.B) OR 
-    (mg.uid = mh.B AND m.uid = mh.A)
+  INNER JOIN _mediaHandles mh ON (m.uid = mh.A OR m.uid = mh.B)
+  INNER JOIN graph g ON (
+    (g.uid = mh.A AND m.uid = mh.B) OR 
+    (g.uid = mh.B AND m.uid = mh.A)
   )
-  WHERE mg.depth < 50  -- Prevent infinite recursion
+  WHERE g.depth < 50
 ),
--- Get the minimum group root for each media item (to handle items that might be reached from multiple roots)
-normalized_groups AS (
-  SELECT 
-    uid,
-    title,
-    origin,
-    id,
-    language,
-    MIN(group_root) as final_group_root
-  FROM media_groups
-  GROUP BY uid, title, origin, id, language
-),
--- Add standalone media items that have no relationships
-all_media_with_groups AS (
-  SELECT 
-    m.uid,
-    m.title,
-    m.origin,
-    m.id,
-    m.language,
-    COALESCE(ng.final_group_root, m.uid) as group_id
+groups AS (
+  SELECT uid, MIN(group_id) as group_id
+  FROM graph
+  GROUP BY uid
+  
+  UNION
+  
+  -- Include standalone media
+  SELECT m.uid, m.uid as group_id
   FROM media m
-  LEFT JOIN normalized_groups ng ON m.uid = ng.uid
+  WHERE NOT EXISTS (
+    SELECT 1 FROM _mediaHandles mh 
+    WHERE mh.A = m.uid OR mh.B = m.uid
+  )
 )
--- Final result: Group all media by their relationship group
 SELECT 
   group_id,
   COUNT(*) as group_size,
-  GROUP_CONCAT(uid, ', ') as media_uids,
-  GROUP_CONCAT(title, ' | ') as media_titles
-FROM all_media_with_groups
+  GROUP_CONCAT(uid, ', ') as media_uids
+FROM groups
 GROUP BY group_id
 ORDER BY group_size DESC, group_id;
