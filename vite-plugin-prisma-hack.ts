@@ -1,17 +1,29 @@
 import type { Plugin } from 'vite'
 
-export const prismaBrowserHack = (): Plugin => ({
-  name: 'prisma-browser-hack',
+const pluginBase: Plugin = {
+  name: 'prisma-browser-hack-worker',
   enforce: 'pre',
   transform(code: string, id: string) {
     if (id.includes('src/worker/prisma/generated/internal/class')) {
-      console.log('PRISMA HACK', id)
-      code = code.replace(
-        /const \{ default: module } = await import\("\.\/query_compiler_bg\.wasm\"\)/g,
+      const transformedCode = code.replace(
+        /const \{ default: module } = await import\("\.\/query_compiler_bg\.wasm"\)/g,
         `const module = new WebAssembly.Module(await fetch((await import('./query_compiler_bg.wasm?url')).default).then(res => res.arrayBuffer()))`
       )
-      return { code, map: null }
+      return { code: transformedCode, map: null }
     }
     return null
+  }
+}
+
+export const prismaBrowserHack = (): Plugin => ({
+  ...pluginBase,
+  config() {
+    return {
+      worker: {
+        plugins: () => [
+          pluginBase
+        ]
+      }
+    }
   }
 })
