@@ -1,5 +1,6 @@
 import { expose } from 'osra'
 import './prisma'
+import './yoga'
 
 export const resolvers = {
   HANDLE_REQUEST: async (request: { foo: string }) => {

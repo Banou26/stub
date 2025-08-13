@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite'
+// @ts-expect-error
 import commonjs from 'vite-plugin-commonjs'
+
 import { prismaBrowserHack } from './vite-plugin-prisma-hack'
 
 export default defineConfig({

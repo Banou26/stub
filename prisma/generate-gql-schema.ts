@@ -81,7 +81,25 @@ async function generateGraphQLSchema() {
     return `type ${model.name} {\n${fields}\n}`
   }
 
-  let schema = `scalar JSON\n\n`
+  let schema = `scalar JSON
+scalar DateTime
+
+type Query {
+  _empty: String
+}
+type Mutation {
+  _empty: String
+}
+type Subscription {
+  _empty: String
+}
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+`
 
   if (dmmf.datamodel.enums && dmmf.datamodel.enums.length > 0) {
     const enums = dmmf.datamodel.enums.map(generateEnumType).join('\n\n')
@@ -94,6 +112,7 @@ async function generateGraphQLSchema() {
   schema += types + '\n\n'
 
   await writeFile('./prisma/schema.gql', schema, 'utf8')
+  await writeFile('./prisma/gql-schema.ts', `export default \`#graphql\n${schema.replaceAll('`', '\\`')}\``, 'utf8')
 
   console.log('GraphQL schema generated successfully at ./prisma/schema.graphql')
   console.log(`Generated ${models.length} types, ${dmmf.datamodel.enums?.length || 0} enums`)

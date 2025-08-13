@@ -12,6 +12,12 @@
     "build"
   ],
   "devDependencies": {
+    "@eddeee888/gcg-typescript-resolver-files": "^0.12.1",
+    "@graphql-codegen/cli": "^5.0.7",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-document-nodes": "^4.0.16",
+    "@graphql-codegen/typescript-resolvers": "^4.5.1",
+    "@graphql-codegen/urql-introspection": "^3.0.1",
     "@playwright/test": "^1.54.2",
     "@prisma/client": "^6.13.0",
     "@prisma/driver-adapter-utils": "^6.13.0",
@@ -33,13 +39,14 @@
   "scripts": {
     "dev": "npm run build-prisma && vite --port 4560",
     "test-server": "vite --port 7357 --config vite.test.config.ts",
-    "build": "npm run build-prisma && vite build",
+    "build": "npm run build-prisma && npm run gql-generate && vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
     "test": "npm run build-prisma && npm run build-test && npx playwright test",
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
     "test-watch-headful": "npx playwright test --ui",
-    "build-prisma": "npm run migrate-prisma && npm run generate-prisma",
+    "gql-generate": "graphql-codegen --config codegen.ts",
+    "build-prisma": "npm run migrate-prisma && npm run generate-prisma && npm run generate-gql-prisma",
     "generate-prisma": "prisma migrate reset -f && npx prisma migrate dev && prisma generate --sql",
     "migrate-prisma": "shx mkdir -p prisma/migrations/0_init && prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/0_init/migration.sql",
     "generate-gql-prisma": "node --experimental-strip-types ./prisma/generate-gql-schema.ts"

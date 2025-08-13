@@ -11,5 +11,3 @@ const { HANDLE_REQUEST } = await expose<Resolvers>(
   {},
   { local: worker, remote: worker }
 )
-
-// HANDLE_REQUEST({ foo: 'foo' })

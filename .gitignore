@@ -6,3 +6,5 @@ src/worker/prisma/generated/
 prisma/migrations
 prisma/dev.db
 prisma/schema.gql
+prisma/gql-schema.ts
+src/generated

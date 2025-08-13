@@ -1,8 +1,23 @@
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
-import { createYoga } from 'graphql-yoga'
+import { createSchema, createYoga } from 'graphql-yoga'
 
-const yoga = createYoga({
+import { typeDefs } from '../generated/schema/typeDefs.generated'
+
+export type ServerContext = {
+
+}
+
+const schema = createSchema<ServerContext>({
+  typeDefs,
+  resolvers: {
+
+  }
+})
+
+const yoga = createYoga<ServerContext>({
   schema,
   maskedErrors: false,
   plugins: [useDeferStream()]
 })
+
+console.log('yoga', yoga)
