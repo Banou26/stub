@@ -1,13 +1,15 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
 
-// import { defineConfig } from '@eddeee888/gcg-typescript-resolver-files'
+import { defineConfig } from '@eddeee888/gcg-typescript-resolver-files'
 
 import schema from './prisma/gql-schema'
 
 const config: CodegenConfig = {
   schema,
   generates: {
-    // 'src/generated/schema': defineConfig(),
+    './src/generated/schema': defineConfig({
+      resolverGeneration: 'disabled'
+    }),
     './src/generated/graphql.ts': {
       plugins: [
         'typescript',

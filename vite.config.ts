@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-// @ts-expect-error
-import commonjs from 'vite-plugin-commonjs'
 
 import { prismaBrowserHack } from './vite-plugin-prisma-hack'
 
@@ -18,7 +16,6 @@ export default defineConfig((_) => ({
   },
   plugins: [
     prismaBrowserHack(),
-    commonjs(),
     react({
       jsxImportSource: '@emotion/react'
     })
