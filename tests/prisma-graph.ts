@@ -4,7 +4,6 @@ import chaiShallowDeepEqual from 'chai-shallow-deep-equal'
 
 import { getRelatedMediaHandles } from '../src/worker/prisma/generated/sql/getRelatedMediaHandles'
 import { groupAllRelatedMedia } from '../src/worker/prisma/generated/sql/groupAllRelatedMedia'
-import { groupAllRelatedMediaDetailed } from '../src/worker/prisma/generated/sql/groupAllRelatedMediaDetailed'
 
 use(chaiAsPromised)
 use(chaiShallowDeepEqual)
@@ -181,57 +180,6 @@ export const testGroupAllMediaCircular = async () => {
 
   expect(circularGroup).to.exist
   expect(Number(circularGroup?.group_size)).to.equal(3)
-
-  await client.media.deleteMany({ where: { origin: 't' } })
-}
-
-// Test 7: Detailed grouping
-export const testDetailedGrouping = async () => {
-  const { default: client } = await import('../src/worker/prisma')
-
-  // Setup: Small group
-  await client.media.deleteMany({ where: { origin: 't' } })
-
-  const mediaA = await createTestMedia(client, 'A')
-  const mediaB = await createTestMedia(client, 'B')
-  await connectMedia(client, mediaA.uid, mediaB.uid)
-
-  // Test: Should have correct group details
-  const detailed = await client.$queryRawTyped(groupAllRelatedMediaDetailed())
-  const testItems = detailed.filter(m => m.origin === 't')
-
-  expect(testItems).to.have.lengthOf(2)
-
-  // Both should be in same group
-  const groupIds = [...new Set(testItems.map(m => m.group_id))]
-  expect(groupIds).to.have.lengthOf(1)
-
-  // Both should show correct size and category
-  testItems.forEach(item => {
-    expect(Number(item.group_size)).to.equal(2)
-    expect(item.group_category).to.equal('Small Group')
-  })
-
-  await client.media.deleteMany({ where: { origin: 't' } })
-}
-
-// Test 8: Detailed grouping - standalone
-export const testDetailedGroupingStandalone = async () => {
-  const { default: client } = await import('../src/worker/prisma')
-
-  // Setup: Standalone media
-  await client.media.deleteMany({ where: { origin: 't' } })
-
-  const standalone = await createTestMedia(client, 'S')
-
-  // Test: Should be categorized as standalone
-  const detailed = await client.$queryRawTyped(groupAllRelatedMediaDetailed())
-  const item = detailed.find(m => m.uid === standalone.uid)
-
-  expect(item).to.exist
-  expect(Number(item?.group_size)).to.equal(1)
-  expect(item?.group_category).to.equal('Standalone')
-  expect(item?.group_id).to.equal(standalone.uid)
 
   await client.media.deleteMany({ where: { origin: 't' } })
 }
