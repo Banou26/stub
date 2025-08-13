@@ -1,5 +1,6 @@
-import { css, Global } from '@emotion/react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { css, Global } from '@emotion/react'
 import { Provider, Client } from 'urql'
 
 import './worker.ts'
@@ -62,9 +63,9 @@ const client = new Client({
 })
 
 root.render(
-  // <StrictMode>
-  <Provider value={client}>
-    <Global styles={style}/>
-  </Provider>
-  // </StrictMode>
+  <StrictMode>
+    <Provider value={client}>
+      <Global styles={style}/>
+    </Provider>
+  </StrictMode>
 )

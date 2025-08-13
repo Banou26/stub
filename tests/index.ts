@@ -1,30 +1,21 @@
 import { use, expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import chaiShallowDeepEqual from 'chai-shallow-deep-equal'
 
 use(chaiAsPromised)
+use(chaiShallowDeepEqual)
 
-export const test = async () => {
-  await expect(true).to.equal(true)
-  console.log('Starting Prisma test...')
+export const importPrismaClient = async () => {
+  await expect(import('../src/worker/prisma')).to.be.fulfilled
+}
 
-  try {
-    console.log('Fetching Prisma client...')
-    const { default: client } = await import('../src/worker/database/prisma-client')
-    console.log('Prisma client created:', client)
-
-    const count = await client.media.count()
-    console.log('Media count:', count)
-
-    await expect(true).to.equal(true)
-    console.log('Test passed!')
-  } catch (error) {
-    console.error('Test failed:', error)
-    throw error
-  }
+export const count = async () => {
+  const { default: client } = await import('../src/worker/prisma')
+  await expect(client.media.count()).to.eventually.equal(0)
 }
 
 export const create = async () => {
-  const { default: client } = await import('../src/worker/database/prisma-client')
+  const { default: client } = await import('../src/worker/prisma')
 
   const createdMedia = await client.media.create({
     data: {
@@ -44,15 +35,14 @@ export const create = async () => {
     }
   })
 
-  // Check that the media was created with the correct basic fields
-  await expect(createdMedia.uid).to.equal('test:en:bar')
-  await expect(createdMedia.origin).to.equal('test')
-  await expect(createdMedia.id).to.equal('bar')
-  await expect(createdMedia.language).to.equal('en')
-  await expect(createdMedia.title).to.equal('Bar')
-
-  // Check that the cover was created
-  await expect(createdMedia.covers).to.be.an('array')
-  await expect(createdMedia.covers).to.have.lengthOf(1)
-  await expect(createdMedia.covers[0].url).to.equal('http://example.com/bar')
+  expect(createdMedia).to.shallowDeepEqual({
+    uid: 'test:en:bar',
+    origin: 'test',
+    id: 'bar',
+    language: 'en',
+    title: 'Bar',
+    covers: [{
+      url: 'http://example.com/bar'
+    }]
+  })
 }
