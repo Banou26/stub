@@ -1,4 +1,4 @@
-import type { Resolvers } from './worker/index'
+import type { Resolvers as WorkerResolvers } from './worker/index'
 
 import { expose }  from 'osra'
 
@@ -7,7 +7,23 @@ import Worker from './worker/index?worker'
 
 const worker = new Worker()
 
-const { HANDLE_REQUEST } = await expose<Resolvers>(
-  {},
+const resolvers = {
+  FETCH: async (input: RequestInfo | URL, init?: RequestInit) => {
+    const res = await fetch(input, init)
+    return {
+      headers: Object.fromEntries(res.headers.entries()),
+      body: res.body
+    }
+  }
+}
+
+export type Resolvers = typeof resolvers
+
+const { HANDLE_REQUEST: handleRequest } = await expose<WorkerResolvers>(
+  resolvers,
   { local: worker, remote: worker }
 )
+
+export {
+  handleRequest
+}
