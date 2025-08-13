@@ -1,74 +1,38 @@
-import { getIntrospectionQuery } from 'graphql'
-import { makeScannarrClient } from 'scannarr'
-import { call, makeCallListener, registerListener } from 'osra'
+import type { KeyingConfig } from '@urql/exchange-graphcache'
+import type { Exchange } from 'urql'
 
-import WorkerUrl from './yoga-worker?worker&url'
+import type { Episode, Media, MediaTrailer, PlaybackSource } from './generated/graphql'
 
-import { fetch } from './utils/fetch'
-import { Resolvers as WorkerResolvers } from './yoga-worker'
+import { Client, fetchExchange } from 'urql'
+import { devtoolsExchange } from '@urql/devtools'
+import { cacheExchange } from '@urql/exchange-graphcache'
 
-const worker = new Worker(WorkerUrl, { type: 'module' })
+import { handleRequest } from './worker'
+// @ts-expect-error
+import introspection from './generated/graphql.schema.json'
 
-const target = call<WorkerResolvers>(worker, { key: 'yoga-server' })
+export const keyResolvers = {
+  Media: (media) => (media as Media).uid,
+  Episode: (episode) => (episode as Episode).uid,
+  PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uid,
+} satisfies KeyingConfig
 
-const resolvers = {
-  YOGA_FETCH: makeCallListener(async ({ input, init }: { input: RequestInfo, init?: RequestInit }) => {
-    const res = await fetch(input, init)
-    return {
-      ...res,
-      body: res.body
-    }
-  })
-}
+const cache = cacheExchange({
+  schema: introspection,
+  keys: keyResolvers,
+  resolvers: {
 
-export type Resolvers = typeof resolvers
-
-registerListener({
-  target: worker as unknown as Worker,
-  // @ts-ignore
-  resolvers,
-  key: 'yoga-fetch'
-})
-
-const introspectionSchema = await target(
-  'HANDLE_REQUEST',
-  {
-    input: 'http://d/graphql',
-    init: {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        variables: {},
-        query: getIntrospectionQuery({ descriptions: false }),
-      }),
-    }
-  }
-)
-  .then(res => new Response(res.body, res))
-  .then(res => res.json())
-  .then(({ data }) => data)
-
-export const { client } = makeScannarrClient({
-  introspectionSchema,
-  context: async () => ({
-    fetch
-  }),
-  handleRequest: async (input: RequestInfo | URL, init?: RequestInit | undefined) => {
-    const { body, ...rest } = await target(
-      'HANDLE_REQUEST',
-      {
-        input: input.toString(),
-        init: init && {
-          method: init.method,
-          headers: init.headers,
-          body: init.body
-        }
-      }
-    )
-
-    return new Response(
-      body,
-      rest
-    )
   }
 })
+
+const client = new Client({
+  url: 'http://d/graphql',
+  exchanges: [devtoolsExchange, cache as Exchange, fetchExchange],
+  fetchSubscriptions: true,
+  fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
+    const { body, headers } = await handleRequest(input, init)
+    return new Response(body, { headers })
+  }
+})
+
+export default client

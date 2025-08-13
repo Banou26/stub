@@ -1,39 +1,47 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
 
-// import schema from './src/graphql'
+import { defineConfig } from '@eddeee888/gcg-typescript-resolver-files'
 
-import scannarSchema from 'scannarr/src/graphql/index'
-
-// const config: CodegenConfig = {
-//   schema,
-//   generates: {
-//     './src/generated/graphql.ts': {
-//       plugins: ['typescript', 'typescript-resolvers', 'typescript-document-nodes'],
-//       config: {
-//         useTypeImports: true,
-//         contextType: '../server#Context'
-//       }
-//     },
-//     './src/generated/graphql.schema.json': {
-//       plugins: ['introspection']
-//     }
-//   },
-//   ignoreNoDocuments: true,
-// }
+import schema from './prisma/gql-schema'
 
 const config: CodegenConfig = {
-  schema: [scannarSchema],
-  documents: ['src/**/*.ts', 'src/**/*.tsx'],
+  schema,
   generates: {
-    './src/generated/': {
-      preset: 'client',
-      presetConfig: {
-        gqlTagName: 'gql',
-        fragmentMasking: false
+    './src/generated/schema': defineConfig({
+      resolverGeneration: 'disabled'
+    }),
+    './src/generated/graphql.ts': {
+      plugins: [
+        'typescript',
+        'typescript-resolvers',
+        'typescript-document-nodes',
+        // {
+        //   add: {
+        //     content: `import { Uri } from '../utils/uri'`
+        //   }
+        // }
+      ],
+      config: {
+        useTypeImports: true,
+        contextType: '../worker/yoga#ServerContext',
+        scalars: {
+          // Uri: 'Uri'
+        }
+      }
+    },
+    './src/generated/graphql.schema.json': {
+      plugins: [
+        // 'introspection',
+        'urql-introspection'
+      ],
+      config: {
+        scalars: {
+          // Uri: 'Uri'
+        }
       }
     }
   },
-  ignoreNoDocuments: true
+  ignoreNoDocuments: true,
 }
 
 export default config

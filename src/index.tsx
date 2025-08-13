@@ -1,14 +1,10 @@
-/// <reference types="@emotion/react/types/css-prop" />
-import './polyfill'
-import './vite-hmr'
-import { css, Global } from '@emotion/react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { css, Global } from '@emotion/react'
 import { Provider } from 'urql'
 
-import Mount from './components'
-import { client } from './urql'
-
+import './worker.ts'
+import client from './urql'
 
 const style = css`
   @import url('/style.css');
@@ -60,14 +56,12 @@ const style = css`
   }
 `
 
-
 const root = createRoot(document.body.appendChild(document.createElement('div')))
 
 root.render(
-  // <StrictMode>
-  <Provider value={client}>
-    <Global styles={style}/>
-    <Mount/>
-  </Provider>
-  // </StrictMode>
+  <StrictMode>
+    <Provider value={client}>
+      <Global styles={style}/>
+    </Provider>
+  </StrictMode>
 )

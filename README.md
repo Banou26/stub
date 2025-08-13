@@ -2,7 +2,13 @@
 
 Shows, Movies, Anime, all in one place from your browser
 
-<!-- 
+Decisions to impl:
+
+Sanitize data from the external sources handler, aka db side, not from the react UI
+Offer markdown from the graphql API, not compute it from the react UI
+
+
+<!--
 
 ## Dev steps:
 

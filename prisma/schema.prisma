@@ -1,0 +1,224 @@
+generator client {
+  provider               = "prisma-client"
+  previewFeatures        = ["queryCompiler", "driverAdapters", "typedSql"]
+  output                 = "../src/worker/prisma/generated"
+  runtime                = "workerd"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Media {
+  /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
+  uid      String  @id @unique
+  /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
+  origin   String
+  /// An id that references a specific resource within the origin space
+  id       String
+  /// An url to the media resource
+  url      String?
+  /// The language of the media resource
+  language String
+
+  /// Links to external/other resources related to itself
+  handles  Media[] @relation("mediaHandles")
+  handleOf Media[] @relation("mediaHandles")
+
+  title            String
+  type             MediaType?
+  status           MediaStatus?
+  shortDescription String?
+  description      String?
+
+  trailers      MediaTrailer[]
+  covers        MediaCover[]
+  banners       MediaBanner[]
+  externalLinks String?
+
+  averageScore Int?
+  popularity   Int?
+
+  initialReleaseDate DateTime?
+  startDate          DateTime?
+  endDate            DateTime?
+  isAdult            Boolean?
+  episodeCount       Int?
+
+  episodes Episode[]
+
+  @@unique([origin, id])
+  @@unique([origin, id, language])
+  @@index([uid])
+  @@index([origin, id])
+  @@index([origin, id, language])
+  @@map("media")
+}
+
+model MediaTrailer {
+  id String @id @default(uuid())
+
+  url       String
+  thumbnail String?
+
+  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
+  mediaUid String?
+
+  @@map("mediaTrailer")
+}
+
+model MediaCover {
+  id String @id @default(uuid())
+
+  url    String
+  height Int?
+  width  Int?
+  /// Average #hex color of cover image
+  color  String?
+
+  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
+  mediaUid String?
+
+  @@map("mediaCover")
+}
+
+model MediaBanner {
+  id String @id @default(uuid())
+
+  url    String
+  height Int?
+  width  Int?
+  /// Average #hex color of cover image
+  color  String?
+
+  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
+  mediaUid String?
+
+  @@map("mediaBanner")
+}
+
+enum MediaType {
+  TV
+  MOVIE
+  ANIME
+  /// Special episodes that have been included in DVD/Blu-ray releases, picture dramas, pilots, etc
+  SPECIAL
+  /// (Original Video Animation) Anime that have been released directly on
+  /// DVD/Blu-ray without originally going through a theatrical release or
+  /// television broadcast
+  OVA
+  /// (Original Net Animation) Anime that have been originally released online or are only available through streaming services.
+  ONA
+  /// Live action media such as movies or TV show
+  LIVE_ACTION
+}
+
+enum MediaStatus {
+  /// Has completed and is no longer being released
+  FINISHED
+
+  /// Currently releasing
+  RELEASING
+
+  /// To be released at a later date
+  NOT_YET_RELEASED
+
+  /// Ended before the work could be finished
+  CANCELLED
+
+  /// Is currently paused from releasing and will resume at a later date
+  HIATUS
+}
+
+model Episode {
+  /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
+  uid      String  @id @unique
+  /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
+  origin   String
+  /// An id that references a specific resource within the origin space
+  id       String
+  /// An url to the media resource
+  url      String?
+  /// The language of the media resource
+  language String
+
+  title            String
+  shortDescription String?
+  description      String?
+
+  releaseDate    DateTime?
+  relativeNumber Int?
+  absoluteNumber Int?
+  thumbnails     EpisodeThumbnail[]
+
+  playbackSources PlaybackSource[]
+
+  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  /// gql-omit
+  mediaUid String?
+
+  @@unique([origin, id])
+  @@unique([origin, id, language])
+  @@index([uid])
+  @@index([origin, id])
+  @@index([origin, id, language])
+  @@map("episode")
+}
+
+model EpisodeThumbnail {
+  id String @id @default(uuid())
+
+  url    String
+  height Int?
+  width  Int?
+  /// Average #hex color of cover image
+  color  String?
+
+  Episode    Episode? @relation(fields: [episodeUid], references: [uid])
+  /// gql-omit
+  episodeUid String?
+
+  @@map("episodeThumbnail")
+}
+
+model PlaybackSource {
+  /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
+  uid      String  @id @unique
+  /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
+  origin   String
+  /// An id that references a specific resource within the origin space
+  id       String
+  /// An url to the media resource
+  url      String?
+  /// The language of the media resource
+  language String
+
+  type PlaybackSourceType
+
+  /// JSON data for custom players
+  data Json?
+
+  Episode    Episode? @relation(fields: [episodeUid], references: [uid])
+  /// gql-omit
+  episodeUid String?
+
+  @@unique([origin, id])
+  @@unique([origin, id, language])
+  @@index([uid])
+  @@index([origin, id])
+  @@index([origin, id, language])
+  @@map("playbackSource")
+}
+
+enum PlaybackSourceType {
+  IFRAME
+  CUSTOM
+  OTHER
+}

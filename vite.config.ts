@@ -1,54 +1,23 @@
-import path from 'path'
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import preact from '@preact/preset-vite'
-import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 
-import polyfills from './vite-plugin-node-stdlib-browser.cjs'
+import { prismaBrowserHack } from './vite-plugin-prisma-hack'
 
-const resolveFixup = {
-  name: 'resolve-fixup',
-  setup(build) {
-    build.onResolve({ filter: /react-virtualized/ }, () => ({
-      path: path.resolve('./node_modules/react-virtualized/dist/umd/react-virtualized.js')
-    }))
-  }
-}
-
-export default defineConfig((env) => ({
+export default defineConfig((_) => ({
   build: {
     target: 'esnext',
-    outDir: 'build',
-    rollupOptions: {
-      plugins: [
-        rollupNodePolyFill()
-      ]
-    }
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      plugins: [resolveFixup]
-    }
+    outDir: 'build'
   },
   worker: {
     format: 'es'
   },
-  define: env.mode === 'development' ? {} : {
-    'process.env.NODE_ENV': JSON.stringify('production')
+  optimizeDeps: {
+    include: ['wa-sqlite']
   },
   plugins: [
-    env.mode === 'development'
-      ? (
-        react({
-          jsxImportSource: '@emotion/react'
-        })
-      )
-      : (
-        preact({
-          jsxImportSource: '@emotion/react'
-        })
-      ),
-    polyfills()
+    prismaBrowserHack(),
+    react({
+      jsxImportSource: '@emotion/react'
+    })
   ]
 }))
