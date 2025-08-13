@@ -1,0 +1,11 @@
+input MediaInput {
+  uid: ID!
+  origin: String!
+  language: String!
+  id: ID!
+  url: String!
+}
+
+extend type Query {
+  media(input: MediaInput!): Media
+}

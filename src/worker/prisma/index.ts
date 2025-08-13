@@ -62,6 +62,6 @@ const prismaClient =
         }
       }
     })
-await prismaClient.$executeRawUnsafe(SQLSchema)
+await prismaClient.$executeRawUnsafe(SQLSchema as string)
 
 export default prismaClient

@@ -18,12 +18,12 @@ model Media {
   uid      String  @id @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
   origin   String
+  /// The language of the media resource
+  language String
   /// An id that references a specific resource within the origin space
   id       String
   /// An url to the media resource
   url      String?
-  /// The language of the media resource
-  language String
 
   /// Links to external/other resources related to itself
   handles  Media[] @relation("mediaHandles")
@@ -142,12 +142,12 @@ model Episode {
   uid      String  @id @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
   origin   String
+  /// The language of the media resource
+  language String
   /// An id that references a specific resource within the origin space
   id       String
   /// An url to the media resource
   url      String?
-  /// The language of the media resource
-  language String
 
   title            String
   shortDescription String?
@@ -193,12 +193,12 @@ model PlaybackSource {
   uid      String  @id @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
   origin   String
+  /// The language of the media resource
+  language String
   /// An id that references a specific resource within the origin space
   id       String
   /// An url to the media resource
   url      String?
-  /// The language of the media resource
-  language String
 
   type PlaybackSourceType
 
