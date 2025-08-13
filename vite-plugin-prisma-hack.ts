@@ -11,6 +11,13 @@ const pluginBase: Plugin = {
       )
       return { code: transformedCode, map: null }
     }
+    if (id.includes('wasm-compiler-edge')) {
+      const transformedCode = code.replace(
+        /SharedArrayBuffer/g,
+        `class __DUMMY_CLASS__{}`
+      )
+      return { code: transformedCode, map: null }
+    }
     return null
   }
 }
