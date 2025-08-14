@@ -35,4 +35,15 @@ const client = new Client({
   }
 })
 
+console.log(
+  await client.query(
+    `query($input: MediaInput!) { media(input: $input) { uid } }`,
+    {
+      input: {
+        uid: ''
+      }
+    }
+  )
+)
+
 export default client

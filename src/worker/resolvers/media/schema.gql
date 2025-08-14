@@ -1,9 +1,9 @@
 input MediaInput {
-  uid: ID!
-  origin: String!
-  language: String!
-  id: ID!
-  url: String!
+  uid: ID
+  origin: ID
+  language: String
+  id: ID
+  url: String
 }
 
 extend type Query {

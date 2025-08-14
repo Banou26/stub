@@ -5,7 +5,12 @@ import _schema from './schema.gql?raw'
 export const schema = _schema as string
 
 export const resolvers = {
-  Query: {},
+  Query: {
+    media: async (_parent, { input }, ctx) => {
+      console.log('query media', _parent, input, ctx)
+      throw new Error('Not implemented')
+    }
+  },
   Mutation: {},
   Subscription: {},
   Media: {
