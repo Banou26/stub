@@ -6,6 +6,36 @@ input MediaInput {
   url: String
 }
 
-extend type Query {
+input MediaPageInput {
+  nodes: [MediaInput!]
+  search: String
+  status: MediaStatus
+}
+
+type MediaPage {
+  """The current page"""
+  firstPageCursor: String
+  """The current page"""
+  previousPageCursor: String
+  """The current page"""
+  currentPageCursor: String
+  """The first page"""
+  nextPageCursor: String
+  """The last page cursor"""
+  lastPageCursor: String
+  """Total number of items on the current page"""
+  currentPageNodeCount: Int
+  """The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""
+  totalNodeCount: Int
+  """Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""
+  beforeCurrentPageNodeCount: Int
+  """Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""
+  afterCurrentPageNodeCount: Int
+  """The media page nodes"""
+  nodes: [Media!]!
+}
+
+extend type Subscription {
   media(input: MediaInput!): Media
+  mediaPage(input: MediaPageInput!): MediaPage!
 }

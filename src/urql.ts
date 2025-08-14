@@ -35,15 +35,14 @@ const client = new Client({
   }
 })
 
-console.log(
-  await client.query(
-    `query($input: MediaInput!) { media(input: $input) { uid } }`,
-    {
-      input: {
-        uid: ''
-      }
+const subscription = client.subscription(
+  `subscription($input: MediaInput!) { media(input: $input) { uid } }`,
+  {
+    input: {
+      uid: ''
     }
-  )
+  }
 )
+subscription.subscribe((result) => console.log('subscription result', result))
 
 export default client

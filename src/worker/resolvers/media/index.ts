@@ -1,18 +1,20 @@
-import { Resolvers } from 'src/generated/schema/types.generated'
+import { Media, Resolvers } from 'src/generated/schema/types.generated'
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 
 export const schema = _schema as string
 
 export const resolvers = {
-  Query: {
-    media: async (_parent, { input }, ctx) => {
-      console.log('query media', _parent, input, ctx)
-      throw new Error('Not implemented')
+  Query: {},
+  Mutation: {},
+  Subscription: {
+    media: {
+      subscribe: async function*(_parent, { input }, ctx) {
+        console.log('query media', _parent, input, ctx)
+        throw new Error('Not implemented')
+      }
     }
   },
-  Mutation: {},
-  Subscription: {},
   Media: {
     uid: (parent) => parent.uid,
     origin: (parent) => parent.origin,

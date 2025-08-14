@@ -8,12 +8,16 @@ export type ServerContext = {
 
 }
 
+export type UserContext = {
+
+}
+
 const schema = createSchema<ServerContext>({
   typeDefs,
   resolvers
 })
 
-const yoga = createYoga<ServerContext>({
+const yoga = createYoga<ServerContext, UserContext>({
   schema,
   maskedErrors: false,
   plugins: [useDeferStream()]
