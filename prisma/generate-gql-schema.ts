@@ -1,6 +1,5 @@
 import type { Field, Model } from '@prisma/dmmf'
 
-// @ts-expect-error
 import { readFile, writeFile } from 'fs/promises'
 import internals from '@prisma/internals'
 
@@ -16,7 +15,7 @@ async function generateGraphQLSchema() {
     'Int': 'Int',
     'Float': 'Float',
     'Boolean': 'Boolean',
-    'DateTime': 'DateTime',
+    'DateTime': 'Date',
     'Json': 'JSON',
     'Decimal': 'Float',
     'BigInt': 'String',

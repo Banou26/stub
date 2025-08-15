@@ -9,7 +9,7 @@ export const resolvers = {
   Mutation: {},
   Subscription: {
     media: {
-      subscribe: async function*(_parent, { input }, ctx) {
+      subscribe: async function* (_parent, { input }, ctx) {
         console.log('query media', _parent, input, ctx)
         throw new Error('Not implemented')
       }

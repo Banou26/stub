@@ -1,10 +1,12 @@
+import type { YogaInitialContext } from 'graphql-yoga'
+
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
 import { createSchema, createYoga } from 'graphql-yoga'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 
-export type ServerContext = {
+export type ServerContext = YogaInitialContext & {
 
 }
 

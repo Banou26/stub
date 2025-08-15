@@ -7,22 +7,37 @@ input MediaInput {
 }
 
 input MediaPageInput {
+"""Filter by media IDs"""
   nodes: [MediaInput!]
+  """Filter by search terms"""
   search: String
+  """Filter by the media's current release status"""
   status: MediaStatus
+
+  """Filter by the start date of the media"""
+  startDate: Date
+  """Filter by the end date of the media"""
+  endDate: Date
+
+  """Cursor from where to start"""
+  at: Id
+  """How many pages before the cursor to return"""
+  before: Int
+  """How many pages after the cursor to return"""
+  after: Int
 }
 
 type MediaPage {
   """The current page"""
-  firstPageCursor: String
+  firstPageCursor: Id
   """The current page"""
-  previousPageCursor: String
+  previousPageCursor: Id
   """The current page"""
-  currentPageCursor: String
+  currentPageCursor: Id
   """The first page"""
-  nextPageCursor: String
+  nextPageCursor: Id
   """The last page cursor"""
-  lastPageCursor: String
+  lastPageCursor: Id
   """Total number of items on the current page"""
   currentPageNodeCount: Int
   """The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""

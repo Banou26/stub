@@ -1,3 +1,5 @@
+import type { YogaInitialContext } from 'graphql-yoga'
+
 import type { Resolvers } from '../generated/schema/types.generated'
 
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -8,7 +10,7 @@ import * as extractors from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from '../utils/fetch'
 
-export type ExtractorServerContext = {
+export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
   client: Client
 }
