@@ -80,17 +80,25 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
       : data.status === 'Finished Airing' ? MediaStatus.Finished
       : undefined,
     startDate:
-      Temporal.PlainDate.from({
-        year: data.aired.prop.from.year,
-        month: data.aired.prop.from.month + 1,
-        day: data.aired.prop.from.day + 1
-      }),
+      Temporal
+        .PlainDateTime
+        .from({
+          year: data.aired.prop.from.year,
+          month: data.aired.prop.from.month + 1,
+          day: data.aired.prop.from.day + 1
+        })
+        .toZonedDateTime('UTC')
+        .toString(),
     endDate:
-      Temporal.PlainDate.from({
-        year: data.aired.prop.to.year,
-        month: data.aired.prop.to.month + 1,
-        day: data.aired.prop.to.day + 1
-      }),
+      Temporal
+        .PlainDateTime
+        .from({
+          year: data.aired.prop.to.year,
+          month: data.aired.prop.to.month + 1,
+          day: data.aired.prop.to.day + 1
+        })
+        .toZonedDateTime('UTC')
+        .toString(),
     trailers:
       data.trailer?.youtube_id
         ? [{
@@ -99,7 +107,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
           url: `https://www.youtube.com/watch?v=${data.trailer.youtube_id}`,
           thumbnail: data.trailer.images.image_url
         } as MediaTrailer]
-      : undefined
+      : []
   } satisfies Media
 }
 

@@ -43,10 +43,10 @@ model Media {
   averageScore Int?
   popularity   Int?
 
-  startDate          DateTime?
-  endDate            DateTime?
-  isAdult            Boolean?
-  episodeCount       Int?
+  startDate    DateTime?
+  endDate      DateTime?
+  isAdult      Boolean?
+  episodeCount Int?
 
   episodes Episode[]
 

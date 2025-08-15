@@ -6,35 +6,34 @@ const config: CodegenConfig = {
   schema: './**/*.gql',
   generates: {
     './src/generated/schema': defineConfig({
-      resolverGeneration: 'disabled'
+      resolverGeneration: 'disabled',
+      scalarsOverrides: {
+        Date: {
+          type: 'string'
+        }
+      }
     }),
     './src/generated/graphql.ts': {
       plugins: [
         'typescript',
         'typescript-resolvers',
         'typescript-document-nodes',
-        // {
-        //   add: {
-        //     content: `import { Uri } from '../utils/uri'`
-        //   }
-        // }
       ],
       config: {
         useTypeImports: true,
         contextType: '../worker/yoga#ServerContext',
         scalars: {
-          // Uri: 'Uri'
+          Date: 'string'
         }
       }
     },
     './src/generated/graphql.schema.json': {
       plugins: [
-        // 'introspection',
         'urql-introspection'
       ],
       config: {
         scalars: {
-          // Uri: 'Uri'
+          Date: 'string'
         }
       }
     }

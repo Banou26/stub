@@ -1,7 +1,8 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 
-import type { Resolvers } from '../generated/schema/types.generated'
+import type { Media, Resolvers } from '../generated/schema/types.generated'
 
+import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
 import { Client, fetchExchange } from 'urql'
 
@@ -9,6 +10,8 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
+import { getNamedType } from 'graphql'
+import prismaClient from './prisma'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -37,7 +40,7 @@ export const extractors =
                 Mutation: {
                 },
                 Subscription: {
-                  media: { subscribe: async function*() {} },
+                  // media: { subscribe: async function*() {} },
                   // mediaPage: { subscribe: async function*() {} },
                   // episode: { subscribe: async function*() {} },
                   // episodePage: { subscribe: async function*() {} },
@@ -47,7 +50,73 @@ export const extractors =
               } satisfies Resolvers,
               extractor.resolvers
             ) as Resolvers
-        })
+        }),
+        plugins: [
+          {
+            onPluginInit: ({ addPlugin }) => {
+              addPlugin(useOnResolve(({ args, context, info }) => {
+                if (getNamedType(info.returnType).name === 'Media') {
+                  return async ({ result }) => {
+                    const resolveMedia = async (media: Media) => {
+                      console.log('media', media)
+                      const prismaData = {
+                        ...media,
+                        startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
+                        endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
+                        titles: {
+                          connectOrCreate: []
+                        },
+                        shortDescriptions: {
+                          connectOrCreate: []
+                        },
+                        descriptions: {
+                          connectOrCreate: []
+                        },
+                        handles: {
+                          connectOrCreate: []
+                        },
+                        handleOf: {
+                          connectOrCreate: []
+                        },
+                        trailers: {
+                          connectOrCreate: []
+                        },
+                        covers: {
+                          connectOrCreate: []
+                        },
+                        banners: {
+                          connectOrCreate: []
+                        },
+                        episodes: {
+                          connectOrCreate: []
+                        }
+                      }
+                      // try {
+                      //   const upsertedMedia = await prismaClient.media.upsert({
+                      //     where: { uri: media.uri },
+                      //     update: prismaData,
+                      //     create: prismaData,
+                      //     include: {
+                      //       episodes: true,
+                      //       handles: true,
+                      //     }
+                      //   })
+                      //   console.log('upsertedMedia', upsertedMedia)
+                      // } catch (error) {
+                      //   console.error('Error upserting media', error)
+                      // }
+                    }
+                    if (Array.isArray(result)) {
+                      await Promise.all(result.map(resolveMedia))
+                    } else {
+                      await resolveMedia(result as Media)
+                    }
+                  }
+                }
+              }))
+            },
+          }
+        ]
       })
 
       const client = new Client({
