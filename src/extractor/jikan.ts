@@ -143,7 +143,7 @@ const getFullSeasonNow = async (context: ExtractorServerContext) => {
   )
 }
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   Query: {},
   Mutation: {},
   Subscription: {
@@ -190,7 +190,7 @@ export const resolvers = {
       }
     },
   }
-} satisfies Resolvers
+}
 
 
 interface MalEntity {

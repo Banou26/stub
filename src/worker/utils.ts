@@ -22,11 +22,7 @@ const { FETCH } = await expose<MainThreadResolvers>(
   { local: globalThis as unknown as Worker, remote: globalThis as unknown as Worker }
 )
 
-const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+export const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const { body, ...rest } = await FETCH(input, init)
   return new Response(body, rest)
-}
-
-export {
-  fetch
 }

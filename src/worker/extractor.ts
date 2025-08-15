@@ -12,7 +12,6 @@ import { fetch } from './utils'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
-  client: Client
 }
 
 export type ExtractorUserContext = {
@@ -55,10 +54,10 @@ export const extractors =
         url: 'http://d/graphql',
         exchanges: [fetchExchange],
         fetchSubscriptions: true,
-        fetch: async (input: RequestInfo | URL, init?: RequestInit | undefined) =>
+        fetch: async (input: Parameters<typeof globalThis.fetch>[0], init: Parameters<typeof globalThis.fetch>[1]) =>
           server.handleRequest(
             new Request(input, init),
-            { fetch, client }
+            { fetch }
           )
       })
 
