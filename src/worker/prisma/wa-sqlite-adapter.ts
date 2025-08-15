@@ -230,35 +230,104 @@ class WaSQLiteQueryable implements SqlQueryable {
           str = sqlite3.str_new(db, query.sql)
           const prepared = await sqlite3.prepare_v2(db, sqlite3.str_value(str))
 
-          if (!prepared || !prepared.stmt) {
+          if (!prepared) {
             throw new Error(`Failed to prepare statement: ${query.sql}`)
           }
 
           stmt = prepared.stmt
+          if (!stmt || stmt === 0) {
+            throw new Error(`Invalid statement handle for SQL: ${query.sql}`)
+          }
 
-          // Bind parameters
-          cleanedArgs.forEach((arg, index) => {
-            const paramIndex = index + 1 // SQLite uses 1-based indexing
-
-            if (arg === null || arg === undefined) {
-              sqlite3.bind_null(stmt, paramIndex)
-            } else if (typeof arg === 'number') {
-              if (Number.isInteger(arg)) {
-                sqlite3.bind_int(stmt, paramIndex, arg)
-              } else {
-                sqlite3.bind_double(stmt, paramIndex, arg)
-              }
-            } else if (typeof arg === 'string') {
-              sqlite3.bind_text(stmt, paramIndex, arg)
-            } else if (arg instanceof Uint8Array) {
-              sqlite3.bind_blob(stmt, paramIndex, arg)
-            } else if (Array.isArray(arg)) {
-              sqlite3.bind_blob(stmt, paramIndex, new Uint8Array(arg))
+          // Verify the statement is valid before proceeding
+          let paramCount = 0
+          try {
+            if (typeof sqlite3.bind_parameter_count === 'function') {
+              paramCount = sqlite3.bind_parameter_count(stmt)
             } else {
-              // Convert to string as fallback
-              sqlite3.bind_text(stmt, paramIndex, String(arg))
+              // Fallback: count ? placeholders in the SQL
+              const matches = query.sql.match(/\?/g)
+              paramCount = matches ? matches.length : 0
             }
-          })
+          } catch (err) {
+            console.error('[wa-sqlite] Error getting parameter count:', err)
+            // If we can't get the parameter count, try to count placeholders
+            const matches = query.sql.match(/\?/g)
+            paramCount = matches ? matches.length : 0
+          }
+          
+          // Debug logging and validation
+          if (paramCount > 0 && cleanedArgs.length !== paramCount) {
+            console.warn('[wa-sqlite] Parameter count mismatch:', {
+              sql: query.sql,
+              expectedParams: paramCount,
+              providedParams: cleanedArgs.length,
+              args: cleanedArgs
+            })
+            
+            // If we have fewer arguments than expected, we need to bind nulls for missing ones
+            if (cleanedArgs.length < paramCount) {
+              // Pad with nulls
+              while (cleanedArgs.length < paramCount) {
+                cleanedArgs.push(null)
+              }
+            }
+          }
+
+          // Reset bindings before setting new ones
+          try {
+            if (typeof sqlite3.reset === 'function') {
+              sqlite3.reset(stmt)
+            }
+            if (typeof sqlite3.clear_bindings === 'function') {
+              sqlite3.clear_bindings(stmt)
+            }
+          } catch (err) {
+            console.warn('[wa-sqlite] Could not reset/clear bindings:', err)
+          }
+
+          // Bind parameters - only bind up to the expected number of parameters
+          const paramsToBind = paramCount > 0 ? Math.min(cleanedArgs.length, paramCount) : cleanedArgs.length
+          for (let i = 0; i < paramsToBind; i++) {
+            const arg = cleanedArgs[i]
+            const paramIndex = i + 1 // SQLite uses 1-based indexing
+
+            try {
+              let bindResult
+              if (arg === null || arg === undefined) {
+                bindResult = sqlite3.bind_null(stmt, paramIndex)
+              } else if (typeof arg === 'number') {
+                if (Number.isInteger(arg)) {
+                  bindResult = sqlite3.bind_int(stmt, paramIndex, arg)
+                } else {
+                  bindResult = sqlite3.bind_double(stmt, paramIndex, arg)
+                }
+              } else if (typeof arg === 'string') {
+                bindResult = sqlite3.bind_text(stmt, paramIndex, arg)
+              } else if (arg instanceof Uint8Array) {
+                bindResult = sqlite3.bind_blob(stmt, paramIndex, arg)
+              } else if (Array.isArray(arg)) {
+                bindResult = sqlite3.bind_blob(stmt, paramIndex, new Uint8Array(arg))
+              } else {
+                // Convert to string as fallback
+                bindResult = sqlite3.bind_text(stmt, paramIndex, String(arg))
+              }
+              
+              // Check if binding was successful
+              if (bindResult !== SQLite.SQLITE_OK) {
+                throw new Error(`Bind failed with code ${bindResult}`)
+              }
+            } catch (bindError) {
+              console.error(`[wa-sqlite] Error binding parameter ${paramIndex}:`, {
+                error: bindError,
+                arg,
+                argType: typeof arg,
+                paramIndex,
+                sql: query.sql
+              })
+              throw new Error(`Failed to bind parameter ${paramIndex}: ${bindError}`)
+            }
+          }
 
           if (executeRaw) {
             // Execute and return affected rows
@@ -317,10 +386,18 @@ class WaSQLiteQueryable implements SqlQueryable {
         } finally {
           // Clean up
           if (stmt) {
-            await sqlite3.finalize(stmt)
+            try {
+              await sqlite3.finalize(stmt)
+            } catch (err) {
+              console.warn('[wa-sqlite] Error finalizing statement:', err)
+            }
           }
           if (str !== null) {
-            sqlite3.str_finish(str)
+            try {
+              sqlite3.str_finish(str)
+            } catch (err) {
+              console.warn('[wa-sqlite] Error finishing string:', err)
+            }
           }
         }
       }
