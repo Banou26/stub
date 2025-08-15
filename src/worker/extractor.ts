@@ -63,51 +63,34 @@ export const extractors =
                         ...media,
                         startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
                         endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
-                        titles: {
-                          connectOrCreate: []
-                        },
-                        shortDescriptions: {
-                          connectOrCreate: []
-                        },
-                        descriptions: {
-                          connectOrCreate: []
-                        },
-                        handles: {
-                          connectOrCreate: []
-                        },
-                        handleOf: {
-                          connectOrCreate: []
-                        },
-                        trailers: {
-                          connectOrCreate: []
-                        },
-                        covers: {
-                          connectOrCreate: []
-                        },
-                        banners: {
-                          connectOrCreate: []
-                        },
-                        episodes: {
-                          connectOrCreate: []
-                        }
+                        titles: undefined,
+                        shortDescriptions: undefined,
+                        descriptions: undefined,
+                        handles: undefined,
+                        handleOf: undefined,
+                        trailers: undefined,
+                        covers: undefined,
+                        banners: undefined,
+                        episodes: undefined
                       }
-                      // try {
-                      //   const upsertedMedia = await prismaClient.media.upsert({
-                      //     where: { uri: media.uri },
-                      //     update: prismaData,
-                      //     create: prismaData,
-                      //     include: {
-                      //       episodes: true,
-                      //       handles: true,
-                      //     }
-                      //   })
-                      //   console.log('upsertedMedia', upsertedMedia)
-                      // } catch (error) {
-                      //   console.error('Error upserting media', error)
-                      // }
+                      try {
+                        const upsertedMedia = await prismaClient.media.upsert({
+                          where: { uri: media.uri },
+                          update: prismaData,
+                          create: prismaData,
+                          include: {
+                            episodes: true,
+                            handles: true,
+                          }
+                        })
+                        console.log('upsertedMedia', upsertedMedia)
+                      } catch (error) {
+                        console.error('Error upserting media', error)
+                      }
                     }
                     if (Array.isArray(result)) {
-                      await Promise.all(result.map(resolveMedia))
+                      await Promise.all(result.slice(0, 1).map(resolveMedia))
+                      // await Promise.all(result.map(resolveMedia))
                     } else {
                       await resolveMedia(result as Media)
                     }

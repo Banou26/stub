@@ -14,6 +14,7 @@ import {
 } from '@prisma/driver-adapter-utils'
 import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs'
 import * as SQLite from 'wa-sqlite'
+import { Mutex } from 'async-mutex'
 
 const debug = Debug('prisma:driver-adapter:wa-sqlite')
 
@@ -415,8 +416,8 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
     query: '[prisma:query]',
   }
   
-  private transactionCount = 0
-  private hasActiveTransaction = false
+  private transactionMutex = new Mutex()
+  private activeTransaction: Transaction | null = null
 
   constructor(adapter: WaSQLiteAdapter, private readonly release?: () => Promise<void>) {
     super(adapter)
@@ -455,45 +456,49 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
     const tag = '[js::startTransaction]'
     debug('%s options: %O', tag, options)
 
-    const { sqlite3, db } = this.adapter
+    // Use mutex to ensure transactions are serialized
+    const releaser = await this.transactionMutex.acquire()
     
-    // Track if this is a nested transaction
-    const isNested = this.hasActiveTransaction
-    
-    if (!isNested) {
+    try {
+      const { sqlite3, db } = this.adapter
+      
       // Start a new database transaction
       await sqlite3.exec(db, 'BEGIN')
-      this.hasActiveTransaction = true
-      this.transactionCount = 1
-    } else {
-      // This is a nested transaction request
-      this.transactionCount++
-    }
-    
-    // Create transaction object that knows if it's nested
-    const tx = new WaSQLiteTransaction(this.adapter, options, isNested)
-    
-    // Track when transactions complete
-    const originalCommit = tx.commit.bind(tx)
-    const originalRollback = tx.rollback.bind(tx)
-    
-    tx.commit = async () => {
-      await originalCommit()
-      this.transactionCount--
-      if (this.transactionCount === 0) {
-        this.hasActiveTransaction = false
+      
+      // Create transaction object
+      const tx = new WaSQLiteTransaction(this.adapter, options, false)
+      
+      // Store the active transaction
+      this.activeTransaction = tx
+      
+      // Wrap commit and rollback to release the mutex
+      const originalCommit = tx.commit.bind(tx)
+      const originalRollback = tx.rollback.bind(tx)
+      
+      tx.commit = async () => {
+        try {
+          await originalCommit()
+        } finally {
+          this.activeTransaction = null
+          releaser()
+        }
       }
-    }
-    
-    tx.rollback = async () => {
-      await originalRollback()
-      this.transactionCount--
-      if (this.transactionCount === 0) {
-        this.hasActiveTransaction = false
+      
+      tx.rollback = async () => {
+        try {
+          await originalRollback()
+        } finally {
+          this.activeTransaction = null
+          releaser()
+        }
       }
+      
+      return tx
+    } catch (error) {
+      // If we fail to create the transaction, release the mutex
+      releaser()
+      throw error
     }
-    
-    return tx
   }
 
   async dispose(): Promise<void> {
