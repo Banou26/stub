@@ -1,4 +1,4 @@
-import type { Resolvers as MainThreadResolvers } from '../worker.ts'
+import type { Resolvers as MainThreadResolvers } from '../worker'
 
 import { expose } from 'osra'
 
@@ -7,10 +7,10 @@ import { yoga } from './yoga'
 export const resolvers = {
   HANDLE_REQUEST: async (input: RequestInfo | URL, init?: RequestInit) => {
     const { headers, body, method } = init ?? {}
-    const res = await yoga.handleRequest(new Request(input, { headers, body, method }), {})
+    const response = await yoga.handleRequest(new Request(input, { headers, body, method }), {})
     return {
-      headers: Object.fromEntries(res.headers.entries()),
-      body: res.body
+      headers: Object.fromEntries(response.headers.entries()),
+      body: response.body
     }
   }
 }

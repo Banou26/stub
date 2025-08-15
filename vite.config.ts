@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 import { prismaBrowserHack } from './vite-plugin-prisma-hack'
 
@@ -15,6 +16,7 @@ export default defineConfig((_) => ({
     include: ['wa-sqlite']
   },
   plugins: [
+    nodePolyfills(),
     prismaBrowserHack(),
     react({
       jsxImportSource: '@emotion/react'

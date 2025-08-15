@@ -34,7 +34,8 @@
     "prisma": "^6.13.0",
     "shx": "^0.4.0",
     "typescript": "^5.9.2",
-    "vite": "^7.0.6"
+    "vite": "^7.0.6",
+    "vite-plugin-node-polyfills": "^0.24.0"
   },
   "scripts": {
     "dev": "npm run build-prisma && vite --port 4560",
