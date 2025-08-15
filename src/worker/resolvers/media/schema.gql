@@ -1,5 +1,5 @@
 input MediaInput {
-  uid: ID
+  uri: ID
   origin: ID
   language: String
   id: ID

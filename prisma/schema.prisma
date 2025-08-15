@@ -14,26 +14,26 @@ datasource db {
 }
 
 model Media {
-  /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
-  uid      String  @id @unique
+  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
+  uri    String  @id @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
-  origin   String
-  /// The language of the media resource
-  language String
+  origin String
   /// An id that references a specific resource within the origin space
-  id       String
+  id     String
   /// An url to the media resource
-  url      String?
+  url    String?
+
+  aggregated Boolean? @default(false)
 
   /// Links to external/other resources related to itself
   handles  Media[] @relation("mediaHandles")
   handleOf Media[] @relation("mediaHandles")
 
-  title            String
-  type             MediaType?
-  status           MediaStatus?
-  shortDescription String?
-  description      String?
+  titles            MediaTitle[]
+  type              MediaType?
+  status            MediaStatus?
+  shortDescriptions MediaShortDescription[]
+  descriptions      MediaDescription[]
 
   trailers      MediaTrailer[]
   covers        MediaCover[]
@@ -43,7 +43,6 @@ model Media {
   averageScore Int?
   popularity   Int?
 
-  initialReleaseDate DateTime?
   startDate          DateTime?
   endDate            DateTime?
   isAdult            Boolean?
@@ -52,22 +51,60 @@ model Media {
   episodes Episode[]
 
   @@unique([origin, id])
-  @@unique([origin, id, language])
-  @@index([uid])
+  @@index([uri])
   @@index([origin, id])
-  @@index([origin, id, language])
   @@map("media")
 }
 
-model MediaTrailer {
+model MediaTitle {
   id String @id @default(uuid())
 
-  url       String
+  language String
+  title    String
+  Media    Media?  @relation(fields: [mediaUri], references: [uri])
+  mediaUri String?
+
+  @@map("mediaTitle")
+}
+
+model MediaShortDescription {
+  id String @id @default(uuid())
+
+  language         String
+  shortDescription String
+  Media            Media?  @relation(fields: [mediaUri], references: [uri])
+  mediaUri         String?
+
+  @@map("mediaShortDescription")
+}
+
+model MediaDescription {
+  id String @id @default(uuid())
+
+  language    String
+  description String
+  Media       Media?  @relation(fields: [mediaUri], references: [uri])
+  mediaUri    String?
+
+  @@map("mediaDescription")
+}
+
+model MediaTrailer {
+  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
+  uri    String  @id @unique
+  /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
+  origin String
+  /// An id that references a specific resource within the origin space
+  id     String
+  /// An url to the media resource
+  url    String?
+
+  language  String
   thumbnail String?
 
-  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  Media    Media?  @relation(fields: [mediaUri], references: [uri])
   /// gql-omit
-  mediaUid String?
+  mediaUri String?
 
   @@map("mediaTrailer")
 }
@@ -75,15 +112,16 @@ model MediaTrailer {
 model MediaCover {
   id String @id @default(uuid())
 
-  url    String
-  height Int?
-  width  Int?
+  language String
+  url      String
+  height   Int?
+  width    Int?
   /// Average #hex color of cover image
-  color  String?
+  color    String?
 
-  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  Media    Media?  @relation(fields: [mediaUri], references: [uri])
   /// gql-omit
-  mediaUid String?
+  mediaUri String?
 
   @@map("mediaCover")
 }
@@ -91,15 +129,16 @@ model MediaCover {
 model MediaBanner {
   id String @id @default(uuid())
 
-  url    String
-  height Int?
-  width  Int?
+  language String
+  url      String
+  height   Int?
+  width    Int?
   /// Average #hex color of cover image
-  color  String?
+  color    String?
 
-  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  Media    Media?  @relation(fields: [mediaUri], references: [uri])
   /// gql-omit
-  mediaUid String?
+  mediaUri String?
 
   @@map("mediaBanner")
 }
@@ -138,20 +177,20 @@ enum MediaStatus {
 }
 
 model Episode {
-  /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
-  uid      String  @id @unique
+  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
+  uri    String  @id @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
-  origin   String
-  /// The language of the media resource
-  language String
+  origin String
   /// An id that references a specific resource within the origin space
-  id       String
+  id     String
   /// An url to the media resource
-  url      String?
+  url    String?
 
-  title            String
-  shortDescription String?
-  description      String?
+  aggregated Boolean @default(false)
+
+  titles            EpisodeTitle[]
+  shortDescriptions EpisodeShortDescription[]
+  descriptions      EpisodeDescription[]
 
   releaseDate    DateTime?
   relativeNumber Int?
@@ -160,16 +199,47 @@ model Episode {
 
   playbackSources PlaybackSource[]
 
-  Media    Media?  @relation(fields: [mediaUid], references: [uid])
+  Media    Media?  @relation(fields: [mediaUri], references: [uri])
   /// gql-omit
-  mediaUid String?
+  mediaUri String?
 
   @@unique([origin, id])
-  @@unique([origin, id, language])
-  @@index([uid])
+  @@index([uri])
   @@index([origin, id])
-  @@index([origin, id, language])
   @@map("episode")
+}
+
+model EpisodeTitle {
+  id String @id @default(uuid())
+
+  language   String
+  title      String
+  Episode    Episode? @relation(fields: [episodeUri], references: [uri])
+  episodeUri String?
+
+  @@map("episodeTitle")
+}
+
+model EpisodeShortDescription {
+  id String @id @default(uuid())
+
+  language         String
+  shortDescription String
+  Episode          Episode? @relation(fields: [episodeUri], references: [uri])
+  episodeUri       String?
+
+  @@map("episodeShortDescription")
+}
+
+model EpisodeDescription {
+  id String @id @default(uuid())
+
+  language    String
+  description String
+  Episode     Episode? @relation(fields: [episodeUri], references: [uri])
+  episodeUri  String?
+
+  @@map("episodeDescription")
 }
 
 model EpisodeThumbnail {
@@ -181,39 +251,35 @@ model EpisodeThumbnail {
   /// Average #hex color of cover image
   color  String?
 
-  Episode    Episode? @relation(fields: [episodeUid], references: [uid])
+  Episode    Episode? @relation(fields: [episodeUri], references: [uri])
   /// gql-omit
-  episodeUid String?
+  episodeUri String?
 
   @@map("episodeThumbnail")
 }
 
 model PlaybackSource {
-  /// Uri consists of the `origin`, `language` and `id` fields in the format `origin:language:id`
-  uid      String  @id @unique
+  /// Uri consists of the `origin` and `id` fields in the format `origin:id`
+  uri    String  @id @unique
   /// String that is used to target a specific origin, e.g `google` or `yt` for youtube
-  origin   String
-  /// The language of the media resource
-  language String
+  origin String
   /// An id that references a specific resource within the origin space
-  id       String
+  id     String
   /// An url to the media resource
-  url      String?
+  url    String?
 
   type PlaybackSourceType
 
   /// JSON data for custom players
   data Json?
 
-  Episode    Episode? @relation(fields: [episodeUid], references: [uid])
+  Episode    Episode? @relation(fields: [episodeUri], references: [uri])
   /// gql-omit
-  episodeUid String?
+  episodeUri String?
 
   @@unique([origin, id])
-  @@unique([origin, id, language])
-  @@index([uid])
+  @@index([uri])
   @@index([origin, id])
-  @@index([origin, id, language])
   @@map("playbackSource")
 }
 

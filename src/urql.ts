@@ -12,9 +12,9 @@ import { handleRequest } from './worker'
 import introspection from './generated/graphql.schema.json'
 
 export const keyResolvers = {
-  Media: (media) => (media as Media).uid,
-  Episode: (episode) => (episode as Episode).uid,
-  PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uid,
+  Media: (media) => (media as Media).uri,
+  Episode: (episode) => (episode as Episode).uri,
+  PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uri,
 } satisfies KeyingConfig
 
 const cache = cacheExchange({
@@ -36,10 +36,10 @@ const client = new Client({
 })
 
 const subscription = client.subscription(
-  `subscription($input: MediaInput!) { media(input: $input) { uid } }`,
+  `subscription($input: MediaPageInput!) { mediaPage(input: $input) { nodes { uri } } }`,
   {
     input: {
-      uid: ''
+      status: 'RELEASING'
     }
   }
 )

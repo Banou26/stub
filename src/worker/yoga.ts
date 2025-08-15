@@ -14,15 +14,13 @@ export type UserContext = {
 
 }
 
-const schema = createSchema<ServerContext>({
+export const schema = createSchema<Omit<ServerContext, keyof YogaInitialContext>>({
   typeDefs,
   resolvers
 })
 
-const yoga = createYoga<ServerContext, UserContext>({
+export const yoga = createYoga<Omit<ServerContext, keyof YogaInitialContext>, UserContext>({
   schema,
   maskedErrors: false,
   plugins: [useDeferStream()]
 })
-
-export default yoga

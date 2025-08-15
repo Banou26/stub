@@ -1,9 +1,10 @@
-import type { Resolvers as WorkerResolvers } from './worker/index'
+import type { Resolvers as WorkerResolvers } from './worker/utils'
 
 import { expose }  from 'osra'
 
 // @ts-expect-error
 import Worker from './worker/index?worker'
+// import { fetch } from './utils/fetch'
 
 const worker = new Worker()
 

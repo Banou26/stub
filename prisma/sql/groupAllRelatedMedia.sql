@@ -2,45 +2,45 @@
 
 WITH RECURSIVE graph AS (
   -- Start with nodes that have the smallest UID in their component
-  SELECT m.uid, m.uid as group_id, 0 as depth
+  SELECT m.uri, m.uri as group_id, 0 as depth
   FROM media m
   WHERE NOT EXISTS (
-    SELECT 1 FROM _mediaHandles mh 
-    WHERE (mh.B = m.uid AND mh.A < m.uid) 
-       OR (mh.A = m.uid AND mh.B < m.uid)
+    SELECT 1 FROM _mediaHandles mh
+    WHERE (mh.B = m.uri AND mh.A < m.uri)
+       OR (mh.A = m.uri AND mh.B < m.uri)
   )
-  
+
   UNION
-  
+
   -- Traverse the graph
-  SELECT m.uid, g.group_id, g.depth + 1
+  SELECT m.uri, g.group_id, g.depth + 1
   FROM media m
-  INNER JOIN _mediaHandles mh ON (m.uid = mh.A OR m.uid = mh.B)
+  INNER JOIN _mediaHandles mh ON (m.uri = mh.A OR m.uri = mh.B)
   INNER JOIN graph g ON (
-    (g.uid = mh.A AND m.uid = mh.B) OR 
-    (g.uid = mh.B AND m.uid = mh.A)
+    (g.uri = mh.A AND m.uri = mh.B) OR
+    (g.uri = mh.B AND m.uri = mh.A)
   )
   WHERE g.depth < 50
 ),
 groups AS (
-  SELECT uid, MIN(group_id) as group_id
+  SELECT uri, MIN(group_id) as group_id
   FROM graph
-  GROUP BY uid
-  
+  GROUP BY uri
+
   UNION
-  
+
   -- Include standalone media
-  SELECT m.uid, m.uid as group_id
+  SELECT m.uri, m.uri as group_id
   FROM media m
   WHERE NOT EXISTS (
-    SELECT 1 FROM _mediaHandles mh 
-    WHERE mh.A = m.uid OR mh.B = m.uid
+    SELECT 1 FROM _mediaHandles mh
+    WHERE mh.A = m.uri OR mh.B = m.uri
   )
 )
-SELECT 
+SELECT
   group_id,
   COUNT(*) as group_size,
-  GROUP_CONCAT(uid, ', ') as media_uids
+  GROUP_CONCAT(uri, ', ') as media_uris
 FROM groups
 GROUP BY group_id
 ORDER BY group_size DESC, group_id;

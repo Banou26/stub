@@ -6,9 +6,9 @@ import { createSchema, createYoga } from 'graphql-yoga'
 import { Client, fetchExchange } from 'urql'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
-import * as extractors from '../extractor'
+import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
-import { fetch } from '../utils/fetch'
+import { fetch } from './utils'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -19,13 +19,13 @@ export type ExtractorUserContext = {
 
 }
 
-const clients =
+export const extractors =
   Object
-    .entries(extractors)
+    .entries(extractorDefinitions)
     .map(([name, extractor]) => {
-      const server = createYoga<ExtractorServerContext, ExtractorUserContext>({
+      const server = createYoga<Omit<ExtractorServerContext, keyof YogaInitialContext>, ExtractorUserContext>({
         maskedErrors: false,
-        schema: createSchema<ExtractorServerContext>({
+        schema: createSchema<Omit<ExtractorServerContext, keyof YogaInitialContext>>({
           typeDefs,
           resolvers:
             merge(
@@ -69,5 +69,3 @@ const clients =
         extractor
       }
     })
-
-export default clients

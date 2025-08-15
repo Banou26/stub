@@ -8,23 +8,41 @@ const prismaClient =
   new PrismaClient({
     adapter,
     omit: {
+      mediaTitle: {
+        mediaUri: true
+      },
+      mediaShortDescription: {
+        mediaUri: true
+      },
+      mediaDescription: {
+        mediaUri: true
+      },
       mediaTrailer: {
-        mediaUid: true
+        mediaUri: true
       },
       mediaCover: {
-        mediaUid: true
+        mediaUri: true
       },
       mediaBanner: {
-        mediaUid: true
+        mediaUri: true
       },
       episode: {
-        mediaUid: true
+        mediaUri: true
+      },
+      episodeTitle: {
+        episodeUri: true
+      },
+      episodeShortDescription: {
+        episodeUri: true
+      },
+      episodeDescription: {
+        episodeUri: true
       },
       episodeThumbnail: {
-        episodeUid: true
+        episodeUri: true
       },
       playbackSource: {
-        episodeUid: true
+        episodeUri: true
       }
     } as const
   })
@@ -34,30 +52,18 @@ const prismaClient =
           uri: {
             needs: { origin: true, id: true },
             compute: (media) => `${media.origin}:${media.id}`
-          },
-          uid: {
-            needs: { origin: true, id: true, language: true },
-            compute: (media) => `${media.origin}:${media.language}:${media.id}`
           }
         },
         episode: {
           uri: {
             needs: { origin: true, id: true },
             compute: (episode) => `${episode.origin}:${episode.id}`
-          },
-          uid: {
-            needs: { origin: true, id: true, language: true },
-            compute: (episode) => `${episode.origin}:${episode.language}:${episode.id}`
           }
         },
         playbackSource: {
           uri: {
             needs: { origin: true, id: true },
             compute: (playbackSource) => `${playbackSource.origin}:${playbackSource.id}`
-          },
-          uid: {
-            needs: { origin: true, id: true, language: true },
-            compute: (playbackSource) => `${playbackSource.origin}:${playbackSource.language}:${playbackSource.id}`
           }
         }
       }

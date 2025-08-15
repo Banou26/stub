@@ -81,7 +81,8 @@ async function generateGraphQLSchema() {
   }
 
   let schema = `scalar JSON
-scalar DateTime
+scalar Id
+scalar Date
 
 type Query {
   _empty: String
