@@ -1,7 +1,8 @@
-import {
+/* eslint-disable @typescript-eslint/require-await */
+
+import type {
   ConnectionInfo,
   Debug,
-  DriverAdapterError,
   IsolationLevel,
   SqlDriverAdapter,
   SqlDriverAdapterFactory,
@@ -10,53 +11,180 @@ import {
   SqlResultSet,
   Transaction,
   TransactionOptions,
-  ColumnTypeEnum,
 } from '@prisma/driver-adapter-utils'
-import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs'
-import * as SQLite from 'wa-sqlite'
-import { Mutex } from 'async-mutex'
+import { DriverAdapterError } from '@prisma/driver-adapter-utils'
+import { blue, cyan, red, yellow } from 'kleur/colors'
+import { WaSQLite } from './wa-sqlite-wrapper' // Import the wrapper we created
 
-const debug = Debug('prisma:driver-adapter:wa-sqlite')
+const debug = () => { }// Debug('prisma:driver-adapter:wa-sqlite')
+const packageName = '@prisma/adapter-wa-sqlite'
 
-// Constants
-const MAX_BIND_VALUES = 32766 // SQLite limit
+// SQLite bind parameter limit
+const MAX_BIND_VALUES = 999
 
-// Type definitions for wa-sqlite
-type WaSQLiteDB = number
-type WaSQLiteStmt = any // wa-sqlite uses object with stmt property
-
-interface WaSQLiteAdapter {
-  sqlite3: any // wa-sqlite Factory result
-  db: WaSQLiteDB
+// Type mapping constants
+const SQLiteTypeMap: Record<string, number> = {
+  NULL: 1,
+  INTEGER: 2,
+  REAL: 3,
+  TEXT: 4,
+  BLOB: 5,
 }
 
-// Utility functions
-function cleanArg(arg: unknown, argType?: unknown): unknown {
-  if (arg === undefined) return null
-  if (arg instanceof Date) return arg.toISOString()
-  if (arg instanceof Uint8Array) return Array.from(arg)
-  if (typeof arg === 'bigint') return Number(arg)
-  return arg
-}
+// Column type detection
+function getColumnTypes(columnNames: string[], rows: unknown[][]): Record<string, number> {
+  const columnTypes: Record<string, number> = {}
 
-function convertDriverError(error: Error): any {
-  // Check if it's a SQLiteError with a code
-  if ('code' in error && typeof (error as any).code === 'number') {
-    const code = (error as any).code
+  if (rows.length === 0) {
+    return columnTypes
+  }
 
-    // Map SQLite error codes to Prisma error kinds
-    if (code === SQLite.SQLITE_CONSTRAINT) {
-      return {
-        kind: 'UniqueConstraintViolation',
-        message: error.message,
+  // Infer types from first non-null value in each column
+  for (let colIndex = 0; colIndex < columnNames.length; colIndex++) {
+    const columnName = columnNames[colIndex]
+    let columnType = SQLiteTypeMap.NULL
+
+    // Find first non-null value to determine type
+    for (const row of rows) {
+      const value = row[colIndex]
+      if (value !== null && value !== undefined) {
+        if (typeof value === 'number') {
+          columnType = Number.isInteger(value) ? SQLiteTypeMap.INTEGER : SQLiteTypeMap.REAL
+        } else if (typeof value === 'string') {
+          columnType = SQLiteTypeMap.TEXT
+        } else if (value instanceof Uint8Array || value instanceof ArrayBuffer) {
+          columnType = SQLiteTypeMap.BLOB
+        } else if (typeof value === 'boolean') {
+          columnType = SQLiteTypeMap.INTEGER
+        } else {
+          columnType = SQLiteTypeMap.TEXT
+        }
+        break
       }
     }
 
-    if (code === SQLite.SQLITE_BUSY) {
-      return {
-        kind: 'DatabaseTimeout',
-        message: error.message,
-      }
+    columnTypes[columnName] = columnType
+  }
+
+  return columnTypes
+}
+
+// Map Prisma argument types to SQLite values
+function mapArg(arg: any, argType?: string): any {
+  if (arg === null || arg === undefined) {
+    return null
+  }
+
+  // Handle special Prisma types
+  if (argType === 'Decimal' || argType === 'BigInt') {
+    return arg.toString()
+  }
+
+  if (argType === 'DateTime' && arg instanceof Date) {
+    return arg.toISOString()
+  }
+
+  if (argType === 'Json') {
+    return JSON.stringify(arg)
+  }
+
+  if (argType === 'Bytes' && typeof arg === 'string') {
+    // Convert base64 to Uint8Array
+    const binaryString = atob(arg)
+    const bytes = new Uint8Array(binaryString.length)
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i)
+    }
+    return bytes
+  }
+
+  // Handle boolean as integer
+  if (typeof arg === 'boolean') {
+    return arg ? 1 : 0
+  }
+
+  return arg
+}
+
+// Map SQLite row values back to JavaScript types
+function mapRow(row: unknown[], columnTypes: number[]): unknown[] {
+  return row.map((value, index) => {
+    if (value === null || value === undefined) {
+      return null
+    }
+
+    const columnType = columnTypes[index]
+
+    // Convert SQLite types to JavaScript types
+    switch (columnType) {
+      case SQLiteTypeMap.INTEGER:
+        if (typeof value === 'boolean') {
+          return value ? 1 : 0
+        }
+        return typeof value === 'number' ? Math.floor(value) : parseInt(String(value), 10)
+
+      case SQLiteTypeMap.REAL:
+        return typeof value === 'number' ? value : parseFloat(String(value))
+
+      case SQLiteTypeMap.TEXT:
+        return String(value)
+
+      case SQLiteTypeMap.BLOB:
+        if (value instanceof Uint8Array) {
+          return value
+        }
+        if (value instanceof ArrayBuffer) {
+          return new Uint8Array(value)
+        }
+        // If it's a string, assume base64
+        if (typeof value === 'string') {
+          const binaryString = atob(value)
+          const bytes = new Uint8Array(binaryString.length)
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i)
+          }
+          return bytes
+        }
+        return value
+
+      default:
+        return value
+    }
+  })
+}
+
+// Convert JavaScript errors to Prisma driver adapter errors
+function convertDriverError(error: Error): any {
+  const message = error.message.toLowerCase()
+
+  if (message.includes('unique constraint')) {
+    return {
+      kind: 'UniqueConstraintViolation',
+      modelName: undefined,
+      constraint: undefined,
+    }
+  }
+
+  if (message.includes('foreign key constraint')) {
+    return {
+      kind: 'ForeignKeyConstraintViolation',
+      modelName: undefined,
+      constraint: undefined,
+    }
+  }
+
+  if (message.includes('not null constraint')) {
+    return {
+      kind: 'NullConstraintViolation',
+      modelName: undefined,
+      constraint: undefined,
+    }
+  }
+
+  if (message.includes('syntax error')) {
+    return {
+      kind: 'SyntaxError',
+      message: error.message,
     }
   }
 
@@ -66,86 +194,14 @@ function convertDriverError(error: Error): any {
   }
 }
 
-function getColumnTypeEnums(columnNames: string[], rows: unknown[][]): Record<string, ColumnTypeEnum> {
-  const columnTypes: Record<string, ColumnTypeEnum> = {}
-
-  if (rows.length === 0) {
-    return columnTypes
-  }
-
-  const firstRow = rows[0]
-  if (!firstRow) {
-    return columnTypes
-  }
-
-  columnNames.forEach((name, index) => {
-    const value = firstRow[index]
-    // Map to Prisma ColumnTypeEnum
-    if (value === null || value === undefined) {
-      columnTypes[name] = ColumnTypeEnum.Int32 // Default for NULL
-    } else if (typeof value === 'number') {
-      if (Number.isInteger(value)) {
-        columnTypes[name] = ColumnTypeEnum.Int32
-      } else {
-        columnTypes[name] = ColumnTypeEnum.Double
-      }
-    } else if (typeof value === 'string') {
-      columnTypes[name] = ColumnTypeEnum.Text
-    } else if (typeof value === 'bigint') {
-      columnTypes[name] = ColumnTypeEnum.Int64
-    } else if (value instanceof Uint8Array || Array.isArray(value)) {
-      columnTypes[name] = ColumnTypeEnum.Bytes
-    } else if (value instanceof Date) {
-      columnTypes[name] = ColumnTypeEnum.DateTime
-    } else if (typeof value === 'boolean') {
-      columnTypes[name] = ColumnTypeEnum.Boolean
-    } else {
-      columnTypes[name] = ColumnTypeEnum.Text // Default
-    }
-  })
-
-  return columnTypes
-}
-
-function mapRow(row: unknown[], columnTypes: ColumnTypeEnum[]): unknown[] {
-  return row.map((value, index) => {
-    const type = columnTypes[index]
-
-    if (value === null || value === undefined) {
-      return null
-    }
-
-    // Handle blob data
-    if (type === ColumnTypeEnum.Bytes && Array.isArray(value)) {
-      return new Uint8Array(value)
-    }
-
-    // Handle dates stored as ISO strings
-    if (type === ColumnTypeEnum.DateTime && typeof value === 'string') {
-      // Check if it's a date string
-      const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
-      if (dateRegex.test(value)) {
-        return new Date(value)
-      }
-    }
-
-    // Handle bigint conversion
-    if (type === ColumnTypeEnum.Int64 && typeof value === 'number') {
-      return BigInt(value)
-    }
-
-    return value
-  })
-}
-
 /**
- * wa-sqlite Queryable implementation
+ * WaSQLite Queryable implementation
  */
-class WaSQLiteQueryable implements SqlQueryable {
+class WaSQLiteQueryable<ClientT extends WaSQLite> implements SqlQueryable {
   readonly provider = 'sqlite'
-  readonly adapterName = 'prisma-wa-sqlite-adapter'
+  readonly adapterName = packageName
 
-  constructor(protected readonly adapter: WaSQLiteAdapter) {}
+  constructor(protected readonly client: ClientT) {}
 
   /**
    * Execute a query given as SQL, interpolating the given parameters.
@@ -154,12 +210,14 @@ class WaSQLiteQueryable implements SqlQueryable {
     const tag = '[js::query_raw]'
     debug(`${tag} %O`, query)
 
-    const data = await this.performIO(query) as [string[], unknown[][]]
-    return this.convertData(data)
+    const data = await this.performIO(query)
+    const convertedData = this.convertData(data as [string[], unknown[][]])
+    return convertedData
   }
 
   private convertData(ioResult: [string[], unknown[][]]): SqlResultSet {
-    const [columnNames, results] = ioResult
+    const columnNames = ioResult[0]
+    const results = ioResult[1]
 
     if (results.length === 0) {
       return {
@@ -169,8 +227,8 @@ class WaSQLiteQueryable implements SqlQueryable {
       }
     }
 
-    const columnTypes = Object.values(getColumnTypeEnums(columnNames, results))
-    const rows = results.map((row) => mapRow(row, columnTypes))
+    const columnTypes = Object.values(getColumnTypes(columnNames, results))
+    const rows = results.map((value) => mapRow(value, columnTypes))
 
     return {
       columnNames,
@@ -192,322 +250,93 @@ class WaSQLiteQueryable implements SqlQueryable {
   }
 
   private async performIO(query: SqlQuery, executeRaw = false): Promise<[string[], unknown[][]] | number> {
-    const { sqlite3, db } = this.adapter
-
     try {
-      // Clean arguments
-      const cleanedArgs = query.args.map((arg, i) => cleanArg(arg, query.argTypes?.[i]))
+      const args = query.args.map((arg, i) => mapArg(arg, query.argTypes[i]))
+      const stmt = this.client.prepare(query.sql)
 
-      // Use high-level API for better compatibility
-      if (cleanedArgs.length === 0) {
-        // No parameters - use exec
-        if (executeRaw) {
-          await sqlite3.exec(db, query.sql)
-          return sqlite3.changes(db)
-        } else {
-          // For SELECT queries, use exec with callback
-          const rows: unknown[][] = []
-          const columnNames: string[] = []
-          let firstRow = true
-
-          await sqlite3.exec(db, query.sql, (row: unknown[], columns: string[]) => {
-            if (firstRow) {
-              columnNames.push(...columns)
-              firstRow = false
-            }
-            rows.push(row)
-          })
-
-          return [columnNames, rows]
-        }
+      if (executeRaw) {
+        const result = await stmt.run(args)
+        await stmt.finalize()
+        return result.changes
       } else {
-        // With parameters - use the prepared statement approach
-        let stmt: any = null
-        let str: number | null = null
+        // Get column names from first query
+        const rows: unknown[][] = []
+        let columnNames: string[] = []
 
-        try {
-          // Create string buffer for SQL
-          str = sqlite3.str_new(db, query.sql)
-          const prepared = await sqlite3.prepare_v2(db, sqlite3.str_value(str))
+        // Execute query and collect all rows
+        const allRows = await stmt.all(args)
 
-          if (!prepared) {
-            throw new Error(`Failed to prepare statement: ${query.sql}`)
-          }
-
-          stmt = prepared.stmt
-          if (!stmt || stmt === 0) {
-            throw new Error(`Invalid statement handle for SQL: ${query.sql}`)
-          }
-
-          // Verify the statement is valid before proceeding
-          let paramCount = 0
-          try {
-            if (typeof sqlite3.bind_parameter_count === 'function') {
-              paramCount = sqlite3.bind_parameter_count(stmt)
-            } else {
-              // Fallback: count ? placeholders in the SQL
-              const matches = query.sql.match(/\?/g)
-              paramCount = matches ? matches.length : 0
-            }
-          } catch (err) {
-            console.error('[wa-sqlite] Error getting parameter count:', err)
-            // If we can't get the parameter count, try to count placeholders
-            const matches = query.sql.match(/\?/g)
-            paramCount = matches ? matches.length : 0
-          }
-          
-          // Debug logging and validation
-          if (paramCount > 0 && cleanedArgs.length !== paramCount) {
-            console.warn('[wa-sqlite] Parameter count mismatch:', {
-              sql: query.sql,
-              expectedParams: paramCount,
-              providedParams: cleanedArgs.length,
-              args: cleanedArgs
-            })
-            
-            // If we have fewer arguments than expected, we need to bind nulls for missing ones
-            if (cleanedArgs.length < paramCount) {
-              // Pad with nulls
-              while (cleanedArgs.length < paramCount) {
-                cleanedArgs.push(null)
-              }
-            }
-          }
-
-          // Reset bindings before setting new ones
-          try {
-            if (typeof sqlite3.reset === 'function') {
-              sqlite3.reset(stmt)
-            }
-            if (typeof sqlite3.clear_bindings === 'function') {
-              sqlite3.clear_bindings(stmt)
-            }
-          } catch (err) {
-            console.warn('[wa-sqlite] Could not reset/clear bindings:', err)
-          }
-
-          // Bind parameters - only bind up to the expected number of parameters
-          const paramsToBind = paramCount > 0 ? Math.min(cleanedArgs.length, paramCount) : cleanedArgs.length
-          for (let i = 0; i < paramsToBind; i++) {
-            const arg = cleanedArgs[i]
-            const paramIndex = i + 1 // SQLite uses 1-based indexing
-
-            try {
-              let bindResult
-              if (arg === null || arg === undefined) {
-                bindResult = sqlite3.bind_null(stmt, paramIndex)
-              } else if (typeof arg === 'number') {
-                if (Number.isInteger(arg)) {
-                  bindResult = sqlite3.bind_int(stmt, paramIndex, arg)
-                } else {
-                  bindResult = sqlite3.bind_double(stmt, paramIndex, arg)
-                }
-              } else if (typeof arg === 'string') {
-                bindResult = sqlite3.bind_text(stmt, paramIndex, arg)
-              } else if (arg instanceof Uint8Array) {
-                bindResult = sqlite3.bind_blob(stmt, paramIndex, arg)
-              } else if (Array.isArray(arg)) {
-                bindResult = sqlite3.bind_blob(stmt, paramIndex, new Uint8Array(arg))
-              } else {
-                // Convert to string as fallback
-                bindResult = sqlite3.bind_text(stmt, paramIndex, String(arg))
-              }
-              
-              // Check if binding was successful
-              if (bindResult !== SQLite.SQLITE_OK) {
-                throw new Error(`Bind failed with code ${bindResult}`)
-              }
-            } catch (bindError) {
-              console.error(`[wa-sqlite] Error binding parameter ${paramIndex}:`, {
-                error: bindError,
-                arg,
-                argType: typeof arg,
-                paramIndex,
-                sql: query.sql
-              })
-              throw new Error(`Failed to bind parameter ${paramIndex}: ${bindError}`)
-            }
-          }
-
-          if (executeRaw) {
-            // Execute and return affected rows
-            const stepResult = await sqlite3.step(stmt)
-            if (stepResult !== SQLite.SQLITE_DONE && stepResult !== SQLite.SQLITE_ROW) {
-              throw new Error(`Failed to execute statement. Result code: ${stepResult}`)
-            }
-            return sqlite3.changes(db)
-          } else {
-            // Query and return results
-            const columnNames: string[] = []
-            const rows: unknown[][] = []
-
-            // Get column names
-            const columnCount = sqlite3.column_count(stmt)
-            for (let i = 0; i < columnCount; i++) {
-              columnNames.push(sqlite3.column_name(stmt, i))
-            }
-
-            // Fetch all rows
-            let stepResult = await sqlite3.step(stmt)
-            while (stepResult === SQLite.SQLITE_ROW) {
-              const row: unknown[] = []
-              for (let i = 0; i < columnCount; i++) {
-                const type = sqlite3.column_type(stmt, i)
-
-                switch (type) {
-                  case SQLite.SQLITE_INTEGER:
-                    row.push(sqlite3.column_int(stmt, i))
-                    break
-                  case SQLite.SQLITE_FLOAT:
-                    row.push(sqlite3.column_double(stmt, i))
-                    break
-                  case SQLite.SQLITE_TEXT:
-                    row.push(sqlite3.column_text(stmt, i))
-                    break
-                  case SQLite.SQLITE_BLOB:
-                    row.push(sqlite3.column_blob(stmt, i))
-                    break
-                  case SQLite.SQLITE_NULL:
-                  default:
-                    row.push(null)
-                    break
-                }
-              }
-              rows.push(row)
-              stepResult = await sqlite3.step(stmt)
-            }
-
-            if (stepResult !== SQLite.SQLITE_DONE) {
-              throw new Error(`Error fetching results. Result code: ${stepResult}`)
-            }
-
-            return [columnNames, rows]
-          }
-        } finally {
-          // Clean up
-          if (stmt) {
-            try {
-              await sqlite3.finalize(stmt)
-            } catch (err) {
-              console.warn('[wa-sqlite] Error finalizing statement:', err)
-            }
-          }
-          if (str !== null) {
-            try {
-              sqlite3.str_finish(str)
-            } catch (err) {
-              console.warn('[wa-sqlite] Error finishing string:', err)
-            }
+        if (allRows.length > 0) {
+          columnNames = Object.keys(allRows[0])
+          for (const row of allRows) {
+            rows.push(columnNames.map(col => row[col]))
           }
         }
+
+        await stmt.finalize()
+        return [columnNames, rows]
       }
     } catch (e) {
-      console.error('[wa-sqlite] Error in performIO:', e)
-      onError(e as Error)
+      this.onError(e as Error)
     }
+  }
+
+  private onError(error: Error): never {
+    console.error('Error in performIO: %O', error)
+    throw new DriverAdapterError(convertDriverError(error))
   }
 }
 
 /**
- * wa-sqlite Transaction implementation  
+ * WaSQLite Transaction implementation
  */
-class WaSQLiteTransaction extends WaSQLiteQueryable implements Transaction {
-  private state: 'open' | 'committed' | 'rolledback' = 'open'
-  
-  constructor(
-    adapter: WaSQLiteAdapter, 
-    readonly options: TransactionOptions,
-    private readonly isNested: boolean = false
-  ) {
-    super(adapter)
+class WaSQLiteTransaction extends WaSQLiteQueryable<WaSQLite> implements Transaction {
+  private committed = false
+  private rolledBack = false
+
+  constructor(client: WaSQLite, readonly options: TransactionOptions) {
+    super(client)
   }
 
   async commit(): Promise<void> {
-    debug(`[js::commit] state: ${this.state}, isNested: ${this.isNested}`)
-    
-    // If already processed, return silently (idempotent)
-    if (this.state !== 'open') {
-      debug(`[js::commit] Transaction already ${this.state}`)
-      return
+    debug(`[js::commit]`)
+    if (!this.committed && !this.rolledBack) {
+      await this.client.exec('COMMIT')
+      this.committed = true
     }
-
-    const { sqlite3, db } = this.adapter
-    
-    // Only actually commit if this is not a nested transaction
-    // For nested transactions, we just mark as committed but don't execute DB commands
-    if (!this.isNested) {
-      // Check if there's actually a transaction to commit
-      try {
-        await sqlite3.exec(db, 'COMMIT')
-      } catch (error: any) {
-        // If there's no transaction to commit, that's fine - it might have been
-        // committed by another transaction object
-        if (!error?.message?.includes('no transaction is active')) {
-          throw error
-        }
-      }
-    }
-    
-    this.state = 'committed'
   }
 
   async rollback(): Promise<void> {
-    debug(`[js::rollback] state: ${this.state}, isNested: ${this.isNested}`)
-    
-    // If already processed, return silently (idempotent)
-    if (this.state !== 'open') {
-      debug(`[js::rollback] Transaction already ${this.state}`)
-      return
+    debug(`[js::rollback]`)
+    if (!this.committed && !this.rolledBack) {
+      await this.client.exec('ROLLBACK')
+      this.rolledBack = true
     }
-
-    const { sqlite3, db } = this.adapter
-    
-    // Only actually rollback if this is not a nested transaction
-    // For nested transactions, we just mark as rolled back but don't execute DB commands
-    if (!this.isNested) {
-      // Check if there's actually a transaction to rollback
-      try {
-        await sqlite3.exec(db, 'ROLLBACK')
-      } catch (error: any) {
-        // If there's no transaction to rollback, that's fine - it might have been
-        // committed or rolled back by another transaction object
-        if (!error?.message?.includes('no transaction is active')) {
-          throw error
-        }
-      }
-    }
-    
-    this.state = 'rolledback'
   }
 }
 
-
 /**
- * Main wa-sqlite Prisma Adapter
+ * Prisma WaSQLite Adapter
  */
-export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDriverAdapter {
+export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable<WaSQLite> implements SqlDriverAdapter {
   readonly tags = {
-    error: '[prisma:error]',
-    warn: '[prisma:warn]',
-    info: '[prisma:info]',
-    query: '[prisma:query]',
+    error: red('prisma:error'),
+    warn: yellow('prisma:warn'),
+    info: cyan('prisma:info'),
+    query: blue('prisma:query'),
   }
-  
-  private transactionMutex = new Mutex()
-  private activeTransaction: Transaction | null = null
 
-  constructor(adapter: WaSQLiteAdapter, private readonly release?: () => Promise<void>) {
-    super(adapter)
+  private transactionCounter = 0
+
+  constructor(client: WaSQLite, private readonly release?: () => Promise<void>) {
+    super(client)
   }
 
   async executeScript(script: string): Promise<void> {
     try {
-      const { sqlite3, db } = this.adapter
-      // console.log('[wa-sqlite] Executing script:', script.substring(0, 100), '...')
-      await sqlite3.exec(db, script)
+      await this.client.exec(script)
     } catch (error) {
-      // console.error('[wa-sqlite] Error executing script:', error)
-      onError(error as Error)
+      this.onError(error as Error)
     }
   }
 
@@ -519,6 +348,7 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
   }
 
   async startTransaction(isolationLevel?: IsolationLevel): Promise<Transaction> {
+    // SQLite only supports SERIALIZABLE isolation level
     if (isolationLevel && isolationLevel !== 'SERIALIZABLE') {
       throw new DriverAdapterError({
         kind: 'InvalidIsolationLevel',
@@ -533,138 +363,69 @@ export class PrismaWaSQLiteAdapter extends WaSQLiteQueryable implements SqlDrive
     const tag = '[js::startTransaction]'
     debug('%s options: %O', tag, options)
 
-    // Use mutex to ensure transactions are serialized
-    const releaser = await this.transactionMutex.acquire()
-    
-    try {
-      const { sqlite3, db } = this.adapter
-      
-      // Start a new database transaction
-      await sqlite3.exec(db, 'BEGIN')
-      
-      // Create transaction object
-      const tx = new WaSQLiteTransaction(this.adapter, options, false)
-      
-      // Store the active transaction
-      this.activeTransaction = tx
-      
-      // Wrap commit and rollback to release the mutex
-      const originalCommit = tx.commit.bind(tx)
-      const originalRollback = tx.rollback.bind(tx)
-      
-      tx.commit = async () => {
-        try {
-          await originalCommit()
-        } finally {
-          this.activeTransaction = null
-          releaser()
-        }
-      }
-      
-      tx.rollback = async () => {
-        try {
-          await originalRollback()
-        } finally {
-          this.activeTransaction = null
-          releaser()
-        }
-      }
-      
-      return tx
-    } catch (error) {
-      // If we fail to create the transaction, release the mutex
-      releaser()
-      throw error
-    }
+    // Start transaction
+    await this.client.exec('BEGIN')
+
+    return new WaSQLiteTransaction(this.client, options)
   }
 
   async dispose(): Promise<void> {
     await this.release?.()
   }
+
+  private onError(error: Error): never {
+    console.error('Error in executeScript: %O', error)
+    throw new DriverAdapterError(convertDriverError(error))
+  }
 }
 
 /**
- * wa-sqlite Adapter Factory
+ * Prisma WaSQLite Adapter Factory
  */
 export class PrismaWaSQLiteAdapterFactory implements SqlDriverAdapterFactory {
   readonly provider = 'sqlite'
-  readonly adapterName = 'prisma-wa-sqlite-adapter'
-  private adapterInstance: PrismaWaSQLiteAdapter | null = null
+  readonly adapterName = packageName
 
-  constructor(private adapter: WaSQLiteAdapter) {}
+  private client?: WaSQLite
+
+  constructor(private options: {
+    filename?: string
+    pragmas?: Record<string, any>
+    locateFile?: (file: string) => string
+  } = {}) {}
 
   async connect(): Promise<SqlDriverAdapter> {
-    // Return the same adapter instance to maintain transaction state
-    if (!this.adapterInstance) {
-      this.adapterInstance = new PrismaWaSQLiteAdapter(this.adapter, async () => {
-        // Cleanup if needed
-        const { sqlite3, db } = this.adapter
-        await sqlite3.close(db)
-        this.adapterInstance = null
-      })
+    // Initialize WaSQLite if not already done
+    if (!this.client) {
+      this.client = await WaSQLite.open(
+        this.options.filename || ':memory:',
+        {
+          pragmas: {
+            journal_mode: 'WAL',
+            foreign_keys: 1,
+            ...this.options.pragmas
+          },
+          locateFile: this.options.locateFile
+        }
+      )
     }
-    return this.adapterInstance
-  }
-}
 
-function onError(error: Error): never {
-  console.error('Error in performIO: %O', error)
-  throw new DriverAdapterError(convertDriverError(error))
+    return new PrismaWaSQLiteAdapter(this.client, async () => {
+      if (this.client) {
+        await this.client.close()
+        this.client = undefined
+      }
+    })
+  }
 }
 
 /**
- * Create wa-sqlite Prisma adapter
+ * Helper function to create a Prisma client with WaSQLite
  */
-export const createWaSQLitePrismaAdapter = async (
-  options: {
-    logger?: (message: string) => void
-  } = {
-    logger: undefined
-  }
-) => {
-  options?.logger?.('Initializing wa-sqlite...')
-
-  try {
-    // @ts-expect-error
-    const { default: SQLiteWasm } = await import('wa-sqlite/dist/wa-sqlite.wasm?url')
-    const module = await SQLiteESMFactory({ locateFile: () => SQLiteWasm })
-    const sqlite3 = SQLite.Factory(module)
-
-    options?.logger?.('Opening database...')
-    // Open database - use in-memory database for browser
-    // wa-sqlite returns the db handle directly, not wrapped in a promise
-    const db = await sqlite3.open_v2(':memory:')
-
-    if (!db || db === 0) {
-      throw new Error(`Failed to open database`)
-    }
-
-    options?.logger?.('Database opened successfully')
-
-    // Set pragmas for better performance and compatibility
-    try {
-      await sqlite3.exec(db, 'PRAGMA foreign_keys = ON')
-      options?.logger?.('Foreign keys enabled')
-    } catch (e) {
-      console.warn('[wa-sqlite] Failed to enable foreign keys:', e)
-    }
-
-    // Test the connection with a simple query
-    try {
-      await sqlite3.exec(db, 'SELECT 1')
-      options?.logger?.('Database connection verified')
-    } catch (e) {
-      throw new Error(`Database connection test failed: ${e}`)
-    }
-
-    const adapter: WaSQLiteAdapter = {
-      sqlite3,
-      db,
-    }
-
-    return new PrismaWaSQLiteAdapterFactory(adapter)
-  } catch (error) {
-    options?.logger?.(`Failed to initialize wa-sqlite: ${error}`)
-    throw error
-  }
+export function createWaSQLitePrismaClient(options?: {
+  filename?: string
+  pragmas?: Record<string, any>
+  locateFile?: (file: string) => string
+}) {
+  return new PrismaWaSQLiteAdapterFactory(options)
 }

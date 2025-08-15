@@ -1,9 +1,10 @@
-import { createWaSQLitePrismaAdapter } from './wa-sqlite-adapter'
+import { PrismaWaSQLiteAdapterFactory } from './wa-sqlite-adapter'
 // @ts-expect-error
 import SQLSchema from '../../../prisma/migrations/0_init/migration.sql?raw'
 import { PrismaClient } from './generated/client'
 
-const adapter = await createWaSQLitePrismaAdapter({})
+const adapterFactory = new PrismaWaSQLiteAdapterFactory({})
+const adapter = await adapterFactory.connect()
 const prismaClient =
   new PrismaClient({
     adapter,

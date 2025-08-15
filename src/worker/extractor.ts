@@ -89,8 +89,11 @@ export const extractors =
                       }
                     }
                     if (Array.isArray(result)) {
-                      await Promise.all(result.slice(0, 1).map(resolveMedia))
-                      // await Promise.all(result.map(resolveMedia))
+                      // Process sequentially to avoid memory issues with wa-sqlite
+                      for (const media of result.slice(0, 2)) {
+                        await resolveMedia(media)
+                        await new Promise(resolve => setTimeout(resolve, 1000))
+                      }
                     } else {
                       await resolveMedia(result as Media)
                     }
