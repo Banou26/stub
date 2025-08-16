@@ -61,8 +61,8 @@ export const extractors =
                       console.log('media', media)
                       const prismaData = {
                         ...media,
-                        startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
-                        endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
+                        startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toZonedDateTime('UTC').epochMilliseconds) : undefined,
+                        endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toZonedDateTime('UTC').epochMilliseconds) : undefined,
                         titles: {
                           connectOrCreate: []
                         },
@@ -91,23 +91,24 @@ export const extractors =
                           connectOrCreate: []
                         }
                       }
-                      // try {
-                      //   const upsertedMedia = await prismaClient.media.upsert({
-                      //     where: { uri: media.uri },
-                      //     update: prismaData,
-                      //     create: prismaData,
-                      //     include: {
-                      //       episodes: true,
-                      //       handles: true,
-                      //     }
-                      //   })
-                      //   console.log('upsertedMedia', upsertedMedia)
-                      // } catch (error) {
-                      //   console.error('Error upserting media', error)
-                      // }
+
+                      try {
+                        const upsertedMedia = await prismaClient.media.upsert({
+                          where: { uri: media.uri },
+                          update: prismaData,
+                          create: prismaData,
+                          include: {
+                            episodes: true,
+                            handles: true,
+                          }
+                        })
+                        console.log('upsertedMedia', upsertedMedia)
+                      } catch (error) {
+                        console.error('Error upserting media', error)
+                      }
                     }
                     if (Array.isArray(result)) {
-                      await Promise.all(result.map(resolveMedia))
+                      await Promise.all(result.slice(0, 1).map(resolveMedia))
                     } else {
                       await resolveMedia(result as Media)
                     }

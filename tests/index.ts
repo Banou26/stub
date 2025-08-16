@@ -3,5 +3,5 @@ import * as prismaGraph from './prisma-graph'
 
 export {
   prisma,
-  prismaGraph as 'prisma graph'
+  // prismaGraph as 'prisma graph'
 }
