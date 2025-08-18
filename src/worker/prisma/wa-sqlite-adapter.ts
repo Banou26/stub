@@ -10,6 +10,7 @@ import {
   SqlResultSet,
   Transaction,
   TransactionOptions,
+  ColumnTypeEnum
 } from '@prisma/driver-adapter-utils'
 import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs'
 import * as SQLite from 'wa-sqlite'
@@ -71,19 +72,13 @@ class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable
   }
 
   private async performIO(query: SqlQuery): Promise<ExtendedSqlResultSet> {
-    console.log('query', query)
+    const release = await this[LOCK_TAG].acquire()
     try {
       const params = query.args.map((arg, i) => mapArg(arg, query.argTypes[i]))
       let currentIndex = 0
       for await (const stmt of this.context.sqlite3.statements(this.context.database, query.sql)) {
-        console.log('stmt', this.context.sqlite3.sql(stmt))
         const paramCount = this.context.sqlite3.bind_parameter_count(stmt)
-        // const columnCount = this.context.sqlite3.column_count(stmt)
         const columnNames = this.context.sqlite3.column_names(stmt)
-        const columnTypes =
-          Array(paramCount)
-            .fill(undefined)
-            .map((_, i) => inferColumnType(this.context.sqlite3.column_type(stmt, i)))
         this.context.sqlite3.bind_collection(stmt, params.slice(currentIndex, paramCount))
         currentIndex = currentIndex + paramCount
         const rows = [] as SQLiteCompatibleType[][]
@@ -91,6 +86,7 @@ class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable
           const row = this.context.sqlite3.row(stmt)
           rows.push(row)
         }
+        const columnTypes = getColumnTypes(columnNames, rows)
         const changes = this.context.sqlite3.changes(this.context.database)
         if (changes) {
           return {
@@ -110,6 +106,8 @@ class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable
     } catch (error) {
       console.error('Error in performIO: %O', error)
       throw new DriverAdapterError(convertDriverError(error))
+    } finally {
+      release()
     }
   }
 }
@@ -175,11 +173,6 @@ export class PrismaWASqliteAdapter extends WASqliteQueryable<WASqliteContext> im
         level: isolationLevel,
       })
     }
-
-    this.warnOnce(
-      'D1 Transaction',
-      "Cloudflare D1 does not support transactions yet. When using Prisma's D1 adapter, implicit & explicit transactions will be ignored and run as individual queries, which breaks the guarantees of the ACID properties of transactions. For more details see https://pris.ly/d/d1-transactions",
-    )
 
     const options: TransactionOptions = {
       usePhantomQuery: true,

@@ -12,6 +12,7 @@ import { merge } from '../utils/merge'
 import { fetch } from './utils'
 import { getNamedType } from 'graphql'
 import prismaClient from './prisma'
+import { MediaCreateInput } from './prisma/generated/models'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -59,26 +60,37 @@ export const extractors =
                   return async ({ result }) => {
                     const resolveMedia = async (media: Media) => {
                       console.log('media', media)
-                      const prismaData = {
-                        ...media,
-                        startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
-                        endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
-                        titles: undefined,
-                        shortDescriptions: undefined,
-                        descriptions: undefined,
-                        handles: undefined,
-                        handleOf: undefined,
-                        trailers: undefined,
-                        covers: undefined,
-                        banners: undefined,
-                        episodes: undefined
-                      }
                       try {
-                        const upsertedMedia = await prismaClient.media.upsert({
-                          where: { uri: media.uri },
-                          update: prismaData,
-                          create: prismaData,
+                        const upsertedMedia = await prismaClient.media.create({
+                          data: {
+                            ...media,
+                            startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
+                            endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
+                            titles: {
+                              connectOrCreate: {
+                                where: {
+                                  id: {
+                                    language: media.titles?.at(0)?.language!,
+                                    title: media.titles?.at(0)?.title!
+                                  }
+                                },
+                                create: {
+                                  language: media.titles?.at(0)?.language!,
+                                  title: media.titles?.at(0)?.title!
+                                }
+                              }
+                            },
+                            shortDescriptions: undefined,
+                            descriptions: undefined,
+                            handles: undefined,
+                            handleOf: undefined,
+                            trailers: undefined,
+                            covers: undefined,
+                            banners: undefined,
+                            episodes: undefined
+                          },
                           include: {
+                            titles: true,
                             episodes: true,
                             handles: true,
                           }
