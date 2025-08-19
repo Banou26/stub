@@ -1,3 +1,5 @@
+import type PrismaClient from '../src/worker/prisma'
+
 import { use, expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import chaiShallowDeepEqual from 'chai-shallow-deep-equal'
@@ -9,7 +11,7 @@ use(chaiAsPromised)
 use(chaiShallowDeepEqual)
 
 // Helper to create test data
-const createTestMedia = async (client: any, id: string) =>
+const createTestMedia = async (client: typeof PrismaClient, id: string) =>
   client.media.upsert({
     where: { uri: `t:${id}` },
     update: {},
