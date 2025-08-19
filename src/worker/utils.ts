@@ -4,6 +4,8 @@ import { expose } from 'osra'
 
 import { yoga } from './yoga'
 
+export const filterNonNullable = <T extends any[]>(array: T) => array.filter((value): value is NonNullable<T[number]> => Boolean(value))
+
 export const resolvers = {
   HANDLE_REQUEST: async (input: RequestInfo | URL, init?: RequestInit) => {
     const { headers, body, method } = init ?? {}

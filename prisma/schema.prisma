@@ -57,35 +57,32 @@ model Media {
 }
 
 model MediaTitle {
-  id String @id @default(uuid())
-
   language String
   title    String
   Media    Media?  @relation(fields: [mediaUri], references: [uri])
   mediaUri String?
 
+  @@id(name: "id", fields: [language, title])
   @@map("mediaTitle")
 }
 
 model MediaShortDescription {
-  id String @id @default(uuid())
-
   language         String
   shortDescription String
   Media            Media?  @relation(fields: [mediaUri], references: [uri])
   mediaUri         String?
 
+  @@id(name: "id", fields: [language, shortDescription])
   @@map("mediaShortDescription")
 }
 
 model MediaDescription {
-  id String @id @default(uuid())
-
   language    String
   description String
   Media       Media?  @relation(fields: [mediaUri], references: [uri])
   mediaUri    String?
 
+  @@id(name: "id", fields: [language, description])
   @@map("mediaDescription")
 }
 
@@ -110,8 +107,6 @@ model MediaTrailer {
 }
 
 model MediaCover {
-  id String @id @default(uuid())
-
   language String
   url      String
   height   Int?
@@ -123,12 +118,11 @@ model MediaCover {
   /// gql-omit
   mediaUri String?
 
+  @@id(name: "id", fields: [language, url])
   @@map("mediaCover")
 }
 
 model MediaBanner {
-  id String @id @default(uuid())
-
   language String
   url      String
   height   Int?
@@ -140,6 +134,7 @@ model MediaBanner {
   /// gql-omit
   mediaUri String?
 
+  @@id(name: "id", fields: [language, url])
   @@map("mediaBanner")
 }
 
@@ -210,51 +205,48 @@ model Episode {
 }
 
 model EpisodeTitle {
-  id String @id @default(uuid())
-
   language   String
   title      String
   Episode    Episode? @relation(fields: [episodeUri], references: [uri])
   episodeUri String?
 
+  @@id(name: "id", fields: [language, title])
   @@map("episodeTitle")
 }
 
 model EpisodeShortDescription {
-  id String @id @default(uuid())
-
   language         String
   shortDescription String
   Episode          Episode? @relation(fields: [episodeUri], references: [uri])
   episodeUri       String?
 
+  @@id(name: "id", fields: [language, shortDescription])
   @@map("episodeShortDescription")
 }
 
 model EpisodeDescription {
-  id String @id @default(uuid())
-
   language    String
   description String
   Episode     Episode? @relation(fields: [episodeUri], references: [uri])
   episodeUri  String?
 
+  @@id(name: "id", fields: [language, description])
   @@map("episodeDescription")
 }
 
 model EpisodeThumbnail {
-  id String @id @default(uuid())
-
-  url    String
-  height Int?
-  width  Int?
+  language String
+  url      String
+  height   Int?
+  width    Int?
   /// Average #hex color of cover image
-  color  String?
+  color    String?
 
   Episode    Episode? @relation(fields: [episodeUri], references: [uri])
   /// gql-omit
   episodeUri String?
 
+  @@id(name: "id", fields: [language, url])
   @@map("episodeThumbnail")
 }
 

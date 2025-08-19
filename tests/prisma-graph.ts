@@ -19,20 +19,14 @@ const createTestMedia = async (client: typeof PrismaClient, id: string) =>
       uri: `t:${id}`,
       origin: 't',
       id,
-      titles: {
-        create: {
-          title: `Media ${id}`,
-          language: 'en'
-        }
-      },
       type: 'ANIME'
     }
   })
 
 // Helper to connect media handles
-const connectMedia = async (client: any, fromUid: string, toUri: string) => {
+const connectMedia = async (client: any, fromUri: string, toUri: string) => {
   await client.media.update({
-    where: { uri: fromUid },
+    where: { uri: fromUri },
     data: {
       handles: {
         connect: { uri: toUri }
