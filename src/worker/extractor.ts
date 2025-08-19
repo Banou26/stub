@@ -64,8 +64,10 @@ export const extractors =
                         const upsertedMedia = await prismaClient.media.create({
                           data: {
                             ...media,
-                            startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
-                            endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
+                            startDate: media.startDate ? new Date(media.startDate) : undefined,
+                            endDate: media.endDate ? new Date(media.endDate) : undefined,
+                            // startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
+                            // endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
                             titles: {
                               connectOrCreate: {
                                 where: {
@@ -102,13 +104,37 @@ export const extractors =
                       }
                     }
                     if (Array.isArray(result)) {
-                      // Process sequentially to avoid memory issues with wa-sqlite
-                      const p = performance.now()
-                      const allInserted = await Promise.all(result.map(resolveMedia))
-                      console.log('allInserted', performance.now() - p, allInserted)
-                      // for (const media of result) {
-                      //   await resolveMedia(media)
-                      // }
+                      try {
+                        // Process sequentially to avoid memory issues with wa-sqlite
+                        const p = performance.now()
+                        const upsertedMedias = await prismaClient.media.createManyAndReturn({
+                          data:
+                            result.map(media => ({
+                              ...media,
+                              startDate: media.startDate ? new Date(media.startDate) : undefined,
+                              endDate: media.endDate ? new Date(media.endDate) : undefined,
+                              // startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
+                              // endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
+                              titles: undefined,
+                              shortDescriptions: undefined,
+                              descriptions: undefined,
+                              handles: undefined,
+                              handleOf: undefined,
+                              trailers: undefined,
+                              covers: undefined,
+                              banners: undefined,
+                              episodes: undefined
+                            }))
+                        })
+                        // const allInserted = await Promise.all(result.map(resolveMedia))
+                        console.log('allInserted', performance.now() - p, upsertedMedias)
+                        // for (const media of result) {
+                        //   await resolveMedia(media)
+                        // }
+                      } catch (err) {
+                        console.error(err)
+                        throw err
+                      }
                     } else {
                       await resolveMedia(result as Media)
                     }
