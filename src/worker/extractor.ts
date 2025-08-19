@@ -59,8 +59,8 @@ export const extractors =
                 if (getNamedType(info.returnType).name === 'Media') {
                   return async ({ result }) => {
                     const resolveMedia = async (media: Media) => {
-                      console.log('media', media)
                       try {
+                        if (!media.titles?.at(0)?.title) return
                         const upsertedMedia = await prismaClient.media.create({
                           data: {
                             ...media,
@@ -95,6 +95,7 @@ export const extractors =
                             handles: true,
                           }
                         })
+                        return upsertedMedia
                         console.log('upsertedMedia', upsertedMedia)
                       } catch (error) {
                         console.error('Error upserting media', error)
@@ -102,10 +103,12 @@ export const extractors =
                     }
                     if (Array.isArray(result)) {
                       // Process sequentially to avoid memory issues with wa-sqlite
-                      for (const media of result.slice(0, 2)) {
-                        await resolveMedia(media)
-                        await new Promise(resolve => setTimeout(resolve, 1000))
-                      }
+                      const p = performance.now()
+                      const allInserted = await Promise.all(result.map(resolveMedia))
+                      console.log('allInserted', performance.now() - p, allInserted)
+                      // for (const media of result) {
+                      //   await resolveMedia(media)
+                      // }
                     } else {
                       await resolveMedia(result as Media)
                     }

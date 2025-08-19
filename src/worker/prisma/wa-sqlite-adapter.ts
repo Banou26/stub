@@ -24,9 +24,8 @@ import { convertDriverError } from './errors'
 
 const debug = Debug('prisma:driver-adapter:d1')
 
-const LOCK_TAG = Symbol()
-
 type WASqliteContext = {
+  mutex: Mutex
   module: any
   sqlite3: SQLiteAPI
   database: number
@@ -42,8 +41,6 @@ type ExtendedSqlResultSet = SqlResultSet & {
 class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable {
   readonly provider = 'sqlite'
   readonly adapterName = packageName;
-
-  [LOCK_TAG] = new Mutex()
 
   constructor(protected readonly context: ClientT) {}
 
@@ -72,7 +69,7 @@ class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable
   }
 
   private async performIO(query: SqlQuery): Promise<ExtendedSqlResultSet> {
-    const release = await this[LOCK_TAG].acquire()
+    const release = await this.context.mutex.acquire()
     try {
       const params = query.args.map((arg, i) => mapArg(arg, query.argTypes[i]))
       let currentIndex = 0
@@ -201,6 +198,7 @@ export class PrismaWASqliteAdapterFactory implements SqlDriverAdapterFactory {
     const module = await SQLiteESMFactory({ locateFile: () => SQLiteWasm })
     const sqlite3 = SQLite.Factory(module)
     const database = await sqlite3.open_v2(':memory:')
-    return new PrismaWASqliteAdapter({ module, sqlite3, database }, async () => {})
+    const mutex = new Mutex()
+    return new PrismaWASqliteAdapter({ mutex, module, sqlite3, database }, async () => {})
   }
 }
