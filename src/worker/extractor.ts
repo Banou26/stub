@@ -55,39 +55,33 @@ export const extractors =
         plugins: [
           {
             onPluginInit: ({ addPlugin }) => {
-              addPlugin(useOnResolve(({ args, context, info }) => {
+              addPlugin(useOnResolve(({ info }) => {
                 if (getNamedType(info.returnType).name === 'Media') {
                   return async ({ result }: { result: Media | Media[] }) => {
                     if (Array.isArray(result)) {
-                      const unwrapHandles = (media: Media) => [
-                        {
-                          ...media,
-                          titles: filterNonNullable(media.titles?.filter(mediaTitle => mediaTitle.language && mediaTitle.title) ?? []),
-                          trailers: filterNonNullable(media.trailers?.filter(mediaTitle => mediaTitle.uri) ?? []),
-                          shortDescriptions: filterNonNullable(media.shortDescriptions?.filter(mediaShortDescription => mediaShortDescription.language && mediaShortDescription.shortDescription) ?? []),
-                          descriptions: filterNonNullable(media.descriptions?.filter(mediaDescription => mediaDescription.language && mediaDescription.description) ?? []),
-                          covers: filterNonNullable(media.covers?.filter(mediaCovers => mediaCovers.language && mediaCovers.url) ?? []),
-                          banners: filterNonNullable(media.banners?.filter(mediaBanners => mediaBanners.language && mediaBanners.url) ?? []),
-                        },
+                      const makeMediaNonNullable = (media: Media) => ({
+                        ...media,
+                        titles: filterNonNullable(media.titles?.filter(mediaTitle => mediaTitle.language && mediaTitle.title) ?? []),
+                        trailers: filterNonNullable(media.trailers?.filter(mediaTitle => mediaTitle.uri) ?? []),
+                        shortDescriptions: filterNonNullable(media.shortDescriptions?.filter(mediaShortDescription => mediaShortDescription.language && mediaShortDescription.shortDescription) ?? []),
+                        descriptions: filterNonNullable(media.descriptions?.filter(mediaDescription => mediaDescription.language && mediaDescription.description) ?? []),
+                        covers: filterNonNullable(media.covers?.filter(mediaCovers => mediaCovers.language && mediaCovers.url) ?? []),
+                        banners: filterNonNullable(media.banners?.filter(mediaBanners => mediaBanners.language && mediaBanners.url) ?? []),
+                      })
+                      const unwrapHandles = (media: Media): ReturnType<typeof makeMediaNonNullable>[] => [
+                        makeMediaNonNullable(media),
                         ...media.handles?.flatMap(media => unwrapHandles(media)) ?? []
                       ]
                       const sanitizedResult = result.flatMap(unwrapHandles)
 
                       try {
-                        const p = performance.now()
-                        const sanitizedMediaTitles = sanitizedResult.flatMap(media => media.titles)
-                        const mediaTitles = await prismaClient.mediaTitle.createMany({ data: sanitizedMediaTitles })
-                        const sanitizedMediaDescriptions = sanitizedResult.flatMap(media => media.descriptions)
-                        const mediaDescriptions = await prismaClient.mediaDescription.createMany({ data: sanitizedMediaDescriptions })
-                        const sanitizedMediaShortDescriptions = sanitizedResult.flatMap(media => media.shortDescriptions)
-                        const mediaShortDescriptions = await prismaClient.mediaShortDescription.createMany({ data: sanitizedMediaShortDescriptions })
-                        const sanitizedMediaTrailers = sanitizedResult.flatMap(media => media.trailers)
-                        const mediaTrailers = await prismaClient.mediaTrailer.createMany({ data: sanitizedMediaTrailers })
-                        const sanitizedMediaCovers = sanitizedResult.flatMap(media => media.covers)
-                        const mediaCovers = await prismaClient.mediaCover.createMany({ data: sanitizedMediaCovers })
-                        const sanitizedMediaBanners = sanitizedResult.flatMap(media => media.banners)
-                        const mediaBanners = await prismaClient.mediaBanner.createMany({ data: sanitizedMediaBanners })
-                        const medias = await prismaClient.media.createMany({
+                        await prismaClient.mediaTitle.createMany({ data: sanitizedResult.flatMap(media => media.titles) })
+                        await prismaClient.mediaDescription.createMany({ data: sanitizedResult.flatMap(media => media.descriptions) })
+                        await prismaClient.mediaShortDescription.createMany({ data: sanitizedResult.flatMap(media => media.shortDescriptions) })
+                        await prismaClient.mediaTrailer.createMany({ data: sanitizedResult.flatMap(media => media.trailers) })
+                        await prismaClient.mediaCover.createMany({ data: sanitizedResult.flatMap(media => media.covers) })
+                        await prismaClient.mediaBanner.createMany({ data: sanitizedResult.flatMap(media => media.banners) })
+                        await prismaClient.media.createMany({
                           data: sanitizedResult.map(media => ({
                             ...media,
                             startDate: media.startDate ? new Date(media.startDate) : undefined,
@@ -103,9 +97,6 @@ export const extractors =
                             episodes: undefined
                           }))
                         })
-
-                        console.log('time', performance.now() - p)
-                        const connectP = performance.now()
 
                         // Update relations using raw SQL
                         // Collect ALL updates across all media items
@@ -231,15 +222,11 @@ export const extractors =
                           `)
                         }
 
-                        console.log('connectP time', performance.now() - connectP)
-                        console.log('time', performance.now() - p)
-
-                        const mediaAfterConnect = await prismaClient.media.findMany({
+                        await prismaClient.media.findMany({
                           include: {
                             titles: true
                           }
                         })
-                        console.log('mediaAfterConnect', mediaAfterConnect)
                       } catch (err) {
                         console.error(err)
                         throw err
