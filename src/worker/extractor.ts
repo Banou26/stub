@@ -58,52 +58,6 @@ export const extractors =
               addPlugin(useOnResolve(({ args, context, info }) => {
                 if (getNamedType(info.returnType).name === 'Media') {
                   return async ({ result }: { result: Media | Media[] }) => {
-                    const resolveMedia = async (media: Media) => {
-                      try {
-                        if (!media.titles?.at(0)?.title) return
-                        const upsertedMedia = await prismaClient.media.create({
-                          data: {
-                            ...media,
-                            startDate: media.startDate ? new Date(media.startDate) : undefined,
-                            endDate: media.endDate ? new Date(media.endDate) : undefined,
-                            // startDate: media.startDate ? new Date(Temporal.PlainDateTime.from(media.startDate).toLocaleString()) : undefined,
-                            // endDate: media.endDate ? new Date(Temporal.PlainDateTime.from(media.endDate).toLocaleString()) : undefined,
-                            titles: {
-                              connectOrCreate:
-                                media.titles.map(mediaTitle => ({
-                                  where: {
-                                    id: {
-                                      language: mediaTitle.language,
-                                      title: mediaTitle.title
-                                    }
-                                  },
-                                  create: {
-                                    language: mediaTitle.language,
-                                    title: mediaTitle.title
-                                  }
-                                }))
-                            },
-                            shortDescriptions: undefined,
-                            descriptions: undefined,
-                            handles: undefined,
-                            handleOf: undefined,
-                            trailers: undefined,
-                            covers: undefined,
-                            banners: undefined,
-                            episodes: undefined
-                          },
-                          include: {
-                            titles: true,
-                            episodes: true,
-                            handles: true,
-                          }
-                        })
-                        return upsertedMedia
-                        console.log('upsertedMedia', upsertedMedia)
-                      } catch (error) {
-                        console.error('Error upserting media', error)
-                      }
-                    }
                     if (Array.isArray(result)) {
                       const sanitizedResult =
                         result
@@ -116,12 +70,6 @@ export const extractors =
                             covers: filterNonNullable(media.covers?.filter(mediaCovers => mediaCovers.language && mediaCovers.url) ?? []),
                             banners: filterNonNullable(media.banners?.filter(mediaBanners => mediaBanners.language && mediaBanners.url) ?? []),
                           }))
-                      // const p = performance.now()
-                      // await Promise.all(
-                      //   sanitizedResult.map(resolveMedia)
-                      // )
-                      // console.log('time', performance.now() - p)
-                      // return
 
                       try {
                         const p = performance.now()
@@ -156,65 +104,132 @@ export const extractors =
 
                         console.log('time', performance.now() - p)
                         const connectP = performance.now()
-                        const updateResults = await Promise.all(
-                          sanitizedResult.map(media =>
-                            prismaClient.media.update({
-                              where: {
-                                uri: media.uri
-                              },
-                              data: {
-                                titles: {
-                                  connect:
-                                    media.titles.map(mediaTitle => ({
-                                      id: {
-                                        language: mediaTitle.language,
-                                        title: mediaTitle.title
-                                      }
-                                    }))
-                                },
-                                shortDescriptions: {
-                                  connect:
-                                    media.shortDescriptions.map(mediaShortDescription => ({
-                                      id: {
-                                        language: mediaShortDescription.language,
-                                        shortDescription: mediaShortDescription.shortDescription
-                                      }
-                                    }))
-                                },
-                                descriptions: {
-                                  connect:
-                                    media.descriptions.map(mediaDescription => ({
-                                      id: {
-                                        language: mediaDescription.language,
-                                        description: mediaDescription.description
-                                      }
-                                    }))
-                                },
-                                covers: {
-                                  connect:
-                                    media.covers.map(mediaCover => ({
-                                      id: {
-                                        language: mediaCover.language,
-                                        url: mediaCover.url
-                                      }
-                                    }))
-                                },
-                                banners: {
-                                  connect:
-                                    media.banners.map(mediaBanner => ({
-                                      id: {
-                                        language: mediaBanner.language,
-                                        url: mediaBanner.url
-                                      }
-                                    }))
-                                }
-                              }
-                            })
-                          )
-                        )
-                        console.log('connectP time', performance.now() - connectP)
-                        console.log('updateResults', updateResults)
 
+                        // Update relations using raw SQL
+                        // Collect ALL updates across all media items
+                        const esc = (str: string) => str.replace(/'/g, "''")
+
+                        const allTitleUpdates =
+                          sanitizedResult.flatMap(media =>
+                            media.titles.map(title => ({
+                              mediaUri: media.uri,
+                              language: title.language,
+                              title: title.title
+                            }))
+                          )
+                        if (allTitleUpdates.length) {
+                          await prismaClient.$executeRawUnsafe(`
+                            UPDATE mediaTitle
+                            SET mediaUri = CASE
+                              ${allTitleUpdates.map(u =>
+                                `WHEN language = '${esc(u.language)}' AND title = '${esc(u.title)}' THEN '${esc(u.mediaUri)}'`
+                              ).join(' ')}
+                              ELSE mediaUri
+                            END
+                            WHERE mediaUri IS NULL
+                              AND (${allTitleUpdates.map(u =>
+                                `(language = '${esc(u.language)}' AND title = '${esc(u.title)}')`
+                              ).join(' OR ')})
+                          `)
+                        }
+
+                        const allShortDescUpdates =
+                          sanitizedResult.flatMap(media =>
+                            media.shortDescriptions.map(desc => ({
+                              mediaUri: media.uri,
+                              language: desc.language,
+                              shortDescription: desc.shortDescription
+                            }))
+                          )
+                        if (allShortDescUpdates.length) {
+                          await prismaClient.$executeRawUnsafe(`
+                            UPDATE mediaShortDescription
+                            SET mediaUri = CASE
+                              ${allShortDescUpdates.map(u =>
+                                `WHEN language = '${esc(u.language)}' AND shortDescription = '${esc(u.shortDescription)}' THEN '${esc(u.mediaUri)}'`
+                              ).join(' ')}
+                              ELSE mediaUri
+                            END
+                            WHERE mediaUri IS NULL
+                              AND (${allShortDescUpdates.map(u =>
+                                `(language = '${esc(u.language)}' AND shortDescription = '${esc(u.shortDescription)}')`
+                              ).join(' OR ')})
+                          `)
+                        }
+
+                        const allDescUpdates =
+                          sanitizedResult.flatMap(media =>
+                            media.descriptions.map(desc => ({
+                              mediaUri: media.uri,
+                              language: desc.language,
+                              description: desc.description
+                            }))
+                          )
+                        if (allDescUpdates.length) {
+                          await prismaClient.$executeRawUnsafe(`
+                            UPDATE mediaDescription
+                            SET mediaUri = CASE
+                              ${allDescUpdates.map(u =>
+                                `WHEN language = '${esc(u.language)}' AND description = '${esc(u.description)}' THEN '${esc(u.mediaUri)}'`
+                              ).join(' ')}
+                              ELSE mediaUri
+                            END
+                            WHERE mediaUri IS NULL
+                              AND (${allDescUpdates.map(u =>
+                                `(language = '${esc(u.language)}' AND description = '${esc(u.description)}')`
+                              ).join(' OR ')})
+                          `)
+                        }
+
+                        const allCoverUpdates =
+                          sanitizedResult.flatMap(media =>
+                            media.covers.map(cover => ({
+                              mediaUri: media.uri,
+                              language: cover.language,
+                              url: cover.url
+                            }))
+                          )
+                        if (allCoverUpdates.length) {
+                          await prismaClient.$executeRawUnsafe(`
+                            UPDATE mediaCover
+                            SET mediaUri = CASE
+                              ${allCoverUpdates.map(u =>
+                                `WHEN language = '${esc(u.language)}' AND url = '${esc(u.url)}' THEN '${esc(u.mediaUri)}'`
+                              ).join(' ')}
+                              ELSE mediaUri
+                            END
+                            WHERE mediaUri IS NULL
+                              AND (${allCoverUpdates.map(u =>
+                                `(language = '${esc(u.language)}' AND url = '${esc(u.url)}')`
+                              ).join(' OR ')})
+                          `)
+                        }
+
+                        const allBannerUpdates =
+                          sanitizedResult.flatMap(media =>
+                            media.banners.map(banner => ({
+                              mediaUri: media.uri,
+                              language: banner.language,
+                              url: banner.url
+                            }))
+                          )
+                        if (allBannerUpdates.length) {
+                          await prismaClient.$executeRawUnsafe(`
+                            UPDATE mediaBanner
+                            SET mediaUri = CASE
+                              ${allBannerUpdates.map(u =>
+                                `WHEN language = '${esc(u.language)}' AND url = '${esc(u.url)}' THEN '${esc(u.mediaUri)}'`
+                              ).join(' ')}
+                              ELSE mediaUri
+                            END
+                            WHERE mediaUri IS NULL
+                              AND (${allBannerUpdates.map(u =>
+                                `(language = '${esc(u.language)}' AND url = '${esc(u.url)}')`
+                              ).join(' OR ')})
+                          `)
+                        }
+
+                        console.log('connectP time', performance.now() - connectP)
                         console.log('time', performance.now() - p)
 
                         const mediaAfterConnect = await prismaClient.media.findMany({
@@ -222,11 +237,7 @@ export const extractors =
                             titles: true
                           }
                         })
-
                         console.log('mediaAfterConnect', mediaAfterConnect)
-                        // for (const media of result) {
-                        //   await resolveMedia(media)
-                        // }
                       } catch (err) {
                         console.error(err)
                         throw err
