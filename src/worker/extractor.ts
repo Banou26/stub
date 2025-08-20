@@ -59,17 +59,19 @@ export const extractors =
                 if (getNamedType(info.returnType).name === 'Media') {
                   return async ({ result }: { result: Media | Media[] }) => {
                     if (Array.isArray(result)) {
-                      const sanitizedResult =
-                        result
-                          .map(media => ({
-                            ...media,
-                            titles: filterNonNullable(media.titles?.filter(mediaTitle => mediaTitle.language && mediaTitle.title) ?? []),
-                            trailers: filterNonNullable(media.trailers?.filter(mediaTitle => mediaTitle.uri) ?? []),
-                            shortDescriptions: filterNonNullable(media.shortDescriptions?.filter(mediaShortDescription => mediaShortDescription.language && mediaShortDescription.shortDescription) ?? []),
-                            descriptions: filterNonNullable(media.descriptions?.filter(mediaDescription => mediaDescription.language && mediaDescription.description) ?? []),
-                            covers: filterNonNullable(media.covers?.filter(mediaCovers => mediaCovers.language && mediaCovers.url) ?? []),
-                            banners: filterNonNullable(media.banners?.filter(mediaBanners => mediaBanners.language && mediaBanners.url) ?? []),
-                          }))
+                      const unwrapHandles = (media: Media) => [
+                        {
+                          ...media,
+                          titles: filterNonNullable(media.titles?.filter(mediaTitle => mediaTitle.language && mediaTitle.title) ?? []),
+                          trailers: filterNonNullable(media.trailers?.filter(mediaTitle => mediaTitle.uri) ?? []),
+                          shortDescriptions: filterNonNullable(media.shortDescriptions?.filter(mediaShortDescription => mediaShortDescription.language && mediaShortDescription.shortDescription) ?? []),
+                          descriptions: filterNonNullable(media.descriptions?.filter(mediaDescription => mediaDescription.language && mediaDescription.description) ?? []),
+                          covers: filterNonNullable(media.covers?.filter(mediaCovers => mediaCovers.language && mediaCovers.url) ?? []),
+                          banners: filterNonNullable(media.banners?.filter(mediaBanners => mediaBanners.language && mediaBanners.url) ?? []),
+                        },
+                        ...media.handles?.flatMap(media => unwrapHandles(media)) ?? []
+                      ]
+                      const sanitizedResult = result.flatMap(unwrapHandles)
 
                       try {
                         const p = performance.now()
