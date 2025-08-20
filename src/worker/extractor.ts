@@ -13,6 +13,8 @@ import { fetch } from './utils'
 import { getNamedType } from 'graphql'
 import prismaClient from './prisma'
 import { unwrapHandles } from './prisma/utils'
+import { groupAllRelatedMedia } from './prisma/generated/sql/groupAllRelatedMedia'
+
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -67,6 +69,8 @@ export const extractors =
                         await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
                         await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
                         await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
+                        const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
+                        console.log('groupMedia', groupMedia)
                       } catch (err) {
                         console.error(err)
                         throw err
