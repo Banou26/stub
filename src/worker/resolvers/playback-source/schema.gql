@@ -1,0 +1,21 @@
+
+enum PlaybackSourceType {
+  IFRAME
+  CUSTOM
+  OTHER
+}
+
+type PlaybackSource {
+  """Uri consists of the `origin` and `id` fields in the format `origin:id`"""
+  uri: String!
+  """String that is used to target a specific origin, e.g `google` or `yt` for youtube"""
+  origin: String!
+  """An id that references a specific resource within the origin space"""
+  id: String!
+  """An url to the media resource"""
+  url: String
+  type: PlaybackSourceType!
+  """JSON data for custom players"""
+  data: JSON
+  Episode: Episode
+}

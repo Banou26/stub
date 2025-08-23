@@ -1,16 +1,19 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 
 import type { Media, Resolvers } from '../generated/schema/types.generated'
+import { mediaTable, type CreateMedia } from './drizzle/schema'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
 import { Client, fetchExchange } from 'urql'
 import { getNamedType } from 'graphql'
+import { sql } from 'drizzle-orm'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
+import database from './drizzle'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -57,20 +60,47 @@ export const extractors =
                 if (getNamedType(info.returnType).name === 'Media') {
                   return async ({ result }: { result: Media | Media[] }) => {
                     if (Array.isArray(result)) {
-                      // try {
-                      //   // const sanitizedResult = result.flatMap(unwrapHandles)
-                      //   await prismaClient.media.bulkCreateWithRelatedEntities(result)
-                      //   // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
-                      //   // await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
-                      //   // await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
-                      //   // await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
-                      //   // await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
-                      //   const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
-                      //   console.log('groupMedia', groupMedia)
-                      // } catch (err) {
-                      //   console.error(err)
-                      //   throw err
-                      // }
+                      try {
+                        await database.transaction(async () => {
+                          const values = result.map(media => ({
+                            ...media,
+                            startDate: media.startDate ? new Date(media.startDate) : null,
+                            endDate: media.endDate ? new Date(media.endDate) : null
+                          } satisfies CreateMedia))
+                          const results =
+                            await database.insert(mediaTable)
+                            .values(values)
+                            .onConflictDoUpdate({
+                              target: mediaTable.uri,
+                              set: {
+                                type: sql`excluded.type`,
+                                status: sql`excluded.status`,
+                                startDate: sql`excluded.startDate`,
+                                endDate: sql`excluded.endDate`,
+                                averageScore: sql`excluded.averageScore`,
+                                episodeCount: sql`excluded.episodeCount`,
+                                aggregated: sql`excluded.aggregated`,
+                                isAdult: sql`excluded.isAdult`,
+                                popularity: sql`excluded.popularity`
+                              }
+                            })
+                            .returning()
+                          console.log('results', results)
+                        })
+
+                        // const sanitizedResult = result.flatMap(unwrapHandles)
+                        // await prismaClient.media.bulkCreateWithRelatedEntities(result)
+                        // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
+                        // const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
+                        // console.log('groupMedia', groupMedia)
+                      } catch (err) {
+                        console.error(err)
+                        throw err
+                      }
                     } else {
                       // await resolveMedia(result as Media)
                     }

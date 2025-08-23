@@ -12,7 +12,7 @@ export const playbackSourceTypeEnum = ['IFRAME', 'CUSTOM', 'OTHER'] as const;
 export type PlaybackSourceType = typeof playbackSourceTypeEnum[number];
 
 // Media table
-export const media = sqliteTable('media', {
+export const mediaTable = sqliteTable('media', {
   uri: text('uri').primaryKey().unique().notNull(),
   origin: text('origin').notNull(),
   id: text('id').notNull(),
@@ -34,69 +34,69 @@ export const media = sqliteTable('media', {
 }));
 
 // MediaTitle table
-export const mediaTitle = sqliteTable('mediaTitle', {
+export const mediaTitleTable = sqliteTable('mediaTitle', {
   language: text('language').notNull(),
   title: text('title').notNull(),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.title] }),
 }));
 
 // MediaShortDescription table
-export const mediaShortDescription = sqliteTable('mediaShortDescription', {
+export const mediaShortDescriptionTable = sqliteTable('mediaShortDescription', {
   language: text('language').notNull(),
   shortDescription: text('shortDescription').notNull(),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.shortDescription] }),
 }));
 
 // MediaDescription table
-export const mediaDescription = sqliteTable('mediaDescription', {
+export const mediaDescriptionTable = sqliteTable('mediaDescription', {
   language: text('language').notNull(),
   description: text('description').notNull(),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.description] }),
 }));
 
 // MediaTrailer table
-export const mediaTrailer = sqliteTable('mediaTrailer', {
+export const mediaTrailerTable = sqliteTable('mediaTrailer', {
   uri: text('uri').primaryKey().unique().notNull(),
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
   language: text('language').notNull(),
   thumbnail: text('thumbnail'),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 });
 
 // MediaCover table
-export const mediaCover = sqliteTable('mediaCover', {
+export const mediaCoverTable = sqliteTable('mediaCover', {
   language: text('language').notNull(),
   url: text('url').notNull(),
   height: integer('height'),
   width: integer('width'),
   color: text('color'),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.url] }),
 }));
 
 // MediaBanner table
-export const mediaBanner = sqliteTable('mediaBanner', {
+export const mediaBannerTable = sqliteTable('mediaBanner', {
   language: text('language').notNull(),
   url: text('url').notNull(),
   height: integer('height'),
   width: integer('width'),
   color: text('color'),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.url] }),
 }));
 
 // Episode table
-export const episode = sqliteTable('episode', {
+export const episodeTable = sqliteTable('episode', {
   uri: text('uri').primaryKey().unique().notNull(),
   origin: text('origin').notNull(),
   id: text('id').notNull(),
@@ -105,7 +105,7 @@ export const episode = sqliteTable('episode', {
   releaseDate: integer('releaseDate', { mode: 'timestamp' }),
   relativeNumber: integer('relativeNumber'),
   absoluteNumber: integer('absoluteNumber'),
-  mediaUri: text('mediaUri').references(() => media.uri),
+  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   uriIdx: index('episode_uri_idx').on(table.uri),
   originIdIdx: index('episode_origin_id_idx').on(table.origin, table.id),
@@ -113,53 +113,53 @@ export const episode = sqliteTable('episode', {
 }));
 
 // EpisodeTitle table
-export const episodeTitle = sqliteTable('episodeTitle', {
+export const episodeTitleTable = sqliteTable('episodeTitle', {
   language: text('language').notNull(),
   title: text('title').notNull(),
-  episodeUri: text('episodeUri').references(() => episode.uri),
+  episodeUri: text('episodeUri').references(() => episodeTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.title] }),
 }));
 
 // EpisodeShortDescription table
-export const episodeShortDescription = sqliteTable('episodeShortDescription', {
+export const episodeShortDescriptionTable = sqliteTable('episodeShortDescription', {
   language: text('language').notNull(),
   shortDescription: text('shortDescription').notNull(),
-  episodeUri: text('episodeUri').references(() => episode.uri),
+  episodeUri: text('episodeUri').references(() => episodeTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.shortDescription] }),
 }));
 
 // EpisodeDescription table
-export const episodeDescription = sqliteTable('episodeDescription', {
+export const episodeDescriptionTable = sqliteTable('episodeDescription', {
   language: text('language').notNull(),
   description: text('description').notNull(),
-  episodeUri: text('episodeUri').references(() => episode.uri),
+  episodeUri: text('episodeUri').references(() => episodeTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.description] }),
 }));
 
 // EpisodeThumbnail table
-export const episodeThumbnail = sqliteTable('episodeThumbnail', {
+export const episodeThumbnailTable = sqliteTable('episodeThumbnail', {
   language: text('language').notNull(),
   url: text('url').notNull(),
   height: integer('height'),
   width: integer('width'),
   color: text('color'),
-  episodeUri: text('episodeUri').references(() => episode.uri),
+  episodeUri: text('episodeUri').references(() => episodeTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.language, table.url] }),
 }));
 
 // PlaybackSource table
-export const playbackSource = sqliteTable('playbackSource', {
+export const playbackSourceTable = sqliteTable('playbackSource', {
   uri: text('uri').primaryKey().unique().notNull(),
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
   type: text('type').notNull().$type<PlaybackSourceType>(),
   data: text('data', { mode: 'json' }).$type<Record<string, any>>(),
-  episodeUri: text('episodeUri').references(() => episode.uri),
+  episodeUri: text('episodeUri').references(() => episodeTable.uri),
 }, (table) => ({
   uriIdx: index('playbackSource_uri_idx').on(table.uri),
   originIdIdx: index('playbackSource_origin_id_idx').on(table.origin, table.id),
@@ -167,136 +167,136 @@ export const playbackSource = sqliteTable('playbackSource', {
 }));
 
 // Junction table for Media handles (self-referencing many-to-many)
-export const mediaHandles = sqliteTable('mediaHandles', {
-  mediaUri: text('mediaUri').notNull().references(() => media.uri),
-  handleUri: text('handleUri').notNull().references(() => media.uri),
+export const mediaHandlesTable = sqliteTable('mediaHandles', {
+  mediaUri: text('mediaUri').notNull().references(() => mediaTable.uri),
+  handleUri: text('handleUri').notNull().references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.mediaUri, table.handleUri] }),
 }));
 
 // Relations
-export const mediaRelations = relations(media, ({ many }) => ({
-  titles: many(mediaTitle),
-  shortDescriptions: many(mediaShortDescription),
-  descriptions: many(mediaDescription),
-  trailers: many(mediaTrailer),
-  covers: many(mediaCover),
-  banners: many(mediaBanner),
-  episodes: many(episode),
-  handles: many(mediaHandles, {
+export const mediaRelations = relations(mediaTable, ({ many }) => ({
+  titles: many(mediaTitleTable),
+  shortDescriptions: many(mediaShortDescriptionTable),
+  descriptions: many(mediaDescriptionTable),
+  trailers: many(mediaTrailerTable),
+  covers: many(mediaCoverTable),
+  banners: many(mediaBannerTable),
+  episodes: many(episodeTable),
+  handles: many(mediaHandlesTable, {
     relationName: 'handles',
   }),
-  handleOf: many(mediaHandles, {
+  handleOf: many(mediaHandlesTable, {
     relationName: 'handleOf',
   }),
 }));
 
-export const mediaTitleRelations = relations(mediaTitle, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaTitle.mediaUri],
-    references: [media.uri],
+export const mediaTitleRelations = relations(mediaTitleTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaTitleTable.mediaUri],
+    references: [mediaTable.uri],
   }),
 }));
 
-export const mediaShortDescriptionRelations = relations(mediaShortDescription, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaShortDescription.mediaUri],
-    references: [media.uri],
+export const mediaShortDescriptionRelations = relations(mediaShortDescriptionTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaShortDescriptionTable.mediaUri],
+    references: [mediaTable.uri],
   }),
 }));
 
-export const mediaDescriptionRelations = relations(mediaDescription, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaDescription.mediaUri],
-    references: [media.uri],
+export const mediaDescriptionRelations = relations(mediaDescriptionTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaDescriptionTable.mediaUri],
+    references: [mediaTable.uri],
   }),
 }));
 
-export const mediaTrailerRelations = relations(mediaTrailer, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaTrailer.mediaUri],
-    references: [media.uri],
+export const mediaTrailerRelations = relations(mediaTrailerTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaTrailerTable.mediaUri],
+    references: [mediaTable.uri],
   }),
 }));
 
-export const mediaCoverRelations = relations(mediaCover, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaCover.mediaUri],
-    references: [media.uri],
+export const mediaCoverRelations = relations(mediaCoverTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaCoverTable.mediaUri],
+    references: [mediaTable.uri],
   }),
 }));
 
-export const mediaBannerRelations = relations(mediaBanner, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaBanner.mediaUri],
-    references: [media.uri],
+export const mediaBannerRelations = relations(mediaBannerTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaBannerTable.mediaUri],
+    references: [mediaTable.uri],
   }),
 }));
 
-export const episodeRelations = relations(episode, ({ one, many }) => ({
-  media: one(media, {
-    fields: [episode.mediaUri],
-    references: [media.uri],
+export const episodeRelations = relations(episodeTable, ({ one, many }) => ({
+  media: one(mediaTable, {
+    fields: [episodeTable.mediaUri],
+    references: [mediaTable.uri],
   }),
-  titles: many(episodeTitle),
-  shortDescriptions: many(episodeShortDescription),
-  descriptions: many(episodeDescription),
-  thumbnails: many(episodeThumbnail),
-  playbackSources: many(playbackSource),
+  titles: many(episodeTitleTable),
+  shortDescriptions: many(episodeShortDescriptionTable),
+  descriptions: many(episodeDescriptionTable),
+  thumbnails: many(episodeThumbnailTable),
+  playbackSources: many(playbackSourceTable),
 }));
 
-export const episodeTitleRelations = relations(episodeTitle, ({ one }) => ({
-  episode: one(episode, {
-    fields: [episodeTitle.episodeUri],
-    references: [episode.uri],
-  }),
-}));
-
-export const episodeShortDescriptionRelations = relations(episodeShortDescription, ({ one }) => ({
-  episode: one(episode, {
-    fields: [episodeShortDescription.episodeUri],
-    references: [episode.uri],
+export const episodeTitleRelations = relations(episodeTitleTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [episodeTitleTable.episodeUri],
+    references: [episodeTable.uri],
   }),
 }));
 
-export const episodeDescriptionRelations = relations(episodeDescription, ({ one }) => ({
-  episode: one(episode, {
-    fields: [episodeDescription.episodeUri],
-    references: [episode.uri],
+export const episodeShortDescriptionRelations = relations(episodeShortDescriptionTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [episodeShortDescriptionTable.episodeUri],
+    references: [episodeTable.uri],
   }),
 }));
 
-export const episodeThumbnailRelations = relations(episodeThumbnail, ({ one }) => ({
-  episode: one(episode, {
-    fields: [episodeThumbnail.episodeUri],
-    references: [episode.uri],
+export const episodeDescriptionRelations = relations(episodeDescriptionTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [episodeDescriptionTable.episodeUri],
+    references: [episodeTable.uri],
   }),
 }));
 
-export const playbackSourceRelations = relations(playbackSource, ({ one }) => ({
-  episode: one(episode, {
-    fields: [playbackSource.episodeUri],
-    references: [episode.uri],
+export const episodeThumbnailRelations = relations(episodeThumbnailTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [episodeThumbnailTable.episodeUri],
+    references: [episodeTable.uri],
   }),
 }));
 
-export const mediaHandlesRelations = relations(mediaHandles, ({ one }) => ({
-  media: one(media, {
-    fields: [mediaHandles.mediaUri],
-    references: [media.uri],
+export const playbackSourceRelations = relations(playbackSourceTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [playbackSourceTable.episodeUri],
+    references: [episodeTable.uri],
+  }),
+}));
+
+export const mediaHandlesRelations = relations(mediaHandlesTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaHandlesTable.mediaUri],
+    references: [mediaTable.uri],
     relationName: 'handles',
   }),
-  handle: one(media, {
-    fields: [mediaHandles.handleUri],
-    references: [media.uri],
+  handle: one(mediaTable, {
+    fields: [mediaHandlesTable.handleUri],
+    references: [mediaTable.uri],
     relationName: 'handleOf',
   }),
 }));
 
 // Type exports for better TypeScript support
-export type Media = typeof media.$inferSelect;
-export type NewMedia = typeof media.$inferInsert;
-export type Episode = typeof episode.$inferSelect;
-export type NewEpisode = typeof episode.$inferInsert;
-export type PlaybackSource = typeof playbackSource.$inferSelect;
-export type NewPlaybackSource = typeof playbackSource.$inferInsert;
+export type Media = typeof mediaTable.$inferSelect;
+export type CreateMedia = typeof mediaTable.$inferInsert;
+export type Episode = typeof episodeTable.$inferSelect;
+export type CreateEpisode = typeof episodeTable.$inferInsert;
+export type PlaybackSource = typeof playbackSourceTable.$inferSelect;
+export type CreatePlaybackSource = typeof playbackSourceTable.$inferInsert;

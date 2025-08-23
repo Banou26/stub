@@ -1,3 +1,120 @@
+
+enum MediaType {
+  TV
+  MOVIE
+  ANIME
+  """Special episodes that have been included in DVD/Blu-ray releases, picture dramas, pilots, etc"""
+  SPECIAL
+  """(Original Video Animation) Anime that have been released directly on
+DVD/Blu-ray without originally going through a theatrical release or
+television broadcast"""
+  OVA
+  """(Original Net Animation) Anime that have been originally released online or are only available through streaming services."""
+  ONA
+  """Live action media such as movies or TV show"""
+  LIVE_ACTION
+}
+
+enum MediaStatus {
+  """Has completed and is no longer being released"""
+  FINISHED
+  """Currently releasing"""
+  RELEASING
+  """To be released at a later date"""
+  NOT_YET_RELEASED
+  """Ended before the work could be finished"""
+  CANCELLED
+  """Is currently paused from releasing and will resume at a later date"""
+  HIATUS
+}
+
+type Media {
+  """Uri consists of the `origin` and `id` fields in the format `origin:id`"""
+  uri: String!
+  """String that is used to target a specific origin, e.g `google` or `yt` for youtube"""
+  origin: String!
+  """An id that references a specific resource within the origin space"""
+  id: String!
+  """An url to the media resource"""
+  url: String
+  aggregated: Boolean
+  """Links to external/other resources related to itself"""
+  handles: [Media!]
+  handleOf: [Media!]
+  titles: [MediaTitle!]
+  type: MediaType
+  status: MediaStatus
+  shortDescriptions: [MediaShortDescription!]
+  descriptions: [MediaDescription!]
+  trailers: [MediaTrailer!]
+  covers: [MediaCover!]
+  banners: [MediaBanner!]
+  externalLinks: String
+  averageScore: Int
+  popularity: Int
+  startDate: Date
+  endDate: Date
+  isAdult: Boolean
+  episodeCount: Int
+  episodes: [Episode!]
+}
+
+type MediaTitle {
+  language: String!
+  title: String!
+  Media: Media
+  mediaUri: String
+}
+
+type MediaShortDescription {
+  language: String!
+  shortDescription: String!
+  Media: Media
+  mediaUri: String
+}
+
+type MediaDescription {
+  language: String!
+  description: String!
+  Media: Media
+  mediaUri: String
+}
+
+type MediaTrailer {
+  """Uri consists of the `origin` and `id` fields in the format `origin:id`"""
+  uri: String!
+  """String that is used to target a specific origin, e.g `google` or `yt` for youtube"""
+  origin: String!
+  """An id that references a specific resource within the origin space"""
+  id: String!
+  """An url to the media resource"""
+  url: String
+  language: String!
+  thumbnail: String
+  Media: Media
+}
+
+type MediaCover {
+  language: String!
+  url: String!
+  height: Int
+  width: Int
+  """Average #hex color of cover image"""
+  color: String
+  Media: Media
+}
+
+type MediaBanner {
+  language: String!
+  url: String!
+  height: Int
+  width: Int
+  """Average #hex color of cover image"""
+  color: String
+  Media: Media
+}
+
+
 input MediaInput {
   uri: ID
   origin: ID
