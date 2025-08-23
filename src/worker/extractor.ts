@@ -5,16 +5,12 @@ import type { Media, Resolvers } from '../generated/schema/types.generated'
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
 import { Client, fetchExchange } from 'urql'
+import { getNamedType } from 'graphql'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
-import { getNamedType } from 'graphql'
-import prismaClient from './prisma'
-import { unwrapHandles } from './prisma/utils'
-import { groupAllRelatedMedia } from './prisma/generated/sql/groupAllRelatedMedia'
-
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -61,20 +57,20 @@ export const extractors =
                 if (getNamedType(info.returnType).name === 'Media') {
                   return async ({ result }: { result: Media | Media[] }) => {
                     if (Array.isArray(result)) {
-                      try {
-                        // const sanitizedResult = result.flatMap(unwrapHandles)
-                        await prismaClient.media.bulkCreateWithRelatedEntities(result)
-                        // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
-                        const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
-                        console.log('groupMedia', groupMedia)
-                      } catch (err) {
-                        console.error(err)
-                        throw err
-                      }
+                      // try {
+                      //   // const sanitizedResult = result.flatMap(unwrapHandles)
+                      //   await prismaClient.media.bulkCreateWithRelatedEntities(result)
+                      //   // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
+                      //   // await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
+                      //   // await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
+                      //   // await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
+                      //   // await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
+                      //   const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
+                      //   console.log('groupMedia', groupMedia)
+                      // } catch (err) {
+                      //   console.error(err)
+                      //   throw err
+                      // }
                     } else {
                       // await resolveMedia(result as Media)
                     }

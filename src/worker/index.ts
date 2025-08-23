@@ -1,2 +1,2 @@
-import './prisma'
 import './utils'
+import './yoga'

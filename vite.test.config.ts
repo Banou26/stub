@@ -1,7 +1,4 @@
 import { defineConfig } from 'vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
-
-import { prismaBrowserHack } from './vite-plugin-prisma-hack'
 
 export default defineConfig({
   build: {
@@ -20,8 +17,6 @@ export default defineConfig({
     include: ['wa-sqlite']
   },
   plugins: [
-    nodePolyfills(),
-    prismaBrowserHack(),
     {
       name: 'custom-index-html',
       transformIndexHtml(html) {
