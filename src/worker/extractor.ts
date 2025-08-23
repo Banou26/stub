@@ -62,13 +62,13 @@ export const extractors =
                   return async ({ result }: { result: Media | Media[] }) => {
                     if (Array.isArray(result)) {
                       try {
-                        const sanitizedResult = result.flatMap(unwrapHandles)
+                        // const sanitizedResult = result.flatMap(unwrapHandles)
                         await prismaClient.media.bulkCreateWithRelatedEntities(result)
-                        await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
-                        await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
-                        await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
-                        await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
-                        await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
+                        // await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
                         const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
                         console.log('groupMedia', groupMedia)
                       } catch (err) {

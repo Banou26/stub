@@ -90,6 +90,9 @@ function inferObjectType(value: Object): ColumnType {
   if (value instanceof Array) {
     return ColumnTypeEnum.Bytes
   }
+  if (value === null) {
+    return 'Unknown'
+  }
   throw new UnexpectedTypeError(value)
 }
 

@@ -5,6 +5,7 @@ import { PrismaWASqliteAdapterFactory } from './wa-sqlite-adapter'
 import SQLSchema from '../../../prisma/migrations/0_init/migration.sql?raw'
 import { Prisma, PrismaClient } from './generated/client'
 import { unwrapHandles } from './utils'
+import { inferColumnType } from './conversion'
 
 const esc = (str: string) => str.replace(/'/g, "''")
 
@@ -208,28 +209,90 @@ const prismaClient =
             const context = Prisma.getExtensionContext(this)
             const sanitizedResult = medias.flatMap(unwrapHandles)
             const client = (context.$parent as typeof prismaClient)
-            await client.mediaTitle.createMany({ data: sanitizedResult.flatMap(media => media.titles) })
-            await client.mediaDescription.createMany({ data: sanitizedResult.flatMap(media => media.descriptions) })
-            await client.mediaShortDescription.createMany({ data: sanitizedResult.flatMap(media => media.shortDescriptions) })
-            await client.mediaTrailer.createMany({ data: sanitizedResult.flatMap(media => media.trailers) })
-            await client.mediaCover.createMany({ data: sanitizedResult.flatMap(media => media.covers) })
-            await client.mediaBanner.createMany({ data: sanitizedResult.flatMap(media => media.banners) })
-            await client.media.createMany({
-              data: sanitizedResult.map(media => ({
-                ...media,
-                startDate: media.startDate ? new Date(media.startDate) : undefined,
-                endDate: media.endDate ? new Date(media.endDate) : undefined,
-                titles: undefined,
-                shortDescriptions: undefined,
-                descriptions: undefined,
-                handles: undefined,
-                handleOf: undefined,
-                trailers: undefined,
-                covers: undefined,
-                banners: undefined,
-                episodes: undefined
-              }))
-            })
+            // await client.mediaTitle.createMany({ data: sanitizedResult.flatMap(media => media.titles) })
+            // await client.mediaDescription.createMany({ data: sanitizedResult.flatMap(media => media.descriptions) })
+            // await client.mediaShortDescription.createMany({ data: sanitizedResult.flatMap(media => media.shortDescriptions) })
+            // await client.mediaTrailer.createMany({ data: sanitizedResult.flatMap(media => media.trailers) })
+            // await client.mediaCover.createMany({ data: sanitizedResult.flatMap(media => media.covers) })
+            // await client.mediaBanner.createMany({ data: sanitizedResult.flatMap(media => media.banners) })
+
+
+            const mediaItems = sanitizedResult.map(media => ({
+              ...media,
+              startDate: media.startDate ? new Date(media.startDate) : undefined,
+              endDate: media.endDate ? new Date(media.endDate) : undefined,
+              titles: undefined,
+              shortDescriptions: undefined,
+              descriptions: undefined,
+              handles: undefined,
+              handleOf: undefined,
+              trailers: undefined,
+              covers: undefined,
+              banners: undefined,
+              episodes: undefined
+            }))
+
+            const values =
+              mediaItems.flatMap((item) =>
+                [
+                  item.uri,
+                  item.origin,
+                  item.id,
+                  item.url,
+                  item.aggregated,
+                  item.type,
+                  item.status,
+                  item.averageScore,
+                  item.popularity,
+                  item.isAdult,
+                  item.episodeCount
+                ]
+              )
+            // inferColumnType
+            // await adapter.performIO({
+            //   sql: `INSERT INTO media (uri, origin, id, url, aggregated, type, status, averageScore, popularity, isAdult, episodeCount)
+            //     VALUES ${mediaItems.map(() =>`(${Array(11).fill(undefined).map(() => '?').join(',')})`)}
+            //     ON CONFLICT(uri) DO UPDATE SET
+            //       url = excluded.url,
+            //       aggregated = excluded.aggregated,
+            //       type = excluded.type,
+            //       status = excluded.status,
+            //       averageScore = excluded.averageScore,
+            //       popularity = excluded.popularity,
+            //       isAdult = excluded.isAdult,
+            //       episodeCount = excluded.episodeCount`,
+            //   argTypes: values.map(value => inferColumnType(value ?? null)),
+            //   args: values
+            // })
+
+            await client.$executeRawUnsafe(
+              `INSERT INTO media (uri, origin, id, url, aggregated, type, status, averageScore, popularity, isAdult, episodeCount)
+                VALUES ${mediaItems.map(() =>`(${Array(11).fill(undefined).map(() => '?').join(',')})`)}
+                ON CONFLICT(uri) DO UPDATE SET
+                  url = excluded.url,
+                  aggregated = excluded.aggregated,
+                  type = excluded.type,
+                  status = excluded.status,
+                  averageScore = excluded.averageScore,
+                  popularity = excluded.popularity,
+                  isAdult = excluded.isAdult,
+                  episodeCount = excluded.episodeCount`,
+              ...mediaItems.flatMap((item) =>
+                [
+                  item.uri,
+                  item.origin,
+                  item.id,
+                  item.url,
+                  item.aggregated,
+                  item.type,
+                  item.status,
+                  item.averageScore,
+                  item.popularity,
+                  item.isAdult,
+                  item.episodeCount
+                ]
+              )
+            )
           }
         },
       },

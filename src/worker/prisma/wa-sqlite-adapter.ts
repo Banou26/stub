@@ -69,6 +69,7 @@ class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable
   }
 
   private async performIO(query: SqlQuery): Promise<ExtendedSqlResultSet> {
+    console.log('query', query)
     const release = await this.context.mutex.acquire()
     try {
       const params = query.args.map((arg, i) => mapArg(arg, query.argTypes[i]))
@@ -110,8 +111,15 @@ class WASqliteQueryable<ClientT extends WASqliteContext> implements SqlQueryable
 }
 
 class WASqliteTransaction extends WASqliteQueryable<WASqliteContext> implements Transaction {
+  module: any
+  sqlite3: SQLiteAPI | undefined
+  mutex: Mutex | undefined
+
   constructor(context: WASqliteContext, readonly options: TransactionOptions) {
     super(context)
+    this.module = context.module
+    this.sqlite3 = context.sqlite3
+    this.mutex = context.mutex
   }
 
   async commit(): Promise<void> {
@@ -189,6 +197,10 @@ export class PrismaWASqliteAdapter extends WASqliteQueryable<WASqliteContext> im
 export class PrismaWASqliteAdapterFactory implements SqlDriverAdapterFactory {
   readonly provider = 'sqlite'
   readonly adapterName = packageName
+  module: any
+  sqlite3: SQLiteAPI | undefined
+  mutex: Mutex | undefined
+  database: any | undefined
 
   constructor() {}
 
@@ -196,9 +208,59 @@ export class PrismaWASqliteAdapterFactory implements SqlDriverAdapterFactory {
     // @ts-expect-error
     const { default: SQLiteWasm } = await import('wa-sqlite/dist/wa-sqlite.wasm?url')
     const module = await SQLiteESMFactory({ locateFile: () => SQLiteWasm })
-    const sqlite3 = SQLite.Factory(module)
-    const database = await sqlite3.open_v2(':memory:')
-    const mutex = new Mutex()
-    return new PrismaWASqliteAdapter({ mutex, module, sqlite3, database }, async () => {})
+    this.sqlite3 = SQLite.Factory(module)
+    this.database = await this.sqlite3.open_v2(':memory:')
+    this.mutex = new Mutex()
+    return new PrismaWASqliteAdapter({ mutex: this.mutex, module, sqlite3: this.sqlite3, database: this.database }, async () => {})
+  }
+
+  async performIO(query: SqlQuery): Promise<ExtendedSqlResultSet> {
+    if (!this.mutex) {
+      throw new Error('Mutex not initialized')
+    }
+    if (!this.sqlite3) {
+      throw new Error('SQLite3 not initialized')
+    }
+    if (!this.database) {
+      throw new Error('Database not initialized')
+    }
+    console.log('query', query)
+    const release = await this.mutex.acquire()
+    try {
+      const params = query.args.map((arg, i) => mapArg(arg, query.argTypes[i]))
+      let currentIndex = 0
+      for await (const stmt of this.sqlite3.statements(this.database, query.sql)) {
+        const paramCount = this.sqlite3.bind_parameter_count(stmt)
+        const columnNames = this.sqlite3.column_names(stmt)
+        this.sqlite3.bind_collection(stmt, params.slice(currentIndex, paramCount))
+        currentIndex = currentIndex + paramCount
+        const rows = [] as SQLiteCompatibleType[][]
+        while (await this.sqlite3.step(stmt) === SQLite.SQLITE_ROW) {
+          const row = this.sqlite3.row(stmt)
+          rows.push(row)
+        }
+        const columnTypes = getColumnTypes(columnNames, rows)
+        const changes = this.sqlite3.changes(this.database)
+        if (changes) {
+          return {
+            columnNames,
+            columnTypes,
+            rows,
+            changes
+          }
+        }
+      }
+      return {
+        columnNames: [],
+        columnTypes: [],
+        rows: [],
+        changes: 0
+      }
+    } catch (error) {
+      console.error('Error in performIO: %O', error)
+      throw new DriverAdapterError(convertDriverError(error))
+    } finally {
+      release()
+    }
   }
 }
