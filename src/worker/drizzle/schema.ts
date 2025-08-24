@@ -296,6 +296,18 @@ export const mediaHandlesRelations = relations(mediaHandlesTable, ({ one }) => (
 // Type exports for better TypeScript support
 export type Media = typeof mediaTable.$inferSelect;
 export type CreateMedia = typeof mediaTable.$inferInsert;
+export type MediaTitle = typeof mediaTitleTable.$inferSelect;
+export type CreateMediaTitle = typeof mediaTitleTable.$inferInsert;
+export type MediaDescription = typeof mediaDescriptionTable.$inferSelect;
+export type CreateMediaDescription = typeof mediaDescriptionTable.$inferInsert;
+export type MediaShortDescription = typeof mediaShortDescriptionTable.$inferSelect;
+export type CreateMediaShortDescription = typeof mediaShortDescriptionTable.$inferInsert;
+export type MediaTrailer = typeof mediaTrailerTable.$inferSelect;
+export type CreateMediaTrailer = typeof mediaTrailerTable.$inferInsert;
+export type MediaCover = typeof mediaCoverTable.$inferSelect;
+export type CreateMediaCover = typeof mediaCoverTable.$inferInsert;
+export type MediaBanner = typeof mediaBannerTable.$inferSelect;
+export type CreateMediaBanner = typeof mediaBannerTable.$inferInsert;
 export type Episode = typeof episodeTable.$inferSelect;
 export type CreateEpisode = typeof episodeTable.$inferInsert;
 export type PlaybackSource = typeof playbackSourceTable.$inferSelect;
