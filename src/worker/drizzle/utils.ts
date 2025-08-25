@@ -2,7 +2,7 @@ import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
-import type { Media } from '../../generated/schema/types.generated'
+import type { Media, Episode } from '../../generated/schema/types.generated'
 import type {
   CreateMedia,
   CreateMediaBanner,
@@ -10,10 +10,14 @@ import type {
   CreateMediaDescription,
   CreateMediaShortDescription,
   CreateMediaTitle,
-  CreateMediaTrailer
+  CreateMediaTrailer,
+  CreateEpisode,
+  CreateEpisodeTitle,
+  CreateEpisodeDescription,
+  CreateEpisodeShortDescription,
+  CreateEpisodeThumbnail
 } from './schema'
 
-import database from '.'
 import {
   mediaBannerTable,
   mediaCoverTable,
@@ -21,7 +25,12 @@ import {
   mediaShortDescriptionTable,
   mediaTable,
   mediaTitleTable,
-  mediaTrailerTable
+  mediaTrailerTable,
+  episodeTable,
+  episodeTitleTable,
+  episodeDescriptionTable,
+  episodeShortDescriptionTable,
+  episodeThumbnailTable
 } from './schema'
 import { sql } from 'drizzle-orm'
 
@@ -166,6 +175,106 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, medias: Medi
   if (mediaBanners.length) {
     await tx.insert(mediaBannerTable)
       .values(mediaBanners)
+      .onConflictDoNothing()
+  }
+}
+
+export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
+  const values = episodes.map(episode => ({
+    ...episode,
+    releaseDate: episode.releaseDate ? new Date(episode.releaseDate) : null
+  } satisfies CreateEpisode))
+
+  if (values.length) {
+    await tx.insert(episodeTable)
+        .values(values)
+        .onConflictDoUpdate({
+          target: episodeTable.uri,
+          set: {
+            origin: sql`excluded.origin`,
+            id: sql`excluded.id`,
+            url: sql`excluded.url`,
+            aggregated: sql`excluded.aggregated`,
+            releaseDate: sql`excluded.releaseDate`,
+            relativeNumber: sql`excluded.relativeNumber`,
+            absoluteNumber: sql`excluded.absoluteNumber`,
+            mediaUri: sql`excluded.mediaUri`
+          }
+        })
+  }
+
+  const episodeTitles =
+    episodes
+      .flatMap(episode =>
+        episode.titles?.map(title => ({
+          episodeUri: episode.uri,
+          language: title.language,
+          title: title.title
+        }) satisfies CreateEpisodeTitle)
+      )
+      .filter((title): title is NonNullable<typeof title> => title !== null && title !== undefined)
+      .filter(title => title.title?.length > 0)
+
+  if (episodeTitles.length) {
+    await tx.insert(episodeTitleTable)
+      .values(episodeTitles)
+      .onConflictDoNothing()
+  }
+
+  const episodeDescriptions =
+    episodes
+      .flatMap(episode =>
+        episode.descriptions?.map(episodeDescription => ({
+          episodeUri: episode.uri,
+          language: episodeDescription.language,
+          description: episodeDescription.description
+        }) satisfies CreateEpisodeDescription)
+      )
+      .filter((episodeDescription): episodeDescription is NonNullable<typeof episodeDescription> => episodeDescription !== null && episodeDescription !== undefined)
+      .filter(episodeDescription => episodeDescription.description?.length > 0)
+
+  if (episodeDescriptions.length) {
+    await tx.insert(episodeDescriptionTable)
+      .values(episodeDescriptions)
+      .onConflictDoNothing()
+  }
+
+  const episodeShortDescriptions =
+    episodes
+      .flatMap(episode =>
+        episode.shortDescriptions?.map(episodeShortDescription => ({
+          episodeUri: episode.uri,
+          language: episodeShortDescription.language,
+          shortDescription: episodeShortDescription.shortDescription
+        }) satisfies CreateEpisodeShortDescription)
+      )
+      .filter((episodeShortDescription): episodeShortDescription is NonNullable<typeof episodeShortDescription> => episodeShortDescription !== null && episodeShortDescription !== undefined)
+      .filter(episodeShortDescription => episodeShortDescription.shortDescription?.length > 0)
+
+  if (episodeShortDescriptions.length) {
+    await tx.insert(episodeShortDescriptionTable)
+      .values(episodeShortDescriptions)
+      .onConflictDoNothing()
+  }
+
+  const episodeThumbnails =
+    episodes
+      .flatMap(episode =>
+        episode.thumbnails?.map(episodeThumbnail => ({
+          episodeUri: episode.uri,
+          language: episodeThumbnail.language,
+          url: episodeThumbnail.url,
+          height: episodeThumbnail.height,
+          width: episodeThumbnail.width,
+          color: episodeThumbnail.color
+        }) satisfies CreateEpisodeThumbnail)
+      )
+      .filter((episodeThumbnail): episodeThumbnail is NonNullable<typeof episodeThumbnail> => episodeThumbnail !== null && episodeThumbnail !== undefined)
+      .filter(episodeThumbnail => episodeThumbnail.url?.length > 0)
+
+  if (episodeThumbnails.length) {
+    await tx.insert(episodeThumbnailTable)
+      .values(episodeThumbnails)
       .onConflictDoNothing()
   }
 }
