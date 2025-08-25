@@ -62,41 +62,21 @@ export const extractors =
                   return async ({ result }: { result: Media | Media[] }) => {
                     if (Array.isArray(result)) {
                       try {
-                        const p = performance.now()
-                        await database.transaction(async (tx) => {
-                          await insertManyMedia(tx, result)
-                        })
-                        console.log('insertManyMedia', performance.now() - p)
-                        const results = await findAllMedia()
-                        console.log('results', results)
+                        await database.transaction((tx) => insertManyMedia(tx, result))
+                        const insertedMedia = await findAllMedia()
                         const groups = await database.all(groupAllRelatedMedia) as [string, number, string][]
-                        console.log('groups', groups)
-                        const mergedMedia = groups.map(([_, __, urisString]) => {
+                        const aggregatedMedia = groups.map(([_, __, urisString]) => {
                           const uris = urisString.split(',').map(uri => uri.trim())
                           const medias =
                             uris
-                              .map(uri => results.find(r => r?.uri === uri))
+                              .map(uri => insertedMedia.find(r => r?.uri === uri))
                               .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
                           return aggregateMediaHandles(medias)
                         })
-                        await database.transaction(async (tx) => {
-                          await insertManyMedia(tx, mergedMedia)
-                        })
-                        // Cleanup duplicate aggregated media (keeping the ones with most handles)
-                        const deletedCount = await cleanupDuplicateAggregatedMedia()
-                        console.log(`Cleaned up ${deletedCount} duplicate aggregated media`)
-                        console.log('mergedMedia', mergedMedia)
+                        await database.transaction((tx) => insertManyMedia(tx, aggregatedMedia))
+                        await cleanupDuplicateAggregatedMedia()
                         const finalResults = await findAllMedia()
                         console.log('finalResults', finalResults)
-                        // const sanitizedResult = result.flatMap(unwrapHandles)
-                        // await prismaClient.media.bulkCreateWithRelatedEntities(result)
-                        // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaBanner.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaCover.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaDescription.bulkRelationUpdate(sanitizedResult)
-                        // await prismaClient.mediaShortDescription.bulkRelationUpdate(sanitizedResult)
-                        // const groupMedia = await prismaClient.$queryRawTyped(groupAllRelatedMedia())
-                        // console.log('groupMedia', groupMedia)
                       } catch (err) {
                         console.error(err)
                         throw err
