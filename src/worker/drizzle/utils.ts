@@ -43,8 +43,18 @@ export type DrizzleSQLiteTransaction = SQLiteTransaction<
   typeof import("c:/dev/stub/src/worker/drizzle/schema"),
   ExtractTablesWithRelations<typeof import("c:/dev/stub/src/worker/drizzle/schema")>
 >
+export const recursivelyUnwrapMediaHandles = (media: Media): Media[] =>
+  media.handles
+    ? [
+      media,
+      ...media
+        .handles
+        .flatMap(recursivelyUnwrapMediaHandles)
+    ]
+    : [media]
 
-export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, medias: Media[]) => {
+export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: Media[]) => {
+  const medias = wrappedMedias.flatMap(recursivelyUnwrapMediaHandles)
   const values = medias.map(media => ({
     ...media,
     startDate: media.startDate ? new Date(media.startDate) : null,
@@ -211,7 +221,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, medias: Medi
   }
 }
 
-export const findManyMediaWithHandles = async () => {
+export const findAllMedia = async () => {
   const results = await database.query.mediaTable.findMany({
     with: {
       titles: true,
@@ -235,7 +245,7 @@ export const findManyMediaWithHandles = async () => {
   })
 
   // Transform the results to include actual Media objects in handles
-  return results.map(media => ({
+  const mappedMedia = results.map(media => ({
     ...media,
     handles: [
       ...media.handles.map(h => h.handle),
@@ -243,6 +253,9 @@ export const findManyMediaWithHandles = async () => {
     ].filter(Boolean),
     handleOf: undefined // Remove the intermediate relation
   }))
+
+  const unwrappedMedia = mappedMedia.flatMap(recursivelyUnwrapMediaHandles)
+  return unwrappedMedia
 }
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
@@ -344,3 +357,15 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
       .onConflictDoNothing()
   }
 }
+
+export const aggregateMediaHandles = (medias: Media[]) =>
+  medias.reduce((acc, media) => ({
+    ...acc,
+    titles: [...acc.titles ?? [], ...media.titles ?? []]
+  }), {
+    uri: `ag:(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,
+    id: `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,
+    origin: 'ag',
+    url: undefined,
+    handles: medias.flatMap(recursivelyUnwrapMediaHandles)
+  } as Media)

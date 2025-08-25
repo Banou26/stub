@@ -13,7 +13,7 @@ import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
 import database from './drizzle'
-import { insertManyMedia, findManyMediaWithHandles } from './drizzle/utils'
+import { insertManyMedia, findAllMedia, aggregateMediaHandles } from './drizzle/utils'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -67,10 +67,19 @@ export const extractors =
                           await insertManyMedia(tx, result)
                         })
                         console.log('insertManyMedia', performance.now() - p)
-                        const results = await findManyMediaWithHandles()
+                        const results = await findAllMedia()
                         console.log('results', results)
-
-                        console.log(await database.all(groupAllRelatedMedia))
+                        const groups = await database.all(groupAllRelatedMedia) as [string, number, string][]
+                        console.log('groups', groups)
+                        const mergedMedia = groups.map(([_, __, urisString]) => {
+                          const uris = urisString.split(',').map(uri => uri.trim())
+                          const medias =
+                            uris
+                              .map(uri => results.find(r => r?.uri === uri))
+                              .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
+                          return aggregateMediaHandles(medias)
+                        })
+                        console.log('mergedMedia', mergedMedia)
                         // const sanitizedResult = result.flatMap(unwrapHandles)
                         // await prismaClient.media.bulkCreateWithRelatedEntities(result)
                         // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
