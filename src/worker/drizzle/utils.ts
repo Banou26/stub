@@ -255,7 +255,13 @@ export const findAllMedia = async () => {
   }))
 
   const unwrappedMedia = mappedMedia.flatMap(recursivelyUnwrapMediaHandles)
-  return unwrappedMedia
+  
+  // Filter out duplicates based on URI
+  const uniqueMedia = unwrappedMedia.filter((media, index, self) =>
+    index === self.findIndex(m => m.uri === media.uri)
+  )
+  
+  return uniqueMedia
 }
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
