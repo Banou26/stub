@@ -79,7 +79,12 @@ export const extractors =
                               .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
                           return aggregateMediaHandles(medias)
                         })
+                        await database.transaction(async (tx) => {
+                          await insertManyMedia(tx, mergedMedia)
+                        })
                         console.log('mergedMedia', mergedMedia)
+                        const finalResults = await findAllMedia()
+                        console.log('finalResults', finalResults)
                         // const sanitizedResult = result.flatMap(unwrapHandles)
                         // await prismaClient.media.bulkCreateWithRelatedEntities(result)
                         // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
