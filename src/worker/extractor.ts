@@ -13,7 +13,7 @@ import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
 import database from './drizzle'
-import { insertManyMedia, findAllMedia, aggregateMediaHandles, cleanupDuplicateAggregatedMedia } from './drizzle/utils'
+import { insertManyMedia, findAllMedia, aggregateMediaHandles, cleanupDuplicateAggregatedMedia, findAggregatedMedia } from './drizzle/utils'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -75,7 +75,7 @@ export const extractors =
                         })
                         await database.transaction((tx) => insertManyMedia(tx, aggregatedMedia))
                         await cleanupDuplicateAggregatedMedia()
-                        const finalResults = await findAllMedia()
+                        const finalResults = await findAggregatedMedia()
                         console.log('finalResults', finalResults)
                       } catch (err) {
                         console.error(err)

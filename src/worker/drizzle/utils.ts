@@ -264,6 +264,43 @@ export const findAllMedia = async () => {
   return uniqueMedia
 }
 
+export const findAggregatedMedia = async () => {
+  const results = await database.query.mediaTable.findMany({
+    where: eq(mediaTable.origin, 'ag'),
+    with: {
+      titles: true,
+      descriptions: true,
+      shortDescriptions: true,
+      trailers: true,
+      covers: true,
+      banners: true,
+      episodes: true,
+      handles: {
+        with: {
+          handle: true
+        }
+      },
+      handleOf: {
+        with: {
+          media: true
+        }
+      }
+    }
+  })
+
+  // Transform the results to include actual Media objects in handles
+  const mappedMedia = results.map(media => ({
+    ...media,
+    handles: [
+      ...media.handles.map(h => h.handle),
+      ...media.handleOf.map(h => h.media)
+    ].filter(Boolean),
+    handleOf: undefined // Remove the intermediate relation
+  }))
+
+  return mappedMedia
+}
+
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
   const values = episodes.map(episode => ({
     ...episode,
@@ -373,6 +410,7 @@ export const aggregateMediaHandles = (medias: Media[]) =>
     id: `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,
     origin: 'ag',
     url: undefined,
+    aggregated: true,
     handles: medias.flatMap(recursivelyUnwrapMediaHandles)
   } as Media)
 
