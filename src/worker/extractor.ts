@@ -74,7 +74,8 @@ export const extractors =
                             shortDescriptions: true,
                             trailers: true,
                             covers: true,
-                            banners: true
+                            banners: true,
+                            episodes: true
                           }
                         })
                         console.log('results', results)

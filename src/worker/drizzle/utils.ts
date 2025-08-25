@@ -177,6 +177,18 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, medias: Medi
       .values(mediaBanners)
       .onConflictDoNothing()
   }
+
+  // Handle episodes for all media
+  const allEpisodes = medias.flatMap(media => 
+    media.episodes?.map(episode => ({
+      ...episode,
+      mediaUri: media.uri // Ensure the relation to the parent media
+    })) || []
+  )
+
+  if (allEpisodes.length) {
+    await insertManyEpisode(tx, allEpisodes)
+  }
 }
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
