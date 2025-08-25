@@ -320,3 +320,5 @@ export type EpisodeThumbnail = typeof episodeThumbnailTable.$inferSelect;
 export type CreateEpisodeThumbnail = typeof episodeThumbnailTable.$inferInsert;
 export type PlaybackSource = typeof playbackSourceTable.$inferSelect;
 export type CreatePlaybackSource = typeof playbackSourceTable.$inferInsert;
+export type MediaHandles = typeof mediaHandlesTable.$inferSelect;
+export type CreateMediaHandles = typeof mediaHandlesTable.$inferInsert;

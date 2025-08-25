@@ -1,7 +1,6 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 
 import type { Media, Resolvers } from '../generated/schema/types.generated'
-import { CreateMediaBanner, CreateMediaCover, CreateMediaDescription, CreateMediaShortDescription, CreateMediaTitle, CreateMediaTrailer, mediaBannerTable, mediaCoverTable, mediaDescriptionTable, mediaShortDescriptionTable, mediaTable, mediaTitleTable, mediaTrailerTable, type CreateMedia } from './drizzle/schema'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -14,7 +13,8 @@ import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
 import database from './drizzle'
-import { insertManyMedia } from './drizzle/utils'
+import { insertManyMedia, findManyMediaWithHandles } from './drizzle/utils'
+import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -67,18 +67,10 @@ export const extractors =
                           await insertManyMedia(tx, result)
                         })
                         console.log('insertManyMedia', performance.now() - p)
-                        const results = await database.query.mediaTable.findMany({
-                          with: {
-                            titles: true,
-                            descriptions: true,
-                            shortDescriptions: true,
-                            trailers: true,
-                            covers: true,
-                            banners: true,
-                            episodes: true
-                          }
-                        })
+                        const results = await findManyMediaWithHandles()
                         console.log('results', results)
+
+                        // console.log(await database.get(groupAllRelatedMedia))
                         // const sanitizedResult = result.flatMap(unwrapHandles)
                         // await prismaClient.media.bulkCreateWithRelatedEntities(result)
                         // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)

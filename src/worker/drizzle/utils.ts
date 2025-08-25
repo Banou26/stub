@@ -15,7 +15,8 @@ import type {
   CreateEpisodeTitle,
   CreateEpisodeDescription,
   CreateEpisodeShortDescription,
-  CreateEpisodeThumbnail
+  CreateEpisodeThumbnail,
+  CreateMediaHandles
 } from './schema'
 
 import {
@@ -30,9 +31,11 @@ import {
   episodeTitleTable,
   episodeDescriptionTable,
   episodeShortDescriptionTable,
-  episodeThumbnailTable
+  episodeThumbnailTable,
+  mediaHandlesTable
 } from './schema'
 import { sql } from 'drizzle-orm'
+import database from '.'
 
 export type DrizzleSQLiteTransaction = SQLiteTransaction<
   "async",
@@ -178,8 +181,25 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, medias: Medi
       .onConflictDoNothing()
   }
 
+  // Handle the many-to-many handles relationship
+  const mediaHandles =
+    medias
+      .flatMap(media =>
+        media.handles?.map(handle => ({
+          mediaUri: media.uri,
+          handleUri: handle.uri
+        }) satisfies CreateMediaHandles)
+      )
+      .filter((mediaHandle): mediaHandle is NonNullable<typeof mediaHandle> => mediaHandle !== null && mediaHandle !== undefined)
+
+  if (mediaHandles.length) {
+    await tx.insert(mediaHandlesTable)
+      .values(mediaHandles)
+      .onConflictDoNothing()
+  }
+
   // Handle episodes for all media
-  const allEpisodes = medias.flatMap(media => 
+  const allEpisodes = medias.flatMap(media =>
     media.episodes?.map(episode => ({
       ...episode,
       mediaUri: media.uri // Ensure the relation to the parent media
@@ -189,6 +209,40 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, medias: Medi
   if (allEpisodes.length) {
     await insertManyEpisode(tx, allEpisodes)
   }
+}
+
+export const findManyMediaWithHandles = async () => {
+  const results = await database.query.mediaTable.findMany({
+    with: {
+      titles: true,
+      descriptions: true,
+      shortDescriptions: true,
+      trailers: true,
+      covers: true,
+      banners: true,
+      episodes: true,
+      handles: {
+        with: {
+          handle: true
+        }
+      },
+      handleOf: {
+        with: {
+          media: true
+        }
+      }
+    }
+  })
+
+  // Transform the results to include actual Media objects in handles
+  return results.map(media => ({
+    ...media,
+    handles: [
+      ...media.handles.map(h => h.handle),
+      ...media.handleOf.map(h => h.media)
+    ].filter(Boolean),
+    handleOf: undefined // Remove the intermediate relation
+  }))
 }
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
