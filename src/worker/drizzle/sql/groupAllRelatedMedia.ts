@@ -7,7 +7,8 @@ WITH RECURSIVE graph AS (
     -- Start with nodes that have the smallest URI in their component
     SELECT m.uri, m.uri as group_id, 0 as depth
     FROM media m
-    WHERE NOT EXISTS (
+    WHERE m.origin != 'ag'
+      AND NOT EXISTS (
         SELECT 1 FROM mediaHandles mh
         WHERE (mh.handleUri = m.uri AND mh.mediaUri < m.uri)
            OR (mh.mediaUri = m.uri AND mh.handleUri < m.uri)
@@ -23,7 +24,7 @@ WITH RECURSIVE graph AS (
         (g.uri = mh.mediaUri AND m.uri = mh.handleUri) OR
         (g.uri = mh.handleUri AND m.uri = mh.mediaUri)
     )
-    WHERE g.depth < 50
+    WHERE m.origin != 'ag' AND g.depth < 50
 ),
 groups AS (
     SELECT uri, MIN(group_id) as group_id
@@ -35,7 +36,8 @@ groups AS (
     -- Include standalone media
     SELECT m.uri, m.uri as group_id
     FROM media m
-    WHERE NOT EXISTS (
+    WHERE m.origin != 'ag'
+      AND NOT EXISTS (
         SELECT 1 FROM mediaHandles mh
         WHERE mh.mediaUri = m.uri OR mh.handleUri = m.uri
     )
