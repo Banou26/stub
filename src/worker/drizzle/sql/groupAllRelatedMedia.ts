@@ -4,13 +4,13 @@ export default sql`
 -- Group all Media items by their relationships
 
 WITH RECURSIVE graph AS (
-    -- Start with nodes that have the smallest UID in their component
+    -- Start with nodes that have the smallest URI in their component
     SELECT m.uri, m.uri as group_id, 0 as depth
     FROM media m
     WHERE NOT EXISTS (
-    SELECT 1 FROM _mediaHandles mh
-    WHERE (mh.B = m.uri AND mh.A < m.uri)
-        OR (mh.A = m.uri AND mh.B < m.uri)
+        SELECT 1 FROM mediaHandles mh
+        WHERE (mh.handleUri = m.uri AND mh.mediaUri < m.uri)
+           OR (mh.mediaUri = m.uri AND mh.handleUri < m.uri)
     )
 
     UNION
@@ -18,10 +18,10 @@ WITH RECURSIVE graph AS (
     -- Traverse the graph
     SELECT m.uri, g.group_id, g.depth + 1
     FROM media m
-    INNER JOIN _mediaHandles mh ON (m.uri = mh.A OR m.uri = mh.B)
+    INNER JOIN mediaHandles mh ON (m.uri = mh.mediaUri OR m.uri = mh.handleUri)
     INNER JOIN graph g ON (
-    (g.uri = mh.A AND m.uri = mh.B) OR
-    (g.uri = mh.B AND m.uri = mh.A)
+        (g.uri = mh.mediaUri AND m.uri = mh.handleUri) OR
+        (g.uri = mh.handleUri AND m.uri = mh.mediaUri)
     )
     WHERE g.depth < 50
 ),
@@ -36,8 +36,8 @@ groups AS (
     SELECT m.uri, m.uri as group_id
     FROM media m
     WHERE NOT EXISTS (
-    SELECT 1 FROM _mediaHandles mh
-    WHERE mh.A = m.uri OR mh.B = m.uri
+        SELECT 1 FROM mediaHandles mh
+        WHERE mh.mediaUri = m.uri OR mh.handleUri = m.uri
     )
 )
 SELECT

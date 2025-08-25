@@ -70,7 +70,7 @@ export const extractors =
                         const results = await findManyMediaWithHandles()
                         console.log('results', results)
 
-                        // console.log(await database.get(groupAllRelatedMedia))
+                        console.log(await database.all(groupAllRelatedMedia))
                         // const sanitizedResult = result.flatMap(unwrapHandles)
                         // await prismaClient.media.bulkCreateWithRelatedEntities(result)
                         // await prismaClient.mediaTitle.bulkRelationUpdate(sanitizedResult)
