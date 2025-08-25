@@ -34,7 +34,7 @@ import {
   episodeThumbnailTable,
   mediaHandlesTable
 } from './schema'
-import { sql } from 'drizzle-orm'
+import { sql, eq, inArray } from 'drizzle-orm'
 import database from '.'
 
 export type DrizzleSQLiteTransaction = SQLiteTransaction<
@@ -375,3 +375,79 @@ export const aggregateMediaHandles = (medias: Media[]) =>
     url: undefined,
     handles: medias.flatMap(recursivelyUnwrapMediaHandles)
   } as Media)
+
+export const cleanupDuplicateAggregatedMedia = async () => {
+  // Find all aggregated media (origin = 'ag')
+  const aggregatedMedia = await database.query.mediaTable.findMany({
+    where: eq(mediaTable.origin, 'ag'),
+    with: {
+      handles: {
+        with: {
+          handle: true
+        }
+      }
+    }
+  })
+
+  console.log(`Found ${aggregatedMedia.length} aggregated media to check for subsets`)
+
+  // Extract URIs for each aggregated media
+  const mediaWithUris = aggregatedMedia.map(media => {
+    const match = media.uri.match(/^ag:\((.*)\)$/)
+    if (!match) {
+      console.log(`Skipping media with invalid ag: format: ${media.uri}`)
+      return null
+    }
+    
+    const urisSet = new Set(match[1].split(','))
+    return { media, urisSet }
+  }).filter((item): item is NonNullable<typeof item> => item !== null)
+
+  // Find subsets: if media A contains all URIs of media B, then B is a subset of A
+  const toDelete: string[] = []
+  
+  for (let i = 0; i < mediaWithUris.length; i++) {
+    const { media: mediaA, urisSet: urisA } = mediaWithUris[i]
+    
+    for (let j = 0; j < mediaWithUris.length; j++) {
+      if (i === j) continue
+      
+      const { media: mediaB, urisSet: urisB } = mediaWithUris[j]
+      
+      // Check if B is a subset of A (A contains all URIs of B)
+      const isSubset = [...urisB].every(uri => urisA.has(uri))
+      
+      if (isSubset && urisB.size < urisA.size) {
+        // B is a proper subset of A, mark B for deletion
+        console.log(`${mediaB.uri} (${urisB.size} URIs) is a subset of ${mediaA.uri} (${urisA.size} URIs)`)
+        if (!toDelete.includes(mediaB.uri)) {
+          toDelete.push(mediaB.uri)
+        }
+      }
+    }
+  }
+
+  // Delete the duplicate aggregated media
+  if (toDelete.length > 0) {
+    console.log(`Deleting ${toDelete.length} duplicate aggregated media:`, toDelete)
+    
+    await database.transaction(async (tx) => {
+      // Delete related data first (due to foreign key constraints)
+      await tx.delete(mediaTitleTable).where(inArray(mediaTitleTable.mediaUri, toDelete))
+      await tx.delete(mediaDescriptionTable).where(inArray(mediaDescriptionTable.mediaUri, toDelete))
+      await tx.delete(mediaShortDescriptionTable).where(inArray(mediaShortDescriptionTable.mediaUri, toDelete))
+      await tx.delete(mediaTrailerTable).where(inArray(mediaTrailerTable.mediaUri, toDelete))
+      await tx.delete(mediaCoverTable).where(inArray(mediaCoverTable.mediaUri, toDelete))
+      await tx.delete(mediaBannerTable).where(inArray(mediaBannerTable.mediaUri, toDelete))
+      await tx.delete(mediaHandlesTable).where(
+        sql`${mediaHandlesTable.mediaUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)}) OR ${mediaHandlesTable.handleUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)})`
+      )
+      await tx.delete(episodeTable).where(inArray(episodeTable.mediaUri, toDelete))
+      
+      // Finally delete the media itself
+      await tx.delete(mediaTable).where(inArray(mediaTable.uri, toDelete))
+    })
+  }
+  
+  return toDelete.length
+}
