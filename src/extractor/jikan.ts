@@ -50,18 +50,9 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
       shortDescription: data.synopsis
     }],
     titles: [
-      {
-        language: 'en',
-        title: data.title_english,
-      },
-      {
-        language: 'jp-en',
-        title: data.title
-      },
-      {
-        language: 'jp',
-        title: data.title_japanese
-      }
+      ... data.title_english ? [{ language: 'en', title: data.title_english }] : [],
+      ... data.title ? [{ language: 'jp-en', title: data.title }] : [],
+      ... data.title_japanese ? [{ language: 'jp', title: data.title_japanese }] : []
     ],
     covers: [{
       language: 'en',
