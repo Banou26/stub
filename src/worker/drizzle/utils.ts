@@ -32,7 +32,11 @@ import {
   episodeDescriptionTable,
   episodeShortDescriptionTable,
   episodeThumbnailTable,
-  mediaHandlesTable
+  mediaHandlesTable,
+  titlesTable,
+  shortDescriptionsTable,
+  descriptionsTable,
+  imagesTable
 } from './schema'
 import { sql, eq, inArray } from 'drizzle-orm'
 import database from '.'
@@ -108,58 +112,191 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         })
   }
 
-  const mediaTitles =
-    medias
-      .flatMap(media =>
-        media.titles?.map(title => ({
-          mediaUri: media.uri,
+  // Insert titles into shared titles table first
+  const allTitles = medias
+    .flatMap(media =>
+      media.titles?.map(title => ({
+        language: title.language,
+        title: title.title
+      })) || []
+    )
+    .filter((title): title is NonNullable<typeof title> => title !== null && title !== undefined)
+    .filter(title => title.title?.length > 0 && title.language != null)
+
+  // Remove duplicates
+  const uniqueTitles = Array.from(
+    new Map(allTitles.map(t => [`${t.language}-${t.title}`, t])).values()
+  )
+
+  if (uniqueTitles.length > 0) {
+    // Insert titles
+    for (const title of uniqueTitles) {
+      await tx.insert(titlesTable)
+        .values({
           language: title.language,
           title: title.title
-        }) satisfies CreateMediaTitle)
-      )
-      .filter((title): title is NonNullable<typeof title> => title !== null && title !== undefined)
-      .filter(title => title.title?.length > 0)
+        })
+        .onConflictDoNothing()
+    }
 
-  if (mediaTitles.length) {
-    await tx.insert(mediaTitleTable)
-      .values(mediaTitles)
-      .onConflictDoNothing()
+    // Get all title IDs for the junction table
+    const existingTitles = await tx.select()
+      .from(titlesTable)
+      .where(sql`(${titlesTable.language}, ${titlesTable.title}) IN (${sql.join(
+        uniqueTitles.map(t => sql`(${t.language}, ${t.title})`),
+        sql`, `
+      )})`)
+    
+    const titleIds = new Map<string, number>()
+    for (const title of existingTitles) {
+      titleIds.set(`${title.language}-${title.title}`, title.id)
+    }
+
+    // Create media-title junction entries
+    const mediaTitleEntries = medias
+      .flatMap(media =>
+        media.titles?.map(title => {
+          const titleId = titleIds.get(`${title.language}-${title.title}`)
+          if (titleId) {
+            return {
+              mediaUri: media.uri,
+              titleId: titleId
+            }
+          }
+          return null
+        }) || []
+      )
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+    if (mediaTitleEntries.length > 0) {
+      await tx.insert(mediaTitleTable)
+        .values(mediaTitleEntries)
+        .onConflictDoNothing()
+    }
   }
 
-  const mediaDescriptions =
-    medias
-      .flatMap(media =>
-        media.descriptions?.map(mediaDescription => ({
-          mediaUri: media.uri,
-          language: mediaDescription.language,
-          description: mediaDescription.description
-        }) satisfies CreateMediaDescription)
-      )
-      .filter((mediaDescription): mediaDescription is NonNullable<typeof mediaDescription> => mediaDescription !== null && mediaDescription !== undefined)
-      .filter(mediaDescription => mediaDescription.description?.length > 0)
+  // Insert descriptions into shared descriptions table
+  const allDescriptions = medias
+    .flatMap(media =>
+      media.descriptions?.map(desc => ({
+        language: desc.language,
+        description: desc.description
+      })) || []
+    )
+    .filter((desc): desc is NonNullable<typeof desc> => desc !== null && desc !== undefined)
+    .filter(desc => desc.description?.length > 0 && desc.language != null)
 
-  if (mediaDescriptions.length) {
-    await tx.insert(mediaDescriptionTable)
-      .values(mediaDescriptions)
-      .onConflictDoNothing()
+  const uniqueDescriptions = Array.from(
+    new Map(allDescriptions.map(d => [`${d.language}-${d.description}`, d])).values()
+  )
+
+  if (uniqueDescriptions.length > 0) {
+    // Insert descriptions
+    for (const desc of uniqueDescriptions) {
+      await tx.insert(descriptionsTable)
+        .values({
+          language: desc.language,
+          description: desc.description
+        })
+        .onConflictDoNothing()
+    }
+
+    // Get description IDs
+    const existingDescriptions = await tx.select()
+      .from(descriptionsTable)
+      .where(sql`(${descriptionsTable.language}, ${descriptionsTable.description}) IN (${sql.join(
+        uniqueDescriptions.map(d => sql`(${d.language}, ${d.description})`),
+        sql`, `
+      )})`)
+    
+    const descriptionIds = new Map<string, number>()
+    for (const desc of existingDescriptions) {
+      descriptionIds.set(`${desc.language}-${desc.description}`, desc.id)
+    }
+
+    // Create media-description junction entries
+    const mediaDescriptionEntries = medias
+      .flatMap(media =>
+        media.descriptions?.map(desc => {
+          const descId = descriptionIds.get(`${desc.language}-${desc.description}`)
+          if (descId) {
+            return {
+              mediaUri: media.uri,
+              descriptionId: descId
+            }
+          }
+          return null
+        }) || []
+      )
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+    if (mediaDescriptionEntries.length > 0) {
+      await tx.insert(mediaDescriptionTable)
+        .values(mediaDescriptionEntries)
+        .onConflictDoNothing()
+    }
   }
 
-  const mediaShortDescriptions =
-    medias
-      .flatMap(media =>
-        media.shortDescriptions?.map(mediaShortDescription => ({
-          mediaUri: media.uri,
-          language: mediaShortDescription.language,
-          shortDescription: mediaShortDescription.shortDescription
-        }) satisfies CreateMediaShortDescription)
-      )
-      .filter((mediaShortDescription): mediaShortDescription is NonNullable<typeof mediaShortDescription> => mediaShortDescription !== null && mediaShortDescription !== undefined)
-      .filter(mediaShortDescription => mediaShortDescription.shortDescription?.length > 0)
+  // Insert short descriptions into shared short descriptions table
+  const allShortDescriptions = medias
+    .flatMap(media =>
+      media.shortDescriptions?.map(shortDesc => ({
+        language: shortDesc.language,
+        shortDescription: shortDesc.shortDescription
+      })) || []
+    )
+    .filter((shortDesc): shortDesc is NonNullable<typeof shortDesc> => shortDesc !== null && shortDesc !== undefined)
+    .filter(shortDesc => shortDesc.shortDescription?.length > 0 && shortDesc.language != null)
 
-  if (mediaShortDescriptions.length) {
-    await tx.insert(mediaShortDescriptionTable)
-      .values(mediaShortDescriptions)
-      .onConflictDoNothing()
+  const uniqueShortDescriptions = Array.from(
+    new Map(allShortDescriptions.map(sd => [`${sd.language}-${sd.shortDescription}`, sd])).values()
+  )
+
+  if (uniqueShortDescriptions.length > 0) {
+    // Insert short descriptions
+    for (const shortDesc of uniqueShortDescriptions) {
+      await tx.insert(shortDescriptionsTable)
+        .values({
+          language: shortDesc.language,
+          shortDescription: shortDesc.shortDescription
+        })
+        .onConflictDoNothing()
+    }
+
+    // Get short description IDs
+    const existingShortDescriptions = await tx.select()
+      .from(shortDescriptionsTable)
+      .where(sql`(${shortDescriptionsTable.language}, ${shortDescriptionsTable.shortDescription}) IN (${sql.join(
+        uniqueShortDescriptions.map(sd => sql`(${sd.language}, ${sd.shortDescription})`),
+        sql`, `
+      )})`)
+    
+    const shortDescriptionIds = new Map<string, number>()
+    for (const shortDesc of existingShortDescriptions) {
+      shortDescriptionIds.set(`${shortDesc.language}-${shortDesc.shortDescription}`, shortDesc.id)
+    }
+
+    // Create media-short description junction entries
+    const mediaShortDescriptionEntries = medias
+      .flatMap(media =>
+        media.shortDescriptions?.map(shortDesc => {
+          const shortDescId = shortDescriptionIds.get(`${shortDesc.language}-${shortDesc.shortDescription}`)
+          if (shortDescId) {
+            return {
+              mediaUri: media.uri,
+              shortDescriptionId: shortDescId
+            }
+          }
+          return null
+        }) || []
+      )
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+    if (mediaShortDescriptionEntries.length > 0) {
+      await tx.insert(mediaShortDescriptionTable)
+        .values(mediaShortDescriptionEntries)
+        .onConflictDoNothing()
+    }
   }
 
   const mediaTrailers =
@@ -183,40 +320,106 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
       .onConflictDoNothing()
   }
 
-  const mediaCovers =
-    medias
+  // Collect all images (covers and banners) and insert into shared images table
+  const allImages = [
+    ...medias.flatMap(media =>
+      media.covers?.map(cover => ({
+        url: cover.url!,
+        language: cover.language,
+        height: cover.height,
+        width: cover.width,
+        color: cover.color
+      })) || []
+    ),
+    ...medias.flatMap(media =>
+      media.banners?.map(banner => ({
+        url: banner.url!,
+        language: banner.language,
+        height: banner.height,
+        width: banner.width,
+        color: banner.color
+      })) || []
+    )
+  ].filter((img): img is NonNullable<typeof img> => img !== null && img !== undefined && img.url != null)
+
+  const uniqueImages = Array.from(
+    new Map(allImages.map(img => [img.url, img])).values()
+  )
+
+  if (uniqueImages.length > 0) {
+    // Insert images one by one to handle conflicts properly
+    for (const img of uniqueImages) {
+      await tx.insert(imagesTable)
+        .values({
+          url: img.url,
+          language: img.language || null,
+          height: img.height || null,
+          width: img.width || null,
+          color: img.color || null
+        })
+        .onConflictDoNothing()
+    }
+
+    // Get image IDs
+    const existingImages = await tx.select()
+      .from(imagesTable)
+      .where(sql`${imagesTable.url} IN (${sql.join(
+        uniqueImages.map(img => sql`${img.url}`),
+        sql`, `
+      )})`)
+    
+    const imageIds = new Map<string, number>()
+    for (const img of existingImages) {
+      imageIds.set(img.url, img.id)
+    }
+
+    // Create media-cover junction entries
+    const mediaCoverEntries = medias
       .flatMap(media =>
-        media.trailers?.map(mediaCover => ({
-          mediaUri: media.uri,
-          language: mediaCover.language,
-          url: mediaCover.url!
-        }) satisfies CreateMediaCover)
+        media.covers?.map(cover => {
+          if (cover.url) {
+            const imageId = imageIds.get(cover.url)
+            if (imageId) {
+              return {
+                mediaUri: media.uri,
+                imageId: imageId
+              }
+            }
+          }
+          return null
+        }) || []
       )
-      .filter((mediaCover): mediaCover is NonNullable<typeof mediaCover> => mediaCover !== null && mediaCover !== undefined)
-      .filter(mediaCover => mediaCover.url !== null)
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
 
-  if (mediaCovers.length) {
-    await tx.insert(mediaCoverTable)
-      .values(mediaCovers)
-      .onConflictDoNothing()
-  }
+    if (mediaCoverEntries.length > 0) {
+      await tx.insert(mediaCoverTable)
+        .values(mediaCoverEntries)
+        .onConflictDoNothing()
+    }
 
-  const mediaBanners =
-    medias
+    // Create media-banner junction entries
+    const mediaBannerEntries = medias
       .flatMap(media =>
-        media.banners?.map(mediaBanner => ({
-          mediaUri: media.uri,
-          language: mediaBanner.language,
-          url: mediaBanner.url!
-        }) satisfies CreateMediaBanner)
+        media.banners?.map(banner => {
+          if (banner.url) {
+            const imageId = imageIds.get(banner.url)
+            if (imageId) {
+              return {
+                mediaUri: media.uri,
+                imageId: imageId
+              }
+            }
+          }
+          return null
+        }) || []
       )
-      .filter((mediaBanner): mediaBanner is NonNullable<typeof mediaBanner> => mediaBanner !== null && mediaBanner !== undefined)
-      .filter(mediaBanner => mediaBanner.url !== null)
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
 
-  if (mediaBanners.length) {
-    await tx.insert(mediaBannerTable)
-      .values(mediaBanners)
-      .onConflictDoNothing()
+    if (mediaBannerEntries.length > 0) {
+      await tx.insert(mediaBannerTable)
+        .values(mediaBannerEntries)
+        .onConflictDoNothing()
+    }
   }
 
   // Handle the many-to-many handles relationship
@@ -252,23 +455,63 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
 export const findAllMedia = async () => {
   const results = await database.query.mediaTable.findMany({
     with: {
-      titles: true,
-      descriptions: true,
-      shortDescriptions: true,
+      mediaTitles: {
+        with: {
+          title: true
+        }
+      },
+      mediaDescriptions: {
+        with: {
+          description: true
+        }
+      },
+      mediaShortDescriptions: {
+        with: {
+          shortDescription: true
+        }
+      },
       trailers: true,
-      covers: true,
-      banners: true,
+      mediaCovers: {
+        with: {
+          image: true
+        }
+      },
+      mediaBanners: {
+        with: {
+          image: true
+        }
+      },
       episodes: true,
       handles: {
         with: {
           handle: {
             with: {
-              titles: true,
-              descriptions: true,
-              shortDescriptions: true,
+              mediaTitles: {
+                with: {
+                  title: true
+                }
+              },
+              mediaDescriptions: {
+                with: {
+                  description: true
+                }
+              },
+              mediaShortDescriptions: {
+                with: {
+                  shortDescription: true
+                }
+              },
               trailers: true,
-              covers: true,
-              banners: true,
+              mediaCovers: {
+                with: {
+                  image: true
+                }
+              },
+              mediaBanners: {
+                with: {
+                  image: true
+                }
+              },
               episodes: true
             }
           }
@@ -282,9 +525,22 @@ export const findAllMedia = async () => {
     }
   })
 
+  // Transform the results to match the expected format
   const mappedMedia = results.map(media => ({
     ...media,
-    handles: media.handles.map(h => h.handle)
+    titles: media.mediaTitles?.map(mt => mt.title) || [],
+    descriptions: media.mediaDescriptions?.map(md => md.description) || [],
+    shortDescriptions: media.mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
+    covers: media.mediaCovers?.map(mc => mc.image) || [],
+    banners: media.mediaBanners?.map(mb => mb.image) || [],
+    handles: media.handles.map(h => ({
+      ...h.handle,
+      titles: h.handle.mediaTitles?.map(mt => mt.title) || [],
+      descriptions: h.handle.mediaDescriptions?.map(md => md.description) || [],
+      shortDescriptions: h.handle.mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
+      covers: h.handle.mediaCovers?.map(mc => mc.image) || [],
+      banners: h.handle.mediaBanners?.map(mb => mb.image) || []
+    }))
   }))
 
   return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
@@ -294,23 +550,63 @@ export const findAggregatedMedia = async() =>
   (await database.query.mediaTable.findMany({
     where: eq(mediaTable.origin, 'ag'),
     with: {
-      titles: true,
-      descriptions: true,
-      shortDescriptions: true,
+      mediaTitles: {
+        with: {
+          title: true
+        }
+      },
+      mediaDescriptions: {
+        with: {
+          description: true
+        }
+      },
+      mediaShortDescriptions: {
+        with: {
+          shortDescription: true
+        }
+      },
       trailers: true,
-      covers: true,
-      banners: true,
+      mediaCovers: {
+        with: {
+          image: true
+        }
+      },
+      mediaBanners: {
+        with: {
+          image: true
+        }
+      },
       episodes: true,
       handles: {
         with: {
           handle: {
             with: {
-              titles: true,
-              descriptions: true,
-              shortDescriptions: true,
+              mediaTitles: {
+                with: {
+                  title: true
+                }
+              },
+              mediaDescriptions: {
+                with: {
+                  description: true
+                }
+              },
+              mediaShortDescriptions: {
+                with: {
+                  shortDescription: true
+                }
+              },
               trailers: true,
-              covers: true,
-              banners: true,
+              mediaCovers: {
+                with: {
+                  image: true
+                }
+              },
+              mediaBanners: {
+                with: {
+                  image: true
+                }
+              },
               episodes: true
             }
           }
@@ -320,7 +616,19 @@ export const findAggregatedMedia = async() =>
   }))
   .map(media => ({
     ...media,
-    handles: media.handles.map(mediaHandle => mediaHandle.handle)
+    titles: media.mediaTitles?.map(mt => mt.title) || [],
+    descriptions: media.mediaDescriptions?.map(md => md.description) || [],
+    shortDescriptions: media.mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
+    covers: media.mediaCovers?.map(mc => mc.image) || [],
+    banners: media.mediaBanners?.map(mb => mb.image) || [],
+    handles: media.handles.map(mediaHandle => ({
+      ...mediaHandle.handle,
+      titles: mediaHandle.handle.mediaTitles?.map(mt => mt.title) || [],
+      descriptions: mediaHandle.handle.mediaDescriptions?.map(md => md.description) || [],
+      shortDescriptions: mediaHandle.handle.mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
+      covers: mediaHandle.handle.mediaCovers?.map(mc => mc.image) || [],
+      banners: mediaHandle.handle.mediaBanners?.map(mb => mb.image) || []
+    }))
   }))
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
@@ -347,78 +655,242 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         })
   }
 
-  const episodeTitles =
-    episodes
-      .flatMap(episode =>
-        episode.titles?.map(title => ({
-          episodeUri: episode.uri,
+  // Insert episode titles into shared titles table
+  const allEpisodeTitles = episodes
+    .flatMap(episode =>
+      episode.titles?.map(title => ({
+        language: title.language,
+        title: title.title
+      })) || []
+    )
+    .filter((title): title is NonNullable<typeof title> => title !== null && title !== undefined)
+    .filter(title => title.title?.length > 0 && title.language != null)
+
+  const uniqueEpisodeTitles = Array.from(
+    new Map(allEpisodeTitles.map(t => [`${t.language}-${t.title}`, t])).values()
+  )
+
+  if (uniqueEpisodeTitles.length > 0) {
+    // Insert titles one by one
+    for (const title of uniqueEpisodeTitles) {
+      await tx.insert(titlesTable)
+        .values({
           language: title.language,
           title: title.title
-        }) satisfies CreateEpisodeTitle)
-      )
-      .filter((title): title is NonNullable<typeof title> => title !== null && title !== undefined)
-      .filter(title => title.title?.length > 0)
+        })
+        .onConflictDoNothing()
+    }
 
-  if (episodeTitles.length) {
-    await tx.insert(episodeTitleTable)
-      .values(episodeTitles)
+    // Get title IDs for episodes
+    const existingTitles = await tx.select()
+      .from(titlesTable)
+      .where(sql`(${titlesTable.language}, ${titlesTable.title}) IN (${sql.join(
+        uniqueEpisodeTitles.map(t => sql`(${t.language}, ${t.title})`),
+        sql`, `
+      )})`)
+    
+    const episodeTitleIds = new Map<string, number>()
+    for (const title of existingTitles) {
+      episodeTitleIds.set(`${title.language}-${title.title}`, title.id)
+    }
+
+    // Create episode-title junction entries
+    const episodeTitleEntries = episodes
+      .flatMap(episode =>
+        episode.titles?.map(title => {
+          const titleId = episodeTitleIds.get(`${title.language}-${title.title}`)
+          if (titleId) {
+            return {
+              episodeUri: episode.uri,
+              titleId: titleId
+            }
+          }
+          return null
+        }) || []
+      )
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+    if (episodeTitleEntries.length > 0) {
+      await tx.insert(episodeTitleTable)
+        .values(episodeTitleEntries)
+        .onConflictDoNothing()
+    }
+  }
+
+  // Insert episode descriptions into shared tables
+  const allEpisodeDescriptions = episodes
+    .flatMap(episode =>
+      episode.descriptions?.map(desc => ({
+        language: desc.language,
+        description: desc.description
+      }))
+    )
+    .filter((desc): desc is NonNullable<typeof desc> => desc !== null && desc !== undefined)
+    .filter(desc => desc.description?.length > 0)
+
+  const uniqueEpisodeDescriptions = Array.from(
+    new Map(allEpisodeDescriptions.map(d => [`${d.language}-${d.description}`, d])).values()
+  )
+
+  if (uniqueEpisodeDescriptions.length) {
+    await tx.insert(descriptionsTable)
+      .values(uniqueEpisodeDescriptions)
       .onConflictDoNothing()
   }
 
-  const episodeDescriptions =
-    episodes
-      .flatMap(episode =>
-        episode.descriptions?.map(episodeDescription => ({
-          episodeUri: episode.uri,
-          language: episodeDescription.language,
-          description: episodeDescription.description
-        }) satisfies CreateEpisodeDescription)
-      )
-      .filter((episodeDescription): episodeDescription is NonNullable<typeof episodeDescription> => episodeDescription !== null && episodeDescription !== undefined)
-      .filter(episodeDescription => episodeDescription.description?.length > 0)
+  // Get description IDs
+  const episodeDescriptionIds = new Map<string, number>()
+  if (uniqueEpisodeDescriptions.length) {
+    const existingDescriptions = await tx.select()
+      .from(descriptionsTable)
+      .where(sql`(${descriptionsTable.language}, ${descriptionsTable.description}) IN (${sql.join(
+        uniqueEpisodeDescriptions.map(d => sql`(${d.language}, ${d.description})`),
+        sql`, `
+      )})`)
+    
+    for (const desc of existingDescriptions) {
+      episodeDescriptionIds.set(`${desc.language}-${desc.description}`, desc.id)
+    }
+  }
 
-  if (episodeDescriptions.length) {
+  // Create episode-description junction entries
+  const episodeDescriptionEntries = episodes
+    .flatMap(episode =>
+      episode.descriptions?.map(desc => {
+        const descId = episodeDescriptionIds.get(`${desc.language}-${desc.description}`)
+        if (descId) {
+          return {
+            episodeUri: episode.uri,
+            descriptionId: descId
+          }
+        }
+        return null
+      })
+    )
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+  if (episodeDescriptionEntries.length) {
     await tx.insert(episodeDescriptionTable)
-      .values(episodeDescriptions)
+      .values(episodeDescriptionEntries)
       .onConflictDoNothing()
   }
 
-  const episodeShortDescriptions =
-    episodes
-      .flatMap(episode =>
-        episode.shortDescriptions?.map(episodeShortDescription => ({
-          episodeUri: episode.uri,
-          language: episodeShortDescription.language,
-          shortDescription: episodeShortDescription.shortDescription
-        }) satisfies CreateEpisodeShortDescription)
-      )
-      .filter((episodeShortDescription): episodeShortDescription is NonNullable<typeof episodeShortDescription> => episodeShortDescription !== null && episodeShortDescription !== undefined)
-      .filter(episodeShortDescription => episodeShortDescription.shortDescription?.length > 0)
+  // Insert episode short descriptions
+  const allEpisodeShortDescriptions = episodes
+    .flatMap(episode =>
+      episode.shortDescriptions?.map(shortDesc => ({
+        language: shortDesc.language,
+        shortDescription: shortDesc.shortDescription
+      }))
+    )
+    .filter((shortDesc): shortDesc is NonNullable<typeof shortDesc> => shortDesc !== null && shortDesc !== undefined)
+    .filter(shortDesc => shortDesc.shortDescription?.length > 0)
 
-  if (episodeShortDescriptions.length) {
+  const uniqueEpisodeShortDescriptions = Array.from(
+    new Map(allEpisodeShortDescriptions.map(sd => [`${sd.language}-${sd.shortDescription}`, sd])).values()
+  )
+
+  if (uniqueEpisodeShortDescriptions.length) {
+    await tx.insert(shortDescriptionsTable)
+      .values(uniqueEpisodeShortDescriptions)
+      .onConflictDoNothing()
+  }
+
+  // Get short description IDs
+  const episodeShortDescriptionIds = new Map<string, number>()
+  if (uniqueEpisodeShortDescriptions.length) {
+    const existingShortDescriptions = await tx.select()
+      .from(shortDescriptionsTable)
+      .where(sql`(${shortDescriptionsTable.language}, ${shortDescriptionsTable.shortDescription}) IN (${sql.join(
+        uniqueEpisodeShortDescriptions.map(sd => sql`(${sd.language}, ${sd.shortDescription})`),
+        sql`, `
+      )})`)
+    
+    for (const shortDesc of existingShortDescriptions) {
+      episodeShortDescriptionIds.set(`${shortDesc.language}-${shortDesc.shortDescription}`, shortDesc.id)
+    }
+  }
+
+  // Create episode-short description junction entries
+  const episodeShortDescriptionEntries = episodes
+    .flatMap(episode =>
+      episode.shortDescriptions?.map(shortDesc => {
+        const shortDescId = episodeShortDescriptionIds.get(`${shortDesc.language}-${shortDesc.shortDescription}`)
+        if (shortDescId) {
+          return {
+            episodeUri: episode.uri,
+            shortDescriptionId: shortDescId
+          }
+        }
+        return null
+      })
+    )
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+  if (episodeShortDescriptionEntries.length) {
     await tx.insert(episodeShortDescriptionTable)
-      .values(episodeShortDescriptions)
+      .values(episodeShortDescriptionEntries)
       .onConflictDoNothing()
   }
 
-  const episodeThumbnails =
-    episodes
-      .flatMap(episode =>
-        episode.thumbnails?.map(episodeThumbnail => ({
-          episodeUri: episode.uri,
-          language: episodeThumbnail.language,
-          url: episodeThumbnail.url,
-          height: episodeThumbnail.height,
-          width: episodeThumbnail.width,
-          color: episodeThumbnail.color
-        }) satisfies CreateEpisodeThumbnail)
-      )
-      .filter((episodeThumbnail): episodeThumbnail is NonNullable<typeof episodeThumbnail> => episodeThumbnail !== null && episodeThumbnail !== undefined)
-      .filter(episodeThumbnail => episodeThumbnail.url?.length > 0)
+  // Insert episode thumbnails into shared images table
+  const allEpisodeThumbnails = episodes
+    .flatMap(episode =>
+      episode.thumbnails?.map(thumb => ({
+        url: thumb.url,
+        language: thumb.language,
+        height: thumb.height,
+        width: thumb.width,
+        color: thumb.color
+      }))
+    )
+    .filter((thumb): thumb is NonNullable<typeof thumb> => thumb !== null && thumb !== undefined)
+    .filter(thumb => thumb.url?.length > 0)
 
-  if (episodeThumbnails.length) {
+  const uniqueEpisodeThumbnails = Array.from(
+    new Map(allEpisodeThumbnails.map(thumb => [thumb.url, thumb])).values()
+  )
+
+  if (uniqueEpisodeThumbnails.length) {
+    await tx.insert(imagesTable)
+      .values(uniqueEpisodeThumbnails)
+      .onConflictDoNothing()
+  }
+
+  // Get thumbnail IDs
+  const episodeThumbnailIds = new Map<string, number>()
+  if (uniqueEpisodeThumbnails.length) {
+    const existingImages = await tx.select()
+      .from(imagesTable)
+      .where(sql`${imagesTable.url} IN (${sql.join(
+        uniqueEpisodeThumbnails.map(thumb => sql`${thumb.url}`),
+        sql`, `
+      )})`)
+    
+    for (const img of existingImages) {
+      episodeThumbnailIds.set(img.url, img.id)
+    }
+  }
+
+  // Create episode-thumbnail junction entries
+  const episodeThumbnailEntries = episodes
+    .flatMap(episode =>
+      episode.thumbnails?.map(thumb => {
+        const imageId = episodeThumbnailIds.get(thumb.url)
+        if (imageId) {
+          return {
+            episodeUri: episode.uri,
+            imageId: imageId
+          }
+        }
+        return null
+      })
+    )
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+  if (episodeThumbnailEntries.length) {
     await tx.insert(episodeThumbnailTable)
-      .values(episodeThumbnails)
+      .values(episodeThumbnailEntries)
       .onConflictDoNothing()
   }
 }
