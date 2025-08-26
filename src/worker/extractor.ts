@@ -63,20 +63,24 @@ export const extractors =
                     const result = _result as Media | Media[]
                     if (Array.isArray(result)) {
                       try {
+                        const p = performance.now()
                         await database.transaction((tx) => insertManyMedia(tx, result))
-                        const insertedMedia = await findAllMedia()
+                        const dbP = performance.now()
+                        const allMedias = await findAllMedia()
                         const groups = await database.all(groupAllRelatedMedia) as [string, number, string][]
+                        console.log('dbP', performance.now() - dbP)
                         const aggregatedMedia = groups.map(([_, __, urisString]) => {
                           const uris = urisString.split(',').map(uri => uri.trim())
                           const medias =
                             uris
-                              .map(uri => insertedMedia.find(r => r?.uri === uri))
+                              .map(uri => allMedias.find(r => r?.uri === uri))
                               .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
                           return aggregateMediaHandles(medias)
                         })
                         await database.transaction((tx) => insertManyMedia(tx, aggregatedMedia))
                         await cleanupDuplicateAggregatedMedia()
                         const finalResults = await findAggregatedMedia()
+                        console.log('p', performance.now() - p)
                         console.log('finalResults', finalResults)
                       } catch (err) {
                         console.error(err)

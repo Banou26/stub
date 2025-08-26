@@ -43,18 +43,46 @@ export type DrizzleSQLiteTransaction = SQLiteTransaction<
   typeof import("c:/dev/stub/src/worker/drizzle/schema"),
   ExtractTablesWithRelations<typeof import("c:/dev/stub/src/worker/drizzle/schema")>
 >
-export const recursivelyUnwrapMediaHandles = (media: Media): Media[] =>
-  media.handles
-    ? [
-      media,
-      ...media
-        .handles
-        .flatMap(recursivelyUnwrapMediaHandles)
-    ]
-    : [media]
+
+function removeDuplicatesByUri<T extends { uri: string }>(array: T[]): T[] {
+  const seen = new Set<string | number>()
+  const result: T[] = []
+
+  for (const item of array) {
+    if (!seen.has(item.uri)) {
+      seen.add(item.uri)
+      result.push(item)
+    }
+  }
+
+  return result
+}
+
+const unwrapCache = new WeakMap<Media, Media[]>()
+export const recursivelyUnwrapMediaHandles = (media: Media): Media[] => {
+  if (unwrapCache.has(media)) {
+    return unwrapCache.get(media)!
+  }
+
+  const unwrappedResult =
+    media.handles
+      ? [
+        media,
+        ...media
+          .handles
+          .flatMap(recursivelyUnwrapMediaHandles)
+      ]
+      : [media]
+
+  if (media.handles) {
+    unwrapCache.set(media, unwrappedResult)
+  }
+
+  return unwrappedResult
+}
 
 export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: Media[]) => {
-  const medias = wrappedMedias.flatMap(recursivelyUnwrapMediaHandles)
+  const medias = removeDuplicatesByUri(wrappedMedias.flatMap(recursivelyUnwrapMediaHandles))
   const values = medias.map(media => ({
     ...media,
     startDate: media.startDate ? new Date(media.startDate) : null,
@@ -233,7 +261,17 @@ export const findAllMedia = async () => {
       episodes: true,
       handles: {
         with: {
-          handle: true
+          handle: {
+            with: {
+              titles: true,
+              descriptions: true,
+              shortDescriptions: true,
+              trailers: true,
+              covers: true,
+              banners: true,
+              episodes: true
+            }
+          }
         }
       },
       handleOf: {
@@ -244,28 +282,16 @@ export const findAllMedia = async () => {
     }
   })
 
-  // Transform the results to include actual Media objects in handles
   const mappedMedia = results.map(media => ({
     ...media,
-    handles: [
-      ...media.handles.map(h => h.handle),
-      ...media.handleOf.map(h => h.media)
-    ].filter(Boolean),
-    handleOf: undefined // Remove the intermediate relation
+    handles: media.handles.map(h => h.handle)
   }))
 
-  const unwrappedMedia = mappedMedia.flatMap(recursivelyUnwrapMediaHandles)
-
-  // Filter out duplicates based on URI
-  const uniqueMedia = unwrappedMedia.filter((media, index, self) =>
-    index === self.findIndex(m => m.uri === media.uri)
-  )
-
-  return uniqueMedia
+  return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
-export const findAggregatedMedia = async () => {
-  const results = await database.query.mediaTable.findMany({
+export const findAggregatedMedia = async() =>
+  (await database.query.mediaTable.findMany({
     where: eq(mediaTable.origin, 'ag'),
     with: {
       titles: true,
@@ -277,29 +303,25 @@ export const findAggregatedMedia = async () => {
       episodes: true,
       handles: {
         with: {
-          handle: true
-        }
-      },
-      handleOf: {
-        with: {
-          media: true
+          handle: {
+            with: {
+              titles: true,
+              descriptions: true,
+              shortDescriptions: true,
+              trailers: true,
+              covers: true,
+              banners: true,
+              episodes: true
+            }
+          }
         }
       }
     }
-  })
-
-  // Transform the results to include actual Media objects in handles
-  const mappedMedia = results.map(media => ({
-    ...media,
-    handles: [
-      ...media.handles.map(h => h.handle),
-      ...media.handleOf.map(h => h.media)
-    ].filter(Boolean),
-    handleOf: undefined // Remove the intermediate relation
   }))
-
-  return mappedMedia
-}
+  .map(media => ({
+    ...media,
+    handles: media.handles.map(mediaHandle => mediaHandle.handle)
+  }))
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
   const values = episodes.map(episode => ({
@@ -411,7 +433,7 @@ export const aggregateMediaHandles = (medias: Media[]) =>
     origin: 'ag',
     url: undefined,
     aggregated: true,
-    handles: medias.flatMap(recursivelyUnwrapMediaHandles)
+    handles: removeDuplicatesByUri(medias.flatMap(recursivelyUnwrapMediaHandles))
   } as Media)
 
 export const cleanupDuplicateAggregatedMedia = async () => {
