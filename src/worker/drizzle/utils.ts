@@ -146,7 +146,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         uniqueTitles.map(t => sql`(${t.language}, ${t.title})`),
         sql`, `
       )})`)
-    
+
     const titleIds = new Map<string, number>()
     for (const title of existingTitles) {
       titleIds.set(`${title.language}-${title.title}`, title.id)
@@ -208,7 +208,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         uniqueDescriptions.map(d => sql`(${d.language}, ${d.description})`),
         sql`, `
       )})`)
-    
+
     const descriptionIds = new Map<string, number>()
     for (const desc of existingDescriptions) {
       descriptionIds.set(`${desc.language}-${desc.description}`, desc.id)
@@ -270,7 +270,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         uniqueShortDescriptions.map(sd => sql`(${sd.language}, ${sd.shortDescription})`),
         sql`, `
       )})`)
-    
+
     const shortDescriptionIds = new Map<string, number>()
     for (const shortDesc of existingShortDescriptions) {
       shortDescriptionIds.set(`${shortDesc.language}-${shortDesc.shortDescription}`, shortDesc.id)
@@ -367,7 +367,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         uniqueImages.map(img => sql`${img.url}`),
         sql`, `
       )})`)
-    
+
     const imageIds = new Map<string, number>()
     for (const img of existingImages) {
       imageIds.set(img.url, img.id)
@@ -614,20 +614,20 @@ export const findAggregatedMedia = async() =>
       }
     }
   }))
-  .map(media => ({
+  .map(({ mediaTitles, mediaDescriptions, mediaShortDescriptions, mediaCovers, mediaBanners, ...media }) => ({
     ...media,
-    titles: media.mediaTitles?.map(mt => mt.title) || [],
-    descriptions: media.mediaDescriptions?.map(md => md.description) || [],
-    shortDescriptions: media.mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
-    covers: media.mediaCovers?.map(mc => mc.image) || [],
-    banners: media.mediaBanners?.map(mb => mb.image) || [],
-    handles: media.handles.map(mediaHandle => ({
-      ...mediaHandle.handle,
-      titles: mediaHandle.handle.mediaTitles?.map(mt => mt.title) || [],
-      descriptions: mediaHandle.handle.mediaDescriptions?.map(md => md.description) || [],
-      shortDescriptions: mediaHandle.handle.mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
-      covers: mediaHandle.handle.mediaCovers?.map(mc => mc.image) || [],
-      banners: mediaHandle.handle.mediaBanners?.map(mb => mb.image) || []
+    titles: mediaTitles?.map(mt => mt.title) || [],
+    descriptions: mediaDescriptions?.map(md => md.description) || [],
+    shortDescriptions: mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
+    covers: mediaCovers?.map(mc => mc.image) || [],
+    banners: mediaBanners?.map(mb => mb.image) || [],
+    handles: media.handles.map(({ handle: { mediaTitles, mediaDescriptions, mediaShortDescriptions, mediaCovers, mediaBanners, ...media } }) => ({
+      ...media,
+      titles: mediaTitles?.map(mt => mt.title) || [],
+      descriptions: mediaDescriptions?.map(md => md.description) || [],
+      shortDescriptions: mediaShortDescriptions?.map(msd => msd.shortDescription) || [],
+      covers: mediaCovers?.map(mc => mc.image) || [],
+      banners: mediaBanners?.map(mb => mb.image) || []
     }))
   }))
 
@@ -688,7 +688,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         uniqueEpisodeTitles.map(t => sql`(${t.language}, ${t.title})`),
         sql`, `
       )})`)
-    
+
     const episodeTitleIds = new Map<string, number>()
     for (const title of existingTitles) {
       episodeTitleIds.set(`${title.language}-${title.title}`, title.id)
@@ -747,7 +747,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         uniqueEpisodeDescriptions.map(d => sql`(${d.language}, ${d.description})`),
         sql`, `
       )})`)
-    
+
     for (const desc of existingDescriptions) {
       episodeDescriptionIds.set(`${desc.language}-${desc.description}`, desc.id)
     }
@@ -805,7 +805,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         uniqueEpisodeShortDescriptions.map(sd => sql`(${sd.language}, ${sd.shortDescription})`),
         sql`, `
       )})`)
-    
+
     for (const shortDesc of existingShortDescriptions) {
       episodeShortDescriptionIds.set(`${shortDesc.language}-${shortDesc.shortDescription}`, shortDesc.id)
     }
@@ -866,7 +866,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         uniqueEpisodeThumbnails.map(thumb => sql`${thumb.url}`),
         sql`, `
       )})`)
-    
+
     for (const img of existingImages) {
       episodeThumbnailIds.set(img.url, img.id)
     }
