@@ -59,7 +59,8 @@ export const extractors =
             onPluginInit: ({ addPlugin }) => {
               addPlugin(useOnResolve(({ info }) => {
                 if (getNamedType(info.returnType).name === 'Media') {
-                  return async ({ result }: { result: Media | Media[] }) => {
+                  return async ({ result: _result }) => {
+                    const result = _result as Media | Media[]
                     if (Array.isArray(result)) {
                       try {
                         await database.transaction((tx) => insertManyMedia(tx, result))
