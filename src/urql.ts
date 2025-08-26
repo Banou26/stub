@@ -1,7 +1,7 @@
 import type { KeyingConfig } from '@urql/exchange-graphcache'
 import type { Exchange } from 'urql'
 
-import type { Episode, Media, PlaybackSource } from './generated/schema/types.generated'
+import type { Episode, Media, MediaBanner, MediaCover, MediaDescription, MediaShortDescription, MediaTitle, PlaybackSource } from './generated/schema/types.generated'
 
 import { Client, fetchExchange } from 'urql'
 import { devtoolsExchange } from '@urql/devtools'
@@ -13,6 +13,11 @@ import introspection from './generated/graphql.schema.json'
 
 export const keyResolvers = {
   Media: (media) => (media as Media).uri,
+  MediaTitle: (mediaTitle) => `${(mediaTitle as MediaTitle).language}-${(mediaTitle as MediaTitle).title}`,
+  MediaDescription: (mediaDescription) => `${(mediaDescription as MediaDescription).language}-${(mediaDescription as MediaDescription).description}`,
+  MediaShortDescription: (mediaShortDescription) => `${(mediaShortDescription as MediaShortDescription).language}-${(mediaShortDescription as MediaShortDescription).description}`,
+  MediaCover: (mediaCover) => `${(mediaCover as MediaCover).language}-${(mediaCover as MediaCover).url}`,
+  MediaBanner: (mediaBanner) => `${(mediaBanner as MediaBanner).language}-${(mediaBanner as MediaBanner).url}`,
   Episode: (episode) => (episode as Episode).uri,
   PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uri,
 } satisfies KeyingConfig
@@ -36,7 +41,34 @@ const client = new Client({
 })
 
 const subscription = client.subscription(
-  `subscription($input: MediaPageInput!) { mediaPage(input: $input) { nodes { uri } } }`,
+  `
+  subscription($input: MediaPageInput!) {
+    mediaPage(input: $input) {
+      nodes {
+        uri
+        titles {
+          language
+          title
+        }
+        descriptions {
+          language
+          description
+        }
+        shortDescriptions {
+          language
+          shortDescription
+        }
+        covers {
+          language
+          url
+        }
+        banners {
+          language
+          url
+        }
+      }
+    }
+  }`,
   {
     input: {
       status: 'RELEASING'

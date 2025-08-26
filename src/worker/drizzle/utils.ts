@@ -234,7 +234,11 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
 export const aggregateMediaHandles = (medias: Media[]) =>
   medias.reduce((acc, media) => ({
     ...acc,
-    titles: [...acc.titles ?? [], ...media.titles ?? []]
+    titles: [...acc.titles ?? [], ...media.titles ?? []],
+    descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
+    shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
+    covers: [...acc.covers ?? [], ...media.covers ?? []],
+    banners: [...acc.banners ?? [], ...media.banners ?? []]
   }), {
     uri: `ag:(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,
     id: `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,

@@ -3,6 +3,7 @@ import type { Media, Resolvers } from '../../../generated/schema/types.generated
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../../worker/extractor'
+import { findAggregatedMedia } from '../../../worker/drizzle/utils'
 
 export const schema = _schema as string
 
@@ -19,7 +20,8 @@ export const resolvers = {
         )
         return yield {
           mediaPage: {
-            nodes: responses.flatMap(response => response.data.mediaPage.nodes)
+            nodes: await findAggregatedMedia()
+            // nodes: responses.flatMap(response => response.data.mediaPage.nodes)
           }
         }
       }
