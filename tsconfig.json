@@ -14,5 +14,6 @@
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
     "baseUrl": ".",
+    "jsxImportSource": "@emotion/react"
   }
 }

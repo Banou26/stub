@@ -1,10 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
 import { css, Global } from '@emotion/react'
+import { render } from 'preact'
 import { Provider } from 'urql'
 
 import './worker.ts'
 import client from './urql'
+import Router from './router'
 
 const style = css`
   @import url('/style.css');
@@ -56,12 +56,10 @@ const style = css`
   }
 `
 
-const root = createRoot(document.body.appendChild(document.createElement('div')))
-
-root.render(
-  <StrictMode>
-    <Provider value={client}>
-      <Global styles={style}/>
-    </Provider>
-  </StrictMode>
+render(
+  <Provider value={client}>
+    <Global styles={style}/>
+    <Router/>
+  </Provider>,
+  document.body.appendChild(document.createElement('div'))
 )
