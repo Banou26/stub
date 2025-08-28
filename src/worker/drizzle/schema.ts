@@ -17,7 +17,7 @@ export const mediaTable = sqliteTable('media', {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
-  aggregated: integer('aggregated', { mode: 'boolean' }).default(false),
+  aggregated: integer('aggregated', { mode: 'boolean' }),
   type: text('type').$type<MediaType>(),
   status: text('status').$type<MediaStatus>(),
   titles: text('titles', { mode: 'json' }).$type<{ language: string; title: string }[]>(),
@@ -45,7 +45,7 @@ export const episodeTable = sqliteTable('episode', {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
-  aggregated: integer('aggregated', { mode: 'boolean' }).default(false).notNull(),
+  aggregated: integer('aggregated', { mode: 'boolean' }).notNull(),
   titles: text('titles', { mode: 'json' }).$type<{ language: string; title: string }[]>(),
   descriptions: text('descriptions', { mode: 'json' }).$type<{ language: string; description: string }[]>(),
   shortDescriptions: text('shortDescriptions', { mode: 'json' }).$type<{ language: string; shortDescription: string }[]>(),
@@ -53,7 +53,6 @@ export const episodeTable = sqliteTable('episode', {
   releaseDate: integer('releaseDate', { mode: 'timestamp' }),
   relativeNumber: integer('relativeNumber'),
   absoluteNumber: integer('absoluteNumber'),
-  mediaUri: text('mediaUri').references(() => mediaTable.uri),
 }, (table) => ({
   uriIdx: index('episode_uri_idx').on(table.uri),
   originIdIdx: index('episode_origin_id_idx').on(table.origin, table.id),
@@ -68,11 +67,30 @@ export const playbackSourceTable = sqliteTable('playbackSource', {
   url: text('url'),
   type: text('type').notNull().$type<PlaybackSourceType>(),
   data: text('data', { mode: 'json' }).$type<Record<string, any>>(),
-  episodeUri: text('episodeUri').references(() => episodeTable.uri),
 }, (table) => ({
   uriIdx: index('playbackSource_uri_idx').on(table.uri),
   originIdIdx: index('playbackSource_origin_id_idx').on(table.origin, table.id),
   originIdUnique: uniqueIndex('playbackSource_origin_id_unique').on(table.origin, table.id),
+}));
+
+// Junction table for Media<->Episode many-to-many
+export const mediaEpisodesTable = sqliteTable('mediaEpisodes', {
+  mediaUri: text('mediaUri').notNull().references(() => mediaTable.uri),
+  episodeUri: text('episodeUri').notNull().references(() => episodeTable.uri),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.mediaUri, table.episodeUri] }),
+  mediaIdx: index('mediaEpisodes_mediaUri_idx').on(table.mediaUri),
+  episodeIdx: index('mediaEpisodes_episodeUri_idx').on(table.episodeUri),
+}));
+
+// Junction table for Episode<->PlaybackSource many-to-many
+export const episodePlaybackSourcesTable = sqliteTable('episodePlaybackSources', {
+  episodeUri: text('episodeUri').notNull().references(() => episodeTable.uri),
+  playbackSourceUri: text('playbackSourceUri').notNull().references(() => playbackSourceTable.uri),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.episodeUri, table.playbackSourceUri] }),
+  episodeIdx: index('episodePlaybackSources_episodeUri_idx').on(table.episodeUri),
+  playbackSourceIdx: index('episodePlaybackSources_playbackSourceUri_idx').on(table.playbackSourceUri),
 }));
 
 // Junction table for Media handles (self-referencing many-to-many)
@@ -85,7 +103,7 @@ export const mediaHandlesTable = sqliteTable('mediaHandles', {
 
 // Relations
 export const mediaRelations = relations(mediaTable, ({ many }) => ({
-  episodes: many(episodeTable),
+  episodes: many(mediaEpisodesTable),
   handles: many(mediaHandlesTable, {
     relationName: 'handles',
   }),
@@ -94,18 +112,34 @@ export const mediaRelations = relations(mediaTable, ({ many }) => ({
   }),
 }));
 
-export const episodeRelations = relations(episodeTable, ({ one, many }) => ({
-  media: one(mediaTable, {
-    fields: [episodeTable.mediaUri],
-    references: [mediaTable.uri],
-  }),
-  playbackSources: many(playbackSourceTable),
+export const episodeRelations = relations(episodeTable, ({ many }) => ({
+  mediaEpisodes: many(mediaEpisodesTable),
+  episodePlaybackSources: many(episodePlaybackSourcesTable),
 }));
 
-export const playbackSourceRelations = relations(playbackSourceTable, ({ one }) => ({
+export const playbackSourceRelations = relations(playbackSourceTable, ({ many }) => ({
+  episodePlaybackSources: many(episodePlaybackSourcesTable),
+}));
+
+export const mediaEpisodesRelations = relations(mediaEpisodesTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaEpisodesTable.mediaUri],
+    references: [mediaTable.uri],
+  }),
   episode: one(episodeTable, {
-    fields: [playbackSourceTable.episodeUri],
+    fields: [mediaEpisodesTable.episodeUri],
     references: [episodeTable.uri],
+  }),
+}));
+
+export const episodePlaybackSourcesRelations = relations(episodePlaybackSourcesTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [episodePlaybackSourcesTable.episodeUri],
+    references: [episodeTable.uri],
+  }),
+  playbackSource: one(playbackSourceTable, {
+    fields: [episodePlaybackSourcesTable.playbackSourceUri],
+    references: [playbackSourceTable.uri],
   }),
 }));
 
@@ -129,5 +163,9 @@ export type Episode = typeof episodeTable.$inferSelect;
 export type CreateEpisode = typeof episodeTable.$inferInsert;
 export type PlaybackSource = typeof playbackSourceTable.$inferSelect;
 export type CreatePlaybackSource = typeof playbackSourceTable.$inferInsert;
+export type MediaEpisodes = typeof mediaEpisodesTable.$inferSelect;
+export type CreateMediaEpisodes = typeof mediaEpisodesTable.$inferInsert;
+export type EpisodePlaybackSources = typeof episodePlaybackSourcesTable.$inferSelect;
+export type CreateEpisodePlaybackSources = typeof episodePlaybackSourcesTable.$inferInsert;
 export type MediaHandles = typeof mediaHandlesTable.$inferSelect;
 export type CreateMediaHandles = typeof mediaHandlesTable.$inferInsert;

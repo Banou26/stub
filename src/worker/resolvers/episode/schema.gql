@@ -35,7 +35,7 @@ type EpisodeDescription {
 }
 
 type EpisodeThumbnail {
-  language: String!
+  language: String
   url: String!
   height: Int
   width: Int

@@ -2,18 +2,20 @@ import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
-import type { Media as GraphqlMedia, Episode } from '../../generated/schema/types.generated'
-import type { Media as DrizzleMedia } from './schema'
+import type { Media as GraphqlMedia, Episode as GraphqlEpisode } from '../../generated/schema/types.generated'
+import type { Media as DrizzleMedia, Episode as DrizzleEpisode } from './schema'
 import type {
   CreateMedia,
   CreateEpisode,
-  CreateMediaHandles
+  CreateMediaHandles,
+  CreateMediaEpisodes
 } from './schema'
 
 import {
   mediaTable,
   episodeTable,
-  mediaHandlesTable
+  mediaHandlesTable,
+  mediaEpisodesTable
 } from './schema'
 import { sql, eq, inArray } from 'drizzle-orm'
 import database from '.'
@@ -215,27 +217,46 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
   }
 
   // Handle episodes for all media
-  const allEpisodes = medias.flatMap(media =>
-    media.episodes?.map(episode => ({
-      ...episode,
-      mediaUri: media.uri // Ensure the relation to the parent media
-    })) || []
+  const allEpisodes = removeDuplicatesByUri(
+    medias.flatMap(media => media.episodes || [])
   )
 
   if (allEpisodes.length) {
     await insertManyEpisode(tx, allEpisodes)
+
+    // Create media-episode relationships
+    const mediaEpisodeRelations = medias.flatMap(media =>
+      media.episodes?.map(episode => ({
+        mediaUri: media.uri,
+        episodeUri: episode.uri
+      }) satisfies CreateMediaEpisodes) || []
+    )
+
+    if (mediaEpisodeRelations.length) {
+      await tx.insert(mediaEpisodesTable)
+        .values(mediaEpisodeRelations)
+        .onConflictDoNothing()
+    }
   }
 }
 
 export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
   const results = await tx.query.mediaTable.findMany({
     with: {
-      episodes: true,
+      episodes: {
+        with: {
+          episode: true
+        }
+      },
       handles: {
         with: {
           handle: {
             with: {
-              episodes: true
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
             }
           }
         }
@@ -252,7 +273,11 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
     results
       .map(media => ({
         ...media,
-        handles: media.handles.map(h => h.handle)
+        episodes: media.episodes.map(me => me.episode),
+        handles: media.handles.map(h => ({
+          ...h.handle,
+          episodes: h.handle.episodes.map(me => me.episode)
+        }))
       }))
       .map(normalizeGraphqlMedia)
 
@@ -263,12 +288,20 @@ export const findAggregatedMedia = async(tx: DrizzleSQLiteTransaction = database
   (await tx.query.mediaTable.findMany({
     where: eq(mediaTable.origin, 'ag'),
     with: {
-      episodes: true,
+      episodes: {
+        with: {
+          episode: true
+        }
+      },
       handles: {
         with: {
           handle: {
             with: {
-              episodes: true
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
             }
           }
         }
@@ -277,24 +310,58 @@ export const findAggregatedMedia = async(tx: DrizzleSQLiteTransaction = database
   }))
   .map(media => ({
     ...media,
-    handles: media.handles.map(mediaHandle => mediaHandle.handle)
+    episodes: media.episodes.map(me => me.episode),
+    handles: media.handles.map(mediaHandle => ({
+      ...mediaHandle.handle,
+      episodes: mediaHandle.handle.episodes.map(me => me.episode)
+    }))
   }))
 
-export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: Episode[]) => {
-  const values = episodes.map(episode => ({
-    uri: episode.uri,
-    origin: episode.origin,
-    id: episode.id,
-    url: episode.url,
-    aggregated: episode.aggregated,
-    titles: episode.titles || [],
-    descriptions: episode.descriptions || [],
-    shortDescriptions: episode.shortDescriptions || [],
-    thumbnails: episode.thumbnails || [],
-    releaseDate: episode.releaseDate ? new Date(episode.releaseDate) : null,
-    relativeNumber: episode.relativeNumber,
-    absoluteNumber: episode.absoluteNumber,
-  } satisfies CreateEpisode))
+const normalizeGraphqlEpisode = (episode: CreateEpisode): GraphqlEpisode => ({
+  ...episode,
+  url: episode.url ?? null,
+  titles: episode.titles || [],
+  descriptions: episode.descriptions || [],
+  shortDescriptions: episode.shortDescriptions || [],
+  thumbnails:
+    episode
+      .thumbnails
+      ?.map(thumbnail => ({
+        ...thumbnail,
+        height: thumbnail.height ?? undefined,
+        width: thumbnail.width ?? undefined,
+        color: thumbnail.color ?? undefined
+      }))
+    ?? [],
+  releaseDate: episode.releaseDate?.toUTCString(),
+  relativeNumber: episode.relativeNumber ?? null,
+  absoluteNumber: episode.absoluteNumber ?? null,
+});
+
+const normalizeDrizzleEpisode = (episode: GraphqlEpisode): CreateEpisode => ({
+  ...episode,
+  url: episode.url ?? null,
+  titles: episode.titles || [],
+  descriptions: episode.descriptions || [],
+  shortDescriptions: episode.shortDescriptions || [],
+  thumbnails:
+    episode
+      .thumbnails
+      ?.map(thumbnail => ({
+        ...thumbnail,
+        language: thumbnail.language ?? undefined,
+        height: thumbnail.height ?? undefined,
+        width: thumbnail.width ?? undefined,
+        color: thumbnail.color ?? undefined
+      }))
+    ?? [],
+  releaseDate: episode.releaseDate ? new Date(episode.releaseDate) : null,
+  relativeNumber: episode.relativeNumber ?? null,
+  absoluteNumber: episode.absoluteNumber ?? null,
+});
+
+export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: GraphqlEpisode[]) => {
+  const values = episodes.map(normalizeDrizzleEpisode)
 
   if (values.length) {
     await tx.insert(episodeTable)
@@ -312,8 +379,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
             thumbnails: sql`excluded.thumbnails`,
             releaseDate: sql`excluded.releaseDate`,
             relativeNumber: sql`excluded.relativeNumber`,
-            absoluteNumber: sql`excluded.absoluteNumber`,
-            mediaUri: sql`excluded.mediaUri`
+            absoluteNumber: sql`excluded.absoluteNumber`
           }
         })
   }
@@ -374,7 +440,7 @@ export const cleanupDuplicateAggregatedMedia = async (tx: DrizzleSQLiteTransacti
     await tx.delete(mediaHandlesTable).where(
       sql`${mediaHandlesTable.mediaUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)}) OR ${mediaHandlesTable.handleUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)})`
     )
-    await tx.delete(episodeTable).where(inArray(episodeTable.mediaUri, toDelete))
+    await tx.delete(mediaEpisodesTable).where(inArray(mediaEpisodesTable.mediaUri, toDelete))
     await tx.delete(mediaTable).where(inArray(mediaTable.uri, toDelete))
   }
 
