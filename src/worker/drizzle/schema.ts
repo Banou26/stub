@@ -23,7 +23,7 @@ export const mediaTable = sqliteTable('media', {
   titles: text('titles', { mode: 'json' }).$type<{ language: string; title: string }[]>(),
   descriptions: text('descriptions', { mode: 'json' }).$type<{ language: string; description: string }[]>(),
   shortDescriptions: text('shortDescriptions', { mode: 'json' }).$type<{ language: string; shortDescription: string }[]>(),
-  trailers: text('trailers', { mode: 'json' }).$type<{ uri: string; origin: string; id: string; url?: string; language: string; thumbnail?: string }[]>(),
+  trailers: text('trailers', { mode: 'json' }).$type<{ uri: string; origin: string; id: string; url?: string; language?: string; thumbnail?: string }[]>(),
   covers: text('covers', { mode: 'json' }).$type<{ language?: string; url: string; height?: number; width?: number; color?: string }[]>(),
   banners: text('banners', { mode: 'json' }).$type<{ language?: string; url: string; height?: number; width?: number; color?: string }[]>(),
   externalLinks: text('externalLinks'),

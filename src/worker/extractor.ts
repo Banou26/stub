@@ -6,14 +6,19 @@ import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
 import { Client, fetchExchange } from 'urql'
 import { getNamedType } from 'graphql'
-import { sql } from 'drizzle-orm'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../extractor'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
 import database from './drizzle'
-import { insertManyMedia, findAllMedia, aggregateMediaHandles, cleanupDuplicateAggregatedMedia, findAggregatedMedia } from './drizzle/utils'
+import {
+  insertManyMedia,
+  findAllMedia,
+  aggregateMediaHandles,
+  cleanupDuplicateAggregatedMedia,
+  findAggregatedMedia
+} from './drizzle/utils'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -63,25 +68,27 @@ export const extractors =
                     const result = _result as Media | Media[]
                     if (Array.isArray(result)) {
                       try {
-                        const p = performance.now()
-                        await database.transaction((tx) => insertManyMedia(tx, result))
-                        const dbP = performance.now()
-                        const allMedias = await findAllMedia()
-                        const groups = await database.all(groupAllRelatedMedia) as [string, number, string][]
-                        console.log('dbP', performance.now() - dbP)
-                        const aggregatedMedia = groups.map(([_, __, urisString]) => {
-                          const uris = urisString.split(',').map(uri => uri.trim())
-                          const medias =
-                            uris
-                              .map(uri => allMedias.find(r => r?.uri === uri))
-                              .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
-                          return aggregateMediaHandles(medias)
+                        await database.transaction(async (tx) => {
+                          const p = performance.now()
+                          await insertManyMedia(tx, result)
+                          const dbP = performance.now()
+                          const allMedias = await findAllMedia(tx)
+                          const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
+                          console.log('dbP', performance.now() - dbP)
+                          const aggregatedMedia = groups.map(([_, __, urisString]) => {
+                            const uris = urisString.split(',').map(uri => uri.trim())
+                            const medias =
+                              uris
+                                .map(uri => allMedias.find(r => r?.uri === uri))
+                                .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
+                            return aggregateMediaHandles(medias)
+                          })
+                          await insertManyMedia(tx, aggregatedMedia)
+                          await cleanupDuplicateAggregatedMedia(tx)
+                          const finalResults = await findAggregatedMedia(tx)
+                          console.log('p', performance.now() - p)
+                          console.log('finalResults', finalResults)
                         })
-                        await database.transaction((tx) => insertManyMedia(tx, aggregatedMedia))
-                        await cleanupDuplicateAggregatedMedia()
-                        const finalResults = await findAggregatedMedia()
-                        console.log('p', performance.now() - p)
-                        console.log('finalResults', finalResults)
                       } catch (err) {
                         console.error(err)
                         throw err

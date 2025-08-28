@@ -43,7 +43,7 @@
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
     "test-watch-headful": "npx playwright test --ui",
     "gql-generate": "graphql-codegen --config codegen.ts",
-    "generate-drizzle": "npx drizzle-kit generate --name=init"
+    "drizzle-generate": "npx drizzle-kit generate --name=init"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

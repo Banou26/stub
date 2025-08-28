@@ -2,7 +2,8 @@ import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
-import type { Media, Episode } from '../../generated/schema/types.generated'
+import type { Media as GraphqlMedia, Episode } from '../../generated/schema/types.generated'
+import type { Media as DrizzleMedia } from './schema'
 import type {
   CreateMedia,
   CreateEpisode,
@@ -38,8 +39,8 @@ function removeDuplicatesByUri<T extends { uri: string }>(array: T[]): T[] {
   return result
 }
 
-const unwrapCache = new WeakMap<Media, Media[]>()
-export const recursivelyUnwrapMediaHandles = (media: Media): Media[] => {
+const unwrapCache = new WeakMap<GraphqlMedia, GraphqlMedia[]>()
+export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia[] => {
   if (unwrapCache.has(media)) {
     return unwrapCache.get(media)!
   }
@@ -61,30 +62,115 @@ export const recursivelyUnwrapMediaHandles = (media: Media): Media[] => {
   return unwrappedResult
 }
 
-export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: Media[]) => {
+const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
+  uri: media.uri,
+  origin: media.origin,
+  id: media.id,
+  url: media.url ?? null,
+  aggregated: media.aggregated ?? null,
+  type: media.type ?? null,
+  status: media.status ?? null,
+  titles: media.titles || [],
+  descriptions: media.descriptions || [],
+  shortDescriptions: media.shortDescriptions || [],
+  trailers:
+    media
+      .trailers
+      ?.map(trailer => ({
+        ...trailer,
+        url: trailer.url ?? undefined,
+        language: trailer.language ?? undefined,
+        thumbnail: trailer.thumbnail ?? undefined
+      }))
+    ?? [],
+  covers:
+    media
+      .covers
+      ?.map(cover => ({
+        ...cover,
+        language: cover.language ?? undefined,
+        url: cover.url ?? undefined,
+        height: cover.height ?? undefined,
+        width: cover.width ?? undefined,
+        color: cover.color ?? undefined
+      }))
+    ?? [],
+  banners:
+    media
+      .banners
+      ?.map(banner => ({
+        ...banner,
+        language: banner.language ?? undefined,
+        url: banner.url ?? undefined,
+        height: banner.height ?? undefined,
+        width: banner.width ?? undefined,
+        color: banner.color ?? undefined
+      }))
+    ?? [],
+  externalLinks: media.externalLinks ?? null,
+  averageScore: media.averageScore ?? null,
+  popularity: media.popularity ?? null,
+  startDate: media.startDate ? new Date(media.startDate) : null,
+  endDate: media.endDate ? new Date(media.endDate) : null,
+  isAdult: media.isAdult ?? null,
+  episodeCount: media.episodeCount ?? null
+})
+
+const normalizeGraphqlMedia = (media: CreateMedia): GraphqlMedia => ({
+  uri: media.uri,
+  origin: media.origin,
+  id: media.id,
+  url: media.url,
+  aggregated: media.aggregated,
+  type: media.type,
+  status: media.status,
+  titles: media.titles || [],
+  descriptions: media.descriptions || [],
+  shortDescriptions: media.shortDescriptions || [],
+  trailers:
+    media
+      .trailers
+      ?.map(trailer => ({
+        ...trailer,
+        url: trailer.url ?? undefined,
+        thumbnail: trailer.thumbnail ?? undefined
+      }))
+    ?? [],
+  covers:
+    media
+      .covers
+      ?.map(cover => ({
+        ...cover,
+        language: cover.language ?? undefined,
+        url: cover.url ?? undefined,
+        height: cover.height ?? undefined,
+        width: cover.width ?? undefined,
+        color: cover.color ?? undefined
+      }))
+    ?? [],
+  banners:
+    media
+      .banners
+      ?.map(banner => ({
+        ...banner,
+        url: banner.url ?? undefined,
+        height: banner.height ?? undefined,
+        width: banner.width ?? undefined,
+        color: banner.color ?? undefined
+      }))
+    ?? [],
+  externalLinks: media.externalLinks,
+  averageScore: media.averageScore,
+  popularity: media.popularity,
+  startDate: media.startDate?.toUTCString(),
+  endDate: media.endDate?.toUTCString(),
+  isAdult: media.isAdult,
+  episodeCount: media.episodeCount
+})
+
+export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: GraphqlMedia[]) => {
   const medias = removeDuplicatesByUri(wrappedMedias.flatMap(recursivelyUnwrapMediaHandles))
-  const values = medias.map(media => ({
-    uri: media.uri,
-    origin: media.origin,
-    id: media.id,
-    url: media.url,
-    aggregated: media.aggregated,
-    type: media.type,
-    status: media.status,
-    titles: media.titles || [],
-    descriptions: media.descriptions || [],
-    shortDescriptions: media.shortDescriptions || [],
-    trailers: media.trailers || [],
-    covers: media.covers || [],
-    banners: media.banners || [],
-    externalLinks: media.externalLinks,
-    averageScore: media.averageScore,
-    popularity: media.popularity,
-    startDate: media.startDate ? new Date(media.startDate) : null,
-    endDate: media.endDate ? new Date(media.endDate) : null,
-    isAdult: media.isAdult,
-    episodeCount: media.episodeCount
-  } satisfies CreateMedia))
+  const values = medias.map(normalizeDrizzleMedia)
 
   if (values.length) {
     await tx.insert(mediaTable)
@@ -141,8 +227,8 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
   }
 }
 
-export const findAllMedia = async () => {
-  const results = await database.query.mediaTable.findMany({
+export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.mediaTable.findMany({
     with: {
       episodes: true,
       handles: {
@@ -162,16 +248,19 @@ export const findAllMedia = async () => {
     }
   })
 
-  const mappedMedia = results.map(media => ({
-    ...media,
-    handles: media.handles.map(h => h.handle)
-  }))
+  const mappedMedia =
+    results
+      .map(media => ({
+        ...media,
+        handles: media.handles.map(h => h.handle)
+      }))
+      .map(normalizeGraphqlMedia)
 
   return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
-export const findAggregatedMedia = async() =>
-  (await database.query.mediaTable.findMany({
+export const findAggregatedMedia = async(tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) =>
+  (await tx.query.mediaTable.findMany({
     where: eq(mediaTable.origin, 'ag'),
     with: {
       episodes: true,
@@ -205,7 +294,6 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
     releaseDate: episode.releaseDate ? new Date(episode.releaseDate) : null,
     relativeNumber: episode.relativeNumber,
     absoluteNumber: episode.absoluteNumber,
-    mediaUri: episode.mediaUri
   } satisfies CreateEpisode))
 
   if (values.length) {
@@ -231,7 +319,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
   }
 }
 
-export const aggregateMediaHandles = (medias: Media[]) =>
+export const aggregateMediaHandles = (medias: GraphqlMedia[]) =>
   medias.reduce((acc, media) => ({
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
@@ -246,11 +334,10 @@ export const aggregateMediaHandles = (medias: Media[]) =>
     url: undefined,
     aggregated: true,
     handles: removeDuplicatesByUri(medias.flatMap(recursivelyUnwrapMediaHandles))
-  } as Media)
+  } as GraphqlMedia)
 
-export const cleanupDuplicateAggregatedMedia = async () => {
-  // Find all aggregated media (origin = 'ag')
-  const aggregatedMedia = await database.query.mediaTable.findMany({
+export const cleanupDuplicateAggregatedMedia = async (tx: DrizzleSQLiteTransaction) => {
+  const aggregatedMedia = await tx.query.mediaTable.findMany({
     where: eq(mediaTable.origin, 'ag'),
     with: {
       handles: {
@@ -261,52 +348,34 @@ export const cleanupDuplicateAggregatedMedia = async () => {
     }
   })
 
-  // Extract URIs for each aggregated media
-  const mediaWithUris = aggregatedMedia.map(media => {
-    const match = media.uri.match(/^ag:\((.*)\)$/)
-    if (!match) {
-      return null
-    }
+  const aggregatedMediaUris =
+    aggregatedMedia
+      .map(media => ({
+        media,
+        urisSet: new Set(media.uri.slice('ag:('.length, -1).split(','))
+      }))
 
-    const urisSet = new Set(match[1].split(','))
-    return { media, urisSet }
-  }).filter((item): item is NonNullable<typeof item> => item !== null)
-
-  // Find subsets: if media A contains all URIs of media B, then B is a subset of A
   const toDelete: string[] = []
-
-  for (let i = 0; i < mediaWithUris.length; i++) {
-    const { media: mediaA, urisSet: urisA } = mediaWithUris[i]
-
-    for (let j = 0; j < mediaWithUris.length; j++) {
-      if (i === j) continue
-
-      const { media: mediaB, urisSet: urisB } = mediaWithUris[j]
-
-      // Check if B is a subset of A (A contains all URIs of B)
+  for (const mediaA of aggregatedMediaUris) {
+    const urisA = mediaA.urisSet
+    for (const mediaB of aggregatedMediaUris) {
+      if (mediaA === mediaB) continue
+      const urisB = mediaB.urisSet
       const isSubset = [...urisB].every(uri => urisA.has(uri))
-
       if (isSubset && urisB.size < urisA.size) {
-        // B is a proper subset of A, mark B for deletion
-        if (!toDelete.includes(mediaB.uri)) {
-          toDelete.push(mediaB.uri)
+        if (!toDelete.includes(mediaB.media.uri)) {
+          toDelete.push(mediaB.media.uri)
         }
       }
     }
   }
 
-  // Delete the duplicate aggregated media
   if (toDelete.length > 0) {
-    await database.transaction(async (tx) => {
-      // Delete related data first (due to foreign key constraints)
-      await tx.delete(mediaHandlesTable).where(
-        sql`${mediaHandlesTable.mediaUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)}) OR ${mediaHandlesTable.handleUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)})`
-      )
-      await tx.delete(episodeTable).where(inArray(episodeTable.mediaUri, toDelete))
-
-      // Finally delete the media itself
-      await tx.delete(mediaTable).where(inArray(mediaTable.uri, toDelete))
-    })
+    await tx.delete(mediaHandlesTable).where(
+      sql`${mediaHandlesTable.mediaUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)}) OR ${mediaHandlesTable.handleUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)})`
+    )
+    await tx.delete(episodeTable).where(inArray(episodeTable.mediaUri, toDelete))
+    await tx.delete(mediaTable).where(inArray(mediaTable.uri, toDelete))
   }
 
   return toDelete.length

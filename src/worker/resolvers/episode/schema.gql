@@ -17,28 +17,21 @@ type Episode {
   absoluteNumber: Int
   thumbnails: [EpisodeThumbnail!]
   playbackSources: [PlaybackSource!]
-  Media: Media
 }
 
 type EpisodeTitle {
   language: String!
   title: String!
-  Episode: Episode
-  episodeUri: String
 }
 
 type EpisodeShortDescription {
   language: String!
   shortDescription: String!
-  Episode: Episode
-  episodeUri: String
 }
 
 type EpisodeDescription {
   language: String!
   description: String!
-  Episode: Episode
-  episodeUri: String
 }
 
 type EpisodeThumbnail {
@@ -48,5 +41,4 @@ type EpisodeThumbnail {
   width: Int
   """Average #hex color of cover image"""
   color: String
-  Episode: Episode
 }

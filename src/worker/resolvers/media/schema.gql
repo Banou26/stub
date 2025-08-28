@@ -62,22 +62,16 @@ type Media {
 type MediaTitle {
   language: String!
   title: String!
-  Media: Media
-  mediaUri: String
 }
 
 type MediaShortDescription {
   language: String!
   shortDescription: String!
-  Media: Media
-  mediaUri: String
 }
 
 type MediaDescription {
   language: String!
   description: String!
-  Media: Media
-  mediaUri: String
 }
 
 type MediaTrailer {
@@ -89,29 +83,26 @@ type MediaTrailer {
   id: String!
   """An url to the media resource"""
   url: String
-  language: String!
+  language: String
   thumbnail: String
-  Media: Media
 }
 
 type MediaCover {
-  language: String!
+  language: String
   url: String!
   height: Int
   width: Int
   """Average #hex color of cover image"""
   color: String
-  Media: Media
 }
 
 type MediaBanner {
-  language: String!
+  language: String
   url: String!
   height: Int
   width: Int
   """Average #hex color of cover image"""
   color: String
-  Media: Media
 }
 
 
