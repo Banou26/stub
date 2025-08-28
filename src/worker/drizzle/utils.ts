@@ -6,7 +6,6 @@ import type { Media as GraphqlMedia, Episode as GraphqlEpisode } from '../../gen
 import type { Media as DrizzleMedia, Episode as DrizzleEpisode } from './schema'
 import type {
   CreateMedia,
-  CreateEpisode,
   CreateMediaHandles,
   CreateMediaEpisodes
 } from './schema'
@@ -118,7 +117,7 @@ const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
   episodeCount: media.episodeCount ?? null
 })
 
-const normalizeGraphqlMedia = (media: CreateMedia): GraphqlMedia => ({
+const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: DrizzleEpisode }[], handles?: { handle: DrizzleMedia }[] }): GraphqlMedia => ({
   uri: media.uri,
   origin: media.origin,
   id: media.id,
@@ -167,7 +166,9 @@ const normalizeGraphqlMedia = (media: CreateMedia): GraphqlMedia => ({
   startDate: media.startDate?.toUTCString(),
   endDate: media.endDate?.toUTCString(),
   isAdult: media.isAdult,
-  episodeCount: media.episodeCount
+  episodeCount: media.episodeCount,
+  episodes: media.episodes?.map(mediaEpisode => normalizeGraphqlEpisode(mediaEpisode.episode)),
+  handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle))
 })
 
 export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: GraphqlMedia[]) => {
@@ -269,17 +270,7 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
     }
   })
 
-  const mappedMedia =
-    results
-      .map(media => ({
-        ...media,
-        episodes: media.episodes.map(me => me.episode),
-        handles: media.handles.map(h => ({
-          ...h.handle,
-          episodes: h.handle.episodes.map(me => me.episode)
-        }))
-      }))
-      .map(normalizeGraphqlMedia)
+  const mappedMedia = results.map(normalizeGraphqlMedia)
 
   return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
@@ -308,16 +299,9 @@ export const findAggregatedMedia = async(tx: DrizzleSQLiteTransaction = database
       }
     }
   }))
-  .map(media => ({
-    ...media,
-    episodes: media.episodes.map(me => me.episode),
-    handles: media.handles.map(mediaHandle => ({
-      ...mediaHandle.handle,
-      episodes: mediaHandle.handle.episodes.map(me => me.episode)
-    }))
-  }))
+  .map(media => normalizeGraphqlMedia(media))
 
-const normalizeGraphqlEpisode = (episode: CreateEpisode): GraphqlEpisode => ({
+const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
   ...episode,
   url: episode.url ?? null,
   titles: episode.titles || [],
@@ -338,7 +322,7 @@ const normalizeGraphqlEpisode = (episode: CreateEpisode): GraphqlEpisode => ({
   absoluteNumber: episode.absoluteNumber ?? null,
 });
 
-const normalizeDrizzleEpisode = (episode: GraphqlEpisode): CreateEpisode => ({
+const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   ...episode,
   url: episode.url ?? null,
   titles: episode.titles || [],
