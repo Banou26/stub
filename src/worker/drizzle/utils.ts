@@ -17,7 +17,7 @@ import {
   mediaEpisodesTable
 } from './schema'
 import { sql, eq, inArray } from 'drizzle-orm'
-import database from '.'
+import { Database } from '.'
 
 export type DrizzleSQLiteTransaction = SQLiteTransaction<
   "async",
@@ -25,6 +25,27 @@ export type DrizzleSQLiteTransaction = SQLiteTransaction<
   typeof import("c:/dev/stub/src/worker/drizzle/schema"),
   ExtractTablesWithRelations<typeof import("c:/dev/stub/src/worker/drizzle/schema")>
 >
+
+export const generateTableNotifyTrigger = (database: Database, tableName: string, columnId: string, operation: 'INSERT' | 'UPDATE' | 'DELETE') =>
+  database.run(sql.raw(`
+    CREATE TRIGGER IF NOT EXISTS ${tableName}${operation.slice(0, 1).toUpperCase()}${operation.slice(1).toLowerCase()}Notify
+    AFTER ${operation} ON ${tableName}
+    FOR EACH ROW
+    BEGIN
+        INSERT INTO notify (tableName, rowId, operation)
+        VALUES (
+            '${tableName}',
+            ${operation === 'DELETE' ? 'OLD' : 'NEW'}.${columnId},
+            '${operation}'
+        );
+    END;
+  `))
+
+export const generateTableNotifyTriggers = async (database: Database, tableName: string, columnId: string) => {
+  await generateTableNotifyTrigger(database, tableName, columnId, 'INSERT')
+  await generateTableNotifyTrigger(database, tableName, columnId, 'UPDATE')
+  await generateTableNotifyTrigger(database, tableName, columnId, 'DELETE')
+}
 
 function removeDuplicatesByUri<T extends { uri: string }>(array: T[]): T[] {
   const seen = new Set<string | number>()
