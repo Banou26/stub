@@ -1,9 +1,10 @@
-import type { ExtractorServerContext } from '../../../worker/extractor'
+import type { ExtractorServerContext } from '../../extractor'
 import type { Media, Resolvers } from '../../../generated/schema/types.generated'
 // @ts-expect-error
 import _schema from './schema.gql?raw'
-import { extractors } from '../../../worker/extractor'
-import { findAggregatedMedia } from '../../../worker/drizzle/utils'
+import { extractors } from '../../extractor'
+import { findAggregatedMedia } from '../../drizzle/utils'
+import { listenIterator } from '../../drizzle/notifications'
 
 export const schema = _schema as string
 
@@ -13,15 +14,29 @@ export const resolvers = {
   Subscription: {
     mediaPage: {
       subscribe: async function* (_parent, { input }, ctx: ExtractorServerContext) {
-        const responses = await Promise.all(
+        const subscriptions =
           extractors.map(extractor =>
-            extractor.client.subscription(ctx.params.query!, ctx.params.variables)
+            extractor.client.subscription(
+              ctx.params.query!,
+              ctx.params.variables
+            ).subscribe(() => {})
           )
-        )
+
+        for await (const _ of listenIterator()) {
+          if (ctx.request.signal.aborted) {
+            subscriptions.forEach(subscription => subscription.unsubscribe())
+            break
+          }
+          yield {
+            mediaPage: {
+              nodes: await findAggregatedMedia()
+            }
+          }
+        }
+
         return yield {
           mediaPage: {
             nodes: await findAggregatedMedia()
-            // nodes: responses.flatMap(response => response.data.mediaPage.nodes)
           }
         }
       }

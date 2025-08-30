@@ -69,12 +69,9 @@ export const extractors =
                     if (Array.isArray(result)) {
                       try {
                         await database.transaction(async (tx) => {
-                          const p = performance.now()
                           await insertManyMedia(tx, result)
-                          const dbP = performance.now()
                           const allMedias = await findAllMedia(tx)
                           const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-                          console.log('dbP', performance.now() - dbP)
                           const aggregatedMedia = groups.map(([_, __, urisString]) => {
                             const uris = urisString.split(',').map(uri => uri.trim())
                             const medias =
@@ -85,9 +82,6 @@ export const extractors =
                           })
                           await insertManyMedia(tx, aggregatedMedia)
                           await cleanupDuplicateAggregatedMedia(tx)
-                          const finalResults = await findAggregatedMedia(tx)
-                          console.log('p', performance.now() - p)
-                          console.log('finalResults', finalResults)
                         })
                       } catch (err) {
                         console.error(err)

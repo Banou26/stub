@@ -165,6 +165,7 @@ export const mediaHandlesRelations = relations(mediaHandlesTable, ({ one }) => (
 }))
 
 // Type exports for better TypeScript support
+export type ChangeNotification = typeof notifyTable.$inferSelect
 export type Media = typeof mediaTable.$inferSelect
 export type CreateMedia = typeof mediaTable.$inferInsert
 export type Episode = typeof episodeTable.$inferSelect
