@@ -40,41 +40,4 @@ const client = new Client({
   }
 })
 
-const subscription = client.subscription(
-  `
-  subscription($input: MediaPageInput!) {
-    mediaPage(input: $input) {
-      nodes {
-        uri
-        titles {
-          language
-          title
-        }
-        descriptions {
-          language
-          description
-        }
-        shortDescriptions {
-          language
-          shortDescription
-        }
-        covers {
-          language
-          url
-        }
-        banners {
-          language
-          url
-        }
-      }
-    }
-  }`,
-  {
-    input: {
-      status: 'RELEASING'
-    }
-  }
-)
-subscription.subscribe((result) => console.log('subscription result', result))
-
 export default client

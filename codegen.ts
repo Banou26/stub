@@ -13,20 +13,20 @@ const config: CodegenConfig = {
         }
       }
     }),
-    './src/generated/graphql.ts': {
-      plugins: [
-        'typescript',
-        'typescript-resolvers',
-        'typescript-document-nodes',
-      ],
-      config: {
-        useTypeImports: true,
-        contextType: '../worker/yoga#ServerContext',
-        scalars: {
-          Date: 'string'
-        }
-      }
-    },
+    // './src/generated/graphql.ts': {
+    //   plugins: [
+    //     'typescript',
+    //     'typescript-resolvers',
+    //     'typescript-document-nodes',
+    //   ],
+    //   config: {
+    //     useTypeImports: true,
+    //     contextType: '../worker/yoga#ServerContext',
+    //     scalars: {
+    //       Date: 'string'
+    //     }
+    //   }
+    // },
     './src/generated/graphql.schema.json': {
       plugins: [
         'urql-introspection'
@@ -36,8 +36,23 @@ const config: CodegenConfig = {
           Date: 'string'
         }
       }
+    },
+    './src/generated/': {
+      preset: 'client',
+      presetConfig: {
+        gqlTagName: 'gql',
+        fragmentMasking: false
+      },
+      config: {
+        useTypeImports: true,
+        contextType: '../worker/yoga#ServerContext',
+        scalars: {
+          Date: 'string'
+        }
+      }
     }
   },
+  documents: ['src/**/*.ts', 'src/**/*.tsx'],
   ignoreNoDocuments: true,
 }
 

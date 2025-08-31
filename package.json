@@ -18,6 +18,7 @@
     "@graphql-codegen/typescript-document-nodes": "^4.0.16",
     "@graphql-codegen/typescript-resolvers": "^4.5.1",
     "@graphql-codegen/urql-introspection": "^3.0.1",
+    "@parcel/watcher": "^2.5.1",
     "@playwright/test": "^1.54.2",
     "@preact/preset-vite": "^2.10.2",
     "@types/chai": "^5.2.2",
@@ -44,6 +45,7 @@
     "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
     "test-watch-headful": "npx playwright test --ui",
     "gql-generate": "graphql-codegen --config codegen.ts",
+    "gql-generate-watch": "graphql-codegen --config codegen.ts --watch",
     "drizzle-generate": "npx drizzle-kit generate --name=init"
   },
   "dependencies": {
