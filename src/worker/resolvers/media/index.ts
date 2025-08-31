@@ -13,7 +13,8 @@ export const resolvers = {
   Mutation: {},
   Subscription: {
     mediaPage: {
-      subscribe: async function* (_parent, { input }, ctx: ExtractorServerContext) {
+      resolve: (parent: Media[]) => ({ nodes: parent }),
+      subscribe: async function* (_parent, _, ctx: ExtractorServerContext) {
         const subscriptions =
           extractors.map(extractor =>
             extractor.client.subscription(
@@ -22,22 +23,13 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        for await (const _ of listenIterator()) {
-          if (ctx.request.signal.aborted) {
-            subscriptions.forEach(subscription => subscription.unsubscribe())
-            break
+        try {
+          for await (const _ of listenIterator()) {
+            yield findAggregatedMedia()
           }
-          yield {
-            mediaPage: {
-              nodes: await findAggregatedMedia()
-            }
-          }
-        }
-
-        return yield {
-          mediaPage: {
-            nodes: await findAggregatedMedia()
-          }
+        } finally {
+          await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
+          return yield findAggregatedMedia()
         }
       }
     }

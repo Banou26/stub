@@ -43,32 +43,45 @@ export const listen = (func: (notifications: ChangeNotification[]) => void, opti
   notificationListeners.push(listenerObject)
 
   return () => {
-    notificationListeners.splice(notificationListeners.indexOf(listenerObject), 1)
+    if (notificationListeners.includes(listenerObject)) {
+      notificationListeners.splice(notificationListeners.indexOf(listenerObject), 1)
+    }
   }
 }
 
-export const listenIterator = (options?: { table?: TableName, ids?: string[] }) => {
-  let resolve: ((value: ChangeNotification[]) => void) | null = null
-  let promise: Promise<ChangeNotification[]> | null = null
+export const listenIterator = (options?: { abort?: AbortSignal, table?: TableName, ids?: string[] }) => {
+  let resolve: ((result: { value: ChangeNotification[] | undefined, done: boolean }) => void) | null = null
+  let promise: Promise<{ value: ChangeNotification[] | undefined, done: boolean }> | null = null
 
   const unlisten = listen((changes) => {
     if (resolve) {
-      resolve(changes)
+      resolve({ value: changes, done: false })
       resolve = null
       promise = null
     }
   }, options)
 
+  if (options?.abort) {
+    options.abort.addEventListener('abort', () => {
+      unlisten()
+      if (resolve) {
+        resolve({ value: undefined, done: true })
+      }
+    })
+  }
+
   return {
     async next() {
       if (!promise) {
-        promise = new Promise<ChangeNotification[]>(_resolve => {
+        promise = new Promise<{ value: ChangeNotification[] | undefined, done: boolean }>(_resolve => {
           resolve = _resolve
         })
       }
-      const value = await promise
-      promise = null
-      return { value, done: false }
+      try {
+        return promise
+      } finally {
+        promise = null
+      }
     },
     async return() {
       unlisten()
