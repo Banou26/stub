@@ -14,7 +14,7 @@ export const resolvers = {
   Subscription: {
     mediaPage: {
       resolve: (parent: Media[]) => ({ nodes: parent }),
-      subscribe: async function* (_parent, _, ctx: ExtractorServerContext) {
+      subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         const subscriptions =
           extractors.map(extractor =>
             extractor.client.subscription(
@@ -25,11 +25,11 @@ export const resolvers = {
 
         try {
           for await (const _ of listenIterator()) {
-            yield findAggregatedMedia()
+            yield findAggregatedMedia(undefined, { sorts: args.input.sorts ?? undefined })
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield findAggregatedMedia()
+          return yield findAggregatedMedia(undefined, { sorts: args.input.sorts ?? undefined })
         }
       }
     }

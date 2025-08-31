@@ -2,7 +2,7 @@ import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
-import type { Media as GraphqlMedia, Episode as GraphqlEpisode } from '../../generated/schema/types.generated'
+import type { Media as GraphqlMedia, Episode as GraphqlEpisode, MediaSort } from '../../generated/schema/types.generated'
 import type { Media as DrizzleMedia, Episode as DrizzleEpisode } from './schema'
 import type {
   CreateMedia,
@@ -11,15 +11,17 @@ import type {
 } from './schema'
 import type { Database } from '.'
 
+import { create_custom_config, WasmMatcher } from 'frizbee-wasm'
+import { sql, eq, inArray, asc, desc } from 'drizzle-orm'
+
+// import { MediaSort } from '../../generated/graphql'
 import {
   mediaTable,
   episodeTable,
   mediaHandlesTable,
   mediaEpisodesTable
 } from './schema'
-import { sql, eq, inArray } from 'drizzle-orm'
 import database from '.'
-import { create_custom_config, WasmMatcher } from 'frizbee-wasm'
 
 type RemoveSubstring<T extends string, Substring extends string> =
   T extends `${infer Before}${Substring}${infer After}`
@@ -284,9 +286,20 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
   return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
-export const findAggregatedMedia = async(tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) =>
+export const findAggregatedMedia = async(
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  { sorts }: { sorts?: MediaSort[] } = {}
+) =>
   (await tx.query.mediaTable.findMany({
     where: eq(mediaTable.origin, 'ag'),
+    orderBy:
+      sorts
+        ?.map(sort =>
+          sort === 'POPULARITY' ? desc(mediaTable.popularity)
+          : sort === 'POPULARITY_DESC' ? asc(mediaTable.popularity)
+          : undefined
+        )
+        .filter((sort): sort is NonNullable<typeof sort> => sort !== undefined),
     with: {
       episodes: {
         with: {
@@ -383,6 +396,7 @@ const config = create_custom_config(false, undefined, true, undefined)
 
 export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
   const aggregatedMedia = medias.reduce((acc, media) => ({
+    ...media,
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
     descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],

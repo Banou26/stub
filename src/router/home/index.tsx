@@ -7,7 +7,7 @@ import { Grid } from 'react-window'
 import { useState } from 'preact/compat'
 
 import { gql } from '../../generated/gql'
-import { MediaStatus } from '../../generated/graphql'
+import { MediaSort, MediaStatus } from '../../generated/graphql'
 import MediaTitle from '../../components/media-title'
 
 const getReleasingMediaPage = gql(`
@@ -51,7 +51,15 @@ const style = css`
 `
 
 export default () => {
-  const [{ data }] = useSubscription({ query: getReleasingMediaPage, variables: { input: { status: MediaStatus.Releasing } } })
+  const [{ data }] = useSubscription({
+    query: getReleasingMediaPage,
+    variables: {
+      input: {
+        status: MediaStatus.Releasing,
+        sorts: [MediaSort.Popularity]
+      }
+    }
+  })
 
   const mediaNodes = data?.mediaPage?.nodes || []
   console.log('mediaNodes', mediaNodes)

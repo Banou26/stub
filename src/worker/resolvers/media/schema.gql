@@ -115,6 +115,11 @@ input MediaInput {
   url: String
 }
 
+enum MediaSort {
+  POPULARITY
+  POPULARITY_DESC
+}
+
 input MediaPageInput {
 """Filter by media IDs"""
   nodes: [MediaInput!]
@@ -122,6 +127,8 @@ input MediaPageInput {
   search: String
   """Filter by the media's current release status"""
   status: MediaStatus
+
+  sorts: [MediaSort!]
 
   """Filter by the start date of the media"""
   startDate: Date
