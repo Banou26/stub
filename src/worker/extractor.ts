@@ -72,6 +72,7 @@ export const extractors =
                           await insertManyMedia(tx, result)
                           const allMedias = await findAllMedia(tx)
                           const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
+                          const p = performance.now()
                           const aggregatedMedia = groups.map(([_, __, urisString]) => {
                             const uris = urisString.split(',').map(uri => uri.trim())
                             const medias =
@@ -80,6 +81,7 @@ export const extractors =
                                 .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
                             return aggregateMediaHandles(medias)
                           })
+                          console.log(`aggregatedMedia: ${aggregatedMedia.length} in ${performance.now() - p}ms`)
                           await insertManyMedia(tx, aggregatedMedia)
                           await cleanupDuplicateAggregatedMedia(tx)
                         })

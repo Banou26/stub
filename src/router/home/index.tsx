@@ -11,6 +11,7 @@ const getReleasingMediaPage = gql(`
         titles {
           language
           title
+          score
         }
         descriptions {
           language

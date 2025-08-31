@@ -19,6 +19,7 @@ import {
 } from './schema'
 import { sql, eq, inArray } from 'drizzle-orm'
 import database from '.'
+import { create_custom_config, WasmMatcher } from 'frizbee-wasm'
 
 type RemoveSubstring<T extends string, Substring extends string> =
   T extends `${infer Before}${Substring}${infer After}`
@@ -377,8 +378,11 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
   }
 }
 
-export const aggregateMediaHandles = (medias: GraphqlMedia[]) =>
-  medias.reduce((acc, media) => ({
+const matcher = new WasmMatcher()
+const config = create_custom_config(false, undefined, true, undefined)
+
+export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
+  const aggregatedMedia = medias.reduce((acc, media) => ({
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
     descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
@@ -393,6 +397,32 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[]) =>
     aggregated: true,
     handles: removeDuplicatesByUri(medias.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
+
+  const titleComparisons =
+    aggregatedMedia.titles?.length
+      // todo: check if the input length issue is fixed by frizbee at some point and remove the workaround
+      ? matcher.compareAll(aggregatedMedia.titles.map(mediaTitle => mediaTitle.title.slice(0, 75)), config)
+      : undefined
+
+  const titleScores = titleComparisons?.map(comparison => comparison.score)
+  const maxTitleScore = titleScores?.length ? Math.max(...titleScores) : undefined
+
+  return {
+    ...aggregatedMedia,
+    titles:
+      aggregatedMedia.titles?.map((mediaTitle, index) => {
+        const comparison = titleComparisons?.find(comparison => comparison.needle_index === index)
+
+        return {
+          ...mediaTitle,
+          score:
+            comparison && maxTitleScore
+              ? comparison.score / maxTitleScore
+              : 0
+        }
+      })
+  }
+}
 
 export const cleanupDuplicateAggregatedMedia = async (tx: DrizzleSQLiteTransaction) => {
   const aggregatedMedia = await tx.query.mediaTable.findMany({
