@@ -96,6 +96,7 @@ const SEARCH_QUERY = `
   ) {
     Page(page: $page) {
       pageInfo {
+        lastPage
         hasNextPage
         total
       }
@@ -135,12 +136,13 @@ const mediaSeasons = [MediaSeason.Winter, MediaSeason.Spring, MediaSeason.Summer
 
 const getMediaSeason = (date = new Date()): MediaSeason => {
   const month = date.getMonth()
+
   return (
-    month <= 1 ? MediaSeason.Winter // December to February
-    : month >= 2 && month <= 4 ? MediaSeason.Spring // March to May
-    : month >= 5 && month <= 7 ? MediaSeason.Summer // June to August
-    : month >= 8 && month <= 10 ? MediaSeason.Fall // September to November
-    : MediaSeason.Winter // December to February
+    month >= 1 && month <= 3 ? MediaSeason.Winter // December to February
+    : month >= 4 && month <= 6 ? MediaSeason.Spring // March to May
+    : month >= 7 && month <= 9 ? MediaSeason.Summer // June to August
+    : month >= 10 && month <= 12 ? MediaSeason.Fall // September to November
+    : MediaSeason.Fall // December to February
   )
 }
 
