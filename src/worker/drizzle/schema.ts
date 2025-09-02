@@ -25,7 +25,7 @@ export const mediaTable = sqliteTable('media', {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
-  score: real('uri'),
+  score: real('score'),
   aggregated: integer('aggregated', { mode: 'boolean' }),
   type: text('type').$type<MediaType>(),
   status: text('status').$type<MediaStatus>(),

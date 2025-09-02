@@ -415,7 +415,10 @@ const config = create_custom_config(false, undefined, true, undefined)
 export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
   const id = `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
   const uri = `ag:${id}`
-  const aggregatedMedia = medias.reduce((acc, media) => ({
+
+  const sortedMediaBasedOnQualityScore = medias.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+
+  const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
@@ -429,7 +432,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.TITLE, { uri })}`,
     aggregated: true,
-    handles: removeDuplicatesByUri(medias.flatMap(recursivelyUnwrapMediaHandles))
+    handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 
   const titleComparisons =
