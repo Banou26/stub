@@ -40,6 +40,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
     handles: [
       ...anizipHandle ? [anizipHandle] : []
     ],
+    score: 1,
     averageScore: data.score,
     descriptions: [{
       language: 'en',
@@ -50,9 +51,9 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
       shortDescription: data.synopsis
     }],
     titles: [
-      ... data.title_english ? [{ language: 'en', title: data.title_english }] : [],
-      ... data.title ? [{ language: 'jp-en', title: data.title }] : [],
-      ... data.title_japanese ? [{ language: 'jp', title: data.title_japanese }] : []
+      ... data.title_english ? [{ language: 'en', title: data.title_english, score: 1 }] : [],
+      ... data.title ? [{ language: 'jp-en', title: data.title, score: 1 }] : [],
+      ... data.title_japanese ? [{ language: 'jp', title: data.title_japanese, score: 1 }] : []
     ],
     covers: [{
       language: 'en',

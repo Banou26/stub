@@ -9,6 +9,7 @@ import { useState } from 'preact/compat'
 import { gql } from '../../generated/gql'
 import { MediaSort, MediaStatus } from '../../generated/graphql'
 import MediaTitle from '../../components/media-title'
+import { getRoutePath, Route } from '../path'
 
 const getReleasingMediaPage = gql(`
   subscription GET_RELEASING_MEDIA_PAGE($input: MediaPageInput!) {
@@ -62,14 +63,19 @@ export default () => {
   })
 
   const mediaNodes = data?.mediaPage?.nodes || []
+
   console.log('mediaNodes', mediaNodes)
+  const matchedNodes = mediaNodes.filter(media => media.uri?.includes('anilist:185660') || media.uri?.includes('mal:60543'))
+  console.log('matchedNodes', matchedNodes)
 
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
   const CellComponent = ({ mediaNodes, columnIndex, style }: CellComponentProps<{ mediaNodes: Get_Releasing_Media_PageSubscription['mediaPage']['nodes'] }>) => {
     const media = mediaNodes[columnIndex]
     if (!media) return null
 
-    return <MediaTitle media={media} to={''} style={{ ...style, left: style.left + (columnIndex - visibleStartIndex) * 10 }} />
+    const left = Number(style.left || 0) + (columnIndex - visibleStartIndex) * 10
+
+    return <MediaTitle media={media} to={getRoutePath(Route.TITLE, { uri: media.uri })} style={{ ...style, left }}/>
   }
 
   return (
@@ -86,9 +92,7 @@ export default () => {
           rowCount={1}
           rowHeight={350}
           overscanCount={5}
-          onCellsRendered={({ columnStartIndex }) =>
-            setVisibleStartIndex(columnStartIndex)
-          }
+          onCellsRendered={({ columnStartIndex }) => setVisibleStartIndex(columnStartIndex)}
         />
       </div>
     </div>

@@ -207,6 +207,7 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
     handles: [
       ...malHandle ? [malHandle] : []
     ],
+    score: 0.9,
     averageScore: media.averageScore,
     descriptions:
       media.description
@@ -223,9 +224,9 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
         }]
         : [],
     titles: [
-      ...media.title?.english ? [{ language: 'en', title: media.title.english }] : [],
-      ...media.title?.romaji ? [{ language: 'jp-en', title: media.title.romaji }] : [],
-      ...media.title?.native ? [{ language: 'jp', title: media.title.native }] : []
+      ...media.title?.english ? [{ language: 'en', title: media.title.english, score: 0.9 }] : [],
+      ...media.title?.romaji ? [{ language: 'jp-en', title: media.title.romaji, score: 0.9 }] : [],
+      ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: 0.9 }] : []
     ],
     covers: [
       // ...media.coverImage?.medium ? [{ language: 'en', url: media.coverImage.medium }] : [],

@@ -447,17 +447,23 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
   return {
     ...aggregatedMedia,
     titles:
-      aggregatedMedia.titles?.map((mediaTitle, index) => {
+      aggregatedMedia
+        .titles
+        ?.map((mediaTitle, index) => {
         const comparison = titleComparisons?.find(comparison => comparison.needle_index === index)
 
         return {
           ...mediaTitle,
           score:
-            comparison && maxTitleScore
-              ? comparison.score / maxTitleScore
-              : 0
+            mediaTitle?.score
+            ?? (
+              comparison && maxTitleScore
+                ? comparison.score / maxTitleScore
+                : 0
+            )
         }
       })
+        .sort((a, b) => b.score - a.score)
   }
 }
 
