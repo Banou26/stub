@@ -41,6 +41,7 @@ type Media {
   """Links to external/other resources related to itself"""
   handles: [Media!]
   handleOf: [Media!]
+  score: Float
   titles: [MediaTitle!]
   type: MediaType
   status: MediaStatus

@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey, real } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
 
 // Enums (SQLite doesn't have native enums, so we use text with check constraints)
@@ -25,6 +25,7 @@ export const mediaTable = sqliteTable('media', {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
+  score: real('uri'),
   aggregated: integer('aggregated', { mode: 'boolean' }),
   type: text('type').$type<MediaType>(),
   status: text('status').$type<MediaStatus>(),
