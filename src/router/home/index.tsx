@@ -1,19 +1,20 @@
 import type { CellComponentProps } from 'react-window'
-import type { Get_Releasing_Media_PageSubscription } from '../../generated/graphql'
+import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
 import { Grid } from 'react-window'
-import { useCallback, useState } from 'preact/compat'
+import { useCallback, useMemo, useState } from 'preact/compat'
 
 import { gql } from '../../generated'
 import { getRoutePath, Route } from '../path'
 import { MediaSort, MediaStatus } from '../../generated/graphql'
 import MediaTitle from '../../components/media-title'
 import Draggable from '../../components/draggable'
+import HomeTheater from './theater'
 
-const getReleasingMediaPage = gql(`
-  subscription GET_RELEASING_MEDIA_PAGE($input: MediaPageInput!) {
+const GET_RELEASING_MEDIA_PAGE = gql(`
+  subscription GetReleasingMediaPage($input: MediaPageInput!) {
     mediaPage(input: $input) {
       nodes {
         uri
@@ -70,7 +71,7 @@ const style = css`
 
 const Index = () => {
   const [{ data }] = useSubscription({
-    query: getReleasingMediaPage,
+    query: GET_RELEASING_MEDIA_PAGE,
     variables: {
       input: {
         status: MediaStatus.Releasing,
@@ -82,7 +83,7 @@ const Index = () => {
   const mediaNodes = data?.mediaPage?.nodes || []
 
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
-  const CellComponent = useCallback(({ mediaNodes, columnIndex, style }: CellComponentProps<{ mediaNodes: Get_Releasing_Media_PageSubscription['mediaPage']['nodes'] }>) => {
+  const CellComponent = useCallback(({ mediaNodes, columnIndex, style }: CellComponentProps<{ mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }>) => {
     const media = mediaNodes[columnIndex]
     if (!media) return null
 
@@ -95,6 +96,7 @@ const Index = () => {
 
   return (
     <div css={style}>
+      <HomeTheater mediaNodes={mediaNodes} />
       <div className='section'>
         <span className='title'>Current Season</span>
         <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
