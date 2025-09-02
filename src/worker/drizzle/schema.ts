@@ -28,7 +28,7 @@ export const mediaTable = sqliteTable('media', {
   aggregated: integer('aggregated', { mode: 'boolean' }),
   type: text('type').$type<MediaType>(),
   status: text('status').$type<MediaStatus>(),
-  titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string, score: number }[]>(),
+  titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string, score?: number | null }[]>(),
   descriptions: text('descriptions', { mode: 'json' }).$type<{ language: string, description: string }[]>(),
   shortDescriptions: text('shortDescriptions', { mode: 'json' }).$type<{ language: string, shortDescription: string }[]>(),
   trailers: text('trailers', { mode: 'json' }).$type<{ uri: string, origin: string, id: string, url?: string, language?: string, thumbnail?: string }[]>(),

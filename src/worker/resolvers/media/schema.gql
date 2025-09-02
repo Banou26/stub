@@ -62,7 +62,7 @@ type Media {
 type MediaTitle {
   language: String!
   title: String!
-  score: Float!
+  score: Float
 }
 
 type MediaShortDescription {
