@@ -22,6 +22,7 @@ import {
   mediaEpisodesTable
 } from './schema'
 import database from '.'
+import { getRoutePath, Route } from '../../router/path'
 
 type RemoveSubstring<T extends string, Substring extends string> =
   T extends `${infer Before}${Substring}${infer After}`
@@ -182,6 +183,24 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle))
 })
 
+const mergeJsonArrays = (column: string) => sql`
+    CASE
+      WHEN excluded.${sql.raw(column)} IS NULL THEN ${sql.raw(column)}
+      WHEN ${sql.raw(column)} IS NULL THEN excluded.${sql.raw(column)}
+      ELSE (
+        SELECT json_group_array(json(item))
+        FROM (
+          SELECT DISTINCT value as item
+          FROM (
+            SELECT value FROM json_each(${sql.raw(column)})
+            UNION ALL
+            SELECT value FROM json_each(excluded.${sql.raw(column)})
+          )
+        )
+      )
+    END
+`
+
 export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: GraphqlMedia[]) => {
   const medias = removeDuplicatesByUri(wrappedMedias.flatMap(recursivelyUnwrapMediaHandles))
   const values = medias.map(normalizeDrizzleMedia)
@@ -192,21 +211,20 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         .onConflictDoUpdate({
           target: mediaTable.uri,
           set: {
-            type: sql`excluded.type`,
-            status: sql`excluded.status`,
-            titles: sql`excluded.titles`,
-            descriptions: sql`excluded.descriptions`,
-            shortDescriptions: sql`excluded.shortDescriptions`,
-            trailers: sql`excluded.trailers`,
-            covers: sql`excluded.covers`,
-            banners: sql`excluded.banners`,
-            startDate: sql`excluded.startDate`,
-            endDate: sql`excluded.endDate`,
-            averageScore: sql`excluded.averageScore`,
-            episodeCount: sql`excluded.episodeCount`,
-            aggregated: sql`excluded.aggregated`,
-            isAdult: sql`excluded.isAdult`,
-            popularity: sql`excluded.popularity`
+            status: sql`COALESCE(excluded.status, ${mediaTable.status})`,
+            titles: mergeJsonArrays('titles'),
+            descriptions: sql`COALESCE(excluded.descriptions, ${mediaTable.descriptions})`,
+            shortDescriptions: sql`COALESCE(excluded.shortDescriptions, ${mediaTable.shortDescriptions})`,
+            trailers: sql`COALESCE(excluded.trailers, ${mediaTable.trailers})`,
+            covers: sql`COALESCE(excluded.covers, ${mediaTable.covers})`,
+            banners: sql`COALESCE(excluded.banners, ${mediaTable.banners})`,
+            startDate: sql`COALESCE(excluded.startDate, ${mediaTable.startDate})`,
+            endDate: sql`COALESCE(excluded.endDate, ${mediaTable.endDate})`,
+            averageScore: sql`COALESCE(excluded.averageScore, ${mediaTable.averageScore})`,
+            episodeCount: sql`COALESCE(excluded.episodeCount, ${mediaTable.episodeCount})`,
+            aggregated: sql`COALESCE(excluded.aggregated, ${mediaTable.aggregated})`,
+            isAdult: sql`COALESCE(excluded.isAdult, ${mediaTable.isAdult})`,
+            popularity: sql`COALESCE(excluded.popularity, ${mediaTable.popularity})`
           }
         })
   }
@@ -395,6 +413,8 @@ const matcher = new WasmMatcher()
 const config = create_custom_config(false, undefined, true, undefined)
 
 export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
+  const id = `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
+  const uri = `ag:${id}`
   const aggregatedMedia = medias.reduce((acc, media) => ({
     ...media,
     ...acc,
@@ -404,10 +424,10 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
     covers: [...acc.covers ?? [], ...media.covers ?? []],
     banners: [...acc.banners ?? [], ...media.banners ?? []]
   }), {
-    uri: `ag:(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,
-    id: `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`,
+    uri,
+    id,
     origin: 'ag',
-    url: undefined,
+    url: `${location.origin}/${getRoutePath(Route.TITLE, { uri })}`,
     aggregated: true,
     handles: removeDuplicatesByUri(medias.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
@@ -415,7 +435,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
   const titleComparisons =
     aggregatedMedia.titles?.length
       // todo: check if the input length issue is fixed by frizbee at some point and remove the workaround
-      ? matcher.compareAll(aggregatedMedia.titles.map(mediaTitle => mediaTitle.title.slice(0, 75)), config)
+      ? matcher.compareAll(aggregatedMedia.titles.map(mediaTitle => mediaTitle.title.slice(0, 75).toLocaleLowerCase()), config)
       : undefined
 
   const titleScores = titleComparisons?.map(comparison => comparison.score)
