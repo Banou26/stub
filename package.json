@@ -67,7 +67,7 @@
     "osra": "^0.1.2",
     "preact": "^10.27.1",
     "react-hook-form": "^7.62.0",
-    "react-player": "^3.3.1",
+    "react-player": "^3.3.2",
     "react-window": "^2.0.1",
     "urql": "^4.2.2",
     "wa-sqlite": "^1.0.0",

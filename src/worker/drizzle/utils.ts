@@ -80,6 +80,7 @@ const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
   id: media.id,
   url: media.url ?? null,
   aggregated: media.aggregated ?? null,
+  score: media.score ?? null,
   type: media.type ?? null,
   status: media.status ?? null,
   titles: media.titles || [],
@@ -135,6 +136,7 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   id: media.id,
   url: media.url,
   aggregated: media.aggregated,
+  score: media.score,
   type: media.type,
   status: media.status,
   titles: media.titles || [],
@@ -211,19 +213,20 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         .onConflictDoUpdate({
           target: mediaTable.uri,
           set: {
+            _id: sql`COALESCE(${mediaTable._id}, excluded._id)`,
             status: sql`COALESCE(excluded.status, ${mediaTable.status})`,
             titles: mergeJsonArrays('titles'),
-            descriptions: sql`COALESCE(excluded.descriptions, ${mediaTable.descriptions})`,
-            shortDescriptions: sql`COALESCE(excluded.shortDescriptions, ${mediaTable.shortDescriptions})`,
-            trailers: sql`COALESCE(excluded.trailers, ${mediaTable.trailers})`,
-            covers: sql`COALESCE(excluded.covers, ${mediaTable.covers})`,
-            banners: sql`COALESCE(excluded.banners, ${mediaTable.banners})`,
+            trailers: mergeJsonArrays('trailers'),
+            score: sql`COALESCE(excluded.score, ${mediaTable.score})`,
+            descriptions: mergeJsonArrays('descriptions'),
+            shortDescriptions: mergeJsonArrays('shortDescriptions'),
+            covers: mergeJsonArrays('covers'),
+            banners: mergeJsonArrays('banners'),
             startDate: sql`COALESCE(excluded.startDate, ${mediaTable.startDate})`,
             endDate: sql`COALESCE(excluded.endDate, ${mediaTable.endDate})`,
             averageScore: sql`COALESCE(excluded.averageScore, ${mediaTable.averageScore})`,
             episodeCount: sql`COALESCE(excluded.episodeCount, ${mediaTable.episodeCount})`,
             aggregated: sql`COALESCE(excluded.aggregated, ${mediaTable.aggregated})`,
-            _id: sql`COALESCE(${mediaTable._id}, excluded._id)`, // Preserve existing _id
             isAdult: sql`COALESCE(excluded.isAdult, ${mediaTable.isAdult})`,
             popularity: sql`COALESCE(excluded.popularity, ${mediaTable.popularity})`
           }
@@ -432,14 +435,16 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
     shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
     covers: [...acc.covers ?? [], ...media.covers ?? []],
-    banners: [...acc.banners ?? [], ...media.banners ?? []]
+    banners: [...acc.banners ?? [], ...media.banners ?? []],
+    trailers: [...acc.trailers ?? [], ...media.trailers ?? []]
   }), {
+    _id,
     uri,
     id,
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.TITLE, { uri })}`,
     aggregated: true,
-    _id,
+    score: Math.max(...medias.map(m => m.score ?? 0)),
     handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 

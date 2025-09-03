@@ -1,7 +1,7 @@
 import type { KeyingConfig } from '@urql/exchange-graphcache'
 import type { Exchange } from 'urql'
 
-import type { Episode, Media, PlaybackSource } from './generated/schema/types.generated'
+import type { Episode, Media, MediaTrailer, PlaybackSource } from './generated/schema/types.generated'
 
 import { Client, fetchExchange } from 'urql'
 import { devtoolsExchange } from '@urql/devtools'
@@ -18,6 +18,7 @@ export const keyResolvers = {
   MediaShortDescription: () => null,
   MediaCover: () => null,
   MediaBanner: () => null,
+  MediaTrailer: (trailer) => (trailer as MediaTrailer).uri,
   Episode: (episode) => (episode as Episode).uri,
   PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uri,
 } satisfies KeyingConfig

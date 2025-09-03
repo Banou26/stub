@@ -70,7 +70,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
     trailers:
       data.trailer?.youtube_id
         ? [{
-          uri: `yt:https://www.youtube.com/watch?v=${data.trailer.youtube_id}`,
+          uri: `yt:${data.trailer.youtube_id}`,
           origin: 'yt',
           id: data.trailer.youtube_id,
           url: `https://www.youtube.com/watch?v=${data.trailer.youtube_id}`,

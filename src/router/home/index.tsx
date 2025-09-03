@@ -4,7 +4,7 @@ import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
 import { Grid } from 'react-window'
-import { useCallback, useMemo, useState } from 'preact/compat'
+import { useCallback, useState } from 'preact/compat'
 
 import { gql } from '../../generated'
 import { getRoutePath, Route } from '../path'
@@ -19,6 +19,7 @@ const GET_RELEASING_MEDIA_PAGE = gql(`
       nodes {
         _id
         uri
+        score
         titles {
           language
           title
@@ -39,6 +40,13 @@ const GET_RELEASING_MEDIA_PAGE = gql(`
         banners {
           language
           url
+        }
+        trailers {
+          uri
+          origin
+          id
+          url
+          thumbnail
         }
         popularity
       }

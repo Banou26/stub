@@ -2,10 +2,11 @@ import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
-import { useMemo } from 'preact/compat'
+import { useMemo, useState } from 'preact/compat'
 
 import { gql } from '../../generated'
 import { getEllipsedDescription, parseTextDescription } from './utils'
+import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
 
 const style = css`
 position: relative;
@@ -218,18 +219,19 @@ const GET_THEATHER_MEDIA = gql(`
 
 
 const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
-  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0)), [mediaNodes.length])
-  const theaterMedia = useMemo(() => mediaNodes.at(randomNum), [mediaNodes, randomNum])
-  const [{ data }] = useSubscription({
-    query: GET_THEATHER_MEDIA,
-    variables: {
-      input: {
-        uri: theaterMedia?.uri
-      }
-    },
-    pause: !theaterMedia
-  })
-
+  const hasHighQualityMedia = mediaNodes.some((media) => media.score && media.score >= 0.8)
+  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0)), [hasHighQualityMedia, mediaNodes.length >= 10])
+  const theaterMedia = useMemo(() => hasHighQualityMedia ? mediaNodes.at(randomNum) : undefined, [hasHighQualityMedia, mediaNodes, randomNum])
+  const trailer = useMemo(() => theaterMedia?.trailers?.at(0), [theaterMedia])
+  // const [{ data }] = useSubscription({
+  //   query: GET_THEATHER_MEDIA,
+  //   variables: {
+  //     input: {
+  //       uri: theaterMedia?.uri
+  //     }
+  //   },
+  //   pause: !theaterMedia || Boolean(trailer)
+  // })
 
   const description = theaterMedia?.descriptions?.at(0)
 
@@ -243,10 +245,15 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     [descriptionText]
   )
 
+  const [headerTrailerPaused, setHeaderTrailerPaused] = useState(Boolean(trailer))
 
   return (
     <div className="theater" css={style}>
-
+      {
+        trailer?.url && (
+          <YoutubeMinimalPlayer url={trailer.url} paused={headerTrailerPaused} className="player"/>
+        )
+      }
     </div>
   )
 }
