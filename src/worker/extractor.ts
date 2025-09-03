@@ -71,12 +71,9 @@ export const extractors =
                         await database.transaction(async (tx) => {
                           await insertManyMedia(tx, result)
                           const allMedias = await findAllMedia(tx)
-
-                          // Get existing aggregated media to preserve _ids
-                          const existingAggregated = await findAggregatedMedia(tx)
+                          const existingAggregated = allMedias.filter(media => media.aggregated)
 
                           const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-                          const p = performance.now()
                           const aggregatedMedia = groups.map(([_, __, urisString]) => {
                             const uris = urisString.split(',').map(uri => uri.trim())
                             const medias =
@@ -84,7 +81,6 @@ export const extractors =
                                 .map(uri => allMedias.find(r => r?.uri === uri))
                                 .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
 
-                            // Find existing aggregated media that contains any of these URIs
                             const existingMatch = existingAggregated.find(existing => {
                               const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
                               return existingUris.some(existingUri => uris.includes(existingUri))
@@ -92,7 +88,6 @@ export const extractors =
 
                             return aggregateMediaHandles(medias, existingMatch)
                           })
-                          console.log(`aggregatedMedia: ${aggregatedMedia.length} in ${performance.now() - p}ms`)
                           await insertManyMedia(tx, aggregatedMedia)
                           await cleanupDuplicateAggregatedMedia(tx)
                         })

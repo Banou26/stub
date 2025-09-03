@@ -21,13 +21,13 @@ export const notifyTable = sqliteTable('notify', {
 
 // Media table with JSON fields for content
 export const mediaTable = sqliteTable('media', {
+  _id: text('_id').notNull().default(sql`(lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6))))`),
   uri: text('uri').primaryKey().unique().notNull(),
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
   score: real('score'),
   aggregated: integer('aggregated', { mode: 'boolean' }),
-  _id: text('_id'), // Stable identifier for aggregated media groups
   type: text('type').$type<MediaType>(),
   status: text('status').$type<MediaStatus>(),
   titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string, score?: number | null }[]>(),

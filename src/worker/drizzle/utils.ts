@@ -11,10 +11,8 @@ import type {
 } from './schema'
 import type { Database } from '.'
 
-import { create_custom_config, WasmMatcher } from 'frizbee-wasm'
 import { sql, eq, inArray, asc, desc } from 'drizzle-orm'
 
-// import { MediaSort } from '../../generated/graphql'
 import {
   mediaTable,
   episodeTable,
@@ -76,12 +74,12 @@ export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia
 }
 
 const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
+  _id: media._id,
   uri: media.uri,
   origin: media.origin,
   id: media.id,
   url: media.url ?? null,
   aggregated: media.aggregated ?? null,
-  _id: media._id ?? null,
   type: media.type ?? null,
   status: media.status ?? null,
   titles: media.titles || [],
@@ -131,12 +129,12 @@ const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
 })
 
 const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: DrizzleEpisode }[], handles?: { handle: DrizzleMedia }[] }): GraphqlMedia => ({
+  _id: media._id,
   uri: media.uri,
   origin: media.origin,
   id: media.id,
   url: media.url,
   aggregated: media.aggregated,
-  _id: media._id,
   type: media.type,
   status: media.status,
   titles: media.titles || [],
@@ -412,18 +410,6 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
   }
 }
 
-const matcher = new WasmMatcher()
-const config = create_custom_config(false, undefined, true, undefined)
-
-// Simple UUID v4 generator for stable IDs
-const generate_id = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    const v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
-}
-
 export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregatedMedia?: GraphqlMedia) => {
   const id = `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
   const uri = `ag:${id}`
@@ -437,7 +423,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     medias.find(m => m._id)?._id
 
   // Generate new _id only if none exists
-  const _id = existing_id || generate_id()
+  const _id = existing_id || crypto.randomUUID()
 
   const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
@@ -457,35 +443,12 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 
-  const titleComparisons =
-    aggregatedMedia.titles?.length
-      // todo: check if the input length issue is fixed by frizbee at some point and remove the workaround
-      ? matcher.compareAll(aggregatedMedia.titles.map(mediaTitle => mediaTitle.title.slice(0, 75).toLocaleLowerCase()), config)
-      : undefined
-
-  const titleScores = titleComparisons?.map(comparison => comparison.score)
-  const maxTitleScore = titleScores?.length ? Math.max(...titleScores) : undefined
-
   return {
     ...aggregatedMedia,
     titles:
       aggregatedMedia
-        .titles
-        ?.map((mediaTitle, index) => {
-        const comparison = titleComparisons?.find(comparison => comparison.needle_index === index)
-
-        return {
-          ...mediaTitle,
-          score:
-            mediaTitle?.score
-            ?? (
-              comparison && maxTitleScore
-                ? comparison.score / maxTitleScore
-                : 0
-            )
-        }
-      })
-        .sort((a, b) => b.score - a.score)
+        ?.titles
+        ?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
   }
 }
 
