@@ -21,7 +21,7 @@ const contentStyle = css`
 const wrapElement = (children: ReactNode) =>
   <>
     <Header/>
-    <div css={contentStyle}>
+    <div>
       {children}
     </div>
   </>

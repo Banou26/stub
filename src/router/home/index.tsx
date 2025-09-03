@@ -59,6 +59,7 @@ const style = css`
   display: flex;
   flex-direction: column;
   & > .title {
+    position: relative;
     margin-left: 10rem;
     font-size: 4rem;
     font-weight: bold;
@@ -107,7 +108,7 @@ const Index = () => {
     <div css={style}>
       <HomeTheater mediaNodes={mediaNodes} />
       <div className='section'>
-        <span className='title'>Current Season</span>
+        <span className='title'>Current season</span>
         <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
           <Grid
             className='list'

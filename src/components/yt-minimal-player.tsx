@@ -7,93 +7,23 @@ import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume } from 'lucide-react'
 
 import useNamespacedLocalStorage from '../utils/use-local-storage'
-import { Media } from '../generated/graphql'
 import useScrub from '../utils/use-scrub'
 
-
 const minimalPlayerStyle = css`
-.volume-area-wrapper {
   position: absolute;
-  bottom: 2rem;
-  left: 1rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`
 
-  display: grid;
-  height: 2rem;
-
-  .volume-area {
-    display: flex;
-    /* grid-template-columns: 4.8rem fit-content(0rem); */
-    /* height: 100%; */
-    cursor: pointer;
-    color: #fff;
-
-    .mute-button {
-      color: #fff;
-      border: none;
-      background: none;
-      height: 100%;
-      width: 4.8rem;
-      cursor: pointer;
-    }
-
-    .volume-panel {
-      display: inline-block;
-      width: 0;
-      /* width: 100%; */
-      /* width: 12rem; */
-      height: 100%;
-      -webkit-transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
-      transition: margin .2s cubic-bezier(0.4,0,1,1),width .2s cubic-bezier(0.4,0,1,1);
-      cursor: pointer;
-      outline: 0;
-
-      &.volume-control-hover {
-        width: 6rem;
-        /* width: 52px; */
-        margin-right: 3px;
-        -webkit-transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
-        transition: margin .2s cubic-bezier(0,0,0.2,1),width .2s cubic-bezier(0,0,0.2,1);
-      }
-
-      .slider {
-        height: 100%;
-        min-height: 36px;
-        position: relative;
-        overflow: hidden;
-
-        .slider-handle {
-          /* left: 40px; */
-          position: absolute;
-          top: 50%;
-          width: 12px;
-          height: 12px;
-          border-radius: 6px;
-          margin-top: -6px;
-          margin-left: -5px;
-          /* background: #fff; */
-        }
-        .slider-handle::before, .slider-handle::after {
-          content: "";
-          position: absolute;
-          display: block;
-          top: 50%;
-          left: 0;
-          height: 3px;
-          margin-top: -2px;
-          width: 64px;
-        }
-        .slider-handle::before {
-          left: -58px;
-          background: #fff;
-        }
-        .slider-handle::after {
-          left: 6px;
-          background: rgba(255,255,255,.2);
-        }
-      }
-    }
-  }
-}
+const youtubeStyle = css`
+grid-area: container;
+height: 140vh !important;
+width: 100% !important;
+margin-top: -20vh;
+pointer-events: none;
 `
 
 export const YoutubeMinimalPlayer = (
@@ -144,36 +74,26 @@ export const YoutubeMinimalPlayer = (
     setIsReady(true)
   }
 
+  const player = (
+    <ReactPlayer
+      css={youtubeStyle}
+      onReady={onReady}
+      controls={false}
+      src={url}
+      loop={true}
+      playing={!paused}
+      volume={isReady ? playerVolume : undefined}
+      muted={isMuted}
+      style={{ display: isReady ? '' : 'none' }}
+    />
+  )
+
   return (
     <div css={minimalPlayerStyle} {...rest}>
       {
         redirectTo
-          ? (
-            <Link to={redirectTo}>
-              <ReactPlayer
-                onReady={onReady}
-                controls={false}
-                src={url}
-                loop={true}
-                playing={!paused}
-                volume={isReady ? playerVolume : undefined}
-                muted={isMuted}
-                style={{ display: isReady ? '' : 'none' }}
-              />
-            </Link>
-          )
-          : (
-            <ReactPlayer
-              onReady={onReady}
-              controls={false}
-              src={url}
-              loop={true}
-              playing={!paused}
-              volume={isReady ? playerVolume : undefined}
-              muted={isMuted}
-              style={{ display: isReady ? '' : 'none' }}
-            />
-          )
+          ? <Link to={redirectTo}>${player}</Link>
+          : player
       }
       <div className="volume-area-wrapper" onMouseLeave={mouseOutBottom}>
         <div className="volume-area" onMouseOver={hoverVolumeArea}>
