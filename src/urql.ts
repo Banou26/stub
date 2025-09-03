@@ -12,7 +12,7 @@ import { handleRequest } from './worker'
 import introspection from './generated/graphql.schema.json'
 
 export const keyResolvers = {
-  Media: (media) => (media as Media).uri,
+  Media: (media) => (media as Media)._id,
   MediaTitle: () => null,
   MediaDescription: () => null,
   MediaShortDescription: () => null,

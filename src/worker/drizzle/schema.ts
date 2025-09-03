@@ -27,7 +27,7 @@ export const mediaTable = sqliteTable('media', {
   url: text('url'),
   score: real('score'),
   aggregated: integer('aggregated', { mode: 'boolean' }),
-  stableId: text('stableId'), // Stable identifier for aggregated media groups
+  _id: text('_id'), // Stable identifier for aggregated media groups
   type: text('type').$type<MediaType>(),
   status: text('status').$type<MediaStatus>(),
   titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string, score?: number | null }[]>(),
@@ -47,7 +47,7 @@ export const mediaTable = sqliteTable('media', {
   uriIdx: index('media_uri_idx').on(table.uri),
   originIdIdx: index('media_origin_id_idx').on(table.origin, table.id),
   originIdUnique: uniqueIndex('media_origin_id_unique').on(table.origin, table.id),
-  stableIdIdx: index('media_stable_id_idx').on(table.stableId),
+  _idIdx: index('media_stable_id_idx').on(table._id),
 }))
 
 // Episode table with JSON fields for content

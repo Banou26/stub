@@ -81,7 +81,7 @@ const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
   id: media.id,
   url: media.url ?? null,
   aggregated: media.aggregated ?? null,
-  stableId: media.stableId ?? null,
+  _id: media._id ?? null,
   type: media.type ?? null,
   status: media.status ?? null,
   titles: media.titles || [],
@@ -136,7 +136,7 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   id: media.id,
   url: media.url,
   aggregated: media.aggregated,
-  stableId: media.stableId,
+  _id: media._id,
   type: media.type,
   status: media.status,
   titles: media.titles || [],
@@ -225,7 +225,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
             averageScore: sql`COALESCE(excluded.averageScore, ${mediaTable.averageScore})`,
             episodeCount: sql`COALESCE(excluded.episodeCount, ${mediaTable.episodeCount})`,
             aggregated: sql`COALESCE(excluded.aggregated, ${mediaTable.aggregated})`,
-            stableId: sql`COALESCE(${mediaTable.stableId}, excluded.stableId)`, // Preserve existing stableId
+            _id: sql`COALESCE(${mediaTable._id}, excluded._id)`, // Preserve existing _id
             isAdult: sql`COALESCE(excluded.isAdult, ${mediaTable.isAdult})`,
             popularity: sql`COALESCE(excluded.popularity, ${mediaTable.popularity})`
           }
@@ -416,7 +416,7 @@ const matcher = new WasmMatcher()
 const config = create_custom_config(false, undefined, true, undefined)
 
 // Simple UUID v4 generator for stable IDs
-const generateStableId = () => {
+const generate_id = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0
     const v = c === 'x' ? r : (r & 0x3) | 0x8
@@ -429,15 +429,15 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
   const uri = `ag:${id}`
 
   const sortedMediaBasedOnQualityScore = medias.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-  
-  // Check for existing stableId from any of the media being aggregated
-  // Prefer existing aggregated media's stableId, then any member's stableId
-  const existingStableId = 
-    existingAggregatedMedia?.stableId ||
-    medias.find(m => m.stableId)?.stableId
-  
-  // Generate new stableId only if none exists
-  const stableId = existingStableId || generateStableId()
+
+  // Check for existing _id from any of the media being aggregated
+  // Prefer existing aggregated media's _id, then any member's _id
+  const existing_id =
+    existingAggregatedMedia?._id ||
+    medias.find(m => m._id)?._id
+
+  // Generate new _id only if none exists
+  const _id = existing_id || generate_id()
 
   const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
@@ -453,7 +453,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.TITLE, { uri })}`,
     aggregated: true,
-    stableId,
+    _id,
     handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 
