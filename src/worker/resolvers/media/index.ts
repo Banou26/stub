@@ -39,5 +39,6 @@ export const resolvers = {
     origin: (parent) => parent.origin,
     id: (parent) => parent.id,
     url: (parent) => parent.url,
+    stableId: (parent) => parent.stableId,
   }
 } satisfies Resolvers

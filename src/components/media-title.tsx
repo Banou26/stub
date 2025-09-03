@@ -3,6 +3,7 @@ import type { Path } from 'wouter'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
+import { useEffect, useState } from 'preact/hooks'
 
 const style = css`
 &.card, .card {
@@ -100,13 +101,20 @@ const style = css`
 
 export default ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { media: Pick<Media, 'uri' | 'titles' | 'covers'>, to: Path }) => {
   const title = media.titles?.at(0)?.title
+  const firstCover = media.covers?.at(0)?.url
+  const [coverUrl, setCoverUrl] = useState(firstCover)
+
+  useEffect(() => {
+    if (coverUrl) return
+    setCoverUrl(firstCover)
+  }, [media, coverUrl, firstCover])
 
   return (
     <div
       css={style}
       key={media.uri}
       className="card category-item"
-      style={{ ...rest.style, backgroundImage: `url(${media.covers?.at(0)?.url})`, backgroundSize: 'cover' }}
+      style={{ ...rest.style, backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover' }}
     >
       <Link
         tabIndex={-1}

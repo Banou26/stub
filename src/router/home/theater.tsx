@@ -189,6 +189,7 @@ const GET_THEATHER_MEDIA = gql(`
   subscription GetTheatherMedia($input: MediaInput!) {
     media(input: $input) {
       uri
+      stableId
       titles {
         language
         title

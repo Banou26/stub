@@ -81,6 +81,7 @@ const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
   id: media.id,
   url: media.url ?? null,
   aggregated: media.aggregated ?? null,
+  stableId: media.stableId ?? null,
   type: media.type ?? null,
   status: media.status ?? null,
   titles: media.titles || [],
@@ -135,6 +136,7 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   id: media.id,
   url: media.url,
   aggregated: media.aggregated,
+  stableId: media.stableId,
   type: media.type,
   status: media.status,
   titles: media.titles || [],
@@ -223,6 +225,7 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
             averageScore: sql`COALESCE(excluded.averageScore, ${mediaTable.averageScore})`,
             episodeCount: sql`COALESCE(excluded.episodeCount, ${mediaTable.episodeCount})`,
             aggregated: sql`COALESCE(excluded.aggregated, ${mediaTable.aggregated})`,
+            stableId: sql`COALESCE(${mediaTable.stableId}, excluded.stableId)`, // Preserve existing stableId
             isAdult: sql`COALESCE(excluded.isAdult, ${mediaTable.isAdult})`,
             popularity: sql`COALESCE(excluded.popularity, ${mediaTable.popularity})`
           }
@@ -412,11 +415,29 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
 const matcher = new WasmMatcher()
 const config = create_custom_config(false, undefined, true, undefined)
 
-export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
+// Simple UUID v4 generator for stable IDs
+const generateStableId = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregatedMedia?: GraphqlMedia) => {
   const id = `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
   const uri = `ag:${id}`
 
   const sortedMediaBasedOnQualityScore = medias.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  
+  // Check for existing stableId from any of the media being aggregated
+  // Prefer existing aggregated media's stableId, then any member's stableId
+  const existingStableId = 
+    existingAggregatedMedia?.stableId ||
+    medias.find(m => m.stableId)?.stableId
+  
+  // Generate new stableId only if none exists
+  const stableId = existingStableId || generateStableId()
 
   const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
@@ -432,6 +453,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[]) => {
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.TITLE, { uri })}`,
     aggregated: true,
+    stableId,
     handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 

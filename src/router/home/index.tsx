@@ -18,6 +18,7 @@ const GET_RELEASING_MEDIA_PAGE = gql(`
     mediaPage(input: $input) {
       nodes {
         uri
+        stableId
         titles {
           language
           title
@@ -89,7 +90,7 @@ const Index = () => {
 
     const left = Number(style.left || 0) + (columnIndex - visibleStartIndex) * 10 + 100 /* left margin */
 
-    return <MediaTitle media={media} to={getRoutePath(Route.TITLE, { uri: media.uri })} style={{ ...style, left }}/>
+    return <MediaTitle key={media.stableId} media={media} to={getRoutePath(Route.TITLE, { uri: media.uri })} style={{ ...style, left }}/>
   }, [])
 
   const [isDragging, setIsDragging] = useState(false)

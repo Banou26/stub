@@ -38,6 +38,8 @@ type Media {
   """An url to the media resource"""
   url: String
   aggregated: Boolean
+  """Stable unique identifier that persists across URI changes and source additions"""
+  stableId: String
   """Links to external/other resources related to itself"""
   handles: [Media!]
   handleOf: [Media!]
