@@ -100,7 +100,7 @@ const style = css`
 }
 `
 
-export default ({ ref, media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'covers'>, to: Path }) => {
+const MediaTitle = ({ ref, media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'covers'>, to: Path }) => {
   const title = media.titles?.at(0)?.title
   const firstCover = media.covers?.at(0)?.url
   const [coverUrl, setCoverUrl] = useState(firstCover)
@@ -138,3 +138,5 @@ export default ({ ref, media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivE
     </div>
   )
 }
+
+export default MediaTitle

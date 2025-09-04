@@ -114,7 +114,6 @@ a {
 `
 
 export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Media }) => {
-  console.log('MediaPreview')
   const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
   const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
 
@@ -135,6 +134,7 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
 
   return (
     <div
+      ref={ref}
       {...{
         ...rest,
         style: rest.style && {
@@ -144,7 +144,6 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
       }}
       className="title-hovercard"
       css={style}
-      ref={ref}
     >
       {
         trailer?.url && (
