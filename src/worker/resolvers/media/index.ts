@@ -5,6 +5,7 @@ import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
 import { findAggregatedMedia } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
+import { ellipseText, parseTextDescription } from './utils'
 
 export const schema = _schema as string
 
@@ -40,5 +41,12 @@ export const resolvers = {
     id: (parent) => parent.id,
     url: (parent) => parent.url,
     _id: (parent) => parent._id,
+  },
+  MediaShortDescription: {
+    shortDescription: (parent) => {
+      const parsedText = parseTextDescription(parent.shortDescription)
+      const ellipsedText = ellipseText(parsedText, 225)
+      return ellipsedText
+    }
   }
 } satisfies Resolvers

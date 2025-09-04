@@ -11,12 +11,12 @@ import useNamespacedLocalStorage from '../utils/use-local-storage'
 import useScrub from '../utils/use-scrub'
 
 const minimalPlayerStyle = css`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+overflow: hidden;
 `
 
 const youtubeStyle = css`
