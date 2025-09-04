@@ -1,6 +1,7 @@
 import type { CellComponentProps } from 'react-window'
 import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 import type { Media } from '../../generated/schema/types.generated'
+import type { MouseEvent, RefObject } from 'react'
 
 import { css } from '@emotion/react'
 import { Grid, useGridRef } from 'react-window'
@@ -68,49 +69,73 @@ position: relative;
 }
 `
 
+const CellComponent = (
+  { mediaNodes, columnIndex, style, hoverCardTriggerTimeout, setHoverMediaPreview, setHoverMediaPreviewTriggerTimeout, setReference, floating, update }:
+  CellComponentProps<{
+    hoverCardTriggerTimeout: number | undefined
+    mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'],
+    setHoverMediaPreview: (media: Media | undefined) => void
+    setHoverMediaPreviewTriggerTimeout: (timeoutId: number | undefined) => void
+    setReference: (element: HTMLElement | null) => void
+    floating: RefObject<HTMLElement | null>
+    update: () => void
+  }>
+) => {
+  const media = mediaNodes[columnIndex]
+  if (!media) return null
+  const [isHovered, setIsHovered] = useState(false)
+
+  return (
+    <MediaTitle
+      ref={isHovered ? setReference : null}
+      key={media._id}
+      media={media}
+      to={getRoutePath(Route.TITLE, { uri: media.uri })}
+      style={{
+        ...style,
+        width: 250,
+        marginLeft: 100
+      }}
+      onMouseEnter={e => {
+        console.log('mouse enter')
+        setReference(null)
+        setHoverMediaPreview(undefined)
+        setIsHovered(true)
+        update()
+        setHoverMediaPreviewTriggerTimeout(
+          window.setTimeout(() => {
+            if (!(e.target instanceof HTMLElement)) return
+            // if (refs.reference.current !== e.target) return
+            // setReference(e.target)
+            setIsHovered(true)
+            setHoverMediaPreview(media as Media)
+            update()
+          }, 400)
+        )
+      }}
+      onMouseLeave={(e) => {
+        console.log('mouse leave?')
+        if (!(e.relatedTarget instanceof HTMLElement)) return
+        if (floating.current === e.relatedTarget  || floating.current?.contains(e.relatedTarget)) return
+        if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
+        setIsHovered(false)
+        console.log('mouse leave')
+        setReference(null)
+        setHoverMediaPreview(undefined)
+        update()
+      }}
+    />
+  )
+}
+
+// todo: there is currently a bug if you make the media preview appear and switch to hovering another media, the preview doesnt update position
 export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes: Media[] }) => {
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
   const [visibleEndIndex, setVisibleEndIndex] = useState(0)
 
-  const { x, y, strategy, refs } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
+  const { x, y, strategy, refs, update } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
   const [hoverMediaPreview, setHoverMediaPreview] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverMediaPreviewTriggerTimeout] = useState<number | undefined>(undefined)
-
-  const CellComponent = useCallback(({ mediaNodes, columnIndex, style }: CellComponentProps<{ mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }>) => {
-    const media = mediaNodes[columnIndex]
-    if (!media) return null
-
-    return (
-      <MediaTitle
-        key={media._id}
-        media={media}
-        to={getRoutePath(Route.TITLE, { uri: media.uri })}
-        style={{
-          ...style,
-          width: 250,
-          marginLeft: 100
-        }}
-        onMouseEnter={e => {
-          if (!(e.target instanceof HTMLElement)) return
-          setHoverMediaPreview(undefined)
-          refs.setReference(e.target)
-          setHoverMediaPreviewTriggerTimeout(
-            window.setTimeout(() => {
-              if (refs.reference.current !== e.target) return
-              setHoverMediaPreview(media as Media)
-            }, 400)
-          )
-        }}
-        onMouseLeave={(e) => {
-          if (!(e.relatedTarget instanceof HTMLElement) || !refs.floating.current) return
-          if (refs.floating.current === e.relatedTarget  || refs.floating.current.contains(e.relatedTarget)) return
-          if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
-          refs.setReference(null)
-          setHoverMediaPreview(undefined)
-        }}
-      />
-    )
-  }, [])
 
   const [isDragging, setIsDragging] = useState(false)
   const virtualListRef = useGridRef(null)
@@ -136,7 +161,11 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
     })
   }, [visibleStartIndex, visibleEndIndex, mediaNodes.length, virtualListRef])
 
-  const onHoverMediaPreviewMouseLeave = () => {
+  const onHoverMediaPreviewMouseLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    // console.log('preview mouse leave', refs.reference.current, e.relatedTarget, e.target)
+    // if (!(e.relatedTarget instanceof HTMLElement)) return
+    // if (refs.reference.current === e.relatedTarget  || refs.reference.current?.contains(e.relatedTarget)) return
+    // console.log('preview mouse leave AFTER', refs.reference.current, e.relatedTarget, e.target)
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
     refs.setReference(null)
     setHoverMediaPreview(undefined)
@@ -157,7 +186,15 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
             gridRef={virtualListRef}
             className='virtual-list'
             cellComponent={CellComponent}
-            cellProps={{ mediaNodes }}
+            cellProps={{
+              mediaNodes,
+              hoverCardTriggerTimeout,
+              setHoverMediaPreview,
+              setHoverMediaPreviewTriggerTimeout,
+              setReference: refs.setReference,
+              floating: refs.floating,
+              update
+            }}
             columnCount={mediaNodes.length}
             columnWidth={260}
             rowCount={1}
