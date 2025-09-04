@@ -97,7 +97,7 @@ a {
     width: 70rem;
   }
 
-  & > a > div:first-of-type {
+  & > a > youtube-video {
     grid-area: container;
     pointer-events: none;
 
@@ -114,7 +114,7 @@ a {
 `
 
 export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Media }) => {
-  const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null)
+  const [contentRef, setContentRef] = useState<HTMLAnchorElement | null>(null)
   const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
     const resizeObserver = new ResizeObserver(() => {
       setContentHeight(contentRef.clientHeight)
     })
-    resizeObserver.observe(contentRef as HTMLDivElement)
+    resizeObserver.observe(contentRef)
     return () => {
       resizeObserver.disconnect()
     }

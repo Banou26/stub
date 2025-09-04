@@ -65,7 +65,7 @@ export const YoutubeMinimalPlayer = (
     <div css={minimalPlayerStyle} {...rest}>
       {
         redirectTo
-          ? <Link to={redirectTo}>${player}</Link>
+          ? <Link to={redirectTo}>{player}</Link>
           : player
       }
     </div>
