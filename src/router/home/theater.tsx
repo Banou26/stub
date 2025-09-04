@@ -3,10 +3,11 @@ import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
 import { useCallback, useMemo, useState } from 'preact/compat'
+import { LucidePause, LucidePlay } from 'lucide-react'
 
 import { gql } from '../../generated'
 import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
-import { LucidePause, LucidePlay, Volume } from 'lucide-react'
+import { VolumeControl } from '../../components/volume-control'
 
 const style = css`
 height: 70vh;
@@ -152,6 +153,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const trailer = useMemo(() => theaterMedia?.trailers?.at(0), [theaterMedia])
 
   const [playerPaused, setPlayerPaused] = useState(Boolean(trailer))
+  const [playerVolume, setPlayerVolume] = useState(0)
 
   const onTrailerError = useCallback(() => {
     setBannedMediaIndexes([...bannedMediaIndexes, mediaIndex])
@@ -166,6 +168,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
               url={trailer.url}
               paused={playerPaused}
               onError={onTrailerError}
+              volume={playerVolume}
               className="player"
             />
           )
@@ -186,10 +189,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                 : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
             }
           </span>
-          <span className="volume">
-            <Volume className="icon-outline" size={30} strokeWidth={3} color="black"/>
-            <Volume className="icon-body" size={30}/>
-          </span>
+          <VolumeControl onVolumeUpdate={volume => setPlayerVolume(volume)} />
         </div>
         <div className="title">{title}</div>
         <div className="short-description">{shortDescription}</div>

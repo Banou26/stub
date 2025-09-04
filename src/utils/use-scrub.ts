@@ -6,7 +6,7 @@ export default ({ element, defaultValue }: { element: HTMLElement | null, defaul
   const [value, setValue] = useState(defaultValue)
   const [scrubbing, setScrubbing] = useState(false)
 
-  const scrub: MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
+  const scrubHandler: MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
     setScrubbing(true)
     if (!element) return
     const { clientX: x } = ev
@@ -17,7 +17,7 @@ export default ({ element, defaultValue }: { element: HTMLElement | null, defaul
   useEffect(() => {
     if (!scrubbing) return
     const mouseUp = () => setScrubbing(false)
-    const mouseMove = (ev: globalThis.MouseEvent) => {
+    const mouseMove = (ev: MouseEvent) => {
       if (!element) return
       const { clientX: x } = ev
       const { left, right } = element.getBoundingClientRect()
@@ -34,6 +34,6 @@ export default ({ element, defaultValue }: { element: HTMLElement | null, defaul
   return {
     value,
     scrubbing,
-    scrub
+    scrubHandler
   }
 }
