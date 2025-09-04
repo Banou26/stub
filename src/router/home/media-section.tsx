@@ -84,10 +84,17 @@ const CellComponent = (
   const media = mediaNodes[columnIndex]
   if (!media) return null
   const [isHovered, setIsHovered] = useState(false)
+  const [ref, setRef] = useState<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (!isHovered || !ref) return
+    setReference(ref)
+    update()
+  }, [isHovered, ref])
 
   return (
     <MediaTitle
-      ref={isHovered ? setReference : null}
+      ref={setRef}
       key={media._id}
       media={media}
       to={getRoutePath(Route.TITLE, { uri: media.uri })}
@@ -97,16 +104,13 @@ const CellComponent = (
         marginLeft: 100
       }}
       onMouseEnter={e => {
-        console.log('mouse enter')
-        setReference(null)
         setHoverMediaPreview(undefined)
         setIsHovered(true)
         update()
         setHoverMediaPreviewTriggerTimeout(
           window.setTimeout(() => {
             if (!(e.target instanceof HTMLElement)) return
-            // if (refs.reference.current !== e.target) return
-            // setReference(e.target)
+            setReference(e.target)
             setIsHovered(true)
             setHoverMediaPreview(media as Media)
             update()
@@ -114,13 +118,10 @@ const CellComponent = (
         )
       }}
       onMouseLeave={(e) => {
-        console.log('mouse leave?')
         if (!(e.relatedTarget instanceof HTMLElement)) return
         if (floating.current === e.relatedTarget  || floating.current?.contains(e.relatedTarget)) return
         if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
         setIsHovered(false)
-        console.log('mouse leave')
-        setReference(null)
         setHoverMediaPreview(undefined)
         update()
       }}
@@ -128,7 +129,7 @@ const CellComponent = (
   )
 }
 
-// todo: there is currently a bug if you make the media preview appear and switch to hovering another media, the preview doesnt update position
+// todo: there is currently a bug where if the media that is previewed gets updated, the preview's position gets fucked because the node changed or smth
 export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes: Media[] }) => {
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
   const [visibleEndIndex, setVisibleEndIndex] = useState(0)
@@ -162,10 +163,6 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
   }, [visibleStartIndex, visibleEndIndex, mediaNodes.length, virtualListRef])
 
   const onHoverMediaPreviewMouseLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    // console.log('preview mouse leave', refs.reference.current, e.relatedTarget, e.target)
-    // if (!(e.relatedTarget instanceof HTMLElement)) return
-    // if (refs.reference.current === e.relatedTarget  || refs.reference.current?.contains(e.relatedTarget)) return
-    // console.log('preview mouse leave AFTER', refs.reference.current, e.relatedTarget, e.target)
     if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
     refs.setReference(null)
     setHoverMediaPreview(undefined)
