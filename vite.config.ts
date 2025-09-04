@@ -15,6 +15,13 @@ export default defineConfig((_) => ({
   optimizeDeps: {
     include: ['wa-sqlite']
   },
+  resolve: {
+    alias: {
+      "react": "preact/compat",
+      "react-dom": "preact/compat",
+      "react/jsx-runtime": "preact/jsx-runtime"
+    }
+  },
   plugins: [
     nodePolyfills(),
     prismaBrowserHack(),

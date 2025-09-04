@@ -1,4 +1,5 @@
 import type { Media } from '../generated/graphql'
+import type { Ref } from 'react'
 import type { Path } from 'wouter'
 
 import { css } from '@emotion/react'
@@ -99,7 +100,7 @@ const style = css`
 }
 `
 
-export default ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { media: Pick<Media, 'uri' | 'titles' | 'covers'>, to: Path }) => {
+export default ({ ref, media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'covers'>, to: Path }) => {
   const title = media.titles?.at(0)?.title
   const firstCover = media.covers?.at(0)?.url
   const [coverUrl, setCoverUrl] = useState(firstCover)
@@ -111,6 +112,8 @@ export default ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElemen
 
   return (
     <div
+      {...rest}
+      ref={ref}
       css={style}
       key={media.uri}
       className="card category-item"
