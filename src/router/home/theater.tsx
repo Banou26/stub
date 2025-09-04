@@ -2,7 +2,7 @@ import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
-import { useMemo, useState } from 'preact/compat'
+import { useCallback, useMemo, useState } from 'preact/compat'
 
 import { gql } from '../../generated'
 import { getEllipsedDescription, parseTextDescription } from './utils'
@@ -68,9 +68,17 @@ const GET_THEATHER_MEDIA = gql(`
 
 const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const hasHighQualityMedia = mediaNodes.some((media) => media.score && media.score >= 0.8)
-  const randomNum = useMemo(() => Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0)), [hasHighQualityMedia, mediaNodes.length >= 10])
-  const theaterMedia = useMemo(() => hasHighQualityMedia ? mediaNodes.at(randomNum) : undefined, [hasHighQualityMedia, mediaNodes, randomNum])
+  const [bannedMediaIndexes, setBannedMediaIndexes] = useState<number[]>([])
+  const mediaIndex = useMemo(() => {
+    let index = Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0))
+    while (bannedMediaIndexes.includes(index)) {
+      index = Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0))
+    }
+    return index
+  }, [hasHighQualityMedia, mediaNodes.length >= 10, bannedMediaIndexes])
+  const theaterMedia = useMemo(() => hasHighQualityMedia ? mediaNodes.at(mediaIndex) : undefined, [hasHighQualityMedia, mediaNodes, mediaIndex])
   const trailer = useMemo(() => theaterMedia?.trailers?.at(0), [theaterMedia])
+  // todo: re-impl media details loading for the theater
   // const [{ data }] = useSubscription({
   //   query: GET_THEATHER_MEDIA,
   //   variables: {
@@ -95,11 +103,24 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
 
   const [headerTrailerPaused, setHeaderTrailerPaused] = useState(Boolean(trailer))
 
+  const onTrailerError = useCallback(() => {
+    setBannedMediaIndexes([...bannedMediaIndexes, mediaIndex])
+  }, [bannedMediaIndexes, mediaIndex])
+
   return (
     <div css={style} className='theater'>
       <div className="theater-content" css={style}>
         <div className="player-wrapper">
-          {trailer?.url && (<YoutubeMinimalPlayer url={trailer.url} paused={headerTrailerPaused} className="player"/>)}
+          {
+            trailer?.url && (
+              <YoutubeMinimalPlayer
+                url={trailer.url}
+                paused={headerTrailerPaused}
+                onError={onTrailerError}
+                className="player"
+              />
+            )
+          }
           <div className="shadow"/>
         </div>
       </div>

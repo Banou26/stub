@@ -1,26 +1,26 @@
-import type { MouseEventHandler, RefObject } from 'preact/compat'
+import type { MouseEventHandler } from 'react'
 
-import { useState, useEffect } from 'preact/compat'
+import { useState, useEffect, useCallback } from 'preact/compat'
 
-export default ({ ref, defaultValue }: { ref: RefObject<HTMLElement>, defaultValue?: number }) => {
+export default ({ element, defaultValue }: { element: HTMLElement | null, defaultValue?: number }) => {
   const [value, setValue] = useState(defaultValue)
   const [scrubbing, setScrubbing] = useState(false)
 
-  const scrub: MouseEventHandler<HTMLDivElement> = (ev) => {
+  const scrub: MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
     setScrubbing(true)
-    if (!ref.current) return
+    if (!element) return
     const { clientX: x } = ev
-    const { left, right } = ref.current.getBoundingClientRect()
+    const { left, right } = element.getBoundingClientRect()
     setValue(Math.min(Math.max(((x - left) / (right - left)), 0), 1))
-  }
+  }, [element])
 
   useEffect(() => {
     if (!scrubbing) return
     const mouseUp = () => setScrubbing(false)
     const mouseMove = (ev: globalThis.MouseEvent) => {
-      if (!ref.current) return
+      if (!element) return
       const { clientX: x } = ev
-      const { left, right } = ref.current.getBoundingClientRect()
+      const { left, right } = element.getBoundingClientRect()
       setValue(Math.min(Math.max(((x - left) / (right - left)), 0), 1))
     }
     document.addEventListener('mousemove', mouseMove)
@@ -29,7 +29,7 @@ export default ({ ref, defaultValue }: { ref: RefObject<HTMLElement>, defaultVal
       document.removeEventListener('mousemove', mouseMove)
       document.removeEventListener('mouseup', mouseUp)
     }
-  }, [scrubbing])
+  }, [element, scrubbing])
 
   return {
     value,

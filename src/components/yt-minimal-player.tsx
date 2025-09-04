@@ -1,8 +1,9 @@
 import type { Path } from 'wouter'
+import type { HTMLAttributes, DOMAttributes, ReactEventHandler } from 'react'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
-import { useState, useEffect, HTMLAttributes, useRef } from 'preact/compat'
+import { useState, useEffect, useRef, useCallback, RefObject } from 'preact/compat'
 import ReactPlayer from 'react-player'
 import { VolumeX, Volume2, Volume1, Volume } from 'lucide-react'
 
@@ -27,22 +28,24 @@ pointer-events: none;
 `
 
 export const YoutubeMinimalPlayer = (
-  { url, redirectTo, paused = false, ...rest }:
+  { url, redirectTo, paused = false, onError, ...rest }:
   HTMLAttributes<HTMLDivElement> & {
     url: string
     redirectTo?: Path
     paused?: boolean
+    onError?: ReactEventHandler<HTMLVideoElement>
   }
 ) => {
+  const [ref, setRef] = useState<HTMLVideoElement | null>(null)
   const [playerVolume, setPlayerVolume] = useState(1)
   const [isReady, setIsReady] = useState(false)
 
-  const volumeBarRef = useRef<HTMLDivElement>(null)
+  const [volumeBarRef, setVolumeBarRef] = useState<HTMLDivElement | null>(null)
   const [hiddenVolumeArea, setHiddenVolumeArea] = useState(true)
   const useStoredValue = useNamespacedLocalStorage<{ volume: number, muted: boolean }>('title-hovercard')
   const [volume, setStoredVolume] = useStoredValue('volume', 1)
   const [isMuted, setStoredMuted] = useStoredValue('muted', true)
-  const { scrub: volumeScrub, value: volumeScrubValue } = useScrub({ ref: volumeBarRef, defaultValue: volume })
+  const { scrub: volumeScrub, value: volumeScrubValue } = useScrub({ element: volumeBarRef, defaultValue: volume })
 
   useEffect(() => {
     if (isMuted) {
@@ -54,28 +57,33 @@ export const YoutubeMinimalPlayer = (
     setPlayerVolume(volumeScrubValue ** 2)
     setStoredVolume(volumeScrubValue)
     setStoredMuted(isMuted)
-  }, [volumeScrubValue, isMuted])
+  }, [volumeScrubValue, isMuted, setPlayerVolume, setStoredVolume, setStoredMuted])
 
-  const toggleMuteButton = () => {
+  const toggleMuteButton = useCallback(() => {
     setStoredMuted(value => !value)
     if (volumeScrubValue === undefined) return
     setPlayerVolume(volumeScrubValue ** 2)
-  }
+  }, [setStoredMuted, setPlayerVolume, volumeScrubValue])
 
-  const hoverVolumeArea: React.DOMAttributes<HTMLDivElement>['onMouseOver'] = () => {
+  const hoverVolumeArea: DOMAttributes<HTMLDivElement>['onMouseOver'] = useCallback(() => {
     setHiddenVolumeArea(false)
-  }
+  }, [setHiddenVolumeArea])
 
-  const mouseOutBottom: React.DOMAttributes<HTMLDivElement>['onMouseOut'] = (ev) => {
+  const mouseOutBottom: DOMAttributes<HTMLDivElement>['onMouseOut'] = useCallback((ev) => {
     setHiddenVolumeArea(true)
-  }
+  }, [setHiddenVolumeArea])
 
-  const onReady = () => {
+  const onReady = useCallback(() => {
     setIsReady(true)
-  }
+  }, [setIsReady])
+
+  const onEnded = useCallback(() => {
+    ref?.play()
+  }, [ref])
 
   const player = (
     <ReactPlayer
+      ref={ref => setRef(ref)}
       css={youtubeStyle}
       onReady={onReady}
       controls={false}
@@ -85,6 +93,8 @@ export const YoutubeMinimalPlayer = (
       volume={isReady ? playerVolume : undefined}
       muted={isMuted}
       style={{ display: isReady ? '' : 'none' }}
+      onError={onError}
+      onEnded={onEnded}
     />
   )
 
