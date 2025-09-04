@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+
 import { css } from '@emotion/react'
 import { Switch, Route as WRoute } from 'wouter'
 
@@ -20,7 +21,7 @@ const contentStyle = css`
 const wrapElement = (children: ReactNode) =>
   <>
     <Header/>
-    <div css={contentStyle}>
+    <div>
       {children}
     </div>
   </>

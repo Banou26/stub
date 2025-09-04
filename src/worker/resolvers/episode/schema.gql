@@ -1,0 +1,44 @@
+
+type Episode {
+  """Uri consists of the `origin` and `id` fields in the format `origin:id`"""
+  uri: String!
+  """String that is used to target a specific origin, e.g `google` or `yt` for youtube"""
+  origin: String!
+  """An id that references a specific resource within the origin space"""
+  id: String!
+  """An url to the media resource"""
+  url: String
+  aggregated: Boolean!
+  titles: [EpisodeTitle!]
+  shortDescriptions: [EpisodeShortDescription!]
+  descriptions: [EpisodeDescription!]
+  releaseDate: Date
+  relativeNumber: Int
+  absoluteNumber: Int
+  thumbnails: [EpisodeThumbnail!]
+  playbackSources: [PlaybackSource!]
+}
+
+type EpisodeTitle {
+  language: String!
+  title: String!
+}
+
+type EpisodeShortDescription {
+  language: String!
+  shortDescription: String!
+}
+
+type EpisodeDescription {
+  language: String!
+  description: String!
+}
+
+type EpisodeThumbnail {
+  language: String
+  url: String!
+  height: Int
+  width: Int
+  """Average #hex color of cover image"""
+  color: String
+}

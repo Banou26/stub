@@ -2,45 +2,57 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 import { defineConfig } from '@eddeee888/gcg-typescript-resolver-files'
 
-import schema from './prisma/gql-schema'
-
 const config: CodegenConfig = {
-  schema,
+  schema: './**/*.gql',
   generates: {
     './src/generated/schema': defineConfig({
-      resolverGeneration: 'disabled'
-    }),
-    './src/generated/graphql.ts': {
-      plugins: [
-        'typescript',
-        'typescript-resolvers',
-        'typescript-document-nodes',
-        // {
-        //   add: {
-        //     content: `import { Uri } from '../utils/uri'`
-        //   }
-        // }
-      ],
-      config: {
-        useTypeImports: true,
-        contextType: '../worker/yoga#ServerContext',
-        scalars: {
-          // Uri: 'Uri'
+      resolverGeneration: 'disabled',
+      scalarsOverrides: {
+        Date: {
+          type: 'string'
         }
       }
-    },
+    }),
+    // './src/generated/graphql.ts': {
+    //   plugins: [
+    //     'typescript',
+    //     'typescript-resolvers',
+    //     'typescript-document-nodes',
+    //   ],
+    //   config: {
+    //     useTypeImports: true,
+    //     contextType: '../worker/yoga#ServerContext',
+    //     scalars: {
+    //       Date: 'string'
+    //     }
+    //   }
+    // },
     './src/generated/graphql.schema.json': {
       plugins: [
-        // 'introspection',
         'urql-introspection'
       ],
       config: {
         scalars: {
-          // Uri: 'Uri'
+          Date: 'string'
+        }
+      }
+    },
+    './src/generated/': {
+      preset: 'client',
+      presetConfig: {
+        gqlTagName: 'gql',
+        fragmentMasking: false
+      },
+      config: {
+        useTypeImports: true,
+        contextType: '../worker/yoga#ServerContext',
+        scalars: {
+          Date: 'string'
         }
       }
     }
   },
+  documents: ['src/**/*.ts', 'src/**/*.tsx'],
   ignoreNoDocuments: true,
 }
 

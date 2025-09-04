@@ -1,7 +1,7 @@
 import type { KeyingConfig } from '@urql/exchange-graphcache'
 import type { Exchange } from 'urql'
 
-import type { Episode, Media, MediaTrailer, PlaybackSource } from './generated/graphql'
+import type { Episode, Media, MediaTrailer, PlaybackSource } from './generated/schema/types.generated'
 
 import { Client, fetchExchange } from 'urql'
 import { devtoolsExchange } from '@urql/devtools'
@@ -12,9 +12,15 @@ import { handleRequest } from './worker'
 import introspection from './generated/graphql.schema.json'
 
 export const keyResolvers = {
-  Media: (media) => (media as Media).uid,
-  Episode: (episode) => (episode as Episode).uid,
-  PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uid,
+  Media: (media) => (media as Media)._id,
+  MediaTitle: () => null,
+  MediaDescription: () => null,
+  MediaShortDescription: () => null,
+  MediaCover: () => null,
+  MediaBanner: () => null,
+  MediaTrailer: (trailer) => (trailer as MediaTrailer).uri,
+  Episode: (episode) => (episode as Episode).uri,
+  PlaybackSource: (playbackSource) => (playbackSource as PlaybackSource).uri,
 } satisfies KeyingConfig
 
 const cache = cacheExchange({

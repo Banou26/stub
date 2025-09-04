@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite'
 
-import { prismaBrowserHack } from './vite-plugin-prisma-hack'
-
 export default defineConfig({
   build: {
     target: 'esnext',
@@ -19,7 +17,6 @@ export default defineConfig({
     include: ['wa-sqlite']
   },
   plugins: [
-    prismaBrowserHack(),
     {
       name: 'custom-index-html',
       transformIndexHtml(html) {

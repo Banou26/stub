@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import preact from '@preact/preset-vite'
 
 import { prismaBrowserHack } from './vite-plugin-prisma-hack'
 
@@ -14,9 +15,17 @@ export default defineConfig((_) => ({
   optimizeDeps: {
     include: ['wa-sqlite']
   },
+  resolve: {
+    alias: {
+      "react": "preact/compat",
+      "react-dom": "preact/compat",
+      "react/jsx-runtime": "preact/jsx-runtime"
+    }
+  },
   plugins: [
+    nodePolyfills(),
     prismaBrowserHack(),
-    react({
+    preact({
       jsxImportSource: '@emotion/react'
     })
   ]

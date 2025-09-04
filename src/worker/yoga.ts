@@ -1,22 +1,29 @@
+import type { YogaInitialContext } from 'graphql-yoga'
+
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
-import { createSchema, createYoga } from 'graphql-yoga'
+import { createSchema, createYoga, useExecutionCancellation } from 'graphql-yoga'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
-import resolvers from './resolvers'
+import { resolvers } from './resolvers'
 
-export type ServerContext = {
+export type ServerContext = YogaInitialContext & {
 
 }
 
-const schema = createSchema<ServerContext>({
+export type UserContext = {
+
+}
+
+export const schema = createSchema<Omit<ServerContext, keyof YogaInitialContext>>({
   typeDefs,
   resolvers
 })
 
-const yoga = createYoga<ServerContext>({
+export const yoga = createYoga<Omit<ServerContext, keyof YogaInitialContext>, UserContext>({
   schema,
   maskedErrors: false,
-  plugins: [useDeferStream()]
+  plugins: [
+    useDeferStream(),
+    useExecutionCancellation()
+  ]
 })
-
-export default yoga

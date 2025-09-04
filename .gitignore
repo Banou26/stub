@@ -1,10 +1,7 @@
-node_modules
-.env
-test-results
-build
-src/worker/prisma/generated/
-prisma/migrations
-prisma/dev.db
-prisma/schema.gql
-prisma/gql-schema.ts
-src/generated
+/node_modules
+/.env
+/test-results
+/build
+/src/worker/prisma/generated/
+/drizzle/
+/src/generated
