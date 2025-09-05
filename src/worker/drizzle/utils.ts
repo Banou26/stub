@@ -442,7 +442,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     uri,
     id,
     origin: 'ag',
-    url: `${location.origin}/${getRoutePath(Route.TITLE, { uri })}`,
+    url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri })}`,
     aggregated: true,
     score: Math.max(...medias.map(m => m.score ?? 0)),
     handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))

@@ -118,13 +118,13 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
           <YoutubeMinimalPlayer
             volume={0}
             url={trailer?.url}
-            redirectTo={`${getRoutePath(Route.TITLE, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}
+            redirectTo={`${getRoutePath(Route.MEDIA, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}
             className="title-hovercard-player"
           />
         )
       }
       <Link
-        to={`${getRoutePath(Route.TITLE, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}
+        to={`${getRoutePath(Route.MEDIA, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}
         ref={ref => setContentRef(ref)}
       >
         <div className="content">

@@ -97,7 +97,7 @@ const CellComponent = (
       ref={setRef}
       key={media._id}
       media={media}
-      to={getRoutePath(Route.TITLE, { uri: media.uri })}
+      to={getRoutePath(Route.MEDIA, { uri: media.uri })}
       style={{
         ...style,
         width: 250,

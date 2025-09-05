@@ -1,23 +1,23 @@
 
 export enum Route {
   HOME = 'HOME',
-  TITLE = 'TITLE',
-  TITLE_EPISODE = 'TITLE_EPISODE',
+  MEDIA = 'MEDIA',
+  MEDIA_EPISODE = 'MEDIA_EPISODE',
   WATCH = 'WATCH',
 }
 
 const Routes = {
   [Route.HOME]: () => '/',
-  [Route.TITLE]: ({ uri }: { uri: string }) => `/title/${uri}`,
-  [Route.TITLE_EPISODE]: ({ uri, titleUri }: { uri: string, titleUri: string }) => `/title/${uri}/${titleUri}`,
+  [Route.MEDIA]: ({ uri }: { uri: string }) => `/media/${uri}`,
+  [Route.MEDIA_EPISODE]: ({ uri, mediaUri }: { uri: string, mediaUri: string }) => `/media/${uri}/${mediaUri}`,
   [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
     `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
 }
 
 const RouterRoutes = {
   [Route.HOME]: '/',
-  [Route.TITLE]: '/title/:uri',
-  [Route.TITLE_EPISODE]: '/title/:uri/:titleUri',
+  [Route.MEDIA]: '/media/:uri',
+  [Route.MEDIA_EPISODE]: '/media/:uri/:mediaUri',
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',
 }
 
