@@ -111,26 +111,25 @@ gap: 0.5rem;
 `
 
 export const VolumeControl = (
-  { defaultVolume = 0, onVolumeUpdate }:
-  { defaultVolume?: number, onVolumeUpdate: (volume: number, adjustedVolume: number) => void }
+  { defaultMuted = true, defaultVolume = 1, onMutedUpdate, onVolumeUpdate }:
+  { defaultMuted?: boolean, onMutedUpdate: (muted: boolean) => void, defaultVolume?: number, onVolumeUpdate: (adjustedVolume: number, volume: number) => void }
 ) => {
-  const [volume, setVolume] = useState(defaultVolume ** 2)
-  const [isMuted, setMuted] = useState(defaultVolume === 0 ? true : false)
+  const [volume, setVolume] = useState(defaultVolume)
+  const [isMuted, setMuted] = useState(defaultMuted)
   const [volumeBarElement, setVolumeBarElement] = useState<HTMLDivElement | null>(null)
   const [hiddenVolumeArea, setHiddenVolumeArea] = useState(true)
   const { scrubHandler, value: volumeScrubValue } = useScrub({ element: volumeBarElement, defaultValue: volume })
 
   useEffect(() => {
     if (volumeScrubValue === undefined) return
-    setMuted(!Boolean(volumeScrubValue))
-    setVolume(volumeScrubValue ** 2)
-    onVolumeUpdate(volumeScrubValue, volumeScrubValue ** 2)
+    setVolume(volumeScrubValue)
+    onVolumeUpdate(volumeScrubValue ** 2, volumeScrubValue)
   }, [setVolume, volumeScrubValue])
 
   const toggleMuteButton = useCallback(() => {
     if (volumeScrubValue === undefined) return
-    onVolumeUpdate(isMuted ? volumeScrubValue : 0, isMuted ? volumeScrubValue ** 2 : 0)
     setMuted(value => !value)
+    onMutedUpdate(isMuted ? false : true)
   }, [setMuted, setVolume, volumeScrubValue, isMuted])
 
   const hoverVolumeArea: HTMLAttributes<HTMLDivElement | HTMLButtonElement>['onMouseOver'] = useCallback(() => {
@@ -167,7 +166,7 @@ export const VolumeControl = (
           onMouseDown={scrubHandler}
         >
           <div className="slider">
-            <div className="slider-handle" style={{ left: `${(Math.sqrt(volume) ?? 0) * 100}%` }}></div>
+            <div className="slider-handle" style={{ left: `${(volume ?? 0) * 100}%` }}></div>
           </div>
         </div>
       </div>

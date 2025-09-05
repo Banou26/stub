@@ -153,7 +153,8 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const trailer = useMemo(() => theaterMedia?.trailers?.at(0), [theaterMedia])
 
   const [playerPaused, setPlayerPaused] = useState(Boolean(trailer))
-  const [playerVolume, setPlayerVolume] = useState(0)
+  const [playerMuted, setPlayerMuted] = useState(true)
+  const [playerVolume, setPlayerVolume] = useState(0.25)
 
   const onTrailerError = useCallback(() => {
     setBannedMediaIndexes([...bannedMediaIndexes, mediaIndex])
@@ -168,7 +169,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
               url={trailer.url}
               paused={playerPaused}
               onError={onTrailerError}
-              volume={playerVolume}
+              volume={playerMuted ? 0 : playerVolume}
               className="player"
             />
           )
@@ -189,7 +190,12 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                 : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
             }
           </span>
-          <VolumeControl onVolumeUpdate={volume => setPlayerVolume(volume)} />
+          <VolumeControl
+            defaultMuted={playerMuted}
+            onMutedUpdate={setPlayerMuted}
+            defaultVolume={playerVolume}
+            onVolumeUpdate={volume => setPlayerVolume(volume)}
+          />
         </div>
         <div className="title">{title}</div>
         <div className="short-description">{shortDescription}</div>
