@@ -7,7 +7,7 @@ import { css } from '@emotion/react'
 import { Grid, useGridRef } from 'react-window'
 import { useCallback, useEffect, useMemo, useState } from 'preact/compat'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { autoUpdate, shift, useFloating } from '@floating-ui/react-dom'
+import { autoUpdate, offset, shift, useFloating } from '@floating-ui/react-dom'
 
 import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
@@ -134,7 +134,11 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
   const [visibleEndIndex, setVisibleEndIndex] = useState(0)
 
-  const { x, y, strategy, refs, update } = useFloating({ whileElementsMounted: autoUpdate, placement: 'top', middleware: [shift()] })
+  const { x, y, strategy, refs, update } = useFloating({
+    whileElementsMounted: autoUpdate,
+    placement: 'top',
+    middleware: [offset({ mainAxis: -375 }), shift()]
+  })
   const [hoverMediaPreview, setHoverMediaPreview] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverMediaPreviewTriggerTimeout] = useState<number | undefined>(undefined)
 

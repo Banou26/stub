@@ -15,16 +15,8 @@ const style = css`
   overflow: hidden;
   border-radius: 1rem;
 
-  height: 14rem;
-  width: 13rem;
-  @media (min-width: 1440px) {
-    height: 30rem;
-    width: 20rem;
-  }
-  @media (min-width: 2560px) {
-    height: 35rem;
-    width: 25rem;
-  }
+  height: 35rem;
+  width: 25rem;
 
   &.link {
     position: absolute;
@@ -52,14 +44,9 @@ const style = css`
     width: 100%;
     word-wrap: break-word;
 
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin: .1rem 0;
-    @media (min-width: 2560px) {
-      font-size: 2.2rem;
-      font-weight: bold;
-      margin: .5rem 0;
-    }
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: .5rem 0;
   }
 
   .information {
@@ -78,11 +65,7 @@ const style = css`
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: .5rem;
-    padding: .75rem .5rem 0rem .5rem;
-    @media (min-width: 2560px) {
-      padding: 1rem 2rem 0rem 2rem;
-    }
+    padding: 1rem 2rem 0rem 2rem;
     color: white;
     font-size: 2.5rem;
     overflow: hidden;
