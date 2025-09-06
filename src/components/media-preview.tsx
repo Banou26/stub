@@ -15,15 +15,7 @@ background-color: rgb(35, 35, 35);
 border-radius: 1rem;
 user-select: none;
 
-transform: scale(0.95);
-transition: transform .2s ease, opacity .2s ease;
-
 width: 70rem;
-
-&:hover {
-  transform: scale(1);
-  opacity: 1;
-}
 
 a {
   color: #fff;

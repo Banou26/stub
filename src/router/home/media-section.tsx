@@ -8,7 +8,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   autoUpdate, offset, useFloating, shift,
   useHover, useInteractions, safePolygon,
-  FloatingPortal
+  FloatingPortal,
+  useTransitionStyles
 } from '@floating-ui/react'
 
 import { getRoutePath, Route } from '../path'
@@ -92,6 +93,17 @@ const CellComponent = (
     ]
   })
   const hover = useHover(context, { restMs: 400, handleClose: safePolygon() })
+  const {styles} = useTransitionStyles(context, {
+    initial: {
+      opacity: 0,
+      transform: 'scale(0.8)',
+    },
+    open: {
+      opacity: 1,
+      transform: 'scale(1)'
+    },
+    duration: 150
+  })
   const {getReferenceProps, getFloatingProps} = useInteractions([hover])
 
   return (
@@ -103,6 +115,7 @@ const CellComponent = (
               media={media}
               ref={refs.setFloating}
               style={{
+                ...styles,
                 position: strategy,
                 top: y ?? 0,
                 left: x ?? 0
