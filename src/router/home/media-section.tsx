@@ -5,9 +5,9 @@ import type { MouseEvent, RefObject } from 'react'
 
 import { css } from '@emotion/react'
 import { Grid, useGridRef } from 'react-window'
-import { useCallback, useEffect, useMemo, useState } from 'preact/compat'
+import { useCallback, useEffect, useState } from 'preact/compat'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { autoUpdate, offset, shift, useFloating } from '@floating-ui/react-dom'
+import { autoUpdate, offset, useFloating, shift } from '@floating-ui/react-dom'
 
 import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
@@ -137,7 +137,11 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
   const { x, y, strategy, refs, update } = useFloating({
     whileElementsMounted: autoUpdate,
     placement: 'top',
-    middleware: [offset({ mainAxis: -375 }), shift()]
+    middleware: [
+      // todo: check why the 75px padding & offset fix is needed
+      offset(({ rects }) => (-rects.reference.height / 2 - rects.floating.height / 2) + 75),
+      shift({ crossAxis: true, padding: 75 })
+    ]
   })
   const [hoverMediaPreview, setHoverMediaPreview] = useState<Media | undefined>(undefined)
   const [hoverCardTriggerTimeout, setHoverMediaPreviewTriggerTimeout] = useState<number | undefined>(undefined)
