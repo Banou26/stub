@@ -8,6 +8,8 @@ import { LucidePause, LucidePlay } from 'lucide-react'
 import { gql } from '../../generated'
 import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
 import { VolumeControl } from '../../components/volume-control'
+import { useRoute } from 'wouter'
+import { getRouterRoutePath, Route } from '../path'
 
 const style = css`
 height: 70vh;
@@ -126,6 +128,7 @@ const GET_THEATHER_MEDIA = gql(`
 `)
 
 const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
+  const [matchMediaRoute] = useRoute(getRouterRoutePath(Route.MEDIA))
   const hasHighQualityMedia = mediaNodes.some((media) => media.score && media.score >= 0.8)
   const [bannedMediaIndexes, setBannedMediaIndexes] = useState<number[]>([])
   const mediaIndex = useMemo(() => {
@@ -152,7 +155,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const shortDescription = useMemo(() => theaterMedia?.shortDescriptions?.at(0)?.shortDescription, [theaterMedia])
   const trailer = useMemo(() => theaterMedia?.trailers?.at(0), [theaterMedia])
 
-  const [playerPaused, setPlayerPaused] = useState(Boolean(trailer))
+  const [playerPaused, setPlayerPaused] = useState(false)
   const [playerMuted, setPlayerMuted] = useState(true)
   const [playerVolume, setPlayerVolume] = useState(0.25)
 
@@ -167,7 +170,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
           trailer?.url && (
             <YoutubeMinimalPlayer
               url={trailer.url}
-              paused={playerPaused}
+              paused={playerPaused || matchMediaRoute}
               onError={onTrailerError}
               volume={playerMuted ? 0 : playerVolume}
               className="player"

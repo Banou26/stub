@@ -72,7 +72,7 @@ const Index = () => {
     <div css={style}>
       <HomeTheater mediaNodes={mediaNodes} />
       <MediaSection title="Current season" mediaNodes={mediaNodes} />
-      {matchMediaRoute && <MediaModal/>}
+      {matchMediaRoute && <MediaModal mediaNodes={mediaNodes} />}
     </div>
   )
 }

@@ -6,12 +6,16 @@ export enum Route {
   WATCH = 'WATCH',
 }
 
-const Routes = {
+const ROUTES = {
   [Route.HOME]: () => '/',
   [Route.MEDIA]: ({ uri }: { uri: string }) => `/media/${uri}`,
   [Route.MEDIA_EPISODE]: ({ uri, mediaUri }: { uri: string, mediaUri: string }) => `/media/${uri}/${mediaUri}`,
   [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
     `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
+}
+
+export type RouteParams = {
+  [K in Route]: Parameters<typeof ROUTES[K]>[0]
 }
 
 const RouterRoutes = {
@@ -29,6 +33,6 @@ export const getRoutePath = <
   T extends Route
 > (
   route: T,
-  args?: Parameters<(typeof Routes)[T]>[0]
+  args?: Parameters<(typeof ROUTES)[T]>[0]
 ) =>
-  Routes[route](<any>args)
+  ROUTES[route](<any>args)

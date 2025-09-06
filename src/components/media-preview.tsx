@@ -63,7 +63,7 @@ a {
   height: 39.25rem;
   width: 70rem;
 
-  & > a > youtube-video {
+  & youtube-video {
     grid-area: container;
     pointer-events: none;
     margin-top: -10.3rem;
@@ -90,12 +90,12 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
           <YoutubeMinimalPlayer
             volume={0}
             url={trailer?.url}
-            redirectTo={`${getRoutePath(Route.MEDIA, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}
+            redirectTo={getRoutePath(Route.MEDIA, { uri: media.uri })}
             className="title-hovercard-player"
           />
         )
       }
-      <Link to={`${getRoutePath(Route.MEDIA, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}>
+      <Link to={getRoutePath(Route.MEDIA, { uri: media.uri })}>
         <div className="content">
           <div className='title'>
             {title}
