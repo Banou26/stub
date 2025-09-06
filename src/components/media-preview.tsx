@@ -4,7 +4,7 @@ import type { Media } from '../generated/schema/types.generated'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useMemo } from 'preact/hooks'
 
 import { getRoutePath, Route } from '../router/path'
 import { YoutubeMinimalPlayer } from './yt-minimal-player'
@@ -82,20 +82,6 @@ a {
 `
 
 export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Media }) => {
-  const [contentRef, setContentRef] = useState<HTMLAnchorElement | null>(null)
-  const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
-
-  useEffect(() => {
-    if (contentRef === null) return
-    const resizeObserver = new ResizeObserver(() => {
-      setContentHeight(contentRef.clientHeight)
-    })
-    resizeObserver.observe(contentRef)
-    return () => {
-      resizeObserver.disconnect()
-    }
-  })
-
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const shortDescription = useMemo(() => media?.shortDescriptions?.at(0)?.shortDescription, [media])
   const trailer = useMemo(() => media?.trailers?.at(0), [media])
@@ -103,15 +89,9 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
   return (
     <div
       ref={ref}
-      {...{
-        ...rest,
-        style: rest.style && {
-          ...rest.style,
-          top: contentHeight ? `calc(${rest.style.top}px + ${contentHeight / 2}px)` : rest.style.top
-        }
-      }}
       className="title-hovercard"
       css={style}
+      {...rest}
     >
       {
         trailer?.url && (
@@ -123,10 +103,7 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
           />
         )
       }
-      <Link
-        to={`${getRoutePath(Route.MEDIA, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}
-        ref={ref => setContentRef(ref)}
-      >
+      <Link to={`${getRoutePath(Route.MEDIA, { uri: media.uri })}?${new URLSearchParams({ details: media.uri }).toString()}`}>
         <div className="content">
           <div className='title'>
             {title}

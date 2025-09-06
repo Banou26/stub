@@ -7,7 +7,7 @@ import { css } from '@emotion/react'
 import { Grid, useGridRef } from 'react-window'
 import { useCallback, useEffect, useState } from 'preact/compat'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { autoUpdate, offset, useFloating, shift } from '@floating-ui/react-dom'
+import { autoUpdate, offset, useFloating, shift, useHover, useInteractions, safePolygon } from '@floating-ui/react'
 
 import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
@@ -70,12 +70,11 @@ position: relative;
 `
 
 const CellComponent = (
-  { mediaNodes, columnIndex, style, hoverCardTriggerTimeout, setHoverMediaPreview, setHoverMediaPreviewTriggerTimeout, setReference, floating, update }:
+  { getReferenceProps, mediaNodes, columnIndex, style, setHoverMediaPreview, setReference }:
   CellComponentProps<{
-    hoverCardTriggerTimeout: number | undefined
+    getReferenceProps: (userProps?: React.HTMLProps<Element>) => Record<string, unknown>
     mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'],
     setHoverMediaPreview: (media: Media | undefined) => void
-    setHoverMediaPreviewTriggerTimeout: (timeoutId: number | undefined) => void
     setReference: (element: HTMLElement | null) => void
     floating: RefObject<HTMLElement | null>
     update: () => void
@@ -83,18 +82,9 @@ const CellComponent = (
 ) => {
   const media = mediaNodes[columnIndex]
   if (!media) return null
-  const [isHovered, setIsHovered] = useState(false)
-  const [ref, setRef] = useState<HTMLElement | null>(null)
-
-  useEffect(() => {
-    if (!isHovered || !ref) return
-    setReference(ref)
-    update()
-  }, [isHovered, ref])
 
   return (
     <MediaTitle
-      ref={setRef}
       key={media._id}
       media={media}
       to={getRoutePath(Route.MEDIA, { uri: media.uri })}
@@ -103,28 +93,12 @@ const CellComponent = (
         width: 250,
         marginLeft: 100
       }}
-      onMouseEnter={e => {
-        setHoverMediaPreview(undefined)
-        setIsHovered(true)
-        update()
-        setHoverMediaPreviewTriggerTimeout(
-          window.setTimeout(() => {
-            if (!(e.target instanceof HTMLElement)) return
-            setReference(e.target)
-            setIsHovered(true)
-            setHoverMediaPreview(media as Media)
-            update()
-          }, 400)
-        )
+      onMouseEnter={(e) => {
+        if (!(e.target instanceof HTMLElement)) return
+        setReference(e.target)
+        setHoverMediaPreview(media as Media)
       }}
-      onMouseLeave={(e) => {
-        if (!(e.relatedTarget instanceof HTMLElement)) return
-        if (floating.current === e.relatedTarget  || floating.current?.contains(e.relatedTarget)) return
-        if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
-        setIsHovered(false)
-        setHoverMediaPreview(undefined)
-        update()
-      }}
+      {...getReferenceProps()}
     />
   )
 }
@@ -134,17 +108,23 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
   const [visibleEndIndex, setVisibleEndIndex] = useState(0)
 
-  const { x, y, strategy, refs, update } = useFloating({
+  const [mediaPreviewIsOpen, setMediaPreviewIsOpen] = useState(false)
+
+  const { x, y, strategy, refs, update, context } = useFloating({
+    open: mediaPreviewIsOpen,
+    onOpenChange: setMediaPreviewIsOpen,
     whileElementsMounted: autoUpdate,
     placement: 'top',
     middleware: [
-      // todo: check why the 75px padding & offset fix is needed
-      offset(({ rects }) => (-rects.reference.height / 2 - rects.floating.height / 2) + 75),
-      shift({ crossAxis: true, padding: 75 })
+      offset(({ rects }) => (-rects.reference.height / 2 - rects.floating.height / 2)),
+      shift({ crossAxis: true })
     ]
   })
+
+  const hover = useHover(context, { restMs: 400, handleClose: safePolygon() })
+  const {getReferenceProps, getFloatingProps} = useInteractions([hover])
+
   const [hoverMediaPreview, setHoverMediaPreview] = useState<Media | undefined>(undefined)
-  const [hoverCardTriggerTimeout, setHoverMediaPreviewTriggerTimeout] = useState<number | undefined>(undefined)
 
   const [isDragging, setIsDragging] = useState(false)
   const virtualListRef = useGridRef(null)
@@ -170,12 +150,6 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
     })
   }, [visibleStartIndex, visibleEndIndex, mediaNodes.length, virtualListRef])
 
-  const onHoverMediaPreviewMouseLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    if (hoverCardTriggerTimeout) clearTimeout(hoverCardTriggerTimeout)
-    refs.setReference(null)
-    setHoverMediaPreview(undefined)
-  }
-
   return (
     <div css={style}>
       <span className='title'>{title}</span>
@@ -192,10 +166,9 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
             className='virtual-list'
             cellComponent={CellComponent}
             cellProps={{
+              getReferenceProps,
               mediaNodes,
-              hoverCardTriggerTimeout,
               setHoverMediaPreview,
-              setHoverMediaPreviewTriggerTimeout,
               setReference: refs.setReference,
               floating: refs.floating,
               update
@@ -213,16 +186,16 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
         </Draggable>
       </div>
       {
-        !isDragging && hoverMediaPreview && (
+        !isDragging && hoverMediaPreview && mediaPreviewIsOpen && (
           <MediaPreview
             media={hoverMediaPreview}
             ref={refs.setFloating}
-            onMouseLeave={onHoverMediaPreviewMouseLeave}
             style={{
               position: strategy,
               top: y ?? 0,
               left: x ?? 0
             }}
+            {...getFloatingProps()}
           />
         )
       }
