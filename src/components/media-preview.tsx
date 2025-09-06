@@ -81,7 +81,7 @@ a {
 }
 `
 
-export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Media }) => {
+export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'shortDescriptions' | 'trailers' | 'episodeCount'> }) => {
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const shortDescription = useMemo(() => media?.shortDescriptions?.at(0)?.shortDescription, [media])
   const trailer = useMemo(() => media?.trailers?.at(0), [media])

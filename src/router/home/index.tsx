@@ -69,7 +69,7 @@ const Index = () => {
   return (
     <div css={style}>
       <HomeTheater mediaNodes={mediaNodes} />
-      <MediaSection title="Current season" mediaNodes={mediaNodes as Media[]} />
+      <MediaSection title="Current season" mediaNodes={mediaNodes} />
     </div>
   )
 }

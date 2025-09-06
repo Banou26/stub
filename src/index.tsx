@@ -37,7 +37,7 @@ const style = css`
     font-family: Montserrat;
   }
 
-  body > div {
+  #stub-root {
     height: 100vh;
     width: 100%;
   }
@@ -56,10 +56,13 @@ const style = css`
   }
 `
 
+const root = document.createElement('div')
+root.id = 'stub-root'
+
 render(
   <Provider value={client}>
     <Global styles={style}/>
     <Router/>
   </Provider>,
-  document.body.appendChild(document.createElement('div'))
+  document.body.appendChild(root)
 )

@@ -1,13 +1,15 @@
 import type { CellComponentProps } from 'react-window'
 import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
-import type { Media } from '../../generated/schema/types.generated'
-import type { MouseEvent, RefObject } from 'react'
 
 import { css } from '@emotion/react'
 import { Grid, useGridRef } from 'react-window'
-import { useCallback, useEffect, useState } from 'preact/compat'
+import { useCallback, useState } from 'preact/compat'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { autoUpdate, offset, useFloating, shift, useHover, useInteractions, safePolygon } from '@floating-ui/react'
+import {
+  autoUpdate, offset, useFloating, shift,
+  useHover, useInteractions, safePolygon,
+  FloatingPortal
+} from '@floating-ui/react'
 
 import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
@@ -70,49 +72,18 @@ position: relative;
 `
 
 const CellComponent = (
-  { getReferenceProps, mediaNodes, columnIndex, style, setHoverMediaPreview, setReference }:
+  { style, mediaNodes, columnIndex }:
   CellComponentProps<{
-    getReferenceProps: (userProps?: React.HTMLProps<Element>) => Record<string, unknown>
-    mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'],
-    setHoverMediaPreview: (media: Media | undefined) => void
-    setReference: (element: HTMLElement | null) => void
-    floating: RefObject<HTMLElement | null>
-    update: () => void
+    mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes']
   }>
 ) => {
   const media = mediaNodes[columnIndex]
   if (!media) return null
 
-  return (
-    <MediaTitle
-      key={media._id}
-      media={media}
-      to={getRoutePath(Route.MEDIA, { uri: media.uri })}
-      style={{
-        ...style,
-        width: 250,
-        marginLeft: 100
-      }}
-      onMouseEnter={(e) => {
-        if (!(e.target instanceof HTMLElement)) return
-        setReference(e.target)
-        setHoverMediaPreview(media as Media)
-      }}
-      {...getReferenceProps()}
-    />
-  )
-}
-
-// todo: there is currently a bug where if the media that is previewed gets updated, the preview's position gets fucked because the node changed or smth
-export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes: Media[] }) => {
-  const [visibleStartIndex, setVisibleStartIndex] = useState(0)
-  const [visibleEndIndex, setVisibleEndIndex] = useState(0)
-
-  const [mediaPreviewIsOpen, setMediaPreviewIsOpen] = useState(false)
-
-  const { x, y, strategy, refs, update, context } = useFloating({
-    open: mediaPreviewIsOpen,
-    onOpenChange: setMediaPreviewIsOpen,
+  const [open, onOpenChange] = useState(false)
+  const { x, y, strategy, refs, context } = useFloating({
+    open,
+    onOpenChange,
     whileElementsMounted: autoUpdate,
     placement: 'top',
     middleware: [
@@ -120,11 +91,49 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
       shift({ crossAxis: true })
     ]
   })
-
   const hover = useHover(context, { restMs: 400, handleClose: safePolygon() })
   const {getReferenceProps, getFloatingProps} = useInteractions([hover])
 
-  const [hoverMediaPreview, setHoverMediaPreview] = useState<Media | undefined>(undefined)
+  return (
+    <>
+      {
+        open && (
+          <FloatingPortal>
+            <MediaPreview
+              media={media}
+              ref={refs.setFloating}
+              style={{
+                position: strategy,
+                top: y ?? 0,
+                left: x ?? 0
+              }}
+              {...getFloatingProps()}
+            />
+          </FloatingPortal>
+        )
+      }
+      <MediaTitle
+        key={media._id}
+        media={media}
+        to={getRoutePath(Route.MEDIA, { uri: media.uri })}
+        style={{
+          ...style,
+          width: 250,
+          marginLeft: 100
+        }}
+        onMouseEnter={(e) => {
+          if (!(e.target instanceof HTMLElement)) return
+          refs.setReference(e.target)
+        }}
+        {...getReferenceProps()}
+      />
+    </>
+  )
+}
+
+export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
+  const [visibleStartIndex, setVisibleStartIndex] = useState(0)
+  const [visibleEndIndex, setVisibleEndIndex] = useState(0)
 
   const [isDragging, setIsDragging] = useState(false)
   const virtualListRef = useGridRef(null)
@@ -165,14 +174,7 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
             gridRef={virtualListRef}
             className='virtual-list'
             cellComponent={CellComponent}
-            cellProps={{
-              getReferenceProps,
-              mediaNodes,
-              setHoverMediaPreview,
-              setReference: refs.setReference,
-              floating: refs.floating,
-              update
-            }}
+            cellProps={{ mediaNodes }}
             columnCount={mediaNodes.length}
             columnWidth={260}
             rowCount={1}
@@ -185,20 +187,6 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
           />
         </Draggable>
       </div>
-      {
-        !isDragging && hoverMediaPreview && mediaPreviewIsOpen && (
-          <MediaPreview
-            media={hoverMediaPreview}
-            ref={refs.setFloating}
-            style={{
-              position: strategy,
-              top: y ?? 0,
-              left: x ?? 0
-            }}
-            {...getFloatingProps()}
-          />
-        )
-      }
     </div>
   )
 }
