@@ -1,5 +1,3 @@
-import type { Media } from '../../generated/schema/types.generated'
-
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
 
@@ -7,6 +5,9 @@ import { gql } from '../../generated'
 import { MediaSort, MediaStatus } from '../../generated/graphql'
 import HomeTheater from './theater'
 import MediaSection from './media-section'
+import { useRoute } from 'wouter'
+import { getRouterRoutePath, Route } from '../path'
+import MediaModal from './media-modal'
 
 const GET_RELEASING_MEDIA_PAGE = gql(`
   subscription GetReleasingMediaPage($input: MediaPageInput!) {
@@ -54,6 +55,7 @@ const style = css`
 `
 
 const Index = () => {
+  const [matchMediaRoute] = useRoute(getRouterRoutePath(Route.MEDIA))
   const [{ data }] = useSubscription({
     query: GET_RELEASING_MEDIA_PAGE,
     variables: {
@@ -70,6 +72,7 @@ const Index = () => {
     <div css={style}>
       <HomeTheater mediaNodes={mediaNodes} />
       <MediaSection title="Current season" mediaNodes={mediaNodes} />
+      {matchMediaRoute && <MediaModal/>}
     </div>
   )
 }
