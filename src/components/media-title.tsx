@@ -83,7 +83,7 @@ const style = css`
 }
 `
 
-const MediaTitle = ({ ref, media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'covers'>, to: Path }) => {
+const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'titles' | 'covers'>, to: Path }) => {
   const title = media.titles?.at(0)?.title
   const firstCover = media.covers?.at(0)?.url
   const [coverUrl, setCoverUrl] = useState(firstCover)
@@ -96,9 +96,7 @@ const MediaTitle = ({ ref, media, to, ...rest }: React.ButtonHTMLAttributes<HTML
   return (
     <div
       {...rest}
-      ref={ref}
       css={style}
-      key={media.uri}
       className="card category-item"
       style={{ ...rest.style, backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover' }}
     >
