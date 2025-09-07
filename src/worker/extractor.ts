@@ -8,7 +8,7 @@ import { Client, fetchExchange } from 'urql'
 import { getNamedType } from 'graphql'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
-import * as extractorDefinitions from '../extractor'
+import * as extractorDefinitions from './extractor/index'
 import { merge } from '../utils/merge'
 import { fetch } from './utils'
 import database from './drizzle'

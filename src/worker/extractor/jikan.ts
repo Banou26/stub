@@ -1,6 +1,6 @@
-import type { ExtractorServerContext } from '../worker/extractor'
-import type { Media, MediaTrailer, Resolvers } from '../generated/schema/types.generated'
-import { MediaStatus } from '../generated/graphql'
+import type { ExtractorServerContext } from '../extractor'
+import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
+import { MediaStatus } from '../../generated/graphql'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'

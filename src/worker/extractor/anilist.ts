@@ -1,6 +1,6 @@
-import type { ExtractorServerContext } from '../worker/extractor'
-import type { Resolvers, Media as GQLMedia } from '../generated/schema/types.generated'
-import { MediaStatus as GQLMediaStatus } from '../generated/graphql'
+import type { ExtractorServerContext } from '../extractor'
+import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
+import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
