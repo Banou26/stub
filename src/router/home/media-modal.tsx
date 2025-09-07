@@ -47,8 +47,8 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
       youtube-video {
         grid-area: container;
         pointer-events: none;
-        margin-top: -11rem !important;
-        height: 89.25rem !important;
+        margin-top: -21.5rem !important;
+        height: 110.25rem !important;
       }
     }
     .player-controls {

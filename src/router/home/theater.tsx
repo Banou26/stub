@@ -18,6 +18,13 @@ height: 70vh;
   width: 100%;
   height: calc(100vh - 5rem);
   user-select: none;
+
+  youtube-video {
+    height: 250vh !important;
+    width: 100% !important;
+    margin-top: -75vh;
+  }
+
   .shadow {
     position: absolute;
     bottom: 0;
