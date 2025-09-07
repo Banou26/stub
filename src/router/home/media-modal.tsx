@@ -1,4 +1,4 @@
-import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
+import { MediaDescriptionContentType, type GetReleasingMediaPageSubscription } from '../../generated/graphql'
 import type { RouteParams } from '../path'
 
 import { css } from '@emotion/react'
@@ -84,19 +84,19 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   .content {
     padding: 2.5rem;
     .title {
-      font-size: 2rem;
+      font-size: 3rem;
       font-weight: 600;
     }
 
     .description {
-      margin-top: 1.5rem;
+      margin-top: 2.5rem;
     }
   }
 }
 `
 
 const GET_MEDIA_MODAL = gql(`
-  subscription GetMediaModal($input: MediaInput!) {
+  subscription GetMediaModal($input: MediaInput!, $descriptionInput: MediaDescriptionInput!) {
     media(input: $input) {
       _id
       uri
@@ -107,11 +107,7 @@ const GET_MEDIA_MODAL = gql(`
       }
       descriptions {
         language
-        description
-      }
-      shortDescriptions {
-        language
-        shortDescription
+        description(input: $descriptionInput)
       }
       covers {
         language
@@ -135,20 +131,22 @@ const GET_MEDIA_MODAL = gql(`
 
 export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
-  const media = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
+  const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
   const [{ data }] = useSubscription({
     query: GET_MEDIA_MODAL,
     variables: {
       input: {
-        uri: media?.uri
+        uri: foundMedia?.uri
+      },
+      descriptionInput: {
+        type: MediaDescriptionContentType.Html
       }
     },
-    pause: !media
+    pause: !foundMedia
   })
-
+  const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const description = useMemo(() => media?.descriptions?.at(0)?.description, [media])
-  const shortDescription = useMemo(() => media?.shortDescriptions?.at(0)?.shortDescription, [media])
   const trailer = useMemo(() => media?.trailers?.at(0), [media])
 
   const [open, onOpenChange] = useState(Boolean(params))
@@ -207,7 +205,8 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
             </div>
             <div className="content">
               <div className="title">{title}</div>
-              <div className="description">{shortDescription}</div>
+              {/* todo: implement an expandable description */}
+              <div className="description" dangerouslySetInnerHTML={{ __html: description ?? '' }}></div>
             </div>
           </div>
         </FloatingFocusManager>

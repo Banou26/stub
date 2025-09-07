@@ -5,7 +5,8 @@ import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
 import { findAggregatedMedia, findAggregatedMedias } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
-import { ellipseText, parseTextDescription } from './utils'
+import { parseHTMLDescription, parseTextDescription } from './utils'
+import { MediaDescriptionContentType } from '../../../generated/graphql'
 
 export const schema = _schema as string
 
@@ -68,11 +69,22 @@ export const resolvers = {
     url: (parent) => parent.url,
     _id: (parent) => parent._id,
   },
+  MediaDescription: {
+    description: (parent, args) => {
+      const parsed =
+        args.input?.type === MediaDescriptionContentType.Html ? parseHTMLDescription(parent.description)
+        : args.input?.type === MediaDescriptionContentType.Text ? parseTextDescription(parent.description)
+        : parseTextDescription(parent.description)
+      return parsed
+    },
+  },
   MediaShortDescription: {
-    shortDescription: (parent) => {
-      const parsedText = parseTextDescription(parent.shortDescription)
-      const ellipsedText = ellipseText(parsedText, 225)
-      return ellipsedText
+    shortDescription: (parent, args) => {
+      const parsed =
+        args.input?.type === MediaDescriptionContentType.Html ? parseHTMLDescription(parent.shortDescription)
+        : args.input?.type === MediaDescriptionContentType.Text ? parseTextDescription(parent.shortDescription)
+        : parseTextDescription(parent.shortDescription)
+      return parsed
     }
   }
 } satisfies Resolvers

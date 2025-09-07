@@ -2,6 +2,7 @@ import type { ExtractorServerContext } from '../extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
+import { ellipseText } from './utils'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -51,7 +52,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
     }],
     shortDescriptions: [{
       language: 'en',
-      shortDescription: data.synopsis
+      shortDescription: ellipseText(data.synopsis, 225)
     }],
     titles: [
       ... data.title_english ? [{ language: 'en', title: data.title_english, score: 1 }] : [],

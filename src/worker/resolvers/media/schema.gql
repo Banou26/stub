@@ -68,14 +68,27 @@ type MediaTitle {
   score: Float
 }
 
+input MediaShortDescriptionInput {
+  type: MediaDescriptionContentType = TEXT
+}
+
 type MediaShortDescription {
   language: String!
-  shortDescription: String!
+  shortDescription(input: MediaShortDescriptionInput): String!
+}
+
+enum MediaDescriptionContentType {
+  HTML
+  TEXT
+}
+
+input MediaDescriptionInput {
+  type: MediaDescriptionContentType = TEXT
 }
 
 type MediaDescription {
   language: String!
-  description: String!
+  description(input: MediaDescriptionInput): String!
 }
 
 type MediaTrailer {
