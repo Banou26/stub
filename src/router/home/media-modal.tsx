@@ -151,10 +151,6 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
   const shortDescription = useMemo(() => media?.shortDescriptions?.at(0)?.shortDescription, [media])
   const trailer = useMemo(() => media?.trailers?.at(0), [media])
 
-  useEffect(() => {
-    console.log('media', media)
-  }, [media])
-
   const [open, onOpenChange] = useState(Boolean(params))
   const { refs, context } = useFloating({
     open,
