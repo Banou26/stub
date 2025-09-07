@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
-import { fromUri } from '../../utils/uri'
+import { fromUri, isUri } from '../../utils/uri'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -184,6 +184,7 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
   const malHandle =
     media.idMal
       ? {
+        _id: crypto.randomUUID(),
         uri: `mal:${media.idMal}`,
         origin: 'mal',
         language: 'en',
@@ -205,6 +206,7 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
       : undefined
 
   return {
+    _id: crypto.randomUUID(),
     uri: `${origin}:${media.id}`,
     origin,
     id: media.id.toString(),
@@ -270,7 +272,7 @@ export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
-        if (!uri) return
+        if (!uri || !isUri(uri)) return
         const uriValues = fromUri(uri)
         if (uriValues.origin !== origin) return
         yield {

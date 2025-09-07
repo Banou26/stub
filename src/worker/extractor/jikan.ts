@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus } from '../../generated/graphql'
-import { fromUri } from '../../utils/uri'
+import { fromUri, isUri } from '../../utils/uri'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -25,6 +25,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
   const anizipHandle =
     aniDBSource
       ? {
+        _id: crypto.randomUUID(),
         uri: `anizip:${aniDBId}`,
         origin: 'anizip',
         language: 'en',
@@ -34,6 +35,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
       : undefined
 
   return {
+    _id: crypto.randomUUID(),
     uri: `${origin}:${data.mal_id}`,
     origin,
     id: data.mal_id.toString(),
@@ -128,7 +130,7 @@ export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
-        if (!uri) return
+        if (!uri || !isUri(uri)) return
         const uriValues = fromUri(uri)
         if (uriValues.origin !== origin) return
         yield {
