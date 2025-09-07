@@ -36,13 +36,13 @@ export type DrizzleSQLiteTransaction = SQLiteTransaction<
   ExtractTablesWithRelations<typeof import("c:/dev/stub/src/worker/drizzle/schema")>
 >
 
-function removeDuplicatesByUri<T extends { uri: string }>(array: T[]): T[] {
+function removeDuplicatesByField<T extends Record<string, any>>(field: keyof T, array: T[]): T[] {
   const seen = new Set<string | number>()
   const result: T[] = []
 
   for (const item of array) {
-    if (!seen.has(item.uri)) {
-      seen.add(item.uri)
+    if (!seen.has(item[field])) {
+      seen.add(item[field])
       result.push(item)
     }
   }
@@ -204,7 +204,7 @@ const mergeJsonArrays = (column: string) => sql`
 `
 
 export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: GraphqlMedia[]) => {
-  const medias = removeDuplicatesByUri(wrappedMedias.flatMap(recursivelyUnwrapMediaHandles))
+  const medias = removeDuplicatesByField('uri', wrappedMedias.flatMap(recursivelyUnwrapMediaHandles))
   const values = medias.map(normalizeDrizzleMedia)
 
   if (values.length) {
@@ -251,7 +251,8 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
   }
 
   // Handle episodes for all media
-  const allEpisodes = removeDuplicatesByUri(
+  const allEpisodes = removeDuplicatesByField(
+    'uri',
     medias.flatMap(media => media.episodes || [])
   )
 
@@ -305,7 +306,7 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
 
   const mappedMedia = results.map(normalizeGraphqlMedia)
 
-  return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
+  return removeDuplicatesByField('uri', mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
 
@@ -479,15 +480,13 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri })}`,
     aggregated: true,
     score: Math.max(...medias.map(m => m.score ?? 0)),
-    handles: removeDuplicatesByUri(sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
+    handles: removeDuplicatesByField('uri', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 
   return {
     ...aggregatedMedia,
-    titles:
-      aggregatedMedia
-        ?.titles
-        ?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    titles: removeDuplicatesByField('title', aggregatedMedia?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
+    trailers: removeDuplicatesByField('uri', aggregatedMedia?.trailers ?? [])
   }
 }
 
