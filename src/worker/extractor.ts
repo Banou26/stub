@@ -17,7 +17,6 @@ import {
   findAllMedia,
   aggregateMediaHandles,
   cleanupDuplicateAggregatedMedia,
-  findAggregatedMedia
 } from './drizzle/utils'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 

@@ -11,7 +11,7 @@ import type {
 } from './schema'
 import type { Database } from '.'
 
-import { sql, eq, inArray, asc, desc } from 'drizzle-orm'
+import { sql, eq, inArray, asc, desc, and } from 'drizzle-orm'
 
 import {
   mediaTable,
@@ -308,7 +308,41 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
   return removeDuplicatesByUri(mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
+
 export const findAggregatedMedia = async(
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  { uri }: { uri: string }
+) =>
+  tx.query.mediaTable.findFirst({
+    where: and(
+      eq(mediaTable.origin, 'ag'),
+      uri ? inArray(mediaTable.uri, [uri]) : undefined
+    ),
+    with: {
+      episodes: {
+        with: {
+          episode: true
+        }
+      },
+      handles: {
+        with: {
+          handle: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+  .then(media => media && normalizeGraphqlMedia(media))
+
+
+export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { sorts }: { sorts?: MediaSort[] } = {}
 ) =>

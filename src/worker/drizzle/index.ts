@@ -11,7 +11,9 @@ const database = driver.getDrizzleDB<typeof schema>({ schema })
 try {
   await database.run(SQLInit)
   await generateTableNotifyTriggers(database, 'media', 'uri')
+  await generateTableNotifyTriggers(database, 'media', '_id')
   await generateTableNotifyTriggers(database, 'episode', 'uri')
+  await generateTableNotifyTriggers(database, 'episode', '_id')
 } catch (err) {
   console.error(err)
   throw err

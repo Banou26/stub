@@ -14,6 +14,7 @@ export type PlaybackSourceType = typeof playbackSourceTypeEnum[number]
 export const notifyTable = sqliteTable('notify', {
   id: integer('id').primaryKey().unique().notNull(),
   tableName: text('tableName').notNull(),
+  columnId: text('columnId').notNull(),
   rowId: text('rowId').notNull(),
   operation: text('operation').notNull(),
   timestamp: integer('timestamp', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull()

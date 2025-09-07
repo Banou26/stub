@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
+import { fromUri } from '../../utils/uri'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -150,6 +151,10 @@ const getPreviousMediaSeason = (date = new Date()) =>
   mediaSeasons[mediaSeasons.indexOf(getMediaSeason(date)) - 1]
   ?? MediaSeason.Fall
 
+const fetchMedia = ({ id, idMal }: { id?: number, idMal?: number }, context: ExtractorServerContext) =>
+  fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
+    .then(({ data }) => data.Media ? normalizeMedia(data.Media, context) : undefined)
+
 const fetchMediaSeason = (
   { season, year, page = 1 }:
   { season: MediaSeason, year: number, page?: number },
@@ -263,23 +268,16 @@ export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
 
 export const resolvers: Resolvers = {
   Subscription: {
-    // media: {
-    //   subscribe: async function*(_, { input: { uri } }, ctx) {
-    //     if (!uri) return
-    //     const uriValues =
-    //       isScannarrUri(uri)
-    //         ? (
-    //           fromScannarrUri(uri)
-    //             ?.handleUrisValues
-    //             .find(({ origin: _origin }) => _origin === origin)
-    //         )
-    //         : fromUri(uri)
-    //     if (!uriValues || uriValues.origin !== origin) return
-    //     yield {
-    //       media: await fetchMedia({ id: Number(uriValues.id) }, ctx)
-    //     }
-    //   }
-    // },
+    media: {
+      subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
+        if (!uri) return
+        const uriValues = fromUri(uri)
+        if (uriValues.origin !== origin) return
+        yield {
+          media: await fetchMedia({ id: Number(uriValues.id) }, ctx)
+        }
+      }
+    },
     mediaPage: {
       subscribe: async function*(_, { input: { search, status } }, ctx: ExtractorServerContext) {
         if (status === 'RELEASING') {

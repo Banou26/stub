@@ -4,15 +4,16 @@ import { Database } from '.'
 import { ChangeNotification, notifyTable } from './schema'
 import { TableName } from './utils'
 
-export const generateTableNotifyTrigger = (database: Database, tableName: TableName, columnId: string, operation: 'INSERT' | 'UPDATE' | 'DELETE') =>
+export const generateTableNotifyTrigger = (database: Database,tableName: TableName, columnId: string, operation: 'INSERT' | 'UPDATE' | 'DELETE') =>
   database.run(sql.raw(`
     CREATE TRIGGER IF NOT EXISTS ${tableName}${operation.slice(0, 1).toUpperCase()}${operation.slice(1).toLowerCase()}Notify
     AFTER ${operation} ON ${tableName}
     FOR EACH ROW
     BEGIN
-        INSERT INTO notify (tableName, rowId, operation)
+        INSERT INTO notify (tableName, columnId, rowId, operation)
         VALUES (
             '${tableName}',
+            '${columnId}',
             ${operation === 'DELETE' ? 'OLD' : 'NEW'}.${columnId},
             '${operation}'
         );
@@ -28,15 +29,17 @@ export const generateTableNotifyTriggers = async (database: Database, tableName:
 type ChangeNotificationListener = {
   func: (notifications: ChangeNotification[]) => void
   table?: TableName
+  columnId?: string
   ids?: string[]
 }
 
 const notificationListeners: ChangeNotificationListener[] = []
 
-export const listen = (func: (notifications: ChangeNotification[]) => void, options?: { table?: TableName, ids?: string[] }) => {
+export const listen = (func: (notifications: ChangeNotification[]) => void, options?: { table?: TableName, columnId?: string, ids?: string[] }) => {
   const listenerObject = {
     func,
     table: options?.table,
+    columnId: options?.columnId,
     ids: options?.ids
   }
 
@@ -49,7 +52,7 @@ export const listen = (func: (notifications: ChangeNotification[]) => void, opti
   }
 }
 
-export const listenIterator = (options?: { abort?: AbortSignal, table?: TableName, ids?: string[] }) => {
+export const listenIterator = (options?: { abort?: AbortSignal, table?: TableName, columnId?: string, ids?: string[] }) => {
   let resolve: ((result: { value: ChangeNotification[] | undefined, done: boolean }) => void) | null = null
   let promise: Promise<{ value: ChangeNotification[] | undefined, done: boolean }> | null = null
 
@@ -104,6 +107,9 @@ export const startNotificationRootListener = (database: Database) => {
         (
           !notificationListener.table
           || notificationListener.table === notification.tableName
+        ) && (
+          !notificationListener.columnId
+          || notificationListener.columnId === notification.columnId
         ) && (
           !notificationListener.ids?.length
           || notificationListener.ids?.includes(notification.rowId)

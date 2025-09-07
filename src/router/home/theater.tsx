@@ -148,6 +148,7 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     },
     pause: !selectedMedia
   })
+  console.log('data', selectedMedia?.uri, data)
   const theaterMedia = data?.media ?? selectedMedia
 
   // todo: instead of just selecting 0, should make a query that selects the wanted language and sort by score

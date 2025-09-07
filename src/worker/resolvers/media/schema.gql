@@ -109,13 +109,8 @@ type MediaBanner {
   color: String
 }
 
-
 input MediaInput {
   uri: ID
-  origin: ID
-  language: String
-  id: ID
-  url: String
 }
 
 enum MediaSort {
@@ -124,7 +119,7 @@ enum MediaSort {
 }
 
 input MediaPageInput {
-"""Filter by media IDs"""
+  """Filter by media IDs"""
   nodes: [MediaInput!]
   """Filter by search terms"""
   search: String

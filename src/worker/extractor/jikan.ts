@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus } from '../../generated/graphql'
+import { fromUri } from '../../utils/uri'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -125,23 +126,16 @@ export const resolvers: Resolvers = {
   Query: {},
   Mutation: {},
   Subscription: {
-    // media: {
-    //   subscribe: async function*(_, { input: { uri } }, ctx) {
-    //     if (!uri) return
-    //     const uriValues =
-    //       isScannarrUri(uri)
-    //         ? (
-    //           fromScannarrUri(uri)
-    //             ?.handleUrisValues
-    //             .find(({ origin: _origin }) => _origin === origin)
-    //         )
-    //         : fromUri(uri)
-    //     if (!uriValues || uriValues.origin !== origin) return
-    //     yield {
-    //       media: await fetchMedia({ id: Number(uriValues.id) }, ctx)
-    //     }
-    //   }
-    // },
+    media: {
+      subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
+        if (!uri) return
+        const uriValues = fromUri(uri)
+        if (uriValues.origin !== origin) return
+        yield {
+          media: await fetchMedia({ id: Number(uriValues.id) }, ctx)
+        }
+      }
+    },
     mediaPage: {
       subscribe: async function*(_, { input: { search, status } }, ctx: ExtractorServerContext) {
         if (status === 'RELEASING') {
