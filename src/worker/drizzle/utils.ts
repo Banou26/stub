@@ -397,12 +397,14 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
       }))
     ?? [],
   releaseDate: episode.releaseDate?.toUTCString(),
-  relativeNumber: episode.relativeNumber ?? null,
-  absoluteNumber: episode.absoluteNumber ?? null,
-});
+  seasonNumber: episode.seasonNumber ?? null,
+  episodeNumber: episode.episodeNumber ?? null,
+  absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+})
 
 const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   ...episode,
+  aggregated: episode.aggregated ?? null,
   url: episode.url ?? null,
   titles: episode.titles || [],
   descriptions: episode.descriptions || [],
@@ -419,9 +421,10 @@ const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
       }))
     ?? [],
   releaseDate: episode.releaseDate ? new Date(episode.releaseDate) : null,
-  relativeNumber: episode.relativeNumber ?? null,
-  absoluteNumber: episode.absoluteNumber ?? null,
-});
+  seasonNumber: episode.seasonNumber ?? null,
+  episodeNumber: episode.episodeNumber ?? null,
+  absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+})
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: GraphqlEpisode[]) => {
   const values = episodes.map(normalizeDrizzleEpisode)
@@ -441,8 +444,9 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
             shortDescriptions: sql`excluded.shortDescriptions`,
             thumbnails: sql`excluded.thumbnails`,
             releaseDate: sql`excluded.releaseDate`,
-            relativeNumber: sql`excluded.relativeNumber`,
-            absoluteNumber: sql`excluded.absoluteNumber`
+            seasonNumber: sql`excluded.seasonNumber`,
+            episodeNumber: sql`excluded.episodeNumber`,
+            absoluteEpisodeNumber: sql`excluded.absoluteEpisodeNumber`
           }
         })
   }

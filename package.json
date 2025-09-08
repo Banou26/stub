@@ -42,12 +42,12 @@
     "build": "npm run gql-generate && vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
-    "test": "npm run build-test && npx playwright test",
-    "test-watch": "set PWTEST_WATCH=1 & npx playwright test",
-    "test-watch-headful": "npx playwright test --ui",
+    "test": "npm run build-test && playwright test",
+    "test-watch": "set PWTEST_WATCH=1 & playwright test",
+    "test-watch-headful": "playwright test --ui",
     "gql-generate": "graphql-codegen --config codegen.ts",
     "gql-generate-watch": "graphql-codegen --config codegen.ts --watch",
-    "drizzle-generate": "npx drizzle-kit generate --name=init"
+    "drizzle-generate": "shx rm -rf ./drizzle && drizzle-kit generate --name=init"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

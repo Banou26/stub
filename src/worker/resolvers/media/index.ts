@@ -63,11 +63,6 @@ export const resolvers = {
     }
   },
   Media: {
-    uri: (parent) => parent.uri,
-    origin: (parent) => parent.origin,
-    id: (parent) => parent.id,
-    url: (parent) => parent.url,
-    _id: (parent) => parent._id,
     descriptions: (parent, args) => {
       const descriptions =
         parent

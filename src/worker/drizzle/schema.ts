@@ -57,14 +57,15 @@ export const episodeTable = sqliteTable('episode', {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
-  aggregated: integer('aggregated', { mode: 'boolean' }).notNull(),
+  aggregated: integer('aggregated', { mode: 'boolean' }),
   titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string }[]>(),
   descriptions: text('descriptions', { mode: 'json' }).$type<{ language: string, description: string }[]>(),
   shortDescriptions: text('shortDescriptions', { mode: 'json' }).$type<{ language: string, shortDescription: string }[]>(),
   thumbnails: text('thumbnails', { mode: 'json' }).$type<{ language?: string, url: string, height?: number, width?: number, color?: string }[]>(),
   releaseDate: integer('releaseDate', { mode: 'timestamp' }),
-  relativeNumber: integer('relativeNumber'),
-  absoluteNumber: integer('absoluteNumber'),
+  seasonNumber: integer('seasonNumber'),
+  episodeNumber: integer('episodeNumber'),
+  absoluteEpisodeNumber: integer('absoluteEpisodeNumber')
 }, (table) => ({
   uriIdx: index('episode_uri_idx').on(table.uri),
   originIdIdx: index('episode_origin_id_idx').on(table.origin, table.id),

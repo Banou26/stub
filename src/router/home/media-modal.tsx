@@ -149,6 +149,9 @@ const GET_MEDIA_MODAL = gql(`
       }
       handles {
         uri
+        episodes {
+          uri
+        }
       }
       popularity
       episodes {
@@ -175,6 +178,7 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
     },
     pause: !foundMedia
   })
+  console.log('data', data?.media)
   const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
