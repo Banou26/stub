@@ -6,7 +6,7 @@ import {
   FloatingFocusManager, FloatingOverlay, FloatingPortal,
   useClick, useFloating, useInteractions
 } from '@floating-ui/react'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
@@ -151,7 +151,7 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
   })
   const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
-  const description = useMemo(() => media?.descriptions?.at(0)?.description, [media])
+  const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
   const trailer = useMemo(() => media?.trailers?.at(0), [media])
 
   const [open, onOpenChange] = useState(Boolean(params))
