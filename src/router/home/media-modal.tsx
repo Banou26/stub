@@ -25,7 +25,6 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   width: 120rem;
-  height: 200rem;
   background-color: rgb(35, 35, 35);
   border-radius: 1rem;
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -34,12 +33,10 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 
   .trailer {
     position: relative;
-    width: 120rem;
     overflow: hidden;
     height: 67.5rem;
     .player {
       border-radius: 1rem 1rem 0 0;
-      width: 120rem;
       overflow: hidden;
       height: 67.5rem;
       user-select: none;
@@ -81,9 +78,9 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     }
   }
 
-  .content {
+  & > .content {
     padding: 2.5rem;
-    .title {
+    & > .title {
       font-size: 3rem;
       font-weight: 600;
     }
@@ -91,6 +88,31 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     .description {
       white-space: pre-wrap;
       margin-top: 2.5rem;
+    }
+
+    .episodes {
+      margin-top: 4rem;
+      border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
+      .episode {
+        display: grid;
+        grid-template-columns: 7rem auto 2.5rem 12.5rem;
+        height: 7rem;
+        border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
+        color: rgb(255, 255, 255);
+        text-decoration: none;
+        overflow: hidden;
+        height: 10rem;
+        cursor: pointer;
+
+        .content {
+          display: flex;
+          align-items: center;
+          .title {
+            font-size: 2rem;
+            font-weight: bold;
+          }
+        }
+      }
     }
   }
 }
@@ -129,6 +151,10 @@ const GET_MEDIA_MODAL = gql(`
         uri
       }
       popularity
+      episodes {
+        uri
+      }
+      episodeCount
     }
   }
 `)
@@ -212,6 +238,23 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
               <div className="title">{title}</div>
               {/* todo: implement an expandable description */}
               <div className="description" dangerouslySetInnerHTML={{ __html: description ?? '' }}></div>
+              <div className="episodes">
+                {
+                  new Array(media && 'episodeCount' in media && media.episodeCount ? media.episodeCount : 0)
+                    .fill(undefined)
+                    .map((media, index) =>
+                      <div className="episode">
+                        <div className="number"></div>
+                        {
+                          <div className="content">
+                            <div className="title">Episode {index + 1}</div>
+                          </div>
+                        }
+                        <div className="date"></div>
+                      </div>
+                    )
+                }
+              </div>
             </div>
           </div>
         </FloatingFocusManager>
