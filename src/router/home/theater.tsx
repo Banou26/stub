@@ -97,7 +97,7 @@ height: 70vh;
 `
 
 const GET_THEATHER_MEDIA = gql(`
-  subscription GetTheatherMedia($input: MediaInput!) {
+  subscription GetTheatherMedia($input: MediaInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
     media(input: $input) {
       _id
       uri
@@ -106,11 +106,7 @@ const GET_THEATHER_MEDIA = gql(`
         title
         score
       }
-      descriptions {
-        language
-        description
-      }
-      shortDescriptions {
+      shortDescriptions(input: $shortDescriptionInput) {
         language
         shortDescription
       }
@@ -151,6 +147,9 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     variables: {
       input: {
         uri: selectedMedia?.uri
+      },
+      shortDescriptionInput: {
+        count: 1
       }
     },
     pause: !selectedMedia

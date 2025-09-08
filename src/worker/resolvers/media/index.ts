@@ -68,23 +68,43 @@ export const resolvers = {
     id: (parent) => parent.id,
     url: (parent) => parent.url,
     _id: (parent) => parent._id,
-  },
-  MediaDescription: {
-    description: (parent, args) => {
-      const parsed =
-        args.input?.type === MediaDescriptionContentType.Html ? parseHTMLDescription(parent.description)
-        : args.input?.type === MediaDescriptionContentType.Text ? parseTextDescription(parent.description)
-        : parseTextDescription(parent.description)
-      return parsed
+    descriptions: (parent, args) => {
+      const descriptions =
+        parent
+          .descriptions
+          ?.slice(0, args.input?.count ? args.input.count : undefined)
+          .map(mediaDescription => {
+            const parsed =
+              args.input?.type === MediaDescriptionContentType.Html ? parseHTMLDescription(mediaDescription.description)
+              : args.input?.type === MediaDescriptionContentType.Text ? parseTextDescription(mediaDescription.description)
+              : parseTextDescription(mediaDescription.description)
+
+            return {
+              ...mediaDescription,
+              shortDescription: parsed
+            }
+          })
+
+      return descriptions
     },
-  },
-  MediaShortDescription: {
-    shortDescription: (parent, args) => {
-      const parsed =
-        args.input?.type === MediaDescriptionContentType.Html ? parseHTMLDescription(parent.shortDescription)
-        : args.input?.type === MediaDescriptionContentType.Text ? parseTextDescription(parent.shortDescription)
-        : parseTextDescription(parent.shortDescription)
-      return parsed
-    }
+    shortDescriptions: (parent, args) => {
+      const shortDescriptions =
+        parent
+          .shortDescriptions
+          ?.slice(0, args.input?.count ? args.input.count : undefined)
+          ?.map(mediaShortDescription => {
+            const parsed =
+              args.input?.type === MediaDescriptionContentType.Html ? parseHTMLDescription(mediaShortDescription.shortDescription)
+              : args.input?.type === MediaDescriptionContentType.Text ? parseTextDescription(mediaShortDescription.shortDescription)
+              : parseTextDescription(mediaShortDescription.shortDescription)
+
+            return {
+              ...mediaShortDescription,
+              shortDescription: parsed
+            }
+          })
+
+      return shortDescriptions
+    },
   }
 } satisfies Resolvers

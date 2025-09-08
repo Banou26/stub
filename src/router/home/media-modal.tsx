@@ -89,6 +89,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .description {
+      white-space: pre-wrap;
       margin-top: 2.5rem;
     }
   }
@@ -105,9 +106,9 @@ const GET_MEDIA_MODAL = gql(`
         title
         score
       }
-      descriptions {
+      descriptions(input: $descriptionInput) {
         language
-        description(input: $descriptionInput)
+        description
       }
       covers {
         language
@@ -124,6 +125,9 @@ const GET_MEDIA_MODAL = gql(`
         url
         thumbnail
       }
+      handles {
+        uri
+      }
       popularity
     }
   }
@@ -139,7 +143,8 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
         uri: foundMedia?.uri
       },
       descriptionInput: {
-        type: MediaDescriptionContentType.Html
+        type: MediaDescriptionContentType.Html,
+        count: 1
       }
     },
     pause: !foundMedia

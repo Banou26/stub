@@ -10,7 +10,7 @@ import { getRouterRoutePath, Route } from '../path'
 import MediaModal from './media-modal'
 
 const GET_RELEASING_MEDIA_PAGE = gql(`
-  subscription GetReleasingMediaPage($input: MediaPageInput!) {
+  subscription GetReleasingMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
     mediaPage(input: $input) {
       nodes {
         _id
@@ -21,11 +21,7 @@ const GET_RELEASING_MEDIA_PAGE = gql(`
           title
           score
         }
-        descriptions {
-          language
-          description
-        }
-        shortDescriptions {
+        shortDescriptions(input: $shortDescriptionInput) {
           language
           shortDescription
         }
@@ -62,6 +58,9 @@ const Index = () => {
       input: {
         status: MediaStatus.Releasing,
         sorts: [MediaSort.Popularity]
+      },
+      shortDescriptionInput: {
+        count: 1
       }
     }
   })

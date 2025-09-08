@@ -47,8 +47,8 @@ type Media {
   titles: [MediaTitle!]
   type: MediaType
   status: MediaStatus
-  shortDescriptions: [MediaShortDescription!]
-  descriptions: [MediaDescription!]
+  shortDescriptions(input: MediaShortDescriptionInput): [MediaShortDescription!]
+  descriptions(input: MediaDescriptionInput): [MediaDescription!]
   trailers: [MediaTrailer!]
   covers: [MediaCover!]
   banners: [MediaBanner!]
@@ -70,11 +70,12 @@ type MediaTitle {
 
 input MediaShortDescriptionInput {
   type: MediaDescriptionContentType = TEXT
+  count: Int
 }
 
 type MediaShortDescription {
   language: String!
-  shortDescription(input: MediaShortDescriptionInput): String!
+  shortDescription: String!
 }
 
 enum MediaDescriptionContentType {
@@ -84,11 +85,12 @@ enum MediaDescriptionContentType {
 
 input MediaDescriptionInput {
   type: MediaDescriptionContentType = TEXT
+  count: Int
 }
 
 type MediaDescription {
   language: String!
-  description(input: MediaDescriptionInput): String!
+  description: String!
 }
 
 type MediaTrailer {
