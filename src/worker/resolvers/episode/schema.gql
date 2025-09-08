@@ -8,7 +8,7 @@ type Episode {
   id: String!
   """An url to the media resource"""
   url: String
-  aggregated: Boolean!
+  aggregated: Boolean
   titles: [EpisodeTitle!]
   shortDescriptions: [EpisodeShortDescription!]
   descriptions: [EpisodeDescription!]
@@ -17,6 +17,9 @@ type Episode {
   absoluteNumber: Int
   thumbnails: [EpisodeThumbnail!]
   playbackSources: [PlaybackSource!]
+  seasonNumber: Int
+  episodeNumber: Int
+  absoluteEpisodeNumber: Int
 }
 
 type EpisodeTitle {

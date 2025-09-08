@@ -13,7 +13,7 @@ export const official = true
 export const metadataOnly = true
 export const supportedUris = ['mal']
 
-const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'external'>>, context: ExtractorServerContext) => {
+const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {
   const aniDBSource = data.external?.find(site => site.name === 'AniDB')
   const aniDBId =
     aniDBSource
@@ -23,13 +23,23 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
       )
       : undefined
 
+  const anidbHandle =
+    aniDBId
+      ? {
+        _id: crypto.randomUUID(),
+        uri: `anidb:${aniDBId}`,
+        origin: 'anidb',
+        id: aniDBId,
+        url: aniDBSource?.url
+      } as Media
+      : undefined
+
   const anizipHandle =
     aniDBSource
       ? {
         _id: crypto.randomUUID(),
         uri: `anizip:${aniDBId}`,
         origin: 'anizip',
-        language: 'en',
         id: aniDBId,
         url: `https://api.ani.zip/mappings?anidb_id=${aniDBId}`
       } as Media
@@ -42,6 +52,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
     id: data.mal_id.toString(),
     url: data.url,
     handles: [
+      ...anidbHandle ? [anidbHandle] : [],
       ...anizipHandle ? [anizipHandle] : []
     ],
     score: 1,
@@ -63,6 +74,7 @@ const normalizeMedia = async (data: SearchAnimeData & Partial<Pick<AnimeData, 'e
       language: 'en',
       url: data.images.webp.large_image_url
     }],
+    episodeCount: data.episodes,
     popularity: data.members,
     status:
       data.status === 'Not yet aired' ? MediaStatus.NotYetReleased

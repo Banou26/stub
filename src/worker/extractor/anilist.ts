@@ -188,7 +188,6 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
         _id: crypto.randomUUID(),
         uri: `mal:${media.idMal}`,
         origin: 'mal',
-        language: 'en',
         id: media.idMal.toString(),
         url: `https://myanimelist.net/anime/${media.idMal}`
       } as GQLMedia
@@ -241,6 +240,7 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
       // ...media.coverImage?.large ? [{ language: 'jp', url: media.coverImage.large }] : [],
       ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge }] : []
     ],
+    episodeCount: media.episodes,
     popularity: media.popularity,
     status:
       media.status === MediaStatus.NotYetReleased ? GQLMediaStatus.NotYetReleased
