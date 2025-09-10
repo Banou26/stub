@@ -382,6 +382,7 @@ export const findAggregatedMedias = async(
 
 const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
   ...episode,
+  _id: episode._id,
   url: episode.url ?? null,
   titles: episode.titles || [],
   descriptions: episode.descriptions || [],
@@ -404,6 +405,7 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
 
 const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   ...episode,
+  _id: episode._id,
   aggregated: episode.aggregated ?? null,
   url: episode.url ?? null,
   titles: episode.titles || [],
@@ -435,6 +437,7 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         .onConflictDoUpdate({
           target: episodeTable.uri,
           set: {
+            _id: sql`COALESCE(${episodeTable._id}, excluded._id)`,
             origin: sql`excluded.origin`,
             id: sql`excluded.id`,
             url: sql`excluded.url`,

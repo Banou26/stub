@@ -46,13 +46,17 @@ export const mediaTable = sqliteTable('media', {
   episodeCount: integer('episodeCount'),
 }, (table) => ({
   uriIdx: index('media_uri_idx').on(table.uri),
+  originIdx: index('media_origin_idx').on(table.origin),
   originIdIdx: index('media_origin_id_idx').on(table.origin, table.id),
   originIdUnique: uniqueIndex('media_origin_id_unique').on(table.origin, table.id),
+  aggregatedIdx: index('media_aggregated_idx').on(table.aggregated),
   _idIdx: index('media_stable_id_idx').on(table._id),
+  // _idUnique: uniqueIndex('media_stable_id_unique').on(table._id),
 }))
 
 // Episode table with JSON fields for content
 export const episodeTable = sqliteTable('episode', {
+  _id: text('_id').notNull().default(sql`(lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6))))`),
   uri: text('uri').primaryKey().unique().notNull(),
   origin: text('origin').notNull(),
   id: text('id').notNull(),
@@ -68,8 +72,12 @@ export const episodeTable = sqliteTable('episode', {
   absoluteEpisodeNumber: integer('absoluteEpisodeNumber')
 }, (table) => ({
   uriIdx: index('episode_uri_idx').on(table.uri),
+  originIdx: index('episode_origin_idx').on(table.origin),
   originIdIdx: index('episode_origin_id_idx').on(table.origin, table.id),
+  aggregatedIdx: index('episode_aggregated_idx').on(table.aggregated),
   originIdUnique: uniqueIndex('episode_origin_id_unique').on(table.origin, table.id),
+  _idIdx: index('episode_stable_id_idx').on(table._id),
+  // _idUnique: uniqueIndex('episode_stable_id_unique').on(table._id),
 }))
 
 // PlaybackSource table
