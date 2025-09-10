@@ -1,7 +1,7 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
-import { createSchema, createYoga, useExecutionCancellation } from 'graphql-yoga'
+import { createSchema, createYoga, useErrorHandler, useExecutionCancellation } from 'graphql-yoga'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
@@ -23,6 +23,11 @@ export const yoga = createYoga<Omit<ServerContext, keyof YogaInitialContext>, Us
   schema,
   maskedErrors: false,
   plugins: [
+    useErrorHandler(({ errors, context }) => {
+      for (const error of errors) {
+        console.error(new Error(`GQLError occurred on request: ${context.operationName}`, { cause: error }))
+      }
+    }),
     useDeferStream(),
     useExecutionCancellation()
   ]

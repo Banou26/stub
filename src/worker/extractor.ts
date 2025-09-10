@@ -3,7 +3,7 @@ import type { YogaInitialContext } from 'graphql-yoga'
 import type { Media, Resolvers } from '../generated/schema/types.generated'
 
 import { useOnResolve } from '@envelop/on-resolve'
-import { createSchema, createYoga } from 'graphql-yoga'
+import { createSchema, createYoga, useErrorHandler } from 'graphql-yoga'
 import { Client, fetchExchange } from 'urql'
 import { getNamedType } from 'graphql'
 
@@ -59,6 +59,11 @@ export const extractors =
             ) as Resolvers
         }),
         plugins: [
+          useErrorHandler(({ errors, context }) => {
+            for (const error of errors) {
+              console.error(new Error(`GQLError occurred on request: ${context.operationName}`, { cause: error }))
+            }
+          }),
           {
             onPluginInit: ({ addPlugin }) => {
               addPlugin(useOnResolve(({ info }) => {
@@ -90,34 +95,34 @@ export const extractors =
                     })
                   }
                 }
-                if (getNamedType(info.returnType).name === 'Episode') {
-                  return async ({ result: _result }) => {
-                    const result = Array.isArray(_result) ? _result : [_result] as Media[]
-                    await database.transaction(async (tx) => {
-                      await insertManyMedia(tx, result)
-                      const allMedias = await findAllMedia(tx)
-                      const existingAggregated = allMedias.filter(media => media.aggregated)
+                // if (getNamedType(info.returnType).name === 'Episode') {
+                //   return async ({ result: _result }) => {
+                //     const result = Array.isArray(_result) ? _result : [_result] as Media[]
+                //     await database.transaction(async (tx) => {
+                //       await insertManyMedia(tx, result)
+                //       const allMedias = await findAllMedia(tx)
+                //       const existingAggregated = allMedias.filter(media => media.aggregated)
 
-                      const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-                      const aggregatedMedia = groups.map(([_, __, urisString]) => {
-                        const uris = urisString.split(',').map(uri => uri.trim())
-                        const medias =
-                          uris
-                            .map(uri => allMedias.find(r => r?.uri === uri))
-                            .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
+                //       const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
+                //       const aggregatedMedia = groups.map(([_, __, urisString]) => {
+                //         const uris = urisString.split(',').map(uri => uri.trim())
+                //         const medias =
+                //           uris
+                //             .map(uri => allMedias.find(r => r?.uri === uri))
+                //             .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
 
-                        const existingMatch = existingAggregated.find(existing => {
-                          const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-                          return existingUris.some(existingUri => uris.includes(existingUri))
-                        })
+                //         const existingMatch = existingAggregated.find(existing => {
+                //           const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
+                //           return existingUris.some(existingUri => uris.includes(existingUri))
+                //         })
 
-                        return aggregateMediaHandles(medias, existingMatch)
-                      })
-                      await insertManyMedia(tx, aggregatedMedia)
-                      await cleanupDuplicateAggregatedMedia(tx)
-                    })
-                  }
-                }
+                //         return aggregateMediaHandles(medias, existingMatch)
+                //       })
+                //       await insertManyMedia(tx, aggregatedMedia)
+                //       await cleanupDuplicateAggregatedMedia(tx)
+                //     })
+                //   }
+                // }
               }))
             }
           }
