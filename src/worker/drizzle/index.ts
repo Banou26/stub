@@ -6,6 +6,12 @@ import { generateTableNotifyTriggers, startNotificationRootListener } from './no
 
 const database = await makeDrizzle<typeof schema>({ schema })
 
+const _transaction = database.transaction.bind(database)
+database.transaction = async (...args) => {
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  return _transaction(...args)
+}
+
 try {
   await database.run(SQLInit)
   await generateTableNotifyTriggers(database, 'media', 'uri')
