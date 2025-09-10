@@ -15,6 +15,7 @@ import { AggregatedUri, matchAggregatedUris } from '../../utils/uri'
 import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import { VolumeControl } from '../../components/volume-control'
+import { getRoutePath, Route } from '../path'
 
 const style = css`
 padding: 5rem;
@@ -162,7 +163,7 @@ const GET_MEDIA_MODAL = gql(`
   }
 `)
 
-export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
+const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
   const [{ data }] = useSubscription({
@@ -200,6 +201,7 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
   const [playerVolume, setPlayerVolume] = useState(0.25)
 
   if (!open) return <Redirect to="/" />
+  if (media?.uri && params.uri !== media.uri) return <Redirect to={getRoutePath(Route.MEDIA, { uri: media.uri })} replace={true} />
 
   return (
     <FloatingPortal>
@@ -241,11 +243,7 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
             <div className="content">
               <div className="title">{title}</div>
               {/* todo: implement an expandable description */}
-              {
-                description && (
-                  <div className="description" dangerouslySetInnerHTML={{ __html: description }}></div>
-                )
-              }
+              { description ? <div className="description" dangerouslySetInnerHTML={{ __html: description }} /> : undefined}
               <div className="episodes">
                 {
                   new Array(media && 'episodeCount' in media && media.episodeCount ? media.episodeCount : 0)
@@ -270,3 +268,5 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
     </FloatingPortal>
   )
 }
+
+export default MediaModal
