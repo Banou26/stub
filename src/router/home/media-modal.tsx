@@ -241,7 +241,11 @@ export default ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription[
             <div className="content">
               <div className="title">{title}</div>
               {/* todo: implement an expandable description */}
-              <div className="description" dangerouslySetInnerHTML={{ __html: description ?? '' }}></div>
+              {
+                description && (
+                  <div className="description" dangerouslySetInnerHTML={{ __html: description }}></div>
+                )
+              }
               <div className="episodes">
                 {
                   new Array(media && 'episodeCount' in media && media.episodeCount ? media.episodeCount : 0)
