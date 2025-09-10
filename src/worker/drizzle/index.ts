@@ -1,12 +1,10 @@
 import * as schema from './schema'
-import { WaSQLiteDrizzleDriver } from './drizzle-adapter'
+import makeDrizzle from './drizzle-adapter'
 // @ts-expect-error
 import SQLInit from '../../../drizzle/0000_init.sql?raw'
 import { generateTableNotifyTriggers, startNotificationRootListener } from './notifications'
 
-const driver = new WaSQLiteDrizzleDriver()
-await driver.init()
-const database = driver.getDrizzleDB<typeof schema>({ schema })
+const database = await makeDrizzle<typeof schema>({ schema })
 
 try {
   await database.run(SQLInit)
