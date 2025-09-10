@@ -47,12 +47,7 @@ export const extractors =
                 Mutation: {
                 },
                 Subscription: {
-                  // media: { subscribe: async function*() {} },
-                  // mediaPage: { subscribe: async function*() {} },
-                  // episode: { subscribe: async function*() {} },
-                  // episodePage: { subscribe: async function*() {} },
-                  // playbackSource: { subscribe: async function*() {} },
-                  // playbackSourcePage: { subscribe: async function*() {} },
+                  mediaPage: { subscribe: async function* (_parent) { return [] } }
                 }
               } satisfies Resolvers,
               extractor.resolvers
