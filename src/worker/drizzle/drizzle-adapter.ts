@@ -17,27 +17,32 @@ export default async <TSchema extends Record<string, unknown> = Record<string, n
     async (sql, params: SQLiteCompatibleType[], method) => {
       const release = await mutex.acquire()
       try {
-        let currentIndex = 0
-        for await (const stmt of sqlite3.statements(database, sql)) {
-          const paramCount = sqlite3.bind_parameter_count(stmt)
-          sqlite3.bind_collection(stmt, params.slice(currentIndex, paramCount))
-          currentIndex = currentIndex + paramCount
+        if (method === 'run') {
+          for await (const stmt of sqlite3.statements(database, sql)) {
+            if (params.length > 0) {
+              sqlite3.bind_collection(stmt, params)
+            }
+            await sqlite3.step(stmt)
+          }
+          sqlite3.changes(database)
+          return { rows: [] }
+        } else {
           const rows = [] as SQLiteCompatibleType[][]
-          while (await sqlite3.step(stmt) === SQLite.SQLITE_ROW) {
-            const row = sqlite3.row(stmt)
-            rows.push(row)
+          for await (const stmt of sqlite3.statements(database, sql)) {
+            if (params.length > 0) {
+              sqlite3.bind_collection(stmt, params)
+            }
+            while (await sqlite3.step(stmt) === SQLite.SQLITE_ROW) {
+              const rowData = sqlite3.row(stmt)
+              rows.push(rowData)
+            }
           }
-          const changes = sqlite3.changes(database)
-          if (changes) {
-            // WARNING: we only supports single statement queries
-            return (
-              method === 'get'
-                ? { rows: rows[0] ?? [] }
-                : { rows }
-            )
-          }
+          return (
+            method === 'get'
+              ? { rows: rows[0] ?? [] }
+              : { rows }
+          )
         }
-        return { rows: [] }
       } catch (error) {
         console.error('wa-sqlite query error:', error)
         throw error
