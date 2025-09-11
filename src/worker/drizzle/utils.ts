@@ -11,7 +11,7 @@ import type {
 } from './schema'
 import type { Database } from '.'
 
-import { sql, eq, inArray, asc, desc, and } from 'drizzle-orm'
+import { sql, eq, inArray, asc, desc, and, like } from 'drizzle-orm'
 
 import {
   mediaTable,
@@ -287,7 +287,7 @@ export const findAggregatedMedia = async(
   tx.query.mediaTable.findFirst({
     where: and(
       eq(mediaTable.origin, 'ag'),
-      uri ? inArray(mediaTable.uri, [uri]) : undefined
+      uri ? eq(mediaTable.uri, uri) : undefined
     ),
     with: {
       episodes: {
@@ -442,14 +442,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
 
   const sortedMediaBasedOnQualityScore = medias.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
-  // Check for existing _id from any of the media being aggregated
-  // Prefer existing aggregated media's _id, then any member's _id
-  const existing_id =
-    existingAggregatedMedia?._id ||
-    medias.find(m => m._id)?._id
-
-  // Generate new _id only if none exists
-  const _id = existing_id || crypto.randomUUID()
+  const _id = existingAggregatedMedia?._id || crypto.randomUUID()
 
   const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
@@ -459,8 +452,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
     covers: [...acc.covers ?? [], ...media.covers ?? []],
     banners: [...acc.banners ?? [], ...media.banners ?? []],
-    trailers: [...acc.trailers ?? [], ...media.trailers ?? []],
-    episodes: [...acc.episodes ?? [], ...media.episodes ?? []]
+    trailers: [...acc.trailers ?? [], ...media.trailers ?? []]
   }), {
     _id,
     uri,
@@ -472,12 +464,59 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     handles: removeDuplicatesByField('uri', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
 
+
+  if (aggregatedMedia?.episodes?.length) {
+    console.log('-----------------', aggregatedMedia)
+  }
+
   return {
     ...aggregatedMedia,
     titles: removeDuplicatesByField('title', aggregatedMedia?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
     trailers: removeDuplicatesByField('uri', aggregatedMedia?.trailers ?? [])
   }
 }
+
+
+export const aggregateEpisodeHandles = (episodes: GraphqlMedia[], existingAggregatedEpisode?: GraphqlMedia) => {
+  const id = `(${episodes.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
+  const uri = `ag:${id}`
+
+  const sortedMediaBasedOnQualityScore = episodes.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+
+  const _id = existingAggregatedEpisode?._id || crypto.randomUUID()
+
+  const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
+    ...media,
+    ...acc,
+    titles: [...acc.titles ?? [], ...media.titles ?? []],
+    descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
+    shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
+    covers: [...acc.covers ?? [], ...media.covers ?? []],
+    banners: [...acc.banners ?? [], ...media.banners ?? []],
+    trailers: [...acc.trailers ?? [], ...media.trailers ?? []]
+  }), {
+    _id,
+    uri,
+    id,
+    origin: 'ag',
+    url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri })}`,
+    aggregated: true,
+    score: Math.max(...episodes.map(m => m.score ?? 0)),
+    handles: removeDuplicatesByField('uri', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
+  } as GraphqlMedia)
+
+
+  if (aggregatedMedia?.episodes?.length) {
+    console.log('-----------------', aggregatedMedia)
+  }
+
+  return {
+    ...aggregatedMedia,
+    titles: removeDuplicatesByField('title', aggregatedMedia?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
+    trailers: removeDuplicatesByField('uri', aggregatedMedia?.trailers ?? [])
+  }
+}
+
 
 export const cleanupDuplicateAggregatedMedia = async (tx: DrizzleSQLiteTransaction) => {
   const aggregatedMedia = await tx.query.mediaTable.findMany({

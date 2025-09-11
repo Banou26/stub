@@ -28,6 +28,7 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
+        console.log('BEFORE aggregatedMedia', args.input.uri)
         const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
         console.log('aggregatedMedia', aggregatedMedia)
         yield aggregatedMedia
@@ -74,6 +75,7 @@ export const resolvers = {
     }
   },
   Media: {
+    _id: (parent) => parent._id,
     episodes: (parent) => parent.episodes ?? [],
     descriptions: (parent, args) => {
       const descriptions =

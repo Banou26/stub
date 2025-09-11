@@ -11,7 +11,7 @@ import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
 import { gql } from '../../generated'
-import { AggregatedUri, matchAggregatedUris } from '../../utils/uri'
+import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris } from '../../utils/uri'
 import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import { VolumeControl } from '../../components/volume-control'
@@ -156,6 +156,11 @@ const GET_MEDIA_MODAL = gql(`
           title
         }
       }
+      handles {
+        episodes {
+            ...EpisodeFragment
+        }
+      }
       episodeCount
     }
   }
@@ -164,7 +169,7 @@ const GET_MEDIA_MODAL = gql(`
 const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
-  const [{ data }] = useSubscription({
+  const [{ data, error }] = useSubscription({
     query: GET_MEDIA_MODAL,
     variables: {
       input: {
@@ -177,6 +182,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     },
     pause: !foundMedia
   })
+  if (error) console.error(error)
   console.log('data', data?.media)
   const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
@@ -199,8 +205,14 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const [playerVolume, setPlayerVolume] = useState(0.25)
 
   if (!open) return <Redirect to="/" />
-  if (media?.uri && params.uri !== media.uri) return <Redirect to={getRoutePath(Route.MEDIA, { uri: media.uri })} replace={true} />
 
+  if (media?.uri && isAggregatedUri(media.uri) && params.uri && isAggregatedUri(params.uri)) {
+    const mediaAggregatedUris = fromAggregatedUri(media.uri)?.handleUris ?? []
+    const paramsAggregatedUris = fromAggregatedUri(params.uri)?.handleUris ?? []
+    if (mediaAggregatedUris.length > paramsAggregatedUris.length) {
+      return <Redirect to={getRoutePath(Route.MEDIA, { uri: media.uri })} replace={true} />
+    }
+  }
   return (
     <FloatingPortal>
       <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>

@@ -33,9 +33,7 @@ export type ExtractorUserContext = {
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   await database.transaction(async (tx) => {
     await insertManyMedia(tx, medias as Media[])
-    console.log('insertManyMedia')
     const allMedias = await findAllMedia(tx)
-    console.log('allMedias', allMedias)
     const existingAggregated = allMedias.filter(media => media.aggregated)
 
     const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]

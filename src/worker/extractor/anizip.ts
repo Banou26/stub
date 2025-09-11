@@ -18,7 +18,15 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
     origin,
     id: media.mappings.anidb_id.toString(),
     url: `https://api.ani.zip/mappings?anidb_id=${media.mappings.anidb_id}`,
-    handles: [],
+    handles: [
+      {
+        _id: crypto.randomUUID(),
+        uri: `mal:${media.mappings.mal_id}`,
+        origin: 'mal',
+        id: media.mappings.mal_id.toString(),
+        url: `https://myanimelist.net/anime/${media.mappings.mal_id}`
+      } as GQLMedia
+    ],
     titles: [
       ...media.titles.en ? [{ language: 'en', title: media.titles.en }] : [],
       ...media.titles.ja ? [{ language: 'ja', title: media.titles.ja }] : [],
