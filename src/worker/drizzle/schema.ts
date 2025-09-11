@@ -120,6 +120,10 @@ export const mediaHandlesTable = sqliteTable('mediaHandles', {
   handleUri: text('handleUri').notNull().references(() => mediaTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.mediaUri, table.handleUri] }),
+  mediaUriIdx: index('mediaHandles_mediaUri_idx').on(table.mediaUri),
+  handleUriIdx: index('mediaHandles_handleUri_idx').on(table.handleUri),
+  // Composite index for bi-directional lookups
+  handleMediaIdx: index('mediaHandles_handle_media_idx').on(table.handleUri, table.mediaUri),
 }))
 
 // Relations
