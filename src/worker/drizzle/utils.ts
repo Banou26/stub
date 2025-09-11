@@ -233,7 +233,6 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         })
   }
 
-  // Handle the many-to-many handles relationship
   const mediaHandles =
     medias
       .flatMap(media =>
@@ -249,30 +248,6 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
       .values(mediaHandles)
       .onConflictDoNothing()
   }
-
-  // Handle episodes for all media
-  // const allEpisodes = removeDuplicatesByField(
-  //   'uri',
-  //   medias.flatMap(media => media.episodes || [])
-  // )
-
-  // if (allEpisodes.length) {
-  //   await insertManyEpisode(tx, allEpisodes)
-
-  //   // Create media-episode relationships
-  //   const mediaEpisodeRelations = medias.flatMap(media =>
-  //     media.episodes?.map(episode => ({
-  //       mediaUri: media.uri,
-  //       episodeUri: episode.uri
-  //     }) satisfies CreateMediaEpisodes) || []
-  //   )
-
-  //   if (mediaEpisodeRelations.length) {
-  //     await tx.insert(mediaEpisodesTable)
-  //       .values(mediaEpisodeRelations)
-  //       .onConflictDoNothing()
-  //   }
-  // }
 }
 
 export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
@@ -281,6 +256,19 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
       episodes: {
         with: {
           episode: true
+        }
+      },
+      handles: {
+        with: {
+          handle: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -306,6 +294,19 @@ export const findAggregatedMedia = async(
         with: {
           episode: true
         }
+      },
+      handles: {
+        with: {
+          handle: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
       }
     }
   })
@@ -329,6 +330,19 @@ export const findAggregatedMedias = async(
       episodes: {
         with: {
           episode: true
+        }
+      },
+      handles: {
+        with: {
+          handle: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
         }
       }
     }

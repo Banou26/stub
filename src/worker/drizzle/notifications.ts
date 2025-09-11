@@ -4,26 +4,61 @@ import { Database } from '.'
 import { ChangeNotification, notifyTable } from './schema'
 import { TableName } from './utils'
 
-export const generateTableNotifyTrigger = (database: Database,tableName: TableName, columnId: string, operation: 'INSERT' | 'UPDATE' | 'DELETE') =>
+export const generateTableNotifyTriggerWithAllFields = async (database: Database, tableName: TableName, columnId: string, operation: 'INSERT' | 'UPDATE' | 'DELETE') => {
+  // Get all column names from the table
+  const columns = await database.all<{ name: string }>(sql`SELECT name FROM pragma_table_info(${sql.raw(tableName)})`)
+  const columnNames = columns.map(col => col.name)
+  
+  const rowRef = operation === 'DELETE' ? 'OLD' : 'NEW'
+  const jsonFields = columnNames.map(col => `'${col}', ${rowRef}.${col}`).join(', ')
+  
+  return database.run(sql.raw(`
+    CREATE TRIGGER IF NOT EXISTS ${tableName}${operation.slice(0, 1).toUpperCase()}${operation.slice(1).toLowerCase()}Notify
+    AFTER ${operation} ON ${tableName}
+    FOR EACH ROW
+    BEGIN
+        INSERT INTO notify (tableName, columnId, rowId, operation, data)
+        VALUES (
+            '${tableName}',
+            '${columnId}',
+            ${rowRef}.${columnId},
+            '${operation}',
+            json_object(${jsonFields})
+        );
+    END;
+  `))
+}
+
+export const generateTableNotifyTrigger = (database: Database,tableName: TableName, columnId: string, operation: 'INSERT' | 'UPDATE' | 'DELETE', includeFields?: string[]) =>
   database.run(sql.raw(`
     CREATE TRIGGER IF NOT EXISTS ${tableName}${operation.slice(0, 1).toUpperCase()}${operation.slice(1).toLowerCase()}Notify
     AFTER ${operation} ON ${tableName}
     FOR EACH ROW
     BEGIN
-        INSERT INTO notify (tableName, columnId, rowId, operation)
+        INSERT INTO notify (tableName, columnId, rowId, operation, data)
         VALUES (
             '${tableName}',
             '${columnId}',
             ${operation === 'DELETE' ? 'OLD' : 'NEW'}.${columnId},
-            '${operation}'
+            '${operation}',
+            ${includeFields && includeFields.length > 0 
+              ? `json_object(${includeFields.map(field => `'${field}', ${operation === 'DELETE' ? 'OLD' : 'NEW'}.${field}`).join(', ')})`
+              : 'NULL'
+            }
         );
     END;
   `))
 
-export const generateTableNotifyTriggers = async (database: Database, tableName: TableName, columnId: string) => {
-  await generateTableNotifyTrigger(database, tableName, columnId, 'INSERT')
-  await generateTableNotifyTrigger(database, tableName, columnId, 'UPDATE')
-  await generateTableNotifyTrigger(database, tableName, columnId, 'DELETE')
+export const generateTableNotifyTriggers = async (database: Database, tableName: TableName, columnId: string, includeFields?: string[]) => {
+  await generateTableNotifyTrigger(database, tableName, columnId, 'INSERT', includeFields)
+  await generateTableNotifyTrigger(database, tableName, columnId, 'UPDATE', includeFields)
+  await generateTableNotifyTrigger(database, tableName, columnId, 'DELETE', includeFields)
+}
+
+export const generateTableNotifyTriggersWithAllFields = async (database: Database, tableName: TableName, columnId: string) => {
+  await generateTableNotifyTriggerWithAllFields(database, tableName, columnId, 'INSERT')
+  await generateTableNotifyTriggerWithAllFields(database, tableName, columnId, 'UPDATE')
+  await generateTableNotifyTriggerWithAllFields(database, tableName, columnId, 'DELETE')
 }
 
 type ChangeNotificationListener = {

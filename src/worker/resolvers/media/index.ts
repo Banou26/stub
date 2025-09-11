@@ -41,7 +41,6 @@ export const resolvers = {
         try {
           for await (const _ of listeners) {
             console.log('changes', _)
-            console.log('test query', await database.all(sql`SELECT * FROM mediaEpisodes`))
             const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
             console.log('aggregatedMedia', aggregatedMedia)
             yield aggregatedMedia

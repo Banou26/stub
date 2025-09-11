@@ -8,15 +8,13 @@ export type MediaType = typeof mediaTypeEnum[number]
 export const mediaStatusEnum = ['FINISHED', 'RELEASING', 'NOT_YET_RELEASED', 'CANCELLED', 'HIATUS'] as const
 export type MediaStatus = typeof mediaStatusEnum[number]
 
-export const playbackSourceTypeEnum = ['IFRAME', 'CUSTOM', 'OTHER'] as const
-export type PlaybackSourceType = typeof playbackSourceTypeEnum[number]
-
 export const notifyTable = sqliteTable('notify', {
   id: integer('id').primaryKey().unique().notNull(),
   tableName: text('tableName').notNull(),
   columnId: text('columnId').notNull(),
   rowId: text('rowId').notNull(),
   operation: text('operation').notNull(),
+  data: text('data', { mode: 'json' }).$type<Record<string, any>>(),
   timestamp: integer('timestamp', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull()
 })
 
@@ -54,6 +52,42 @@ export const mediaTable = sqliteTable('media', {
   // _idUnique: uniqueIndex('media_stable_id_unique').on(table._id),
 }))
 
+// Junction table for Media handles (self-referencing many-to-many)
+export const mediaHandlesTable = sqliteTable('mediaHandles', {
+  mediaUri: text('mediaUri').notNull().references(() => mediaTable.uri),
+  handleUri: text('handleUri').notNull().references(() => mediaTable.uri),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.mediaUri, table.handleUri] }),
+  mediaUriIdx: index('mediaHandles_mediaUri_idx').on(table.mediaUri),
+  handleUriIdx: index('mediaHandles_handleUri_idx').on(table.handleUri),
+  // Composite index for bi-directional lookups
+  handleMediaIdx: index('mediaHandles_handle_media_idx').on(table.handleUri, table.mediaUri),
+}))
+
+// Media relations
+export const mediaRelations = relations(mediaTable, ({ many }) => ({
+  episodes: many(mediaEpisodesTable),
+  handles: many(mediaHandlesTable, {
+    relationName: 'handles',
+  }),
+  handleOf: many(mediaHandlesTable, {
+    relationName: 'handleOf',
+  }),
+}))
+
+export const mediaHandlesRelations = relations(mediaHandlesTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaHandlesTable.mediaUri],
+    references: [mediaTable.uri],
+    relationName: 'handles',
+  }),
+  handle: one(mediaTable, {
+    fields: [mediaHandlesTable.handleUri],
+    references: [mediaTable.uri],
+    relationName: 'handleOf',
+  }),
+}))
+
 // Episode table with JSON fields for content
 export const episodeTable = sqliteTable('episode', {
   _id: text('_id').notNull().default(sql`(lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6))))`),
@@ -82,20 +116,6 @@ export const episodeTable = sqliteTable('episode', {
   // _idUnique: uniqueIndex('episode_stable_id_unique').on(table._id),
 }))
 
-// PlaybackSource table
-export const playbackSourceTable = sqliteTable('playbackSource', {
-  uri: text('uri').primaryKey().unique().notNull(),
-  origin: text('origin').notNull(),
-  id: text('id').notNull(),
-  url: text('url'),
-  type: text('type').notNull().$type<PlaybackSourceType>(),
-  data: text('data', { mode: 'json' }).$type<Record<string, any>>(),
-}, (table) => ({
-  uriIdx: index('playbackSource_uri_idx').on(table.uri),
-  originIdIdx: index('playbackSource_origin_id_idx').on(table.origin, table.id),
-  originIdUnique: uniqueIndex('playbackSource_origin_id_unique').on(table.origin, table.id),
-}))
-
 // Junction table for Media<->Episode many-to-many
 export const mediaEpisodesTable = sqliteTable('mediaEpisodes', {
   mediaUri: text('mediaUri').notNull().references(() => mediaTable.uri),
@@ -104,48 +124,6 @@ export const mediaEpisodesTable = sqliteTable('mediaEpisodes', {
   pk: primaryKey({ columns: [table.mediaUri, table.episodeUri] }),
   mediaIdx: index('mediaEpisodes_mediaUri_idx').on(table.mediaUri),
   episodeIdx: index('mediaEpisodes_episodeUri_idx').on(table.episodeUri),
-}))
-
-// Junction table for Episode<->PlaybackSource many-to-many
-export const episodePlaybackSourcesTable = sqliteTable('episodePlaybackSources', {
-  episodeUri: text('episodeUri').notNull().references(() => episodeTable.uri),
-  playbackSourceUri: text('playbackSourceUri').notNull().references(() => playbackSourceTable.uri),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.episodeUri, table.playbackSourceUri] }),
-  episodeIdx: index('episodePlaybackSources_episodeUri_idx').on(table.episodeUri),
-  playbackSourceIdx: index('episodePlaybackSources_playbackSourceUri_idx').on(table.playbackSourceUri),
-}))
-
-// Junction table for Media handles (self-referencing many-to-many)
-export const mediaHandlesTable = sqliteTable('mediaHandles', {
-  mediaUri: text('mediaUri').notNull().references(() => mediaTable.uri),
-  handleUri: text('handleUri').notNull().references(() => mediaTable.uri),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.mediaUri, table.handleUri] }),
-  mediaUriIdx: index('mediaHandles_mediaUri_idx').on(table.mediaUri),
-  handleUriIdx: index('mediaHandles_handleUri_idx').on(table.handleUri),
-  // Composite index for bi-directional lookups
-  handleMediaIdx: index('mediaHandles_handle_media_idx').on(table.handleUri, table.mediaUri),
-}))
-
-// Relations
-export const mediaRelations = relations(mediaTable, ({ many }) => ({
-  episodes: many(mediaEpisodesTable),
-  handles: many(mediaHandlesTable, {
-    relationName: 'handles',
-  }),
-  handleOf: many(mediaHandlesTable, {
-    relationName: 'handleOf',
-  }),
-}))
-
-export const episodeRelations = relations(episodeTable, ({ many }) => ({
-  mediaEpisodes: many(mediaEpisodesTable),
-  episodePlaybackSources: many(episodePlaybackSourcesTable),
-}))
-
-export const playbackSourceRelations = relations(playbackSourceTable, ({ many }) => ({
-  episodePlaybackSources: many(episodePlaybackSourcesTable),
 }))
 
 export const mediaEpisodesRelations = relations(mediaEpisodesTable, ({ one }) => ({
@@ -159,26 +137,24 @@ export const mediaEpisodesRelations = relations(mediaEpisodesTable, ({ one }) =>
   }),
 }))
 
-export const episodePlaybackSourcesRelations = relations(episodePlaybackSourcesTable, ({ one }) => ({
-  episode: one(episodeTable, {
-    fields: [episodePlaybackSourcesTable.episodeUri],
-    references: [episodeTable.uri],
-  }),
-  playbackSource: one(playbackSourceTable, {
-    fields: [episodePlaybackSourcesTable.playbackSourceUri],
-    references: [playbackSourceTable.uri],
-  }),
+// Junction table for Media handles (self-referencing many-to-many)
+export const episodeHandlesTable = sqliteTable('episodeHandles', {
+  episodeUri: text('episodeUri').notNull().references(() => episodeTable.uri),
+  handleUri: text('handleUri').notNull().references(() => episodeTable.uri),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.episodeUri, table.handleUri] }),
+  episodeUriIdx: index('episodeHandles_episodeUri_idx').on(table.episodeUri),
+  handleUriIdx: index('episodeHandles_handleUri_idx').on(table.handleUri),
+  // Composite index for bi-directional lookups
+  handleMediaIdx: index('episodeHandles_handle_episode_idx').on(table.handleUri, table.episodeUri),
 }))
 
-export const mediaHandlesRelations = relations(mediaHandlesTable, ({ one }) => ({
-  media: one(mediaTable, {
-    fields: [mediaHandlesTable.mediaUri],
-    references: [mediaTable.uri],
+export const episodeRelations = relations(episodeTable, ({ many }) => ({
+  mediaEpisodes: many(mediaEpisodesTable),
+  handles: many(episodeHandlesTable, {
     relationName: 'handles',
   }),
-  handle: one(mediaTable, {
-    fields: [mediaHandlesTable.handleUri],
-    references: [mediaTable.uri],
+  handleOf: many(episodeHandlesTable, {
     relationName: 'handleOf',
   }),
 }))
@@ -189,11 +165,7 @@ export type Media = typeof mediaTable.$inferSelect
 export type CreateMedia = typeof mediaTable.$inferInsert
 export type Episode = typeof episodeTable.$inferSelect
 export type CreateEpisode = typeof episodeTable.$inferInsert
-export type PlaybackSource = typeof playbackSourceTable.$inferSelect
-export type CreatePlaybackSource = typeof playbackSourceTable.$inferInsert
 export type MediaEpisodes = typeof mediaEpisodesTable.$inferSelect
 export type CreateMediaEpisodes = typeof mediaEpisodesTable.$inferInsert
-export type EpisodePlaybackSources = typeof episodePlaybackSourcesTable.$inferSelect
-export type CreateEpisodePlaybackSources = typeof episodePlaybackSourcesTable.$inferInsert
 export type MediaHandles = typeof mediaHandlesTable.$inferSelect
 export type CreateMediaHandles = typeof mediaHandlesTable.$inferInsert

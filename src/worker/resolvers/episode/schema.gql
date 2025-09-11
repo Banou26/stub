@@ -13,6 +13,9 @@ type Episode {
   """Uri to the media resource"""
   mediaUri: String!
   aggregated: Boolean
+  """Links to external/other resources related to itself"""
+  handles: [Episode!]
+  handleOf: [Episode!]
   titles: [EpisodeTitle!]
   shortDescriptions: [EpisodeShortDescription!]
   descriptions: [EpisodeDescription!]

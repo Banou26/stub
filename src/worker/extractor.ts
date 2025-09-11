@@ -33,7 +33,9 @@ export type ExtractorUserContext = {
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   await database.transaction(async (tx) => {
     await insertManyMedia(tx, medias as Media[])
+    console.log('insertManyMedia')
     const allMedias = await findAllMedia(tx)
+    console.log('allMedias', allMedias)
     const existingAggregated = allMedias.filter(media => media.aggregated)
 
     const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
@@ -65,6 +67,27 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
   await database.transaction(async (tx) => {
     await insertManyEpisode(tx, episodes as Episode[])
+    const allMedias = await findAllMedia(tx)
+    const existingAggregated = allMedias.filter(media => media.aggregated)
+
+    const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
+    const aggregatedMedia = groups.map(([_, __, urisString]) => {
+      const uris = urisString.split(',').map(uri => uri.trim())
+      const medias =
+        uris
+          .map(uri => allMedias.find(r => r?.uri === uri))
+          .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
+
+      const existingMatch = existingAggregated.find(existing => {
+        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
+        return existingUris.some(existingUri => uris.includes(existingUri))
+      })
+
+      return aggregateMediaHandles(medias, existingMatch)
+    })
+    console.log('EPISODE INSERTER aggregatedMedia', aggregatedMedia)
+    await insertManyMedia(tx, aggregatedMedia)
+    await cleanupDuplicateAggregatedMedia(tx)
   })
   return episodes
 }, {
@@ -112,13 +135,13 @@ export const extractors =
                   if (getNamedType(info.returnType).name === 'Media') {
                     if (Array.isArray(result)) {
                       await mediaInserter.loadMany(result as Media[])
-                    } else {
+                    } else if (result) {
                       await mediaInserter.load(result as Media)
                     }
                   } else if (getNamedType(info.returnType).name === 'Episode') {
                     if (Array.isArray(result)) {
                       await episodeInserter.loadMany(result as Episode[])
-                    } else {
+                    } else if (result) {
                       await episodeInserter.load(result as Episode)
                     }
                   }
