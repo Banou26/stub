@@ -10,6 +10,8 @@ type Episode {
   id: String!
   """An url to the media resource"""
   url: String
+  """Uri to the media resource"""
+  mediaUri: String!
   aggregated: Boolean
   titles: [EpisodeTitle!]
   shortDescriptions: [EpisodeShortDescription!]

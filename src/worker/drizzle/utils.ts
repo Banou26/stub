@@ -251,28 +251,28 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
   }
 
   // Handle episodes for all media
-  const allEpisodes = removeDuplicatesByField(
-    'uri',
-    medias.flatMap(media => media.episodes || [])
-  )
+  // const allEpisodes = removeDuplicatesByField(
+  //   'uri',
+  //   medias.flatMap(media => media.episodes || [])
+  // )
 
-  if (allEpisodes.length) {
-    await insertManyEpisode(tx, allEpisodes)
+  // if (allEpisodes.length) {
+  //   await insertManyEpisode(tx, allEpisodes)
 
-    // Create media-episode relationships
-    const mediaEpisodeRelations = medias.flatMap(media =>
-      media.episodes?.map(episode => ({
-        mediaUri: media.uri,
-        episodeUri: episode.uri
-      }) satisfies CreateMediaEpisodes) || []
-    )
+  //   // Create media-episode relationships
+  //   const mediaEpisodeRelations = medias.flatMap(media =>
+  //     media.episodes?.map(episode => ({
+  //       mediaUri: media.uri,
+  //       episodeUri: episode.uri
+  //     }) satisfies CreateMediaEpisodes) || []
+  //   )
 
-    if (mediaEpisodeRelations.length) {
-      await tx.insert(mediaEpisodesTable)
-        .values(mediaEpisodeRelations)
-        .onConflictDoNothing()
-    }
-  }
+  //   if (mediaEpisodeRelations.length) {
+  //     await tx.insert(mediaEpisodesTable)
+  //       .values(mediaEpisodeRelations)
+  //       .onConflictDoNothing()
+  //   }
+  // }
 }
 
 export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
@@ -281,24 +281,6 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
       episodes: {
         with: {
           episode: true
-        }
-      },
-      handles: {
-        with: {
-          handle: {
-            with: {
-              episodes: {
-                with: {
-                  episode: true
-                }
-              }
-            }
-          }
-        }
-      },
-      handleOf: {
-        with: {
-          media: true
         }
       }
     }
@@ -324,24 +306,10 @@ export const findAggregatedMedia = async(
         with: {
           episode: true
         }
-      },
-      handles: {
-        with: {
-          handle: {
-            with: {
-              episodes: {
-                with: {
-                  episode: true
-                }
-              }
-            }
-          }
-        }
       }
     }
   })
   .then(media => media && normalizeGraphqlMedia(media))
-
 
 export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
@@ -361,19 +329,6 @@ export const findAggregatedMedias = async(
       episodes: {
         with: {
           episode: true
-        }
-      },
-      handles: {
-        with: {
-          handle: {
-            with: {
-              episodes: {
-                with: {
-                  episode: true
-                }
-              }
-            }
-          }
         }
       }
     }
@@ -453,6 +408,18 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
           }
         })
   }
+
+  // Create media-episode relationships
+  const mediaEpisodeRelations = episodes.map(episode => ({
+    mediaUri: episode.mediaUri,
+    episodeUri: episode.uri
+  }) satisfies CreateMediaEpisodes)
+
+  if (mediaEpisodeRelations.length) {
+    await tx.insert(mediaEpisodesTable)
+      .values(mediaEpisodeRelations)
+      .onConflictDoNothing()
+  }
 }
 
 export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregatedMedia?: GraphqlMedia) => {
@@ -478,7 +445,8 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
     covers: [...acc.covers ?? [], ...media.covers ?? []],
     banners: [...acc.banners ?? [], ...media.banners ?? []],
-    trailers: [...acc.trailers ?? [], ...media.trailers ?? []]
+    trailers: [...acc.trailers ?? [], ...media.trailers ?? []],
+    episodes: [...acc.episodes ?? [], ...media.episodes ?? []]
   }), {
     _id,
     uri,

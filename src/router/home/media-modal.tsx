@@ -16,6 +16,8 @@ import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import { VolumeControl } from '../../components/volume-control'
 import { getRoutePath, Route } from '../path'
+import { EPISODE_FRAGMENT } from '../../worker/resolvers/episode/fragment'
+import { MEDIA_FRAGMENT } from '../../worker/resolvers/media/fragment'
 
 const style = css`
 padding: 5rem;
@@ -122,8 +124,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 const GET_MEDIA_MODAL = gql(`
   subscription GetMediaModal($input: MediaInput!, $descriptionInput: MediaDescriptionInput!) {
     media(input: $input) {
-      _id
-      uri
+      ...MediaFragment
       titles {
         language
         title
@@ -148,15 +149,12 @@ const GET_MEDIA_MODAL = gql(`
         url
         thumbnail
       }
-      handles {
-        uri
-        episodes {
-          uri
-        }
-      }
       popularity
       episodes {
-        uri
+        ...EpisodeFragment
+        titles {
+          title
+        }
       }
       episodeCount
     }

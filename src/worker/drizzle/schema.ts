@@ -61,6 +61,7 @@ export const episodeTable = sqliteTable('episode', {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
+  mediaUri: text('mediaUri').notNull(),
   aggregated: integer('aggregated', { mode: 'boolean' }),
   titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string }[]>(),
   descriptions: text('descriptions', { mode: 'json' }).$type<{ language: string, description: string }[]>(),
@@ -77,6 +78,7 @@ export const episodeTable = sqliteTable('episode', {
   aggregatedIdx: index('episode_aggregated_idx').on(table.aggregated),
   originIdUnique: uniqueIndex('episode_origin_id_unique').on(table.origin, table.id),
   _idIdx: index('episode_stable_id_idx').on(table._id),
+  mediaUriIdx: index('episode_media_uri_idx').on(table.mediaUri),
   // _idUnique: uniqueIndex('episode_stable_id_unique').on(table._id),
 }))
 

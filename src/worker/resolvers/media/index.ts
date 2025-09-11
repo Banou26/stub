@@ -5,8 +5,10 @@ import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
 import { findAggregatedMedia, findAggregatedMedias } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
-import { parseHTMLDescription, parseTextDescription } from './utils'
+import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from './utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
+import database from '../../drizzle'
+import { sql } from 'drizzle-orm'
 
 export const schema = _schema as string
 
@@ -27,12 +29,22 @@ export const resolvers = {
           )
 
         const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
+        console.log('aggregatedMedia', aggregatedMedia)
         yield aggregatedMedia
+
+        const mediaListener = listenIterator(aggregatedMedia ? { table: 'media', columnId: '_id', ids: [aggregatedMedia._id] } : undefined)
+        const episodeListener = listenIterator(aggregatedMedia ? { table: 'mediaEpisodes', columnId: 'mediaUri' } : undefined)
+
+        const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 
         // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
         try {
-          for await (const _ of listenIterator(aggregatedMedia ? { table: 'media', columnId: '_id', ids: [aggregatedMedia._id] } : undefined)) {
-            yield findAggregatedMedia(undefined, { uri: args.input.uri })
+          for await (const _ of listeners) {
+            console.log('changes', _)
+            console.log('test query', await database.all(sql`SELECT * FROM mediaEpisodes`))
+            const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
+            console.log('aggregatedMedia', aggregatedMedia)
+            yield aggregatedMedia
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
@@ -63,6 +75,7 @@ export const resolvers = {
     }
   },
   Media: {
+    episodes: (parent) => parent.episodes ?? [],
     descriptions: (parent, args) => {
       const descriptions =
         parent

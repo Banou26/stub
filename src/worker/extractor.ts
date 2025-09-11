@@ -18,6 +18,7 @@ import {
   findAllMedia,
   aggregateMediaHandles,
   cleanupDuplicateAggregatedMedia,
+  insertManyEpisode,
 } from './drizzle/utils'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 
@@ -54,6 +55,18 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
     await cleanupDuplicateAggregatedMedia(tx)
   })
   return medias
+}, {
+  cache: false,
+  batch: true,
+  maxBatchSize: 250,
+  batchScheduleFn: (callback) => setTimeout(callback, 50)
+})
+
+const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
+  await database.transaction(async (tx) => {
+    await insertManyEpisode(tx, episodes as Episode[])
+  })
+  return episodes
 }, {
   cache: false,
   batch: true,
@@ -103,9 +116,11 @@ export const extractors =
                       await mediaInserter.load(result as Media)
                     }
                   } else if (getNamedType(info.returnType).name === 'Episode') {
-                    // const result = Array.isArray(_result) ? _result : [_result] as Episode[]
-                    // await database.transaction(async (tx) => {
-                    // })
+                    if (Array.isArray(result)) {
+                      await episodeInserter.loadMany(result as Episode[])
+                    } else {
+                      await episodeInserter.load(result as Episode)
+                    }
                   }
                 }
               ))

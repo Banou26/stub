@@ -99,8 +99,7 @@ height: 70vh;
 const GET_THEATHER_MEDIA = gql(`
   subscription GetTheatherMedia($input: MediaInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
     media(input: $input) {
-      _id
-      uri
+      ...MediaFragment
       titles {
         language
         title

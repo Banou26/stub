@@ -13,8 +13,7 @@ const GET_RELEASING_MEDIA_PAGE = gql(`
   subscription GetReleasingMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
     mediaPage(input: $input) {
       nodes {
-        _id
-        uri
+        ...MediaFragment
         score
         titles {
           language

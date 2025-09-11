@@ -11,9 +11,10 @@ export const metadataOnly = true as const
 export const supportedUris = ['anidb', 'mal']
 
 const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => {
+  const uri = `${origin}:${media.mappings.anidb_id}`
   return {
     _id: crypto.randomUUID(),
-    uri: `${origin}:${media.mappings.anidb_id}`,
+    uri,
     origin,
     id: media.mappings.anidb_id.toString(),
     url: `https://api.ani.zip/mappings?anidb_id=${media.mappings.anidb_id}`,
@@ -44,6 +45,7 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
             origin,
             id: id.toString(),
             url: `https://api.ani.zip/mappings?anidb_id=${media.mappings.anidb_id}`,
+            mediaUri: uri,
             titles: [
               ...episode.title.en ? [{ language: 'en', title: episode.title.en }] : [],
               ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja }] : [],
