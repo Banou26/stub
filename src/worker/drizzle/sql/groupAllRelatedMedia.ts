@@ -67,7 +67,7 @@ final_groups AS (
 SELECT
     group_id,
     COUNT(*) as group_size,
-    GROUP_CONCAT(uri, ', ') as media_uris
+    GROUP_CONCAT(uri, ',') as media_uris
 FROM final_groups
 GROUP BY group_id
 HAVING COUNT(*) > 0

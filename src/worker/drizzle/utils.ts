@@ -3,11 +3,12 @@ import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
 import type { Media as GraphqlMedia, Episode as GraphqlEpisode, MediaSort } from '../../generated/schema/types.generated'
-import type { Media as DrizzleMedia, Episode as DrizzleEpisode } from './schema'
+import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia } from './schema'
 import type {
   CreateMedia,
   CreateMediaHandles,
-  CreateMediaEpisodes
+  CreateMediaEpisodes,
+  CreateAggregatedMediaHandles
 } from './schema'
 import type { Database } from '.'
 
@@ -17,7 +18,9 @@ import {
   mediaTable,
   episodeTable,
   mediaHandlesTable,
-  mediaEpisodesTable
+  mediaEpisodesTable,
+  aggregatedMediaTable,
+  aggregatedMediaHandlesTable
 } from './schema'
 import database from '.'
 import { getRoutePath, Route } from '../../router/path'
@@ -74,12 +77,10 @@ export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia
 }
 
 const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
-  _id: media._id,
   uri: media.uri,
   origin: media.origin,
   id: media.id,
   url: media.url ?? null,
-  aggregated: media.aggregated ?? null,
   score: media.score ?? null,
   type: media.type ?? null,
   status: media.status ?? null,
@@ -129,13 +130,17 @@ const normalizeDrizzleMedia = (media: GraphqlMedia): CreateMedia => ({
   episodeCount: media.episodeCount ?? null
 })
 
+export const normalizeDrizzleAggregatedMedia = (media: GraphqlMedia): CreateAggregatedMedia => ({
+  ...normalizeDrizzleMedia(media),
+    _id: media._id
+})
+
 const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: DrizzleEpisode }[], handles?: { handle: DrizzleMedia }[] }): GraphqlMedia => ({
-  _id: media._id,
+  _id: media.uri,
   uri: media.uri,
   origin: media.origin,
   id: media.id,
   url: media.url,
-  aggregated: media.aggregated,
   score: media.score,
   type: media.type,
   status: media.status,
@@ -185,6 +190,20 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle))
 })
 
+export const normalizeGraphqlAggregatedMedia = (
+  media:
+  DrizzleAggregatedMedia & {
+    episodes?: { aggregatedEpisode: DrizzleAggregatedEpisode }[],
+    handles?: { media: DrizzleMedia }[]
+  }): GraphqlMedia => ({
+  ...normalizeGraphqlMedia({
+    ...media,
+    episodes: media.episodes?.map(mediaEpisode => ({ episode: mediaEpisode.aggregatedEpisode })),
+    handles: media.handles?.map(mediaHandle => ({ handle: mediaHandle.media }))
+  }),
+  _id: media._id
+})
+
 const mergeJsonArrays = (column: string) => sql`
     CASE
       WHEN excluded.${sql.raw(column)} IS NULL THEN ${sql.raw(column)}
@@ -213,7 +232,6 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         .onConflictDoUpdate({
           target: mediaTable.uri,
           set: {
-            _id: sql`COALESCE(${mediaTable._id}, excluded._id)`,
             status: sql`COALESCE(excluded.status, ${mediaTable.status})`,
             titles: mergeJsonArrays('titles'),
             trailers: mergeJsonArrays('trailers'),
@@ -226,7 +244,6 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
             endDate: sql`COALESCE(excluded.endDate, ${mediaTable.endDate})`,
             averageScore: sql`COALESCE(excluded.averageScore, ${mediaTable.averageScore})`,
             episodeCount: sql`COALESCE(excluded.episodeCount, ${mediaTable.episodeCount})`,
-            aggregated: sql`COALESCE(excluded.aggregated, ${mediaTable.aggregated})`,
             isAdult: sql`COALESCE(excluded.isAdult, ${mediaTable.isAdult})`,
             popularity: sql`COALESCE(excluded.popularity, ${mediaTable.popularity})`
           }
@@ -246,6 +263,52 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
   if (mediaHandles.length) {
     await tx.insert(mediaHandlesTable)
       .values(mediaHandles)
+      .onConflictDoNothing()
+  }
+}
+
+export const insertManyAggregatedMedia = async (tx: DrizzleSQLiteTransaction, medias: GraphqlMedia[]) => {
+  const values = medias.map(normalizeDrizzleAggregatedMedia)
+
+  if (values.length) {
+    console.log('values', values)
+    await tx.insert(aggregatedMediaTable)
+        .values(values)
+        .onConflictDoUpdate({
+          target: aggregatedMediaTable._id,
+          set: {
+            uri: sql`COALESCE(excluded.uri, ${aggregatedMediaTable.uri})`,
+            status: sql`COALESCE(excluded.status, ${aggregatedMediaTable.status})`,
+            titles: mergeJsonArrays('titles'),
+            trailers: mergeJsonArrays('trailers'),
+            score: sql`COALESCE(excluded.score, ${aggregatedMediaTable.score})`,
+            descriptions: mergeJsonArrays('descriptions'),
+            shortDescriptions: mergeJsonArrays('shortDescriptions'),
+            covers: mergeJsonArrays('covers'),
+            banners: mergeJsonArrays('banners'),
+            startDate: sql`COALESCE(excluded.startDate, ${aggregatedMediaTable.startDate})`,
+            endDate: sql`COALESCE(excluded.endDate, ${aggregatedMediaTable.endDate})`,
+            averageScore: sql`COALESCE(excluded.averageScore, ${aggregatedMediaTable.averageScore})`,
+            episodeCount: sql`COALESCE(excluded.episodeCount, ${aggregatedMediaTable.episodeCount})`,
+            isAdult: sql`COALESCE(excluded.isAdult, ${aggregatedMediaTable.isAdult})`,
+            popularity: sql`COALESCE(excluded.popularity, ${aggregatedMediaTable.popularity})`
+          }
+        })
+  }
+
+  const aggregatedMediaHandles =
+    medias
+      .flatMap(media =>
+        media.handles?.map(handle => ({
+          aggregatedMediaId: media._id,
+          mediaUri: handle.uri
+        }) satisfies CreateAggregatedMediaHandles)
+      )
+      .filter((mediaHandle): mediaHandle is NonNullable<typeof mediaHandle> => mediaHandle !== null && mediaHandle !== undefined)
+
+  if (aggregatedMediaHandles.length) {
+    await tx.insert(aggregatedMediaHandlesTable)
+      .values(aggregatedMediaHandles)
       .onConflictDoNothing()
   }
 }
@@ -279,25 +342,17 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
   return removeDuplicatesByField('uri', mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
-
-export const findAggregatedMedia = async(
-  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
-  { uri }: { uri: string }
-) =>
-  tx.query.mediaTable.findFirst({
-    where: and(
-      eq(mediaTable.origin, 'ag'),
-      uri ? eq(mediaTable.uri, uri) : undefined
-    ),
+export const findAllAggregatedMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.aggregatedMediaTable.findMany({
     with: {
       episodes: {
         with: {
-          episode: true
+          aggregatedEpisode: true
         }
       },
       handles: {
         with: {
-          handle: {
+          media: {
             with: {
               episodes: {
                 with: {
@@ -310,14 +365,44 @@ export const findAggregatedMedia = async(
       }
     }
   })
-  .then(media => media && normalizeGraphqlMedia(media))
+
+  return results.map(normalizeGraphqlAggregatedMedia)
+}
+
+export const findAggregatedMedia = async(
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  { uri }: { uri: string }
+) =>
+  tx.query.aggregatedMediaTable.findFirst({
+    where: uri ? eq(mediaTable.uri, uri) : undefined,
+    with: {
+      episodes: {
+        with: {
+          aggregatedEpisode: true
+        }
+      },
+      handles: {
+        with: {
+          media: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+  .then(media => media && normalizeGraphqlAggregatedMedia(media))
 
 export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { sorts }: { sorts?: MediaSort[] } = {}
 ) =>
-  (await tx.query.mediaTable.findMany({
-    where: eq(mediaTable.origin, 'ag'),
+  (await tx.query.aggregatedMediaTable.findMany({
     orderBy:
       sorts
         ?.map(sort =>
@@ -329,12 +414,12 @@ export const findAggregatedMedias = async(
     with: {
       episodes: {
         with: {
-          episode: true
+          aggregatedEpisode: true
         }
       },
       handles: {
         with: {
-          handle: {
+          media: {
             with: {
               episodes: {
                 with: {
@@ -347,12 +432,13 @@ export const findAggregatedMedias = async(
       }
     }
   }))
-  .map(media => normalizeGraphqlMedia(media))
+  .map(media => normalizeGraphqlAggregatedMedia(media))
 
 const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
   ...episode,
-  _id: episode._id,
+  _id: episode.uri,
   url: episode.url ?? null,
+  mediaUri: episode.mediaUri,
   titles: episode.titles || [],
   descriptions: episode.descriptions || [],
   shortDescriptions: episode.shortDescriptions || [],
@@ -374,8 +460,6 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
 
 const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   ...episode,
-  _id: episode._id,
-  aggregated: episode.aggregated ?? null,
   url: episode.url ?? null,
   titles: episode.titles || [],
   descriptions: episode.descriptions || [],
@@ -406,11 +490,10 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
         .onConflictDoUpdate({
           target: episodeTable.uri,
           set: {
-            _id: sql`COALESCE(${episodeTable._id}, excluded._id)`,
             origin: sql`excluded.origin`,
             id: sql`excluded.id`,
             url: sql`excluded.url`,
-            aggregated: sql`excluded.aggregated`,
+            mediaUri: sql`excluded.mediaUri`,
             titles: sql`excluded.titles`,
             descriptions: sql`excluded.descriptions`,
             shortDescriptions: sql`excluded.shortDescriptions`,
@@ -442,7 +525,7 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
 
   const sortedMediaBasedOnQualityScore = medias.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
-  const _id = existingAggregatedMedia?._id || crypto.randomUUID()
+  const _id = existingAggregatedMedia?._id ?? crypto.randomUUID()
 
   const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
@@ -458,12 +541,11 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     uri,
     id,
     origin: 'ag',
-    url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri })}`,
+    url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     aggregated: true,
     score: Math.max(...medias.map(m => m.score ?? 0)),
-    handles: removeDuplicatesByField('uri', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
+    handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
-
 
   if (aggregatedMedia?.episodes?.length) {
     console.log('-----------------', aggregatedMedia)
@@ -483,7 +565,7 @@ export const aggregateEpisodeHandles = (episodes: GraphqlMedia[], existingAggreg
 
   const sortedMediaBasedOnQualityScore = episodes.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
-  const _id = existingAggregatedEpisode?._id || crypto.randomUUID()
+  const _id = existingAggregatedEpisode?._id ?? crypto.randomUUID()
 
   const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
@@ -499,12 +581,11 @@ export const aggregateEpisodeHandles = (episodes: GraphqlMedia[], existingAggreg
     uri,
     id,
     origin: 'ag',
-    url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri })}`,
+    url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     aggregated: true,
     score: Math.max(...episodes.map(m => m.score ?? 0)),
-    handles: removeDuplicatesByField('uri', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
+    handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
-
 
   if (aggregatedMedia?.episodes?.length) {
     console.log('-----------------', aggregatedMedia)
@@ -515,50 +596,4 @@ export const aggregateEpisodeHandles = (episodes: GraphqlMedia[], existingAggreg
     titles: removeDuplicatesByField('title', aggregatedMedia?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
     trailers: removeDuplicatesByField('uri', aggregatedMedia?.trailers ?? [])
   }
-}
-
-
-export const cleanupDuplicateAggregatedMedia = async (tx: DrizzleSQLiteTransaction) => {
-  const aggregatedMedia = await tx.query.mediaTable.findMany({
-    where: eq(mediaTable.origin, 'ag'),
-    with: {
-      handles: {
-        with: {
-          handle: true
-        }
-      }
-    }
-  })
-
-  const aggregatedMediaUris =
-    aggregatedMedia
-      .map(media => ({
-        media,
-        urisSet: new Set(media.uri.slice('ag:('.length, -1).split(','))
-      }))
-
-  const toDelete: string[] = []
-  for (const mediaA of aggregatedMediaUris) {
-    const urisA = mediaA.urisSet
-    for (const mediaB of aggregatedMediaUris) {
-      if (mediaA === mediaB) continue
-      const urisB = mediaB.urisSet
-      const isSubset = [...urisB].every(uri => urisA.has(uri))
-      if (isSubset && urisB.size < urisA.size) {
-        if (!toDelete.includes(mediaB.media.uri)) {
-          toDelete.push(mediaB.media.uri)
-        }
-      }
-    }
-  }
-
-  if (toDelete.length > 0) {
-    await tx.delete(mediaHandlesTable).where(
-      sql`${mediaHandlesTable.mediaUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)}) OR ${mediaHandlesTable.handleUri} IN (${sql.join(toDelete.map(uri => sql`${uri}`), sql`, `)})`
-    )
-    await tx.delete(mediaEpisodesTable).where(inArray(mediaEpisodesTable.mediaUri, toDelete))
-    await tx.delete(mediaTable).where(inArray(mediaTable.uri, toDelete))
-  }
-
-  return toDelete.length
 }

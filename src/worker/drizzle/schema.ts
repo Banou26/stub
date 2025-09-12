@@ -9,6 +9,8 @@ export type MediaType = typeof mediaTypeEnum[number]
 export const mediaStatusEnum = ['FINISHED', 'RELEASING', 'NOT_YET_RELEASED', 'CANCELLED', 'HIATUS'] as const
 export type MediaStatus = typeof mediaStatusEnum[number]
 
+const uuid = sql`(lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6))))`
+
 export const notifyTable = sqliteTable('notify', {
   id: integer('id').primaryKey().unique().notNull(),
   tableName: text('tableName').notNull(),
@@ -52,7 +54,7 @@ export const mediaTable = sqliteTable('media', {
 // Aggregated Media table with _id as primary key
 export const aggregatedMediaTable = sqliteTable('aggregatedMedia', {
   ...mediaBaseSchema,
-  _id: text('_id').primaryKey().unique().notNull(),
+  _id: text('_id').primaryKey().unique().notNull().default(uuid),
   uri: text('uri').notNull()
 }, (table) => ({
   _idIdx: index('aggregatedMedia_id_idx').on(table._id),
@@ -80,6 +82,7 @@ export const mediaRelations = relations(mediaTable, ({ many }) => ({
   handleOf: many(mediaHandlesTable, {
     relationName: 'handleOf',
   }),
+  aggregatedBy: many(aggregatedMediaHandlesTable),
 }))
 
 export const mediaHandlesRelations = relations(mediaHandlesTable, ({ one }) => ({
@@ -99,6 +102,7 @@ const episodeBaseSchema = {
   origin: text('origin').notNull(),
   id: text('id').notNull(),
   url: text('url'),
+  mediaUri: text('mediaUri').notNull(),
   titles: text('titles', { mode: 'json' }).$type<{ language: string, title: string }[]>(),
   descriptions: text('descriptions', { mode: 'json' }).$type<{ language: string, description: string }[]>(),
   shortDescriptions: text('shortDescriptions', { mode: 'json' }).$type<{ language: string, shortDescription: string }[]>(),
@@ -120,7 +124,7 @@ export const episodeTable = sqliteTable('episode', {
 // Aggregated Episode table with _id as primary key
 export const aggregatedEpisodeTable = sqliteTable('aggregatedEpisode', {
     ...episodeBaseSchema,
-  _id: text('_id').primaryKey().unique().notNull(),
+  _id: text('_id').primaryKey().unique().notNull().default(uuid),
   uri: text('uri').notNull()
 }, (table) => ({
   _idIdx: index('aggregatedEpisode_id_idx').on(table._id),
@@ -169,36 +173,96 @@ export const aggregatedMediaEpisodesRelations = relations(aggregatedMediaEpisode
   }),
 }))
 
-// Junction table for aggregatedEpisode -> episode handles
+// Junction table for AggregatedMedia -> Media handles
+export const aggregatedMediaHandlesTable = sqliteTable('aggregatedMediaHandles', {
+  aggregatedMediaId: text('aggregatedMediaId').notNull().references(() => aggregatedMediaTable._id),
+  mediaUri: text('mediaUri').notNull().references(() => mediaTable.uri),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.aggregatedMediaId, table.mediaUri] }),
+  aggregatedMediaIdIdx: index('aggregatedMediaHandles_aggregatedMediaId_idx').on(table.aggregatedMediaId),
+  mediaUriIdx: index('aggregatedMediaHandles_mediaUri_idx').on(table.mediaUri),
+  // Composite index for bi-directional lookups
+  handleMediaIdx: index('aggregatedMediaHandles_handle_media_idx').on(table.mediaUri, table.aggregatedMediaId),
+}))
+
+// Junction table for Episode handles (self-referencing many-to-many)
 export const episodeHandlesTable = sqliteTable('episodeHandles', {
+  episodeUri: text('episodeUri').notNull().references(() => episodeTable.uri),
+  handleUri: text('handleUri').notNull().references(() => episodeTable.uri),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.episodeUri, table.handleUri] }),
+  episodeUriIdx: index('episodeHandles_episodeUri_idx').on(table.episodeUri),
+  handleUriIdx: index('episodeHandles_handleUri_idx').on(table.handleUri),
+  // Composite index for bi-directional lookups
+  handleEpisodeIdx: index('episodeHandles_handle_episode_idx').on(table.handleUri, table.episodeUri),
+}))
+
+// Junction table for AggregatedEpisode -> Episode handles
+export const aggregatedEpisodeHandlesTable = sqliteTable('aggregatedEpisodeHandles', {
   aggregatedEpisodeId: text('aggregatedEpisodeId').notNull().references(() => aggregatedEpisodeTable._id),
   episodeUri: text('episodeUri').notNull().references(() => episodeTable.uri),
 }, (table) => ({
   pk: primaryKey({ columns: [table.aggregatedEpisodeId, table.episodeUri] }),
-  aggregatedEpisodeIdIdx: index('episodeHandles_aggregatedEpisodeId_idx').on(table.aggregatedEpisodeId),
-  episodeUriIdx: index('episodeHandles_episodeUri_idx').on(table.episodeUri),
+  aggregatedEpisodeIdIdx: index('aggregatedEpisodeHandles_aggregatedEpisodeId_idx').on(table.aggregatedEpisodeId),
+  episodeUriIdx: index('aggregatedEpisodeHandles_episodeUri_idx').on(table.episodeUri),
   // Composite index for bi-directional lookups
-  handleEpisodeIdx: index('episodeHandles_handle_episode_idx').on(table.episodeUri, table.aggregatedEpisodeId),
+  handleEpisodeIdx: index('aggregatedEpisodeHandles_handle_episode_idx').on(table.episodeUri, table.aggregatedEpisodeId),
 }))
 
 export const episodeRelations = relations(episodeTable, ({ many }) => ({
   mediaEpisodes: many(mediaEpisodesTable),
-  aggregatedEpisodes: many(episodeHandlesTable),
+  handles: many(episodeHandlesTable, {
+    relationName: 'handles',
+  }),
+  handleOf: many(episodeHandlesTable, {
+    relationName: 'handleOf',
+  }),
+  aggregatedBy: many(aggregatedEpisodeHandlesTable),
+}))
+
+// Aggregated Media relations
+export const aggregatedMediaRelations = relations(aggregatedMediaTable, ({ many }) => ({
+  handles: many(aggregatedMediaHandlesTable),
+  episodes: many(aggregatedMediaEpisodesTable),
 }))
 
 // Aggregated Episode relations
 export const aggregatedEpisodeRelations = relations(aggregatedEpisodeTable, ({ many }) => ({
-  handles: many(episodeHandlesTable),
+  handles: many(aggregatedEpisodeHandlesTable),
   aggregatedMediaEpisodes: many(aggregatedMediaEpisodesTable),
 }))
 
+export const aggregatedMediaHandlesRelations = relations(aggregatedMediaHandlesTable, ({ one }) => ({
+  aggregatedMedia: one(aggregatedMediaTable, {
+    fields: [aggregatedMediaHandlesTable.aggregatedMediaId],
+    references: [aggregatedMediaTable._id],
+  }),
+  media: one(mediaTable, {
+    fields: [aggregatedMediaHandlesTable.mediaUri],
+    references: [mediaTable.uri],
+  }),
+}))
+
 export const episodeHandlesRelations = relations(episodeHandlesTable, ({ one }) => ({
+  episode: one(episodeTable, {
+    fields: [episodeHandlesTable.episodeUri],
+    references: [episodeTable.uri],
+    relationName: 'handles',
+  }),
+  handle: one(episodeTable, {
+    fields: [episodeHandlesTable.handleUri],
+    references: [episodeTable.uri],
+    relationName: 'handleOf',
+  }),
+}))
+
+export const aggregatedEpisodeHandlesRelations = relations(aggregatedEpisodeHandlesTable, ({ one }) => ({
   aggregatedEpisode: one(aggregatedEpisodeTable, {
-    fields: [episodeHandlesTable.aggregatedEpisodeId],
+    fields: [aggregatedEpisodeHandlesTable.aggregatedEpisodeId],
     references: [aggregatedEpisodeTable._id],
   }),
   episode: one(episodeTable, {
-    fields: [episodeHandlesTable.episodeUri],
+    fields: [aggregatedEpisodeHandlesTable.episodeUri],
     references: [episodeTable.uri],
   }),
 }))
@@ -221,3 +285,7 @@ export type MediaHandles = typeof mediaHandlesTable.$inferSelect
 export type CreateMediaHandles = typeof mediaHandlesTable.$inferInsert
 export type EpisodeHandles = typeof episodeHandlesTable.$inferSelect
 export type CreateEpisodeHandles = typeof episodeHandlesTable.$inferInsert
+export type AggregatedMediaHandles = typeof aggregatedMediaHandlesTable.$inferSelect
+export type CreateAggregatedMediaHandles = typeof aggregatedMediaHandlesTable.$inferInsert
+export type AggregatedEpisodeHandles = typeof aggregatedEpisodeHandlesTable.$inferSelect
+export type CreateAggregatedEpisodeHandles = typeof aggregatedEpisodeHandlesTable.$inferInsert
