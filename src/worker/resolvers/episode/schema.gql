@@ -12,7 +12,6 @@ type Episode {
   url: String
   """Uri to the media resource"""
   mediaUri: String!
-  aggregated: Boolean
   """Links to external/other resources related to itself"""
   handles: [Episode!]
   handleOf: [Episode!]

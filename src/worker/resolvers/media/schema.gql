@@ -39,7 +39,6 @@ type Media {
   id: String!
   """An url to the media resource"""
   url: String
-  aggregated: Boolean
   """Links to external/other resources related to itself"""
   handles: [Media!]
   handleOf: [Media!]

@@ -8,7 +8,6 @@ export const EPISODE_FRAGMENT = gql(`
     id
     url
     mediaUri
-    aggregated
     handles {
       _id
       uri
@@ -16,7 +15,6 @@ export const EPISODE_FRAGMENT = gql(`
       id
       url
       mediaUri
-      aggregated
     }
   }
 `)

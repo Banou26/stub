@@ -16,12 +16,8 @@ import { fetch } from './utils'
 import database from './drizzle'
 import {
   insertManyMedia,
-  findAllMedia,
-  aggregateMediaHandles,
-  cleanupDuplicateAggregatedMedia,
   insertManyEpisode,
 } from './drizzle/utils'
-import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -34,26 +30,6 @@ export type ExtractorUserContext = {
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   await database.transaction(async (tx) => {
     await insertManyMedia(tx, medias as Media[])
-    const allMedias = await findAllMedia(tx)
-    const existingAggregated = allMedias.filter(media => media.aggregated)
-
-    const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-    const aggregatedMedia = groups.map(([_, __, urisString]) => {
-      const uris = urisString.split(',').map(uri => uri.trim())
-      const medias =
-        uris
-          .map(uri => allMedias.find(r => r?.uri === uri))
-          .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
-
-      const existingMatch = existingAggregated.find(existing => {
-        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-        return existingUris.some(existingUri => uris.includes(existingUri))
-      })
-
-      return aggregateMediaHandles(medias, existingMatch)
-    })
-    await insertManyMedia(tx, aggregatedMedia)
-    await cleanupDuplicateAggregatedMedia(tx)
   })
   return medias
 }, {
@@ -66,27 +42,6 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
   await database.transaction(async (tx) => {
     await insertManyEpisode(tx, episodes as Episode[])
-    const allMedias = await findAllMedia(tx)
-    const existingAggregated = allMedias.filter(media => media.aggregated)
-
-    const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-    const aggregatedMedia = groups.map(([_, __, urisString]) => {
-      const uris = urisString.split(',').map(uri => uri.trim())
-      const medias =
-        uris
-          .map(uri => allMedias.find(r => r?.uri === uri))
-          .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
-
-      const existingMatch = existingAggregated.find(existing => {
-        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-        return existingUris.some(existingUri => uris.includes(existingUri))
-      })
-
-      return aggregateMediaHandles(medias, existingMatch)
-    })
-    console.log('EPISODE INSERTER aggregatedMedia', aggregatedMedia)
-    await insertManyMedia(tx, aggregatedMedia)
-    await cleanupDuplicateAggregatedMedia(tx)
   })
   return episodes
 }, {
@@ -108,13 +63,17 @@ export const extractors =
             merge(
               {
                 Media: {
-                  // episodes: (parent) => parent.episodes ?? []
+                  _id: (parent) => parent.uri
+                },
+                Episode: {
+                  _id: (parent) => parent.uri,
                 },
                 Query: {
                 },
                 Mutation: {
                 },
                 Subscription: {
+                  media: { subscribe: async function* (_parent) { } },
                   mediaPage: { subscribe: async function* (_parent) { return [] } }
                 }
               } satisfies Resolvers,
