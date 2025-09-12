@@ -4,6 +4,7 @@ import type { Episode, Media, Resolvers } from '../generated/schema/types.genera
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga, useErrorHandler } from 'graphql-yoga'
+import { useResponseCache } from '@graphql-yoga/plugin-response-cache'
 import { Client, fetchExchange } from 'urql'
 import { getNamedType } from 'graphql'
 import DataLoader from 'dataloader'
@@ -121,6 +122,7 @@ export const extractors =
             ) as Resolvers
         }),
         plugins: [
+          useResponseCache({ session: () => null, ttl: 15 * 60 * 1000 }),
           useErrorHandler(({ errors, context }) => {
             for (const error of errors) {
               console.error(new Error(`GQLError occurred on request: ${context.operationName}`, { cause: error }))
