@@ -47,7 +47,8 @@
     "test-watch-headful": "playwright test --ui",
     "gql-generate": "graphql-codegen --config codegen.ts",
     "gql-generate-watch": "graphql-codegen --config codegen.ts --watch",
-    "drizzle-generate": "shx rm -rf ./drizzle && drizzle-kit generate --name=init"
+    "drizzle-generate": "shx rm -rf ./drizzle && drizzle-kit generate --name=init",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

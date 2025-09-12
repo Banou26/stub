@@ -1,7 +1,5 @@
-import * as prisma from './prisma'
-import * as prismaGraph from './prisma-graph'
+import * as drizzle from './drizzle'
 
 export {
-  prisma,
-  // prismaGraph as 'prisma graph'
+  drizzle
 }
