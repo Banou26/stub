@@ -2,11 +2,10 @@ import type { KeyingConfig } from '@urql/exchange-graphcache'
 import type { Exchange } from 'urql'
 
 import type {
-  Episode, EpisodeThumbnail,
-  Media, MediaTrailer, PlaybackSource
+  Episode, Media, MediaTrailer, PlaybackSource
 } from './generated/schema/types.generated'
 
-import { Client, fetchExchange } from 'urql'
+import { Client, fetchExchange, mapExchange } from 'urql'
 import { devtoolsExchange } from '@urql/devtools'
 import { cacheExchange } from '@urql/exchange-graphcache'
 
@@ -40,7 +39,18 @@ const cache = cacheExchange({
 
 const client = new Client({
   url: 'http://d/graphql',
-  exchanges: [devtoolsExchange, cache as Exchange, fetchExchange],
+  exchanges: [
+    mapExchange({
+      onError(combinedError, operation) {
+        for (const error of combinedError.graphQLErrors) {
+          console.error(error)
+        }
+      }
+    }),
+    devtoolsExchange,
+    cache as Exchange,
+    fetchExchange,
+  ],
   fetchSubscriptions: true,
   fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
     const { body, headers } = await handleRequest(input, init)
