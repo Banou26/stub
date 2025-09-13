@@ -3,7 +3,7 @@ import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
 import type { Media as GraphqlMedia, Episode as GraphqlEpisode, MediaSort } from '../../generated/schema/types.generated'
-import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia } from './schema'
+import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia, CreateAggregatedEpisode } from './schema'
 import type {
   CreateMedia,
   CreateMediaHandles,
@@ -53,10 +53,10 @@ function removeDuplicatesByField<T extends Record<string, any>>(field: keyof T, 
   return result
 }
 
-const unwrapCache = new WeakMap<GraphqlMedia, GraphqlMedia[]>()
+const unwrapMediaCache = new WeakMap<GraphqlMedia, GraphqlMedia[]>()
 export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia[] => {
-  if (unwrapCache.has(media)) {
-    return unwrapCache.get(media)!
+  if (unwrapMediaCache.has(media)) {
+    return unwrapMediaCache.get(media)!
   }
 
   const unwrappedResult =
@@ -70,7 +70,30 @@ export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia
       : [media]
 
   if (media.handles) {
-    unwrapCache.set(media, unwrappedResult)
+    unwrapMediaCache.set(media, unwrappedResult)
+  }
+
+  return unwrappedResult
+}
+
+const unwrapEpisodeCache = new WeakMap<GraphqlEpisode, GraphqlEpisode[]>()
+export const recursivelyUnwrapEpisodeHandles = (episode: GraphqlEpisode): GraphqlEpisode[] => {
+  if (unwrapEpisodeCache.has(episode)) {
+    return unwrapEpisodeCache.get(episode)!
+  }
+
+  const unwrappedResult =
+    episode.handles
+      ? [
+        episode,
+        ...episode
+          .handles
+          .flatMap(recursivelyUnwrapEpisodeHandles)
+      ]
+      : [episode]
+
+  if (episode.handles) {
+    unwrapEpisodeCache.set(episode, unwrappedResult)
   }
 
   return unwrappedResult
@@ -434,7 +457,7 @@ export const findAggregatedMedias = async(
   }))
   .map(media => normalizeGraphqlAggregatedMedia(media))
 
-const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
+const normalizeGraphqlEpisode = (episode: DrizzleEpisode & { handles?: { episode: DrizzleEpisode }[] }): GraphqlEpisode => ({
   ...episode,
   _id: episode.uri,
   url: episode.url ?? null,
@@ -456,6 +479,16 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
   seasonNumber: episode.seasonNumber ?? null,
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+  handles: episode.handles?.map(handle => normalizeGraphqlEpisode(handle.episode))
+})
+
+export const normalizeGraphqlAggregatedEpisode = (
+  episode:
+  DrizzleAggregatedEpisode & {
+    handles?: { episode: DrizzleEpisode }[]
+  }): GraphqlEpisode => ({
+  ...normalizeGraphqlEpisode(episode),
+  _id: episode._id
 })
 
 const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
@@ -480,6 +513,51 @@ const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
 })
+
+export const normalizeDrizzleAggregatedEpisode = (episode: GraphqlEpisode): CreateAggregatedEpisode => ({
+  ...normalizeDrizzleEpisode(episode),
+    _id: episode._id
+})
+
+
+export const findAllEpisode = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.episodeTable.findMany({
+    with: {
+      handles: {
+        with: {
+          episode: true
+        }
+      }
+    }
+  })
+
+  const mappedEpisode = results.map(normalizeGraphqlEpisode)
+
+  return removeDuplicatesByField('uri', mappedEpisode.flatMap(recursivelyUnwrapEpisodeHandles))
+}
+
+
+export const findAllAggregatedEpisode = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.aggregatedEpisodeTable.findMany({
+    with: {
+      handles: {
+        with: {
+          episode: {
+            with: {
+              handles: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+
+  return results.map(normalizeGraphqlAggregatedEpisode)
+}
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: GraphqlEpisode[]) => {
   const values = episodes.map(normalizeDrizzleEpisode)
@@ -559,41 +637,33 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
 }
 
 
-export const aggregateEpisodeHandles = (episodes: GraphqlMedia[], existingAggregatedEpisode?: GraphqlMedia) => {
+export const aggregateEpisodeHandles = (episodes: GraphqlEpisode[], existingAggregatedEpisode?: GraphqlEpisode) => {
   const id = `(${episodes.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
   const uri = `ag:${id}`
 
-  const sortedMediaBasedOnQualityScore = episodes.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  const sortedEpisodeBasedOnQualityScore = episodes.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
   const _id = existingAggregatedEpisode?._id ?? crypto.randomUUID()
 
-  const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
+  const aggregatedEpisode = sortedEpisodeBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
     descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
-    shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
-    covers: [...acc.covers ?? [], ...media.covers ?? []],
-    banners: [...acc.banners ?? [], ...media.banners ?? []],
-    trailers: [...acc.trailers ?? [], ...media.trailers ?? []]
+    shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []]
   }), {
     _id,
     uri,
     id,
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
-    aggregated: true,
-    score: Math.max(...episodes.map(m => m.score ?? 0)),
-    handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
-  } as GraphqlMedia)
-
-  if (aggregatedMedia?.episodes?.length) {
-    console.log('-----------------', aggregatedMedia)
-  }
+    mediaUri: uri,
+    // score: Math.max(...episodes.map(m => m.score ?? 0)),
+    handles: removeDuplicatesByField('_id', sortedEpisodeBasedOnQualityScore.flatMap(recursivelyUnwrapEpisodeHandles))
+  } as GraphqlEpisode)
 
   return {
-    ...aggregatedMedia,
-    titles: removeDuplicatesByField('title', aggregatedMedia?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
-    trailers: removeDuplicatesByField('uri', aggregatedMedia?.trailers ?? [])
+    ...aggregatedEpisode,
+    titles: removeDuplicatesByField('title', aggregatedEpisode?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
   }
 }

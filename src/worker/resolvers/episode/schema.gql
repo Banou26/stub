@@ -15,6 +15,7 @@ type Episode {
   """Links to external/other resources related to itself"""
   handles: [Episode!]
   handleOf: [Episode!]
+  score: Float
   titles: [EpisodeTitle!]
   shortDescriptions: [EpisodeShortDescription!]
   descriptions: [EpisodeDescription!]
@@ -31,6 +32,7 @@ type Episode {
 type EpisodeTitle {
   language: String!
   title: String!
+  score: Float
 }
 
 type EpisodeShortDescription {

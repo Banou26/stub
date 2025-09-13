@@ -21,8 +21,12 @@ import {
   findAllAggregatedMedia,
   aggregateMediaHandles,
   insertManyAggregatedMedia,
+  aggregateEpisodeHandles,
+  findAllAggregatedEpisode,
+  findAllEpisode,
 } from './drizzle/utils'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
+import groupAllRelatedEpisodes from './drizzle/sql/groupAllRelatedEpisodes'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -67,6 +71,25 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
   await database.transaction(async (tx) => {
     await insertManyEpisode(tx, episodes as Episode[])
+    const allEpisode = await findAllEpisode(tx)
+    const allAggregatedEpisode = await findAllAggregatedEpisode(tx)
+    const groups = await tx.all(groupAllRelatedEpisodes) as [string, number, string, number][]
+    console.log('EPISODE GROUPS', groups)
+    const allUpdatedAggregatedEpisode = groups.map(([_, __, urisString]) => {
+      const uris = urisString.split(',').map(uri => uri.trim())
+      const episodes =
+        uris
+          .map(uri => allEpisode.find(r => r?.uri === uri))
+          .filter((episode): episode is NonNullable<typeof episode> => episode !== null && episode !== undefined)
+
+      const existingMatch = allAggregatedEpisode.find(existing => {
+        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
+        return existingUris.some(existingUri => uris.includes(existingUri))
+      })
+
+      return aggregateEpisodeHandles(episodes, existingMatch)
+    })
+    console.log('-------------------------', allUpdatedAggregatedEpisode)
   })
   return episodes
 }, {
