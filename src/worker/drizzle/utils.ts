@@ -8,7 +8,9 @@ import type {
   CreateMedia,
   CreateMediaHandles,
   CreateMediaEpisodes,
-  CreateAggregatedMediaHandles
+  CreateAggregatedMediaHandles,
+  CreateAggregatedEpisodeHandles,
+  CreateAggregatedMediaEpisodes
 } from './schema'
 import type { Database } from '.'
 
@@ -20,7 +22,10 @@ import {
   mediaHandlesTable,
   mediaEpisodesTable,
   aggregatedMediaTable,
-  aggregatedMediaHandlesTable
+  aggregatedMediaHandlesTable,
+  aggregatedEpisodeTable,
+  aggregatedEpisodeHandlesTable,
+  aggregatedMediaEpisodesTable
 } from './schema'
 import database from '.'
 import { getRoutePath, Route } from '../../router/path'
@@ -593,6 +598,47 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
   if (mediaEpisodeRelations.length) {
     await tx.insert(mediaEpisodesTable)
       .values(mediaEpisodeRelations)
+      .onConflictDoNothing()
+  }
+}
+
+export const insertManyAggregatedEpisode = async (tx: DrizzleSQLiteTransaction, episodes: GraphqlEpisode[]) => {
+  const values = episodes.map(normalizeDrizzleAggregatedEpisode)
+
+  if (values.length) {
+    await tx.insert(aggregatedEpisodeTable)
+        .values(values)
+        .onConflictDoUpdate({
+          target: aggregatedEpisodeTable._id,
+          set: {
+            uri: sql`COALESCE(excluded.uri, ${aggregatedEpisodeTable.uri})`,
+            mediaUri: sql`COALESCE(excluded.mediaUri, ${aggregatedEpisodeTable.mediaUri})`,
+            titles: mergeJsonArrays('titles'),
+            score: sql`COALESCE(excluded.score, ${aggregatedEpisodeTable.score})`,
+            descriptions: mergeJsonArrays('descriptions'),
+            shortDescriptions: mergeJsonArrays('shortDescriptions'),
+            thumbnails: mergeJsonArrays('thumbnails'),
+            releaseDate: sql`COALESCE(excluded.releaseDate, ${aggregatedEpisodeTable.releaseDate})`,
+            seasonNumber: sql`COALESCE(excluded.seasonNumber, ${aggregatedEpisodeTable.seasonNumber})`,
+            episodeNumber: sql`COALESCE(excluded.episodeNumber, ${aggregatedEpisodeTable.episodeNumber})`,
+            absoluteEpisodeNumber: sql`COALESCE(excluded.absoluteEpisodeNumber, ${aggregatedEpisodeTable.absoluteEpisodeNumber})`
+          }
+        })
+  }
+
+  const aggregatedEpisodeHandles =
+    episodes
+      .flatMap(episode =>
+        episode.handles?.map(handle => ({
+          aggregatedEpisodeId: episode._id,
+          episodeUri: handle.uri
+        }) satisfies CreateAggregatedEpisodeHandles)
+      )
+      .filter((episodeHandle): episodeHandle is NonNullable<typeof episodeHandle> => episodeHandle !== null && episodeHandle !== undefined)
+
+  if (aggregatedEpisodeHandles.length) {
+    await tx.insert(aggregatedEpisodeHandlesTable)
+      .values(aggregatedEpisodeHandles)
       .onConflictDoNothing()
   }
 }

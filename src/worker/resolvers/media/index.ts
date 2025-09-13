@@ -34,7 +34,7 @@ export const resolvers = {
         yield aggregatedMedia
 
         const mediaListener = listenIterator(aggregatedMedia ? { table: 'media', columnId: '_id', ids: [aggregatedMedia._id] } : undefined)
-        const episodeListener = listenIterator(aggregatedMedia ? { table: 'mediaEpisodes', columnId: 'mediaUri' } : undefined)
+        const episodeListener = listenIterator(aggregatedMedia ? { table: 'aggregatedEpisode', columnId: 'mediaUri' } : undefined)
 
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 

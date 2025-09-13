@@ -1,6 +1,7 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 
 import type { Episode, Media, Resolvers } from '../generated/schema/types.generated'
+import type { CreateAggregatedMediaEpisodes } from './drizzle/schema'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga, useErrorHandler } from 'graphql-yoga'
@@ -24,7 +25,9 @@ import {
   aggregateEpisodeHandles,
   findAllAggregatedEpisode,
   findAllEpisode,
+  insertManyAggregatedEpisode,
 } from './drizzle/utils'
+import { aggregatedMediaEpisodesTable } from './drizzle/schema'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 import groupAllRelatedEpisodes from './drizzle/sql/groupAllRelatedEpisodes'
 
@@ -73,8 +76,10 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
     await insertManyEpisode(tx, episodes as Episode[])
     const allEpisode = await findAllEpisode(tx)
     const allAggregatedEpisode = await findAllAggregatedEpisode(tx)
+    const allAggregatedMedia = await findAllAggregatedMedia(tx)
+
     const groups = await tx.all(groupAllRelatedEpisodes) as [string, number, string, number][]
-    console.log('EPISODE GROUPS', groups)
+
     const allUpdatedAggregatedEpisode = groups.map(([_, __, urisString]) => {
       const uris = urisString.split(',').map(uri => uri.trim())
       const episodes =
@@ -89,7 +94,53 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
 
       return aggregateEpisodeHandles(episodes, existingMatch)
     })
-    console.log('-------------------------', allUpdatedAggregatedEpisode)
+
+    // Insert aggregated episodes
+    await insertManyAggregatedEpisode(tx, allUpdatedAggregatedEpisode)
+
+    // Group episodes by their mediaUri to update aggregated media
+    const episodesByMediaUri = new Map<string, Episode[]>()
+    for (const episode of episodes as Episode[]) {
+      const mediaUri = episode.mediaUri
+      if (!episodesByMediaUri.has(mediaUri)) {
+        episodesByMediaUri.set(mediaUri, [])
+      }
+      episodesByMediaUri.get(mediaUri)!.push(episode)
+    }
+
+    // Find corresponding aggregated media and create relations
+    const aggregatedMediaEpisodeRelations: CreateAggregatedMediaEpisodes[] = []
+    for (const [mediaUri, mediaEpisodes] of episodesByMediaUri) {
+      // Find the aggregated media that contains this media URI
+      const aggregatedMedia = allAggregatedMedia.find(am => {
+        const aggregatedUris = am.uri.slice('ag:('.length, -1).split(',')
+        return aggregatedUris.includes(mediaUri)
+      })
+
+      if (aggregatedMedia) {
+        // Find corresponding aggregated episodes for these episodes
+        for (const episode of mediaEpisodes) {
+          const aggregatedEpisode = allUpdatedAggregatedEpisode.find(ae => {
+            const aggregatedUris = ae.uri.slice('ag:('.length, -1).split(',')
+            return aggregatedUris.includes(episode.uri)
+          })
+
+          if (aggregatedEpisode) {
+            aggregatedMediaEpisodeRelations.push({
+              aggregatedMediaId: aggregatedMedia._id,
+              aggregatedEpisodeId: aggregatedEpisode._id
+            } satisfies CreateAggregatedMediaEpisodes)
+          }
+        }
+      }
+    }
+
+    // Insert aggregated media-episode relations
+    if (aggregatedMediaEpisodeRelations.length) {
+      await tx.insert(aggregatedMediaEpisodesTable)
+        .values(aggregatedMediaEpisodeRelations)
+        .onConflictDoNothing()
+    }
   })
   return episodes
 }, {
