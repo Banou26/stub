@@ -190,18 +190,19 @@ const GET_MEDIA_MODAL = gql(`
 const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
+  const { uri } = params
   const [{ data }] = useSubscription({
     query: GET_MEDIA_MODAL,
     variables: {
       input: {
-        uri: foundMedia?.uri
+        uri
       },
       descriptionInput: {
         type: MediaDescriptionContentType.Html,
         count: 1
       }
     },
-    pause: !foundMedia
+    pause: !uri
   })
   const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
