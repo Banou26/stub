@@ -60,7 +60,7 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
             ],
             descriptions: [{ language: 'en', description: episode.overview }],
             shortDescriptions: [{ language: 'en', shortDescription: episode.summary }],
-            thumbnails: [{ url: episode.image }],
+            thumbnails: episode.image ? [{ url: episode.image }] : [],
             seasonNumber: episode.seasonNumber,
             episodeNumber: episode.episodeNumber,
             absoluteEpisodeNumber: episode.absoluteEpisodeNumber,
@@ -132,7 +132,7 @@ interface Episode {
   airDateUtc: string; // ISO 8601 datetime
   runtime: number;
   overview: string;
-  image: string; // URL
+  image?: string; // URL
   episode: string;
   anidbEid: number;
   length: number;

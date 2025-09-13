@@ -155,6 +155,9 @@ const GET_MEDIA_MODAL = gql(`
         titles {
           title
         }
+        thumbnails {
+          url
+        }
       }
       handles {
         episodes {
