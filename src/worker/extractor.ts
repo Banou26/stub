@@ -61,7 +61,6 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
       return aggregateMediaHandles(medias, existingMatch)
     })
     await insertManyAggregatedMedia(tx, allUpdatedAggregatedMedia)
-    console.log('aggregated medias', await findAllAggregatedMedia(tx))
   })
   return medias
 }, {

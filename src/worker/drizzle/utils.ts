@@ -299,7 +299,6 @@ export const insertManyAggregatedMedia = async (tx: DrizzleSQLiteTransaction, me
   const values = medias.map(normalizeDrizzleAggregatedMedia)
 
   if (values.length) {
-    console.log('values', values)
     await tx.insert(aggregatedMediaTable)
         .values(values)
         .onConflictDoUpdate({
@@ -670,10 +669,6 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     score: Math.max(...medias.map(m => m.score ?? 0)),
     handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
-
-  if (aggregatedMedia?.episodes?.length) {
-    console.log('-----------------', aggregatedMedia)
-  }
 
   return {
     ...aggregatedMedia,

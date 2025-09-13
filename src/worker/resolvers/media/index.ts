@@ -7,8 +7,6 @@ import { findAggregatedMedia, findAggregatedMedias } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
 import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from './utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
-import database from '../../drizzle'
-import { sql } from 'drizzle-orm'
 
 export const schema = _schema as string
 
@@ -28,9 +26,7 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        console.log('BEFORE aggregatedMedia', args.input.uri)
         const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
-        console.log('aggregatedMedia', aggregatedMedia)
         yield aggregatedMedia
 
         const mediaListener = listenIterator(aggregatedMedia ? { table: 'media', columnId: '_id', ids: [aggregatedMedia._id] } : undefined)
@@ -41,10 +37,7 @@ export const resolvers = {
         // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
         try {
           for await (const _ of listeners) {
-            console.log('changes', _)
-            const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
-            console.log('aggregatedMedia', aggregatedMedia)
-            yield aggregatedMedia
+            yield await findAggregatedMedia(undefined, { uri: args.input.uri })
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
