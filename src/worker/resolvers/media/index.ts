@@ -3,10 +3,13 @@ import type { Media, Resolvers } from '../../../generated/schema/types.generated
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findAggregatedMedia, findAggregatedMedias } from '../../drizzle/utils'
+import { findAggregatedMedia, findAggregatedMedias, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
 import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from './utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
+import database from '../../drizzle'
+import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
+import { eq, asc } from 'drizzle-orm'
 
 export const schema = _schema as string
 
@@ -69,7 +72,22 @@ export const resolvers = {
   },
   Media: {
     _id: (parent) => parent._id,
-    episodes: (parent) => parent.episodes ?? [],
+    episodes: async (parent) => {
+      if (parent.uri.startsWith('ag:')) {
+        const episodes = await database
+          .select()
+          .from(aggregatedMediaEpisodesTable)
+          .innerJoin(aggregatedEpisodeTable, eq(aggregatedMediaEpisodesTable.aggregatedEpisodeId, aggregatedEpisodeTable._id))
+          .where(eq(aggregatedMediaEpisodesTable.aggregatedMediaId, parent._id))
+          .orderBy(asc(aggregatedEpisodeTable.episodeNumber))
+          .then(results =>
+            results.map(({ aggregatedEpisode }) => normalizeGraphqlAggregatedEpisode(aggregatedEpisode))
+          )
+
+        return episodes?.length ? episodes : parent.episodes
+      }
+      return parent.episodes
+    },
     descriptions: (parent, args) => {
       const descriptions =
         parent
