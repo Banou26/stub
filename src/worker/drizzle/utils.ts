@@ -433,8 +433,8 @@ export const findAggregatedMedias = async(
     orderBy:
       sorts
         ?.map(sort =>
-          sort === 'POPULARITY' ? desc(mediaTable.popularity)
-          : sort === 'POPULARITY_DESC' ? asc(mediaTable.popularity)
+          sort === 'POPULARITY' ? desc(aggregatedMediaTable.popularity)
+          : sort === 'POPULARITY_DESC' ? asc(aggregatedMediaTable.popularity)
           : undefined
         )
         .filter((sort): sort is NonNullable<typeof sort> => sort !== undefined),
@@ -498,6 +498,7 @@ export const normalizeGraphqlAggregatedEpisode = (
 const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   ...episode,
   url: episode.url ?? null,
+  score: episode.score ?? null,
   titles: episode.titles || [],
   descriptions: episode.descriptions || [],
   shortDescriptions: episode.shortDescriptions || [],
@@ -665,7 +666,6 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     id,
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
-    aggregated: true,
     score: Math.max(...medias.map(m => m.score ?? 0)),
     handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
@@ -690,6 +690,7 @@ export const aggregateEpisodeHandles = (episodes: GraphqlEpisode[], existingAggr
     ...media,
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
+    thumbnails: [...acc.thumbnails ?? [], ...media.thumbnails ?? []],
     descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
     shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []]
   }), {
@@ -699,7 +700,7 @@ export const aggregateEpisodeHandles = (episodes: GraphqlEpisode[], existingAggr
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     mediaUri: uri,
-    // score: Math.max(...episodes.map(m => m.score ?? 0)),
+    score: Math.max(...episodes.map(m => m.score ?? 0)),
     handles: removeDuplicatesByField('_id', sortedEpisodeBasedOnQualityScore.flatMap(recursivelyUnwrapEpisodeHandles))
   } as GraphqlEpisode)
 

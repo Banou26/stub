@@ -97,8 +97,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
       margin-top: 4rem;
       border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
       .episode {
-        display: grid;
-        grid-template-columns: 7rem auto 2.5rem 12.5rem;
+        display: flex;
         height: 7rem;
         border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
         color: rgb(255, 255, 255);
@@ -107,9 +106,27 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         height: 10rem;
         cursor: pointer;
 
+        .number {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          font-weight: bold;
+          min-width: 7.5rem;
+        }
+
+        .thumbnail {
+          margin: auto 0;
+          height: 7.5rem;
+          background-color: rgba(255, 255, 255, .1);
+          border-radius: .5rem;
+          margin-right: 2.5rem;
+        }
+
         .content {
           display: flex;
           align-items: center;
+
           .title {
             font-size: 2rem;
             font-weight: bold;
@@ -152,6 +169,7 @@ const GET_MEDIA_MODAL = gql(`
       popularity
       episodes {
         ...EpisodeFragment
+        episodeNumber
         titles {
           title
         }
@@ -257,15 +275,30 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
               { description ? <div className="description" dangerouslySetInnerHTML={{ __html: description }} /> : undefined}
               <div className="episodes">
                 {
-                  new Array(media && 'episodeCount' in media && media.episodeCount ? media.episodeCount : 0)
-                    .fill(undefined)
-                    .map((media, index) =>
+                  media &&
+                  'episodes' in media &&
+                  media
+                    .episodes
+                    ?.map((episode, index) =>
                       <div className="episode">
-                        <div className="number"></div>
+                        <div className="number">{episode.episodeNumber}</div>
                         {
-                          <div className="content">
-                            <div className="title">Episode {index + 1}</div>
-                          </div>
+                          episode.thumbnails?.at(0)
+                            ? <img className="thumbnail" src={episode.thumbnails?.at(0)?.url}></img>
+                            : undefined
+                        }
+                        {
+                          episode.titles?.length
+                            ? (
+                              <div className="content">
+                                <div className="title">{episode.titles.at(0)?.title}</div>
+                              </div>
+                            )
+                            : (
+                              <div className="content">
+                                <div className="title">Episode {index + 1}</div>
+                              </div>
+                            )
                         }
                         <div className="date"></div>
                       </div>
