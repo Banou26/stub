@@ -5,7 +5,7 @@ import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
 import { findAggregatedMedia, findAggregatedMedias, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
-import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from './utils'
+import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
 import database from '../../drizzle'
 import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
@@ -127,6 +127,7 @@ export const resolvers = {
               shortDescription: parsed
             }
           })
+          .filter((mediaShortDescription): mediaShortDescription is NonNullable<typeof mediaShortDescription> => Boolean(mediaShortDescription))
 
       return shortDescriptions
     },

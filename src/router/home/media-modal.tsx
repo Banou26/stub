@@ -126,11 +126,16 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 
         .content {
           display: flex;
-          align-items: center;
+          flex-direction: column;
+          /*align-items: center;*/
+          justify-content: center;
 
           .title {
             font-size: 2rem;
             font-weight: bold;
+          }
+          .description {
+
           }
         }
       }
@@ -174,13 +179,21 @@ const GET_MEDIA_MODAL = gql(`
         titles {
           title
         }
+        shortDescriptions {
+          language
+          shortDescription
+        }
+        descriptions {
+          language
+          description
+        }
         thumbnails {
           url
         }
       }
       handles {
         episodes {
-            ...EpisodeFragment
+          ...EpisodeFragment
         }
       }
       episodeCount
@@ -295,6 +308,20 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                             ? (
                               <div className="content">
                                 <div className="title">{episode.titles.at(0)?.title}</div>
+                                {
+                                  // todo: make it so that shortDescriptions use the description if unset
+                                  (episode.shortDescriptions?.at(0)
+                                    ?? episode.descriptions?.at(0))
+                                    ? (
+                                      <div className="description">
+                                        {
+                                          episode.shortDescriptions?.at(0)?.shortDescription
+                                          ?? episode.descriptions?.at(0)?.description
+                                        }
+                                      </div>
+                                    )
+                                    : undefined
+                                }
                               </div>
                             )
                             : (

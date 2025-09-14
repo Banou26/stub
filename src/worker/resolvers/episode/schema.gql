@@ -17,8 +17,8 @@ type Episode {
   handleOf: [Episode!]
   score: Float
   titles: [EpisodeTitle!]
-  shortDescriptions: [EpisodeShortDescription!]
-  descriptions: [EpisodeDescription!]
+  shortDescriptions(input: EpisodeShortDescriptionInput): [EpisodeShortDescription!]
+  descriptions(input: EpisodeDescriptionInput): [EpisodeDescription!]
   releaseDate: Date
   relativeNumber: Int
   absoluteNumber: Int
@@ -35,15 +35,31 @@ type EpisodeTitle {
   score: Float
 }
 
+input EpisodeShortDescriptionInput {
+  type: EpisodeDescriptionContentType = TEXT
+  count: Int
+}
+
 type EpisodeShortDescription {
   language: String!
   shortDescription: String!
+}
+
+enum EpisodeDescriptionContentType {
+  HTML
+  TEXT
+}
+
+input EpisodeDescriptionInput {
+  type: EpisodeDescriptionContentType = TEXT
+  count: Int
 }
 
 type EpisodeDescription {
   language: String!
   description: String!
 }
+
 
 type EpisodeThumbnail {
   language: String

@@ -58,8 +58,14 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
               ...episode.title.en ? [{ language: 'en', title: episode.title.en }] : [],
               ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja }] : [],
             ],
-            descriptions: [{ language: 'en', description: episode.overview }],
-            shortDescriptions: [{ language: 'en', shortDescription: episode.summary }],
+            descriptions:
+              episode.overview
+                ? [{ language: 'en', description: episode.overview }]
+                : [],
+            shortDescriptions:
+              episode.summary
+                ? [{ language: 'en', shortDescription: episode.summary }]
+                : [],
             thumbnails: episode.image ? [{ url: episode.image }] : [],
             seasonNumber: episode.seasonNumber,
             episodeNumber: episode.episodeNumber,
@@ -131,14 +137,14 @@ interface Episode {
   airDate: string; // Format: "YYYY-MM-DD"
   airDateUtc: string; // ISO 8601 datetime
   runtime: number;
-  overview: string;
+  overview?: string;
   image?: string; // URL
   episode: string;
   anidbEid: number;
   length: number;
   airdate: string; // Format: "YYYY-MM-DD"
   rating: string; // Numeric string
-  summary: string;
+  summary?: string;
   finaleType?: 'season' | 'series'; // Optional, only on finale episodes
 }
 
