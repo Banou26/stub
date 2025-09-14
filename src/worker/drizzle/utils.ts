@@ -401,7 +401,7 @@ export const findAggregatedMedia = async(
   { uri }: { uri: string }
 ) =>
   tx.query.aggregatedMediaTable.findFirst({
-    where: uri ? eq(mediaTable.uri, uri) : undefined,
+    where: uri ? eq(aggregatedMediaTable.uri, uri) : undefined,
     with: {
       episodes: {
         with: {
