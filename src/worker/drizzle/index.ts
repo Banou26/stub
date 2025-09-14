@@ -16,8 +16,12 @@ try {
   await database.run(SQLInit)
   await generateTableNotifyTriggers(database, 'media', 'uri')
   await generateTableNotifyTriggers(database, 'media', '_id')
+  await generateTableNotifyTriggers(database, 'aggregatedMedia', 'uri')
+  await generateTableNotifyTriggers(database, 'aggregatedMedia', '_id')
   await generateTableNotifyTriggers(database, 'episode', 'uri')
   await generateTableNotifyTriggers(database, 'episode', '_id')
+  await generateTableNotifyTriggers(database, 'aggregatedEpisode', 'uri')
+  await generateTableNotifyTriggers(database, 'aggregatedEpisode', '_id')
   await generateTableNotifyTriggers(database, 'mediaEpisodes', 'mediaUri', ['episodeUri'])
 } catch (err) {
   console.error(err)
