@@ -43,7 +43,22 @@ const client = new Client({
     mapExchange({
       onError(combinedError, operation) {
         for (const error of combinedError.graphQLErrors) {
-          console.error(error)
+          console.error(
+            new Error(
+              error.message,
+              {
+                cause:
+                  `GQL Error originated from ${
+                    operation
+                      .query
+                      .definitions
+                      .find(def => def.kind === 'OperationDefinition')
+                      ?.name
+                      ?.value
+                  }`
+              }
+            )
+          )
         }
       }
     }),
