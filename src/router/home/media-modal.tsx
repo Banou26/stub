@@ -89,7 +89,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
       font-weight: 600;
     }
 
-    .description {
+    & > .description {
       white-space: pre-wrap;
       margin-top: 2.5rem;
     }
@@ -130,12 +130,13 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
           /*align-items: center;*/
           justify-content: center;
 
-          .title {
+          & > .title {
             font-size: 2rem;
             font-weight: bold;
           }
-          .description {
-
+          & > .description {
+            white-space: pre-wrap;
+            margin-top: 0.5rem;
           }
         }
       }
@@ -182,10 +183,6 @@ const GET_MEDIA_MODAL = gql(`
         shortDescriptions {
           language
           shortDescription
-        }
-        descriptions {
-          language
-          description
         }
         thumbnails {
           url
@@ -309,15 +306,10 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                               <div className="content">
                                 <div className="title">{episode.titles.at(0)?.title}</div>
                                 {
-                                  // todo: make it so that shortDescriptions use the description if unset
-                                  (episode.shortDescriptions?.at(0)
-                                    ?? episode.descriptions?.at(0))
+                                  episode.shortDescriptions?.at(0)
                                     ? (
                                       <div className="description">
-                                        {
-                                          episode.shortDescriptions?.at(0)?.shortDescription
-                                          ?? episode.descriptions?.at(0)?.description
-                                        }
+                                        {episode.shortDescriptions?.at(0)?.shortDescription}
                                       </div>
                                     )
                                     : undefined
