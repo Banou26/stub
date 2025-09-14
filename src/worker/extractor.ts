@@ -161,10 +161,18 @@ export const extractors =
             merge(
               {
                 Media: {
-                  _id: (parent) => parent.uri
+                  _id: (parent) => parent.uri,
+                  handles: (parent) => parent.handles ?? [],
+                  descriptions: (parent) => parent.descriptions ?? [],
+                  shortDescriptions: (parent) => parent.shortDescriptions ?? [],
+                  trailers: (parent) => parent.trailers ?? [],
+                  episodes: (parent) => parent.episodes ?? [],
                 },
                 Episode: {
                   _id: (parent) => parent.uri,
+                  handles: (parent) => parent.handles ?? [],
+                  descriptions: (parent) => parent.descriptions ?? [],
+                  shortDescriptions: (parent) => parent.shortDescriptions ?? []
                 },
                 Query: {
                 },

@@ -6,7 +6,7 @@ import {
   FloatingFocusManager, FloatingOverlay, FloatingPortal,
   useClick, useFloating, useInteractions
 } from '@floating-ui/react'
-import { useMemo, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
@@ -39,6 +39,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
     height: 67.5rem;
     background-size: cover;
+    background-position: center;
     .player {
       border-radius: 1rem 1rem 0 0;
       overflow: hidden;
@@ -218,8 +219,15 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
-  const trailer = useMemo(() => media?.trailers?.at(0), [media])
   const cover = useMemo(() => media?.covers?.at(0), [media])
+
+  const [bannedTrailerUris, setBannedTrailerUris] = useState<string[]>([])
+  const selectedTrailer = useMemo(() => media?.trailers.filter((trailer) => !bannedTrailerUris.includes(trailer.uri)).at(0), [bannedTrailerUris])
+
+  const onTrailerError = useCallback(() => {
+    if (!selectedTrailer) return
+    setBannedTrailerUris([...bannedTrailerUris, selectedTrailer.uri])
+  }, [selectedTrailer, bannedTrailerUris])
 
   const [open, onOpenChange] = useState(Boolean(params))
   const { refs, context } = useFloating({
@@ -250,18 +258,21 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
       <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>
         <FloatingFocusManager context={context}>
           <div className="modal" ref={refs.setFloating} {...getFloatingProps()}>
-            <div className="trailer" style={!trailer?.url && cover ? { backgroundImage: `url(${cover.url})` } : {}}>
+            <div className="trailer" style={!selectedTrailer?.url && cover ? { backgroundImage: `url(${cover.url})` } : {}}>
               {
-                trailer?.url && (
-                  <YoutubeMinimalPlayer
-                    url={trailer?.url}
-                    className="player"
-                    paused={playerPaused}
-                    volume={playerMuted ? 0 : playerVolume}
-                  />
-                )
+                selectedTrailer?.url
+                  ? (
+                    <YoutubeMinimalPlayer
+                      url={selectedTrailer?.url}
+                      className="player"
+                      onError={onTrailerError}
+                      paused={playerPaused}
+                      volume={playerMuted ? 0 : playerVolume}
+                    />
+                  )
+                  : undefined
               }
-            <div className={`player-controls ${!trailer?.url ? 'hidden' : ''}`}>
+            <div className={`player-controls ${!selectedTrailer?.url ? 'hidden' : ''}`}>
               <span className="playback">
                 {
                   playerPaused

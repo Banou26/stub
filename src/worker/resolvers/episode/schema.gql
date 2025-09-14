@@ -13,17 +13,17 @@ type Episode {
   """Uri to the media resource"""
   mediaUri: String!
   """Links to external/other resources related to itself"""
-  handles: [Episode!]
+  handles: [Episode!]!
   handleOf: [Episode!]
   score: Float
-  titles: [EpisodeTitle!]
-  shortDescriptions(input: EpisodeShortDescriptionInput): [EpisodeShortDescription!]
-  descriptions(input: EpisodeDescriptionInput): [EpisodeDescription!]
+  titles: [EpisodeTitle!]!
+  shortDescriptions(input: EpisodeShortDescriptionInput): [EpisodeShortDescription!]!
+  descriptions(input: EpisodeDescriptionInput): [EpisodeDescription!]!
   releaseDate: Date
   relativeNumber: Int
   absoluteNumber: Int
-  thumbnails: [EpisodeThumbnail!]
-  playbackSources: [PlaybackSource!]
+  thumbnails: [EpisodeThumbnail!]!
+  playbackSources: [PlaybackSource!]!
   seasonNumber: Int
   episodeNumber: Int
   absoluteEpisodeNumber: Int

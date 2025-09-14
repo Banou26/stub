@@ -40,17 +40,17 @@ type Media {
   """An url to the media resource"""
   url: String
   """Links to external/other resources related to itself"""
-  handles: [Media!]
+  handles: [Media!]!
   handleOf: [Media!]
   score: Float
-  titles: [MediaTitle!]
+  titles: [MediaTitle!]!
   type: MediaType
   status: MediaStatus
-  shortDescriptions(input: MediaShortDescriptionInput): [MediaShortDescription!]
-  descriptions(input: MediaDescriptionInput): [MediaDescription!]
-  trailers: [MediaTrailer!]
-  covers: [MediaCover!]
-  banners: [MediaBanner!]
+  shortDescriptions(input: MediaShortDescriptionInput): [MediaShortDescription!]!
+  descriptions(input: MediaDescriptionInput): [MediaDescription!]!
+  trailers: [MediaTrailer!]!
+  covers: [MediaCover!]!
+  banners: [MediaBanner!]!
   externalLinks: String
   averageScore: Int
   popularity: Int
@@ -58,7 +58,7 @@ type Media {
   endDate: Date
   isAdult: Boolean
   episodeCount: Int
-  episodes: [Episode!]
+  episodes: [Episode!]!
 }
 
 type MediaTitle {

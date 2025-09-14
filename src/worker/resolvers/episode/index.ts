@@ -11,6 +11,7 @@ export const resolvers = {
   Mutation: {},
   Subscription: {},
   Episode: {
+    handles: (parent) => parent.handles ?? [],
     descriptions: (parent, args) => {
       const descriptions =
         parent

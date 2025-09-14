@@ -74,6 +74,8 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       language: 'en',
       url: data.images.webp.large_image_url
     }],
+    banners: [],
+    episodes: [],
     episodeCount: data.episodes,
     popularity: data.members,
     status:

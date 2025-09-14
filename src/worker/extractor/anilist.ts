@@ -234,6 +234,8 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
       // ...media.coverImage?.large ? [{ language: 'jp', url: media.coverImage.large }] : [],
       ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge }] : []
     ],
+    banners: [],
+    episodes: [],
     episodeCount: media.episodes,
     popularity: media.popularity,
     status:
