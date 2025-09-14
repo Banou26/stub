@@ -38,6 +38,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
     height: 67.5rem;
+    background-size: cover;
     .player {
       border-radius: 1rem 1rem 0 0;
       overflow: hidden;
@@ -208,6 +209,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
   const trailer = useMemo(() => media?.trailers?.at(0), [media])
+  const cover = useMemo(() => media?.covers?.at(0), [media])
 
   const [open, onOpenChange] = useState(Boolean(params))
   const { refs, context } = useFloating({
@@ -238,7 +240,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
       <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>
         <FloatingFocusManager context={context}>
           <div className="modal" ref={refs.setFloating} {...getFloatingProps()}>
-            <div className="trailer">
+            <div className="trailer" style={!trailer?.url && cover ? { backgroundImage: `url(${cover.url})` } : {}}>
               {
                 trailer?.url && (
                   <YoutubeMinimalPlayer
@@ -249,26 +251,26 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   />
                 )
               }
-              <div className="player-controls">
-                <span className="playback">
-                  {
-                    playerPaused
-                      ? <LucidePlay className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(false)} />
-                      : <LucidePause className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(true)} />
-                  }
-                  {
-                    playerPaused
-                      ? <LucidePlay className="icon-body" size={30} onClick={() => setPlayerPaused(false)}/>
-                      : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
-                  }
-                </span>
-                <VolumeControl
-                  defaultMuted={playerMuted}
-                  onMutedUpdate={setPlayerMuted}
-                  defaultVolume={playerVolume}
-                  onVolumeUpdate={volume => setPlayerVolume(volume)}
-                />
-              </div>
+            <div className="player-controls hidden">
+              <span className="playback">
+                {
+                  playerPaused
+                    ? <LucidePlay className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(false)} />
+                    : <LucidePause className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(true)} />
+                }
+                {
+                  playerPaused
+                    ? <LucidePlay className="icon-body" size={30} onClick={() => setPlayerPaused(false)}/>
+                    : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
+                }
+              </span>
+              <VolumeControl
+                defaultMuted={playerMuted}
+                onMutedUpdate={setPlayerMuted}
+                defaultVolume={playerVolume}
+                onVolumeUpdate={volume => setPlayerVolume(volume)}
+              />
+            </div>
             </div>
             <div className="content">
               <div className="title">{title}</div>
