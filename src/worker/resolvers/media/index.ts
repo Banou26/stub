@@ -29,11 +29,10 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
-        yield aggregatedMedia
+        yield findAggregatedMedia(undefined, { uri: args.input.uri })
 
-        const mediaListener = listenIterator(aggregatedMedia ? { table: 'media', columnId: '_id', ids: [aggregatedMedia._id] } : undefined)
-        const episodeListener = listenIterator(aggregatedMedia ? { table: 'aggregatedEpisode', columnId: 'mediaUri' } : undefined)
+        const mediaListener = listenIterator({ table: 'aggregatedMedia' })
+        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
 
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 
@@ -59,8 +58,13 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
+        const mediaListener = listenIterator({ table: 'aggregatedMedia' })
+        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
+
+        const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+
         try {
-          for await (const _ of listenIterator()) {
+          for await (const _ of listeners) {
             yield findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
           }
         } finally {
