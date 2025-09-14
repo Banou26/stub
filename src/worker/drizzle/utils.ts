@@ -400,8 +400,10 @@ export const findAggregatedMedia = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { uri }: { uri: string }
 ) =>
-  tx.query.aggregatedMediaTable.findFirst({
+ // use `findMany` because otherwise `findFirst` throws with `"undefined" is not valid JSON`
+  tx.query.aggregatedMediaTable.findMany({
     where: uri ? eq(aggregatedMediaTable.uri, uri) : undefined,
+    limit: 1,
     with: {
       episodes: {
         with: {
@@ -423,7 +425,7 @@ export const findAggregatedMedia = async(
       }
     }
   })
-  .then(media => media && normalizeGraphqlAggregatedMedia(media))
+  .then(([media]) => media && normalizeGraphqlAggregatedMedia(media))
 
 export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
