@@ -251,7 +251,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   />
                 )
               }
-            <div className="player-controls hidden">
+            <div className={`player-controls ${!trailer?.url ? 'hidden' : ''}`}>
               <span className="playback">
                 {
                   playerPaused
