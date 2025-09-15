@@ -214,8 +214,8 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   endDate: media.endDate?.toUTCString(),
   isAdult: media.isAdult,
   episodeCount: media.episodeCount,
-  episodes: media.episodes?.map(mediaEpisode => normalizeGraphqlEpisode(mediaEpisode.episode)),
-  handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle))
+  episodes: media.episodes?.map(mediaEpisode => normalizeGraphqlEpisode(mediaEpisode.episode)) ?? [],
+  handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle)) ?? []
 })
 
 export const normalizeGraphqlAggregatedMedia = (
@@ -485,7 +485,7 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode & { handles?: { episode
   seasonNumber: episode.seasonNumber ?? null,
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
-  handles: episode.handles?.map(handle => normalizeGraphqlEpisode(handle.episode))
+  handles: episode.handles?.map(handle => normalizeGraphqlEpisode(handle.episode)) ?? []
 })
 
 export const normalizeGraphqlAggregatedEpisode = (
