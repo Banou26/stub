@@ -13,7 +13,7 @@ import DataLoader from 'dataloader'
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from './extractor/index'
 import { merge } from '../utils/merge'
-import { fetch } from './worker'
+import { fetch } from './fetch'
 import database from './drizzle'
 import {
   insertManyMedia,

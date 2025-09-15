@@ -1,4 +1,4 @@
-import type { Resolvers as WorkerResolvers } from './worker/utils'
+import type { Resolvers as WorkerResolvers } from './worker/yoga'
 
 import { expose }  from 'osra'
 
@@ -20,9 +20,22 @@ const resolvers = {
 
 export type Resolvers = typeof resolvers
 
-const { HANDLE_REQUEST: handleRequest } = await expose<WorkerResolvers>(
+expose<typeof resolvers>(
   resolvers,
-  { local: worker, remote: worker }
+  {
+    local: worker,
+    remote: worker,
+    key: 'fetch'
+  }
+)
+
+const { HANDLE_REQUEST: handleRequest } = await expose<WorkerResolvers>(
+  {},
+  {
+    local: worker,
+    remote: worker,
+    key: 'yoga'
+  }
 )
 
 export {
