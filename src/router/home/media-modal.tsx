@@ -1,4 +1,5 @@
-import { MediaDescriptionContentType, type GetReleasingMediaPageSubscription } from '../../generated/graphql'
+import type { GetMediaModalSubscription, GetReleasingMediaPageSubscription } from '../../generated/graphql'
+import type { Episode } from '../../generated/schema/types.generated'
 import type { RouteParams } from '../path'
 
 import { css } from '@emotion/react'
@@ -10,6 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
+import { MediaDescriptionContentType } from '../../generated/graphql'
 import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import VolumeControl from '../../components/volume-control'
@@ -205,6 +207,48 @@ const GET_MEDIA_MODAL = gql(`
   }
 `)
 
+const Episode = (
+  { episode, index }:
+  { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number }
+) => {
+
+  return (
+    <div className="episode">
+      <div className="number">{episode.episodeNumber}</div>
+      {
+        episode.thumbnails?.at(0)
+          ? <img className="thumbnail" src={episode.thumbnails?.at(0)?.url}></img>
+          : undefined
+      }
+      {
+        episode.titles?.length
+          ? (
+            <div className="content">
+              <div className="title">{episode.titles.at(0)?.title}</div>
+              {
+                episode.shortDescriptions?.at(0)
+                  ? (
+                    <div className="description">
+                      <TextEllipsis className="ellipsis">
+                        {episode.shortDescriptions?.at(0)?.shortDescription}
+                      </TextEllipsis>
+                    </div>
+                  )
+                  : undefined
+              }
+            </div>
+          )
+          : (
+            <div className="content">
+              <div className="title">Episode {index + 1}</div>
+            </div>
+          )
+      }
+      <div className="date"></div>
+    </div>
+  )
+}
+
 const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
@@ -310,39 +354,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   media
                     .episodes
                     ?.map((episode, index) =>
-                      <div className="episode">
-                        <div className="number">{episode.episodeNumber}</div>
-                        {
-                          episode.thumbnails?.at(0)
-                            ? <img className="thumbnail" src={episode.thumbnails?.at(0)?.url}></img>
-                            : undefined
-                        }
-                        {
-                          episode.titles?.length
-                            ? (
-                              <div className="content">
-                                <div className="title">{episode.titles.at(0)?.title}</div>
-                                {
-                                  episode.shortDescriptions?.at(0)
-                                    ? (
-                                      <div className="description">
-                                        <TextEllipsis className="ellipsis">
-                                          {episode.shortDescriptions?.at(0)?.shortDescription}
-                                        </TextEllipsis>
-                                      </div>
-                                    )
-                                    : undefined
-                                }
-                              </div>
-                            )
-                            : (
-                              <div className="content">
-                                <div className="title">Episode {index + 1}</div>
-                              </div>
-                            )
-                        }
-                        <div className="date"></div>
-                      </div>
+                      <Episode episode={episode} index={index} />
                     )
                 }
               </div>
