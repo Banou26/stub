@@ -16,6 +16,7 @@ import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
+import Collapsible from '../../components/collapsible'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
@@ -94,6 +95,10 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     & > .description {
       white-space: pre-wrap;
       margin-top: 2.5rem;
+
+      &.collapsed {
+        max-height: 20rem;
+      }
     }
 
     .episodes {
@@ -345,8 +350,15 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
             </div>
             <div className="content">
               <div className="title">{title}</div>
-              {/* todo: implement an expandable description */}
-              { description ? <div className="description" dangerouslySetInnerHTML={{ __html: description }} /> : undefined}
+              {
+                description
+                  ? (
+                    <Collapsible collapsedHeight={200} className="description">
+                      <div dangerouslySetInnerHTML={{ __html: description }}/>
+                    </Collapsible>
+                  )
+                  : undefined
+              }
               <div className="episodes">
                 {
                   media &&
