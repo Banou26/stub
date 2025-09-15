@@ -1,7 +1,6 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { fromAggregatedUri, isAggregatedUri } from '../../utils/uri'
-import { ellipseText } from '../utils/text'
 
 export const originUrl = 'https://api.ani.zip/' as const
 export const origin = 'anizip' as const
@@ -70,7 +69,7 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
                 : [],
             shortDescriptions:
               episode.summary ? [{ language: 'en', shortDescription: episode.summary }]
-              : episode.overview ? [{ language: 'en', shortDescription: ellipseText(episode.overview, 225) }]
+              : episode.overview ? [{ language: 'en', shortDescription: episode.overview }]
               : [],
             thumbnails: episode.image ? [{ url: episode.image }] : [],
             seasonNumber: episode.seasonNumber,

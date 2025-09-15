@@ -2,7 +2,6 @@ import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
-import { ellipseText } from '../utils/text'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -222,7 +221,7 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
         : [],
     shortDescriptions:
       media.description
-        ? [{ language: 'en', shortDescription: ellipseText(media.description, 225) }]
+        ? [{ language: 'en', shortDescription: media.description }]
         : [],
     titles: [
       ...media.title?.english ? [{ language: 'en', title: media.title.english, score: 0.9 }] : [],
