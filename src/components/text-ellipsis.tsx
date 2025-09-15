@@ -17,6 +17,7 @@ export const TextEllipsis = (
   HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }
 ) => {
   const [ref, setRef] = useState<HTMLDivElement | null>(null)
+  const [lineHeight, setLineHeight] = useState(0)
   const [lineClamp, setLineClamp] = useState(0)
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export const TextEllipsis = (
         lineHeightPx = parseFloat(computedStyle.lineHeight)
       }
 
+      setLineHeight(lineHeightPx)
       const height = ref.clientHeight
       if (lineHeightPx && height) {
         setLineClamp(Math.floor(height / lineHeightPx))
@@ -42,8 +44,6 @@ export const TextEllipsis = (
     return () => resizeObserver.disconnect()
   }, [ref])
 
-  console.log('lineClamp', lineClamp)
-
   return (
     <div
       {...rest}
@@ -51,7 +51,8 @@ export const TextEllipsis = (
       css={style}
       style={{
         ...rest.style,
-        WebkitLineClamp: lineClamp
+        WebkitLineClamp: lineClamp,
+        height: lineHeight && lineClamp ? lineClamp * lineHeight : undefined
       }}
     >
       {children}

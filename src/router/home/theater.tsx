@@ -4,13 +4,13 @@ import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
 import { useCallback, useMemo, useState } from 'preact/compat'
 import { LucidePause, LucidePlay } from 'lucide-react'
-
-import { gql } from '../../generated'
-import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
-import { VolumeControl } from '../../components/volume-control'
 import { useRoute } from 'wouter'
-import { getRouterRoutePath, Route } from '../path'
+
+import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
+import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
+import { gql } from '../../generated'
+import { getRouterRoutePath, Route } from '../path'
 
 const style = css`
 height: 70vh;

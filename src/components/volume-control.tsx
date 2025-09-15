@@ -173,3 +173,5 @@ export const VolumeControl = (
     </div>
   )
 }
+
+export default VolumeControl

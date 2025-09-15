@@ -7,7 +7,8 @@ import { Link } from 'wouter'
 import { useCallback, useMemo, useState } from 'preact/hooks'
 
 import { getRoutePath, Route } from '../router/path'
-import { YoutubeMinimalPlayer } from './yt-minimal-player'
+import YoutubeMinimalPlayer from './yt-minimal-player'
+import TextEllipsis from '../components/text-ellipsis'
 
 const style = css`
 display: grid;
@@ -42,11 +43,11 @@ a {
   }
 
   .description {
-    display: flex;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 1.25rem;
     font-weight: 500;
+    max-height: 5rem;
   }
 }
 
@@ -142,9 +143,9 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
               {media.episodeCount ?? '?'} Episodes
             </span>
           </div>
-          <div className="description">
+          <TextEllipsis className="description">
             {shortDescription}
-          </div>
+          </TextEllipsis>
         </div>
       </Link>
     </div>

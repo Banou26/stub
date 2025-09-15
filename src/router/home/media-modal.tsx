@@ -10,14 +10,13 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
+import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
+import { LucidePause, LucidePlay } from 'lucide-react'
+import VolumeControl from '../../components/volume-control'
+import TextEllipsis from '../../components/text-ellipsis'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris } from '../../utils/uri'
-import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
-import { LucidePause, LucidePlay } from 'lucide-react'
-import { VolumeControl } from '../../components/volume-control'
 import { getRoutePath, Route } from '../path'
-import { EPISODE_FRAGMENT } from '../../worker/resolvers/episode/fragment'
-import { MEDIA_FRAGMENT } from '../../worker/resolvers/media/fragment'
 
 const style = css`
 padding: 5rem;
@@ -136,8 +135,15 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
             font-weight: bold;
           }
           & > .description {
-            white-space: pre-wrap;
             margin-top: 0.5rem;
+            max-height: 6rem;
+            overflow: hidden;
+
+            * > .ellipsis {
+              max-height: 6rem;
+              white-space: pre-wrap;
+              overflow: hidden;
+            }
           }
         }
       }
@@ -320,7 +326,9 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                                   episode.shortDescriptions?.at(0)
                                     ? (
                                       <div className="description">
-                                        {episode.shortDescriptions?.at(0)?.shortDescription}
+                                        <TextEllipsis className="ellipsis">
+                                          {episode.shortDescriptions?.at(0)?.shortDescription}
+                                        </TextEllipsis>
                                       </div>
                                     )
                                     : undefined

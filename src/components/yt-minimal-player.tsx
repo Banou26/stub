@@ -71,3 +71,5 @@ export const YoutubeMinimalPlayer = (
     </div>
   )
 }
+
+export default YoutubeMinimalPlayer
