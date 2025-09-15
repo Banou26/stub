@@ -39,7 +39,7 @@
   "scripts": {
     "dev": "vite --port 4560",
     "test-server": "vite --port 7357 --config vite.test.config.ts",
-    "build": "npm run gql-generate && vite build",
+    "build": "npm run gql-generate && npm run drizzle-generate && vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
     "test": "npm run build-test && playwright test",
