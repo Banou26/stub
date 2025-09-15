@@ -22,19 +22,38 @@ import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregat
 import { getRoutePath, Route } from '../path'
 
 const style = css`
-padding: 5rem;
+padding: 5rem 1rem;
 background-color: hsla(0, 0%, 0%, 0.439);
 animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+@media (min-width: 1024px) {
+    padding: 5rem 1rem;
+}
+@media (min-width: 1440px) {
+    padding: 5rem 4rem;
+}
+
 .modal {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 120rem;
+  width: 80rem;
   background-color: rgb(35, 35, 35);
   border-radius: 1rem;
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
   overflow: hidden;
   margin: auto;
+
+  @media (min-width: 1024px) {
+      width: 100rem;
+  }
+  @media (min-width: 1440px) {
+      width: 130rem;
+  }
+  @media (min-width: 2560px) {
+      width: 180rem;
+  }
+
 
   .trailer {
     position: relative;
