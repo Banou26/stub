@@ -10,6 +10,7 @@ import { YoutubeMinimalPlayer } from '../../components/yt-minimal-player'
 import { VolumeControl } from '../../components/volume-control'
 import { useRoute } from 'wouter'
 import { getRouterRoutePath, Route } from '../path'
+import TextEllipsis from '../../components/text-ellipsis'
 
 const style = css`
 height: 70vh;
@@ -92,6 +93,9 @@ height: 70vh;
     font-size: 2rem;
     margin-bottom: 1rem;
     user-select: none;
+    overflow: hidden;
+    max-height: 10rem;
+    white-space: pre-wrap;
   }
 }
 `
@@ -206,7 +210,9 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
           />
         </div>
         <div className="title">{title}</div>
-        <div className="short-description">{shortDescription}</div>
+        <TextEllipsis className="short-description">
+          {shortDescription}
+        </TextEllipsis>
       </div>
     </div>
   )
