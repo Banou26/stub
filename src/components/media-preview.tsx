@@ -4,7 +4,7 @@ import type { Media } from '../generated/schema/types.generated'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
-import { useMemo } from 'preact/hooks'
+import { useCallback, useMemo, useState } from 'preact/hooks'
 
 import { getRoutePath, Route } from '../router/path'
 import { YoutubeMinimalPlayer } from './yt-minimal-player'
@@ -71,12 +71,36 @@ a {
     width: 70rem !important;
   }
 }
+
+.trailer-fallback-cover {
+  position: relative;
+  display: grid;
+  grid-template: "container";
+  background-color: #000;
+  overflow: hidden;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  user-select: none;
+  overflow: hidden;
+  height: 39.25rem;
+  width: 70rem;
+  background-size: cover;
+  background-position: center;
+}
 `
 
-export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'shortDescriptions' | 'trailers' | 'episodeCount'> }) => {
+export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElement> & { ref: Ref<HTMLDivElement>, media: Pick<Media, 'uri' | 'titles' | 'shortDescriptions' | 'trailers' | 'covers' | 'episodeCount'> }) => {
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const shortDescription = useMemo(() => media?.shortDescriptions?.at(0)?.shortDescription, [media])
-  const trailer = useMemo(() => media?.trailers?.at(0), [media])
+  const cover = useMemo(() => media?.covers?.at(0)?.url, [media])
+
+  const [bannedTrailerUris, setBannedTrailerUris] = useState<string[]>([])
+  const selectedTrailer = useMemo(() => media?.trailers.filter((trailer) => !bannedTrailerUris.includes(trailer.uri)).at(0), [bannedTrailerUris])
+
+  const onTrailerError = useCallback(() => {
+    if (!selectedTrailer) return
+    setBannedTrailerUris([...bannedTrailerUris, selectedTrailer.uri])
+  }, [selectedTrailer, bannedTrailerUris])
 
   return (
     <div
@@ -86,14 +110,27 @@ export const MediaPreview = ({ ref, media, ...rest }: HTMLAttributes<HTMLDivElem
       {...rest}
     >
       {
-        trailer?.url && (
-          <YoutubeMinimalPlayer
-            volume={0}
-            url={trailer?.url}
-            redirectTo={getRoutePath(Route.MEDIA, { uri: media.uri })}
-            className="title-hovercard-player"
-          />
-        )
+        selectedTrailer?.url
+          ? (
+            <YoutubeMinimalPlayer
+              volume={0}
+              url={selectedTrailer?.url}
+              onError={onTrailerError}
+              redirectTo={getRoutePath(Route.MEDIA, { uri: media.uri })}
+              className="title-hovercard-player"
+            />
+          )
+          : (
+            cover
+              ? (
+                <Link
+                  className="trailer-fallback-cover"
+                  style={{ backgroundImage: `url(${cover})` }}
+                  to={getRoutePath(Route.MEDIA, { uri: media.uri })}
+                />
+              )
+              : undefined
+          )
       }
       <Link to={getRoutePath(Route.MEDIA, { uri: media.uri })}>
         <div className="content">

@@ -3,12 +3,14 @@ import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
 import type { Media as GraphqlMedia, Episode as GraphqlEpisode, MediaSort } from '../../generated/schema/types.generated'
-import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia } from './schema'
+import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia, CreateAggregatedEpisode } from './schema'
 import type {
   CreateMedia,
   CreateMediaHandles,
   CreateMediaEpisodes,
-  CreateAggregatedMediaHandles
+  CreateAggregatedMediaHandles,
+  CreateAggregatedEpisodeHandles,
+  CreateAggregatedMediaEpisodes
 } from './schema'
 import type { Database } from '.'
 
@@ -20,7 +22,10 @@ import {
   mediaHandlesTable,
   mediaEpisodesTable,
   aggregatedMediaTable,
-  aggregatedMediaHandlesTable
+  aggregatedMediaHandlesTable,
+  aggregatedEpisodeTable,
+  aggregatedEpisodeHandlesTable,
+  aggregatedMediaEpisodesTable
 } from './schema'
 import database from '.'
 import { getRoutePath, Route } from '../../router/path'
@@ -53,10 +58,10 @@ function removeDuplicatesByField<T extends Record<string, any>>(field: keyof T, 
   return result
 }
 
-const unwrapCache = new WeakMap<GraphqlMedia, GraphqlMedia[]>()
+const unwrapMediaCache = new WeakMap<GraphqlMedia, GraphqlMedia[]>()
 export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia[] => {
-  if (unwrapCache.has(media)) {
-    return unwrapCache.get(media)!
+  if (unwrapMediaCache.has(media)) {
+    return unwrapMediaCache.get(media)!
   }
 
   const unwrappedResult =
@@ -70,7 +75,30 @@ export const recursivelyUnwrapMediaHandles = (media: GraphqlMedia): GraphqlMedia
       : [media]
 
   if (media.handles) {
-    unwrapCache.set(media, unwrappedResult)
+    unwrapMediaCache.set(media, unwrappedResult)
+  }
+
+  return unwrappedResult
+}
+
+const unwrapEpisodeCache = new WeakMap<GraphqlEpisode, GraphqlEpisode[]>()
+export const recursivelyUnwrapEpisodeHandles = (episode: GraphqlEpisode): GraphqlEpisode[] => {
+  if (unwrapEpisodeCache.has(episode)) {
+    return unwrapEpisodeCache.get(episode)!
+  }
+
+  const unwrappedResult =
+    episode.handles
+      ? [
+        episode,
+        ...episode
+          .handles
+          .flatMap(recursivelyUnwrapEpisodeHandles)
+      ]
+      : [episode]
+
+  if (episode.handles) {
+    unwrapEpisodeCache.set(episode, unwrappedResult)
   }
 
   return unwrappedResult
@@ -186,8 +214,8 @@ const normalizeGraphqlMedia = (media: DrizzleMedia & { episodes?: { episode: Dri
   endDate: media.endDate?.toUTCString(),
   isAdult: media.isAdult,
   episodeCount: media.episodeCount,
-  episodes: media.episodes?.map(mediaEpisode => normalizeGraphqlEpisode(mediaEpisode.episode)),
-  handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle))
+  episodes: media.episodes?.map(mediaEpisode => normalizeGraphqlEpisode(mediaEpisode.episode)) ?? [],
+  handles: media.handles?.map(mediaHandle => normalizeGraphqlMedia(mediaHandle.handle)) ?? []
 })
 
 export const normalizeGraphqlAggregatedMedia = (
@@ -271,7 +299,6 @@ export const insertManyAggregatedMedia = async (tx: DrizzleSQLiteTransaction, me
   const values = medias.map(normalizeDrizzleAggregatedMedia)
 
   if (values.length) {
-    console.log('values', values)
     await tx.insert(aggregatedMediaTable)
         .values(values)
         .onConflictDoUpdate({
@@ -373,8 +400,10 @@ export const findAggregatedMedia = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { uri }: { uri: string }
 ) =>
-  tx.query.aggregatedMediaTable.findFirst({
-    where: uri ? eq(mediaTable.uri, uri) : undefined,
+ // use `findMany` because otherwise `findFirst` throws with `"undefined" is not valid JSON`
+  tx.query.aggregatedMediaTable.findMany({
+    where: uri ? eq(aggregatedMediaTable.uri, uri) : undefined,
+    limit: 1,
     with: {
       episodes: {
         with: {
@@ -396,7 +425,7 @@ export const findAggregatedMedia = async(
       }
     }
   })
-  .then(media => media && normalizeGraphqlAggregatedMedia(media))
+  .then(([media]) => media && normalizeGraphqlAggregatedMedia(media))
 
 export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
@@ -406,8 +435,8 @@ export const findAggregatedMedias = async(
     orderBy:
       sorts
         ?.map(sort =>
-          sort === 'POPULARITY' ? desc(mediaTable.popularity)
-          : sort === 'POPULARITY_DESC' ? asc(mediaTable.popularity)
+          sort === 'POPULARITY' ? desc(aggregatedMediaTable.popularity)
+          : sort === 'POPULARITY_DESC' ? asc(aggregatedMediaTable.popularity)
           : undefined
         )
         .filter((sort): sort is NonNullable<typeof sort> => sort !== undefined),
@@ -434,7 +463,7 @@ export const findAggregatedMedias = async(
   }))
   .map(media => normalizeGraphqlAggregatedMedia(media))
 
-const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
+const normalizeGraphqlEpisode = (episode: DrizzleEpisode & { handles?: { episode: DrizzleEpisode }[] }): GraphqlEpisode => ({
   ...episode,
   _id: episode.uri,
   url: episode.url ?? null,
@@ -456,11 +485,22 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode): GraphqlEpisode => ({
   seasonNumber: episode.seasonNumber ?? null,
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+  handles: episode.handles?.map(handle => normalizeGraphqlEpisode(handle.episode)) ?? []
+})
+
+export const normalizeGraphqlAggregatedEpisode = (
+  episode:
+  DrizzleAggregatedEpisode & {
+    handles?: { episode: DrizzleEpisode }[]
+  }): GraphqlEpisode => ({
+  ...normalizeGraphqlEpisode(episode),
+  _id: episode._id
 })
 
 const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   ...episode,
   url: episode.url ?? null,
+  score: episode.score ?? null,
   titles: episode.titles || [],
   descriptions: episode.descriptions || [],
   shortDescriptions: episode.shortDescriptions || [],
@@ -480,6 +520,51 @@ const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
 })
+
+export const normalizeDrizzleAggregatedEpisode = (episode: GraphqlEpisode): CreateAggregatedEpisode => ({
+  ...normalizeDrizzleEpisode(episode),
+    _id: episode._id
+})
+
+
+export const findAllEpisode = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.episodeTable.findMany({
+    with: {
+      handles: {
+        with: {
+          episode: true
+        }
+      }
+    }
+  })
+
+  const mappedEpisode = results.map(normalizeGraphqlEpisode)
+
+  return removeDuplicatesByField('uri', mappedEpisode.flatMap(recursivelyUnwrapEpisodeHandles))
+}
+
+
+export const findAllAggregatedEpisode = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.aggregatedEpisodeTable.findMany({
+    with: {
+      handles: {
+        with: {
+          episode: {
+            with: {
+              handles: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+
+  return results.map(normalizeGraphqlAggregatedEpisode)
+}
 
 export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: GraphqlEpisode[]) => {
   const values = episodes.map(normalizeDrizzleEpisode)
@@ -519,6 +604,47 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
   }
 }
 
+export const insertManyAggregatedEpisode = async (tx: DrizzleSQLiteTransaction, episodes: GraphqlEpisode[]) => {
+  const values = episodes.map(normalizeDrizzleAggregatedEpisode)
+
+  if (values.length) {
+    await tx.insert(aggregatedEpisodeTable)
+        .values(values)
+        .onConflictDoUpdate({
+          target: aggregatedEpisodeTable._id,
+          set: {
+            uri: sql`COALESCE(excluded.uri, ${aggregatedEpisodeTable.uri})`,
+            mediaUri: sql`COALESCE(excluded.mediaUri, ${aggregatedEpisodeTable.mediaUri})`,
+            titles: mergeJsonArrays('titles'),
+            score: sql`COALESCE(excluded.score, ${aggregatedEpisodeTable.score})`,
+            descriptions: mergeJsonArrays('descriptions'),
+            shortDescriptions: mergeJsonArrays('shortDescriptions'),
+            thumbnails: mergeJsonArrays('thumbnails'),
+            releaseDate: sql`COALESCE(excluded.releaseDate, ${aggregatedEpisodeTable.releaseDate})`,
+            seasonNumber: sql`COALESCE(excluded.seasonNumber, ${aggregatedEpisodeTable.seasonNumber})`,
+            episodeNumber: sql`COALESCE(excluded.episodeNumber, ${aggregatedEpisodeTable.episodeNumber})`,
+            absoluteEpisodeNumber: sql`COALESCE(excluded.absoluteEpisodeNumber, ${aggregatedEpisodeTable.absoluteEpisodeNumber})`
+          }
+        })
+  }
+
+  const aggregatedEpisodeHandles =
+    episodes
+      .flatMap(episode =>
+        episode.handles?.map(handle => ({
+          aggregatedEpisodeId: episode._id,
+          episodeUri: handle.uri
+        }) satisfies CreateAggregatedEpisodeHandles)
+      )
+      .filter((episodeHandle): episodeHandle is NonNullable<typeof episodeHandle> => episodeHandle !== null && episodeHandle !== undefined)
+
+  if (aggregatedEpisodeHandles.length) {
+    await tx.insert(aggregatedEpisodeHandlesTable)
+      .values(aggregatedEpisodeHandles)
+      .onConflictDoNothing()
+  }
+}
+
 export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregatedMedia?: GraphqlMedia) => {
   const id = `(${medias.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
   const uri = `ag:${id}`
@@ -542,14 +668,9 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
     id,
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
-    aggregated: true,
     score: Math.max(...medias.map(m => m.score ?? 0)),
     handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
   } as GraphqlMedia)
-
-  if (aggregatedMedia?.episodes?.length) {
-    console.log('-----------------', aggregatedMedia)
-  }
 
   return {
     ...aggregatedMedia,
@@ -559,41 +680,34 @@ export const aggregateMediaHandles = (medias: GraphqlMedia[], existingAggregated
 }
 
 
-export const aggregateEpisodeHandles = (episodes: GraphqlMedia[], existingAggregatedEpisode?: GraphqlMedia) => {
+export const aggregateEpisodeHandles = (episodes: GraphqlEpisode[], existingAggregatedEpisode?: GraphqlEpisode) => {
   const id = `(${episodes.sort((a, b) => a.uri.localeCompare(b.uri)).map(media => media.uri).join(',')})`
   const uri = `ag:${id}`
 
-  const sortedMediaBasedOnQualityScore = episodes.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  const sortedEpisodeBasedOnQualityScore = episodes.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
   const _id = existingAggregatedEpisode?._id ?? crypto.randomUUID()
 
-  const aggregatedMedia = sortedMediaBasedOnQualityScore.reduce((acc, media) => ({
+  const aggregatedEpisode = sortedEpisodeBasedOnQualityScore.reduce((acc, media) => ({
     ...media,
     ...acc,
     titles: [...acc.titles ?? [], ...media.titles ?? []],
+    thumbnails: [...acc.thumbnails ?? [], ...media.thumbnails ?? []],
     descriptions: [...acc.descriptions ?? [], ...media.descriptions ?? []],
-    shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []],
-    covers: [...acc.covers ?? [], ...media.covers ?? []],
-    banners: [...acc.banners ?? [], ...media.banners ?? []],
-    trailers: [...acc.trailers ?? [], ...media.trailers ?? []]
+    shortDescriptions: [...acc.shortDescriptions ?? [], ...media.shortDescriptions ?? []]
   }), {
     _id,
     uri,
     id,
     origin: 'ag',
     url: `${location.origin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
-    aggregated: true,
+    mediaUri: uri,
     score: Math.max(...episodes.map(m => m.score ?? 0)),
-    handles: removeDuplicatesByField('_id', sortedMediaBasedOnQualityScore.flatMap(recursivelyUnwrapMediaHandles))
-  } as GraphqlMedia)
-
-  if (aggregatedMedia?.episodes?.length) {
-    console.log('-----------------', aggregatedMedia)
-  }
+    handles: removeDuplicatesByField('_id', sortedEpisodeBasedOnQualityScore.flatMap(recursivelyUnwrapEpisodeHandles))
+  } as GraphqlEpisode)
 
   return {
-    ...aggregatedMedia,
-    titles: removeDuplicatesByField('title', aggregatedMedia?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
-    trailers: removeDuplicatesByField('uri', aggregatedMedia?.trailers ?? [])
+    ...aggregatedEpisode,
+    titles: removeDuplicatesByField('title', aggregatedEpisode?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
   }
 }

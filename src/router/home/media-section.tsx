@@ -45,7 +45,6 @@ position: relative;
     color: white;
     font-size: 24px;
     cursor: pointer;
-    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -89,7 +88,7 @@ const CellComponent = (
     placement: 'top',
     middleware: [
       offset(({ rects }) => (-rects.reference.height / 2 - rects.floating.height / 2)),
-      shift({ crossAxis: true })
+      shift({ crossAxis: true, padding: 25 })
     ]
   })
   const hover = useHover(context, { restMs: 400, handleClose: safePolygon() })
@@ -176,12 +175,6 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
     <div css={style}>
       <span className='title'>{title}</span>
       <div className='list-container'>
-        <button className='scroll-button left' onClick={() => scrollTo('left')}>
-          <ChevronLeft />
-        </button>
-        <button className='scroll-button right' onClick={() => scrollTo('right')}>
-          <ChevronRight />
-        </button>
         <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
           <Grid
             gridRef={virtualListRef}
@@ -199,6 +192,12 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
             }}
           />
         </Draggable>
+        <button className='scroll-button left' onClick={() => scrollTo('left')}>
+          <ChevronLeft />
+        </button>
+        <button className='scroll-button right' onClick={() => scrollTo('right')}>
+          <ChevronRight />
+        </button>
       </div>
     </div>
   )

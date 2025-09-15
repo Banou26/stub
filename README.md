@@ -2,13 +2,13 @@
 
 Shows, Movies, Anime, all in one place from your browser
 
+<!--
+
 Decisions to impl:
 
 Sanitize data from the external sources handler, aka db side, not from the react UI
 Offer markdown from the graphql API, not compute it from the react UI
 
-
-<!--
 
 ## Dev steps:
 
@@ -16,9 +16,9 @@ You have to run `npm run copy-anitomy` first before being able to run `npm run d
 
 
 
-
-
 ## todo:
+
+make it so that shortDescriptions use the description if unset
 
 re-implement the title infer system for low count searches using smith waterman + sorensen dice coef = magic alignment
 

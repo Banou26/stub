@@ -3,12 +3,13 @@ import type { Media, Resolvers } from '../../../generated/schema/types.generated
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findAggregatedMedia, findAggregatedMedias } from '../../drizzle/utils'
+import { findAggregatedMedia, findAggregatedMedias, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
-import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from './utils'
+import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
 import database from '../../drizzle'
-import { sql } from 'drizzle-orm'
+import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
+import { eq, asc } from 'drizzle-orm'
 
 export const schema = _schema as string
 
@@ -28,23 +29,17 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        console.log('BEFORE aggregatedMedia', args.input.uri)
-        const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
-        console.log('aggregatedMedia', aggregatedMedia)
-        yield aggregatedMedia
+        yield findAggregatedMedia(undefined, { uri: args.input.uri })
 
-        const mediaListener = listenIterator(aggregatedMedia ? { table: 'media', columnId: '_id', ids: [aggregatedMedia._id] } : undefined)
-        const episodeListener = listenIterator(aggregatedMedia ? { table: 'mediaEpisodes', columnId: 'mediaUri' } : undefined)
+        const mediaListener = listenIterator({ table: 'aggregatedMedia' })
+        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
 
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 
         // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
         try {
           for await (const _ of listeners) {
-            console.log('changes', _)
-            const aggregatedMedia = await findAggregatedMedia(undefined, { uri: args.input.uri })
-            console.log('aggregatedMedia', aggregatedMedia)
-            yield aggregatedMedia
+            yield await findAggregatedMedia(undefined, { uri: args.input.uri })
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
@@ -63,8 +58,13 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
+        const mediaListener = listenIterator({ table: 'aggregatedMedia' })
+        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
+
+        const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+
         try {
-          for await (const _ of listenIterator()) {
+          for await (const _ of listeners) {
             yield findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
           }
         } finally {
@@ -76,7 +76,22 @@ export const resolvers = {
   },
   Media: {
     _id: (parent) => parent._id,
-    episodes: (parent) => parent.episodes ?? [],
+    episodes: async (parent) => {
+      if (parent.uri.startsWith('ag:')) {
+        const episodes = await database
+          .select()
+          .from(aggregatedMediaEpisodesTable)
+          .innerJoin(aggregatedEpisodeTable, eq(aggregatedMediaEpisodesTable.aggregatedEpisodeId, aggregatedEpisodeTable._id))
+          .where(eq(aggregatedMediaEpisodesTable.aggregatedMediaId, parent._id))
+          .orderBy(asc(aggregatedEpisodeTable.episodeNumber))
+          .then(results =>
+            results.map(({ aggregatedEpisode }) => normalizeGraphqlAggregatedEpisode(aggregatedEpisode))
+          )
+
+        return episodes?.length ? episodes : parent.episodes
+      }
+      return parent.episodes
+    },
     descriptions: (parent, args) => {
       const descriptions =
         parent
@@ -112,6 +127,7 @@ export const resolvers = {
               shortDescription: parsed
             }
           })
+          .filter((mediaShortDescription): mediaShortDescription is NonNullable<typeof mediaShortDescription> => Boolean(mediaShortDescription))
 
       return shortDescriptions
     },

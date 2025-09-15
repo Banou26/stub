@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../extractor'
-import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { fromAggregatedUri, isAggregatedUri } from '../../utils/uri'
+import { ellipseText } from '../utils/text'
 
 export const originUrl = 'https://api.ani.zip/' as const
 export const origin = 'anizip' as const
@@ -13,7 +14,7 @@ export const supportedUris = ['anidb', 'mal']
 const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => {
   const uri = `${origin}:${media.mappings.anidb_id}`
   return {
-    _id: crypto.randomUUID(),
+    _id: crypto.randomUUID() as string,
     uri,
     origin,
     id: media.mappings.anidb_id.toString(),
@@ -31,6 +32,9 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
       ...media.titles.en ? [{ language: 'en', title: media.titles.en }] : [],
       ...media.titles.ja ? [{ language: 'ja', title: media.titles.ja }] : [],
     ],
+    descriptions: [],
+    shortDescriptions: [],
+    trailers: [],
     covers:
       media
         .images
@@ -43,29 +47,38 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
         .map(image => ({ url: image.url })),
     episodeCount: media.episodeCount,
     episodes:
-      Object.entries(media.episodes)
+      Object
+        .entries(media.episodes)
         .map(([episodeId, episode]) => {
           const id = `${media.mappings.anidb_id}-${episodeId}`
 
           return {
-            _id: crypto.randomUUID(),
+            _id: crypto.randomUUID() as string,
             uri: `${origin}:${id}`,
             origin,
             id: id.toString(),
             url: `https://api.ani.zip/mappings?anidb_id=${media.mappings.anidb_id}`,
+            handles: [],
             mediaUri: uri,
             titles: [
               ...episode.title.en ? [{ language: 'en', title: episode.title.en }] : [],
               ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja }] : [],
             ],
-            descriptions: [{ language: 'en', description: episode.overview }],
-            shortDescriptions: [{ language: 'en', shortDescription: episode.summary }],
-            thumbnails: [{ url: episode.image }],
+            descriptions:
+              episode.overview
+                ? [{ language: 'en', description: episode.overview }]
+                : [],
+            shortDescriptions:
+              episode.summary ? [{ language: 'en', shortDescription: episode.summary }]
+              : episode.overview ? [{ language: 'en', shortDescription: ellipseText(episode.overview, 225) }]
+              : [],
+            thumbnails: episode.image ? [{ url: episode.image }] : [],
             seasonNumber: episode.seasonNumber,
             episodeNumber: episode.episodeNumber,
             absoluteEpisodeNumber: episode.absoluteEpisodeNumber,
-          }
+          } satisfies GQLEpisode
         })
+      ?? []
   } satisfies GQLMedia
 }
 
@@ -84,14 +97,13 @@ const fetchAnilistMappings = (id: string, context: ExtractorServerContext) => fe
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
+      resolve: (parent: GQLMedia) => parent,
       subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
         if (!uri || !isAggregatedUri(uri)) return
         const uris = fromAggregatedUri(uri)
         const malId = uris?.handleUrisValues.find(uri => uri.origin === 'mal')
         if (malId) {
-          yield {
-            media: await fetchMALMappings(malId.id, ctx)
-          }
+          yield await fetchMALMappings(malId.id, ctx)
         }
       }
     }
@@ -131,14 +143,14 @@ interface Episode {
   airDate: string; // Format: "YYYY-MM-DD"
   airDateUtc: string; // ISO 8601 datetime
   runtime: number;
-  overview: string;
-  image: string; // URL
+  overview?: string;
+  image?: string; // URL
   episode: string;
   anidbEid: number;
   length: number;
   airdate: string; // Format: "YYYY-MM-DD"
   rating: string; // Numeric string
-  summary: string;
+  summary?: string;
   finaleType?: 'season' | 'series'; // Optional, only on finale episodes
 }
 

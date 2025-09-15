@@ -6,7 +6,7 @@ import {
   FloatingFocusManager, FloatingOverlay, FloatingPortal,
   useClick, useFloating, useInteractions
 } from '@floating-ui/react'
-import { useMemo, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
@@ -38,6 +38,8 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
     height: 67.5rem;
+    background-size: cover;
+    background-position: center;
     .player {
       border-radius: 1rem 1rem 0 0;
       overflow: hidden;
@@ -88,7 +90,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
       font-weight: 600;
     }
 
-    .description {
+    & > .description {
       white-space: pre-wrap;
       margin-top: 2.5rem;
     }
@@ -97,8 +99,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
       margin-top: 4rem;
       border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
       .episode {
-        display: grid;
-        grid-template-columns: 7rem auto 2.5rem 12.5rem;
+        display: flex;
         height: 7rem;
         border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
         color: rgb(255, 255, 255);
@@ -107,12 +108,36 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         height: 10rem;
         cursor: pointer;
 
-        .content {
+        .number {
           display: flex;
           align-items: center;
-          .title {
+          justify-content: center;
+          font-size: 2rem;
+          font-weight: bold;
+          min-width: 7.5rem;
+        }
+
+        .thumbnail {
+          margin: auto 0;
+          height: 7.5rem;
+          background-color: rgba(255, 255, 255, .1);
+          border-radius: .5rem;
+          margin-right: 2.5rem;
+        }
+
+        .content {
+          display: flex;
+          flex-direction: column;
+          /*align-items: center;*/
+          justify-content: center;
+
+          & > .title {
             font-size: 2rem;
             font-weight: bold;
+          }
+          & > .description {
+            white-space: pre-wrap;
+            margin-top: 0.5rem;
           }
         }
       }
@@ -152,13 +177,21 @@ const GET_MEDIA_MODAL = gql(`
       popularity
       episodes {
         ...EpisodeFragment
+        episodeNumber
         titles {
           title
+        }
+        shortDescriptions {
+          language
+          shortDescription
+        }
+        thumbnails {
+          url
         }
       }
       handles {
         episodes {
-            ...EpisodeFragment
+          ...EpisodeFragment
         }
       }
       episodeCount
@@ -169,25 +202,32 @@ const GET_MEDIA_MODAL = gql(`
 const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
-  const [{ data, error }] = useSubscription({
+  const { uri } = params
+  const [{ data }] = useSubscription({
     query: GET_MEDIA_MODAL,
     variables: {
       input: {
-        uri: foundMedia?.uri
+        uri
       },
       descriptionInput: {
         type: MediaDescriptionContentType.Html,
         count: 1
       }
     },
-    pause: !foundMedia
+    pause: !uri
   })
-  if (error) console.error(error)
-  console.log('data', data?.media)
   const media = data?.media ?? foundMedia
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
-  const trailer = useMemo(() => media?.trailers?.at(0), [media])
+  const cover = useMemo(() => media?.covers?.at(0), [media])
+
+  const [bannedTrailerUris, setBannedTrailerUris] = useState<string[]>([])
+  const selectedTrailer = useMemo(() => media?.trailers.filter((trailer) => !bannedTrailerUris.includes(trailer.uri)).at(0), [bannedTrailerUris])
+
+  const onTrailerError = useCallback(() => {
+    if (!selectedTrailer) return
+    setBannedTrailerUris([...bannedTrailerUris, selectedTrailer.uri])
+  }, [selectedTrailer, bannedTrailerUris])
 
   const [open, onOpenChange] = useState(Boolean(params))
   const { refs, context } = useFloating({
@@ -218,37 +258,40 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
       <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>
         <FloatingFocusManager context={context}>
           <div className="modal" ref={refs.setFloating} {...getFloatingProps()}>
-            <div className="trailer">
+            <div className="trailer" style={!selectedTrailer?.url && cover ? { backgroundImage: `url(${cover.url})` } : {}}>
               {
-                trailer?.url && (
-                  <YoutubeMinimalPlayer
-                    url={trailer?.url}
-                    className="player"
-                    paused={playerPaused}
-                    volume={playerMuted ? 0 : playerVolume}
-                  />
-                )
+                selectedTrailer?.url
+                  ? (
+                    <YoutubeMinimalPlayer
+                      url={selectedTrailer?.url}
+                      className="player"
+                      onError={onTrailerError}
+                      paused={playerPaused}
+                      volume={playerMuted ? 0 : playerVolume}
+                    />
+                  )
+                  : undefined
               }
-              <div className="player-controls">
-                <span className="playback">
-                  {
-                    playerPaused
-                      ? <LucidePlay className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(false)} />
-                      : <LucidePause className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(true)} />
-                  }
-                  {
-                    playerPaused
-                      ? <LucidePlay className="icon-body" size={30} onClick={() => setPlayerPaused(false)}/>
-                      : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
-                  }
-                </span>
-                <VolumeControl
-                  defaultMuted={playerMuted}
-                  onMutedUpdate={setPlayerMuted}
-                  defaultVolume={playerVolume}
-                  onVolumeUpdate={volume => setPlayerVolume(volume)}
-                />
-              </div>
+            <div className={`player-controls ${!selectedTrailer?.url ? 'hidden' : ''}`}>
+              <span className="playback">
+                {
+                  playerPaused
+                    ? <LucidePlay className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(false)} />
+                    : <LucidePause className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(true)} />
+                }
+                {
+                  playerPaused
+                    ? <LucidePlay className="icon-body" size={30} onClick={() => setPlayerPaused(false)}/>
+                    : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
+                }
+              </span>
+              <VolumeControl
+                defaultMuted={playerMuted}
+                onMutedUpdate={setPlayerMuted}
+                defaultVolume={playerVolume}
+                onVolumeUpdate={volume => setPlayerVolume(volume)}
+              />
+            </div>
             </div>
             <div className="content">
               <div className="title">{title}</div>
@@ -256,15 +299,39 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
               { description ? <div className="description" dangerouslySetInnerHTML={{ __html: description }} /> : undefined}
               <div className="episodes">
                 {
-                  new Array(media && 'episodeCount' in media && media.episodeCount ? media.episodeCount : 0)
-                    .fill(undefined)
-                    .map((media, index) =>
+                  media &&
+                  'episodes' in media &&
+                  media
+                    .episodes
+                    ?.map((episode, index) =>
                       <div className="episode">
-                        <div className="number"></div>
+                        <div className="number">{episode.episodeNumber}</div>
                         {
-                          <div className="content">
-                            <div className="title">Episode {index + 1}</div>
-                          </div>
+                          episode.thumbnails?.at(0)
+                            ? <img className="thumbnail" src={episode.thumbnails?.at(0)?.url}></img>
+                            : undefined
+                        }
+                        {
+                          episode.titles?.length
+                            ? (
+                              <div className="content">
+                                <div className="title">{episode.titles.at(0)?.title}</div>
+                                {
+                                  episode.shortDescriptions?.at(0)
+                                    ? (
+                                      <div className="description">
+                                        {episode.shortDescriptions?.at(0)?.shortDescription}
+                                      </div>
+                                    )
+                                    : undefined
+                                }
+                              </div>
+                            )
+                            : (
+                              <div className="content">
+                                <div className="title">Episode {index + 1}</div>
+                              </div>
+                            )
                         }
                         <div className="date"></div>
                       </div>

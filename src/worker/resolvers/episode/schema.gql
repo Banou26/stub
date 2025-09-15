@@ -13,16 +13,17 @@ type Episode {
   """Uri to the media resource"""
   mediaUri: String!
   """Links to external/other resources related to itself"""
-  handles: [Episode!]
+  handles: [Episode!]!
   handleOf: [Episode!]
-  titles: [EpisodeTitle!]
-  shortDescriptions: [EpisodeShortDescription!]
-  descriptions: [EpisodeDescription!]
+  score: Float
+  titles: [EpisodeTitle!]!
+  shortDescriptions(input: EpisodeShortDescriptionInput): [EpisodeShortDescription!]!
+  descriptions(input: EpisodeDescriptionInput): [EpisodeDescription!]!
   releaseDate: Date
   relativeNumber: Int
   absoluteNumber: Int
-  thumbnails: [EpisodeThumbnail!]
-  playbackSources: [PlaybackSource!]
+  thumbnails: [EpisodeThumbnail!]!
+  # playbackSources: [PlaybackSource!]!
   seasonNumber: Int
   episodeNumber: Int
   absoluteEpisodeNumber: Int
@@ -31,6 +32,12 @@ type Episode {
 type EpisodeTitle {
   language: String!
   title: String!
+  score: Float
+}
+
+input EpisodeShortDescriptionInput {
+  type: EpisodeDescriptionContentType = TEXT
+  count: Int
 }
 
 type EpisodeShortDescription {
@@ -38,10 +45,21 @@ type EpisodeShortDescription {
   shortDescription: String!
 }
 
+enum EpisodeDescriptionContentType {
+  HTML
+  TEXT
+}
+
+input EpisodeDescriptionInput {
+  type: EpisodeDescriptionContentType = TEXT
+  count: Int
+}
+
 type EpisodeDescription {
   language: String!
   description: String!
 }
+
 
 type EpisodeThumbnail {
   language: String

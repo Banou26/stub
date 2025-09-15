@@ -54,6 +54,10 @@ const style = css`
   ul {
     list-style: none;
   }
+
+  .hidden {
+    display: none !important;
+  }
 `
 
 const root = document.createElement('div')
