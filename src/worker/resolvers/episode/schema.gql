@@ -23,7 +23,7 @@ type Episode {
   relativeNumber: Int
   absoluteNumber: Int
   thumbnails: [EpisodeThumbnail!]!
-  playbackSources: [PlaybackSource!]!
+  # playbackSources: [PlaybackSource!]!
   seasonNumber: Int
   episodeNumber: Int
   absoluteEpisodeNumber: Int
