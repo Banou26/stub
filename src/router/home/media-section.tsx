@@ -88,7 +88,7 @@ const CellComponent = (
     placement: 'top',
     middleware: [
       offset(({ rects }) => (-rects.reference.height / 2 - rects.floating.height / 2)),
-      shift({ crossAxis: true })
+      shift({ crossAxis: true, padding: 25 })
     ]
   })
   const hover = useHover(context, { restMs: 400, handleClose: safePolygon() })
