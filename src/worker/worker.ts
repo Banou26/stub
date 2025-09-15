@@ -4,6 +4,8 @@ import { expose } from 'osra'
 
 import { yoga } from './yoga'
 
+console.log('worker')
+
 export const resolvers = {
   HANDLE_REQUEST: async (input: RequestInfo | URL, init?: RequestInit) => {
     const { headers, body, method } = init ?? {}
@@ -17,12 +19,13 @@ export const resolvers = {
 
 export type Resolvers = typeof resolvers
 
-const { FETCH } = await expose<MainThreadResolvers>(
+const exposePromise = expose<MainThreadResolvers>(
   resolvers,
   { local: globalThis as unknown as Worker, remote: globalThis as unknown as Worker }
 )
 
 export const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+  const { FETCH } = await exposePromise
   const { body, ...rest } = await FETCH(input, init)
   return new Response(body, rest)
 }

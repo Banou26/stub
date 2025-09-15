@@ -1,5 +1,8 @@
 import type { ExtractorServerContext } from '../../extractor'
 import type { Media, Resolvers } from '../../../generated/schema/types.generated'
+
+import { eq, asc } from 'drizzle-orm'
+
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
@@ -9,7 +12,6 @@ import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from 
 import { MediaDescriptionContentType } from '../../../generated/graphql'
 import database from '../../drizzle'
 import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
-import { eq, asc } from 'drizzle-orm'
 
 export const schema = _schema as string
 

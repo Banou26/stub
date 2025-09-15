@@ -6,6 +6,8 @@ import { createSchema, createYoga, useErrorHandler, useExecutionCancellation } f
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 
+console.log('yoga')
+
 export type ServerContext = YogaInitialContext & {
 
 }

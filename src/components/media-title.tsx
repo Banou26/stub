@@ -5,6 +5,7 @@ import type { Path } from 'wouter'
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
 import { useEffect, useState } from 'preact/hooks'
+import TextEllipsis from './text-ellipsis'
 
 const style = css`
 &.card, .card {
@@ -21,32 +22,6 @@ const style = css`
   &.link {
     position: absolute;
     inset: 0;
-  }
-
-  .origin-icon {
-    display: inline-flex;
-    margin-top: auto;
-    margin-left: 1rem;
-    height: 2rem;
-    width: 2rem;
-
-    &:hover {
-      border: 1px solid white;
-    }
-
-    img {
-      height: 2rem;
-      width: 2rem;
-    }
-  }
-
-  .title {
-    width: 100%;
-    word-wrap: break-word;
-
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin: .5rem 0;
   }
 
   .information {
@@ -70,14 +45,20 @@ const style = css`
     font-size: 2.5rem;
     overflow: hidden;
     pointer-events: none;
+    max-height: 10rem;
 
-    .title-text, .author, .origin-icon {
-      color: white;
-      position: relative;
+    .title {
+      width: 100%;
+      max-height: 10rem;
+
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin: .5rem 0;
     }
 
-    .author a span {
+    .title-text {
       color: white;
+      position: relative;
     }
   }
 }
@@ -108,11 +89,7 @@ const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivEl
       <div className="information">
           <div className="title">
             <Link to={to} className="title-text">
-              {
-                (title?.length ?? 0) > 30
-                  ? title?.slice(0, 30) + '...'
-                  : title
-              }
+              <TextEllipsis>{title}</TextEllipsis>
             </Link>
           </div>
       </div>

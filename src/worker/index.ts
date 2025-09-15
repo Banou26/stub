@@ -1,3 +1,3 @@
+import './yoga'
 import './worker'
 import './drizzle'
-import './yoga'
