@@ -2,8 +2,6 @@ import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import preact from '@preact/preset-vite'
 
-import { prismaBrowserHack } from './vite-plugin-prisma-hack'
-
 export default defineConfig((_) => ({
   build: {
     target: 'esnext',
@@ -24,7 +22,6 @@ export default defineConfig((_) => ({
   },
   plugins: [
     nodePolyfills(),
-    prismaBrowserHack(),
     preact({
       jsxImportSource: '@emotion/react'
     })
