@@ -109,11 +109,13 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     & > .title {
       font-size: 3rem;
       font-weight: 600;
+      cursor: default;
     }
 
     & > .description {
       white-space: pre-wrap;
       margin-top: 2.5rem;
+      cursor: default;
 
       &.collapsed {
         max-height: 20rem;

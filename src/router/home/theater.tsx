@@ -86,13 +86,13 @@ height: 70vh;
     font-size: 4rem;
     font-weight: bold;
     margin-bottom: 1rem;
-    user-select: none;
+    cursor: default;
   }
 
   .short-description {
     font-size: 2rem;
     margin-bottom: 1rem;
-    user-select: none;
+    cursor: default;
     overflow: hidden;
     max-height: 10rem;
     white-space: pre-wrap;
