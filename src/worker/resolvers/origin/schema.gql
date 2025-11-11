@@ -1,0 +1,57 @@
+
+type Origin {
+  """An id to references the origin"""
+  id: String!
+  """An url to the origin"""
+  url: String
+  """The name of the origin"""
+  name: String!
+  """The origin's icon"""
+  icon: String
+  """The origin's color"""
+  color: String
+  """If the origin is an api only origin"""
+  isApiOnly: Boolean!
+}
+
+input OriginInput {
+  id: ID!
+}
+
+enum OriginFilter {
+  IS_API_ONLY
+  IS_NOT_API_ONLY
+}
+
+input OriginPageInput {
+  ids: [ID!]!
+  filters: [OriginFilter!]
+}
+
+type OriginPage {
+  """The current page"""
+  firstPageCursor: Id
+  """The current page"""
+  previousPageCursor: Id
+  """The current page"""
+  currentPageCursor: Id
+  """The first page"""
+  nextPageCursor: Id
+  """The last page cursor"""
+  lastPageCursor: Id
+  """Total number of items on the current page"""
+  currentPageNodeCount: Int
+  """The total number of items. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""
+  totalNodeCount: Int
+  """Total number of items before the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""
+  beforeCurrentPageNodeCount: Int
+  """Total number of items after the current page. Note: This value is not guaranteed to be accurate, do not rely on this for logic"""
+  afterCurrentPageNodeCount: Int
+  """The media page nodes"""
+  nodes: [Origin!]!
+}
+
+extend type Subscription {
+  origin(input: OriginInput!): Origin
+  originPage(input: OriginPageInput!): OriginPage!
+}

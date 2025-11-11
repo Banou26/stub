@@ -23,6 +23,7 @@ try {
   await generateTableNotifyTriggers(database, 'aggregatedEpisode', 'uri')
   await generateTableNotifyTriggers(database, 'aggregatedEpisode', '_id')
   await generateTableNotifyTriggers(database, 'mediaEpisodes', 'mediaUri', ['episodeUri'])
+  await generateTableNotifyTriggers(database, 'origin', 'id')
 } catch (err) {
   console.error(err)
   throw err

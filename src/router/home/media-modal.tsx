@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Redirect, useParams } from 'wouter'
 
-import { MediaDescriptionContentType } from '../../generated/graphql'
+import { MediaDescriptionContentType, OriginFilter } from '../../generated/graphql'
 import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import VolumeControl from '../../components/volume-control'
@@ -106,10 +106,29 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 
   & > .content {
     padding: 2.5rem;
-    & > .title {
-      font-size: 3rem;
-      font-weight: 600;
-      cursor: default;
+    & > .header {
+      display: flex;
+      gap: 1rem;
+
+      & > .title {
+        font-size: 3rem;
+        font-weight: 600;
+        cursor: default;
+      }
+
+      & > .origins {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        & > .origin {
+          height: 4rem;
+          & > img {
+            height: 4rem;
+            width: 4rem;
+          }
+        }
+      }
     }
 
     & > .description {
@@ -233,6 +252,16 @@ const GET_MEDIA_MODAL = gql(`
   }
 `)
 
+const GET_MEDIA_MODAL_ORIGINS = gql(`
+  subscription GetMediaModalOrigins($input: OriginPageInput!) {
+    originPage(input: $input) {
+      nodes {
+        ...OriginFragment
+      }
+    }
+  }
+`)
+
 const Episode = (
   { episode, index }:
   { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number }
@@ -293,6 +322,16 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     pause: !uri
   })
   const media = data?.media ?? foundMedia
+  const origins =
+    data?.media?.uri
+      ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues
+      : undefined
+  const originIds = origins?.map(origin => origin.origin)
+  const [{ data: originData }] = useSubscription({
+    query: GET_MEDIA_MODAL_ORIGINS,
+    variables: { input: { ids: originIds!, filters: [OriginFilter.IsNotApiOnly] } },
+    pause: !originIds
+  })
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
   const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
   const cover = useMemo(() => media?.covers?.at(0), [media])
@@ -348,29 +387,56 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   )
                   : undefined
               }
-            <div className={`player-controls ${!selectedTrailer?.url ? 'hidden' : ''}`}>
-              <span className="playback">
-                {
-                  playerPaused
-                    ? <LucidePlay className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(false)} />
-                    : <LucidePause className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(true)} />
-                }
-                {
-                  playerPaused
-                    ? <LucidePlay className="icon-body" size={30} onClick={() => setPlayerPaused(false)}/>
-                    : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
-                }
-              </span>
-              <VolumeControl
-                defaultMuted={playerMuted}
-                onMutedUpdate={setPlayerMuted}
-                defaultVolume={playerVolume}
-                onVolumeUpdate={volume => setPlayerVolume(volume)}
-              />
-            </div>
+              <div className={`player-controls ${!selectedTrailer?.url ? 'hidden' : ''}`}>
+                <span className="playback">
+                  {
+                    playerPaused
+                      ? <LucidePlay className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(false)} />
+                      : <LucidePause className="icon-outline" size={30} strokeWidth={3} color="black" onClick={() => setPlayerPaused(true)} />
+                  }
+                  {
+                    playerPaused
+                      ? <LucidePlay className="icon-body" size={30} onClick={() => setPlayerPaused(false)}/>
+                      : <LucidePause className="icon-body" size={30} onClick={() => setPlayerPaused(true)}/>
+                  }
+                </span>
+                <VolumeControl
+                  defaultMuted={playerMuted}
+                  onMutedUpdate={setPlayerMuted}
+                  defaultVolume={playerVolume}
+                  onVolumeUpdate={volume => setPlayerVolume(volume)}
+                />
+              </div>
             </div>
             <div className="content">
-              <div className="title">{title}</div>
+              <div className="header">
+                <span className="title">{title}</span>
+                <span className="origins">
+                  {
+                    originData
+                      ?.originPage
+                      ?.nodes
+                      ?.map(origin => {
+                        const link = media?.handles.find(handle => handle.origin === origin.id)?.url
+                        if (!origin.icon) return undefined
+                        return (
+                          link
+                            ? (
+                              <a className="origin" href={link} target="_blank" rel="noreferrer" title={origin.name}>
+                                <img src={origin.icon}/>
+                              </a>
+                            )
+                            : (
+                              <div className="origin">
+                                <img src={origin.icon}/>
+                              </div>
+                            )
+                        )
+                      })
+                      .filter(Boolean)
+                  }
+                </span>
+              </div>
               {
                 description
                   ? (

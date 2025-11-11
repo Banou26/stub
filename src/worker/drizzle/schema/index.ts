@@ -18,5 +18,8 @@ export * from './episodes'
 // All relations (depends on tables being defined first)
 export * from './relations'
 
+// Origin tables
+export * from './origin'
+
 // Type exports
 export * from './types'

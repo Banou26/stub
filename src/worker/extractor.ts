@@ -1,6 +1,6 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 
-import type { Episode, Media, Resolvers } from '../generated/schema/types.generated'
+import type { Episode, Media, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { CreateAggregatedMediaEpisodes } from './drizzle/schema'
 
 import { useOnResolve } from '@envelop/on-resolve'
@@ -26,6 +26,8 @@ import {
   findAllAggregatedEpisode,
   findAllEpisode,
   insertManyAggregatedEpisode,
+  insertManyOrigins,
+  normalizeDrizzleOrigin,
 } from './drizzle/utils'
 import { aggregatedMediaEpisodesTable } from './drizzle/schema'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
@@ -179,6 +181,14 @@ export const extractors =
                 Mutation: {
                 },
                 Subscription: {
+                  origin: {
+                    resolve: () => normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl }),
+                    subscribe: async function*() { return yield normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl }) }
+                  },
+                  originPage: {
+                    resolve: () => ({ nodes: [normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })] }),
+                    subscribe: async function* () { yield [normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })] }
+                  },
                   media: { subscribe: async function* (_parent) { } },
                   mediaPage: { subscribe: async function* (_parent) { return [] } }
                 }
@@ -209,6 +219,12 @@ export const extractors =
                     } else if (result) {
                       await episodeInserter.load(result as Episode)
                     }
+                  } else if (getNamedType(info.returnType).name === 'Origin') {
+                    if (Array.isArray(result)) {
+                      await originInserter.loadMany(result as Origin[])
+                    } else if (result) {
+                      await originInserter.load(result as Origin)
+                    }
                   }
                 }
               ))
@@ -235,3 +251,15 @@ export const extractors =
         extractor
       }
     })
+
+const originInserter = new DataLoader<Origin, Origin>(async (origins) => {
+  await database.transaction(async (tx) => {
+    await insertManyOrigins(tx, origins as Origin[])
+  })
+  return origins
+}, {
+  cache: false,
+  batch: true,
+  maxBatchSize: 50,
+  batchScheduleFn: (callback) => setTimeout(callback, 50)
+})

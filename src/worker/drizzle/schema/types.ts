@@ -10,11 +10,13 @@ import type {
   mediaHandlesTable,
   episodeHandlesTable,
   aggregatedMediaHandlesTable,
-  aggregatedEpisodeHandlesTable
+  aggregatedEpisodeHandlesTable,
+  originTable
 } from './index'
 
 export type ChangeNotification = typeof notifyTable.$inferSelect
 export type Media = typeof mediaTable.$inferSelect
+export type Origin = typeof originTable.$inferSelect
 export type CreateMedia = typeof mediaTable.$inferInsert
 export type AggregatedMedia = typeof aggregatedMediaTable.$inferSelect
 export type CreateAggregatedMedia = typeof aggregatedMediaTable.$inferInsert

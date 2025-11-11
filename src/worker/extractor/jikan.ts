@@ -10,6 +10,7 @@ export const categories = ['ANIME']
 export const name = 'MyAnimeList'
 export const official = true
 export const metadataOnly = true
+export const isApiOnly = false
 export const supportedUris = ['mal']
 
 const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {

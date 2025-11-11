@@ -5,26 +5,31 @@ import baseSchema from '../schema.gql?raw'
 import { resolvers as mediaResolvers, schema as mediaSchema } from './media'
 import { resolvers as episodeResolvers, schema as episodeSchema } from './episode'
 import { resolvers as playbackSourceResolvers, schema as playbackSourceSchema } from './playback-source'
+import { resolvers as originResolvers, schema as originSchema } from './origin'
 
-export const schema = [baseSchema, episodeSchema, playbackSourceSchema, mediaSchema].join('\n\n')
+export const schema = [baseSchema, episodeSchema, playbackSourceSchema, mediaSchema, originSchema].join('\n\n')
 
 export const resolvers = {
   ...mediaResolvers,
   ...episodeResolvers,
   ...playbackSourceResolvers,
+  ...originResolvers,
   Query: {
     ...mediaResolvers.Query,
     ...episodeResolvers.Query,
     ...playbackSourceResolvers.Query,
+    ...originResolvers.Query,
   },
   Mutation: {
     ...mediaResolvers.Mutation,
     ...episodeResolvers.Mutation,
     ...playbackSourceResolvers.Mutation,
+    ...originResolvers.Mutation,
   },
   Subscription: {
     ...mediaResolvers.Subscription,
     ...episodeResolvers.Subscription,
     ...playbackSourceResolvers.Subscription,
+    ...originResolvers.Subscription,
   },
 } satisfies Resolvers

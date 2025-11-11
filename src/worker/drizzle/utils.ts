@@ -1,9 +1,9 @@
-import type { ExtractTablesWithRelations } from 'drizzle-orm'
+import type { ExtractTablesWithRelations, SQL } from 'drizzle-orm'
 import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core'
 import type { SqliteRemoteResult } from 'drizzle-orm/sqlite-proxy'
 
-import type { Media as GraphqlMedia, Episode as GraphqlEpisode, MediaSort } from '../../generated/schema/types.generated'
-import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia, CreateAggregatedEpisode } from './schema'
+import type { Media as GraphqlMedia, Episode as GraphqlEpisode, MediaSort, Origin as GraphqlOrigin } from '../../generated/schema/types.generated'
+import type { Media as DrizzleMedia, Episode as DrizzleEpisode, AggregatedMedia as DrizzleAggregatedMedia, AggregatedEpisode as DrizzleAggregatedEpisode, CreateAggregatedMedia, CreateAggregatedEpisode, Origin as DrizzleOrigin } from './schema'
 import type {
   CreateMedia,
   CreateMediaHandles,
@@ -25,10 +25,12 @@ import {
   aggregatedMediaHandlesTable,
   aggregatedEpisodeTable,
   aggregatedEpisodeHandlesTable,
-  aggregatedMediaEpisodesTable
+  aggregatedMediaEpisodesTable,
+  originTable
 } from './schema'
 import database from '.'
 import { getRoutePath, Route } from '../../router/path'
+import { OriginFilter } from '../../generated/graphql'
 
 type RemoveSubstring<T extends string, Substring extends string> =
   T extends `${infer Before}${Substring}${infer After}`
@@ -709,5 +711,107 @@ export const aggregateEpisodeHandles = (episodes: GraphqlEpisode[], existingAggr
   return {
     ...aggregatedEpisode,
     titles: removeDuplicatesByField('title', aggregatedEpisode?.titles?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)) ?? []),
+  }
+}
+
+// Origin helper functions
+export const normalizeGraphqlOrigin = (origin: DrizzleOrigin): GraphqlOrigin => ({
+  id: origin.id,
+  url: origin.url ?? undefined,
+  name: origin.name,
+  icon: origin.icon ?? undefined,
+  color: origin.color ?? undefined,
+  isApiOnly: origin.isApiOnly
+})
+
+export const normalizeDrizzleOrigin = (origin: GraphqlOrigin): DrizzleOrigin => ({
+  id: origin.id,
+  url: origin.url ?? null,
+  name: origin.name,
+  icon: origin.icon ?? null,
+  color: origin.color ?? null,
+  isApiOnly: origin.isApiOnly
+})
+
+export const findOrigin = async (
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  { id }: { id: string }
+): Promise<GraphqlOrigin | null> => {
+  const origin = await tx
+    .select()
+    .from(originTable)
+    .where(eq(originTable.id, id))
+    .limit(1)
+    .then(([origin]) => origin)
+
+  return origin ? normalizeGraphqlOrigin(origin) : null
+}
+
+export const findOrigins = async (
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  { ids, filters }: { ids: string[], filters?: OriginFilter[] }
+): Promise<GraphqlOrigin[]> => {
+  const conditions = [
+    ...ids.length ? [inArray(originTable.id, ids)] : [],
+    ...filters?.length
+      ? [
+        and(
+          ...filters.map(filter =>
+            eq(originTable.isApiOnly, filter === OriginFilter.IsApiOnly)
+          )
+        )
+      ]
+      : []
+  ]
+
+  const origins =
+    await tx
+      .select()
+      .from(originTable)
+      .where(and(...conditions))
+      .orderBy(asc(originTable.name))
+
+  if (ids && ids.length > 0) {
+    const originMap = new Map<string, GraphqlOrigin>()
+    origins.forEach(origin => {
+      originMap.set(origin.id, normalizeGraphqlOrigin(origin))
+    })
+
+    return (
+      ids
+        .map(id => originMap.get(id))
+        .filter((origin): origin is GraphqlOrigin => origin !== null && origin !== undefined)
+    )
+  }
+
+  return origins.map(normalizeGraphqlOrigin)
+}
+
+export const insertManyOrigins = async (
+  tx: DrizzleSQLiteTransaction,
+  origins: GraphqlOrigin[]
+) => {
+  const values = origins.map(origin => ({
+    id: origin.id,
+    url: origin.url,
+    name: origin.name,
+    icon: origin.icon,
+    color: origin.color,
+    isApiOnly: origin.isApiOnly
+  }))
+
+  if (values.length) {
+    await tx.insert(originTable)
+      .values(values)
+      .onConflictDoUpdate({
+        target: originTable.id,
+        set: {
+          url: sql`COALESCE(excluded.url, ${originTable.url})`,
+          name: sql`COALESCE(excluded.name, ${originTable.name})`,
+          icon: sql`COALESCE(excluded.icon, ${originTable.icon})`,
+          color: sql`COALESCE(excluded.color, ${originTable.color})`,
+          isApiOnly: sql`COALESCE(excluded.isApiOnly, ${originTable.isApiOnly})`
+        }
+      })
   }
 }
