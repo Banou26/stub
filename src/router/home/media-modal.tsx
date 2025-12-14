@@ -315,8 +315,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
         uri
       },
       descriptionInput: {
-        type: MediaDescriptionContentType.Html,
-        count: 1
+        type: MediaDescriptionContentType.Html
       }
     },
     pause: !uri
@@ -337,7 +336,13 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     () =>
       media
       && 'descriptions' in media
-      && media?.descriptions?.at(0)?.description,
+      && (
+        media
+          .descriptions
+          .sort((desc1, desc2) => desc2.description.length - desc1.description.length)
+          ?.at(0)
+          ?.description
+      ),
     [media]
   )
   const cover = useMemo(() => media?.covers?.at(0), [media])
