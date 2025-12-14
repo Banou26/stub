@@ -333,11 +333,24 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     pause: !originIds
   })
   const title = useMemo(() => media?.titles?.at(0)?.title, [media])
-  const description = useMemo(() => media && 'descriptions' in media && media?.descriptions?.at(0)?.description, [media])
+  const description = useMemo(
+    () =>
+      media
+      && 'descriptions' in media
+      && media?.descriptions?.at(0)?.description,
+    [media]
+  )
   const cover = useMemo(() => media?.covers?.at(0), [media])
 
   const [bannedTrailerUris, setBannedTrailerUris] = useState<string[]>([])
-  const selectedTrailer = useMemo(() => media?.trailers.filter((trailer) => !bannedTrailerUris.includes(trailer.uri)).at(0), [bannedTrailerUris])
+  const selectedTrailer = useMemo(
+    () =>
+      media
+        ?.trailers
+        .filter((trailer) => !bannedTrailerUris.includes(trailer.uri))
+        .at(0),
+    [media?.trailers?.map(trailer => trailer.uri), bannedTrailerUris]
+  )
 
   const onTrailerError = useCallback(() => {
     if (!selectedTrailer) return
