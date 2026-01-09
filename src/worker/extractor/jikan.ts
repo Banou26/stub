@@ -13,6 +13,8 @@ export const metadataOnly = true
 export const isApiOnly = false
 export const supportedUris = ['mal']
 
+const youtubeEmbedRegex = /\/embed\/([a-zA-Z0-9_-]{11})/
+
 const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {
   const aniDBSource = data.external?.find(site => site.name === 'AniDB')
   const aniDBId =
@@ -45,6 +47,30 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       } as Media
       : undefined
 
+  const embeddedYoutubeUrl =
+    data.trailer?.embed_url
+      ? data.trailer.embed_url.match(youtubeEmbedRegex)?.[1]
+      : undefined
+  
+  const trailers: MediaTrailer[] =
+      data.trailer?.youtube_id ? [{
+      uri: `yt:${data.trailer.youtube_id}`,
+      origin: 'yt',
+      id: data.trailer.youtube_id,
+      url: `https://www.youtube.com/watch?v=${data.trailer.youtube_id}`,
+      language: 'en',
+      thumbnail: data.trailer.images.image_url
+    }]
+    : data.trailer?.embed_url && embeddedYoutubeUrl ? [{
+      uri: `yt:${embeddedYoutubeUrl}`,
+      origin: 'yt',
+      id: embeddedYoutubeUrl,
+      url: `https://www.youtube.com/watch?v=${embeddedYoutubeUrl}`,
+      language: 'en',
+      thumbnail: data.trailer.images.image_url
+    }]
+    : []
+  
   return {
     _id: crypto.randomUUID(),
     uri: `${origin}:${data.mal_id}`,
@@ -85,17 +111,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       : undefined,
     startDate: new Date(data.aired.prop.from.year, data.aired.prop.from.month, data.aired.prop.from.day).toUTCString(),
     endDate: new Date(data.aired.prop.to.year, data.aired.prop.to.month, data.aired.prop.to.day).toUTCString(),
-    trailers:
-      data.trailer?.youtube_id
-        ? [{
-          uri: `yt:${data.trailer.youtube_id}`,
-          origin: 'yt',
-          id: data.trailer.youtube_id,
-          url: `https://www.youtube.com/watch?v=${data.trailer.youtube_id}`,
-          language: 'en',
-          thumbnail: data.trailer.images.image_url
-        } as MediaTrailer]
-      : []
+    trailers
   } satisfies Media
 }
 
