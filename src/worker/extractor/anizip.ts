@@ -38,13 +38,15 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
     covers:
       media
         .images
-        .filter(image => image.coverType === 'Poster')
-        .map(image => ({ url: image.url })),
+        ?.filter(image => image.coverType === 'Poster')
+        .map(image => ({ url: image.url }))
+      ?? [],
     banners:
       media
         .images
-        .filter(image => image.coverType === 'Banner')
-        .map(image => ({ url: image.url })),
+        ?.filter(image => image.coverType === 'Banner')
+        .map(image => ({ url: image.url }))
+      ?? [],
     episodeCount: media.episodeCount,
     episodes:
       Object
@@ -187,6 +189,6 @@ interface AnimeSeries {
   episodes: Episodes;
   episodeCount: number;
   specialCount: number;
-  images: Image[];
+  images?: Image[];
   mappings: Mappings;
 }
