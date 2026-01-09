@@ -1,14 +1,16 @@
 import type { YogaInitialContext } from 'graphql-yoga'
+import type { Exchange } from 'urql'
 
-import type { Episode, Media, Origin, Resolvers } from '../generated/schema/types.generated'
+import type { Episode, Media, MediaPage as GQLMediaPage, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { CreateAggregatedMediaEpisodes } from './drizzle/schema'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga, useErrorHandler } from 'graphql-yoga'
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache'
-import { Client, fetchExchange } from 'urql'
+import { Client, fetchExchange, getOperationName } from 'urql'
 import { getNamedType } from 'graphql'
 import DataLoader from 'dataloader'
+import { pipe, tap } from 'wonka'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from './extractor/index'
@@ -189,8 +191,8 @@ export const extractors =
                     resolve: () => ({ nodes: [normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })] }),
                     subscribe: async function* () { yield [normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })] }
                   },
-                  media: { subscribe: async function* (_parent) { } },
-                  mediaPage: { subscribe: async function* (_parent) { return [] } }
+                  media: { subscribe: async function* (_parent) { yield { media: null } } },
+                  mediaPage: { subscribe: async function* (_parent) { yield { mediaPage: { nodes: [] } } } }
                 }
               } satisfies Resolvers,
               extractor.resolvers
@@ -232,10 +234,28 @@ export const extractors =
           }
         ]
       })
+      
+      const errorExchange: Exchange = ({ forward }) => (ops$) => {
+        return pipe(
+          forward(ops$),
+          tap((result) => {
+            if (result.error) {
+              if (result.error.networkError) {
+                console.error(`Extractor ${extractor.name} Network error on ${getOperationName(result.operation.query)}:`, result.error.networkError)
+              }
+              if (result.error.graphQLErrors?.length) {
+                result.error.graphQLErrors.forEach((err) => {
+                  console.error(`Extractor ${extractor.name} GraphQL error on ${getOperationName(result.operation.query)}:`, err.message)
+                })
+              }
+            }
+          })
+        )
+      }
 
       const client = new Client({
         url: 'http://d/graphql',
-        exchanges: [fetchExchange],
+        exchanges: [errorExchange, fetchExchange],
         fetchSubscriptions: true,
         fetch: async (input: Parameters<typeof globalThis.fetch>[0], init: Parameters<typeof globalThis.fetch>[1]) =>
           server.handleRequest(
