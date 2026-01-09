@@ -269,9 +269,9 @@ export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
-        if (!uri || !isUri(uri)) return
+        if (!uri || !isUri(uri)) return yield { media: null }
         const uriValues = fromUri(uri)
-        if (uriValues.origin !== origin) return
+        if (uriValues.origin !== origin) return yield { media: null }
         yield {
           media: await fetchMedia({ id: Number(uriValues.id) }, ctx)
         }
