@@ -5,10 +5,11 @@ import type { Episode, Media, MediaPage as GQLMediaPage, Origin, Resolvers } fro
 import type { CreateAggregatedMediaEpisodes } from './drizzle/schema'
 
 import { useOnResolve } from '@envelop/on-resolve'
-import { createSchema, createYoga, useErrorHandler } from 'graphql-yoga'
+import { createSchema, createYoga } from 'graphql-yoga'
+import { useErrorHandler } from '@envelop/core'
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache'
 import { Client, fetchExchange, getOperationName } from 'urql'
-import { getNamedType } from 'graphql'
+import { getNamedType, GraphQLError } from 'graphql'
 import DataLoader from 'dataloader'
 import { pipe, tap } from 'wonka'
 
@@ -158,7 +159,6 @@ export const extractors =
     .entries(extractorDefinitions)
     .map(([name, extractor]) => {
       const server = createYoga<Omit<ExtractorServerContext, keyof YogaInitialContext>, ExtractorUserContext>({
-        maskedErrors: false,
         schema: createSchema<Omit<ExtractorServerContext, keyof YogaInitialContext>>({
           typeDefs,
           resolvers:
@@ -200,11 +200,6 @@ export const extractors =
         }),
         plugins: [
           useResponseCache({ session: () => null, ttl: 15 * 60 * 1000 }),
-          useErrorHandler(({ errors, context }) => {
-            for (const error of errors) {
-              console.error(new Error(`GQLError occurred on request: ${context.operationName}`, { cause: error }))
-            }
-          }),
           {
             onPluginInit: ({ addPlugin }) => {
               addPlugin(useOnResolve(({ info }) =>
@@ -232,7 +227,13 @@ export const extractors =
               ))
             }
           }
-        ]
+        ],
+        maskedErrors: {
+          maskError(error, message, isDev) {
+            console.error(`Server Extractor ${extractor.name} GQLError occurred:`, error)
+            return new GraphQLError((error as Error).message)
+          },
+        }
       })
       
       const errorExchange: Exchange = ({ forward }) => (ops$) => {
@@ -241,11 +242,11 @@ export const extractors =
           tap((result) => {
             if (result.error) {
               if (result.error.networkError) {
-                console.error(`Extractor ${extractor.name} Network error on ${getOperationName(result.operation.query)}:`, result.error.networkError)
+                console.error(new Error(`Client Extractor ${extractor.name} Network error on ${getOperationName(result.operation.query)}:`, { cause: result.error.networkError }))
               }
               if (result.error.graphQLErrors?.length) {
                 result.error.graphQLErrors.forEach((err) => {
-                  console.error(`Extractor ${extractor.name} GraphQL error on ${getOperationName(result.operation.query)}:`, err.message)
+                  console.error(new Error(`Client Extractor ${extractor.name} GraphQL error on ${getOperationName(result.operation.query)}:`, { cause: err }))
                 })
               }
             }
