@@ -140,11 +140,11 @@ const getMediaSeason = (date = new Date()): MediaSeason => {
   const month = date.getMonth()
 
   return (
-    month >= 1 && month <= 3 ? MediaSeason.Winter // December to February
-    : month >= 4 && month <= 6 ? MediaSeason.Spring // March to May
-    : month >= 7 && month <= 9 ? MediaSeason.Summer // June to August
-    : month >= 10 && month <= 12 ? MediaSeason.Fall // September to November
-    : MediaSeason.Fall // December to February
+    month >= 0 && month <= 2 ? MediaSeason.Winter // January to March
+    : month >= 3 && month <= 5 ? MediaSeason.Spring // April to June
+    : month >= 6 && month <= 8 ? MediaSeason.Summer // July to September
+    : month >= 9 && month <= 11 ? MediaSeason.Fall // October to December
+    : undefined as never
   )
 }
 
@@ -259,6 +259,8 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
   } satisfies GQLMedia
 }
 
+
+// todo: implement overlapping week between season since some anime may start while some other ends
 export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
   const season = getMediaSeason()
   const seasonYear = new Date().getFullYear()
