@@ -6,7 +6,7 @@ import { eq, asc } from 'drizzle-orm'
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findAggregatedMedia, findAggregatedMedias, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
+import { findAggregatedMedia, findAggregatedMedias, findMediaByUris, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
 import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
@@ -132,6 +132,23 @@ export const resolvers = {
           .filter((mediaShortDescription): mediaShortDescription is NonNullable<typeof mediaShortDescription> => Boolean(mediaShortDescription))
 
       return shortDescriptions
+    },
+    handles: async (parent) => {
+      if (!parent.handles?.length) return []
+
+      // Check if handles already have their nested handles populated
+      const handlesNeedFetching = parent.handles.some(handle => !handle.handles?.length)
+      if (!handlesNeedFetching) return parent.handles
+
+      // Fetch handles with their nested handles from the database
+      const handleUris = parent.handles.map(handle => handle.uri)
+      const fetchedHandles = await findMediaByUris(undefined, handleUris)
+
+      // Create a map for quick lookup
+      const handleMap = new Map(fetchedHandles.map(h => [h.uri, h]))
+
+      // Return handles in original order, using fetched data when available
+      return parent.handles.map(handle => handleMap.get(handle.uri) ?? handle)
     },
   }
 } satisfies Resolvers

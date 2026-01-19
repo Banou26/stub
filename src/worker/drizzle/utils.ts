@@ -371,6 +371,39 @@ export const findAllMedia = async (tx: DrizzleSQLiteTransaction = database as un
   return removeDuplicatesByField('uri', mappedMedia.flatMap(recursivelyUnwrapMediaHandles))
 }
 
+export const findMediaByUris = async (
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  uris: string[]
+) => {
+  if (!uris.length) return []
+
+  const results = await tx.query.mediaTable.findMany({
+    where: inArray(mediaTable.uri, uris),
+    with: {
+      episodes: {
+        with: {
+          episode: true
+        }
+      },
+      handles: {
+        with: {
+          handle: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+
+  return results.map(normalizeGraphqlMedia)
+}
+
 export const findAllAggregatedMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
   const results = await tx.query.aggregatedMediaTable.findMany({
     with: {
