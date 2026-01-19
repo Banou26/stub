@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
-import { fromUri, isUri } from '../../utils/uri'
+import { fromUri, isUri, toUri } from '../../utils/uri'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -71,6 +71,7 @@ const MEDIA_FIELDS = `
   }
   externalLinks {
     site
+    siteId
     url
   }
   airingSchedule {
@@ -119,6 +120,21 @@ const GET_MEDIA = `
     }
   }
 `
+
+const siteMappings = [
+  {
+    // link example: https://www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites
+    siteId: 5,
+    mapper: (mediaExternalLink: MediaExternalLink) => {
+      const match = mediaExternalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
+      const crunchyrollId = match?.[1]
+      if (!crunchyrollId) return
+      return toUri({ origin: 'cr', id: crunchyrollId })
+    }
+  }
+] as const
+
+type SiteMapper = typeof siteMappings[number]
 
 const fetchAnilist = <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<{ data: T }> =>
   context
@@ -181,6 +197,10 @@ const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year:
   )
 }
 
+const externalLinkHasSiteId =
+  (externalLink: Maybe<MediaExternalLink>): externalLink is MediaExternalLink & { siteId: number } =>
+    Boolean(externalLink?.siteId)
+
 const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
   const malHandle =
     media.idMal
@@ -193,6 +213,29 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
       } as GQLMedia
       : undefined
 
+  const handles =
+    media
+      .externalLinks
+      ?.filter(externalLink => externalLinkHasSiteId(externalLink))
+      .map(externalLink => [
+        externalLink,
+        siteMappings
+          .find(mapper => mapper.siteId === externalLink?.siteId)
+          ?.mapper(externalLink)
+      ] as const)
+      .map(([externalLink, uri]) =>
+        uri
+          ? ({
+            _id: crypto.randomUUID(),
+            uri,
+            origin: 'cr',
+            id: fromUri(uri).id,
+            url: externalLink?.url
+          } as GQLMedia)
+          : undefined
+      )
+      .filter((value): value is NonNullable<typeof value> => Boolean(value))
+    ?? []
 
   const firstAiringNode = media.airingSchedule?.edges?.at(0)?.node
   const startDate =
@@ -212,6 +255,7 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
     id: media.id.toString(),
     url: media.siteUrl,
     handles: [
+      ...handles,
       ...malHandle ? [malHandle] : []
     ],
     score: 0.9,
