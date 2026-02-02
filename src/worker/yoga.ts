@@ -51,8 +51,7 @@ export type Resolvers = typeof osraResolvers
 expose<MainThreadResolvers>(
   osraResolvers,
   {
-    local: globalThis as unknown as Worker,
-    remote: globalThis as unknown as Worker,
+    transport: globalThis,
     key: 'yoga'
   }
 )

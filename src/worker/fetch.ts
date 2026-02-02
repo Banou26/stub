@@ -5,8 +5,7 @@ import { expose } from 'osra'
 const exposePromise = expose<Resolvers>(
   {},
   {
-    local: globalThis as unknown as Worker,
-    remote: globalThis as unknown as Worker,
+    transport: globalThis,
     key: 'fetch'
   }
 )

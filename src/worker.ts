@@ -23,8 +23,7 @@ export type Resolvers = typeof resolvers
 expose<typeof resolvers>(
   resolvers,
   {
-    local: worker,
-    remote: worker,
+    transport: worker,
     key: 'fetch'
   }
 )
@@ -32,8 +31,7 @@ expose<typeof resolvers>(
 const { HANDLE_REQUEST: handleRequest } = await expose<WorkerResolvers>(
   {},
   {
-    local: worker,
-    remote: worker,
+    transport: worker,
     key: 'yoga'
   }
 )

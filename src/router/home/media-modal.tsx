@@ -246,6 +246,13 @@ const GET_MEDIA_MODAL = gql(`
         }
       }
       handles {
+        ...MediaFragment
+        handles {
+          ...MediaFragment
+          episodes {
+            ...EpisodeFragment
+          }
+        }
         episodes {
           ...EpisodeFragment
         }
@@ -324,6 +331,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     pause: !uri
   })
   const media = data?.media ?? foundMedia
+  console.log('media', media)
   const origins =
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues
