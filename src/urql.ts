@@ -67,10 +67,7 @@ const client = new Client({
     fetchExchange,
   ],
   fetchSubscriptions: true,
-  fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
-    const { body, headers } = await handleRequest(input, init)
-    return new Response(body, { headers })
-  }
+  fetch: async (input: RequestInfo | URL, init?: RequestInit) => handleRequest(input, init)
 })
 
 export default client

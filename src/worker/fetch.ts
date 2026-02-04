@@ -10,8 +10,5 @@ const exposePromise = expose<Resolvers>(
   }
 )
 
-export const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-  const { FETCH } = await exposePromise
-  const { body, ...rest } = await FETCH(input, init)
-  return new Response(body, rest)
-}
+export const fetch = (input: RequestInfo | URL, init?: RequestInit) =>
+  exposePromise.then(({ fetch }) => fetch(input, init))

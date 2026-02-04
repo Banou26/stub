@@ -9,13 +9,7 @@ import { fetch } from './utils/fetch'
 const worker = new Worker()
 
 const resolvers = {
-  FETCH: async (input: RequestInfo | URL, init?: RequestInit) => {
-    const response = await fetch(input, init)
-    return {
-      headers: Object.fromEntries(response.headers.entries()),
-      body: response.body
-    }
-  }
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, init)
 }
 
 export type Resolvers = typeof resolvers
@@ -28,7 +22,7 @@ expose<typeof resolvers>(
   }
 )
 
-const { HANDLE_REQUEST: handleRequest } = await expose<WorkerResolvers>(
+const { handleRequest } = await expose<WorkerResolvers>(
   {},
   {
     transport: worker,

@@ -36,14 +36,8 @@ export const yoga = createYoga<Omit<ServerContext, keyof YogaInitialContext>, Us
 })
 
 export const osraResolvers = {
-  HANDLE_REQUEST: async (input: RequestInfo | URL, init?: RequestInit) => {
-    const { headers, body, method } = init ?? {}
-    const response = await yoga.handleRequest(new Request(input, { headers, body, method }), {})
-    return {
-      headers: Object.fromEntries(response.headers.entries()),
-      body: response.body
-    }
-  }
+  handleRequest: (input: RequestInfo | URL, init?: RequestInit) =>
+    yoga.handleRequest(new Request(input, init), {})
 }
 
 export type Resolvers = typeof osraResolvers
