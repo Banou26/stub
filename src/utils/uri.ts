@@ -11,6 +11,11 @@ export type UriValues = {
   id: string
 }
 
+export const extractAggregatedUriOrigin = (uri: Uri, origin: string) =>
+  isAggregatedUri(uri) ? fromAggregatedUri(uri)?.handleUrisValues.find(uri => uri.origin === origin)
+  : isUri(uri) && fromUri(uri).origin === origin ? fromUri(uri)
+  : undefined
+
 export const fromUri = (uri: Uri): UriValues => {
   const [origin, id] = uri.split(':') as [string, string]
   return { origin, id }
