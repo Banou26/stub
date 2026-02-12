@@ -247,15 +247,58 @@ const GET_MEDIA_MODAL = gql(`
       }
       handles {
         ...MediaFragment
-        handles {
-          ...MediaFragment
-          episodes {
-            ...EpisodeFragment
-          }
+        titles {
+            language
+            title
+            score
         }
+        descriptions(input: $descriptionInput) {
+            language
+            description
+        }
+        covers {
+            language
+            url
+        }
+        banners {
+            language
+            url
+        }
+        trailers {
+            uri
+            origin
+            id
+            url
+            thumbnail
+        }
+        popularity
         episodes {
-          ...EpisodeFragment
+            ...EpisodeFragment
+            episodeNumber
+            titles {
+                title
+            }
+            shortDescriptions {
+                language
+                shortDescription
+            }
+            thumbnails {
+                url
+            }
         }
+        handles {
+        ...MediaFragment
+            handles {
+                ...MediaFragment
+                episodes {
+                    ...EpisodeFragment
+                }
+            }
+            episodes {
+                ...EpisodeFragment
+            }
+        }
+        episodeCount
       }
       episodeCount
     }
@@ -332,6 +375,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   })
   const media = data?.media ?? foundMedia
   console.log('media', media)
+  console.log('media CR handle', media?.handles.find(handle => handle.origin === 'cr'))
   const origins =
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues

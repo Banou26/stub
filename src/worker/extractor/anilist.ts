@@ -125,7 +125,7 @@ const siteMappings = [
   {
     // link example: https://www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites
     siteId: 5,
-    mapper: (mediaExternalLink: MediaExternalLink) => {
+    mapper: async (mediaExternalLink: MediaExternalLink) => {
       const match = mediaExternalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
       const crunchyrollId = match?.[1]
       if (!crunchyrollId) return
@@ -182,7 +182,7 @@ const fetchMediaSeason = (
 const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year: number }, context: ExtractorServerContext) => {
   const { data } = await fetchMediaSeason({ season, year, page: 1 }, context)
 
-  return (
+  return Promise.all(
     [
       ...data.Page.media ?? [],
       ...data.Page.pageInfo?.lastPage
@@ -201,7 +201,7 @@ const externalLinkHasSiteId =
   (externalLink: Maybe<MediaExternalLink>): externalLink is MediaExternalLink & { siteId: number } =>
     Boolean(externalLink?.siteId)
 
-const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
+const normalizeMedia = async (media: Media, context: ExtractorServerContext) => {
   const malHandle =
     media.idMal
       ? {
@@ -214,15 +214,18 @@ const normalizeMedia = (media: Media, context: ExtractorServerContext) => {
       : undefined
 
   const handles =
-    media
-      .externalLinks
-      ?.filter(externalLink => externalLinkHasSiteId(externalLink))
-      .map(externalLink => [
-        externalLink,
-        siteMappings
-          .find(mapper => mapper.siteId === externalLink?.siteId)
-          ?.mapper(externalLink)
-      ] as const)
+    (await Promise.all(
+      media
+        .externalLinks
+        ?.filter(externalLink => externalLinkHasSiteId(externalLink))
+        .map(async externalLink => [
+          externalLink,
+          await siteMappings
+            .find(mapper => mapper.siteId === externalLink?.siteId)
+            ?.mapper(externalLink)
+        ] as const)
+      ?? []
+    ))
       .map(([externalLink, uri]) =>
         uri
           ? ({

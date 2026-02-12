@@ -24,8 +24,8 @@ type CrunchyrollAuthToken = {
 
 let _token: CrunchyrollAuthToken | undefined
 
-const fetchToken = async (context: ExtractorServerContext): Promise<CrunchyrollAuthToken> =>
-  context.fetch('https://www.crunchyroll.com/auth/v1/token', {
+const fetchToken = async (context: ExtractorServerContext): Promise<CrunchyrollAuthToken> => {
+  const response = await context.fetch('https://www.crunchyroll.com/auth/v1/token', {
     headers: {
       accept: 'application/json, text/plain, */*',
       authorization: `Basic ${btoa('cr_web:')}`,
@@ -36,19 +36,21 @@ const fetchToken = async (context: ExtractorServerContext): Promise<CrunchyrollA
     mode: 'cors',
     credentials: 'include'
   })
-    .then(res => res.json())
-    .then(res => {
-      const token: CrunchyrollAuthToken = {
-        timestamp: Date.now(),
-        access_token: res.access_token as string,
-        expires_in: res.expires_in as number,
-        token_type: 'Bearer',
-        scope: 'account content offline_access',
-        country: 'US'
-      }
-      _token = token
-      return token
-    })
+  const res = await response.json()
+  if (!res.access_token) {
+    throw new Error(`Crunchyroll token fetch failed: ${JSON.stringify(res)}`)
+  }
+  const token: CrunchyrollAuthToken = {
+    timestamp: Date.now(),
+    access_token: res.access_token as string,
+    expires_in: res.expires_in as number,
+    token_type: 'Bearer',
+    scope: 'account content offline_access',
+    country: 'US'
+  }
+  _token = token
+  return token
+}
 
 const getToken = async (context: ExtractorServerContext): Promise<CrunchyrollAuthToken> => {
   if (_token && Date.now() - _token.timestamp < _token.expires_in * 1000) {
@@ -86,15 +88,44 @@ interface CrunchyrollSeries {
 
 interface CrunchyrollSeason {
   id: string
+  channel_id: string
   title: string
+  slug_title: string
   series_id: string
+  season_display_number: string
+  season_sequence_number: number
   season_number: number
+  is_complete: boolean
   description: string
+  // keywords: any[]
+  season_tags: string[]
+  images: {}
+  extended_maturity_rating: {
+    system: string
+    rating: string
+    level: string
+  }
+  maturity_ratings: string[]
+  content_descriptors: string[]
+  is_mature: boolean
+  mature_blocked: boolean
   is_subbed: boolean
   is_dubbed: boolean
-  audio_locale: string
+  is_simulcast: boolean
+  seo_title: string
+  seo_description: string
+  availability_notes: string
   audio_locales: string[]
   subtitle_locales: string[]
+  audio_locale: string
+  versions: {
+    audio_locale: string
+    guid: string
+    original: boolean
+    variant: string
+    }[]
+  identifier: string
+  number_of_episodes: number
 }
 
 interface CrunchyrollEpisode {
@@ -125,10 +156,9 @@ interface SearchResult {
   items: CrunchyrollSeries[]
 }
 
-// API functions
 const fetchWithAuth = async <T>(url: string, context: ExtractorServerContext): Promise<T> => {
   const token = await getToken(context)
-  return context.fetch(url, {
+  const response = await context.fetch(url, {
     headers: {
       accept: 'application/json, text/plain, */*',
       authorization: `Bearer ${token.access_token}`,
@@ -136,7 +166,8 @@ const fetchWithAuth = async <T>(url: string, context: ExtractorServerContext): P
     method: 'GET',
     mode: 'cors',
     credentials: 'include'
-  }).then(res => res.json() as Promise<T>)
+  })
+  return await response.json() as T
 }
 
 const fetchSeries = (seriesId: string, context: ExtractorServerContext) =>
@@ -164,10 +195,8 @@ const searchSeriesApi = (query: string, context: ExtractorServerContext) =>
   )
 
 // Picks the largest image from Crunchyroll's nested image arrays (last group, last size)
-const bestImage = (images?: CrunchyrollImage[][]): string | undefined => {
-  const group = images?.[images.length - 1]
-  return group?.[group.length - 1]?.source
-}
+const bestImage = (images?: CrunchyrollImage[][]) =>
+  images?.at(-1)?.at(-1)?.source
 
 // Normalization functions
 const normalizeSeries = (series: CrunchyrollSeries): GQLMedia => {
@@ -276,8 +305,24 @@ const getSeasonWithEpisodes = async (
   return media
 }
 
+const getAllEpisodes = async (
+  series: CrunchyrollSeries,
+  seasons: CrunchyrollSeason[],
+  mediaUri: string,
+  context: ExtractorServerContext
+): Promise<GQLEpisode[]> => {
+  console.log('cr getAllEpisodes called with', seasons.length, 'seasons:', seasons.map(s => `${s.id}(${s.title})`))
+  const episodeResponses = await Promise.all(
+    seasons.map(season => fetchEpisodes(season.id, context))
+  )
+  const episodes = episodeResponses.flatMap(res => res.data.map(ep => normalizeEpisode(ep, mediaUri)))
+  console.log('cr getAllEpisodes result:', episodes.length, 'episodes')
+  return episodes
+}
+
 const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
   const { seriesId, seasonId } = parseMediaId(id)
+  console.log('cr getMedia', { id, seriesId, seasonId, hasFetch: typeof context.fetch })
   if (!seriesId) return undefined
 
   const [seriesResponse, seasonsResponse] = await Promise.all([
@@ -286,6 +331,7 @@ const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQ
   ])
 
   const series = seriesResponse.data[0]
+  console.log('cr getMedia series:', series?.id, series?.title, 'seasons:', seasonsResponse?.data?.length, 'raw seasons data:', JSON.stringify(seasonsResponse)?.slice(0, 300))
   if (!series) return undefined
 
   const seasons = seasonsResponse.data
@@ -302,8 +348,11 @@ const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQ
     return getSeasonWithEpisodes(series, seasons[0]!, context)
   }
 
-  // Multi-season series without specific season — return series-level media
-  return normalizeSeries(series)
+  // Multi-season series — return series-level media with all episodes
+  const media = normalizeSeries(series)
+  media.episodes = await getAllEpisodes(series, seasons, media.uri, context)
+  media.episodeCount = media.episodes.length
+  return media
 }
 
 const searchMedia = async (query: string, context: ExtractorServerContext): Promise<GQLMedia[]> => {
@@ -317,11 +366,15 @@ export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
+        console.log('cr Subscription.media called with uri:', _uri)
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
         const uri = extractAggregatedUriOrigin(_uri, origin)
+        console.log('cr extracted uri:', uri)
         if (!uri) return yield { media: null }
+        const media = await getMedia(uri.id, ctx) ?? null
+        console.log('cr media result:', media)
         yield {
-          media: await getMedia(uri.id, ctx) ?? null
+          media
         }
       }
     },
@@ -334,24 +387,36 @@ export const resolvers: Resolvers = {
   },
   Media: {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
-      if (parent.origin !== origin) return undefined
+      console.log('cr Media.episodes resolver called for', parent.origin, parent.id, 'existing episodes:', parent.episodes?.length ?? 0)
+      if (parent.origin !== origin) return parent.episodes ?? []
       // If episodes were already populated (e.g. from Subscription.media), return them
       if (parent.episodes?.length) return parent.episodes
 
       const { seriesId, seasonId } = parseMediaId(parent.id)
-      if (!seriesId) return undefined
+      if (!seriesId) return []
 
       const seasonsResponse = await fetchSeasons(seriesId, ctx)
-      const season =
-        seasonId
-          ? seasonsResponse.data.find(s => s.id === seasonId)
-          : seasonsResponse.data.length === 1
-            ? seasonsResponse.data[0]
-            : undefined
-      if (!season) return undefined
+      const seasons = seasonsResponse.data
 
-      const episodesResponse = await fetchEpisodes(season.id, ctx)
-      return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
+      // Specific season requested
+      if (seasonId) {
+        const season = seasons.find(s => s.id === seasonId)
+        if (!season) return []
+        const episodesResponse = await fetchEpisodes(season.id, ctx)
+        return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
+      }
+
+      // Single season — use it directly
+      if (seasons.length === 1 && seasons[0]) {
+        const episodesResponse = await fetchEpisodes(seasons[0].id, ctx)
+        return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
+      }
+
+      // Multi-season — fetch all episodes from all seasons
+      const seriesResponse = await fetchSeries(seriesId, ctx)
+      const series = seriesResponse.data[0]
+      if (!series) return []
+      return getAllEpisodes(series, seasons, parent.uri, ctx)
     }
   }
 }
