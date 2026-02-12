@@ -1,8 +1,9 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
-import { fromUri, isUri, toUri } from '../../utils/uri'
+import { extractAggregatedUriOrigin, fromUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './anilist-types'
+import { fetchSeasons } from './crunchyroll'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -115,10 +116,11 @@ const siteMappings = [
   {
     // link example: https://www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites
     siteId: 5,
-    mapper: async (mediaExternalLink: MediaExternalLink) => {
-      const match = mediaExternalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
+    mapper: async (media: Media) => {
+      const match = media.externalLinks?.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
       const crunchyrollId = match?.[1]
       if (!crunchyrollId) return
+      const seasons = fetchSeasons(crunchyrollId, context)
       return toUri({ origin: 'cr', id: crunchyrollId })
     }
   }
@@ -160,7 +162,36 @@ const getPreviousMediaSeason = (date = new Date()) =>
 
 const fetchMedia = ({ id, idMal }: { id?: number, idMal?: number }, context: ExtractorServerContext) =>
   fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
-    .then(({ data }) => data.Media ? normalizeMedia(data.Media, context) : undefined)
+    .then(({ data }) => {
+      if (!data.Media) return undefined
+
+      const handles =
+        data
+          .Media
+          .externalLinks
+          ?.filter(externalLink => externalLinkHasSiteId(externalLink))
+          .map(externalLink => [
+            externalLink,
+            siteMappings
+              .find(mapper => mapper.siteId === externalLink?.siteId)
+              ?.mapper(externalLink)
+          ] as const)
+          .map(([externalLink, uri]) =>
+            uri
+              ? ({
+                _id: crypto.randomUUID(),
+                uri,
+                origin: 'cr',
+                id: fromUri(uri).id,
+                url: externalLink?.url
+              } as GQLMedia)
+              : undefined
+          )
+          .filter((value): value is NonNullable<typeof value> => Boolean(value))
+        ?? []
+      
+      const media = normalizeMedia(data.Media)
+    })
 
 const fetchMediaSeason = (
   { season, year, page = 1 }:
@@ -172,7 +203,7 @@ const fetchMediaSeason = (
 const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year: number }, context: ExtractorServerContext) => {
   const { data } = await fetchMediaSeason({ season, year, page: 1 }, context)
 
-  return Promise.all(
+  return (
     [
       ...data.Page.media ?? [],
       ...data.Page.pageInfo?.lastPage
@@ -183,7 +214,7 @@ const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year:
         )).flat()
         : []
     ]
-      .map(media => normalizeMedia(media as Media, context))
+      .map(media => normalizeMedia(media as Media))
   )
 }
 
@@ -191,7 +222,7 @@ const externalLinkHasSiteId =
   (externalLink: Maybe<MediaExternalLink>): externalLink is MediaExternalLink & { siteId: number } =>
     Boolean(externalLink?.siteId)
 
-const normalizeMedia = async (media: Media, context: ExtractorServerContext) => {
+const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
   const malHandle =
     media.idMal
       ? {
@@ -202,33 +233,6 @@ const normalizeMedia = async (media: Media, context: ExtractorServerContext) => 
         url: `https://myanimelist.net/anime/${media.idMal}`
       } as GQLMedia
       : undefined
-
-  const handles =
-    (await Promise.all(
-      media
-        .externalLinks
-        ?.filter(externalLink => externalLinkHasSiteId(externalLink))
-        .map(async externalLink => [
-          externalLink,
-          await siteMappings
-            .find(mapper => mapper.siteId === externalLink?.siteId)
-            ?.mapper(externalLink)
-        ] as const)
-      ?? []
-    ))
-      .map(([externalLink, uri]) =>
-        uri
-          ? ({
-            _id: crypto.randomUUID(),
-            uri,
-            origin: 'cr',
-            id: fromUri(uri).id,
-            url: externalLink?.url
-          } as GQLMedia)
-          : undefined
-      )
-      .filter((value): value is NonNullable<typeof value> => Boolean(value))
-    ?? []
 
   const firstAiringNode = media.airingSchedule?.edges?.at(0)?.node
   const startDate =
@@ -248,7 +252,7 @@ const normalizeMedia = async (media: Media, context: ExtractorServerContext) => 
     id: media.id.toString(),
     url: media.siteUrl,
     handles: [
-      ...handles,
+      ...extraHandles,
       ...malHandle ? [malHandle] : []
     ],
     score: 0.9,
@@ -307,12 +311,12 @@ export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
-      subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
-        if (!uri || !isUri(uri)) return yield { media: null }
-        const uriValues = fromUri(uri)
-        if (uriValues.origin !== origin) return yield { media: null }
+      subscribe: async function*(_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
+        if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
+        const uri = extractAggregatedUriOrigin(_uri, origin)
+        if (!uri) return yield { media: null }
         yield {
-          media: await fetchMedia({ id: Number(uriValues.id) }, ctx)
+          media: await fetchMedia({ id: Number(uri.id) }, ctx)
         }
       }
     },

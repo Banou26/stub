@@ -170,25 +170,25 @@ const fetchWithAuth = async <T>(url: string, context: ExtractorServerContext): P
   return await response.json() as T
 }
 
-const fetchSeries = (seriesId: string, context: ExtractorServerContext) =>
+export const fetchSeries = (seriesId: string, context: ExtractorServerContext) =>
   fetchWithAuth<{ total: number; data: CrunchyrollSeries[] }>(
     `https://www.crunchyroll.com/content/v2/cms/series/${seriesId}?preferred_audio_language=ja-JP&locale=en-US`,
     context
   )
 
-const fetchSeasons = (seriesId: string, context: ExtractorServerContext) =>
+export const fetchSeasons = (seriesId: string, context: ExtractorServerContext) =>
   fetchWithAuth<{ total: number; data: CrunchyrollSeason[] }>(
     `https://www.crunchyroll.com/content/v2/cms/series/${seriesId}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`,
     context
   )
 
-const fetchEpisodes = (seasonId: string, context: ExtractorServerContext) =>
+export const fetchEpisodes = (seasonId: string, context: ExtractorServerContext) =>
   fetchWithAuth<{ total: number; data: CrunchyrollEpisode[] }>(
     `https://www.crunchyroll.com/content/v2/cms/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`,
     context
   )
 
-const searchSeriesApi = (query: string, context: ExtractorServerContext) =>
+export const searchSeriesApi = (query: string, context: ExtractorServerContext) =>
   fetchWithAuth<{ total: number; data: SearchResult[] }>(
     `https://www.crunchyroll.com/content/v2/discover/search?q=${encodeURIComponent(query)}&n=50&type=series&locale=en-US`,
     context
