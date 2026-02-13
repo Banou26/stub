@@ -3,7 +3,7 @@ import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, fromUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './anilist-types'
-import { fetchSeasons } from './crunchyroll'
+import { matchSeasonByDate } from './crunchyroll'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -116,17 +116,21 @@ const siteMappings = [
   {
     // link example: https://www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites
     siteId: 5,
-    mapper: async (media: Media) => {
-      const match = media.externalLinks?.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
-      const crunchyrollId = match?.[1]
-      if (!crunchyrollId) return
-      const seasons = fetchSeasons(crunchyrollId, context)
-      return toUri({ origin: 'cr', id: crunchyrollId })
+    mapper: async (
+      externalLink: MediaExternalLink,
+      startDate: string | undefined,
+      context: ExtractorServerContext
+    ) => {
+      const match = externalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
+      const crunchyrollSeriesId = match?.[1]
+      if (!crunchyrollSeriesId || !startDate) return undefined
+
+      const compositeId = await matchSeasonByDate(crunchyrollSeriesId, startDate, context)
+      if (!compositeId) return undefined
+      return toUri({ origin: 'cr', id: compositeId })
     }
   }
-] as const
-
-type SiteMapper = typeof siteMappings[number]
+]
 
 const fetchAnilist = <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<{ data: T }> =>
   context
@@ -160,38 +164,39 @@ const getPreviousMediaSeason = (date = new Date()) =>
   mediaSeasons[mediaSeasons.indexOf(getMediaSeason(date)) - 1]
   ?? MediaSeason.Fall
 
-const fetchMedia = ({ id, idMal }: { id?: number, idMal?: number }, context: ExtractorServerContext) =>
-  fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
-    .then(({ data }) => {
-      if (!data.Media) return undefined
+const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  const { data } = await fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
+  if (!data.Media) return undefined
 
-      const handles =
-        data
-          .Media
-          .externalLinks
-          ?.filter(externalLink => externalLinkHasSiteId(externalLink))
-          .map(externalLink => [
-            externalLink,
-            siteMappings
-              .find(mapper => mapper.siteId === externalLink?.siteId)
-              ?.mapper(externalLink)
-          ] as const)
-          .map(([externalLink, uri]) =>
-            uri
-              ? ({
-                _id: crypto.randomUUID(),
-                uri,
-                origin: 'cr',
-                id: fromUri(uri).id,
-                url: externalLink?.url
-              } as GQLMedia)
-              : undefined
-          )
-          .filter((value): value is NonNullable<typeof value> => Boolean(value))
-        ?? []
-      
-      const media = normalizeMedia(data.Media)
-    })
+  const firstAiringNode = data.Media.airingSchedule?.edges?.at(0)?.node
+  const startDate =
+    firstAiringNode?.airingAt
+      ? new Date(firstAiringNode.airingAt * 1000).toUTCString()
+      : undefined
+
+  const externalLinks = data.Media.externalLinks
+    ?.filter((link): link is NonNullable<typeof link> => Boolean(link))
+    .filter(externalLink => externalLinkHasSiteId(externalLink))
+    ?? []
+
+  const handles: GQLMedia[] = []
+
+  for (const externalLink of externalLinks) {
+    const mapper = siteMappings.find(m => m.siteId === externalLink.siteId)
+    if (!mapper) continue
+    const uri = await mapper.mapper(externalLink, startDate, context)
+    if (!uri) continue
+    handles.push({
+      _id: crypto.randomUUID(),
+      uri,
+      origin: fromUri(uri).origin,
+      id: fromUri(uri).id,
+      url: externalLink.url ?? undefined
+    } as GQLMedia)
+  }
+
+  return normalizeMedia(data.Media, [])
+}
 
 const fetchMediaSeason = (
   { season, year, page = 1 }:
@@ -315,8 +320,10 @@ export const resolvers: Resolvers = {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
         const uri = extractAggregatedUriOrigin(_uri, origin)
         if (!uri) return yield { media: null }
+        const media = await fetchMedia({ id: Number(uri.id) }, ctx)
+        console.log('anilist media', media)
         yield {
-          media: await fetchMedia({ id: Number(uri.id) }, ctx)
+          media
         }
       }
     },

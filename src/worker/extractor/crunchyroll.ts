@@ -361,6 +361,56 @@ const searchMedia = async (query: string, context: ExtractorServerContext): Prom
   return seriesResults.map(normalizeSeries)
 }
 
+/**
+ * Matches a crunchyroll season to a media based on release date.
+ * Fetches the first episode of each season and compares air dates
+ * against the target date. Returns composite `seriesId-seasonId` ID,
+ * or undefined if no season could be matched.
+ */
+export const matchSeasonByDate = async (
+  seriesId: string,
+  startDate: string,
+  context: ExtractorServerContext
+): Promise<string | undefined> => {
+  const targetDate = new Date(startDate)
+  if (isNaN(targetDate.getTime())) return undefined
+
+  const seasonsResponse = await fetchSeasons(seriesId, context)
+  const seasons = seasonsResponse.data
+
+  if (!seasons.length) return undefined
+  if (seasons.length === 1 && seasons[0]) return `${seriesId}-${seasons[0].id}`
+
+  // Prefer Japanese audio seasons for matching
+  const jaSeasons = seasons.filter(s => s.audio_locale === 'ja-JP')
+  const matchSeasons = jaSeasons.length > 0 ? jaSeasons : seasons
+
+  const seasonWithDates = await Promise.all(
+    matchSeasons.map(async season => {
+      const episodesResponse = await fetchEpisodes(season.id, context)
+      const firstEpisode = episodesResponse.data[0]
+      return {
+        season,
+        firstAirDate: firstEpisode?.episode_air_date
+          ? new Date(firstEpisode.episode_air_date)
+          : undefined
+      }
+    })
+  )
+
+  let bestMatch: { seasonId: string, diff: number } | undefined
+
+  for (const { season, firstAirDate } of seasonWithDates) {
+    if (!firstAirDate) continue
+    const diff = Math.abs(firstAirDate.getTime() - targetDate.getTime())
+    if (!bestMatch || diff < bestMatch.diff) {
+      bestMatch = { seasonId: season.id, diff }
+    }
+  }
+
+  return bestMatch ? `${seriesId}-${bestMatch.seasonId}` : undefined
+}
+
 // Resolvers
 export const resolvers: Resolvers = {
   Subscription: {
