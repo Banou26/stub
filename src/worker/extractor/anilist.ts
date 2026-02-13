@@ -168,10 +168,13 @@ const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, contex
   const { data } = await fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
   if (!data.Media) return undefined
 
-  const firstAiringNode = data.Media.airingSchedule?.edges?.at(0)?.node
   const startDate =
-    firstAiringNode?.airingAt
-      ? new Date(firstAiringNode.airingAt * 1000).toUTCString()
+    data.Media.startDate?.year
+      ? new Date(
+          data.Media.startDate.year,
+          (data.Media.startDate.month ?? 1) - 1,
+          data.Media.startDate.day ?? 1
+        ).toUTCString()
       : undefined
 
   const externalLinks = data.Media.externalLinks
