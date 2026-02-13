@@ -227,7 +227,7 @@ const normalizeSeries = (series: CrunchyrollSeries): GQLMedia => {
 }
 
 const normalizeSeason = (series: CrunchyrollSeries, season: CrunchyrollSeason): GQLMedia => {
-  const id = `${series.id}-${season.id}`
+  const id = crunchyrollId(series.id, season.id)
   const uri = toUri({ origin, id })
   const posterUrl = bestImage(series.images?.poster_tall)
   const bannerUrl = bestImage(series.images?.poster_wide)
@@ -254,7 +254,7 @@ const normalizeSeason = (series: CrunchyrollSeries, season: CrunchyrollSeason): 
 }
 
 const normalizeEpisode = (episode: CrunchyrollEpisode, mediaUri: string): GQLEpisode => {
-  const id = `${episode.series_id}-${episode.season_id}-${episode.id}`
+  const id = crunchyrollId(episode.series_id, episode.season_id, episode.id)
   const thumbnailUrl = bestImage(episode.images?.thumbnail)
 
   return {
@@ -282,8 +282,16 @@ const normalizeEpisode = (episode: CrunchyrollEpisode, mediaUri: string): GQLEpi
   } satisfies GQLEpisode
 }
 
-// ID parsing
-const parseMediaId = (id: string) => {
+// CR ID utils — format is `seriesId-seasonId-episodeId`
+const stripLocale = (id: string) => id.replace(/JAJP$/, '')
+
+export const crunchyrollId = (
+  seriesId: string,
+  seasonId?: string,
+  episodeId?: string
+) => [seriesId, seasonId && stripLocale(seasonId), episodeId].filter(Boolean).join('-')
+
+export const parseCrunchyrollId = (id: string) => {
   const parts = id.split('-')
   return {
     seriesId: parts[0],
@@ -321,8 +329,7 @@ const getAllEpisodes = async (
 }
 
 const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
-  const { seriesId, seasonId } = parseMediaId(id)
-  console.log('cr getMedia', { id, seriesId, seasonId, hasFetch: typeof context.fetch })
+  const { seriesId, seasonId } = parseCrunchyrollId(id)
   if (!seriesId) return undefined
 
   const [seriesResponse, seasonsResponse] = await Promise.all([
@@ -331,7 +338,6 @@ const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQ
   ])
 
   const series = seriesResponse.data[0]
-  console.log('cr getMedia series:', series?.id, series?.title, 'seasons:', seasonsResponse?.data?.length, 'raw seasons data:', JSON.stringify(seasonsResponse)?.slice(0, 300))
   if (!series) return undefined
 
   const seasons = seasonsResponse.data
@@ -379,7 +385,7 @@ export const matchSeasonByDate = async (
   const seasons = seasonsResponse.data
 
   if (!seasons.length) return undefined
-  if (seasons.length === 1 && seasons[0]) return `${seriesId}-${seasons[0].id}`
+  if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, seasons[0].id)
 
   // Prefer Japanese audio seasons for matching
   const jaSeasons = seasons.filter(s => s.audio_locale === 'ja-JP')
@@ -408,7 +414,7 @@ export const matchSeasonByDate = async (
     }
   }
 
-  return bestMatch ? `${seriesId}-${bestMatch.seasonId}` : undefined
+  return bestMatch ? crunchyrollId(seriesId, bestMatch.seasonId) : undefined
 }
 
 // Resolvers
@@ -437,12 +443,11 @@ export const resolvers: Resolvers = {
   },
   Media: {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
-      console.log('cr Media.episodes resolver called for', parent.origin, parent.id, 'existing episodes:', parent.episodes?.length ?? 0)
       if (parent.origin !== origin) return parent.episodes ?? []
       // If episodes were already populated (e.g. from Subscription.media), return them
       if (parent.episodes?.length) return parent.episodes
 
-      const { seriesId, seasonId } = parseMediaId(parent.id)
+      const { seriesId, seasonId } = parseCrunchyrollId(parent.id)
       if (!seriesId) return []
 
       const seasonsResponse = await fetchSeasons(seriesId, ctx)

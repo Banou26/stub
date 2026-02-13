@@ -179,23 +179,23 @@ const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, contex
     .filter(externalLink => externalLinkHasSiteId(externalLink))
     ?? []
 
-  const handles: GQLMedia[] = []
+  const handles = (await Promise.all(
+    externalLinks.map(async (externalLink) => {
+      const mapper = siteMappings.find(m => m.siteId === externalLink.siteId)
+      if (!mapper) return undefined
+      const uri = await mapper.mapper(externalLink, startDate, context)
+      if (!uri) return undefined
+      return {
+        _id: crypto.randomUUID(),
+        uri,
+        origin: fromUri(uri).origin,
+        id: fromUri(uri).id,
+        url: externalLink.url ?? undefined
+      } as GQLMedia
+    })
+  )).filter((handle): handle is GQLMedia => Boolean(handle))
 
-  for (const externalLink of externalLinks) {
-    const mapper = siteMappings.find(m => m.siteId === externalLink.siteId)
-    if (!mapper) continue
-    const uri = await mapper.mapper(externalLink, startDate, context)
-    if (!uri) continue
-    handles.push({
-      _id: crypto.randomUUID(),
-      uri,
-      origin: fromUri(uri).origin,
-      id: fromUri(uri).id,
-      url: externalLink.url ?? undefined
-    } as GQLMedia)
-  }
-
-  return normalizeMedia(data.Media, [])
+  return normalizeMedia(data.Media, handles)
 }
 
 const fetchMediaSeason = (
@@ -321,7 +321,7 @@ export const resolvers: Resolvers = {
         const uri = extractAggregatedUriOrigin(_uri, origin)
         if (!uri) return yield { media: null }
         const media = await fetchMedia({ id: Number(uri.id) }, ctx)
-        console.log('anilist media', media)
+        console.log('anilist media result', media)
         yield {
           media
         }
