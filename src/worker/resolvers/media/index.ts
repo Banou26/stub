@@ -6,14 +6,33 @@ import { eq, asc } from 'drizzle-orm'
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findAggregatedMedia, findAggregatedMedias, findMediaByUris, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
+import { findAggregatedMedia, findAggregatedMediaByHandleUri, findAggregatedMedias, findMediaByUris, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
 import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
 import database from '../../drizzle'
 import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
+import { isAggregatedUri, fromAggregatedUri, isUri, type AggregatedUri } from '../../../utils/uri'
 
 export const schema = _schema as string
+
+/** Find aggregated media by URI, falling back to handle-based lookup when the aggregated URI has changed */
+const findMedia = async (uri: string) => {
+  const result = await findAggregatedMedia(undefined, { uri })
+  if (result) return result
+
+  // Exact match failed — the aggregated URI may have changed (new handles added).
+  // Extract a component URI and search through aggregatedMediaHandles instead.
+  if (isAggregatedUri(uri)) {
+    const parsed = fromAggregatedUri(uri as AggregatedUri)
+    const firstHandleUri = parsed?.handleUris[0]
+    if (firstHandleUri) return findAggregatedMediaByHandleUri(undefined, firstHandleUri)
+  } else if (isUri(uri)) {
+    return findAggregatedMediaByHandleUri(undefined, uri)
+  }
+
+  return undefined
+}
 
 export const resolvers = {
   Query: {},
@@ -31,7 +50,7 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        yield findAggregatedMedia(undefined, { uri: args.input.uri })
+        yield findMedia(args.input.uri)
 
         const mediaListener = listenIterator({ table: 'aggregatedMedia' })
         const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
@@ -41,11 +60,11 @@ export const resolvers = {
         // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
         try {
           for await (const _ of listeners) {
-            yield await findAggregatedMedia(undefined, { uri: args.input.uri })
+            yield await findMedia(args.input.uri)
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield findAggregatedMedia(undefined, { uri: args.input.uri })
+          return yield findMedia(args.input.uri)
         }
       }
     },

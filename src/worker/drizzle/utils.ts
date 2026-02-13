@@ -462,6 +462,42 @@ export const findAggregatedMedia = async(
   })
   .then(([media]) => media && normalizeGraphqlAggregatedMedia(media))
 
+export const findAggregatedMediaByHandleUri = async(
+  tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
+  handleUri: string
+) => {
+  const handle = await tx.query.aggregatedMediaHandlesTable.findFirst({
+    where: eq(aggregatedMediaHandlesTable.mediaUri, handleUri),
+  })
+  if (!handle) return undefined
+
+  const [media] = await tx.query.aggregatedMediaTable.findMany({
+    where: eq(aggregatedMediaTable._id, handle.aggregatedMediaId),
+    limit: 1,
+    with: {
+      episodes: {
+        with: {
+          aggregatedEpisode: true
+        }
+      },
+      handles: {
+        with: {
+          media: {
+            with: {
+              episodes: {
+                with: {
+                  episode: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+  return media && normalizeGraphqlAggregatedMedia(media)
+}
+
 export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { sorts }: { sorts?: MediaSort[] } = {}

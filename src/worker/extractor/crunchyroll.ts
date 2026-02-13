@@ -227,7 +227,7 @@ const normalizeSeries = (series: CrunchyrollSeries): GQLMedia => {
 }
 
 const normalizeSeason = (series: CrunchyrollSeries, season: CrunchyrollSeason): GQLMedia => {
-  const id = crunchyrollId(series.id, season.id)
+  const id = crunchyrollId(series.id, resolveSeasonId(season))
   const uri = toUri({ origin, id })
   const posterUrl = bestImage(series.images?.poster_tall)
   const bannerUrl = bestImage(series.images?.poster_wide)
@@ -285,6 +285,12 @@ const normalizeEpisode = (episode: CrunchyrollEpisode, mediaUri: string): GQLEpi
 // CR ID utils — format is `seriesId-seasonId-episodeId`
 const stripLocale = (id: string) => id.replace(/JAJP$/, '')
 
+/** Resolve the ja-JP (or original) version guid for a season, falling back to stripped season.id */
+const resolveSeasonId = (season: CrunchyrollSeason): string =>
+  season.versions?.find(v => v.audio_locale === 'ja-JP')?.guid
+  ?? season.versions?.find(v => v.original)?.guid
+  ?? stripLocale(season.id)
+
 export const crunchyrollId = (
   seriesId: string,
   seasonId?: string,
@@ -307,7 +313,7 @@ const getSeasonWithEpisodes = async (
   context: ExtractorServerContext
 ): Promise<GQLMedia> => {
   const media = normalizeSeason(series, season)
-  const episodesResponse = await fetchEpisodes(season.id, context)
+  const episodesResponse = await fetchEpisodes(resolveSeasonId(season), context)
   media.episodes = episodesResponse.data.map(ep => normalizeEpisode(ep, media.uri))
   media.episodeCount = media.episodes.length
   return media
@@ -321,7 +327,7 @@ const getAllEpisodes = async (
 ): Promise<GQLEpisode[]> => {
   console.log('cr getAllEpisodes called with', seasons.length, 'seasons:', seasons.map(s => `${s.id}(${s.title})`))
   const episodeResponses = await Promise.all(
-    seasons.map(season => fetchEpisodes(season.id, context))
+    seasons.map(season => fetchEpisodes(resolveSeasonId(season), context))
   )
   const episodes = episodeResponses.flatMap(res => res.data.map(ep => normalizeEpisode(ep, mediaUri)))
   console.log('cr getAllEpisodes result:', episodes.length, 'episodes')
@@ -344,7 +350,7 @@ export const getMedia = async (id: string, context: ExtractorServerContext): Pro
 
   // Specific season requested — match by ID
   if (seasonId) {
-    const season = seasons.find(s => stripLocale(s.id) === seasonId)
+    const season = seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
     if (!season) return undefined
     return getSeasonWithEpisodes(series, season, context)
   }
@@ -385,7 +391,7 @@ export const matchSeasonByDate = async (
   const seasons = seasonsResponse.data
 
   if (!seasons.length) return undefined
-  if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, seasons[0].id)
+  if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, resolveSeasonId(seasons[0]))
 
   // Prefer Japanese audio seasons for matching
   const jaSeasons = seasons.filter(s => s.audio_locale === 'ja-JP')
@@ -393,10 +399,11 @@ export const matchSeasonByDate = async (
 
   const seasonWithDates = await Promise.all(
     matchSeasons.map(async season => {
-      const episodesResponse = await fetchEpisodes(season.id, context)
+      const resolvedId = resolveSeasonId(season)
+      const episodesResponse = await fetchEpisodes(resolvedId, context)
       const firstEpisode = episodesResponse.data[0]
       return {
-        season,
+        resolvedId,
         firstAirDate: firstEpisode?.episode_air_date
           ? new Date(firstEpisode.episode_air_date)
           : undefined
@@ -406,11 +413,11 @@ export const matchSeasonByDate = async (
 
   let bestMatch: { seasonId: string, diff: number } | undefined
 
-  for (const { season, firstAirDate } of seasonWithDates) {
+  for (const { resolvedId, firstAirDate } of seasonWithDates) {
     if (!firstAirDate) continue
     const diff = Math.abs(firstAirDate.getTime() - targetDate.getTime())
     if (!bestMatch || diff < bestMatch.diff) {
-      bestMatch = { seasonId: season.id, diff }
+      bestMatch = { seasonId: resolvedId, diff }
     }
   }
 
@@ -455,15 +462,15 @@ export const resolvers: Resolvers = {
 
       // Specific season requested
       if (seasonId) {
-        const season = seasons.find(s => stripLocale(s.id) === seasonId)
+        const season = seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
         if (!season) return []
-        const episodesResponse = await fetchEpisodes(season.id, ctx)
+        const episodesResponse = await fetchEpisodes(resolveSeasonId(season), ctx)
         return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
       }
 
       // Single season — use it directly
       if (seasons.length === 1 && seasons[0]) {
-        const episodesResponse = await fetchEpisodes(seasons[0].id, ctx)
+        const episodesResponse = await fetchEpisodes(resolveSeasonId(seasons[0]), ctx)
         return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
       }
 

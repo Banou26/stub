@@ -44,29 +44,32 @@ export type ExtractorUserContext = {
 
 }
 
+let mediaInsertLock: Promise<void> = Promise.resolve()
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
-  await database.transaction(async (tx) => {
-    await insertManyMedia(tx, medias as Media[])
-    const allMedia = await findAllMedia(tx)
-    const allAggregatedMedia = await findAllAggregatedMedia(tx)
+  await (mediaInsertLock = mediaInsertLock.catch(() => {}).then(() =>
+    database.transaction(async (tx) => {
+      await insertManyMedia(tx, medias as Media[])
+      const allMedia = await findAllMedia(tx)
+      const allAggregatedMedia = await findAllAggregatedMedia(tx)
 
-    const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-    const allUpdatedAggregatedMedia = groups.map(([_, __, urisString]) => {
-      const uris = urisString.split(',').map(uri => uri.trim())
-      const medias =
-        uris
-          .map(uri => allMedia.find(r => r?.uri === uri))
-          .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
+      const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
+      const allUpdatedAggregatedMedia = groups.map(([_, __, urisString]) => {
+        const uris = urisString.split(',').map(uri => uri.trim())
+        const medias =
+          uris
+            .map(uri => allMedia.find(r => r?.uri === uri))
+            .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
 
-      const existingMatch = allAggregatedMedia.find(existing => {
-        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-        return existingUris.some(existingUri => uris.includes(existingUri))
+        const existingMatch = allAggregatedMedia.find(existing => {
+          const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
+          return existingUris.some(existingUri => uris.includes(existingUri))
+        })
+
+        return aggregateMediaHandles(medias, existingMatch)
       })
-
-      return aggregateMediaHandles(medias, existingMatch)
+      await insertManyAggregatedMedia(tx, allUpdatedAggregatedMedia)
     })
-    await insertManyAggregatedMedia(tx, allUpdatedAggregatedMedia)
-  })
+  ))
   return medias
 }, {
   cache: false,
@@ -75,83 +78,89 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   batchScheduleFn: (callback) => setTimeout(callback, 50)
 })
 
+let episodeInsertLock: Promise<void> = Promise.resolve()
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
-  await database.transaction(async (tx) => {
-    await insertManyEpisode(tx, episodes as Episode[])
-    const allEpisode = await findAllEpisode(tx)
-    const allAggregatedEpisode = await findAllAggregatedEpisode(tx)
-    const allAggregatedMedia = await findAllAggregatedMedia(tx)
+  // Wait for any pending media inserts to complete first
+  await mediaInsertLock.catch(() => {})
+  await (episodeInsertLock = episodeInsertLock.catch(() => {}).then(() =>
+    database.transaction(async (tx) => {
+      await insertManyEpisode(tx, episodes as Episode[])
+      const allEpisode = await findAllEpisode(tx)
+      const allAggregatedEpisode = await findAllAggregatedEpisode(tx)
+      const allAggregatedMedia = await findAllAggregatedMedia(tx)
 
-    const groups = await tx.all(groupAllRelatedEpisodes) as [string, number, string, number][]
+      const groups = await tx.all(groupAllRelatedEpisodes) as [string, number, string, number][]
 
-    const allUpdatedAggregatedEpisode = groups.map(([_, __, urisString]) => {
-      const uris = urisString.split(',').map(uri => uri.trim())
-      const episodes =
-        uris
-          .map(uri => allEpisode.find(r => r?.uri === uri))
-          .filter((episode): episode is NonNullable<typeof episode> => episode !== null && episode !== undefined)
+      const allUpdatedAggregatedEpisode = groups.map(([_, __, urisString]) => {
+        const uris = urisString.split(',').map(uri => uri.trim())
+        const episodes =
+          uris
+            .map(uri => allEpisode.find(r => r?.uri === uri))
+            .filter((episode): episode is NonNullable<typeof episode> => episode !== null && episode !== undefined)
 
-      const existingMatch = allAggregatedEpisode.find(existing => {
-        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-        return existingUris.some(existingUri => uris.includes(existingUri))
+        const existingMatch = allAggregatedEpisode.find(existing => {
+          const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
+          return existingUris.some(existingUri => uris.includes(existingUri))
+        })
+
+        return aggregateEpisodeHandles(episodes, existingMatch)
       })
 
-      return aggregateEpisodeHandles(episodes, existingMatch)
-    })
+      // Insert aggregated episodes
+      await insertManyAggregatedEpisode(tx, allUpdatedAggregatedEpisode)
 
-    // Insert aggregated episodes
-    await insertManyAggregatedEpisode(tx, allUpdatedAggregatedEpisode)
-
-    // Group episodes by their mediaUri to update aggregated media
-    const episodesByMediaUri = new Map<string, Episode[]>()
-    for (const episode of episodes as Episode[]) {
-      const mediaUri = episode.mediaUri
-      if (!episodesByMediaUri.has(mediaUri)) {
-        episodesByMediaUri.set(mediaUri, [])
+      // Group episodes by their mediaUri to update aggregated media
+      const episodesByMediaUri = new Map<string, Episode[]>()
+      for (const episode of episodes as Episode[]) {
+        const mediaUri = episode.mediaUri
+        if (!episodesByMediaUri.has(mediaUri)) {
+          episodesByMediaUri.set(mediaUri, [])
+        }
+        episodesByMediaUri.get(mediaUri)!.push(episode)
       }
-      episodesByMediaUri.get(mediaUri)!.push(episode)
-    }
 
-    // Find corresponding aggregated media and create relations
-    const aggregatedMediaEpisodeRelations: CreateAggregatedMediaEpisodes[] = []
-    for (const [mediaUri, mediaEpisodes] of episodesByMediaUri) {
-      // Find the aggregated media that contains this media URI
-      const aggregatedMedia = allAggregatedMedia.find(am => {
-        const aggregatedUris = am.uri.slice('ag:('.length, -1).split(',')
-        return aggregatedUris.includes(mediaUri)
-      })
+      // Find corresponding aggregated media and create relations
+      const aggregatedMediaEpisodeRelations: CreateAggregatedMediaEpisodes[] = []
+      for (const [mediaUri, mediaEpisodes] of episodesByMediaUri) {
+        // Find the aggregated media that contains this media URI
+        const aggregatedMedia = allAggregatedMedia.find(am => {
+          const aggregatedUris = am.uri.slice('ag:('.length, -1).split(',')
+          return aggregatedUris.includes(mediaUri)
+        })
 
-      if (aggregatedMedia) {
-        // Find corresponding aggregated episodes for these episodes
-        for (const episode of mediaEpisodes) {
-          const aggregatedEpisode = allUpdatedAggregatedEpisode.find(ae => {
-            const aggregatedUris = ae.uri.slice('ag:('.length, -1).split(',')
-            return aggregatedUris.includes(episode.uri)
-          })
+        if (aggregatedMedia) {
+          // Find corresponding aggregated episodes for these episodes
+          for (const episode of mediaEpisodes) {
+            const aggregatedEpisode = allUpdatedAggregatedEpisode.find(ae => {
+              const aggregatedUris = ae.uri.slice('ag:('.length, -1).split(',')
+              return aggregatedUris.includes(episode.uri)
+            })
 
-          if (aggregatedEpisode) {
-            aggregatedMediaEpisodeRelations.push({
-              aggregatedMediaId: aggregatedMedia._id,
-              aggregatedEpisodeId: aggregatedEpisode._id
-            } satisfies CreateAggregatedMediaEpisodes)
+            if (aggregatedEpisode) {
+              aggregatedMediaEpisodeRelations.push({
+                aggregatedMediaId: aggregatedMedia._id,
+                aggregatedEpisodeId: aggregatedEpisode._id
+              } satisfies CreateAggregatedMediaEpisodes)
+            }
           }
         }
       }
-    }
 
-    // Insert aggregated media-episode relations
-    if (aggregatedMediaEpisodeRelations.length) {
-      await tx.insert(aggregatedMediaEpisodesTable)
-        .values(aggregatedMediaEpisodeRelations)
-        .onConflictDoNothing()
-    }
-  })
+      // Insert aggregated media-episode relations
+      if (aggregatedMediaEpisodeRelations.length) {
+        await tx.insert(aggregatedMediaEpisodesTable)
+          .values(aggregatedMediaEpisodeRelations)
+          .onConflictDoNothing()
+      }
+    })
+  ))
   return episodes
 }, {
   cache: false,
   batch: true,
   maxBatchSize: 250,
-  batchScheduleFn: (callback) => setTimeout(callback, 50)
+  // Delay longer than mediaInserter (50ms) so aggregated media exists before episodes try to link
+  batchScheduleFn: (callback) => setTimeout(callback, 200)
 })
 
 export const extractors =

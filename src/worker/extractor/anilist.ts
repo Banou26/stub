@@ -123,11 +123,15 @@ const siteMappings = [
     ): Promise<GQLMedia | undefined> => {
       const match = externalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
       const crunchyrollSeriesId = match?.[1]
+      console.log('anilist cr mapper:', { url: externalLink.url, crunchyrollSeriesId, startDate })
       if (!crunchyrollSeriesId || !startDate) return undefined
 
       const compositeId = await matchSeasonByDate(crunchyrollSeriesId, startDate, context)
+      console.log('anilist cr mapper compositeId:', compositeId)
       if (!compositeId) return undefined
-      return getCrunchyrollMedia(compositeId, context)
+      const crMedia = await getCrunchyrollMedia(compositeId, context)
+      console.log('anilist cr mapper crMedia:', crMedia?.uri, 'episodes:', crMedia?.episodes?.length)
+      return crMedia
     }
   }
 ]
