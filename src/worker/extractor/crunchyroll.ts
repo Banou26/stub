@@ -328,7 +328,7 @@ const getAllEpisodes = async (
   return episodes
 }
 
-const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+export const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
   const { seriesId, seasonId } = parseCrunchyrollId(id)
   if (!seriesId) return undefined
 
@@ -344,7 +344,7 @@ const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQ
 
   // Specific season requested — match by ID
   if (seasonId) {
-    const season = seasons.find(s => s.id === seasonId)
+    const season = seasons.find(s => stripLocale(s.id) === seasonId)
     if (!season) return undefined
     return getSeasonWithEpisodes(series, season, context)
   }
@@ -455,7 +455,7 @@ export const resolvers: Resolvers = {
 
       // Specific season requested
       if (seasonId) {
-        const season = seasons.find(s => s.id === seasonId)
+        const season = seasons.find(s => stripLocale(s.id) === seasonId)
         if (!season) return []
         const episodesResponse = await fetchEpisodes(season.id, ctx)
         return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))

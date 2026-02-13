@@ -1,9 +1,9 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
-import { extractAggregatedUriOrigin, fromUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
+import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './anilist-types'
-import { matchSeasonByDate } from './crunchyroll'
+import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from './crunchyroll'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -120,14 +120,14 @@ const siteMappings = [
       externalLink: MediaExternalLink,
       startDate: string | undefined,
       context: ExtractorServerContext
-    ) => {
+    ): Promise<GQLMedia | undefined> => {
       const match = externalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
       const crunchyrollSeriesId = match?.[1]
       if (!crunchyrollSeriesId || !startDate) return undefined
 
       const compositeId = await matchSeasonByDate(crunchyrollSeriesId, startDate, context)
       if (!compositeId) return undefined
-      return toUri({ origin: 'cr', id: compositeId })
+      return getCrunchyrollMedia(compositeId, context)
     }
   }
 ]
@@ -186,15 +186,7 @@ const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, contex
     externalLinks.map(async (externalLink) => {
       const mapper = siteMappings.find(m => m.siteId === externalLink.siteId)
       if (!mapper) return undefined
-      const uri = await mapper.mapper(externalLink, startDate, context)
-      if (!uri) return undefined
-      return {
-        _id: crypto.randomUUID(),
-        uri,
-        origin: fromUri(uri).origin,
-        id: fromUri(uri).id,
-        url: externalLink.url ?? undefined
-      } as GQLMedia
+      return mapper.mapper(externalLink, startDate, context)
     })
   )).filter((handle): handle is GQLMedia => Boolean(handle))
 
