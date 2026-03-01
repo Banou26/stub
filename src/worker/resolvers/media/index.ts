@@ -31,7 +31,7 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        yield findAggregatedMedia(undefined, { uri: args.input.uri })
+        yield await findAggregatedMedia(undefined, { uri: args.input.uri })
 
         const mediaListener = listenIterator({ table: 'aggregatedMedia' })
         const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
@@ -45,7 +45,7 @@ export const resolvers = {
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield findAggregatedMedia(undefined, { uri: args.input.uri })
+          return yield await findAggregatedMedia(undefined, { uri: args.input.uri })
         }
       }
     },
@@ -60,6 +60,8 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
+        yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
+
         const mediaListener = listenIterator({ table: 'aggregatedMedia' })
         const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
 
@@ -67,11 +69,11 @@ export const resolvers = {
 
         try {
           for await (const _ of listeners) {
-            yield findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
+            yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
+          return yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
         }
       }
     }

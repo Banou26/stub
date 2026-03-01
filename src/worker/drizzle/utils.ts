@@ -31,6 +31,7 @@ import {
 import database from '.'
 import { getRoutePath, Route } from '../../router/path'
 import { OriginFilter } from '../../generated/graphql'
+import { fromAggregatedUri, isAggregatedUri, type AggregatedUri } from '../../utils/uri'
 
 type RemoveSubstring<T extends string, Substring extends string> =
   T extends `${infer Before}${Substring}${infer After}`
@@ -404,28 +405,30 @@ export const findMediaByUris = async (
   return results.map(normalizeGraphqlMedia)
 }
 
-export const findAllAggregatedMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
-  const results = await tx.query.aggregatedMediaTable.findMany({
+const aggregatedMediaWith = {
+  episodes: {
     with: {
-      episodes: {
+      aggregatedEpisode: true
+    }
+  },
+  handles: {
+    with: {
+      media: {
         with: {
-          aggregatedEpisode: true
-        }
-      },
-      handles: {
-        with: {
-          media: {
+          episodes: {
             with: {
-              episodes: {
-                with: {
-                  episode: true
-                }
-              }
+              episode: true
             }
           }
         }
       }
     }
+  }
+} as const
+
+export const findAllAggregatedMedia = async (tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction) => {
+  const results = await tx.query.aggregatedMediaTable.findMany({
+    with: aggregatedMediaWith
   })
 
   return results.map(normalizeGraphqlAggregatedMedia)
@@ -434,33 +437,36 @@ export const findAllAggregatedMedia = async (tx: DrizzleSQLiteTransaction = data
 export const findAggregatedMedia = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { uri }: { uri: string }
-) =>
- // use `findMany` because otherwise `findFirst` throws with `"undefined" is not valid JSON`
-  tx.query.aggregatedMediaTable.findMany({
+) => {
+  // Fast path: exact URI match
+  // use `findMany` because otherwise `findFirst` throws with `"undefined" is not valid JSON`
+  const [exactMatch] = await tx.query.aggregatedMediaTable.findMany({
     where: uri ? eq(aggregatedMediaTable.uri, uri) : undefined,
     limit: 1,
-    with: {
-      episodes: {
-        with: {
-          aggregatedEpisode: true
-        }
-      },
-      handles: {
-        with: {
-          media: {
-            with: {
-              episodes: {
-                with: {
-                  episode: true
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    with: aggregatedMediaWith
   })
-  .then(([media]) => media && normalizeGraphqlAggregatedMedia(media))
+  if (exactMatch) return normalizeGraphqlAggregatedMedia(exactMatch)
+
+  // Fallback: URI may have changed during re-aggregation, look up by individual handle URIs
+  if (!isAggregatedUri(uri)) return undefined
+  const parsed = fromAggregatedUri(uri as AggregatedUri)
+  if (!parsed?.handleUris.length) return undefined
+
+  const handleMatch = await tx
+    .select({ aggregatedMediaId: aggregatedMediaHandlesTable.aggregatedMediaId })
+    .from(aggregatedMediaHandlesTable)
+    .where(inArray(aggregatedMediaHandlesTable.mediaUri, parsed.handleUris))
+    .limit(1)
+    .then(([row]) => row)
+  if (!handleMatch) return undefined
+
+  const [media] = await tx.query.aggregatedMediaTable.findMany({
+    where: eq(aggregatedMediaTable._id, handleMatch.aggregatedMediaId),
+    limit: 1,
+    with: aggregatedMediaWith
+  })
+  return media ? normalizeGraphqlAggregatedMedia(media) : undefined
+}
 
 export const findAggregatedMedias = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
@@ -475,26 +481,7 @@ export const findAggregatedMedias = async(
           : undefined
         )
         .filter((sort): sort is NonNullable<typeof sort> => sort !== undefined),
-    with: {
-      episodes: {
-        with: {
-          aggregatedEpisode: true
-        }
-      },
-      handles: {
-        with: {
-          media: {
-            with: {
-              episodes: {
-                with: {
-                  episode: true
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    with: aggregatedMediaWith
   }))
   .map(media => normalizeGraphqlAggregatedMedia(media))
 
