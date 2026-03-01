@@ -123,14 +123,11 @@ const siteMappings = [
     ): Promise<GQLMedia | undefined> => {
       const match = externalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
       const crunchyrollSeriesId = match?.[1]
-      console.log('anilist cr mapper:', { url: externalLink.url, crunchyrollSeriesId, startDate })
       if (!crunchyrollSeriesId || !startDate) return undefined
 
       const compositeId = await matchSeasonByDate(crunchyrollSeriesId, startDate, context)
-      console.log('anilist cr mapper compositeId:', compositeId)
       if (!compositeId) return undefined
       const crMedia = await getCrunchyrollMedia(compositeId, context)
-      console.log('anilist cr mapper crMedia:', crMedia?.uri, 'episodes:', crMedia?.episodes?.length)
       return crMedia
     }
   }
@@ -325,7 +322,6 @@ export const resolvers: Resolvers = {
         const uri = extractAggregatedUriOrigin(_uri, origin)
         if (!uri) return yield { media: null }
         const media = await fetchMedia({ id: Number(uri.id) }, ctx)
-        console.log('anilist media result', media)
         yield {
           media
         }

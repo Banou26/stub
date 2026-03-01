@@ -331,7 +331,6 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     pause: !uri
   })
   const media = data?.media ?? foundMedia
-  console.log('media', media)
   const origins =
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues

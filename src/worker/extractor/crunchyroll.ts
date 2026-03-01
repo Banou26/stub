@@ -341,12 +341,10 @@ const getAllEpisodes = async (
   mediaUri: string,
   context: ExtractorServerContext
 ): Promise<GQLEpisode[]> => {
-  console.log('cr getAllEpisodes called with', seasons.length, 'seasons:', seasons.map(s => `${s.id}(${s.title})`))
   const episodeResponses = await Promise.all(
     seasons.map(season => fetchEpisodes(resolveSeasonId(season), context))
   )
   const episodes = episodeResponses.flatMap(res => res.data.map(ep => normalizeEpisode(ep, mediaUri)))
-  console.log('cr getAllEpisodes result:', episodes.length, 'episodes')
   return episodes
 }
 
@@ -445,13 +443,10 @@ export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
-        console.log('cr Subscription.media called with uri:', _uri)
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
         const uri = extractAggregatedUriOrigin(_uri, origin)
-        console.log('cr extracted uri:', uri)
         if (!uri) return yield { media: null }
         const media = await getMedia(uri.id, ctx) ?? null
-        console.log('cr media result:', media)
         yield {
           media
         }
