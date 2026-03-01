@@ -31,8 +31,10 @@ import {
   insertManyAggregatedEpisode,
   insertManyOrigins,
   normalizeDrizzleOrigin,
+  reAggregateEpisodesForMedia,
 } from './drizzle/utils'
-import { aggregatedMediaEpisodesTable } from './drizzle/schema'
+import { aggregatedMediaEpisodesTable, aggregatedMediaHandlesTable, aggregatedMediaTable, aggregatedEpisodeTable, aggregatedEpisodeHandlesTable } from './drizzle/schema'
+import { inArray, sql } from 'drizzle-orm'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 import groupAllRelatedEpisodes from './drizzle/sql/groupAllRelatedEpisodes'
 
@@ -51,21 +53,60 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
     const allAggregatedMedia = await findAllAggregatedMedia(tx)
 
     const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-    const allUpdatedAggregatedMedia = groups.map(([_, __, urisString]) => {
+
+    const processedGroups = groups.map(([_, __, urisString]) => {
       const uris = urisString.split(',').map(uri => uri.trim())
       const medias =
         uris
           .map(uri => allMedia.find(r => r?.uri === uri))
           .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
 
-      const existingMatch = allAggregatedMedia.find(existing => {
+      // Find ALL matching aggregated medias, not just the first
+      const existingMatches = allAggregatedMedia.filter(existing => {
         const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
         return existingUris.some(existingUri => uris.includes(existingUri))
       })
 
-      return aggregateMediaHandles(medias, existingMatch)
+      const primaryMatch = existingMatches[0]
+      const secondaryIds = existingMatches.slice(1).map(m => m._id)
+
+      return {
+        aggregatedMedia: aggregateMediaHandles(medias, primaryMatch),
+        primaryId: primaryMatch?._id,
+        secondaryIds
+      }
     })
-    await insertManyAggregatedMedia(tx, allUpdatedAggregatedMedia)
+
+    // Migrate episode relations and clean up orphaned aggregated medias before inserting the merged ones
+    const mergedPrimaryIds: string[] = []
+    for (const { primaryId, secondaryIds } of processedGroups) {
+      if (!primaryId || secondaryIds.length === 0) continue
+      mergedPrimaryIds.push(primaryId)
+
+      // Copy episode relations from secondaries to primary
+      await tx.run(sql`
+        INSERT OR IGNORE INTO aggregatedMediaEpisodes (aggregatedMediaId, aggregatedEpisodeId)
+        SELECT ${primaryId}, aggregatedEpisodeId
+        FROM aggregatedMediaEpisodes
+        WHERE aggregatedMediaId IN (${sql.join(secondaryIds.map(id => sql`${id}`), sql`, `)})
+      `)
+
+      // Clean up secondary aggregated media data
+      await tx.delete(aggregatedMediaEpisodesTable)
+        .where(inArray(aggregatedMediaEpisodesTable.aggregatedMediaId, secondaryIds))
+      await tx.delete(aggregatedMediaHandlesTable)
+        .where(inArray(aggregatedMediaHandlesTable.aggregatedMediaId, secondaryIds))
+      await tx.delete(aggregatedMediaTable)
+        .where(inArray(aggregatedMediaTable._id, secondaryIds))
+    }
+
+    // Insert/update the merged aggregated medias
+    await insertManyAggregatedMedia(tx, processedGroups.map(g => g.aggregatedMedia))
+
+    // Re-aggregate episodes for merged medias (aggregatedMediaHandles is now up to date)
+    if (mergedPrimaryIds.length > 0) {
+      await reAggregateEpisodesForMedia(tx, mergedPrimaryIds)
+    }
   })
   return medias
 }, {
@@ -86,21 +127,52 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
 
     const allUpdatedAggregatedEpisode = groups.map(([_, __, urisString]) => {
       const uris = urisString.split(',').map(uri => uri.trim())
-      const episodes =
+      const groupEpisodes =
         uris
           .map(uri => allEpisode.find(r => r?.uri === uri))
           .filter((episode): episode is NonNullable<typeof episode> => episode !== null && episode !== undefined)
 
-      const existingMatch = allAggregatedEpisode.find(existing => {
+      // Find ALL matching aggregated episodes, not just the first
+      const existingMatches = allAggregatedEpisode.filter(existing => {
         const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
         return existingUris.some(existingUri => uris.includes(existingUri))
       })
 
-      return aggregateEpisodeHandles(episodes, existingMatch)
+      const primaryMatch = existingMatches[0]
+      const secondaryIds = existingMatches.slice(1).map(e => e._id)
+
+      return {
+        aggregatedEpisode: aggregateEpisodeHandles(groupEpisodes, primaryMatch),
+        secondaryIds
+      }
     })
 
+    // Clean up orphaned secondary aggregated episodes before inserting
+    const allSecondaryEpisodeIds = allUpdatedAggregatedEpisode.flatMap(g => g.secondaryIds)
+    if (allSecondaryEpisodeIds.length > 0) {
+      // Migrate media-episode relations from secondaries to their primaries
+      for (const { aggregatedEpisode, secondaryIds } of allUpdatedAggregatedEpisode) {
+        if (secondaryIds.length === 0) continue
+
+        await tx.run(sql`
+          INSERT OR IGNORE INTO aggregatedMediaEpisodes (aggregatedMediaId, aggregatedEpisodeId)
+          SELECT aggregatedMediaId, ${aggregatedEpisode._id}
+          FROM aggregatedMediaEpisodes
+          WHERE aggregatedEpisodeId IN (${sql.join(secondaryIds.map(id => sql`${id}`), sql`, `)})
+        `)
+      }
+
+      // Delete secondary episode data
+      await tx.delete(aggregatedMediaEpisodesTable)
+        .where(inArray(aggregatedMediaEpisodesTable.aggregatedEpisodeId, allSecondaryEpisodeIds))
+      await tx.delete(aggregatedEpisodeHandlesTable)
+        .where(inArray(aggregatedEpisodeHandlesTable.aggregatedEpisodeId, allSecondaryEpisodeIds))
+      await tx.delete(aggregatedEpisodeTable)
+        .where(inArray(aggregatedEpisodeTable._id, allSecondaryEpisodeIds))
+    }
+
     // Insert aggregated episodes
-    await insertManyAggregatedEpisode(tx, allUpdatedAggregatedEpisode)
+    await insertManyAggregatedEpisode(tx, allUpdatedAggregatedEpisode.map(g => g.aggregatedEpisode))
 
     // Group episodes by their mediaUri to update aggregated media
     const episodesByMediaUri = new Map<string, Episode[]>()
@@ -124,7 +196,7 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
       if (aggregatedMedia) {
         // Find corresponding aggregated episodes for these episodes
         for (const episode of mediaEpisodes) {
-          const aggregatedEpisode = allUpdatedAggregatedEpisode.find(ae => {
+          const aggregatedEpisode = allUpdatedAggregatedEpisode.find(({ aggregatedEpisode: ae }) => {
             const aggregatedUris = ae.uri.slice('ag:('.length, -1).split(',')
             return aggregatedUris.includes(episode.uri)
           })
@@ -132,7 +204,7 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
           if (aggregatedEpisode) {
             aggregatedMediaEpisodeRelations.push({
               aggregatedMediaId: aggregatedMedia._id,
-              aggregatedEpisodeId: aggregatedEpisode._id
+              aggregatedEpisodeId: aggregatedEpisode.aggregatedEpisode._id
             } satisfies CreateAggregatedMediaEpisodes)
           }
         }

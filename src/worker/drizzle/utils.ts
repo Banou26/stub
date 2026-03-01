@@ -747,6 +747,53 @@ export const aggregateEpisodeHandles = (episodes: GraphqlEpisode[], existingAggr
   }
 }
 
+export const reAggregateEpisodesForMedia = async (
+  tx: DrizzleSQLiteTransaction,
+  aggregatedMediaIds: string[]
+) => {
+  if (!aggregatedMediaIds.length) return
+
+  const { groupRelatedEpisodesByMedia } = await import('./sql/groupRelatedEpisodesByMedia')
+
+  const allEpisode = await findAllEpisode(tx)
+  const allAggregatedEpisode = await findAllAggregatedEpisode(tx)
+
+  for (const aggregatedMediaId of aggregatedMediaIds) {
+    const groups = await tx.all(groupRelatedEpisodesByMedia(aggregatedMediaId)) as [string, number, string, number][]
+
+    const updatedAggregatedEpisodes = groups.map(([_, __, urisString]) => {
+      const uris = urisString.split(',').map(uri => uri.trim())
+      const episodes =
+        uris
+          .map(uri => allEpisode.find(r => r?.uri === uri))
+          .filter((episode): episode is NonNullable<typeof episode> => episode !== null && episode !== undefined)
+
+      const existingMatch = allAggregatedEpisode.find(existing => {
+        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
+        return existingUris.some(existingUri => uris.includes(existingUri))
+      })
+
+      return aggregateEpisodeHandles(episodes, existingMatch)
+    })
+
+    if (!updatedAggregatedEpisodes.length) continue
+
+    await insertManyAggregatedEpisode(tx, updatedAggregatedEpisodes)
+
+    // Rebuild aggregatedMediaEpisodes relations for this aggregated media
+    const relations: CreateAggregatedMediaEpisodes[] = updatedAggregatedEpisodes.map(ae => ({
+      aggregatedMediaId,
+      aggregatedEpisodeId: ae._id
+    }))
+
+    if (relations.length) {
+      await tx.insert(aggregatedMediaEpisodesTable)
+        .values(relations)
+        .onConflictDoNothing()
+    }
+  }
+}
+
 // Origin helper functions
 export const normalizeGraphqlOrigin = (origin: DrizzleOrigin): GraphqlOrigin => ({
   id: origin.id,
