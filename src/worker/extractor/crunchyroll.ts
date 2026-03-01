@@ -23,6 +23,7 @@ type CrunchyrollAuthToken = {
 }
 
 let _token: CrunchyrollAuthToken | undefined
+let _tokenPromise: Promise<CrunchyrollAuthToken> | undefined
 
 const fetchToken = async (context: ExtractorServerContext): Promise<CrunchyrollAuthToken> => {
   const response = await context.fetch('https://www.crunchyroll.com/auth/v1/token', {
@@ -56,7 +57,10 @@ const getToken = async (context: ExtractorServerContext): Promise<CrunchyrollAut
   if (_token && Date.now() - _token.timestamp < _token.expires_in * 1000) {
     return _token
   }
-  return fetchToken(context)
+  // Deduplicate concurrent token fetches — all callers share the same in-flight promise
+  if (_tokenPromise) return _tokenPromise
+  _tokenPromise = fetchToken(context).finally(() => { _tokenPromise = undefined })
+  return _tokenPromise
 }
 
 // API Types
@@ -156,18 +160,30 @@ interface SearchResult {
   items: CrunchyrollSeries[]
 }
 
+// Deduplicate concurrent GET requests to the same URL
+const _inflightRequests = new Map<string, Promise<unknown>>()
+
 const fetchWithAuth = async <T>(url: string, context: ExtractorServerContext): Promise<T> => {
-  const token = await getToken(context)
-  const response = await context.fetch(url, {
-    headers: {
-      accept: 'application/json, text/plain, */*',
-      authorization: `Bearer ${token.access_token}`,
-    },
-    method: 'GET',
-    mode: 'cors',
-    credentials: 'include'
-  })
-  return await response.json() as T
+  const existing = _inflightRequests.get(url)
+  if (existing) return existing as Promise<T>
+
+  const promise = (async () => {
+    const token = await getToken(context)
+    const response = await context.fetch(url, {
+      headers: {
+        accept: 'application/json, text/plain, */*',
+        authorization: `Bearer ${token.access_token}`,
+      },
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'include'
+    })
+    return await response.json() as T
+  })()
+
+  _inflightRequests.set(url, promise)
+  promise.finally(() => _inflightRequests.delete(url))
+  return promise
 }
 
 export const fetchSeries = (seriesId: string, context: ExtractorServerContext) =>

@@ -190,7 +190,12 @@ const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, contex
     externalLinks.map(async (externalLink) => {
       const mapper = siteMappings.find(m => m.siteId === externalLink.siteId)
       if (!mapper) return undefined
-      return mapper.mapper(externalLink, startDate, context)
+      try {
+        return await mapper.mapper(externalLink, startDate, context)
+      } catch (error) {
+        console.error(`anilist mapper for siteId ${externalLink.siteId} failed:`, error)
+        return undefined
+      }
     })
   )).filter((handle): handle is GQLMedia => Boolean(handle))
 
