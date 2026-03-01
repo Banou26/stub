@@ -25,8 +25,16 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
         uri: `mal:${media.mappings.mal_id}`,
         origin: 'mal',
         id: media.mappings.mal_id.toString(),
-        url: `https://myanimelist.net/anime/${media.mappings.mal_id}`
-      } as GQLMedia
+        url: `https://myanimelist.net/anime/${media.mappings.mal_id}`,
+        titles: [],
+        descriptions: [],
+        shortDescriptions: [],
+        covers: [],
+        banners: [],
+        episodes: [],
+        handles: [],
+        trailers: [],
+      } satisfies GQLMedia
     ],
     titles: [
       ...media.titles.en ? [{ language: 'en', title: media.titles.en }] : [],

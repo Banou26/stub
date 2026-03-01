@@ -167,8 +167,11 @@ export const extractors =
                 Media: {
                   _id: (parent) => parent.uri,
                   handles: (parent) => parent.handles ?? [],
+                  titles: (parent) => parent.titles ?? [],
                   descriptions: (parent) => parent.descriptions ?? [],
                   shortDescriptions: (parent) => parent.shortDescriptions ?? [],
+                  covers: (parent) => parent.covers ?? [],
+                  banners: (parent) => parent.banners ?? [],
                   trailers: (parent) => parent.trailers ?? [],
                   episodes: (parent) => parent.episodes ?? [],
                 },
