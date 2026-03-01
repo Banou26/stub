@@ -254,7 +254,8 @@ const mergeJsonArrays = (column: string) => sql`
 `
 
 export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedias: GraphqlMedia[]) => {
-  const medias = removeDuplicatesByField('uri', wrappedMedias.flatMap(recursivelyUnwrapMediaHandles))
+  const allUnwrapped = wrappedMedias.flatMap(recursivelyUnwrapMediaHandles)
+  const medias = removeDuplicatesByField('uri', allUnwrapped)
   const values = medias.map(normalizeDrizzleMedia)
 
   if (values.length) {
@@ -281,15 +282,22 @@ export const insertManyMedia = async (tx: DrizzleSQLiteTransaction, wrappedMedia
         })
   }
 
-  const mediaHandles =
-    medias
-      .flatMap(media =>
-        media.handles?.map(handle => ({
-          mediaUri: media.uri,
-          handleUri: handle.uri
-        }) satisfies CreateMediaHandles)
-      )
-      .filter((mediaHandle): mediaHandle is NonNullable<typeof mediaHandle> => mediaHandle !== null && mediaHandle !== undefined)
+  // Collect handles from ALL occurrences of each media URI before dedup,
+  // so that handle relationships are never lost when the same media appears
+  // in a batch from multiple sources (e.g. mediaPage without CR handles
+  // and media subscription with CR handles)
+  const handlePairs = new Set<string>()
+  const mediaHandles: CreateMediaHandles[] = []
+  for (const media of allUnwrapped) {
+    if (!media.handles?.length) continue
+    for (const handle of media.handles) {
+      const key = `${media.uri}\0${handle.uri}`
+      if (!handlePairs.has(key)) {
+        handlePairs.add(key)
+        mediaHandles.push({ mediaUri: media.uri, handleUri: handle.uri })
+      }
+    }
+  }
 
   if (mediaHandles.length) {
     await tx.insert(mediaHandlesTable)
