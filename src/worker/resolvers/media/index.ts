@@ -31,12 +31,12 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        yield await findAggregatedMedia(undefined, { uri: args.input.uri })
-
+        // Register listeners before initial yield so notifications are buffered, not lost
         const mediaListener = listenIterator({ table: 'aggregatedMedia' })
         const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
-
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+
+        yield await findAggregatedMedia(undefined, { uri: args.input.uri })
 
         // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
         try {
@@ -60,12 +60,12 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
-
+        // Register listeners before initial yield so notifications are buffered, not lost
         const mediaListener = listenIterator({ table: 'aggregatedMedia' })
         const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
-
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+
+        yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
 
         try {
           for await (const _ of listeners) {
