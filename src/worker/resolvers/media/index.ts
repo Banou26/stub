@@ -1,12 +1,12 @@
 import type { ExtractorServerContext } from '../../extractor'
 import type { Media, Resolvers } from '../../../generated/schema/types.generated'
 
-import { eq, asc } from 'drizzle-orm'
+import { eq, asc, inArray } from 'drizzle-orm'
 
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findAggregatedMedia, findAggregatedMedias, findMediaByUris, normalizeGraphqlAggregatedEpisode } from '../../drizzle/utils'
+import { findAggregatedMedia, findAggregatedMedias, findMediaByUris, normalizeGraphqlAggregatedEpisode, type DrizzleSQLiteTransaction } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
 import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
@@ -82,17 +82,30 @@ export const resolvers = {
     _id: (parent) => parent._id,
     episodes: async (parent) => {
       if (parent.uri.startsWith('ag:')) {
-        const episodes = await database
-          .select()
+        const db = database as unknown as DrizzleSQLiteTransaction
+        const episodeIds = await database
+          .select({ id: aggregatedMediaEpisodesTable.aggregatedEpisodeId })
           .from(aggregatedMediaEpisodesTable)
-          .innerJoin(aggregatedEpisodeTable, eq(aggregatedMediaEpisodesTable.aggregatedEpisodeId, aggregatedEpisodeTable._id))
           .where(eq(aggregatedMediaEpisodesTable.aggregatedMediaId, parent._id))
-          .orderBy(asc(aggregatedEpisodeTable.episodeNumber))
-          .then(results =>
-            results.map(({ aggregatedEpisode }) => normalizeGraphqlAggregatedEpisode(aggregatedEpisode))
-          )
+          .then(results => results.map(r => r.id))
 
-        return episodes?.length ? episodes : parent.episodes
+        if (!episodeIds.length) return parent.episodes
+
+        const episodes = await db.query.aggregatedEpisodeTable.findMany({
+          where: inArray(aggregatedEpisodeTable._id, episodeIds),
+          orderBy: asc(aggregatedEpisodeTable.episodeNumber),
+          with: {
+            handles: {
+              with: {
+                episode: true
+              }
+            }
+          }
+        })
+
+        return episodes.length
+          ? episodes.map(normalizeGraphqlAggregatedEpisode)
+          : parent.episodes
       }
       return parent.episodes
     },

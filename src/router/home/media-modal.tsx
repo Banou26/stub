@@ -179,11 +179,30 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
           flex-direction: column;
           /*align-items: center;*/
           justify-content: center;
-
-          & > .title {
-            font-size: 2rem;
-            font-weight: bold;
+          
+          & > .header {
+            display: flex;
+            
+            & > .title {
+             font-size: 2rem;
+             font-weight: bold;
+            }
+            & > .origins {
+              display: flex;
+              gap: 1rem;
+              align-items: center;
+              margin-left: 1rem;
+          
+              & > .origin {
+                height: 2rem;
+                & > img {
+                  height: 2rem;
+                  width: 2rem;
+                }
+              }
+            }
           }
+
           & > .description {
             margin-top: 0.5rem;
             max-height: 6rem;
@@ -195,6 +214,9 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
               overflow: hidden;
             }
           }
+        }
+        
+        .side {
         }
       }
     }
@@ -244,6 +266,20 @@ const GET_MEDIA_MODAL = gql(`
         thumbnails {
           url
         }
+        handles {
+          ...EpisodeFragment
+          episodeNumber
+          titles {
+            title
+          }
+          shortDescriptions {
+            language
+            shortDescription
+          }
+          thumbnails {
+            url
+          }
+        }
       }
       handles {
         ...MediaFragment
@@ -276,6 +312,16 @@ const Episode = (
   { episode, index }:
   { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number }
 ) => {
+  const origins =
+    episode.uri
+      ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
+      : undefined
+  const originIds = origins?.map(origin => origin.origin)
+  const [{ data: originData }] = useSubscription({
+    query: GET_MEDIA_MODAL_ORIGINS,
+    variables: { input: { ids: originIds!, filters: [OriginFilter.IsNotApiOnly] } },
+    pause: !originIds
+  })
 
   return (
     <div className="episode">
@@ -289,7 +335,34 @@ const Episode = (
         episode.titles?.length
           ? (
             <div className="content">
-              <div className="title">{episode.titles.at(0)?.title}</div>
+              <div className="header">
+                <div className="title">{episode.titles.at(0)?.title}</div>
+                <span className="origins">
+                  {
+                    originData
+                      ?.originPage
+                      ?.nodes
+                      ?.map(origin => {
+                        const link = episode?.handles.find(handle => handle.origin === origin.id)?.url
+                        if (!origin.icon) return undefined
+                        return (
+                          link
+                            ? (
+                              <a className="origin" href={link} target="_blank" rel="noreferrer" title={origin.name}>
+                                <img src={origin.icon}/>
+                              </a>
+                            )
+                            : (
+                              <div className="origin">
+                                <img src={origin.icon}/>
+                              </div>
+                            )
+                        )
+                      })
+                      .filter(Boolean)
+                  }
+                </span>
+              </div>
               {
                 episode.shortDescriptions?.at(0)
                   ? (
@@ -305,11 +378,16 @@ const Episode = (
           )
           : (
             <div className="content">
-              <div className="title">Episode {index + 1}</div>
+              <div className="header">
+                <div className="title">Episode {index + 1}</div>
+              </div>
             </div>
           )
       }
-      <div className="date"></div>
+      <div className="side">
+        <span className="date">
+        </span>
+      </div>
     </div>
   )
 }
@@ -331,6 +409,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     pause: !uri
   })
   const media = data?.media ?? foundMedia
+  console.log('media', media)
   const origins =
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues
