@@ -311,7 +311,7 @@ const normalizeSearchResult = (result: UnogsSearchResult): GQLMedia => {
   } satisfies GQLMedia
 }
 
-const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string): GQLEpisode => {
+const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, withinSeasonEpNum?: number): GQLEpisode => {
   const id = String(episode.epid)
   const imgUrl = episode.img?.replace(/^http:/, 'https:')
   const decodedTitle = decodeEntities(episode.title)
@@ -338,12 +338,30 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string): GQLEpisode =
       : [],
     thumbnails: imgUrl ? [{ url: imgUrl }] : [],
     seasonNumber: episode.seasnum,
-    episodeNumber: episode.epnum,
+    episodeNumber: withinSeasonEpNum ?? episode.epnum,
   } satisfies GQLEpisode
 }
 
+// Find the Netflix season whose episode count is closest to the target
+const findMatchingSeason = (
+  seasons: UnogsSeasonEpisodes[],
+  targetEpisodeCount: number
+): number | undefined => {
+  if (seasons.length <= 1) return undefined
+  let bestMatch: UnogsSeasonEpisodes | undefined
+  let bestDiff = Infinity
+  for (const season of seasons) {
+    const diff = Math.abs(season.episodes.length - targetEpisodeCount)
+    if (diff < bestDiff) {
+      bestDiff = diff
+      bestMatch = season
+    }
+  }
+  return bestMatch?.season
+}
+
 // Composed data fetching
-const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: number): Promise<GQLMedia | undefined> => {
   const [detailRes, bgImagesRes] = await Promise.all([
     fetchDetail(id, ctx),
     fetchBgImages(id, ctx),
@@ -356,8 +374,11 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
 
   if (title.vtype === 'series') {
     const seasonsRes = await fetchEpisodes(id, ctx)
-    media.episodes = seasonsRes.flatMap(season =>
-      season.episodes.map(ep => normalizeEpisode(ep, media.uri))
+    const filteredSeasons = seasonNumber != null
+      ? seasonsRes.filter(s => s.season === seasonNumber)
+      : seasonsRes
+    media.episodes = filteredSeasons.flatMap(season =>
+      season.episodes.map((ep, index) => normalizeEpisode(ep, media.uri, index + 1))
     )
     media.episodeCount = media.episodes.length
   }
@@ -411,6 +432,32 @@ const simplifyTitle = (title: string): string[] => {
   return queries
 }
 
+// Wait for other extractors to populate episode data in the aggregated media
+const waitForEpisodeCount = async (
+  aggregatedUri: string,
+  ctx: ExtractorServerContext,
+): Promise<number | undefined> => {
+  const existing = await ctx.findAggregatedMedia(aggregatedUri)
+  const count = existing?.episodeCount ?? existing?.episodes?.length
+  if (count) return count
+
+  // Listen for DB changes until episodes appear (timeout after 15s)
+  const abortController = new AbortController()
+  const timeout = setTimeout(() => abortController.abort(), 15_000)
+  const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
+  try {
+    for await (const _ of changes) {
+      const updated = await ctx.findAggregatedMedia(aggregatedUri)
+      const epCount = updated?.episodeCount ?? updated?.episodes?.length
+      if (epCount) return epCount
+    }
+  } finally {
+    clearTimeout(timeout)
+    abortController.abort()
+  }
+  return undefined
+}
+
 const searchAndLinkMedia = async (
   title: string,
   aggregatedUri: string,
@@ -420,12 +467,27 @@ const searchAndLinkMedia = async (
   const queries = [title, ...simplifyTitle(title)]
   for (const query of queries) {
     const rawResponse = await searchApi(query, ctx)
-    const results = (rawResponse.results ?? []).map(normalizeSearchResult)
-    if (results.length) {
-      const match = results[0]!
-      match.handles = buildHandlesFromAggregatedUri(aggregatedUri)
-      return match
+    const results = rawResponse.results ?? []
+    if (!results.length) continue
+
+    const matchResult = results[0]!
+    const nfId = String(matchResult.nfid)
+
+    // Determine matching season by waiting for episode count from other extractors
+    let seasonNumber: number | undefined
+    const targetEpCount = await waitForEpisodeCount(aggregatedUri, ctx)
+    if (targetEpCount) {
+      const seasons = await fetchEpisodes(nfId, ctx)
+      if (seasons.length > 1) {
+        seasonNumber = findMatchingSeason(seasons, targetEpCount)
+      }
     }
+
+    const fullMedia = await getMedia(nfId, ctx, seasonNumber)
+    if (!fullMedia) continue
+
+    fullMedia.handles = buildHandlesFromAggregatedUri(aggregatedUri)
+    return fullMedia
   }
   return null
 }
@@ -439,7 +501,19 @@ export const resolvers: Resolvers = {
         // Direct nf: URI — fetch from uNoGS directly
         const uri = extractAggregatedUriOrigin(_uri, origin)
         if (uri) {
-          const media = await getMedia(uri.id, ctx) ?? null
+          // If part of an aggregated URI, determine the correct season by
+          // waiting for other extractors to populate episode data
+          let seasonNumber: number | undefined
+          if (isAggregatedUri(_uri)) {
+            const targetEpCount = await waitForEpisodeCount(_uri, ctx)
+            if (targetEpCount) {
+              const seasons = await fetchEpisodes(uri.id, ctx)
+              if (seasons.length > 1) {
+                seasonNumber = findMatchingSeason(seasons, targetEpCount)
+              }
+            }
+          }
+          const media = await getMedia(uri.id, ctx, seasonNumber) ?? null
           yield { media }
           return
         }
@@ -492,7 +566,7 @@ export const resolvers: Resolvers = {
 
       const seasonsRes = await fetchEpisodes(parent.id, ctx)
       return seasonsRes.flatMap(season =>
-        season.episodes.map(ep => normalizeEpisode(ep, parent.uri))
+        season.episodes.map((ep, index) => normalizeEpisode(ep, parent.uri, index + 1))
       )
     }
   }
