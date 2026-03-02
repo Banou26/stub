@@ -1,6 +1,6 @@
 import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
-import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
+import { extractAggregatedUriOrigin, fromAggregatedUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 
 export const icon = 'https://unogs.com/favicon.ico'
 export const originUrl = 'https://unogs.com'
@@ -169,7 +169,8 @@ const fetchWithAuth = async <T>(url: string, ctx: ExtractorServerContext): Promi
       headers: {
         'accept': 'application/json',
         'authorization': `Bearer ${token}`,
-        'x-requested-with': 'XMLHttpRequest',
+        'REFERRER': 'http://unogs.com',
+        'referer': 'http://unogs.com',
       },
       method: 'GET',
       mode: 'cors',
@@ -373,6 +374,62 @@ const searchMedia = async (query: string, ctx: ExtractorServerContext): Promise<
 const getFirstTitle = (media: { titles?: { title: string }[] } | undefined): string | undefined =>
   media?.titles?.[0]?.title
 
+// Build minimal handle media objects so the Netflix result gets linked
+// to the existing aggregated group via the mediaHandles table
+const buildHandlesFromAggregatedUri = (aggregatedUri: string): GQLMedia[] => {
+  const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
+  if (!parsed) return []
+  return parsed.handleUrisValues.map(({ origin: handleOrigin, id }) => ({
+    _id: crypto.randomUUID(),
+    uri: toUri({ origin: handleOrigin, id }),
+    origin: handleOrigin,
+    id,
+    url: undefined,
+    handles: [],
+    titles: [],
+    descriptions: [],
+    shortDescriptions: [],
+    covers: [],
+    banners: [],
+    episodes: [],
+    trailers: [],
+  } satisfies GQLMedia))
+}
+
+// Generate progressively simpler search queries from a title
+const simplifyTitle = (title: string): string[] => {
+  const queries: string[] = []
+
+  // Strip "Season X" / "Part X" / "Xth Season" etc. suffixes
+  const stripped = title.replace(/\s+(Season|Part|Cour)\s+\d+$/i, '').trim()
+  if (stripped !== title) queries.push(stripped)
+
+  // Also try text before a colon (e.g., "Frieren" from "Frieren: Beyond Journey's End")
+  const colonIdx = title.indexOf(':')
+  if (colonIdx > 2) queries.push(title.slice(0, colonIdx).trim())
+
+  return queries
+}
+
+const searchAndLinkMedia = async (
+  title: string,
+  aggregatedUri: string,
+  ctx: ExtractorServerContext,
+): Promise<GQLMedia | null> => {
+  // Try the full title first, then progressively simpler queries
+  const queries = [title, ...simplifyTitle(title)]
+  for (const query of queries) {
+    const rawResponse = await searchApi(query, ctx)
+    const results = (rawResponse.results ?? []).map(normalizeSearchResult)
+    if (results.length) {
+      const match = results[0]!
+      match.handles = buildHandlesFromAggregatedUri(aggregatedUri)
+      return match
+    }
+  }
+  return null
+}
+
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
@@ -393,25 +450,28 @@ export const resolvers: Resolvers = {
         // Check if the aggregated media already has a title
         const existing = await ctx.findAggregatedMedia(_uri)
         const existingTitle = getFirstTitle(existing)
+
         if (existingTitle) {
-          const results = await searchMedia(existingTitle, ctx)
-          yield { media: results[0] ?? null }
+          const result = await searchAndLinkMedia(existingTitle, _uri, ctx)
+          yield { media: result }
           return
         }
 
-        // Wait for other extractors to populate the title
+        // Wait for other extractors to populate the title (timeout after 30s)
         const abortController = new AbortController()
+        const timeout = setTimeout(() => abortController.abort(), 30_000)
         const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
         try {
           for await (const _ of changes) {
             const updated = await ctx.findAggregatedMedia(_uri)
             const title = getFirstTitle(updated)
             if (!title) continue
-            const results = await searchMedia(title, ctx)
-            yield { media: results[0] ?? null }
+            const result = await searchAndLinkMedia(title, _uri, ctx)
+            yield { media: result }
             return
           }
         } finally {
+          clearTimeout(timeout)
           abortController.abort()
         }
 
