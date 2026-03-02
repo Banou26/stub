@@ -2,14 +2,14 @@ import type { ExtractorServerContext } from '../extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, fromAggregatedUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 
-export const icon = 'https://unogs.com/favicon.ico'
-export const originUrl = 'https://unogs.com'
+export const icon = 'https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2023.ico'
+export const originUrl = 'https://www.netflix.com'
 export const categories = ['ANIME'] as const
-export const name = 'uNoGS'
+export const name = 'Netflix'
 export const origin = 'nf'
 export const official = false
 export const metadataOnly = true
-export const isApiOnly = true
+export const isApiOnly = false
 export const supportedUris = ['nf']
 
 // Token management
@@ -326,7 +326,7 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string): GQLEpisode =
     uri: toUri({ origin, id }),
     origin,
     id,
-    url: undefined,
+    url: `https://www.netflix.com/watch/${episode.epid}`,
     mediaUri,
     handles: [],
     titles: [{ language: 'en', title: decodedTitle }],
