@@ -23,6 +23,7 @@ import {
   insertManyEpisode,
   findAllMedia,
   findAllAggregatedMedia,
+  findAggregatedMedia,
   aggregateMediaHandles,
   insertManyAggregatedMedia,
   aggregateEpisodeHandles,
@@ -37,9 +38,12 @@ import { aggregatedMediaEpisodesTable, aggregatedMediaHandlesTable, aggregatedMe
 import { inArray, sql } from 'drizzle-orm'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 import groupAllRelatedEpisodes from './drizzle/sql/groupAllRelatedEpisodes'
+import { listenIterator } from './drizzle/notifications'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
+  findAggregatedMedia: (uri: string) => Promise<Media | undefined>
+  listenForMediaChanges: (options?: { abort?: AbortSignal }) => ReturnType<typeof listenIterator>
 }
 
 export type ExtractorUserContext = {
@@ -336,7 +340,11 @@ export const extractors =
         fetch: async (input: Parameters<typeof globalThis.fetch>[0], init: Parameters<typeof globalThis.fetch>[1]) =>
           server.handleRequest(
             new Request(input, init),
-            { fetch }
+            {
+              fetch,
+              findAggregatedMedia: (uri: string) => findAggregatedMedia(undefined, { uri }),
+              listenForMediaChanges: (options?: { abort?: AbortSignal }) => listenIterator({ ...options, table: 'aggregatedMedia' }),
+            }
           )
       })
 

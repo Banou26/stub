@@ -370,15 +370,52 @@ const searchMedia = async (query: string, ctx: ExtractorServerContext): Promise<
 }
 
 // Resolvers
+const getFirstTitle = (media: { titles?: { title: string }[] } | undefined): string | undefined =>
+  media?.titles?.[0]?.title
+
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
+
+        // Direct nf: URI — fetch from uNoGS directly
         const uri = extractAggregatedUriOrigin(_uri, origin)
-        if (!uri) return yield { media: null }
-        const media = await getMedia(uri.id, ctx) ?? null
-        yield { media }
+        if (uri) {
+          const media = await getMedia(uri.id, ctx) ?? null
+          yield { media }
+          return
+        }
+
+        // Aggregated URI without nf: origin — search by title from other extractors
+        if (!isAggregatedUri(_uri)) return yield { media: null }
+
+        // Check if the aggregated media already has a title
+        const existing = await ctx.findAggregatedMedia(_uri)
+        const existingTitle = getFirstTitle(existing)
+        if (existingTitle) {
+          const results = await searchMedia(existingTitle, ctx)
+          yield { media: results[0] ?? null }
+          return
+        }
+
+        // Wait for other extractors to populate the title
+        const abortController = new AbortController()
+        const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
+        try {
+          for await (const _ of changes) {
+            const updated = await ctx.findAggregatedMedia(_uri)
+            const title = getFirstTitle(updated)
+            if (!title) continue
+            const results = await searchMedia(title, ctx)
+            yield { media: results[0] ?? null }
+            return
+          }
+        } finally {
+          abortController.abort()
+        }
+
+        yield { media: null }
       }
     },
     mediaPage: {
