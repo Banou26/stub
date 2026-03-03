@@ -148,14 +148,25 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
       margin-top: 4rem;
       border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
       .episode {
+        position: relative;
         display: flex;
-        height: 7rem;
         border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
         color: rgb(255, 255, 255);
         text-decoration: none;
         overflow: hidden;
         height: 10rem;
-        cursor: pointer;
+
+        & > .episode-link {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          color: inherit;
+          text-decoration: none;
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
 
         .number {
           display: flex;
@@ -179,20 +190,22 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
           flex-direction: column;
           /*align-items: center;*/
           justify-content: center;
-          
+
           & > .header {
             display: flex;
-            
+
             & > .title {
              font-size: 2rem;
              font-weight: bold;
             }
             & > .origins {
+              position: relative;
+              z-index: 1;
               display: flex;
               gap: 1rem;
               align-items: center;
               margin-left: 1rem;
-          
+
               & > .origin {
                 height: 2rem;
                 & > img {
@@ -215,7 +228,7 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
             }
           }
         }
-        
+
         .side {
         }
       }
@@ -309,8 +322,8 @@ const GET_MEDIA_MODAL_ORIGINS = gql(`
 `)
 
 const Episode = (
-  { episode, index }:
-  { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number }
+  { episode, index, mediaUri }:
+  { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number, mediaUri: string }
 ) => {
   const origins =
     episode.uri
@@ -323,8 +336,13 @@ const Episode = (
     pause: !originIds
   })
 
+  const watchPath = episode.uri
+    ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri })
+    : undefined
+
   return (
     <div className="episode">
+      {watchPath ? <a className="episode-link" href={watchPath} /> : undefined}
       <div className="number">{episode.episodeNumber}</div>
       {
         episode.thumbnails?.at(0)
@@ -560,7 +578,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   media
                     .episodes
                     ?.map((episode, index) =>
-                      <Episode episode={episode} index={index} />
+                      <Episode episode={episode} index={index} mediaUri={media.uri} />
                     )
                 }
               </div>
