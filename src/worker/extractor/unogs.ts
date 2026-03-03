@@ -400,7 +400,7 @@ const getFirstTitle = (media: { titles?: { title: string }[] } | undefined): str
 const buildHandlesFromAggregatedUri = (aggregatedUri: string): GQLMedia[] => {
   const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
   if (!parsed) return []
-  return parsed.handleUrisValues.map(({ origin: handleOrigin, id }) => ({
+  return parsed.handleUrisValues.filter(({ origin: handleOrigin }) => handleOrigin !== origin).map(({ origin: handleOrigin, id }) => ({
     _id: crypto.randomUUID(),
     uri: toUri({ origin: handleOrigin, id }),
     origin: handleOrigin,
@@ -514,6 +514,9 @@ export const resolvers: Resolvers = {
             }
           }
           const media = await getMedia(uri.id, ctx, seasonNumber) ?? null
+          if (media && isAggregatedUri(_uri)) {
+            media.handles = buildHandlesFromAggregatedUri(_uri)
+          }
           yield { media }
           return
         }
