@@ -322,6 +322,15 @@ export const parseCrunchyrollId = (id: string) => {
   }
 }
 
+/** Keep only the last episode per episode_number (regular episodes come after specials in CR's ordering) */
+const deduplicateByEpisodeNumber = (episodes: GQLEpisode[]): GQLEpisode[] => {
+  const lastByNumber = new Map<number, GQLEpisode>()
+  for (const ep of episodes) {
+    if (ep.episodeNumber != null) lastByNumber.set(ep.episodeNumber, ep)
+  }
+  return episodes.filter(ep => ep.episodeNumber == null || lastByNumber.get(ep.episodeNumber) === ep)
+}
+
 // Composed data fetching functions
 const getSeasonWithEpisodes = async (
   series: CrunchyrollSeries,
@@ -330,7 +339,7 @@ const getSeasonWithEpisodes = async (
 ): Promise<GQLMedia> => {
   const media = normalizeSeason(series, season)
   const episodesResponse = await fetchEpisodes(resolveSeasonId(season), context)
-  media.episodes = episodesResponse.data.map(ep => normalizeEpisode(ep, media.uri))
+  media.episodes = deduplicateByEpisodeNumber(episodesResponse.data.map(ep => normalizeEpisode(ep, media.uri)))
   media.episodeCount = media.episodes.length
   return media
 }
@@ -344,7 +353,9 @@ const getAllEpisodes = async (
   const episodeResponses = await Promise.all(
     seasons.map(season => fetchEpisodes(resolveSeasonId(season), context))
   )
-  const episodes = episodeResponses.flatMap(res => res.data.map(ep => normalizeEpisode(ep, mediaUri)))
+  const episodes = episodeResponses.flatMap(res =>
+    deduplicateByEpisodeNumber(res.data.map(ep => normalizeEpisode(ep, mediaUri)))
+  )
   return episodes
 }
 
@@ -476,13 +487,13 @@ export const resolvers: Resolvers = {
         const season = seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
         if (!season) return []
         const episodesResponse = await fetchEpisodes(resolveSeasonId(season), ctx)
-        return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
+        return deduplicateByEpisodeNumber(episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri)))
       }
 
       // Single season — use it directly
       if (seasons.length === 1 && seasons[0]) {
         const episodesResponse = await fetchEpisodes(resolveSeasonId(seasons[0]), ctx)
-        return episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri))
+        return deduplicateByEpisodeNumber(episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri)))
       }
 
       // Multi-season — fetch all episodes from all seasons
