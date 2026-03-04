@@ -1,13 +1,15 @@
+import type { Frame } from '@fkn/lib'
 import type { RouteParams } from '../path'
 
 import { css } from '@emotion/react'
-import { useMemo } from 'preact/hooks'
+import { newFrame } from '@fkn/lib'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { useParams } from 'wouter'
 
 import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
-import { AggregatedUri, fromAggregatedUri, matchAggregatedUris } from '../../utils/uri'
+import { AggregatedUri, fromAggregatedUri, fromUri, isUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
 const GET_WATCH_MEDIA = gql(`
@@ -66,11 +68,83 @@ const GET_WATCH_ORIGINS = gql(`
   }
 `)
 
+const CRUNCHYROLL_DOMAINS = [
+  'crunchyroll.com',
+  'www.crunchyroll.com',
+  'sso.crunchyroll.com',
+  'static.crunchyroll.com'
+]
+
+const CRUNCHYROLL_OUTER_CSS = `
+  #onetrust-consent-sdk {
+    display: none !important;
+  }
+  .video-player-wrapper, [class*="app-layout__content--"] {
+    position: initial !important;
+  }
+  html {
+    overflow: hidden !important;
+  }
+  html::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 999999;
+    pointer-events: none;
+  }
+  .video-player {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 9999999;
+  }
+`
+
+const CrunchyrollPlayer = ({ url }: { url: string }) => {
+  const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
+  const frameRef = useRef<Frame>(undefined)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!iframe || frameRef.current) return
+    let cancelled = false
+    ;(async () => {
+      const frame = await newFrame({
+        iframe,
+        domains: CRUNCHYROLL_DOMAINS
+      })
+      if (cancelled) return
+      frameRef.current = frame
+      await frame.goto(url, { waitUntil: 'documentstart' })
+      // await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
+      setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [iframe, url])
+
+  return (
+    <div className="player-container">
+      {loading ? <div className="player-loading">Loading Crunchyroll player...</div> : undefined}
+      <iframe
+        ref={setIframe}
+        referrerPolicy="no-referrer"
+        allow="encrypted-media; autoplay; fullscreen;"
+        css={css`
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          border: none;
+          border-radius: 0.8rem;
+          background: #000;
+        `}
+      />
+    </div>
+  )
+}
+
 const style = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
   color: rgb(255, 255, 255);
   padding: 2rem;
@@ -80,7 +154,25 @@ const style = css`
     flex-direction: column;
     gap: 2rem;
     width: 100%;
-    max-width: 80rem;
+    max-width: 120rem;
+  }
+
+  .player-container {
+    position: relative;
+    width: 100%;
+
+    .player-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      border-radius: 0.8rem;
+      font-size: 1.4rem;
+      opacity: 0.7;
+      aspect-ratio: 16 / 9;
+    }
   }
 
   .episode-info {
@@ -151,21 +243,6 @@ const style = css`
       }
     }
   }
-
-  .params {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 2.5rem;
-    background-color: rgb(35, 35, 35);
-    border-radius: 1rem;
-    font-size: 1.4rem;
-
-    span {
-      opacity: 0.7;
-      font-size: 1.2rem;
-    }
-  }
 `
 
 const Watch = () => {
@@ -212,9 +289,25 @@ const Watch = () => {
   const episodeTitle = episode?.titles?.at(0)?.title
   const episodeNumber = episode?.episodeNumber
 
+  // Determine the selected source's origin
+  const selectedOrigin = useMemo(() => {
+    if (!selectedSourceUri) return undefined
+    if (isUri(selectedSourceUri)) return fromUri(selectedSourceUri).origin
+    return undefined
+  }, [selectedSourceUri])
+
+  // Get the Crunchyroll handle's URL for the player
+  const crunchyrollUrl = useMemo(() => {
+    if (selectedOrigin !== 'cr') return undefined
+    const handle = episode?.handles.find(h => h.origin === 'cr')
+    return handle?.url ?? undefined
+  }, [selectedOrigin, episode?.handles])
+
   return (
     <div css={style}>
       <div className="watch-container">
+        {crunchyrollUrl ? <CrunchyrollPlayer url={crunchyrollUrl} /> : undefined}
+
         <div className="episode-info">
           <div className="episode-title">
             {
@@ -238,9 +331,7 @@ const Watch = () => {
                     originData.originPage.nodes.map(origin => {
                       const handle = episode?.handles.find(h => h.origin === origin.id)
                       const sourceUri = handle?.uri
-                      const isActive = selectedSourceUri
-                        ? sourceUri === selectedSourceUri
-                        : false
+                      const isActive = selectedSourceUri === sourceUri
                       const watchPath = sourceUri
                         ? getRoutePath(Route.WATCH, {
                           mediaUri: params.mediaUri,
@@ -269,27 +360,6 @@ const Watch = () => {
             )
             : undefined
         }
-
-        <div className="params">
-          <div>
-            <span>Media</span>
-            <div>{params.mediaUri}</div>
-          </div>
-          <div>
-            <span>Episode</span>
-            <div>{params.episodeUri}</div>
-          </div>
-          {
-            params.sourceUri
-              ? (
-                <div>
-                  <span>Source</span>
-                  <div>{params.sourceUri}</div>
-                </div>
-              )
-              : undefined
-          }
-        </div>
       </div>
     </div>
   )
