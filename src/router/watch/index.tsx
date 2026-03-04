@@ -1,9 +1,7 @@
-import type { Frame } from '@fkn/lib'
 import type { RouteParams } from '../path'
 
 import { css } from '@emotion/react'
-import { newFrame } from '@fkn/lib'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { useMemo } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { useParams } from 'wouter'
 
@@ -11,6 +9,7 @@ import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, fromUri, isUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
+import { players } from '../../sources/players'
 
 const GET_WATCH_MEDIA = gql(`
   subscription GetWatchMedia($input: MediaInput!) {
@@ -67,79 +66,6 @@ const GET_WATCH_ORIGINS = gql(`
     }
   }
 `)
-
-const CRUNCHYROLL_DOMAINS = [
-  'crunchyroll.com',
-  'www.crunchyroll.com',
-  'sso.crunchyroll.com',
-  'static.crunchyroll.com'
-]
-
-const CRUNCHYROLL_OUTER_CSS = `
-  #onetrust-consent-sdk {
-    display: none !important;
-  }
-  .video-player-wrapper, [class*="app-layout__content--"] {
-    position: initial !important;
-  }
-  html {
-    overflow: hidden !important;
-  }
-  html::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 999999;
-    pointer-events: none;
-  }
-  .video-player {
-    position: absolute !important;
-    inset: 0 !important;
-    z-index: 9999999;
-  }
-`
-
-const CrunchyrollPlayer = ({ url }: { url: string }) => {
-  const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
-  const frameRef = useRef<Frame>(undefined)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!iframe || frameRef.current) return
-    let cancelled = false
-    ;(async () => {
-      const frame = await newFrame({
-        iframe,
-        domains: CRUNCHYROLL_DOMAINS
-      })
-      if (cancelled) return
-      frameRef.current = frame
-      await frame.goto(url, { waitUntil: 'documentstart' })
-      // await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
-      setLoading(false)
-    })()
-    return () => { cancelled = true }
-  }, [iframe, url])
-
-  return (
-    <div className="player-container">
-      {loading ? <div className="player-loading">Loading Crunchyroll player...</div> : undefined}
-      <iframe
-        ref={setIframe}
-        referrerPolicy="no-referrer"
-        allow="encrypted-media; autoplay; fullscreen;"
-        css={css`
-          width: 100%;
-          aspect-ratio: 16 / 9;
-          border: none;
-          border-radius: 0.8rem;
-          background: #000;
-        `}
-      />
-    </div>
-  )
-}
 
 const style = css`
   display: flex;
@@ -289,24 +215,25 @@ const Watch = () => {
   const episodeTitle = episode?.titles?.at(0)?.title
   const episodeNumber = episode?.episodeNumber
 
-  // Determine the selected source's origin
+  // Determine the selected source's origin and its player
   const selectedOrigin = useMemo(() => {
     if (!selectedSourceUri) return undefined
     if (isUri(selectedSourceUri)) return fromUri(selectedSourceUri).origin
     return undefined
   }, [selectedSourceUri])
 
-  // Get the Crunchyroll handle's URL for the player
-  const crunchyrollUrl = useMemo(() => {
-    if (selectedOrigin !== 'cr') return undefined
-    const handle = episode?.handles.find(h => h.origin === 'cr')
+  const Player = selectedOrigin ? players[selectedOrigin] : undefined
+
+  const sourceUrl = useMemo(() => {
+    if (!selectedOrigin || !players[selectedOrigin]) return undefined
+    const handle = episode?.handles.find(h => h.origin === selectedOrigin)
     return handle?.url ?? undefined
   }, [selectedOrigin, episode?.handles])
 
   return (
     <div css={style}>
       <div className="watch-container">
-        {crunchyrollUrl ? <CrunchyrollPlayer url={crunchyrollUrl} /> : undefined}
+        {Player && sourceUrl ? <Player url={sourceUrl} /> : undefined}
 
         <div className="episode-info">
           <div className="episode-title">

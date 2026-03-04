@@ -1,0 +1,5 @@
+export * as jikan from './jikan/extractor'
+export * as anilist from './anilist/extractor'
+export * as anizip from './anizip/extractor'
+export * as crunchyroll from './crunchyroll/extractor'
+export * as unogs from './unogs/extractor'

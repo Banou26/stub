@@ -1,4 +1,4 @@
-import type { ExtractorServerContext } from '../extractor'
+import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'

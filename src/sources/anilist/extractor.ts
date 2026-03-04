@@ -1,9 +1,9 @@
-import type { ExtractorServerContext } from '../extractor'
+import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './anilist-types'
-import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from './crunchyroll'
+import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
+import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from '../crunchyroll/extractor'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
