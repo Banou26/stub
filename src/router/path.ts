@@ -4,6 +4,7 @@ export enum Route {
   MEDIA = 'MEDIA',
   MEDIA_EPISODE = 'MEDIA_EPISODE',
   WATCH = 'WATCH',
+  LOGIN_CALLBACK = 'LOGIN_CALLBACK',
 }
 
 const ROUTES = {
@@ -12,6 +13,7 @@ const ROUTES = {
   [Route.MEDIA_EPISODE]: ({ uri, mediaUri }: { uri: string, mediaUri: string }) => `/media/${uri}/${mediaUri}`,
   [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
     `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
+  [Route.LOGIN_CALLBACK]: () => '/login/callback',
 }
 
 export type RouteParams = {
@@ -23,6 +25,7 @@ const RouterRoutes = {
   [Route.MEDIA]: '/media/:uri',
   [Route.MEDIA_EPISODE]: '/media/:uri/:mediaUri',
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',
+  [Route.LOGIN_CALLBACK]: '/login/callback',
 }
 
 export const getRouterRoutePath =
