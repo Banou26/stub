@@ -2,7 +2,18 @@ import CrunchyrollPlayer from './crunchyroll/player'
 
 export type PlayerProps = { url: string }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const players: Record<string, ((props: PlayerProps) => any) | undefined> = {
-  cr: CrunchyrollPlayer
+const players: { match: (url: URL) => boolean, component: (props: PlayerProps) => any }[] = [
+  {
+    match: (url) => url.hostname.endsWith('crunchyroll.com'),
+    component: CrunchyrollPlayer
+  }
+]
+
+export const getPlayer = (url: string) => {
+  try {
+    const parsed = new URL(url)
+    return players.find(p => p.match(parsed))?.component
+  } catch {
+    return undefined
+  }
 }

@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import preact from '@preact/preset-vite'
@@ -5,7 +6,13 @@ import preact from '@preact/preset-vite'
 export default defineConfig((_) => ({
   build: {
     target: 'esnext',
-    outDir: 'build'
+    outDir: 'build',
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        embed: resolve(__dirname, 'embed.html')
+      }
+    }
   },
   worker: {
     format: 'es'

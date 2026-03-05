@@ -7,9 +7,8 @@ import { useParams } from 'wouter'
 
 import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
-import { AggregatedUri, fromAggregatedUri, fromUri, isUri, matchAggregatedUris } from '../../utils/uri'
+import { AggregatedUri, fromAggregatedUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
-import { players } from '../../sources/players'
 
 const GET_WATCH_MEDIA = gql(`
   subscription GetWatchMedia($input: MediaInput!) {
@@ -41,6 +40,7 @@ const GET_WATCH_MEDIA = gql(`
           origin
           id
           url
+          embedUrl
           mediaUri
           episodeNumber
           titles {
@@ -215,25 +215,34 @@ const Watch = () => {
   const episodeTitle = episode?.titles?.at(0)?.title
   const episodeNumber = episode?.episodeNumber
 
-  // Determine the selected source's origin and its player
-  const selectedOrigin = useMemo(() => {
+  // Find the embed URL for the selected source
+  const embedUrl = useMemo(() => {
     if (!selectedSourceUri) return undefined
-    if (isUri(selectedSourceUri)) return fromUri(selectedSourceUri).origin
-    return undefined
-  }, [selectedSourceUri])
-
-  const Player = selectedOrigin ? players[selectedOrigin] : undefined
-
-  const sourceUrl = useMemo(() => {
-    if (!selectedOrigin || !players[selectedOrigin]) return undefined
-    const handle = episode?.handles.find(h => h.origin === selectedOrigin)
-    return handle?.url ?? undefined
-  }, [selectedOrigin, episode?.handles])
+    const handle = episode?.handles.find(h => h.uri === selectedSourceUri)
+    return handle?.embedUrl ?? undefined
+  }, [selectedSourceUri, episode?.handles])
+  
+  console.log('embedUrl', embedUrl, episode?.handles.find(h => h.uri === selectedSourceUri))
 
   return (
     <div css={style}>
       <div className="watch-container">
-        {Player && sourceUrl ? <Player url={sourceUrl} /> : undefined}
+        {embedUrl
+          ? (
+            <iframe
+              src={embedUrl}
+              referrerPolicy="no-referrer"
+              allow="encrypted-media; autoplay; fullscreen;"
+              css={css`
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                border: none;
+                border-radius: 0.8rem;
+                background: #000;
+              `}
+            />
+          )
+          : undefined}
 
         <div className="episode-info">
           <div className="episode-title">

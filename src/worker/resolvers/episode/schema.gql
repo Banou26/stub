@@ -24,6 +24,8 @@ type Episode {
   absoluteNumber: Int
   thumbnails: [EpisodeThumbnail!]!
   # playbackSources: [PlaybackSource!]!
+  """URL for an embeddable player iframe"""
+  embedUrl: String
   seasonNumber: Int
   episodeNumber: Int
   absoluteEpisodeNumber: Int
