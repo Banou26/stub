@@ -1,19 +1,14 @@
 import CrunchyrollPlayer from './crunchyroll/player'
 
-export type PlayerProps = { url: string }
-
-const players: { match: (url: URL) => boolean, component: (props: PlayerProps) => any }[] = [
-  {
-    match: (url) => url.hostname.endsWith('crunchyroll.com'),
-    component: CrunchyrollPlayer
-  }
-]
-
-export const getPlayer = (url: string) => {
-  try {
-    const parsed = new URL(url)
-    return players.find(p => p.match(parsed))?.component
-  } catch {
-    return undefined
-  }
+export type PlayerProps = {
+  url: string
+  mediaUri: string
+  episodeUri: string
+  sourceUri: string
 }
+
+const players: Record<string, (props: PlayerProps) => any> = {
+  cr: CrunchyrollPlayer
+}
+
+export const getPlayer = (origin: string) => players[origin]

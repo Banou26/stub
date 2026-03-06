@@ -56,7 +56,9 @@ const checkLoginState = async (frame: Frame) => {
   return undefined
 }
 
-const CrunchyrollPlayer = ({ url }: { url: string }) => {
+import type { PlayerProps } from '../players'
+
+const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
   const frameRef = useRef<Frame>(undefined)
   const [loading, setLoading] = useState(true)

@@ -7,7 +7,8 @@ import { useParams } from 'wouter'
 
 import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
-import { AggregatedUri, fromAggregatedUri, matchAggregatedUris } from '../../utils/uri'
+import { getPlayer } from '../../sources/players'
+import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
 const GET_WATCH_MEDIA = gql(`
@@ -215,14 +216,23 @@ const Watch = () => {
   const episodeTitle = episode?.titles?.at(0)?.title
   const episodeNumber = episode?.episodeNumber
 
-  // Find the embed URL for the selected source
   const embedUrl = useMemo(() => {
     if (!selectedSourceUri) return undefined
     const handle = episode?.handles.find(h => h.uri === selectedSourceUri)
-    return handle?.embedUrl ?? undefined
-  }, [selectedSourceUri, episode?.handles])
-  
-  console.log('embedUrl', embedUrl, episode?.handles.find(h => h.uri === selectedSourceUri))
+    if (!handle) return undefined
+    // Prefer extractor/plugin-provided embedUrl
+    if (handle.embedUrl) return handle.embedUrl
+    // Fall back to built-in embed page for supported origins
+    const { origin } = fromUri(selectedSourceUri as `${string}:${string}`)
+    if (!getPlayer(origin) || !handle.url) return undefined
+    const embedParams = new URLSearchParams({
+      mediaUri: params.mediaUri,
+      episodeUri: params.episodeUri,
+      sourceUri: selectedSourceUri,
+      url: handle.url
+    })
+    return `/embed.html?${embedParams}`
+  }, [selectedSourceUri, episode?.handles, params.mediaUri, params.episodeUri])
 
   return (
     <div css={style}>

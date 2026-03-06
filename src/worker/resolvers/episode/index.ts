@@ -6,18 +6,12 @@ import { parseHTMLDescription, parseTextDescription } from '../utils'
 
 export const schema = _schema as string
 
-const EMBED_ORIGINS = new Set(['cr'])
-
 export const resolvers = {
   Query: {},
   Mutation: {},
   Subscription: {},
   Episode: {
     handles: (parent) => parent.handles ?? [],
-    embedUrl: (parent) =>
-      parent.url && EMBED_ORIGINS.has(parent.origin)
-        ? `/embed.html?url=${encodeURIComponent(parent.url)}`
-        : undefined,
     descriptions: (parent, args) => {
       const descriptions =
         parent

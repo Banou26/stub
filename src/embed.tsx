@@ -1,14 +1,21 @@
 import { render } from 'preact'
 import { getPlayer } from './sources/players'
+import { fromUri } from './utils/uri'
 
 const params = new URLSearchParams(globalThis.location.search)
+const mediaUri = params.get('mediaUri')
+const episodeUri = params.get('episodeUri')
+const sourceUri = params.get('sourceUri')
 const url = params.get('url')
 
-const Player = url ? getPlayer(url) : undefined
+const origin = sourceUri ? fromUri(sourceUri as `${string}:${string}`).origin : undefined
+const Player = origin ? getPlayer(origin) : undefined
 
 const App = () => {
-  if (!url || !Player) return <div>Unsupported or missing url</div>
-  return <Player url={url} />
+  if (!mediaUri || !episodeUri || !sourceUri || !url || !Player) {
+    return <div>Unsupported or missing parameters</div>
+  }
+  return <Player url={url} mediaUri={mediaUri} episodeUri={episodeUri} sourceUri={sourceUri} />
 }
 
-render(<App />, document.body)
+render(<App />, document.getElementById('app')!)
