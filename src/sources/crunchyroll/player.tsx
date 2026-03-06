@@ -1,5 +1,7 @@
 import type { Frame } from '@fkn/lib'
 
+import type { PlayerProps } from '../players'
+
 import { css } from '@emotion/react'
 import { newFrame } from '@fkn/lib'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
@@ -56,13 +58,12 @@ const checkLoginState = async (frame: Frame) => {
   return undefined
 }
 
-import type { PlayerProps } from '../players'
-
 const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
   const frameRef = useRef<Frame>(undefined)
   const [loading, setLoading] = useState(true)
   const [loggedOut, setLoggedOut] = useState(false)
+  const [error, setError] = useState<string>()
 
   useEffect(() => {
     if (!iframe || frameRef.current) return
@@ -81,7 +82,11 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       const state = await checkLoginState(frame)
       if (cancelled) return
       if (state === 'logged-out') setLoggedOut(true)
-    })()
+    })().catch(err => {
+      if (cancelled) return
+      setLoading(false)
+      setError(err?.message ?? 'Failed to load player')
+    })
     return () => { cancelled = true }
   }, [iframe, url])
 
@@ -104,6 +109,28 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       })()
     }, 500)
   }, [url])
+
+  if (error) {
+    return (
+      <div
+        className="player-container"
+        css={css`
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1.6rem;
+          aspect-ratio: 16 / 9;
+          background: #000;
+          border-radius: 0.8rem;
+          font-size: 1.4rem;
+          color: rgba(255, 255, 255, 0.8);
+        `}
+      >
+        {error}
+      </div>
+    )
+  }
 
   if (loggedOut) {
     return (
