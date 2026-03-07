@@ -24,7 +24,7 @@ const fetchToken = async (ctx: ExtractorServerContext): Promise<string> => {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'x-requested-with': 'XMLHttpRequest',
     },
-    body: `user_name=${Date.now()}.804`,
+    body: `user_name=anonymous`,
     method: 'POST',
     mode: 'cors',
     credentials: 'include'
