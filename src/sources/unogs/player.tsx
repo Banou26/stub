@@ -50,14 +50,14 @@ const waitForContentScript = async <T,>(fn: () => Promise<T>, retries = 10, dela
 }
 
 const checkIsLoggedIn = async (frame: Frame) => {
-  for (let i = 0; i < 150; i++) {
-    if (i === 149) throw new Error('Login state check timed out')
-    const hasLoginForm = await frame.locator('[data-uia="login-page-container"], input[name="userLoginId"]').exists()
+  for (let i = 0; i < 50; i++) {
+    const hasLoginForm = await frame.locator('[data-uia="header"] a[href*="/login"]').exists()
     if (hasLoginForm) return false
     const hasPlayer = await frame.locator('.watch-video, [data-uia="video-canvas"]').exists()
     if (hasPlayer) return true
     await new Promise(r => setTimeout(r, 200))
   }
+  return false
 }
 
 const NetflixPlayer = ({ url }: PlayerProps) => {
@@ -66,6 +66,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
   const [loading, setLoading] = useState(true)
   const [loggedOut, setLoggedOut] = useState(false)
   const [error, setError] = useState<string>()
+  const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
     if (!iframe || frameRef.current) return
@@ -91,7 +92,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
       setError(err?.message ?? 'Failed to load player')
     })
     return () => { cancelled = true }
-  }, [iframe, url])
+  }, [iframe, url, retryCount])
 
   const openLogin = useCallback(() => {
     const popup = globalThis.open(NETFLIX_LOGIN_URL, '_blank', 'width=500,height=700')
@@ -102,8 +103,9 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
       frameRef.current = undefined
       setLoggedOut(false)
       setLoading(true)
+      setRetryCount(c => c + 1)
     }, 500)
-  }, [url])
+  }, [])
 
   const overlay = (loggedOut || error || loading) && (
     <div
