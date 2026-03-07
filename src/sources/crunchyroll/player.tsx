@@ -47,15 +47,32 @@ const CRUNCHYROLL_LOGIN_URL = (() => {
   return `https://sso.crunchyroll.com/login?return_url=${encodeURIComponent(`/authorize?${authorizeParams}`)}`
 })()
 
-const checkLoginState = async (frame: Frame) => {
-  for (let i = 0; i < 15; i++) {
-    await new Promise(r => setTimeout(r, 1000))
-    const count = (await frame.locator('.erc-anonymous-user-menu-old').count()) as number
-    if (count > 0) return 'logged-out' as const
-    const authCount = (await frame.locator('.erc-user-menu-old').count()) as number
-    if (authCount > 0) return 'logged-in' as const
+const waitForContentScript = async <T,>(fn: () => Promise<T>, retries = 10, delay = 500): Promise<T> => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn()
+    } catch (err) {
+      if (i === retries - 1 || !(err instanceof Error) || !err.message.includes('not registered')) throw err
+      await new Promise(r => setTimeout(r, delay))
+    }
   }
-  return undefined
+  throw new Error('unreachable')
+}
+
+const checkIsLoggedIn = async (frame: Frame) => {
+  for (let i = 0; i < 300; i++) {
+    if (i === 299) throw new Error('Login state check timed out')
+    const isLoading = await frame.locator('.shell-header-user-avatar [class*="loading"]').exists()
+    if (isLoading) {
+      await new Promise(r => setTimeout(r, 100))
+      continue
+    }
+    const isLoggedOut = await frame.locator('.erc-anonymous-user-menu-old').exists()
+    const isLoggedIn = await frame.locator('.erc-authenticated-user-menu-old').exists()
+    if (isLoggedOut) return false
+    if (isLoggedIn) return true
+    await new Promise(r => setTimeout(r, 100))
+  }
 }
 
 const CrunchyrollPlayer = ({ url }: PlayerProps) => {
@@ -76,13 +93,14 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       if (cancelled) return
       frameRef.current = frame
       await frame.goto(url, { waitUntil: 'documentstart' })
-      await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
+      await waitForContentScript(() => frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS }))
       if (cancelled) return
       setLoading(false)
-      const state = await checkLoginState(frame)
+      const isLoggedIn = await checkIsLoggedIn(frame)
       if (cancelled) return
-      if (state === 'logged-out') setLoggedOut(true)
+      if (!isLoggedIn) setLoggedOut(true)
     })().catch(err => {
+      console.error(err)
       if (cancelled) return
       setLoading(false)
       setError(err?.message ?? 'Failed to load player')
@@ -96,85 +114,64 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     const interval = setInterval(() => {
       if (!popup.closed) return
       clearInterval(interval)
-      // Re-check login state by reloading the iframe
-      const frame = frameRef.current
-      if (!frame) return
+      frameRef.current = undefined
       setLoggedOut(false)
       setLoading(true)
-      ;(async () => {
-        await frame.goto(url, { waitUntil: 'documentstart' })
-        setLoading(false)
-        const state = await checkLoginState(frame)
-        if (state === 'logged-out') setLoggedOut(true)
-      })()
     }, 500)
   }, [url])
 
-  if (error) {
-    return (
-      <div
-        className="player-container"
-        css={css`
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1.6rem;
-          aspect-ratio: 16 / 9;
-          background: #000;
-          border-radius: 0.8rem;
-          font-size: 1.4rem;
-          color: rgba(255, 255, 255, 0.8);
-        `}
-      >
-        {error}
-      </div>
-    )
-  }
-
-  if (loggedOut) {
-    return (
-      <div
-        className="player-container"
-        css={css`
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1.6rem;
-          aspect-ratio: 16 / 9;
-          background: #000;
-          border-radius: 0.8rem;
-          font-size: 1.4rem;
-          color: rgba(255, 255, 255, 0.8);
-        `}
-      >
-        You need to be logged in to Crunchyroll to watch this content.
-        <button
-          onClick={openLogin}
-          css={css`
-            padding: 0.8rem 2rem;
-            background: #f47521;
-            color: #fff;
-            border: none;
-            border-radius: 0.4rem;
-            font-size: 1.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            &:hover {
-              background: #e0651a;
-            }
-          `}
-        >
-          Open Crunchyroll Login Page
-        </button>
-      </div>
-    )
-  }
+  const overlay = (loggedOut || error || loading) && (
+    <div
+      css={css`
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.6rem;
+        background: #000;
+        border-radius: 0.8rem;
+        font-size: 1.4rem;
+        color: rgba(255, 255, 255, 0.8);
+        z-index: 1;
+      `}
+    >
+      {loggedOut && (
+        <>
+          You need to be logged in to Crunchyroll to watch this content.
+          <button
+            onClick={openLogin}
+            css={css`
+              padding: 0.8rem 2rem;
+              background: #f47521;
+              color: #fff;
+              border: none;
+              border-radius: 0.4rem;
+              font-size: 1.4rem;
+              font-weight: 600;
+              cursor: pointer;
+              &:hover {
+                background: #e0651a;
+              }
+            `}
+          >
+            Open Crunchyroll Login Page
+          </button>
+        </>
+      )}
+      {error && !loggedOut && error}
+      {loading && !error && !loggedOut && 'Loading Crunchyroll player...'}
+    </div>
+  )
 
   return (
-    <div className="player-container">
-      {loading ? <div className="player-loading">Loading Crunchyroll player...</div> : undefined}
+    <div
+      css={css`
+        position: relative;
+      `}
+    >
+      {overlay}
       <iframe
         ref={setIframe}
         referrerPolicy="no-referrer"
