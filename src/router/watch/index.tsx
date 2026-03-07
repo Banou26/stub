@@ -22,12 +22,7 @@ const GET_WATCH_MEDIA = gql(`
         title
       }
       episodes {
-        _id
-        uri
-        origin
-        id
-        url
-        mediaUri
+        ...EpisodeFragment
         episodeNumber
         titles {
           title
@@ -47,6 +42,19 @@ const GET_WATCH_MEDIA = gql(`
           titles {
             title
           }
+        }
+      }
+      handles {
+        ...MediaFragment
+        handles {
+          ...MediaFragment
+          episodes {
+            ...EpisodeFragment
+          }
+        }
+        episodes {
+          ...EpisodeFragment
+          episodeNumber
         }
       }
     }
