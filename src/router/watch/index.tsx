@@ -79,22 +79,21 @@ const GET_WATCH_ORIGINS = gql(`
 const style = css`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   color: rgb(255, 255, 255);
-  padding: 2rem;
 
   .watch-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    width: 100%;
-    max-width: 120rem;
+    flex: 1;
+    min-height: 0;
   }
 
   .player-container {
     position: relative;
-    width: 100%;
+    flex: 1;
+    min-height: 0;
 
     .player-loading {
       position: absolute;
@@ -103,17 +102,26 @@ const style = css`
       align-items: center;
       justify-content: center;
       background: #000;
-      border-radius: 0.8rem;
       font-size: 1.4rem;
       opacity: 0.7;
-      aspect-ratio: 16 / 9;
     }
+  }
+
+  .watch-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    padding: 1.6rem 2.4rem;
+    width: 100%;
+    max-width: 2200px;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .episode-info {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
 
     .episode-title {
       font-size: 1.8rem;
@@ -129,7 +137,7 @@ const style = css`
   .sources {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.6rem;
 
     .sources-label {
       font-size: 1.2rem;
@@ -253,67 +261,69 @@ const Watch = () => {
               allow="encrypted-media; autoplay; fullscreen;"
               css={css`
                 width: 100%;
-                aspect-ratio: 16 / 9;
                 border: none;
-                border-radius: 0.8rem;
                 background: #000;
+                flex: 1;
+                min-height: 0;
               `}
             />
           )
           : undefined}
 
-        <div className="episode-info">
-          <div className="episode-title">
-            {
-              episodeTitle
-                ? `${episodeNumber != null ? `E${episodeNumber} - ` : ''}${episodeTitle}`
-                : episodeNumber != null
-                  ? `Episode ${episodeNumber}`
-                  : params.episodeUri
-            }
+        <div className="watch-info">
+          <div className="episode-info">
+            <div className="episode-title">
+              {
+                episodeTitle
+                  ? `${episodeNumber != null ? `E${episodeNumber} - ` : ''}${episodeTitle}`
+                  : episodeNumber != null
+                    ? `Episode ${episodeNumber}`
+                    : params.episodeUri
+              }
+            </div>
+            {mediaTitle ? <div className="media-title">{mediaTitle}</div> : undefined}
           </div>
-          {mediaTitle ? <div className="media-title">{mediaTitle}</div> : undefined}
-        </div>
 
-        {
-          originData?.originPage?.nodes?.length
-            ? (
-              <div className="sources">
-                <div className="sources-label">Sources</div>
-                <div className="sources-list">
-                  {
-                    originData.originPage.nodes.map(origin => {
-                      const handle = episode?.handles.find(h => h.origin === origin.id)
-                      const sourceUri = handle?.uri
-                      const isActive = selectedSourceUri === sourceUri
-                      const watchPath = sourceUri
-                        ? getRoutePath(Route.WATCH, {
-                          mediaUri: params.mediaUri,
-                          episodeUri: params.episodeUri,
-                          sourceUri
-                        })
-                        : undefined
+          {
+            originData?.originPage?.nodes?.length
+              ? (
+                <div className="sources">
+                  <div className="sources-label">Sources</div>
+                  <div className="sources-list">
+                    {
+                      originData.originPage.nodes.map(origin => {
+                        const handle = episode?.handles.find(h => h.origin === origin.id)
+                        const sourceUri = handle?.uri
+                        const isActive = selectedSourceUri === sourceUri
+                        const watchPath = sourceUri
+                          ? getRoutePath(Route.WATCH, {
+                            mediaUri: params.mediaUri,
+                            episodeUri: params.episodeUri,
+                            sourceUri
+                          })
+                          : undefined
 
-                      return (
-                        <a
-                          key={origin.id}
-                          className={`source${isActive ? ' active' : ''}`}
-                          href={watchPath ?? handle?.url ?? undefined}
-                          target={watchPath ? undefined : '_blank'}
-                          rel={watchPath ? undefined : 'noreferrer'}
-                          title={origin.name}
-                        >
-                          {origin.icon ? <img src={origin.icon} alt={origin.name} /> : undefined}
-                          <span className="source-name">{origin.name}</span>
-                        </a>
-                      )
-                    })
-                  }
+                        return (
+                          <a
+                            key={origin.id}
+                            className={`source${isActive ? ' active' : ''}`}
+                            href={watchPath ?? handle?.url ?? undefined}
+                            target={watchPath ? undefined : '_blank'}
+                            rel={watchPath ? undefined : 'noreferrer'}
+                            title={origin.name}
+                          >
+                            {origin.icon ? <img src={origin.icon} alt={origin.name} /> : undefined}
+                            <span className="source-name">{origin.name}</span>
+                          </a>
+                        )
+                      })
+                    }
+                  </div>
                 </div>
-              </div>
-            )
-            : undefined
-        }
+              )
+              : undefined
+          }
+        </div>
       </div>
     </div>
   )
