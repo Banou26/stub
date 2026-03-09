@@ -12,42 +12,60 @@ export default async <TSchema extends Record<string, unknown> = Record<string, n
   const sqlite3 = SQLite.Factory(module) as SQLiteAPI
   const database = await sqlite3.open_v2(':memory:')
   const mutex = new Mutex()
+  let transactionRelease: (() => void) | null = null
+
+  const exec = async (sql: string, params: SQLiteCompatibleType[], method: string) => {
+    if (method === 'run') {
+      for await (const stmt of sqlite3.statements(database, sql)) {
+        if (params.length > 0) {
+          sqlite3.bind_collection(stmt, params)
+        }
+        await sqlite3.step(stmt)
+      }
+      sqlite3.changes(database)
+      return { rows: [] }
+    } else {
+      const rows = [] as SQLiteCompatibleType[][]
+      for await (const stmt of sqlite3.statements(database, sql)) {
+        if (params.length > 0) {
+          sqlite3.bind_collection(stmt, params)
+        }
+        while (await sqlite3.step(stmt) === SQLite.SQLITE_ROW) {
+          const rowData = sqlite3.row(stmt)
+          rows.push(rowData)
+        }
+      }
+      return (
+        method === 'get'
+          ? { rows: rows[0] ?? [] }
+          : { rows }
+      )
+    }
+  }
 
   return drizzle(
     async (sql, params: SQLiteCompatibleType[], method) => {
-      const release = await mutex.acquire()
+      const sqlLower = sql.trim().toLowerCase()
+      const isBegin = sqlLower === 'begin'
+      const isEnd = sqlLower === 'commit' || sqlLower === 'rollback'
+
+      if (isBegin) {
+        transactionRelease = await mutex.acquire()
+      }
+
+      const release = transactionRelease ? undefined : await mutex.acquire()
       try {
-        if (method === 'run') {
-          for await (const stmt of sqlite3.statements(database, sql)) {
-            if (params.length > 0) {
-              sqlite3.bind_collection(stmt, params)
-            }
-            await sqlite3.step(stmt)
-          }
-          sqlite3.changes(database)
-          return { rows: [] }
-        } else {
-          const rows = [] as SQLiteCompatibleType[][]
-          for await (const stmt of sqlite3.statements(database, sql)) {
-            if (params.length > 0) {
-              sqlite3.bind_collection(stmt, params)
-            }
-            while (await sqlite3.step(stmt) === SQLite.SQLITE_ROW) {
-              const rowData = sqlite3.row(stmt)
-              rows.push(rowData)
-            }
-          }
-          return (
-            method === 'get'
-              ? { rows: rows[0] ?? [] }
-              : { rows }
-          )
-        }
+        return await exec(sql, params, method)
       } catch (error) {
         console.error('wa-sqlite query error:', error)
         throw error
       } finally {
-        release()
+        if (release) release()
+        if (isEnd && transactionRelease) {
+          const r = transactionRelease
+          transactionRelease = null
+          r()
+        }
       }
     },
     async () => {
