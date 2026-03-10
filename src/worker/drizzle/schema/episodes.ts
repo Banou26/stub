@@ -16,7 +16,8 @@ export const episodeBaseSchema = {
   releaseDate: integer('releaseDate', { mode: 'timestamp' }),
   seasonNumber: integer('seasonNumber'),
   episodeNumber: integer('episodeNumber'),
-  absoluteEpisodeNumber: integer('absoluteEpisodeNumber')
+  absoluteEpisodeNumber: integer('absoluteEpisodeNumber'),
+  runtime: integer('runtime')
 } satisfies Record<string, SQLiteColumnBuilderBase>
 
 // Episode table with JSON fields for content

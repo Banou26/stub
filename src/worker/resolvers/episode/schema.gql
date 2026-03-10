@@ -29,6 +29,8 @@ type Episode {
   seasonNumber: Int
   episodeNumber: Int
   absoluteEpisodeNumber: Int
+  """Runtime in minutes"""
+  runtime: Int
 }
 
 type EpisodeTitle {

@@ -515,6 +515,7 @@ const normalizeGraphqlEpisode = (episode: DrizzleEpisode & { handles?: { episode
   seasonNumber: episode.seasonNumber ?? null,
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+  runtime: episode.runtime ?? undefined,
   handles: episode.handles?.map(handle => normalizeGraphqlEpisode(handle.episode)) ?? []
 })
 
@@ -549,6 +550,7 @@ const normalizeDrizzleEpisode = (episode: GraphqlEpisode): DrizzleEpisode => ({
   seasonNumber: episode.seasonNumber ?? null,
   episodeNumber: episode.episodeNumber ?? null,
   absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+  runtime: episode.runtime ?? null,
 })
 
 export const normalizeDrizzleAggregatedEpisode = (episode: GraphqlEpisode): CreateAggregatedEpisode => ({
@@ -616,7 +618,8 @@ export const insertManyEpisode = async (tx: DrizzleSQLiteTransaction, episodes: 
             releaseDate: sql`excluded.releaseDate`,
             seasonNumber: sql`excluded.seasonNumber`,
             episodeNumber: sql`excluded.episodeNumber`,
-            absoluteEpisodeNumber: sql`excluded.absoluteEpisodeNumber`
+            absoluteEpisodeNumber: sql`excluded.absoluteEpisodeNumber`,
+            runtime: sql`excluded.runtime`
           }
         })
   }
@@ -653,7 +656,8 @@ export const insertManyAggregatedEpisode = async (tx: DrizzleSQLiteTransaction, 
             releaseDate: sql`COALESCE(excluded.releaseDate, ${aggregatedEpisodeTable.releaseDate})`,
             seasonNumber: sql`COALESCE(excluded.seasonNumber, ${aggregatedEpisodeTable.seasonNumber})`,
             episodeNumber: sql`COALESCE(excluded.episodeNumber, ${aggregatedEpisodeTable.episodeNumber})`,
-            absoluteEpisodeNumber: sql`COALESCE(excluded.absoluteEpisodeNumber, ${aggregatedEpisodeTable.absoluteEpisodeNumber})`
+            absoluteEpisodeNumber: sql`COALESCE(excluded.absoluteEpisodeNumber, ${aggregatedEpisodeTable.absoluteEpisodeNumber})`,
+            runtime: sql`COALESCE(excluded.runtime, ${aggregatedEpisodeTable.runtime})`
           }
         })
   }

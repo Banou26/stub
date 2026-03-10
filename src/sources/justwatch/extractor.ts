@@ -180,6 +180,7 @@ interface JWEpisode {
     seasonNumber: number
     isReleased: boolean
     shortDescription: string | null
+    runtime: number | null
   }
   flatrate: { package: { clearName: string, packageId: number, shortName: string } }[]
 }
@@ -330,6 +331,7 @@ const NODE_QUERY = `
                 seasonNumber
                 isReleased
                 shortDescription
+                runtime
               }
               flatrate: offers(
                 country: $country
@@ -480,7 +482,8 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode => {
       : [],
     thumbnails: [],
     seasonNumber: ep.content.seasonNumber,
-    episodeNumber: ep.content.episodeNumber
+    episodeNumber: ep.content.episodeNumber,
+    runtime: ep.content.runtime ?? undefined
   } satisfies GQLEpisode
 }
 
