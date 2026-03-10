@@ -426,6 +426,9 @@ const normalizeShowNode = (node: JWShowNode, seasonNumber?: number): GQLMedia =>
   const id = String(node.objectId)
   const uri = toUri({ origin, id })
   const posterUrl = resolveImageUrl(node.content.posterUrl)
+  const title = seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
+    ? `${node.content.title} Season ${seasonNumber}`
+    : node.content.title
 
   const filteredSeasons = seasonNumber != null
     ? node.seasons?.filter(s => s.content.seasonNumber === seasonNumber) ?? []
@@ -443,12 +446,17 @@ const normalizeShowNode = (node: JWShowNode, seasonNumber?: number): GQLMedia =>
     origin,
     id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
-    handles: buildOffersAsHandles(node.offers ?? [], {
-      shortDescription: node.content.shortDescription,
-      title: node.content.title,
-      posterUrl: resolveImageUrl(node.content.posterUrl)
-    }),
-    titles: [{ language: 'en', title: node.content.title }],
+    // Don't create streaming handles when season-filtering — the offer URLs point to the
+    // whole show (e.g. netflix.com/title/X), which would cause other extractors to fetch
+    // ALL seasons' episodes and associate them with this season-specific media
+    handles: seasonNumber != null
+      ? []
+      : buildOffersAsHandles(node.offers ?? [], {
+        shortDescription: node.content.shortDescription,
+        title,
+        posterUrl: resolveImageUrl(node.content.posterUrl)
+      }),
+    titles: [{ language: 'en', title }],
     descriptions: node.content.shortDescription
       ? [{ language: 'en', description: node.content.shortDescription }]
       : [],
@@ -528,6 +536,12 @@ const findMatchingSeason = (
   return bestMatch?.content.seasonNumber
 }
 
+// Parse season number from a title like "Frieren: Beyond Journey's End Season 2" → 2
+const parseSeasonNumber = (title: string): number | undefined => {
+  const match = title.match(/\b(?:Season|Part|Cour)\s+(\d+)\b/i)
+  return match ? Number(match[1]) : undefined
+}
+
 // Title simplification for search
 const simplifyTitle = (title: string): string[] => {
   const queries: string[] = []
@@ -566,6 +580,52 @@ const waitForEpisodeCount = async (
 const getFirstTitle = (media: { titles?: { title: string }[] } | undefined): string | undefined =>
   media?.titles?.[0]?.title
 
+// Try to determine season number from aggregated media data (title or episode count)
+const tryResolveSeasonFromMedia = (
+  existing: { titles?: { title: string }[], episodeCount?: number | null, episodes?: unknown[] } | undefined,
+  seasons: JWSeason[]
+): number | undefined => {
+  const title = getFirstTitle(existing)
+  if (title) {
+    const fromTitle = parseSeasonNumber(title)
+    if (fromTitle) return fromTitle
+  }
+  const targetEpCount = existing?.episodeCount ?? existing?.episodes?.length
+  if (targetEpCount) return findMatchingSeason(seasons, targetEpCount)
+  return undefined
+}
+
+// Determine the season number from existing aggregated media context,
+// waiting for other extractors to populate data if needed
+const resolveSeasonNumber = async (
+  aggregatedUri: string,
+  node: JWShowNode,
+  ctx: ExtractorServerContext
+): Promise<number | undefined> => {
+  if (!node.seasons || node.seasons.length <= 1) return undefined
+
+  // Try immediately
+  const existing = await ctx.findAggregatedMedia(aggregatedUri)
+  const immediate = tryResolveSeasonFromMedia(existing, node.seasons)
+  if (immediate) return immediate
+
+  // Wait for other extractors to populate title or episode count
+  const abortController = new AbortController()
+  const timeout = setTimeout(() => abortController.abort(), 15_000)
+  const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
+  try {
+    for await (const _ of changes) {
+      const updated = await ctx.findAggregatedMedia(aggregatedUri)
+      const result = tryResolveSeasonFromMedia(updated, node.seasons)
+      if (result) return result
+    }
+  } finally {
+    clearTimeout(timeout)
+    abortController.abort()
+  }
+  return undefined
+}
+
 const searchAndLinkMedia = async (
   title: string,
   aggregatedUri: string,
@@ -583,12 +643,15 @@ const searchAndLinkMedia = async (
     const node = detailRes.data?.node
     if (!node) continue
 
-    // Determine matching season
+    // Determine matching season — try title first, then episode count
     let seasonNumber: number | undefined
     if (node.seasons?.length > 1) {
-      const targetEpCount = await waitForEpisodeCount(aggregatedUri, ctx)
-      if (targetEpCount) {
-        seasonNumber = findMatchingSeason(node.seasons, targetEpCount)
+      seasonNumber = parseSeasonNumber(title)
+      if (!seasonNumber) {
+        const targetEpCount = await waitForEpisodeCount(aggregatedUri, ctx)
+        if (targetEpCount) {
+          seasonNumber = findMatchingSeason(node.seasons, targetEpCount)
+        }
       }
     }
 
@@ -619,7 +682,11 @@ export const resolvers: Resolvers = {
             yield { media: null }
             return
           }
-          const media = normalizeShowNode(node)
+          // Determine season from aggregated media context (title or episode count)
+          const seasonNumber = isAggregatedUri(_uri)
+            ? await resolveSeasonNumber(_uri, node, ctx)
+            : undefined
+          const media = normalizeShowNode(node, seasonNumber)
           if (isAggregatedUri(_uri)) {
             const aggregatedHandles = buildHandlesFromAggregatedUri(_uri)
             const existingOrigins = new Set(media.handles.map(h => h.origin))
@@ -685,7 +752,14 @@ export const resolvers: Resolvers = {
       const node = detailRes.data?.node
       if (!node?.seasons) return []
 
-      return node.seasons.flatMap(season =>
+      // Determine season from existing episodes' seasonNumber, or from the aggregated media title
+      const existingSeasonNumber = parent.episodes?.find(ep => ep.seasonNumber != null)?.seasonNumber
+        ?? (parent.titles?.[0]?.title ? parseSeasonNumber(parent.titles[0].title) : undefined)
+      const seasons = existingSeasonNumber != null
+        ? node.seasons.filter(s => s.content.seasonNumber === existingSeasonNumber)
+        : node.seasons
+
+      return seasons.flatMap(season =>
         (season.episodes ?? [])
           .filter(ep => ep.content.isReleased)
           .map(ep => normalizeEpisode(ep, parent.uri))
