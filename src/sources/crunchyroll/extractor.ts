@@ -368,8 +368,11 @@ export const getMedia = async (id: string, context: ExtractorServerContext): Pro
     fetchSeasons(seriesId, context)
   ])
 
-  const series = seriesResponse.data[0]
-  if (!series) return undefined
+  const series = seriesResponse?.data?.[0]
+  if (!series) {
+    console.warn('crunchyroll seriesResponse?.data?.[0] is undefined for', id, seriesResponse)
+    return undefined
+  }
 
   const seasons = seasonsResponse.data
 

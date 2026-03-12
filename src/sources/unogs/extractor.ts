@@ -372,6 +372,11 @@ const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: 
 
   const media = normalizeTitle(title, bgImagesRes)
 
+  if (seasonNumber != null) {
+    media.id = `${media.id}-${seasonNumber}`
+    media.uri = toUri({ origin, id: media.id })
+  }
+
   if (title.vtype === 'series') {
     const seasonsRes = await fetchEpisodes(id, ctx)
     const filteredSeasons = seasonNumber != null

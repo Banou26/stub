@@ -52,8 +52,8 @@ const extractContentId = (url: string): string | undefined => {
 
     // netflix.com/title/81684733
     if (host === 'netflix.com') return pathParts[1]
-    // crunchyroll.com/series/GG5H5XQX4/...
-    if (host === 'crunchyroll.com') return pathParts[1]
+    // crunchyroll.com/series/GG5H5XQX4/... — only extract from /series/ URLs, not /watch/ (episode) URLs
+    if (host === 'crunchyroll.com' && pathParts[0] === 'series') return pathParts[1]
     // amazon.com/gp/video/detail/ID or /dp/ID
     if (host.startsWith('amazon.')) return pathParts.at(-1)
     // hulu.com/series/slug-{uuid} or /watch/id
@@ -75,7 +75,7 @@ const extractContentId = (url: string): string | undefined => {
 }
 
 // Build media handles from JustWatch offers
-const buildOffersAsHandles = (offers: JWOffer[], { shortDescription, title, posterUrl }: { shortDescription?: string | null, title?: string, posterUrl?: string }): GQLMedia[] => {
+const buildOffersAsHandles = (offers: JWOffer[], { shortDescription, title, posterUrl, seasonNumber }: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number }): GQLMedia[] => {
   // Deduplicate by package shortName (pick first, which is typically best quality)
   const seen = new Set<string>()
   const handles: GQLMedia[] = []
@@ -95,8 +95,12 @@ const buildOffersAsHandles = (offers: JWOffer[], { shortDescription, title, post
 
     // Extract content-specific ID from the URL — skip if we can only get a package ID
     // Package IDs (e.g. nf:8) are shared across ALL content on that platform
-    const contentId = url ? extractContentId(url) : undefined
-    if (!contentId) continue
+    const rawContentId = url ? extractContentId(url) : undefined
+    if (!rawContentId) continue
+
+    const contentId = (mappedOrigin === 'nf' && seasonNumber != null)
+      ? `${rawContentId}-${seasonNumber}`
+      : rawContentId
 
     handles.push({
       _id: crypto.randomUUID(),
@@ -446,15 +450,11 @@ const normalizeShowNode = (node: JWShowNode, seasonNumber?: number): GQLMedia =>
     origin,
     id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
-    // Don't create streaming handles when season-filtering — the offer URLs point to the
-    // whole show (e.g. netflix.com/title/X), which would cause other extractors to fetch
-    // ALL seasons' episodes and associate them with this season-specific media
-    handles: seasonNumber != null
-      ? []
-      : buildOffersAsHandles(node.offers ?? [], {
+    handles: buildOffersAsHandles(node.offers ?? [], {
         shortDescription: node.content.shortDescription,
         title,
-        posterUrl: resolveImageUrl(node.content.posterUrl)
+        posterUrl: resolveImageUrl(node.content.posterUrl),
+        seasonNumber
       }),
     titles: [{ language: 'en', title }],
     descriptions: node.content.shortDescription
