@@ -329,10 +329,10 @@ const Episode = (
     episode.uri
       ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
       : undefined
-  const originIds = origins?.map(origin => origin.origin)
+  const originIds = [...new Set(origins?.map(origin => origin.origin) ?? [])]
   const [{ data: originData }] = useSubscription({
     query: GET_MEDIA_MODAL_ORIGINS,
-    variables: { input: { ids: originIds!, filters: [OriginFilter.IsNotApiOnly] } },
+    variables: { input: { ids: originIds, filters: [OriginFilter.IsNotApiOnly] } },
     pause: !originIds
   })
 
@@ -432,7 +432,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues
       : undefined
-  const originIds = origins?.map(origin => origin.origin)
+  const originIds = [...new Set(origins?.map(origin => origin.origin))]
   const [{ data: originData }] = useSubscription({
     query: GET_MEDIA_MODAL_ORIGINS,
     variables: { input: { ids: originIds!, filters: [OriginFilter.IsNotApiOnly] } },
