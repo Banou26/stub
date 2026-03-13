@@ -1,5 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
+
+import { z } from 'zod'
 import { MediaStatus } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
 
@@ -13,9 +15,147 @@ export const metadataOnly = true
 export const isApiOnly = false
 export const supportedUris = ['mal']
 
+const malEntitySchema = z.object({
+  mal_id: z.number(),
+  type: z.string(),
+  name: z.string(),
+  url: z.string()
+})
+
+const imageSetSchema = z.object({
+  image_url: z.string().nullable(),
+  small_image_url: z.string().nullable(),
+  large_image_url: z.string().nullable()
+})
+
+const trailerImagesSchema = z.object({
+  image_url: z.string().nullable(),
+  small_image_url: z.string().nullable(),
+  medium_image_url: z.string().nullable(),
+  large_image_url: z.string().nullable(),
+  maximum_image_url: z.string().nullable()
+})
+
+const datePartSchema = z.object({
+  day: z.number().nullable(),
+  month: z.number().nullable(),
+  year: z.number().nullable()
+})
+
+const externalLinkSchema = z.object({
+  name: z.string(),
+  url: z.string()
+})
+
+const searchAnimeDataSchema = z.object({
+  mal_id: z.number(),
+  url: z.string(),
+  images: z.object({
+    jpg: imageSetSchema,
+    webp: imageSetSchema
+  }),
+  trailer: z.object({
+    youtube_id: z.string().nullable(),
+    url: z.string().nullable(),
+    embed_url: z.string().nullable(),
+    images: trailerImagesSchema
+  }),
+  approved: z.boolean(),
+  titles: z.array(z.object({
+    type: z.string(),
+    title: z.string()
+  })),
+  title: z.string(),
+  title_english: z.string().nullable(),
+  title_japanese: z.string().nullable(),
+  title_synonyms: z.array(z.string()),
+  type: z.string().nullable(),
+  source: z.string().nullable(),
+  episodes: z.number().nullable(),
+  status: z.string().nullable(),
+  airing: z.boolean(),
+  aired: z.object({
+    from: z.string().nullable(),
+    to: z.string().nullable(),
+    prop: z.object({
+      from: datePartSchema,
+      to: datePartSchema
+    }),
+    string: z.string().nullable()
+  }),
+  duration: z.string().nullable(),
+  rating: z.string().nullable(),
+  score: z.number().nullable(),
+  scored_by: z.number().nullable(),
+  rank: z.number().nullable(),
+  popularity: z.number().nullable(),
+  members: z.number().nullable(),
+  favorites: z.number().nullable(),
+  synopsis: z.string().nullable(),
+  background: z.string().nullable(),
+  season: z.string().nullable(),
+  year: z.number().nullable(),
+  broadcast: z.object({
+    day: z.string().nullable(),
+    time: z.string().nullable(),
+    timezone: z.string().nullable(),
+    string: z.string().nullable()
+  }),
+  producers: z.array(malEntitySchema),
+  licensors: z.array(malEntitySchema),
+  studios: z.array(malEntitySchema),
+  genres: z.array(malEntitySchema),
+  explicit_genres: z.array(malEntitySchema),
+  themes: z.array(malEntitySchema),
+  demographics: z.array(malEntitySchema)
+})
+
+const animeDataSchema = searchAnimeDataSchema.extend({
+  relations: z.array(z.object({
+    relation: z.string(),
+    entry: z.array(malEntitySchema)
+  })),
+  theme: z.object({
+    openings: z.array(z.string()),
+    endings: z.array(z.string())
+  }),
+  external: z.array(externalLinkSchema),
+  streaming: z.array(externalLinkSchema)
+})
+
+const paginationSchema = z.object({
+  last_visible_page: z.number(),
+  has_next_page: z.boolean(),
+  current_page: z.number(),
+  items: z.object({
+    count: z.number(),
+    total: z.number(),
+    per_page: z.number()
+  })
+})
+
+const animeSearchResponseSchema = z.object({
+  data: z.array(searchAnimeDataSchema),
+  pagination: paginationSchema
+})
+
+const animeResponseSchema = z.object({
+  data: animeDataSchema
+})
+
+type SearchAnimeData = z.infer<typeof searchAnimeDataSchema>
+type AnimeData = z.infer<typeof animeDataSchema>
+
+// Helpers
+
 const youtubeEmbedRegex = /\/embed\/([a-zA-Z0-9_-]{11})/
 
-const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {
+const toDate = (prop: { year: number | null, month: number | null, day: number | null }): string | undefined => {
+  if (prop.year == null || prop.month == null || prop.day == null) return undefined
+  return new Date(prop.year, prop.month, prop.day).toUTCString()
+}
+
+const normalizeMedia = async (data: SearchAnimeData & { external?: { name: string, url: string }[] }, context: ExtractorServerContext) => {
   const aniDBSource = data.external?.find(site => site.name === 'AniDB')
   const aniDBId =
     aniDBSource
@@ -51,7 +191,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
     data.trailer?.embed_url
       ? data.trailer.embed_url.match(youtubeEmbedRegex)?.[1]
       : undefined
-  
+
   const trailers: MediaTrailer[] =
       data.trailer?.youtube_id ? [{
       uri: `yt:${data.trailer.youtube_id}`,
@@ -70,7 +210,9 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       thumbnail: data.trailer.images.image_url
     }]
     : []
-  
+
+  const coverUrl = data.images.webp.large_image_url
+
   return {
     _id: crypto.randomUUID(),
     uri: `${origin}:${data.mal_id}`,
@@ -96,10 +238,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       ... data.title ? [{ language: 'jp-en', title: data.title, score: 1 }] : [],
       ... data.title_japanese ? [{ language: 'jp', title: data.title_japanese, score: 1 }] : []
     ],
-    covers: [{
-      language: 'en',
-      url: data.images.webp.large_image_url
-    }],
+    covers: coverUrl ? [{ language: 'en', url: coverUrl }] : [],
     banners: [],
     episodes: [],
     episodeCount: data.episodes,
@@ -109,36 +248,33 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       : data.status === 'Currently Airing' ? MediaStatus.Releasing
       : data.status === 'Finished Airing' ? MediaStatus.Finished
       : undefined,
-    startDate: new Date(data.aired.prop.from.year, data.aired.prop.from.month, data.aired.prop.from.day).toUTCString(),
-    endDate: new Date(data.aired.prop.to.year, data.aired.prop.to.month, data.aired.prop.to.day).toUTCString(),
+    startDate: toDate(data.aired.prop.from),
+    endDate: toDate(data.aired.prop.to),
     trailers
   } satisfies Media
 }
 
+// API functions
+
 const fetchSearchAnime = ({ search }: { search: string }, context: ExtractorServerContext) =>
   context
     .fetch(`https://api.jikan.moe/v4/anime?q=${search}`)
-    .then(response => response.json() as Promise<AnimeSearchResponse>)
-    .then(json =>
-      json.data
-        ? json.data.map(media => normalizeMedia(media, context))
-        : undefined
-    )
+    .then(response => response.json())
+    .then(json => animeSearchResponseSchema.parse(json))
+    .then(({ data }) => data.map(media => normalizeMedia(media, context)))
 
 const fetchMedia = ({ id }: { id: number }, context: ExtractorServerContext) =>
   context
     .fetch(`https://api.jikan.moe/v4/anime/${id}/full`)
-    .then(response => response.json() as Promise<AnimeResponse>)
-    .then(json =>
-      json.data
-        ? normalizeMedia(json.data, context)
-        : undefined
-    )
+    .then(response => response.json())
+    .then(json => animeResponseSchema.parse(json))
+    .then(({ data }) => normalizeMedia(data, context))
 
 const getSeasonNow = (page = 1, context: ExtractorServerContext) =>
   context
     .fetch(`https://api.jikan.moe/v4/seasons/now?page=${page}&sfw=true`)
-    .then(response => response.json() as Promise<AnimeSearchResponse>)
+    .then(response => response.json())
+    .then(json => animeSearchResponseSchema.parse(json))
 
 const getFullSeasonNow = async (context: ExtractorServerContext) => {
   const { data, pagination } = await getSeasonNow(1, context)
@@ -195,160 +331,4 @@ export const resolvers: Resolvers = {
       }
     },
   }
-}
-
-
-interface MalEntity {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-interface ImageUrls {
-  image_url: string
-  small_image_url: string
-  medium_image_url: string
-  large_image_url: string
-  maximum_image_url: string
-}
-
-interface Images {
-  jpg: Omit<ImageUrls, 'medium_image_url' | 'maximum_image_url'>
-  webp: Omit<ImageUrls, 'medium_image_url' | 'maximum_image_url'>
-}
-
-interface Trailer {
-  youtube_id: string
-  url: string
-  embed_url: string
-  images: ImageUrls
-}
-
-interface Title {
-  type: string
-  title: string
-}
-
-interface DateProp {
-  day: number
-  month: number
-  year: number
-}
-
-interface AiredDates {
-  from: string
-  to: string
-  prop: {
-    from: DateProp
-    to: DateProp
-    string: string
-  }
-}
-
-interface Broadcast {
-  day: string
-  time: string
-  timezone: string
-  string: string
-}
-
-interface Relation {
-  relation: string
-  entry: MalEntity[]
-}
-
-interface Theme {
-  openings: string[]
-  endings: string[]
-}
-
-interface ExternalLink {
-  name: string
-  url: string
-}
-
-type AnimeType = 'TV' | 'Movie' | 'OVA' | 'Special' | 'ONA' | 'Music'
-
-type AiringStatus =
-  | 'Finished Airing'
-  | 'Currently Airing'
-  | 'Not yet aired'
-
-type Rating =
-  | 'G - All Ages'
-  | 'PG - Children'
-  | 'PG-13 - Teens 13 or older'
-  | 'R - 17+ (violence & profanity)'
-  | 'R+ - Mild Nudity'
-  | 'Rx - Hentai'
-
-type Season = 'spring' | 'summer' | 'fall' | 'winter'
-
-interface AnimeData {
-  mal_id: number
-  url: string
-  images: Images
-  trailer: Trailer
-  approved: boolean
-  titles: Title[]
-  title: string
-  title_english: string
-  title_japanese: string
-  title_synonyms: string[]
-  type: AnimeType
-  source: string
-  episodes: number
-  status: AiringStatus
-  airing: boolean
-  aired: AiredDates
-  duration: string
-  rating: Rating
-  score: number
-  scored_by: number
-  rank: number
-  popularity: number
-  members: number
-  favorites: number
-  synopsis: string
-  background: string
-  season: Season
-  year: number
-  broadcast: Broadcast
-  producers: MalEntity[]
-  licensors: MalEntity[]
-  studios: MalEntity[]
-  genres: MalEntity[]
-  explicit_genres: MalEntity[]
-  themes: MalEntity[]
-  demographics: MalEntity[]
-  relations: Relation[]
-  theme: Theme
-  external: ExternalLink[]
-  streaming: ExternalLink[]
-}
-
-interface AnimeResponse {
-  data: AnimeData
-}
-
-type SearchAnimeData = Omit<AnimeData, 'relations'| 'theme'| 'external'| 'streaming'>
-
-// Search-specific interfaces
-interface PaginationItems {
-  count: number;
-  total: number;
-  per_page: number;
-}
-
-interface Pagination {
-  last_visible_page: number;
-  has_next_page: boolean;
-  current_page: number;
-  items: PaginationItems;
-}
-
-interface AnimeSearchResponse {
-  data: SearchAnimeData[];
-  pagination: Pagination;
 }
