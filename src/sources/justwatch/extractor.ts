@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, fromAggregatedUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
+import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 
 export const icon = 'https://www.justwatch.com/appasset/img/favicon/favicon-32x32.png'
 export const originUrl = 'https://www.justwatch.com'
@@ -74,8 +75,20 @@ const extractContentId = (url: string): string | undefined => {
   return undefined
 }
 
+// Extract episode ID from a Crunchyroll /watch/ URL
+const extractCrunchyrollEpisodeId = (url: string): string | undefined => {
+  try {
+    const { hostname, pathname } = new URL(url)
+    const host = hostname.replace('www.', '')
+    if (host !== 'crunchyroll.com') return undefined
+    const pathParts = pathname.split('/').filter(Boolean)
+    if (pathParts[0] === 'watch') return pathParts[1]
+  } catch {}
+  return undefined
+}
+
 // Build media handles from JustWatch offers
-const buildOffersAsHandles = (offers: JWOffer[], { shortDescription, title, posterUrl, seasonNumber }: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number }): GQLMedia[] => {
+const buildOffersAsHandles = async (offers: JWOffer[], { shortDescription, title, posterUrl, seasonNumber }: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number }, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
   // Deduplicate by package shortName (pick first, which is typically best quality)
   const seen = new Set<string>()
   const handles: GQLMedia[] = []
@@ -95,12 +108,25 @@ const buildOffersAsHandles = (offers: JWOffer[], { shortDescription, title, post
 
     // Extract content-specific ID from the URL — skip if we can only get a package ID
     // Package IDs (e.g. nf:8) are shared across ALL content on that platform
+    let contentId: string | undefined
     const rawContentId = url ? extractContentId(url) : undefined
-    if (!rawContentId) continue
 
-    const contentId = (mappedOrigin === 'nf' && seasonNumber != null)
-      ? `${rawContentId}-${seasonNumber}`
-      : rawContentId
+    if (!rawContentId && mappedOrigin === 'cr' && url) {
+      // CR watch URLs have episode IDs — resolve to series ID via CR API
+      const episodeId = extractCrunchyrollEpisodeId(url)
+      if (episodeId) {
+        const resolved = await resolveEpisodeToSeriesId(episodeId, ctx)
+        if (resolved) {
+          contentId = crunchyrollId(resolved.seriesId, resolved.seasonId)
+        }
+      }
+    } else if (rawContentId) {
+      contentId = (mappedOrigin === 'nf' && seasonNumber != null)
+        ? `${rawContentId}-${seasonNumber}`
+        : rawContentId
+    }
+
+    if (!contentId) continue
 
     handles.push({
       _id: crypto.randomUUID(),
@@ -396,7 +422,7 @@ const resolveImageUrl = (url: string | null | undefined): string | undefined => 
 }
 
 // Normalization
-const normalizeSearchResult = (node: JWSearchNode): GQLMedia => {
+const normalizeSearchResult = async (node: JWSearchNode, ctx: ExtractorServerContext): Promise<GQLMedia> => {
   const id = String(node.objectId)
   const uri = toUri({ origin, id })
   const posterUrl = resolveImageUrl(node.content.posterUrl)
@@ -407,11 +433,11 @@ const normalizeSearchResult = (node: JWSearchNode): GQLMedia => {
     origin,
     id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
-    handles: buildOffersAsHandles(node.offers ?? [], {
+    handles: await buildOffersAsHandles(node.offers ?? [], {
       shortDescription: node.content.shortDescription,
       title: node.content.title,
       posterUrl: resolveImageUrl(node.content.posterUrl)
-    }),
+    }, ctx),
     titles: [{ language: 'en', title: node.content.title }],
     descriptions: node.content.shortDescription
       ? [{ language: 'en', description: node.content.shortDescription }]
@@ -426,7 +452,7 @@ const normalizeSearchResult = (node: JWSearchNode): GQLMedia => {
   } satisfies GQLMedia
 }
 
-const normalizeShowNode = (node: JWShowNode, seasonNumber?: number): GQLMedia => {
+const normalizeShowNode = async (node: JWShowNode, seasonNumber: number | undefined, ctx: ExtractorServerContext): Promise<GQLMedia> => {
   const id = String(node.objectId)
   const uri = toUri({ origin, id })
   const posterUrl = resolveImageUrl(node.content.posterUrl)
@@ -450,12 +476,12 @@ const normalizeShowNode = (node: JWShowNode, seasonNumber?: number): GQLMedia =>
     origin,
     id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
-    handles: buildOffersAsHandles(node.offers ?? [], {
+    handles: await buildOffersAsHandles(node.offers ?? [], {
         shortDescription: node.content.shortDescription,
         title,
         posterUrl: resolveImageUrl(node.content.posterUrl),
         seasonNumber
-      }),
+      }, ctx),
     titles: [{ language: 'en', title }],
     descriptions: node.content.shortDescription
       ? [{ language: 'en', description: node.content.shortDescription }]
@@ -655,7 +681,7 @@ const searchAndLinkMedia = async (
       }
     }
 
-    const media = normalizeShowNode(node, seasonNumber)
+    const media = await normalizeShowNode(node, seasonNumber, ctx)
     const aggregatedHandles = buildHandlesFromAggregatedUri(aggregatedUri)
     const existingOrigins = new Set(media.handles.map(h => h.origin))
     media.handles = [...media.handles, ...aggregatedHandles.filter(h => !existingOrigins.has(h.origin))]
@@ -686,7 +712,7 @@ export const resolvers: Resolvers = {
           const seasonNumber = isAggregatedUri(_uri)
             ? await resolveSeasonNumber(_uri, node, ctx)
             : undefined
-          const media = normalizeShowNode(node, seasonNumber)
+          const media = await normalizeShowNode(node, seasonNumber, ctx)
           if (isAggregatedUri(_uri)) {
             const aggregatedHandles = buildHandlesFromAggregatedUri(_uri)
             const existingOrigins = new Set(media.handles.map(h => h.origin))
@@ -737,7 +763,7 @@ export const resolvers: Resolvers = {
           return
         }
         const searchRes = await searchTitles(search, ctx)
-        const nodes = (searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeSearchResult(e.node))
+        const nodes = await Promise.all((searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeSearchResult(e.node, ctx)))
         yield { mediaPage: { nodes } }
       }
     }

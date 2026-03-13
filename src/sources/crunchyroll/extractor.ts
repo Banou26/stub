@@ -210,6 +210,21 @@ export const searchSeriesApi = (query: string, context: ExtractorServerContext) 
     context
   )
 
+// Resolve a Crunchyroll episode/object ID to its series and season IDs
+// Uses the /content/v2/cms/objects endpoint which returns episode_metadata
+export const resolveEpisodeToSeriesId = async (
+  episodeId: string,
+  context: ExtractorServerContext
+): Promise<{ seriesId: string, seasonId: string } | undefined> => {
+  const response = await fetchWithAuth<{ data: { id: string, episode_metadata?: { series_id: string, season_id: string } }[] }>(
+    `https://www.crunchyroll.com/content/v2/cms/objects/${episodeId}?ratings=true&locale=en-US`,
+    context
+  )
+  const meta = response.data?.[0]?.episode_metadata
+  if (!meta?.series_id) return undefined
+  return { seriesId: meta.series_id, seasonId: meta.season_id }
+}
+
 // Picks the largest image from Crunchyroll's nested image arrays (last group, last size)
 const bestImage = (images?: CrunchyrollImage[][]) =>
   images?.at(-1)?.at(-1)?.source
