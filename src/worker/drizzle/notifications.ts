@@ -87,7 +87,7 @@ export const listen = (func: (notifications: ChangeNotification[]) => void, opti
   }
 }
 
-export const listenIterator = (options?: { abort?: AbortSignal, table?: TableName, columnId?: string, ids?: string[] }) => {
+export const listenIterator = (options?: { abortSignal?: AbortSignal, table?: TableName, columnId?: string, ids?: string[] }) => {
   let resolve: ((result: { value: ChangeNotification[] | undefined, done: boolean }) => void) | null = null
   let promise: Promise<{ value: ChangeNotification[] | undefined, done: boolean }> | null = null
   const buffer: ChangeNotification[][] = []
@@ -102,8 +102,8 @@ export const listenIterator = (options?: { abort?: AbortSignal, table?: TableNam
     }
   }, options)
 
-  if (options?.abort) {
-    options.abort.addEventListener('abort', () => {
+  if (options?.abortSignal) {
+    options.abortSignal.addEventListener('abort', () => {
       unlisten()
       if (resolve) {
         resolve({ value: undefined, done: true })

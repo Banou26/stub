@@ -32,8 +32,8 @@ export const resolvers = {
           )
 
         // Register listeners before initial yield so notifications are buffered, not lost
-        const mediaListener = listenIterator({ table: 'aggregatedMedia' })
-        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
+        const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: ctx.request.signal })
+        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: ctx.request.signal })
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 
         yield await findAggregatedMedia(undefined, { uri: args.input.uri })
@@ -61,8 +61,8 @@ export const resolvers = {
           )
 
         // Register listeners before initial yield so notifications are buffered, not lost
-        const mediaListener = listenIterator({ table: 'aggregatedMedia' })
-        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes' })
+        const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: ctx.request.signal })
+        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: ctx.request.signal })
         const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 
         yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })

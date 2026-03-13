@@ -6,7 +6,6 @@ import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
 import { findOrigin, findOrigins } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
-import { mergeAsyncIterators } from '../utils'
 
 export const schema = _schema as string
 
@@ -32,7 +31,7 @@ export const resolvers = {
         if (origin) yield origin
 
         // Listen for changes
-        const originListener = listenIterator({ table: 'origin' })
+        const originListener = listenIterator({ table: 'origin', abortSignal: ctx.request.signal })
 
         try {
           for await (const _ of originListener) {
@@ -63,7 +62,7 @@ export const resolvers = {
         yield await findOrigins(undefined, { ids: args.input.ids, filters: args.input.filters ?? undefined })
 
         // Listen for changes
-        const originListener = listenIterator({ table: 'origin' })
+        const originListener = listenIterator({ table: 'origin', abortSignal: ctx.request.signal })
 
         try {
           for await (const _ of originListener) {
