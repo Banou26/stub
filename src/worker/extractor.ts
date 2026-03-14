@@ -3,6 +3,7 @@ import type { Exchange } from 'urql'
 
 import type { Episode, Media, MediaPage as GQLMediaPage, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { CreateAggregatedMediaEpisodes } from './drizzle/schema'
+import type { Uri } from 'src/utils/uri'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -33,17 +34,17 @@ import {
   insertManyOrigins,
   normalizeDrizzleOrigin,
   reAggregateEpisodesForMedia,
+  listenForMediaChanges,
 } from './drizzle/utils'
 import { aggregatedMediaEpisodesTable, aggregatedMediaHandlesTable, aggregatedMediaTable, aggregatedEpisodeTable, aggregatedEpisodeHandlesTable } from './drizzle/schema'
 import { inArray, sql } from 'drizzle-orm'
 import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
 import groupAllRelatedEpisodes from './drizzle/sql/groupAllRelatedEpisodes'
-import { listenIterator } from './drizzle/notifications'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
-  findAggregatedMedia: (uri: string) => Promise<Media | undefined>
-  listenForMediaChanges: (options?: { abort?: AbortSignal }) => ReturnType<typeof listenIterator>
+  findAggregatedMedia: (uri: Uri) => ReturnType<typeof findAggregatedMedia>
+  listenForMediaChanges: typeof listenForMediaChanges
 }
 
 export type ExtractorUserContext = {
@@ -342,8 +343,8 @@ export const extractors =
             new Request(input, init),
             {
               fetch,
-              findAggregatedMedia: (uri: string) => findAggregatedMedia(undefined, { uri }),
-              listenForMediaChanges: (options?: { abort?: AbortSignal }) => listenIterator({ ...options, table: 'aggregatedMedia' }),
+              findAggregatedMedia: (uri: Uri) => findAggregatedMedia(undefined, { uri }),
+              listenForMediaChanges
             }
           )
       })

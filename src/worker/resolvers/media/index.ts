@@ -6,12 +6,14 @@ import { eq, asc, inArray } from 'drizzle-orm'
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findAggregatedMedia, findAggregatedMedias, findMediaByUris, normalizeGraphqlAggregatedEpisode, type DrizzleSQLiteTransaction } from '../../drizzle/utils'
+import { findAggregatedMedias, findMediaByUris, listenForMediaChanges, normalizeGraphqlAggregatedEpisode, type DrizzleSQLiteTransaction } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
-import { mergeAsyncIterators, parseHTMLDescription, parseTextDescription } from '../utils'
+import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
 import database from '../../drizzle'
 import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
+import { isAggregatedUri, isUri } from '../../../utils/uri'
+import { mergeAsyncIterators } from '../../../utils/async-iterator'
 
 export const schema = _schema as string
 
@@ -22,7 +24,7 @@ export const resolvers = {
     media: {
       resolve: (parent: Media) => parent,
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
-        if (!args.input.uri) return
+        if (!args.input.uri || !(isUri(args.input.uri) || isAggregatedUri(args.input.uri))) return
         const subscriptions =
           extractors.map(extractor =>
             extractor.client.subscription(
@@ -31,21 +33,10 @@ export const resolvers = {
             ).subscribe(() => {})
           )
 
-        // Register listeners before initial yield so notifications are buffered, not lost
-        const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: ctx.request.signal })
-        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: ctx.request.signal })
-        const listeners = mergeAsyncIterators(mediaListener, episodeListener)
-
-        yield await findAggregatedMedia(undefined, { uri: args.input.uri })
-
-        // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
         try {
-          for await (const _ of listeners) {
-            yield await findAggregatedMedia(undefined, { uri: args.input.uri })
-          }
+          yield* listenForMediaChanges(args.input.uri, { abortSignal: ctx.request.signal })
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield await findAggregatedMedia(undefined, { uri: args.input.uri })
         }
       }
     },

@@ -13,6 +13,7 @@ import type {
   CreateAggregatedMediaEpisodes
 } from './schema'
 import type { Database } from '.'
+import type { Uri, AggregatedUri } from '../../utils/uri'
 
 import { sql, eq, inArray, asc, desc, and, like } from 'drizzle-orm'
 
@@ -31,7 +32,9 @@ import {
 import database from '.'
 import { getRoutePath, Route } from '../../router/path'
 import { OriginFilter } from '../../generated/graphql'
-import { fromAggregatedUri, isAggregatedUri, type AggregatedUri } from '../../utils/uri'
+import { fromAggregatedUri, isAggregatedUri } from '../../utils/uri'
+import { listenIterator } from './notifications'
+import { mergeAsyncIterators } from '../../utils/async-iterator'
 
 type RemoveSubstring<T extends string, Substring extends string> =
   T extends `${infer Before}${Substring}${infer After}`
@@ -913,5 +916,19 @@ export const insertManyOrigins = async (
           isApiOnly: sql`COALESCE(excluded.isApiOnly, ${originTable.isApiOnly})`
         }
       })
+  }
+}
+
+export const listenForMediaChanges = async function* (uri: Uri, options?: { abortSignal?: AbortSignal }) {
+    // Register listeners before initial yield so notifications are buffered, not lost
+  const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: options?.abortSignal })
+  const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: options?.abortSignal })
+  const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+
+  yield await findAggregatedMedia(undefined, { uri })
+
+  // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
+  for await (const _ of listeners) {
+    yield await findAggregatedMedia(undefined, { uri })
   }
 }
