@@ -4,6 +4,11 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import preact from '@preact/preset-vite'
 
 export default defineConfig((_) => ({
+  experimental: {
+    // bundledDev: true,
+    // fullBundleMode: true,
+    // renderBuiltUrl: true,
+  },
   build: {
     target: 'esnext',
     outDir: 'build',
