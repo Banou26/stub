@@ -479,7 +479,7 @@ export const findAggregatedMedia = async(
   return media ? normalizeGraphqlAggregatedMedia(media) : undefined
 }
 
-export const findAggregatedMedias = async(
+export const findAggregatedMediaList = async(
   tx: DrizzleSQLiteTransaction = database as unknown as DrizzleSQLiteTransaction,
   { sorts }: { sorts?: MediaSort[] } = {}
 ) =>
@@ -919,16 +919,33 @@ export const insertManyOrigins = async (
   }
 }
 
-export const listenForMediaChanges = async function* (uri: Uri, options?: { abortSignal?: AbortSignal }) {
+export const listenForMediaChanges = async function* (params: Parameters<typeof findAggregatedMedia>[1], options?: { abortSignal?: AbortSignal }) {
     // Register listeners before initial yield so notifications are buffered, not lost
   const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: options?.abortSignal })
   const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: options?.abortSignal })
   const listeners = mergeAsyncIterators(mediaListener, episodeListener)
 
-  yield await findAggregatedMedia(undefined, { uri })
+  yield await findAggregatedMedia(undefined, params)
 
   // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
   for await (const _ of listeners) {
-    yield await findAggregatedMedia(undefined, { uri })
+    yield await findAggregatedMedia(undefined, params)
+  }
+}
+
+export const listenForMediaListChanges = async function* (
+  params: Parameters<typeof findAggregatedMediaList>[1],
+  options?: { abortSignal?: AbortSignal }
+) {
+    // Register listeners before initial yield so notifications are buffered, not lost
+  const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: options?.abortSignal })
+  const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: options?.abortSignal })
+  const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+
+  yield await findAggregatedMediaList(undefined, params)
+
+  // todo: we can optimize even better by looping on all updates until we find an aggregated media, and then listen for that only media
+  for await (const _ of listeners) {
+    yield await findAggregatedMediaList(undefined, params)
   }
 }

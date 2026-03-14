@@ -5,8 +5,8 @@ import { eq, asc, inArray } from 'drizzle-orm'
 
 // @ts-expect-error
 import _schema from './schema.gql?raw'
-import { extractors } from '../../extractor'
-import { findAggregatedMedias, findMediaByUris, listenForMediaChanges, normalizeGraphqlAggregatedEpisode, type DrizzleSQLiteTransaction } from '../../drizzle/utils'
+import { extractors, proxyRequestToExtractors } from '../../extractor'
+import { findAggregatedMediaList, findMediaByUris, listenForMediaChanges, listenForMediaListChanges, normalizeGraphqlAggregatedEpisode, type DrizzleSQLiteTransaction } from '../../drizzle/utils'
 import { listenIterator } from '../../drizzle/notifications'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
@@ -25,16 +25,13 @@ export const resolvers = {
       resolve: (parent: Media) => parent,
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         if (!args.input.uri || !(isUri(args.input.uri) || isAggregatedUri(args.input.uri))) return
-        const subscriptions =
-          extractors.map(extractor =>
-            extractor.client.subscription(
-              ctx.params.query!,
-              ctx.params.variables
-            ).subscribe(() => {})
-          )
+        const subscriptions = proxyRequestToExtractors(ctx)
 
         try {
-          yield* listenForMediaChanges(args.input.uri, { abortSignal: ctx.request.signal })
+          yield* listenForMediaChanges(
+            { uri: args.input.uri },
+            { abortSignal: ctx.request.signal }
+          )
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
         }
@@ -43,28 +40,15 @@ export const resolvers = {
     mediaPage: {
       resolve: (parent: Media[]) => ({ nodes: parent }),
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
-        const subscriptions =
-          extractors.map(extractor =>
-            extractor.client.subscription(
-              ctx.params.query!,
-              ctx.params.variables
-            ).subscribe(() => {})
-          )
-
-        // Register listeners before initial yield so notifications are buffered, not lost
-        const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: ctx.request.signal })
-        const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: ctx.request.signal })
-        const listeners = mergeAsyncIterators(mediaListener, episodeListener)
-
-        yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
+        const subscriptions = proxyRequestToExtractors(ctx)
 
         try {
-          for await (const _ of listeners) {
-            yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
-          }
+          yield* listenForMediaListChanges(
+            { sorts: args.input.sorts ?? undefined },
+            { abortSignal: ctx.request.signal }
+          )
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield await findAggregatedMedias(undefined, { sorts: args.input.sorts ?? undefined })
         }
       }
     }

@@ -368,3 +368,11 @@ const originInserter = new DataLoader<Origin, Origin>(async (origins) => {
   maxBatchSize: 50,
   batchScheduleFn: (callback) => setTimeout(callback, 50)
 })
+
+export const proxyRequestToExtractors = (ctx: ExtractorServerContext) =>
+  extractors.map(extractor =>
+    extractor.client.subscription(
+      ctx.params.query!,
+      ctx.params.variables
+    ).subscribe(() => {})
+  )
