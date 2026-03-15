@@ -238,8 +238,13 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   const nfUri = extractAggregatedUriOrigin(uri, origin)
   if (nfUri) {
-    const seasonNumber = isAggregatedUri(uri) ? await resolveSeasonNumber(nfUri.id, uri, ctx) : undefined
-    const media = await getMedia(nfUri.id, ctx, seasonNumber)
+    // nfUri.id may contain a season suffix (e.g., '81726714-2') from a previous aggregation
+    const dashIdx = nfUri.id.indexOf('-')
+    const nfId = dashIdx !== -1 ? nfUri.id.slice(0, dashIdx) : nfUri.id
+    const existingSeason = dashIdx !== -1 ? Number(nfUri.id.slice(dashIdx + 1)) : undefined
+    const seasonNumber = existingSeason
+      ?? (isAggregatedUri(uri) ? await resolveSeasonNumber(nfId, uri, ctx) : undefined)
+    const media = await getMedia(nfId, ctx, seasonNumber)
     if (!media) return null
     if (isAggregatedUri(uri)) media.handles = buildHandlesFromUri(uri, origin)
     return media
