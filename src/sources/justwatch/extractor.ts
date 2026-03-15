@@ -18,84 +18,258 @@ const JW_IMAGE_BASE = 'https://images.justwatch.com'
 const COUNTRY = 'US'
 const LANGUAGE = 'en'
 
-// Map JustWatch package shortNames to our origin IDs
 const PACKAGE_ORIGIN_MAP: Record<string, string> = {
-  cru: 'cr',
-  nfx: 'nf',
-  dnp: 'disney',
-  amp: 'amazon',
-  atp: 'appletv',
-  hlu: 'hulu',
-  hbm: 'hbo',
-  pcp: 'peacock',
-  pmp: 'paramount',
-  fuv: 'fubo'
+  cru: 'cr', nfx: 'nf', dnp: 'disney', amp: 'amazon', atp: 'appletv',
+  hlu: 'hulu', hbm: 'hbo', pcp: 'peacock', pmp: 'paramount', fuv: 'fubo'
 }
 
-// Extract real URL from JustWatch affiliate links
-// e.g. "https://crunchyroll.pxf.io/xk92Nv?u=https%3A%2F%2Fwww.crunchyroll.com%2Fwatch%2F..." → "https://www.crunchyroll.com/watch/..."
+// --- URL extraction ---
+
 const extractRealUrl = (affiliateUrl: string): string | undefined => {
   try {
     const url = new URL(affiliateUrl)
-    const realUrl = url.searchParams.get('u') ?? url.searchParams.get('r')
-    if (realUrl) return realUrl
+    return url.searchParams.get('u') ?? url.searchParams.get('r') ?? undefined
   } catch {}
   return undefined
 }
 
-// Extract a content-specific ID from a streaming service URL
-// Without this, we'd use packageId (e.g. nf:8 for ALL Netflix content) which creates false groupings
 const extractContentId = (url: string): string | undefined => {
   try {
     const { hostname, pathname } = new URL(url)
     const host = hostname.replace('www.', '')
-    const pathParts = pathname.split('/').filter(Boolean)
-
-    // netflix.com/title/81684733
-    if (host === 'netflix.com') return pathParts[1]
-    // crunchyroll.com/series/GG5H5XQX4/... — only extract from /series/ URLs, not /watch/ (episode) URLs
-    if (host === 'crunchyroll.com' && pathParts[0] === 'series') return pathParts[1]
-    // amazon.com/gp/video/detail/ID or /dp/ID
-    if (host.startsWith('amazon.')) return pathParts.at(-1)
-    // hulu.com/series/slug-{uuid} or /watch/id
+    const parts = pathname.split('/').filter(Boolean)
+    if (host === 'netflix.com') return parts[1]
+    if (host === 'crunchyroll.com' && parts[0] === 'series') return parts[1]
+    if (host.startsWith('amazon.')) return parts.at(-1)
     if (host === 'hulu.com') {
-      const last = pathParts.at(-1)
-      const uuidMatch = last?.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)
-      return uuidMatch?.[1] ?? last
+      const last = parts.at(-1)
+      return last?.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)?.[1] ?? last
     }
-    // disneyplus.com/series/name/id
-    if (host === 'disneyplus.com') return pathParts[2]
-    // tv.apple.com/show/name/id
-    if (host === 'tv.apple.com') return pathParts[2]
-    // peacocktv.com/watch-online/.../id
-    if (host === 'peacocktv.com') return pathParts.at(-1)
-    // paramountplus.com/shows/slug/
-    if (host === 'paramountplus.com') return pathParts[1]
+    if (host === 'disneyplus.com' || host === 'tv.apple.com') return parts[2]
+    if (host === 'peacocktv.com') return parts.at(-1)
+    if (host === 'paramountplus.com') return parts[1]
   } catch {}
   return undefined
 }
 
-// Extract episode ID from a Crunchyroll /watch/ URL
 const extractCrunchyrollEpisodeId = (url: string): string | undefined => {
   try {
     const { hostname, pathname } = new URL(url)
-    const host = hostname.replace('www.', '')
-    if (host !== 'crunchyroll.com') return undefined
-    const pathParts = pathname.split('/').filter(Boolean)
-    if (pathParts[0] === 'watch') return pathParts[1]
+    if (hostname.replace('www.', '') !== 'crunchyroll.com') return undefined
+    const parts = pathname.split('/').filter(Boolean)
+    return parts[0] === 'watch' ? parts[1] : undefined
   } catch {}
   return undefined
 }
 
-// Build media handles from JustWatch offers
-const buildOffersAsHandles = async (offers: JWOffer[], { shortDescription, title, posterUrl, seasonNumber }: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number }, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
-  // Deduplicate by package shortName (pick first, which is typically best quality)
+// --- API ---
+
+const jwFetch = async <T>(query: string, variables: Record<string, unknown>, ctx: ExtractorServerContext): Promise<T> => {
+  const res = await ctx.fetch(JW_API, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', accept: '*/*' },
+    body: JSON.stringify({ query, variables })
+  })
+  return res.json() as T
+}
+
+const SEARCH_QUERY = `
+  query GetSearchTitles($searchTitlesFilter: TitleFilter!, $country: Country!, $language: Language!, $first: Int!) {
+    popularTitles(country: $country, filter: $searchTitlesFilter, first: $first, sortBy: POPULAR, sortRandomSeed: 0) {
+      edges { node {
+        id objectId objectType
+        content(country: $country, language: $language) {
+          title fullPath originalReleaseYear shortDescription
+          posterUrl(profile: S718, format: JPG)
+          externalIds { imdbId }
+          genres { shortName }
+        }
+        offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
+          monetizationType presentationType standardWebURL
+          package { id packageId clearName technicalName shortName icon(profile: S100) }
+        }
+      }}
+    }
+  }
+`
+
+const NODE_QUERY = `
+  query GetTitleNode($nodeId: ID!, $language: Language!, $country: Country!) {
+    node(id: $nodeId) { ... on MovieOrShow {
+      id objectId objectType
+      content(country: $country, language: $language) {
+        title fullPath originalReleaseYear shortDescription
+        posterUrl(profile: S718, format: JPG)
+        externalIds { imdbId }
+        genres { shortName }
+      }
+      offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
+        monetizationType presentationType standardWebURL
+        package { id packageId clearName technicalName shortName icon(profile: S100) }
+      }
+      ... on Show {
+        totalSeasonCount
+        seasons(sortDirection: ASC) {
+          id objectId totalEpisodeCount
+          content(country: $country, language: $language) {
+            title seasonNumber fullPath posterUrl originalReleaseYear isReleased
+          }
+          episodes(limit: 50) {
+            id objectId
+            content(country: $country, language: $language) {
+              title episodeNumber seasonNumber isReleased shortDescription runtime
+            }
+            flatrate: offers(
+              country: $country, platform: WEB,
+              filter: { monetizationTypes: [FLATRATE_AND_BUY, FLATRATE, ADS, FREE], bestOnly: true }
+            ) { package { clearName packageId shortName } }
+          }
+        }
+      }
+    }}
+  }
+`
+
+// Deduplicate concurrent requests
+const _inflight = new Map<string, Promise<unknown>>()
+
+const deduplicatedFetch = async <T>(key: string, fn: () => Promise<T>): Promise<T> => {
+  const existing = _inflight.get(key)
+  if (existing) return existing as Promise<T>
+  const promise = fn()
+  _inflight.set(key, promise)
+  promise.finally(() => _inflight.delete(key))
+  return promise
+}
+
+const searchTitles = (query: string, ctx: ExtractorServerContext) =>
+  deduplicatedFetch(`search:${query}`, () =>
+    jwFetch<JWSearchResponse>(SEARCH_QUERY, {
+      first: 10, searchTitlesFilter: { searchQuery: query }, language: LANGUAGE, country: COUNTRY
+    }, ctx)
+  )
+
+const getNodeDetails = (nodeId: string, ctx: ExtractorServerContext) =>
+  deduplicatedFetch(`node:${nodeId}`, () =>
+    jwFetch<JWNodeResponse>(NODE_QUERY, { nodeId, language: LANGUAGE, country: COUNTRY }, ctx)
+  )
+
+// --- Types ---
+
+interface JWOffer {
+  monetizationType: string
+  standardWebURL: string | null
+  package: { clearName: string, shortName: string }
+}
+
+interface JWSearchNode {
+  id: string
+  objectId: number
+  content: {
+    title: string
+    fullPath: string
+    posterUrl: string | null
+    shortDescription: string | null
+  }
+  offers: JWOffer[]
+}
+
+interface JWSeason {
+  totalEpisodeCount: number
+  content: { seasonNumber: number, isReleased: boolean }
+  episodes: JWEpisode[]
+}
+
+interface JWEpisode {
+  objectId: number
+  content: {
+    title: string
+    episodeNumber: number
+    seasonNumber: number
+    isReleased: boolean
+    shortDescription: string | null
+    runtime: number | null
+  }
+}
+
+interface JWShowNode extends JWSearchNode {
+  seasons: JWSeason[]
+}
+
+interface JWSearchResponse {
+  data: { popularTitles: { edges: { node: JWSearchNode }[] } }
+}
+
+interface JWNodeResponse {
+  data: { node: JWShowNode }
+}
+
+// --- Helpers ---
+
+const resolveImageUrl = (url: string | null | undefined): string | undefined => {
+  if (!url) return undefined
+  return url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`
+}
+
+const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>
+  media?.titles?.[0]?.title
+
+const parseSeasonNumber = (title: string): number | undefined => {
+  const match = title.match(/\b(?:Season|Part|Cour)\s+(\d+)\b/i)
+  return match ? Number(match[1]) : undefined
+}
+
+const simplifyTitle = (title: string): string[] => {
+  const queries: string[] = []
+  const stripped = title.replace(/\s+(Season|Part|Cour)\s+\d+$/i, '').trim()
+  if (stripped !== title) queries.push(stripped)
+  const colonIdx = title.indexOf(':')
+  if (colonIdx > 2) queries.push(title.slice(0, colonIdx).trim())
+  return queries
+}
+
+const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | undefined => {
+  if (seasons.length <= 1) return undefined
+  let best: { num: number, diff: number } | undefined
+  for (const s of seasons) {
+    const diff = Math.abs(s.totalEpisodeCount - targetCount)
+    if (!best || diff < best.diff) best = { num: s.content.seasonNumber, diff }
+  }
+  return best?.num
+}
+
+const buildHandlesFromAggregatedUri = (aggregatedUri: string): GQLMedia[] => {
+  const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
+  if (!parsed) return []
+  return parsed.handleUrisValues
+    .filter(({ origin: o }) => o !== origin)
+    .map(({ origin: o, id }) => ({
+      _id: crypto.randomUUID(),
+      uri: toUri({ origin: o, id }),
+      origin: o, id,
+      url: undefined, handles: [], titles: [], descriptions: [],
+      shortDescriptions: [], covers: [], banners: [], episodes: [], trailers: []
+    } satisfies GQLMedia))
+}
+
+const mergeAggregatedHandles = (media: GQLMedia, aggregatedUri: string) => {
+  const extra = buildHandlesFromAggregatedUri(aggregatedUri)
+  const existing = new Set(media.handles.map(h => h.origin))
+  media.handles = [...media.handles, ...extra.filter(h => !existing.has(h.origin))]
+}
+
+// --- Handle building from offers ---
+
+const buildOffersAsHandles = async (
+  offers: JWOffer[],
+  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number },
+  ctx: ExtractorServerContext
+): Promise<GQLMedia[]> => {
   const seen = new Set<string>()
   const handles: GQLMedia[] = []
 
   for (const offer of offers) {
-    if (offer.monetizationType !== 'FLATRATE' && offer.monetizationType !== 'FLATRATE_AND_BUY' && offer.monetizationType !== 'FREE' && offer.monetizationType !== 'ADS') continue
-
+    if (!['FLATRATE', 'FLATRATE_AND_BUY', 'FREE', 'ADS'].includes(offer.monetizationType)) continue
     const shortName = offer.package.shortName
     if (seen.has(shortName)) continue
     seen.add(shortName)
@@ -106,23 +280,18 @@ const buildOffersAsHandles = async (offers: JWOffer[], { shortDescription, title
     const realUrl = offer.standardWebURL ? extractRealUrl(offer.standardWebURL) : undefined
     const url = realUrl ?? offer.standardWebURL ?? undefined
 
-    // Extract content-specific ID from the URL — skip if we can only get a package ID
-    // Package IDs (e.g. nf:8) are shared across ALL content on that platform
     let contentId: string | undefined
     const rawContentId = url ? extractContentId(url) : undefined
 
     if (!rawContentId && mappedOrigin === 'cr' && url) {
-      // CR watch URLs have episode IDs — resolve to series ID via CR API
       const episodeId = extractCrunchyrollEpisodeId(url)
       if (episodeId) {
         const resolved = await resolveEpisodeToSeriesId(episodeId, ctx)
-        if (resolved) {
-          contentId = crunchyrollId(resolved.seriesId, resolved.seasonId)
-        }
+        if (resolved) contentId = crunchyrollId(resolved.seriesId, resolved.seasonId)
       }
     } else if (rawContentId) {
-      contentId = (mappedOrigin === 'nf' && seasonNumber != null)
-        ? `${rawContentId}-${seasonNumber}`
+      contentId = (mappedOrigin === 'nf' && meta.seasonNumber != null)
+        ? `${rawContentId}-${meta.seasonNumber}`
         : rawContentId
     }
 
@@ -131,368 +300,62 @@ const buildOffersAsHandles = async (offers: JWOffer[], { shortDescription, title
     handles.push({
       _id: crypto.randomUUID(),
       uri: toUri({ origin: mappedOrigin, id: contentId }),
-      origin: mappedOrigin,
-      id: contentId,
-      url,
+      origin: mappedOrigin, id: contentId, url,
       handles: [],
       titles: [
-        ...title ? [{ language: 'en', title }] : [],
+        ...meta.title ? [{ language: 'en', title: meta.title }] : [],
         { language: 'en', title: offer.package.clearName }
       ],
-      descriptions: shortDescription ? [{ language: 'en', description: shortDescription }] : [],
-      shortDescriptions: shortDescription ? [{ language: 'en', shortDescription }] : [],
-      covers: posterUrl ? [{ url: posterUrl }] : [],
-      banners: [],
-      episodes: [],
-      trailers: []
+      descriptions: meta.shortDescription ? [{ language: 'en', description: meta.shortDescription }] : [],
+      shortDescriptions: meta.shortDescription ? [{ language: 'en', shortDescription: meta.shortDescription }] : [],
+      covers: meta.posterUrl ? [{ url: meta.posterUrl }] : [],
+      banners: [], episodes: [], trailers: []
     } satisfies GQLMedia)
   }
 
   return handles
 }
 
-// Types
-interface JWSearchNode {
-  id: string
-  objectId: number
-  objectType: string
-  content: {
-    title: string
-    fullPath: string
-    originalReleaseYear: number
-    posterUrl: string | null
-    shortDescription: string | null
-    externalIds: {
-      imdbId: string | null
-    }
-    genres: { shortName: string }[]
-  }
-  offers: JWOffer[]
-}
+// --- Normalization ---
 
-interface JWOffer {
-  id: string
-  monetizationType: string
-  presentationType: string
-  standardWebURL: string | null
-  package: {
-    id: string
-    packageId: number
-    clearName: string
-    technicalName: string
-    shortName: string
-    icon: string | null
-  }
-}
-
-interface JWSeason {
-  id: string
-  objectId: number
-  objectType: string
-  totalEpisodeCount: number
-  content: {
-    title: string
-    seasonNumber: number
-    fullPath: string
-    posterUrl: string | null
-    originalReleaseYear: number
-    isReleased: boolean
-  }
-  episodes: JWEpisode[]
-}
-
-interface JWEpisode {
-  id: string
-  objectId: number
-  content: {
-    title: string
-    episodeNumber: number
-    seasonNumber: number
-    isReleased: boolean
-    shortDescription: string | null
-    runtime: number | null
-  }
-  flatrate: { package: { clearName: string, packageId: number, shortName: string } }[]
-}
-
-interface JWShowNode extends JWSearchNode {
-  totalSeasonCount: number
-  seasons: JWSeason[]
-}
-
-interface JWSearchResponse {
-  data: {
-    popularTitles: {
-      edges: { node: JWSearchNode }[]
-    }
-  }
-}
-
-interface JWNodeResponse {
-  data: {
-    node: JWShowNode
-  }
-}
-
-// API helpers
-const jwFetch = async <T>(query: string, variables: Record<string, unknown>, ctx: ExtractorServerContext): Promise<T> => {
-  const response = await ctx.fetch(JW_API, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'accept': '*/*'
-    },
-    body: JSON.stringify({ query, variables })
-  })
-  return await response.json() as T
-}
-
-const SEARCH_QUERY = `
-  query GetSearchTitles(
-    $searchTitlesFilter: TitleFilter!
-    $country: Country!
-    $language: Language!
-    $first: Int!
-  ) {
-    popularTitles(
-      country: $country
-      filter: $searchTitlesFilter
-      first: $first
-      sortBy: POPULAR
-      sortRandomSeed: 0
-    ) {
-      edges {
-        node {
-          id
-          objectId
-          objectType
-          content(country: $country, language: $language) {
-            title
-            fullPath
-            originalReleaseYear
-            posterUrl(profile: S718, format: JPG)
-            shortDescription
-            externalIds {
-              imdbId
-            }
-            genres {
-              shortName
-            }
-          }
-          offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
-            id
-            monetizationType
-            presentationType
-            standardWebURL
-            package {
-              id
-              packageId
-              clearName
-              technicalName
-              shortName
-              icon(profile: S100)
-            }
-          }
-        }
-      }
-    }
-  }
-`
-
-const NODE_QUERY = `
-  query GetTitleNode(
-    $nodeId: ID!
-    $language: Language!
-    $country: Country!
-  ) {
-    node(id: $nodeId) {
-      ... on MovieOrShow {
-        id
-        objectId
-        objectType
-        content(country: $country, language: $language) {
-          title
-          fullPath
-          originalReleaseYear
-          shortDescription
-          posterUrl(profile: S718, format: JPG)
-          externalIds {
-            imdbId
-          }
-          genres {
-            shortName
-          }
-        }
-        offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
-          id
-          monetizationType
-          presentationType
-          standardWebURL
-          package {
-            id
-            packageId
-            clearName
-            technicalName
-            shortName
-            icon(profile: S100)
-          }
-        }
-        ... on Show {
-          totalSeasonCount
-          seasons(sortDirection: ASC) {
-            id
-            objectId
-            objectType
-            totalEpisodeCount
-            content(country: $country, language: $language) {
-              title
-              seasonNumber
-              fullPath
-              posterUrl
-              originalReleaseYear
-              isReleased
-            }
-            episodes(limit: 50) {
-              id
-              objectId
-              content(country: $country, language: $language) {
-                title
-                episodeNumber
-                seasonNumber
-                isReleased
-                shortDescription
-                runtime
-              }
-              flatrate: offers(
-                country: $country
-                platform: WEB
-                filter: { monetizationTypes: [FLATRATE_AND_BUY, FLATRATE, ADS, FREE], bestOnly: true }
-              ) {
-                package {
-                  clearName
-                  packageId
-                  shortName
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`
-
-// Deduplicate concurrent requests
-const _inflightRequests = new Map<string, Promise<unknown>>()
-
-const deduplicatedFetch = async <T>(key: string, fn: () => Promise<T>): Promise<T> => {
-  const existing = _inflightRequests.get(key)
-  if (existing) return existing as Promise<T>
-  const promise = fn()
-  _inflightRequests.set(key, promise)
-  promise.finally(() => _inflightRequests.delete(key))
-  return promise
-}
-
-// API functions
-const searchTitles = (query: string, ctx: ExtractorServerContext) =>
-  deduplicatedFetch(`search:${query}`, () =>
-    jwFetch<JWSearchResponse>(SEARCH_QUERY, {
-      first: 10,
-      searchTitlesFilter: { searchQuery: query },
-      language: LANGUAGE,
-      country: COUNTRY
-    }, ctx)
-  )
-
-const getNodeDetails = (nodeId: string, ctx: ExtractorServerContext) =>
-  deduplicatedFetch(`node:${nodeId}`, () =>
-    jwFetch<JWNodeResponse>(NODE_QUERY, {
-      nodeId,
-      language: LANGUAGE,
-      country: COUNTRY
-    }, ctx)
-  )
-
-// Image URL helpers
-const resolveImageUrl = (url: string | null | undefined): string | undefined => {
-  if (!url) return undefined
-  if (url.startsWith('http')) return url
-  return `${JW_IMAGE_BASE}${url}`
-}
-
-// Normalization
-const normalizeSearchResult = async (node: JWSearchNode, ctx: ExtractorServerContext): Promise<GQLMedia> => {
+const normalizeMedia = async (
+  node: JWSearchNode,
+  opts: { seasons?: JWSeason[], seasonNumber?: number },
+  ctx: ExtractorServerContext
+): Promise<GQLMedia> => {
   const id = String(node.objectId)
-  const uri = toUri({ origin, id })
   const posterUrl = resolveImageUrl(node.content.posterUrl)
+  const { shortDescription } = node.content
 
-  return {
-    _id: crypto.randomUUID(),
-    uri,
-    origin,
-    id,
-    url: `https://www.justwatch.com${node.content.fullPath}`,
-    handles: await buildOffersAsHandles(node.offers ?? [], {
-      shortDescription: node.content.shortDescription,
-      title: node.content.title,
-      posterUrl: resolveImageUrl(node.content.posterUrl)
-    }, ctx),
-    titles: [{ language: 'en', title: node.content.title }],
-    descriptions: node.content.shortDescription
-      ? [{ language: 'en', description: node.content.shortDescription }]
-      : [],
-    shortDescriptions: node.content.shortDescription
-      ? [{ language: 'en', shortDescription: node.content.shortDescription }]
-      : [],
-    covers: posterUrl ? [{ url: posterUrl }] : [],
-    banners: [],
-    episodes: [],
-    trailers: []
-  } satisfies GQLMedia
-}
-
-const normalizeShowNode = async (node: JWShowNode, seasonNumber: number | undefined, ctx: ExtractorServerContext): Promise<GQLMedia> => {
-  const id = String(node.objectId)
-  const uri = toUri({ origin, id })
-  const posterUrl = resolveImageUrl(node.content.posterUrl)
-  const title = seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
-    ? `${node.content.title} Season ${seasonNumber}`
+  const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
+    ? `${node.content.title} Season ${opts.seasonNumber}`
     : node.content.title
 
-  const filteredSeasons = seasonNumber != null
-    ? node.seasons?.filter(s => s.content.seasonNumber === seasonNumber) ?? []
-    : node.seasons ?? []
+  const filteredSeasons = opts.seasonNumber != null
+    ? (opts.seasons ?? []).filter(s => s.content.seasonNumber === opts.seasonNumber)
+    : opts.seasons ?? []
 
   const episodes: GQLEpisode[] = filteredSeasons.flatMap(season =>
     (season.episodes ?? [])
       .filter(ep => ep.content.isReleased)
-      .map(ep => normalizeEpisode(ep, uri))
+      .map(ep => normalizeEpisode(ep, toUri({ origin, id })))
   )
 
   return {
     _id: crypto.randomUUID(),
-    uri,
-    origin,
-    id,
+    uri: toUri({ origin, id }),
+    origin, id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
     handles: await buildOffersAsHandles(node.offers ?? [], {
-        shortDescription: node.content.shortDescription,
-        title,
-        posterUrl: resolveImageUrl(node.content.posterUrl),
-        seasonNumber
-      }, ctx),
+      shortDescription, title, posterUrl: resolveImageUrl(node.content.posterUrl), seasonNumber: opts.seasonNumber
+    }, ctx),
     titles: [{ language: 'en', title }],
-    descriptions: node.content.shortDescription
-      ? [{ language: 'en', description: node.content.shortDescription }]
-      : [],
-    shortDescriptions: node.content.shortDescription
-      ? [{ language: 'en', shortDescription: node.content.shortDescription }]
-      : [],
+    descriptions: shortDescription ? [{ language: 'en', description: shortDescription }] : [],
+    shortDescriptions: shortDescription ? [{ language: 'en', shortDescription }] : [],
     covers: posterUrl ? [{ url: posterUrl }] : [],
     banners: [],
     episodes,
-    episodeCount: episodes.length,
+    episodeCount: episodes.length || undefined,
     trailers: []
   } satisfies GQLMedia
 }
@@ -502,18 +365,11 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode => {
   return {
     _id: crypto.randomUUID(),
     uri: toUri({ origin, id }),
-    origin,
-    id,
-    url: undefined,
-    mediaUri,
-    handles: [],
+    origin, id,
+    url: undefined, mediaUri, handles: [],
     titles: [{ language: 'en', title: ep.content.title }],
-    descriptions: ep.content.shortDescription
-      ? [{ language: 'en', description: ep.content.shortDescription }]
-      : [],
-    shortDescriptions: ep.content.shortDescription
-      ? [{ language: 'en', shortDescription: ep.content.shortDescription }]
-      : [],
+    descriptions: ep.content.shortDescription ? [{ language: 'en', description: ep.content.shortDescription }] : [],
+    shortDescriptions: ep.content.shortDescription ? [{ language: 'en', shortDescription: ep.content.shortDescription }] : [],
     thumbnails: [],
     seasonNumber: ep.content.seasonNumber,
     episodeNumber: ep.content.episodeNumber,
@@ -521,77 +377,17 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode => {
   } satisfies GQLEpisode
 }
 
-// Build handles from aggregated URI so JustWatch result links to existing group
-const buildHandlesFromAggregatedUri = (aggregatedUri: string): GQLMedia[] => {
-  const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
-  if (!parsed) return []
-  return parsed.handleUrisValues
-    .filter(({ origin: handleOrigin }) => handleOrigin !== origin)
-    .map(({ origin: handleOrigin, id }) => ({
-      _id: crypto.randomUUID(),
-      uri: toUri({ origin: handleOrigin, id }),
-      origin: handleOrigin,
-      id,
-      url: undefined,
-      handles: [],
-      titles: [],
-      descriptions: [],
-      shortDescriptions: [],
-      covers: [],
-      banners: [],
-      episodes: [],
-      trailers: []
-    } satisfies GQLMedia))
-}
+// --- Wait patterns ---
 
-// Find best matching season based on episode count
-const findMatchingSeason = (
-  seasons: JWSeason[],
-  targetEpisodeCount: number
-): number | undefined => {
-  if (seasons.length <= 1) return undefined
-  let bestMatch: JWSeason | undefined
-  let bestDiff = Infinity
-  for (const season of seasons) {
-    const diff = Math.abs(season.totalEpisodeCount - targetEpisodeCount)
-    if (diff < bestDiff) {
-      bestDiff = diff
-      bestMatch = season
-    }
-  }
-  return bestMatch?.content.seasonNumber
-}
-
-// Parse season number from a title like "Frieren: Beyond Journey's End Season 2" → 2
-const parseSeasonNumber = (title: string): number | undefined => {
-  const match = title.match(/\b(?:Season|Part|Cour)\s+(\d+)\b/i)
-  return match ? Number(match[1]) : undefined
-}
-
-// Title simplification for search
-const simplifyTitle = (title: string): string[] => {
-  const queries: string[] = []
-  const stripped = title.replace(/\s+(Season|Part|Cour)\s+\d+$/i, '').trim()
-  if (stripped !== title) queries.push(stripped)
-  const colonIdx = title.indexOf(':')
-  if (colonIdx > 2) queries.push(title.slice(0, colonIdx).trim())
-  return queries
-}
-
-// Wait for other extractors to populate episode data
-const waitForEpisodeCount = async (
-  aggregatedUri: string,
-  ctx: ExtractorServerContext
-): Promise<number | undefined> => {
+const waitForEpisodeCount = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<number | undefined> => {
   const existing = await ctx.findAggregatedMedia(aggregatedUri)
   const count = existing?.episodeCount ?? existing?.episodes?.length
   if (count) return count
 
   const abortController = new AbortController()
   const timeout = setTimeout(() => abortController.abort(), 15_000)
-  const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
   try {
-    for await (const _ of changes) {
+    for await (const _ of ctx.listenForMediaChanges({ abort: abortController.signal })) {
       const updated = await ctx.findAggregatedMedia(aggregatedUri)
       const epCount = updated?.episodeCount ?? updated?.episodes?.length
       if (epCount) return epCount
@@ -603,26 +399,27 @@ const waitForEpisodeCount = async (
   return undefined
 }
 
-const getFirstTitle = (media: { titles?: { title: string }[] } | undefined): string | undefined =>
-  media?.titles?.[0]?.title
-
-// Try to determine season number from aggregated media data (title or episode count)
-const tryResolveSeasonFromMedia = (
-  existing: { titles?: { title: string }[], episodeCount?: number | null, episodes?: unknown[] } | undefined,
-  seasons: JWSeason[]
-): number | undefined => {
+const waitForTitle = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<string | undefined> => {
+  const existing = await ctx.findAggregatedMedia(aggregatedUri)
   const title = getFirstTitle(existing)
-  if (title) {
-    const fromTitle = parseSeasonNumber(title)
-    if (fromTitle) return fromTitle
+  if (title) return title
+
+  const abortController = new AbortController()
+  const timeout = setTimeout(() => abortController.abort(), 30_000)
+  try {
+    for await (const _ of ctx.listenForMediaChanges({ abort: abortController.signal })) {
+      const t = getFirstTitle(await ctx.findAggregatedMedia(aggregatedUri))
+      if (t) return t
+    }
+  } finally {
+    clearTimeout(timeout)
+    abortController.abort()
   }
-  const targetEpCount = existing?.episodeCount ?? existing?.episodes?.length
-  if (targetEpCount) return findMatchingSeason(seasons, targetEpCount)
   return undefined
 }
 
-// Determine the season number from existing aggregated media context,
-// waiting for other extractors to populate data if needed
+// --- Season resolution ---
+
 const resolveSeasonNumber = async (
   aggregatedUri: string,
   node: JWShowNode,
@@ -630,19 +427,24 @@ const resolveSeasonNumber = async (
 ): Promise<number | undefined> => {
   if (!node.seasons || node.seasons.length <= 1) return undefined
 
-  // Try immediately
-  const existing = await ctx.findAggregatedMedia(aggregatedUri)
-  const immediate = tryResolveSeasonFromMedia(existing, node.seasons)
+  const tryResolve = (media: { titles?: { title: string }[], episodeCount?: number | null, episodes?: unknown[] } | undefined) => {
+    const title = getFirstTitle(media)
+    if (title) {
+      const fromTitle = parseSeasonNumber(title)
+      if (fromTitle) return fromTitle
+    }
+    const epCount = media?.episodeCount ?? media?.episodes?.length
+    return epCount ? findMatchingSeason(node.seasons, epCount) : undefined
+  }
+
+  const immediate = tryResolve(await ctx.findAggregatedMedia(aggregatedUri))
   if (immediate) return immediate
 
-  // Wait for other extractors to populate title or episode count
   const abortController = new AbortController()
   const timeout = setTimeout(() => abortController.abort(), 15_000)
-  const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
   try {
-    for await (const _ of changes) {
-      const updated = await ctx.findAggregatedMedia(aggregatedUri)
-      const result = tryResolveSeasonFromMedia(updated, node.seasons)
+    for await (const _ of ctx.listenForMediaChanges({ abort: abortController.signal })) {
+      const result = tryResolve(await ctx.findAggregatedMedia(aggregatedUri))
       if (result) return result
     }
   } finally {
@@ -651,6 +453,8 @@ const resolveSeasonNumber = async (
   }
   return undefined
 }
+
+// --- Core resolution ---
 
 const searchAndLinkMedia = async (
   title: string,
@@ -663,107 +467,62 @@ const searchAndLinkMedia = async (
     const results = searchRes.data?.popularTitles?.edges ?? []
     if (!results.length) continue
 
-    const firstResult = results[0]!.node
-    // Get full details with seasons/episodes
-    const detailRes = await getNodeDetails(firstResult.id, ctx)
+    const detailRes = await getNodeDetails(results[0]!.node.id, ctx)
     const node = detailRes.data?.node
     if (!node) continue
 
-    // Determine matching season — try title first, then episode count
     let seasonNumber: number | undefined
     if (node.seasons?.length > 1) {
       seasonNumber = parseSeasonNumber(title)
       if (!seasonNumber) {
         const targetEpCount = await waitForEpisodeCount(aggregatedUri, ctx)
-        if (targetEpCount) {
-          seasonNumber = findMatchingSeason(node.seasons, targetEpCount)
-        }
+        if (targetEpCount) seasonNumber = findMatchingSeason(node.seasons, targetEpCount)
       }
     }
 
-    const media = await normalizeShowNode(node, seasonNumber, ctx)
-    const aggregatedHandles = buildHandlesFromAggregatedUri(aggregatedUri)
-    const existingOrigins = new Set(media.handles.map(h => h.origin))
-    media.handles = [...media.handles, ...aggregatedHandles.filter(h => !existingOrigins.has(h.origin))]
+    const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
+    mergeAggregatedHandles(media, aggregatedUri)
     return media
   }
   return null
 }
 
-// Resolvers
+const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
+  const jwUri = extractAggregatedUriOrigin(uri, origin)
+  if (jwUri) {
+    const detailRes = await getNodeDetails(`ts${jwUri.id}`, ctx)
+    const node = detailRes.data?.node
+    if (!node) return null
+    const seasonNumber = isAggregatedUri(uri) ? await resolveSeasonNumber(uri, node, ctx) : undefined
+    const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
+    if (isAggregatedUri(uri)) mergeAggregatedHandles(media, uri)
+    return media
+  }
+
+  if (!isAggregatedUri(uri)) return null
+  const title = await waitForTitle(uri, ctx)
+  if (!title) return null
+  return searchAndLinkMedia(title, uri, ctx)
+}
+
+// --- Resolvers ---
+
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
-
-        // Direct jw: URI — fetch by JustWatch node ID
-        const uri = extractAggregatedUriOrigin(_uri, origin)
-        if (uri) {
-          // JustWatch IDs are objectId numbers, node IDs are like "ts364792"
-          const nodeId = `ts${uri.id}`
-          const detailRes = await getNodeDetails(nodeId, ctx)
-          const node = detailRes.data?.node
-          if (!node) {
-            yield { media: null }
-            return
-          }
-          // Determine season from aggregated media context (title or episode count)
-          const seasonNumber = isAggregatedUri(_uri)
-            ? await resolveSeasonNumber(_uri, node, ctx)
-            : undefined
-          const media = await normalizeShowNode(node, seasonNumber, ctx)
-          if (isAggregatedUri(_uri)) {
-            const aggregatedHandles = buildHandlesFromAggregatedUri(_uri)
-            const existingOrigins = new Set(media.handles.map(h => h.origin))
-            media.handles = [...media.handles, ...aggregatedHandles.filter(h => !existingOrigins.has(h.origin))]
-          }
-          yield { media }
-          return
-        }
-
-        // Aggregated URI without jw: origin — search by title
-        if (!isAggregatedUri(_uri)) return yield { media: null }
-
-        const existing = await ctx.findAggregatedMedia(_uri)
-        const existingTitle = getFirstTitle(existing)
-
-        if (existingTitle) {
-          const result = await searchAndLinkMedia(existingTitle, _uri, ctx)
-          yield { media: result }
-          return
-        }
-
-        // Wait for other extractors to populate the title
-        const abortController = new AbortController()
-        const timeout = setTimeout(() => abortController.abort(), 30_000)
-        const changes = ctx.listenForMediaChanges({ abort: abortController.signal })
-        try {
-          for await (const _ of changes) {
-            const updated = await ctx.findAggregatedMedia(_uri)
-            const title = getFirstTitle(updated)
-            if (!title) continue
-            const result = await searchAndLinkMedia(title, _uri, ctx)
-            yield { media: result }
-            return
-          }
-        } finally {
-          clearTimeout(timeout)
-          abortController.abort()
-        }
-
-        yield { media: null }
+        yield { media: await resolveMedia(_uri, ctx) }
       }
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
       subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
-        if (!search) {
-          yield { mediaPage: { nodes: [] } }
-          return
-        }
+        if (!search) return yield { mediaPage: { nodes: [] } }
         const searchRes = await searchTitles(search, ctx)
-        const nodes = await Promise.all((searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeSearchResult(e.node, ctx)))
+        const nodes = await Promise.all(
+          (searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeMedia(e.node, {}, ctx))
+        )
         yield { mediaPage: { nodes } }
       }
     }
@@ -772,23 +531,15 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
-
-      const nodeId = `ts${parent.id}`
-      const detailRes = await getNodeDetails(nodeId, ctx)
+      const detailRes = await getNodeDetails(`ts${parent.id}`, ctx)
       const node = detailRes.data?.node
       if (!node?.seasons) return []
-
-      // Determine season from existing episodes' seasonNumber, or from the aggregated media title
-      const existingSeasonNumber = parent.episodes?.find(ep => ep.seasonNumber != null)?.seasonNumber
-        ?? (parent.titles?.[0]?.title ? parseSeasonNumber(parent.titles[0].title) : undefined)
-      const seasons = existingSeasonNumber != null
-        ? node.seasons.filter(s => s.content.seasonNumber === existingSeasonNumber)
+      const seasonNumber = parent.titles?.[0]?.title ? parseSeasonNumber(parent.titles[0].title) : undefined
+      const seasons = seasonNumber != null
+        ? node.seasons.filter(s => s.content.seasonNumber === seasonNumber)
         : node.seasons
-
-      return seasons.flatMap(season =>
-        (season.episodes ?? [])
-          .filter(ep => ep.content.isReleased)
-          .map(ep => normalizeEpisode(ep, parent.uri))
+      return seasons.flatMap(s =>
+        (s.episodes ?? []).filter(ep => ep.content.isReleased).map(ep => normalizeEpisode(ep, parent.uri))
       )
     }
   }
