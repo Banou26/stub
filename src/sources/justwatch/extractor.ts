@@ -80,57 +80,116 @@ const jwFetch = async <T>(query: string, variables: Record<string, unknown>, ctx
 const SEARCH_QUERY = `
   query GetSearchTitles($searchTitlesFilter: TitleFilter!, $country: Country!, $language: Language!, $first: Int!) {
     popularTitles(country: $country, filter: $searchTitlesFilter, first: $first, sortBy: POPULAR, sortRandomSeed: 0) {
-      edges { node {
-        id objectId objectType
-        content(country: $country, language: $language) {
-          title fullPath originalReleaseYear shortDescription
-          posterUrl(profile: S718, format: JPG)
-          externalIds { imdbId }
-          genres { shortName }
+      edges {
+        node {
+          id
+          objectId
+          objectType
+          content(country: $country, language: $language) {
+            title
+            fullPath
+            originalReleaseYear
+            shortDescription
+            posterUrl(profile: S718, format: JPG)
+            externalIds {
+              imdbId
+            }
+            genres {
+              shortName
+            }
+          }
+          offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
+            monetizationType
+            presentationType
+            standardWebURL
+            package {
+              id
+              packageId
+              clearName
+              technicalName
+              shortName
+              icon(profile: S100)
+            }
+          }
         }
-        offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
-          monetizationType presentationType standardWebURL
-          package { id packageId clearName technicalName shortName icon(profile: S100) }
-        }
-      }}
+      }
     }
   }
 `
 
 const NODE_QUERY = `
   query GetTitleNode($nodeId: ID!, $language: Language!, $country: Country!) {
-    node(id: $nodeId) { ... on MovieOrShow {
-      id objectId objectType
-      content(country: $country, language: $language) {
-        title fullPath originalReleaseYear shortDescription
-        posterUrl(profile: S718, format: JPG)
-        externalIds { imdbId }
-        genres { shortName }
-      }
-      offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
-        monetizationType presentationType standardWebURL
-        package { id packageId clearName technicalName shortName icon(profile: S100) }
-      }
-      ... on Show {
-        totalSeasonCount
-        seasons(sortDirection: ASC) {
-          id objectId totalEpisodeCount
-          content(country: $country, language: $language) {
-            title seasonNumber fullPath posterUrl originalReleaseYear isReleased
+    node(id: $nodeId) {
+      ... on MovieOrShow {
+        id
+        objectId
+        objectType
+        content(country: $country, language: $language) {
+          title
+          fullPath
+          originalReleaseYear
+          shortDescription
+          posterUrl(profile: S718, format: JPG)
+          externalIds {
+            imdbId
           }
-          episodes(limit: 50) {
-            id objectId
+          genres {
+            shortName
+          }
+        }
+        offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
+          monetizationType
+          presentationType
+          standardWebURL
+          package {
+            id
+            packageId
+            clearName
+            technicalName
+            shortName
+            icon(profile: S100)
+          }
+        }
+        ... on Show {
+          totalSeasonCount
+          seasons(sortDirection: ASC) {
+            id
+            objectId
+            totalEpisodeCount
             content(country: $country, language: $language) {
-              title episodeNumber seasonNumber isReleased shortDescription runtime
+              title
+              seasonNumber
+              fullPath
+              posterUrl
+              originalReleaseYear
+              isReleased
             }
-            flatrate: offers(
-              country: $country, platform: WEB,
-              filter: { monetizationTypes: [FLATRATE_AND_BUY, FLATRATE, ADS, FREE], bestOnly: true }
-            ) { package { clearName packageId shortName } }
+            episodes(limit: 50) {
+              id
+              objectId
+              content(country: $country, language: $language) {
+                title
+                episodeNumber
+                seasonNumber
+                isReleased
+                shortDescription
+                runtime
+              }
+              flatrate: offers(
+                country: $country, platform: WEB,
+                filter: { monetizationTypes: [FLATRATE_AND_BUY, FLATRATE, ADS, FREE], bestOnly: true }
+              ) {
+                package {
+                  clearName
+                  packageId
+                  shortName
+                }
+              }
+            }
           }
         }
       }
-    }}
+    }
   }
 `
 

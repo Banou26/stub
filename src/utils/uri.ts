@@ -60,7 +60,7 @@ export type AggregatedUri = `ag:(${Uris})${''|`-${string}`}`
 const SCANNARR_REGEX = /ag:\((.*)\)(?:-(.*))?/
 
 export const isAggregatedUri = (uri: string): uri is AggregatedUri => {
-  if (!uri.startsWith('ag:')) return false
+  if (!uri?.startsWith('ag:')) return false
   const match = uri.match(SCANNARR_REGEX)
   if (!match) return false
   const uris = match?.[1]

@@ -34,11 +34,24 @@ export const makeEpisode = ({ origin, id, mediaUri, ...fields }: { origin: strin
   ...fields
 })
 
-export const desc = (d?: string | null) => d
-  ? { descriptions: [{ language: 'en', description: d }], shortDescriptions: [{ language: 'en', shortDescription: d }] }
-  : {}
+export const desc = (description?: string | null) =>
+  description
+    ? {
+      descriptions: [{
+        language: 'en',
+        description: description
+      }],
+      shortDescriptions: [{
+        language: 'en',
+        shortDescription: description
+      }]
+    }
+    : {}
 
-export const img = (url?: string | null) => url ? [{ url }] : []
+export const img = (url?: string | null) =>
+  url
+    ? [{ url }]
+    : []
 
 export const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>
   media?.titles?.[0]?.title
@@ -77,7 +90,7 @@ export const waitForMedia = async <T>(
   const ac = new AbortController()
   const timeout = setTimeout(() => ac.abort(), timeoutMs)
   try {
-    for await (const _ of ctx.listenForMediaChanges({ abort: ac.signal })) {
+    for await (const _ of ctx.listenForMediaChanges({ uri }, { abortSignal: ac.signal })) {
       const r = extract(await ctx.findAggregatedMedia(uri))
       if (r) return r
     }
