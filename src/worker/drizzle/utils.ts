@@ -923,7 +923,8 @@ export const listenForMediaChanges = async function* (params: Parameters<typeof 
     // Register listeners before initial yield so notifications are buffered, not lost
   const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: options?.abortSignal })
   const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: options?.abortSignal })
-  const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+  const aggregatedEpisodeListener = listenIterator({ table: 'aggregatedEpisode', abortSignal: options?.abortSignal })
+  const listeners = mergeAsyncIterators(mediaListener, episodeListener, aggregatedEpisodeListener)
 
   yield await findAggregatedMedia(undefined, params)
 
@@ -940,7 +941,8 @@ export const listenForMediaListChanges = async function* (
     // Register listeners before initial yield so notifications are buffered, not lost
   const mediaListener = listenIterator({ table: 'aggregatedMedia', abortSignal: options?.abortSignal })
   const episodeListener = listenIterator({ table: 'aggregatedMediaEpisodes', abortSignal: options?.abortSignal })
-  const listeners = mergeAsyncIterators(mediaListener, episodeListener)
+  const aggregatedEpisodeListener = listenIterator({ table: 'aggregatedEpisode', abortSignal: options?.abortSignal })
+  const listeners = mergeAsyncIterators(mediaListener, episodeListener, aggregatedEpisodeListener)
 
   yield await findAggregatedMediaList(undefined, params)
 

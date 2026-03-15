@@ -108,9 +108,13 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
     // Insert/update the merged aggregated medias
     await insertManyAggregatedMedia(tx, processedGroups.map(g => g.aggregatedMedia))
 
-    // Re-aggregate episodes for merged medias (aggregatedMediaHandles is now up to date)
-    if (mergedPrimaryIds.length > 0) {
-      await reAggregateEpisodesForMedia(tx, mergedPrimaryIds)
+    // Re-aggregate episodes for all aggregated medias that already existed
+    // (not just merged ones), since new handles may have been added
+    const idsToReaggregate = processedGroups
+      .map(g => g.primaryId)
+      .filter((id): id is string => id !== undefined)
+    if (idsToReaggregate.length > 0) {
+      await reAggregateEpisodesForMedia(tx, idsToReaggregate)
     }
   })
   return medias
