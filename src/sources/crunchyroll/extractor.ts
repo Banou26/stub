@@ -12,282 +12,153 @@ export const metadataOnly = false
 export const isApiOnly = false
 export const supportedUris = ['cr']
 
-// Token management
-type CrunchyrollAuthToken = {
-  timestamp: number
-  readonly access_token: string
-  readonly expires_in: number
-  readonly token_type: 'Bearer'
-  readonly scope: string
-  readonly country: string
-}
+// --- Auth ---
 
-let _token: CrunchyrollAuthToken | undefined
-let _tokenPromise: Promise<CrunchyrollAuthToken> | undefined
+type Token = { timestamp: number, access_token: string, expires_in: number }
+let _token: Token | undefined
+let _tokenPromise: Promise<Token> | undefined
 
-const fetchToken = async (context: ExtractorServerContext): Promise<CrunchyrollAuthToken> => {
-  const response = await context.fetch('https://www.crunchyroll.com/auth/v1/token', {
-    headers: {
-      accept: 'application/json, text/plain, */*',
-      authorization: `Basic ${btoa('cr_web:')}`,
-      'content-type': 'application/x-www-form-urlencoded',
-    },
-    body: 'grant_type=client_id',
-    method: 'POST',
-    mode: 'cors',
-    credentials: 'include'
-  })
-  const res = await response.json()
-  if (!res.access_token) {
-    throw new Error(`Crunchyroll token fetch failed: ${JSON.stringify(res)}`)
-  }
-  const token: CrunchyrollAuthToken = {
-    timestamp: Date.now(),
-    access_token: res.access_token as string,
-    expires_in: res.expires_in as number,
-    token_type: 'Bearer',
-    scope: 'account content offline_access',
-    country: 'US'
-  }
-  _token = token
-  return token
-}
-
-const getToken = async (context: ExtractorServerContext): Promise<CrunchyrollAuthToken> => {
-  if (_token && Date.now() - _token.timestamp < _token.expires_in * 1000) {
-    return _token
-  }
-  // Deduplicate concurrent token fetches — all callers share the same in-flight promise
+const getToken = async (ctx: ExtractorServerContext): Promise<Token> => {
+  if (_token && Date.now() - _token.timestamp < _token.expires_in * 1000) return _token
   if (_tokenPromise) return _tokenPromise
-  _tokenPromise = fetchToken(context).finally(() => { _tokenPromise = undefined })
+  _tokenPromise = (async () => {
+    const res = await ctx.fetch('https://www.crunchyroll.com/auth/v1/token', {
+      headers: {
+        accept: 'application/json, text/plain, */*',
+        authorization: `Basic ${btoa('cr_web:')}`,
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      body: 'grant_type=client_id',
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'include'
+    }).then(r => r.json())
+    if (!res.access_token) throw new Error(`Crunchyroll token fetch failed: ${JSON.stringify(res)}`)
+    return (_token = { timestamp: Date.now(), access_token: res.access_token, expires_in: res.expires_in })
+  })().finally(() => { _tokenPromise = undefined })
   return _tokenPromise
 }
 
-// API Types
-interface CrunchyrollImage {
-  source: string
-  width: number
-  height: number
+// --- API ---
+
+const _inflight = new Map<string, Promise<unknown>>()
+
+const api = async <T>(url: string, ctx: ExtractorServerContext): Promise<T> => {
+  const existing = _inflight.get(url)
+  if (existing) return existing as Promise<T>
+  const promise = getToken(ctx).then(token =>
+    ctx.fetch(url, {
+      headers: { accept: 'application/json, text/plain, */*', authorization: `Bearer ${token.access_token}` },
+      mode: 'cors',
+      credentials: 'include'
+    }).then(r => r.json() as T)
+  )
+  _inflight.set(url, promise)
+  promise.finally(() => _inflight.delete(url))
+  return promise
 }
 
-interface CrunchyrollSeries {
+interface CrSeries {
   id: string
   title: string
   slug_title: string
   description: string
-  images: {
-    poster_tall?: CrunchyrollImage[][]
-    poster_wide?: CrunchyrollImage[][]
-  }
-  series_metadata?: {
-    episode_count: number
-    season_count: number
-    is_dubbed: boolean
-    is_subbed: boolean
-    audio_locales: string[]
-    subtitle_locales: string[]
-    maturity_ratings: string[]
-  }
+  images: { poster_tall?: { source: string }[][], poster_wide?: { source: string }[][] }
+  series_metadata?: { episode_count: number }
 }
 
-interface CrunchyrollSeason {
+interface CrSeason {
   id: string
-  channel_id: string
   title: string
-  slug_title: string
-  series_id: string
-  season_display_number: string
-  season_sequence_number: number
-  season_number: number
-  is_complete: boolean
   description: string
-  // keywords: any[]
-  season_tags: string[]
-  images: {}
-  extended_maturity_rating: {
-    system: string
-    rating: string
-    level: string
-  }
-  maturity_ratings: string[]
-  content_descriptors: string[]
-  is_mature: boolean
-  mature_blocked: boolean
-  is_subbed: boolean
-  is_dubbed: boolean
-  is_simulcast: boolean
-  seo_title: string
-  seo_description: string
-  availability_notes: string
-  audio_locales: string[]
-  subtitle_locales: string[]
   audio_locale: string
-  versions: {
-    audio_locale: string
-    guid: string
-    original: boolean
-    variant: string
-    }[]
-  identifier: string
-  number_of_episodes: number
+  versions?: { audio_locale: string, guid: string, original: boolean }[]
 }
 
-interface CrunchyrollEpisode {
+interface CrEpisode {
   id: string
   title: string
   description: string
-  episode: string
   episode_number: number
   season_number: number
   season_id: string
   series_id: string
-  series_title: string
   sequence_number: number
-  duration_ms: number
   episode_air_date: string
-  is_premium_only: boolean
-  is_subbed: boolean
-  is_dubbed: boolean
-  streams_link?: string
-  images?: {
-    thumbnail?: CrunchyrollImage[][]
-  }
+  images?: { thumbnail?: { source: string }[][] }
 }
 
-interface SearchResult {
-  type: string
-  count: number
-  items: CrunchyrollSeries[]
-}
+const CMS = 'https://www.crunchyroll.com/content/v2/cms'
 
-// Deduplicate concurrent GET requests to the same URL
-const _inflightRequests = new Map<string, Promise<unknown>>()
+const fetchSeries = (id: string, ctx: ExtractorServerContext) =>
+  api<{ data: CrSeries[] }>(`${CMS}/series/${id}?preferred_audio_language=ja-JP&locale=en-US`, ctx)
 
-const fetchWithAuth = async <T>(url: string, context: ExtractorServerContext): Promise<T> => {
-  const existing = _inflightRequests.get(url)
-  if (existing) return existing as Promise<T>
+const fetchSeasons = (id: string, ctx: ExtractorServerContext) =>
+  api<{ data: CrSeason[] }>(`${CMS}/series/${id}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`, ctx)
 
-  const promise = (async () => {
-    const token = await getToken(context)
-    const response = await context.fetch(url, {
-      headers: {
-        accept: 'application/json, text/plain, */*',
-        authorization: `Bearer ${token.access_token}`,
-      },
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'include'
-    })
-    return await response.json() as T
-  })()
+const fetchEpisodes = (seasonId: string, ctx: ExtractorServerContext) =>
+  api<{ data: CrEpisode[] }>(`${CMS}/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`, ctx)
 
-  _inflightRequests.set(url, promise)
-  promise.finally(() => _inflightRequests.delete(url))
-  return promise
-}
-
-export const fetchSeries = (seriesId: string, context: ExtractorServerContext) =>
-  fetchWithAuth<{ total: number; data: CrunchyrollSeries[] }>(
-    `https://www.crunchyroll.com/content/v2/cms/series/${seriesId}?preferred_audio_language=ja-JP&locale=en-US`,
-    context
-  )
-
-export const fetchSeasons = (seriesId: string, context: ExtractorServerContext) =>
-  fetchWithAuth<{ total: number; data: CrunchyrollSeason[] }>(
-    `https://www.crunchyroll.com/content/v2/cms/series/${seriesId}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`,
-    context
-  )
-
-export const fetchEpisodes = (seasonId: string, context: ExtractorServerContext) =>
-  fetchWithAuth<{ total: number; data: CrunchyrollEpisode[] }>(
-    `https://www.crunchyroll.com/content/v2/cms/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`,
-    context
-  )
-
-export const searchSeriesApi = (query: string, context: ExtractorServerContext) =>
-  fetchWithAuth<{ total: number; data: SearchResult[] }>(
+const searchSeries = (query: string, ctx: ExtractorServerContext) =>
+  api<{ data: { type: string, items: CrSeries[] }[] }>(
     `https://www.crunchyroll.com/content/v2/discover/search?q=${encodeURIComponent(query)}&n=50&type=series&locale=en-US`,
-    context
+    ctx
   )
 
-// Resolve a Crunchyroll episode/object ID to its series and season IDs
-// Uses the /content/v2/cms/objects endpoint which returns episode_metadata
 export const resolveEpisodeToSeriesId = async (
   episodeId: string,
-  context: ExtractorServerContext
+  ctx: ExtractorServerContext
 ): Promise<{ seriesId: string, seasonId: string } | undefined> => {
-  const response = await fetchWithAuth<{ data: { id: string, episode_metadata?: { series_id: string, season_id: string } }[] }>(
-    `https://www.crunchyroll.com/content/v2/cms/objects/${episodeId}?ratings=true&locale=en-US`,
-    context
+  const res = await api<{ data: { episode_metadata?: { series_id: string, season_id: string } }[] }>(
+    `${CMS}/objects/${episodeId}?ratings=true&locale=en-US`, ctx
   )
-  const meta = response.data?.[0]?.episode_metadata
-  if (!meta?.series_id) return undefined
-  return { seriesId: meta.series_id, seasonId: meta.season_id }
+  const meta = res.data?.[0]?.episode_metadata
+  return meta?.series_id ? { seriesId: meta.series_id, seasonId: meta.season_id } : undefined
 }
 
-// Picks the largest image from Crunchyroll's nested image arrays (last group, last size)
-const bestImage = (images?: CrunchyrollImage[][]) =>
+// --- ID utils ---
+
+const stripLocale = (id: string) => id.replace(/JAJP$/, '')
+
+const resolveSeasonId = (season: CrSeason): string =>
+  season.versions?.find(v => v.audio_locale === 'ja-JP')?.guid
+  ?? season.versions?.find(v => v.original)?.guid
+  ?? stripLocale(season.id)
+
+export const crunchyrollId = (seriesId: string, seasonId?: string, episodeId?: string) =>
+  [seriesId, seasonId && stripLocale(seasonId), episodeId].filter(Boolean).join('-')
+
+// --- Normalization ---
+
+const bestImage = (images?: { source: string }[][]) =>
   images?.at(-1)?.at(-1)?.source
 
-// Normalization functions
-const normalizeSeries = (series: CrunchyrollSeries): GQLMedia => {
-  const uri = toUri({ origin, id: series.id })
+const normalizeMedia = (
+  id: string, title: string, description: string, series: CrSeries, episodeCount?: number
+): GQLMedia => {
   const posterUrl = bestImage(series.images?.poster_tall)
   const bannerUrl = bestImage(series.images?.poster_wide)
-
   return {
     _id: crypto.randomUUID(),
-    uri,
+    uri: toUri({ origin, id }),
     origin,
-    id: series.id,
+    id,
     url: `https://www.crunchyroll.com/series/${series.id}/${series.slug_title}`,
     handles: [],
-    titles: [{ language: 'en', title: series.title }],
-    descriptions: series.description
-      ? [{ language: 'en', description: series.description }]
-      : [],
-    shortDescriptions: series.description
-      ? [{ language: 'en', shortDescription: series.description }]
-      : [],
+    titles: [{ language: 'en', title }],
+    descriptions: description ? [{ language: 'en', description }] : [],
+    shortDescriptions: description ? [{ language: 'en', shortDescription: description }] : [],
     covers: posterUrl ? [{ url: posterUrl }] : [],
     banners: bannerUrl ? [{ url: bannerUrl }] : [],
     episodes: [],
     trailers: [],
-    episodeCount: series.series_metadata?.episode_count
+    episodeCount
   } satisfies GQLMedia
 }
 
-const normalizeSeason = (series: CrunchyrollSeries, season: CrunchyrollSeason): GQLMedia => {
-  const id = crunchyrollId(series.id, resolveSeasonId(season))
-  const uri = toUri({ origin, id })
-  const posterUrl = bestImage(series.images?.poster_tall)
-  const bannerUrl = bestImage(series.images?.poster_wide)
-
-  return {
-    _id: crypto.randomUUID(),
-    uri,
-    origin,
-    id,
-    url: `https://www.crunchyroll.com/series/${series.id}`,
-    handles: [],
-    titles: [{ language: 'en', title: season.title }],
-    descriptions: season.description
-      ? [{ language: 'en', description: season.description }]
-      : [],
-    shortDescriptions: season.description
-      ? [{ language: 'en', shortDescription: season.description }]
-      : [],
-    covers: posterUrl ? [{ url: posterUrl }] : [],
-    banners: bannerUrl ? [{ url: bannerUrl }] : [],
-    episodes: [],
-    trailers: []
-  } satisfies GQLMedia
-}
-
-const normalizeEpisode = (episode: CrunchyrollEpisode, mediaUri: string): GQLEpisode => {
+const normalizeEpisode = (episode: CrEpisode, mediaUri: string): GQLEpisode => {
   const id = crunchyrollId(episode.series_id, episode.season_id, episode.id)
   const thumbnailUrl = bestImage(episode.images?.thumbnail)
-
   return {
     _id: crypto.randomUUID(),
     uri: toUri({ origin, id }),
@@ -297,48 +168,18 @@ const normalizeEpisode = (episode: CrunchyrollEpisode, mediaUri: string): GQLEpi
     mediaUri,
     handles: [],
     titles: [{ language: 'en', title: episode.title }],
-    descriptions: episode.description
-      ? [{ language: 'en', description: episode.description }]
-      : [],
-    shortDescriptions: episode.description
-      ? [{ language: 'en', shortDescription: episode.description }]
-      : [],
+    descriptions: episode.description ? [{ language: 'en', description: episode.description }] : [],
+    shortDescriptions: episode.description ? [{ language: 'en', shortDescription: episode.description }] : [],
     thumbnails: thumbnailUrl ? [{ url: thumbnailUrl }] : [],
     seasonNumber: episode.season_number,
     episodeNumber: episode.episode_number,
     absoluteEpisodeNumber: episode.sequence_number,
-    releaseDate: episode.episode_air_date
-      ? new Date(episode.episode_air_date).toISOString()
-      : undefined
+    releaseDate: episode.episode_air_date ? new Date(episode.episode_air_date).toISOString() : undefined
   } satisfies GQLEpisode
 }
 
-// CR ID utils — format is `seriesId-seasonId-episodeId`
-const stripLocale = (id: string) => id.replace(/JAJP$/, '')
-
-/** Resolve the ja-JP (or original) version guid for a season, falling back to stripped season.id */
-const resolveSeasonId = (season: CrunchyrollSeason): string =>
-  season.versions?.find(v => v.audio_locale === 'ja-JP')?.guid
-  ?? season.versions?.find(v => v.original)?.guid
-  ?? stripLocale(season.id)
-
-export const crunchyrollId = (
-  seriesId: string,
-  seasonId?: string,
-  episodeId?: string
-) => [seriesId, seasonId && stripLocale(seasonId), episodeId].filter(Boolean).join('-')
-
-export const parseCrunchyrollId = (id: string) => {
-  const parts = id.split('-')
-  return {
-    seriesId: parts[0],
-    seasonId: parts[1],
-    episodeId: parts[2]
-  }
-}
-
 /** Keep only the last episode per episode_number (regular episodes come after specials in CR's ordering) */
-const deduplicateByEpisodeNumber = (episodes: GQLEpisode[]): GQLEpisode[] => {
+const deduplicateEpisodes = (episodes: GQLEpisode[]): GQLEpisode[] => {
   const lastByNumber = new Map<number, GQLEpisode>()
   for (const ep of episodes) {
     if (ep.episodeNumber != null) lastByNumber.set(ep.episodeNumber, ep)
@@ -346,128 +187,81 @@ const deduplicateByEpisodeNumber = (episodes: GQLEpisode[]): GQLEpisode[] => {
   return episodes.filter(ep => ep.episodeNumber == null || lastByNumber.get(ep.episodeNumber) === ep)
 }
 
-// Composed data fetching functions
-const getSeasonWithEpisodes = async (
-  series: CrunchyrollSeries,
-  season: CrunchyrollSeason,
-  context: ExtractorServerContext
-): Promise<GQLMedia> => {
-  const media = normalizeSeason(series, season)
-  const episodesResponse = await fetchEpisodes(resolveSeasonId(season), context)
-  media.episodes = deduplicateByEpisodeNumber(episodesResponse.data.map(ep => normalizeEpisode(ep, media.uri)))
-  media.episodeCount = media.episodes.length
-  return media
+const fetchNormalizedEpisodes = async (seasonId: string, mediaUri: string, ctx: ExtractorServerContext) => {
+  const { data } = await fetchEpisodes(seasonId, ctx)
+  return deduplicateEpisodes(data.map(ep => normalizeEpisode(ep, mediaUri)))
 }
 
-const getAllEpisodes = async (
-  series: CrunchyrollSeries,
-  seasons: CrunchyrollSeason[],
-  mediaUri: string,
-  context: ExtractorServerContext
-): Promise<GQLEpisode[]> => {
-  const episodeResponses = await Promise.all(
-    seasons.map(season => fetchEpisodes(resolveSeasonId(season), context))
-  )
-  const episodes = episodeResponses.flatMap(res =>
-    deduplicateByEpisodeNumber(res.data.map(ep => normalizeEpisode(ep, mediaUri)))
-  )
-  return episodes
-}
+// --- Core data fetching ---
 
-export const getMedia = async (id: string, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
-  const { seriesId, seasonId } = parseCrunchyrollId(id)
+const findSeason = (seasons: CrSeason[], seasonId: string) =>
+  seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
+
+export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  const parts = id.split('-')
+  const seriesId = parts[0]
+  const seasonId = parts[1]
   if (!seriesId) return undefined
 
-  const [seriesResponse, seasonsResponse] = await Promise.all([
-    fetchSeries(seriesId, context),
-    fetchSeasons(seriesId, context)
-  ])
+  const [seriesRes, seasonsRes] = await Promise.all([fetchSeries(seriesId, ctx), fetchSeasons(seriesId, ctx)])
+  const series = seriesRes.data[0]
+  if (!series) return undefined
 
-  const series = seriesResponse?.data?.[0]
-  if (!series) {
-    console.warn('crunchyroll seriesResponse?.data?.[0] is undefined for', id, seriesResponse)
-    return undefined
-  }
+  const seasons = seasonsRes.data
+  // Resolve target season: explicit ID, single season, or multi-season (undefined)
+  const targetSeason = seasonId
+    ? findSeason(seasons, seasonId)
+    : seasons.length === 1 ? seasons[0] : undefined
 
-  const seasons = seasonsResponse.data
+  if (seasonId && !targetSeason) return undefined
 
-  // Specific season requested — match by ID
-  if (seasonId) {
-    const season = seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
-    if (!season) return undefined
-    return getSeasonWithEpisodes(series, season, context)
-  }
+  const media = targetSeason
+    ? normalizeMedia(crunchyrollId(seriesId, resolveSeasonId(targetSeason)), targetSeason.title, targetSeason.description, series)
+    : normalizeMedia(series.id, series.title, series.description, series)
 
-  // Single season series — use that season directly
-  if (seasons.length === 1) {
-    return getSeasonWithEpisodes(series, seasons[0]!, context)
-  }
-
-  // Multi-season series — return series-level media with all episodes
-  const media = normalizeSeries(series)
-  media.episodes = await getAllEpisodes(series, seasons, media.uri, context)
+  media.episodes = targetSeason
+    ? await fetchNormalizedEpisodes(resolveSeasonId(targetSeason), media.uri, ctx)
+    : (await Promise.all(seasons.map(s => fetchNormalizedEpisodes(resolveSeasonId(s), media.uri, ctx)))).flat()
   media.episodeCount = media.episodes.length
   return media
 }
 
-const searchMedia = async (query: string, context: ExtractorServerContext): Promise<GQLMedia[]> => {
-  const searchResponse = await searchSeriesApi(query, context)
-  const seriesResults = searchResponse.data.find(d => d.type === 'series')?.items ?? []
-  return seriesResults.map(normalizeSeries)
-}
-
-/**
- * Matches a crunchyroll season to a media based on release date.
- * Fetches the first episode of each season and compares air dates
- * against the target date. Returns composite `seriesId-seasonId` ID,
- * or undefined if no season could be matched.
- */
 export const matchSeasonByDate = async (
   seriesId: string,
   startDate: string,
-  context: ExtractorServerContext
+  ctx: ExtractorServerContext
 ): Promise<string | undefined> => {
   const targetDate = new Date(startDate)
   if (isNaN(targetDate.getTime())) return undefined
 
-  const seasonsResponse = await fetchSeasons(seriesId, context)
-  const seasons = seasonsResponse.data
-
+  const { data: seasons } = await fetchSeasons(seriesId, ctx)
   if (!seasons.length) return undefined
   if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, resolveSeasonId(seasons[0]))
 
   // Prefer Japanese audio seasons for matching
   const jaSeasons = seasons.filter(s => s.audio_locale === 'ja-JP')
-  const matchSeasons = jaSeasons.length > 0 ? jaSeasons : seasons
+  const candidates = jaSeasons.length > 0 ? jaSeasons : seasons
 
-  const seasonWithDates = await Promise.all(
-    matchSeasons.map(async season => {
+  const seasonDates = await Promise.all(
+    candidates.map(async season => {
       const resolvedId = resolveSeasonId(season)
-      const episodesResponse = await fetchEpisodes(resolvedId, context)
-      const firstEpisode = episodesResponse.data[0]
-      return {
-        resolvedId,
-        firstAirDate: firstEpisode?.episode_air_date
-          ? new Date(firstEpisode.episode_air_date)
-          : undefined
-      }
+      const { data } = await fetchEpisodes(resolvedId, ctx)
+      return { resolvedId, airDate: data[0]?.episode_air_date ? new Date(data[0].episode_air_date) : undefined }
     })
   )
 
-  let bestMatch: { seasonId: string, diff: number } | undefined
-
-  for (const { resolvedId, firstAirDate } of seasonWithDates) {
-    if (!firstAirDate) continue
-    const diff = Math.abs(firstAirDate.getTime() - targetDate.getTime())
-    if (!bestMatch || diff < bestMatch.diff) {
-      bestMatch = { seasonId: resolvedId, diff }
-    }
+  let best: { id: string, diff: number } | undefined
+  for (const { resolvedId, airDate } of seasonDates) {
+    if (!airDate) continue
+    const diff = Math.abs(airDate.getTime() - targetDate.getTime())
+    if (!best || diff < best.diff) best = { id: resolvedId, diff }
   }
 
-  return bestMatch ? crunchyrollId(seriesId, bestMatch.seasonId) : undefined
+  return best ? crunchyrollId(seriesId, best.id) : undefined
 }
 
-// Resolvers
+// --- Resolvers ---
+
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
@@ -475,50 +269,25 @@ export const resolvers: Resolvers = {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
         const uri = extractAggregatedUriOrigin(_uri, origin)
         if (!uri) return yield { media: null }
-        const media = await getMedia(uri.id, ctx) ?? null
-        yield {
-          media
-        }
+        yield { media: await getMedia(uri.id, ctx) ?? null }
       }
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
       subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
-        yield { mediaPage: { nodes: search ? await searchMedia(search, ctx) : [] } }
+        if (!search) return yield { mediaPage: { nodes: [] } }
+        const res = await searchSeries(search, ctx)
+        const items = res.data.find(d => d.type === 'series')?.items ?? []
+        yield { mediaPage: { nodes: items.map(s => normalizeMedia(s.id, s.title, s.description, s, s.series_metadata?.episode_count)) } }
       }
     }
   },
   Media: {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
-      // If episodes were already populated (e.g. from Subscription.media), return them
       if (parent.episodes?.length) return parent.episodes
-
-      const { seriesId, seasonId } = parseCrunchyrollId(parent.id)
-      if (!seriesId) return []
-
-      const seasonsResponse = await fetchSeasons(seriesId, ctx)
-      const seasons = seasonsResponse.data
-
-      // Specific season requested
-      if (seasonId) {
-        const season = seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
-        if (!season) return []
-        const episodesResponse = await fetchEpisodes(resolveSeasonId(season), ctx)
-        return deduplicateByEpisodeNumber(episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri)))
-      }
-
-      // Single season — use it directly
-      if (seasons.length === 1 && seasons[0]) {
-        const episodesResponse = await fetchEpisodes(resolveSeasonId(seasons[0]), ctx)
-        return deduplicateByEpisodeNumber(episodesResponse.data.map(ep => normalizeEpisode(ep, parent.uri)))
-      }
-
-      // Multi-season — fetch all episodes from all seasons
-      const seriesResponse = await fetchSeries(seriesId, ctx)
-      const series = seriesResponse.data[0]
-      if (!series) return []
-      return getAllEpisodes(series, seasons, parent.uri, ctx)
+      const media = await getMedia(parent.id, ctx)
+      return media?.episodes ?? []
     }
   }
 }
