@@ -9,7 +9,7 @@ import {
 } from '@floating-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
-import { Redirect, useParams } from 'wouter'
+import { Link, Redirect, useParams } from 'wouter'
 
 import { MediaDescriptionContentType, OriginFilter } from '../../generated/graphql'
 import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
@@ -336,13 +336,18 @@ const Episode = (
     pause: !originIds
   })
 
-  const watchPath = episode.uri
-    ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri })
-    : undefined
-
   return (
     <div className="episode">
-      {watchPath ? <a className="episode-link" href={watchPath} /> : undefined}
+      {
+        episode.uri
+          ? (
+            <Link
+              className="episode-link"
+              href={getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri })}
+            />
+          )
+          : undefined
+      }
       <div className="number">{episode.episodeNumber}</div>
       {
         episode.thumbnails?.at(0)
