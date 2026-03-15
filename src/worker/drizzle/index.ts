@@ -1,3 +1,5 @@
+import { Mutex } from 'async-mutex'
+
 import * as schema from './schema'
 import makeDrizzle from './drizzle-adapter'
 // @ts-expect-error
@@ -6,10 +8,13 @@ import { generateTableNotifyTriggers, startNotificationRootListener } from './no
 
 const database = await makeDrizzle<typeof schema>({ schema })
 
+const txMutex = new Mutex()
 const _transaction = database.transaction.bind(database)
 database.transaction = async (...args) => {
-  await new Promise((resolve) => setTimeout(resolve, 0))
-  return _transaction(...args)
+  return txMutex.runExclusive(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    return _transaction(...args)
+  })
 }
 
 try {

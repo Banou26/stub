@@ -12,7 +12,6 @@ export default async <TSchema extends Record<string, unknown> = Record<string, n
   const sqlite3 = SQLite.Factory(module) as SQLiteAPI
   const database = await sqlite3.open_v2(':memory:')
   const mutex = new Mutex()
-  let transactionRelease: (() => void) | null = null
 
   const exec = async (sql: string, params: SQLiteCompatibleType[], method: string) => {
     if (method === 'run') {
@@ -45,27 +44,14 @@ export default async <TSchema extends Record<string, unknown> = Record<string, n
 
   return drizzle(
     async (sql, params: SQLiteCompatibleType[], method) => {
-      const sqlLower = sql.trim().toLowerCase()
-      const isBegin = sqlLower === 'begin'
-      const isEnd = sqlLower === 'commit' || sqlLower === 'rollback'
-
-      if (isBegin) {
-        transactionRelease = await mutex.acquire()
-      }
-
-      const release = transactionRelease ? undefined : await mutex.acquire()
+      const release = await mutex.acquire()
       try {
         return await exec(sql, params, method)
       } catch (error) {
         console.error('wa-sqlite query error:', error)
         throw error
       } finally {
-        if (release) release()
-        if (isEnd && transactionRelease) {
-          const r = transactionRelease
-          transactionRelease = null
-          r()
-        }
+        release()
       }
     },
     async () => {
