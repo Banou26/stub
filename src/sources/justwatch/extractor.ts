@@ -1,7 +1,8 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
-import { extractAggregatedUriOrigin, fromAggregatedUri, isAggregatedUri, isUri, toUri } from '../../utils/uri'
+import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
+import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, mergeHandles, waitForMedia } from '../utils'
 
 export const icon = 'https://www.justwatch.com/appasset/img/favicon/favicon-32x32.png'
 export const originUrl = 'https://www.justwatch.com'
@@ -23,7 +24,7 @@ const PACKAGE_ORIGIN_MAP: Record<string, string> = {
   hlu: 'hulu', hbm: 'hbo', pcp: 'peacock', pmp: 'paramount', fuv: 'fubo'
 }
 
-// --- URL extraction ---
+// URL extraction
 
 const extractRealUrl = (affiliateUrl: string): string | undefined => {
   try {
@@ -62,12 +63,15 @@ const extractCrunchyrollEpisodeId = (url: string): string | undefined => {
   return undefined
 }
 
-// --- API ---
+// API
 
 const jwFetch = async <T>(query: string, variables: Record<string, unknown>, ctx: ExtractorServerContext): Promise<T> => {
   const res = await ctx.fetch(JW_API, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', accept: '*/*' },
+    headers: {
+      'content-type': 'application/json',
+      accept: '*/*'
+    },
     body: JSON.stringify({ query, variables })
   })
   return res.json() as T
@@ -130,7 +134,6 @@ const NODE_QUERY = `
   }
 `
 
-// Deduplicate concurrent requests
 const _inflight = new Map<string, Promise<unknown>>()
 
 const deduplicatedFetch = async <T>(key: string, fn: () => Promise<T>): Promise<T> => {
@@ -154,7 +157,7 @@ const getNodeDetails = (nodeId: string, ctx: ExtractorServerContext) =>
     jwFetch<JWNodeResponse>(NODE_QUERY, { nodeId, language: LANGUAGE, country: COUNTRY }, ctx)
   )
 
-// --- Types ---
+// Types
 
 interface JWOffer {
   monetizationType: string
@@ -165,12 +168,7 @@ interface JWOffer {
 interface JWSearchNode {
   id: string
   objectId: number
-  content: {
-    title: string
-    fullPath: string
-    posterUrl: string | null
-    shortDescription: string | null
-  }
+  content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null }
   offers: JWOffer[]
 }
 
@@ -182,50 +180,21 @@ interface JWSeason {
 
 interface JWEpisode {
   objectId: number
-  content: {
-    title: string
-    episodeNumber: number
-    seasonNumber: number
-    isReleased: boolean
-    shortDescription: string | null
-    runtime: number | null
-  }
+  content: { title: string, episodeNumber: number, seasonNumber: number, isReleased: boolean, shortDescription: string | null, runtime: number | null }
 }
 
-interface JWShowNode extends JWSearchNode {
-  seasons: JWSeason[]
-}
+interface JWShowNode extends JWSearchNode { seasons: JWSeason[] }
+interface JWSearchResponse { data: { popularTitles: { edges: { node: JWSearchNode }[] } } }
+interface JWNodeResponse { data: { node: JWShowNode } }
 
-interface JWSearchResponse {
-  data: { popularTitles: { edges: { node: JWSearchNode }[] } }
-}
+// Helpers
 
-interface JWNodeResponse {
-  data: { node: JWShowNode }
-}
+const resolveImageUrl = (url: string | null | undefined) =>
+  url ? (url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`) : undefined
 
-// --- Helpers ---
-
-const resolveImageUrl = (url: string | null | undefined): string | undefined => {
-  if (!url) return undefined
-  return url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`
-}
-
-const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>
-  media?.titles?.[0]?.title
-
-const parseSeasonNumber = (title: string): number | undefined => {
-  const match = title.match(/\b(?:Season|Part|Cour)\s+(\d+)\b/i)
-  return match ? Number(match[1]) : undefined
-}
-
-const simplifyTitle = (title: string): string[] => {
-  const queries: string[] = []
-  const stripped = title.replace(/\s+(Season|Part|Cour)\s+\d+$/i, '').trim()
-  if (stripped !== title) queries.push(stripped)
-  const colonIdx = title.indexOf(':')
-  if (colonIdx > 2) queries.push(title.slice(0, colonIdx).trim())
-  return queries
+const parseSeasonNumber = (title: string) => {
+  const m = title.match(/\b(?:Season|Part|Cour)\s+(\d+)\b/i)
+  return m ? Number(m[1]) : undefined
 }
 
 const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | undefined => {
@@ -238,27 +207,7 @@ const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | 
   return best?.num
 }
 
-const buildHandlesFromAggregatedUri = (aggregatedUri: string): GQLMedia[] => {
-  const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
-  if (!parsed) return []
-  return parsed.handleUrisValues
-    .filter(({ origin: o }) => o !== origin)
-    .map(({ origin: o, id }) => ({
-      _id: crypto.randomUUID(),
-      uri: toUri({ origin: o, id }),
-      origin: o, id,
-      url: undefined, handles: [], titles: [], descriptions: [],
-      shortDescriptions: [], covers: [], banners: [], episodes: [], trailers: []
-    } satisfies GQLMedia))
-}
-
-const mergeAggregatedHandles = (media: GQLMedia, aggregatedUri: string) => {
-  const extra = buildHandlesFromAggregatedUri(aggregatedUri)
-  const existing = new Set(media.handles.map(h => h.origin))
-  media.handles = [...media.handles, ...extra.filter(h => !existing.has(h.origin))]
-}
-
-// --- Handle building from offers ---
+// Handle building from offers
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
@@ -297,26 +246,23 @@ const buildOffersAsHandles = async (
 
     if (!contentId) continue
 
-    handles.push({
-      _id: crypto.randomUUID(),
-      uri: toUri({ origin: mappedOrigin, id: contentId }),
-      origin: mappedOrigin, id: contentId, url,
-      handles: [],
+    handles.push(makeMedia({
+      origin: mappedOrigin,
+      id: contentId,
+      url,
       titles: [
         ...meta.title ? [{ language: 'en', title: meta.title }] : [],
         { language: 'en', title: offer.package.clearName }
       ],
-      descriptions: meta.shortDescription ? [{ language: 'en', description: meta.shortDescription }] : [],
-      shortDescriptions: meta.shortDescription ? [{ language: 'en', shortDescription: meta.shortDescription }] : [],
-      covers: meta.posterUrl ? [{ url: meta.posterUrl }] : [],
-      banners: [], episodes: [], trailers: []
-    } satisfies GQLMedia)
+      ...desc(meta.shortDescription),
+      covers: img(meta.posterUrl)
+    }))
   }
 
   return handles
 }
 
-// --- Normalization ---
+// Normalization
 
 const normalizeMedia = async (
   node: JWSearchNode,
@@ -324,7 +270,6 @@ const normalizeMedia = async (
   ctx: ExtractorServerContext
 ): Promise<GQLMedia> => {
   const id = String(node.objectId)
-  const posterUrl = resolveImageUrl(node.content.posterUrl)
   const { shortDescription } = node.content
 
   const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
@@ -341,128 +286,49 @@ const normalizeMedia = async (
       .map(ep => normalizeEpisode(ep, toUri({ origin, id })))
   )
 
-  return {
-    _id: crypto.randomUUID(),
-    uri: toUri({ origin, id }),
-    origin, id,
+  return makeMedia({
+    origin,
+    id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
     handles: await buildOffersAsHandles(node.offers ?? [], {
       shortDescription, title, posterUrl: resolveImageUrl(node.content.posterUrl), seasonNumber: opts.seasonNumber
     }, ctx),
     titles: [{ language: 'en', title }],
-    descriptions: shortDescription ? [{ language: 'en', description: shortDescription }] : [],
-    shortDescriptions: shortDescription ? [{ language: 'en', shortDescription }] : [],
-    covers: posterUrl ? [{ url: posterUrl }] : [],
-    banners: [],
+    ...desc(shortDescription),
+    covers: img(resolveImageUrl(node.content.posterUrl)),
     episodes,
-    episodeCount: episodes.length || undefined,
-    trailers: []
-  } satisfies GQLMedia
+    episodeCount: episodes.length || undefined
+  })
 }
 
-const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode => {
-  const id = String(ep.objectId)
-  return {
-    _id: crypto.randomUUID(),
-    uri: toUri({ origin, id }),
-    origin, id,
-    url: undefined, mediaUri, handles: [],
+const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
+  makeEpisode({
+    origin,
+    id: String(ep.objectId),
+    mediaUri,
     titles: [{ language: 'en', title: ep.content.title }],
-    descriptions: ep.content.shortDescription ? [{ language: 'en', description: ep.content.shortDescription }] : [],
-    shortDescriptions: ep.content.shortDescription ? [{ language: 'en', shortDescription: ep.content.shortDescription }] : [],
-    thumbnails: [],
+    ...desc(ep.content.shortDescription),
     seasonNumber: ep.content.seasonNumber,
     episodeNumber: ep.content.episodeNumber,
     runtime: ep.content.runtime ?? undefined
-  } satisfies GQLEpisode
-}
+  })
 
-// --- Wait patterns ---
+// Season resolution
 
-const waitForEpisodeCount = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<number | undefined> => {
-  const existing = await ctx.findAggregatedMedia(aggregatedUri)
-  const count = existing?.episodeCount ?? existing?.episodes?.length
-  if (count) return count
-
-  const abortController = new AbortController()
-  const timeout = setTimeout(() => abortController.abort(), 15_000)
-  try {
-    for await (const _ of ctx.listenForMediaChanges({ abort: abortController.signal })) {
-      const updated = await ctx.findAggregatedMedia(aggregatedUri)
-      const epCount = updated?.episodeCount ?? updated?.episodes?.length
-      if (epCount) return epCount
-    }
-  } finally {
-    clearTimeout(timeout)
-    abortController.abort()
-  }
-  return undefined
-}
-
-const waitForTitle = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<string | undefined> => {
-  const existing = await ctx.findAggregatedMedia(aggregatedUri)
-  const title = getFirstTitle(existing)
-  if (title) return title
-
-  const abortController = new AbortController()
-  const timeout = setTimeout(() => abortController.abort(), 30_000)
-  try {
-    for await (const _ of ctx.listenForMediaChanges({ abort: abortController.signal })) {
-      const t = getFirstTitle(await ctx.findAggregatedMedia(aggregatedUri))
-      if (t) return t
-    }
-  } finally {
-    clearTimeout(timeout)
-    abortController.abort()
-  }
-  return undefined
-}
-
-// --- Season resolution ---
-
-const resolveSeasonNumber = async (
-  aggregatedUri: string,
-  node: JWShowNode,
-  ctx: ExtractorServerContext
-): Promise<number | undefined> => {
+const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: ExtractorServerContext) => {
   if (!node.seasons || node.seasons.length <= 1) return undefined
-
-  const tryResolve = (media: { titles?: { title: string }[], episodeCount?: number | null, episodes?: unknown[] } | undefined) => {
-    const title = getFirstTitle(media)
-    if (title) {
-      const fromTitle = parseSeasonNumber(title)
-      if (fromTitle) return fromTitle
-    }
-    const epCount = media?.episodeCount ?? media?.episodes?.length
+  return waitForMedia(uri, ctx, m => {
+    const title = getFirstTitle(m)
+    if (title) { const n = parseSeasonNumber(title); if (n) return n }
+    const epCount = m?.episodeCount ?? m?.episodes?.length
     return epCount ? findMatchingSeason(node.seasons, epCount) : undefined
-  }
-
-  const immediate = tryResolve(await ctx.findAggregatedMedia(aggregatedUri))
-  if (immediate) return immediate
-
-  const abortController = new AbortController()
-  const timeout = setTimeout(() => abortController.abort(), 15_000)
-  try {
-    for await (const _ of ctx.listenForMediaChanges({ abort: abortController.signal })) {
-      const result = tryResolve(await ctx.findAggregatedMedia(aggregatedUri))
-      if (result) return result
-    }
-  } finally {
-    clearTimeout(timeout)
-    abortController.abort()
-  }
-  return undefined
+  })
 }
 
-// --- Core resolution ---
+// Core resolution
 
-const searchAndLinkMedia = async (
-  title: string,
-  aggregatedUri: string,
-  ctx: ExtractorServerContext
-): Promise<GQLMedia | null> => {
-  const queries = [title, ...simplifyTitle(title)]
-  for (const query of queries) {
+const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
+  for (const query of [title, ...simplifyTitle(title)]) {
     const searchRes = await searchTitles(query, ctx)
     const results = searchRes.data?.popularTitles?.edges ?? []
     if (!results.length) continue
@@ -475,13 +341,13 @@ const searchAndLinkMedia = async (
     if (node.seasons?.length > 1) {
       seasonNumber = parseSeasonNumber(title)
       if (!seasonNumber) {
-        const targetEpCount = await waitForEpisodeCount(aggregatedUri, ctx)
-        if (targetEpCount) seasonNumber = findMatchingSeason(node.seasons, targetEpCount)
+        const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
+        if (epCount) seasonNumber = findMatchingSeason(node.seasons, epCount)
       }
     }
 
     const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
-    mergeAggregatedHandles(media, aggregatedUri)
+    mergeHandles(media, aggregatedUri)
     return media
   }
   return null
@@ -495,17 +361,16 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
     if (!node) return null
     const seasonNumber = isAggregatedUri(uri) ? await resolveSeasonNumber(uri, node, ctx) : undefined
     const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
-    if (isAggregatedUri(uri)) mergeAggregatedHandles(media, uri)
+    if (isAggregatedUri(uri)) mergeHandles(media, uri)
     return media
   }
-
   if (!isAggregatedUri(uri)) return null
-  const title = await waitForTitle(uri, ctx)
+  const title = await waitForMedia(uri, ctx, m => getFirstTitle(m), 30_000)
   if (!title) return null
   return searchAndLinkMedia(title, uri, ctx)
 }
 
-// --- Resolvers ---
+// Resolvers
 
 export const resolvers: Resolvers = {
   Subscription: {
