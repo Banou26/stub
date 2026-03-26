@@ -1,11 +1,10 @@
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
-import { JSDOM } from 'jsdom'
+import { parseHTML } from 'linkedom'
 import { LRUCache } from 'lru-cache'
 
-const window = new JSDOM('').window
-const DOMParser = window.DOMParser
-const purify = DOMPurify(window)
+const { window } = parseHTML('<!DOCTYPE html><html><body></body></html>')
+const purify = DOMPurify(window as any)
 
 const innerHTMLCache = new LRUCache<string, string>({ max: 1000 })
 const textContentCache = new LRUCache<string, string>({ max: 1000 })
@@ -20,23 +19,25 @@ const parseMarkdown = (text: string) => {
   return purify.sanitize(markdown)
 }
 
+const parseDOM = (html: string) => {
+  const { document } = parseHTML(`<!DOCTYPE html><html><body>${html}</body></html>`)
+  return {
+    innerHTML: document.body?.innerHTML ?? html,
+    textContent: document.body?.textContent ?? html,
+  }
+}
+
 export const parseHTMLDescription = (text: string) => {
   const cached = innerHTMLCache.get(text)
   if (cached) return cached
 
   const purifiedDOM = parseMarkdown(text)
-  const { innerHTML, textContent } =
-    new DOMParser()
-      .parseFromString(
-        purifiedDOM,
-        'text/html'
-      )
-      .body
+  const { innerHTML, textContent } = parseDOM(purifiedDOM)
 
   textContentCache.set(text, textContent)
   innerHTMLCache.set(text, innerHTML)
 
-  return textContent
+  return innerHTML
 }
 
 export const parseTextDescription = (text: string) => {
@@ -44,13 +45,7 @@ export const parseTextDescription = (text: string) => {
   if (cached) return cached
 
   const purifiedDOM = parseMarkdown(text)
-  const { innerHTML, textContent } =
-    new DOMParser()
-      .parseFromString(
-        purifiedDOM,
-        'text/html'
-      )
-      .body
+  const { innerHTML, textContent } = parseDOM(purifiedDOM)
 
   textContentCache.set(text, textContent)
   innerHTMLCache.set(text, innerHTML)
