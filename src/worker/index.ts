@@ -1,3 +1,3 @@
 import './polyfills'
 import './yoga'
-import './drizzle'
+import './store'

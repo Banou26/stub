@@ -1,5 +1,5 @@
-import * as drizzle from './drizzle'
+import * as store from './store'
 
 export {
-  drizzle
+  store
 }

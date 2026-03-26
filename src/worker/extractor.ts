@@ -1,9 +1,9 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 import type { Exchange } from 'urql'
 
-import type { Episode, Media, MediaPage as GQLMediaPage, Origin, Resolvers } from '../generated/schema/types.generated'
-import type { CreateAggregatedMediaEpisodes } from './drizzle/schema'
+import type { Episode, Media, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { Uri } from 'src/utils/uri'
+import type { Media as GrafeoMedia, Episode as GrafeoEpisode, Origin as GrafeoOrigin } from './store/types'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -18,105 +18,119 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../sources'
 import { merge } from '../utils/merge'
 import { fetch } from './fetch'
-import database from './drizzle'
-import {
-  insertManyMedia,
-  insertManyEpisode,
-  findAllMedia,
-  findAllAggregatedMedia,
-  findAggregatedMedia,
-  aggregateMediaHandles,
-  insertManyAggregatedMedia,
-  aggregateEpisodeHandles,
-  findAllAggregatedEpisode,
-  findAllEpisode,
-  insertManyAggregatedEpisode,
-  insertManyOrigins,
-  normalizeDrizzleOrigin,
-  reAggregateEpisodesForMedia,
-  listenForMediaChanges,
-} from './drizzle/utils'
-import { aggregatedMediaEpisodesTable, aggregatedMediaHandlesTable, aggregatedMediaTable, aggregatedEpisodeTable, aggregatedEpisodeHandlesTable } from './drizzle/schema'
-import { inArray, sql } from 'drizzle-orm'
-import groupAllRelatedMedia from './drizzle/sql/groupAllRelatedMedia'
-import groupAllRelatedEpisodes from './drizzle/sql/groupAllRelatedEpisodes'
+import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils/uri'
+import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
+import { aggregateMedia, recursivelyUnwrapMediaHandles, removeDuplicatesByField } from './store/aggregate'
+import { listenMultipleIterator } from './store/events'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
-  findAggregatedMedia: (uri: Uri) => ReturnType<typeof findAggregatedMedia>
-  listenForMediaChanges: typeof listenForMediaChanges
+  findAggregatedMedia: (uri: Uri) => Promise<Media | undefined>
+  listenForMediaChanges: (params: { uri: string }, options?: { abortSignal?: AbortSignal }) => AsyncGenerator<Media | undefined>
 }
 
 export type ExtractorUserContext = {
 
 }
 
+// ─── Normalization helpers ───────────────────────────────────────────────────
+
+const normalizeToGrafeoMedia = (media: Media): GrafeoMedia => ({
+  uri: media.uri,
+  origin: media.origin,
+  id: media.id,
+  url: media.url ?? null,
+  score: media.score ?? null,
+  type: (media.type as GrafeoMedia['type']) ?? null,
+  status: (media.status as GrafeoMedia['status']) ?? null,
+  titles: media.titles ?? [],
+  descriptions: media.descriptions ?? [],
+  shortDescriptions: media.shortDescriptions ?? [],
+  trailers: media.trailers ?? [],
+  covers: media.covers ?? [],
+  banners: media.banners ?? [],
+  externalLinks: media.externalLinks ?? null,
+  averageScore: media.averageScore ?? null,
+  popularity: media.popularity ?? null,
+  startDate: media.startDate ?? null,
+  endDate: media.endDate ?? null,
+  isAdult: media.isAdult ?? null,
+  episodeCount: media.episodeCount ?? null,
+})
+
+const normalizeToGrafeoEpisode = (episode: Episode): GrafeoEpisode => ({
+  uri: episode.uri,
+  origin: episode.origin,
+  id: episode.id,
+  url: episode.url ?? null,
+  mediaUri: episode.mediaUri,
+  score: episode.score ?? null,
+  titles: episode.titles ?? [],
+  descriptions: episode.descriptions ?? [],
+  shortDescriptions: episode.shortDescriptions ?? [],
+  thumbnails: episode.thumbnails ?? [],
+  releaseDate: episode.releaseDate ?? null,
+  seasonNumber: episode.seasonNumber ?? null,
+  episodeNumber: episode.episodeNumber ?? null,
+  absoluteEpisodeNumber: episode.absoluteEpisodeNumber ?? null,
+  runtime: episode.runtime ?? null,
+})
+
+const normalizeOrigin = (origin: { id: string; url?: string | null; name: string; icon?: string | null; color?: string | null; isApiOnly: boolean }): GrafeoOrigin => ({
+  id: origin.id,
+  url: origin.url ?? null,
+  name: origin.name,
+  icon: origin.icon ?? null,
+  color: origin.color ?? null,
+  isApiOnly: origin.isApiOnly,
+})
+
+// ─── Context helpers ─────────────────────────────────────────────────────────
+
+const findAggregatedMediaForContext = async (uri: string): Promise<Media | undefined> => {
+  let cluster = await findAggregatedMedia(uri)
+  if (!cluster.length && isAggregatedUri(uri)) {
+    const parsed = fromAggregatedUri(uri as AggregatedUri)
+    for (const handleUri of parsed?.handleUris ?? []) {
+      cluster = await findAggregatedMedia(handleUri)
+      if (cluster.length) break
+    }
+  }
+  if (!cluster.length) return undefined
+  return aggregateMedia(cluster, location.origin)
+}
+
+const listenForMediaChangesForContext = async function* (
+  params: { uri: string },
+  options?: { abortSignal?: AbortSignal }
+) {
+  yield await findAggregatedMediaForContext(params.uri)
+
+  const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: options?.abortSignal })
+  for await (const _ of iterator) {
+    yield await findAggregatedMediaForContext(params.uri)
+  }
+}
+
+// ─── DataLoaders ─────────────────────────────────────────────────────────────
+
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
-  await database.transaction(async (tx) => {
-    await insertManyMedia(tx, medias as Media[])
-    const allMedia = await findAllMedia(tx)
-    const allAggregatedMedia = await findAllAggregatedMedia(tx)
+  const allUnwrapped = (medias as Media[]).flatMap(recursivelyUnwrapMediaHandles)
+  const uniqueMedias = removeDuplicatesByField('uri', allUnwrapped)
 
-    const groups = await tx.all(groupAllRelatedMedia) as [string, number, string][]
-
-    const processedGroups = groups.map(([_, __, urisString]) => {
-      const uris = urisString.split(',').map(uri => uri.trim())
-      const medias =
-        uris
-          .map(uri => allMedia.find(r => r?.uri === uri))
-          .filter((media): media is NonNullable<typeof media> => media !== null && media !== undefined)
-
-      // Find ALL matching aggregated medias, not just the first
-      const existingMatches = allAggregatedMedia.filter(existing => {
-        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-        return existingUris.some(existingUri => uris.includes(existingUri))
-      })
-
-      const primaryMatch = existingMatches[0]
-      const secondaryIds = existingMatches.slice(1).map(m => m._id)
-
-      return {
-        aggregatedMedia: aggregateMediaHandles(medias, primaryMatch),
-        primaryId: primaryMatch?._id,
-        secondaryIds
+  const handlePairs: { mediaUri: string; handleUri: string }[] = []
+  const seen = new Set<string>()
+  for (const media of allUnwrapped) {
+    for (const handle of media.handles ?? []) {
+      const key = `${media.uri}\0${handle.uri}`
+      if (!seen.has(key)) {
+        seen.add(key)
+        handlePairs.push({ mediaUri: media.uri, handleUri: handle.uri })
       }
-    })
-
-    // Migrate episode relations and clean up orphaned aggregated medias before inserting the merged ones
-    const mergedPrimaryIds: string[] = []
-    for (const { primaryId, secondaryIds } of processedGroups) {
-      if (!primaryId || secondaryIds.length === 0) continue
-      mergedPrimaryIds.push(primaryId)
-
-      // Copy episode relations from secondaries to primary
-      await tx.run(sql`
-        INSERT OR IGNORE INTO aggregatedMediaEpisodes (aggregatedMediaId, aggregatedEpisodeId)
-        SELECT ${primaryId}, aggregatedEpisodeId
-        FROM aggregatedMediaEpisodes
-        WHERE aggregatedMediaId IN (${sql.join(secondaryIds.map(id => sql`${id}`), sql`, `)})
-      `)
-
-      // Clean up secondary aggregated media data
-      await tx.delete(aggregatedMediaEpisodesTable)
-        .where(inArray(aggregatedMediaEpisodesTable.aggregatedMediaId, secondaryIds))
-      await tx.delete(aggregatedMediaHandlesTable)
-        .where(inArray(aggregatedMediaHandlesTable.aggregatedMediaId, secondaryIds))
-      await tx.delete(aggregatedMediaTable)
-        .where(inArray(aggregatedMediaTable._id, secondaryIds))
     }
+  }
 
-    // Insert/update the merged aggregated medias
-    await insertManyAggregatedMedia(tx, processedGroups.map(g => g.aggregatedMedia))
-
-    // Re-aggregate episodes for all aggregated medias that already existed
-    // (not just merged ones), since new handles may have been added
-    const idsToReaggregate = processedGroups
-      .map(g => g.primaryId)
-      .filter((id): id is string => id !== undefined)
-    if (idsToReaggregate.length > 0) {
-      await reAggregateEpisodesForMedia(tx, idsToReaggregate)
-    }
-  })
+  await upsertMedia(uniqueMedias.map(normalizeToGrafeoMedia), handlePairs)
   return medias
 }, {
   cache: false,
@@ -126,107 +140,14 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
 })
 
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
-  await database.transaction(async (tx) => {
-    await insertManyEpisode(tx, episodes as Episode[])
-    const allEpisode = await findAllEpisode(tx)
-    const allAggregatedEpisode = await findAllAggregatedEpisode(tx)
-    const allAggregatedMedia = await findAllAggregatedMedia(tx)
-
-    const groups = await tx.all(groupAllRelatedEpisodes) as [string, number, string, number][]
-
-    const allUpdatedAggregatedEpisode = groups.map(([_, __, urisString]) => {
-      const uris = urisString.split(',').map(uri => uri.trim())
-      const groupEpisodes =
-        uris
-          .map(uri => allEpisode.find(r => r?.uri === uri))
-          .filter((episode): episode is NonNullable<typeof episode> => episode !== null && episode !== undefined)
-
-      // Find ALL matching aggregated episodes, not just the first
-      const existingMatches = allAggregatedEpisode.filter(existing => {
-        const existingUris = existing.uri.slice('ag:('.length, -1).split(',')
-        return existingUris.some(existingUri => uris.includes(existingUri))
-      })
-
-      const primaryMatch = existingMatches[0]
-      const secondaryIds = existingMatches.slice(1).map(e => e._id)
-
-      return {
-        aggregatedEpisode: aggregateEpisodeHandles(groupEpisodes, primaryMatch),
-        secondaryIds
-      }
-    })
-
-    // Clean up orphaned secondary aggregated episodes before inserting
-    const allSecondaryEpisodeIds = allUpdatedAggregatedEpisode.flatMap(g => g.secondaryIds)
-    if (allSecondaryEpisodeIds.length > 0) {
-      // Migrate media-episode relations from secondaries to their primaries
-      for (const { aggregatedEpisode, secondaryIds } of allUpdatedAggregatedEpisode) {
-        if (secondaryIds.length === 0) continue
-
-        await tx.run(sql`
-          INSERT OR IGNORE INTO aggregatedMediaEpisodes (aggregatedMediaId, aggregatedEpisodeId)
-          SELECT aggregatedMediaId, ${aggregatedEpisode._id}
-          FROM aggregatedMediaEpisodes
-          WHERE aggregatedEpisodeId IN (${sql.join(secondaryIds.map(id => sql`${id}`), sql`, `)})
-        `)
-      }
-
-      // Delete secondary episode data
-      await tx.delete(aggregatedMediaEpisodesTable)
-        .where(inArray(aggregatedMediaEpisodesTable.aggregatedEpisodeId, allSecondaryEpisodeIds))
-      await tx.delete(aggregatedEpisodeHandlesTable)
-        .where(inArray(aggregatedEpisodeHandlesTable.aggregatedEpisodeId, allSecondaryEpisodeIds))
-      await tx.delete(aggregatedEpisodeTable)
-        .where(inArray(aggregatedEpisodeTable._id, allSecondaryEpisodeIds))
+  const handlePairs: { episodeUri: string; handleUri: string }[] = []
+  for (const episode of episodes as Episode[]) {
+    for (const handle of episode.handles ?? []) {
+      handlePairs.push({ episodeUri: episode.uri, handleUri: handle.uri })
     }
+  }
 
-    // Insert aggregated episodes
-    await insertManyAggregatedEpisode(tx, allUpdatedAggregatedEpisode.map(g => g.aggregatedEpisode))
-
-    // Group episodes by their mediaUri to update aggregated media
-    const episodesByMediaUri = new Map<string, Episode[]>()
-    for (const episode of episodes as Episode[]) {
-      const mediaUri = episode.mediaUri
-      if (!episodesByMediaUri.has(mediaUri)) {
-        episodesByMediaUri.set(mediaUri, [])
-      }
-      episodesByMediaUri.get(mediaUri)!.push(episode)
-    }
-
-    // Find corresponding aggregated media and create relations
-    const aggregatedMediaEpisodeRelations: CreateAggregatedMediaEpisodes[] = []
-    for (const [mediaUri, mediaEpisodes] of episodesByMediaUri) {
-      // Find the aggregated media that contains this media URI
-      const aggregatedMedia = allAggregatedMedia.find(am => {
-        const aggregatedUris = am.uri.slice('ag:('.length, -1).split(',')
-        return aggregatedUris.includes(mediaUri)
-      })
-
-      if (aggregatedMedia) {
-        // Find corresponding aggregated episodes for these episodes
-        for (const episode of mediaEpisodes) {
-          const aggregatedEpisode = allUpdatedAggregatedEpisode.find(({ aggregatedEpisode: ae }) => {
-            const aggregatedUris = ae.uri.slice('ag:('.length, -1).split(',')
-            return aggregatedUris.includes(episode.uri)
-          })
-
-          if (aggregatedEpisode) {
-            aggregatedMediaEpisodeRelations.push({
-              aggregatedMediaId: aggregatedMedia._id,
-              aggregatedEpisodeId: aggregatedEpisode.aggregatedEpisode._id
-            } satisfies CreateAggregatedMediaEpisodes)
-          }
-        }
-      }
-    }
-
-    // Insert aggregated media-episode relations
-    if (aggregatedMediaEpisodeRelations.length) {
-      await tx.insert(aggregatedMediaEpisodesTable)
-        .values(aggregatedMediaEpisodeRelations)
-        .onConflictDoNothing()
-    }
-  })
+  await upsertEpisodes((episodes as Episode[]).map(normalizeToGrafeoEpisode), handlePairs)
   return episodes
 }, {
   cache: false,
@@ -235,10 +156,24 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
   batchScheduleFn: (callback) => setTimeout(callback, 50)
 })
 
+const originInserter = new DataLoader<Origin, Origin>(async (origins) => {
+  await upsertOrigins((origins as Origin[]).map(o => normalizeOrigin({ ...o, url: o.url ?? null, icon: o.icon ?? null, color: o.color ?? null })))
+  return origins
+}, {
+  cache: false,
+  batch: true,
+  maxBatchSize: 50,
+  batchScheduleFn: (callback) => setTimeout(callback, 50)
+})
+
+// ─── Extractors ──────────────────────────────────────────────────────────────
+
 export const extractors =
   Object
     .entries(extractorDefinitions)
     .map(([name, extractor]) => {
+      const originData = normalizeOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })
+
       const server = createYoga<Omit<ExtractorServerContext, keyof YogaInitialContext>, ExtractorUserContext>({
         schema: createSchema<Omit<ExtractorServerContext, keyof YogaInitialContext>>({
           typeDefs,
@@ -268,12 +203,12 @@ export const extractors =
                 },
                 Subscription: {
                   origin: {
-                    resolve: () => normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl }),
-                    subscribe: async function*() { return yield normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl }) }
+                    resolve: () => originData,
+                    subscribe: async function*() { return yield originData }
                   },
                   originPage: {
-                    resolve: () => ({ nodes: [normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })] }),
-                    subscribe: async function* () { yield [normalizeDrizzleOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl })] }
+                    resolve: () => ({ nodes: [originData] }),
+                    subscribe: async function* () { yield [originData] }
                   },
                   media: { subscribe: async function* (_parent) { yield { media: null } } },
                   mediaPage: { subscribe: async function* (_parent) { yield { mediaPage: { nodes: [] } } } }
@@ -319,7 +254,7 @@ export const extractors =
           },
         }
       })
-      
+
       const errorExchange: Exchange = ({ forward }) => (ops$) => {
         return pipe(
           forward(ops$),
@@ -347,8 +282,8 @@ export const extractors =
             new Request(input, init),
             {
               fetch,
-              findAggregatedMedia: (uri: Uri) => findAggregatedMedia(undefined, { uri }),
-              listenForMediaChanges
+              findAggregatedMedia: (uri: Uri) => findAggregatedMediaForContext(uri),
+              listenForMediaChanges: listenForMediaChangesForContext
             }
           )
       })
@@ -360,18 +295,6 @@ export const extractors =
         extractor
       }
     })
-
-const originInserter = new DataLoader<Origin, Origin>(async (origins) => {
-  await database.transaction(async (tx) => {
-    await insertManyOrigins(tx, origins as Origin[])
-  })
-  return origins
-}, {
-  cache: false,
-  batch: true,
-  maxBatchSize: 50,
-  batchScheduleFn: (callback) => setTimeout(callback, 50)
-})
 
 export const proxyRequestToExtractors = (ctx: ExtractorServerContext) =>
   extractors.map(extractor =>

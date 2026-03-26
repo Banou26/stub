@@ -13,9 +13,7 @@ export default defineConfig({
       formats: ['es']
     }
   },
-  optimizeDeps: {
-    include: ['wa-sqlite']
-  },
+  optimizeDeps: {},
   plugins: [
     {
       name: 'custom-index-html',
