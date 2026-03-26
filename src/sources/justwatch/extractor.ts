@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
-import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, mergeHandles, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
 
 export const icon = 'https://www.justwatch.com/appasset/img/favicon/favicon-32x32.png'
 export const originUrl = 'https://www.justwatch.com'
@@ -386,6 +386,8 @@ const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: Extractor
 
 // Core resolution
 
+const TITLE_MATCH_THRESHOLD = 0.5
+
 const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   for (const query of [title, ...simplifyTitle(title)]) {
     const searchRes = await searchTitles(query, ctx)
@@ -394,7 +396,11 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 
     const detailRes = await getNodeDetails(results[0]!.node.id, ctx)
     const node = detailRes.data?.node
-    if (!node) continue
+    if (!node?.content?.title) continue
+
+    // Validate title match using Smith-Waterman alignment
+    const similarity = await titleSimilarity(title, node.content.title)
+    if (similarity < TITLE_MATCH_THRESHOLD) continue
 
     let seasonNumber: number | undefined
     if (node.seasons?.length > 1) {

@@ -1,5 +1,11 @@
 import type { ExtractorServerContext } from '../worker/extractor'
 import type { Media as GQLMedia, Episode as GQLEpisode } from '../generated/schema/types.generated'
+
+// @ts-expect-error
+import { initWasm, swAlign } from 'seal-wasm/src/index'
+// @ts-expect-error
+import sealWasmUrl from 'seal-wasm/pkg/rust_seal_bg.wasm?url'
+
 import { fromAggregatedUri, toUri } from '../utils/uri'
 
 export const makeMedia = ({ origin, id, ...fields }: { origin: string, id: string } & Partial<GQLMedia>): GQLMedia => ({
@@ -55,6 +61,31 @@ export const img = (url?: string | null) =>
 
 export const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>
   media?.titles?.[0]?.title
+
+let sealReady: Promise<void> | null = null
+const ensureSeal = () => {
+  if (!sealReady) {
+    initWasm(sealWasmUrl)
+    sealReady = swAlign('a', 'a', { alignment: 'local', equal: 1, align: -1, insert: -1, delete: -1 }).then(() => {})
+  }
+  return sealReady
+}
+
+export const titleSimilarity = async (a: string, b: string): Promise<number> => {
+  await ensureSeal()
+  const normalA = a.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
+  const normalB = b.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
+  if (!normalA || !normalB) return 0
+  const result = await swAlign(normalA, normalB, {
+    alignment: 'local',
+    equal: 2,
+    align: -1,
+    insert: -1,
+    delete: -1,
+  })
+  const maxLen = Math.max(normalA.length, normalB.length)
+  return result.score / (maxLen * 2) // normalize to 0-1
+}
 
 export const simplifyTitle = (title: string): string[] => {
   const queries: string[] = []

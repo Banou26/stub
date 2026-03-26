@@ -76,6 +76,7 @@
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.2",
     "react-window": "^2.0.1",
+    "seal-wasm": "^0.0.3",
     "urql": "^4.2.2",
     "wa-sqlite": "^1.0.0",
     "wouter": "^3.7.1"
