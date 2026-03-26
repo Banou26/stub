@@ -1,21 +1,35 @@
 import type { ExtractorServerContext } from '../../extractor'
 import type { Media, Resolvers } from '../../../generated/schema/types.generated'
 
-import { eq, asc, inArray } from 'drizzle-orm'
-
 // @ts-expect-error
 import _schema from './schema.gql?raw'
-import { extractors, proxyRequestToExtractors } from '../../extractor'
-import { findAggregatedMediaList, findMediaByUris, listenForMediaChanges, listenForMediaListChanges, normalizeGraphqlAggregatedEpisode, type DrizzleSQLiteTransaction } from '../../drizzle/utils'
-import { listenIterator } from '../../drizzle/notifications'
+import { proxyRequestToExtractors } from '../../extractor'
+import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaByAggregatedId } from '../../store/db'
+import { aggregateMedia, aggregateEpisode } from '../../store/aggregate'
+import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
-import database from '../../drizzle'
-import { aggregatedMediaEpisodesTable, aggregatedEpisodeTable } from '../../drizzle/schema'
-import { isAggregatedUri, isUri } from '../../../utils/uri'
-import { mergeAsyncIterators } from '../../../utils/async-iterator'
+import { isAggregatedUri, isUri, fromAggregatedUri, type AggregatedUri } from '../../../utils/uri'
 
 export const schema = _schema as string
+
+const findAggregatedMediaForUri = async (uri: string) => {
+  let cluster = await findAggregatedMedia(uri)
+  if (cluster.length) return cluster
+
+  cluster = await findMediaByAggregatedId(uri)
+  if (cluster.length) return cluster
+
+  if (isAggregatedUri(uri)) {
+    const parsed = fromAggregatedUri(uri as AggregatedUri)
+    for (const handleUri of parsed?.handleUris ?? []) {
+      cluster = await findAggregatedMedia(handleUri)
+      if (cluster.length) return cluster
+    }
+  }
+
+  return []
+}
 
 export const resolvers = {
   Query: {},
@@ -26,12 +40,20 @@ export const resolvers = {
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         if (!args.input.uri || !(isUri(args.input.uri) || isAggregatedUri(args.input.uri))) return
         const subscriptions = proxyRequestToExtractors(ctx)
+        const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
         try {
-          yield* listenForMediaChanges(
-            { uri: args.input.uri },
-            { abortSignal: ctx.request.signal }
-          )
+          const cluster = await findAggregatedMediaForUri(args.input.uri)
+          if (cluster.length) {
+            yield aggregateMedia(cluster, location.origin)
+          }
+
+          for await (const _ of iterator) {
+            const cluster = await findAggregatedMediaForUri(args.input.uri)
+            if (cluster.length) {
+              yield aggregateMedia(cluster, location.origin)
+            }
+          }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
         }
@@ -41,12 +63,28 @@ export const resolvers = {
       resolve: (parent: Media[]) => ({ nodes: parent }),
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         const subscriptions = proxyRequestToExtractors(ctx)
+        const iterator = debouncedListenIterator(['media:changed'], 500, { abortSignal: ctx.request.signal })
+
+        const getPage = async () => {
+          const clusters = await findAllAggregatedMedia()
+          let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
+
+          const sorts = args.input.sorts ?? []
+          for (const sort of sorts) {
+            if (sort === 'POPULARITY') {
+              aggregated.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
+            } else if (sort === 'POPULARITY_DESC') {
+              aggregated.sort((a, b) => (a.popularity ?? 0) - (b.popularity ?? 0))
+            }
+          }
+          return aggregated
+        }
 
         try {
-          yield* listenForMediaListChanges(
-            { sorts: args.input.sorts ?? undefined },
-            { abortSignal: ctx.request.signal }
-          )
+          yield await getPage()
+          for await (const _ of iterator) {
+            yield await getPage()
+          }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
         }
@@ -56,33 +94,25 @@ export const resolvers = {
   Media: {
     _id: (parent) => parent._id,
     episodes: async (parent) => {
-      if (parent.uri.startsWith('ag:')) {
-        const db = database as unknown as DrizzleSQLiteTransaction
-        const episodeIds = await database
-          .select({ id: aggregatedMediaEpisodesTable.aggregatedEpisodeId })
-          .from(aggregatedMediaEpisodesTable)
-          .where(eq(aggregatedMediaEpisodesTable.aggregatedMediaId, parent._id))
-          .then(results => results.map(r => r.id))
+      const handleUris = parent.handles?.map(h => h.uri) ?? []
+      if (!handleUris.length) return parent.episodes ?? []
 
-        if (!episodeIds.length) return parent.episodes
+      const episodeGroups = await findAggregatedEpisodesForMedia(handleUris)
+      if (!episodeGroups.length) return parent.episodes ?? []
 
-        const episodes = await db.query.aggregatedEpisodeTable.findMany({
-          where: inArray(aggregatedEpisodeTable._id, episodeIds),
-          orderBy: asc(aggregatedEpisodeTable.episodeNumber),
-          with: {
-            handles: {
-              with: {
-                episode: true
-              }
-            }
-          }
-        })
-
-        return episodes.length
-          ? episodes.map(normalizeGraphqlAggregatedEpisode)
-          : parent.episodes
+      // Flatten all episodes, filter out specials (no episodeNumber),
+      // then group by episodeNumber only
+      const allEpisodes = episodeGroups.flat()
+        .filter(ep => ep.episodeNumber != null)
+      const grouped = new Map<number, typeof allEpisodes>()
+      for (const ep of allEpisodes) {
+        if (!grouped.has(ep.episodeNumber!)) grouped.set(ep.episodeNumber!, [])
+        grouped.get(ep.episodeNumber!)!.push(ep)
       }
-      return parent.episodes
+
+      return [...grouped.values()]
+        .map(group => aggregateEpisode(group, location.origin))
+        .sort((a, b) => (a.episodeNumber ?? 0) - (b.episodeNumber ?? 0))
     },
     descriptions: (parent, args) => {
       const descriptions =
@@ -123,22 +153,6 @@ export const resolvers = {
 
       return shortDescriptions
     },
-    handles: async (parent) => {
-      if (!parent.handles?.length) return []
-
-      // Check if handles already have their nested handles populated
-      const handlesNeedFetching = parent.handles.some(handle => !handle.handles?.length)
-      if (!handlesNeedFetching) return parent.handles
-
-      // Fetch handles with their nested handles from the database
-      const handleUris = parent.handles.map(handle => handle.uri)
-      const fetchedHandles = await findMediaByUris(undefined, handleUris)
-
-      // Create a map for quick lookup
-      const handleMap = new Map(fetchedHandles.map(h => [h.uri, h]))
-
-      // Return handles in original order, using fetched data when available
-      return parent.handles.map(handle => handleMap.get(handle.uri) ?? handle)
-    },
+    handles: (parent) => parent.handles ?? [],
   }
 } satisfies Resolvers

@@ -4,8 +4,8 @@ import type { Origin, Resolvers } from '../../../generated/schema/types.generate
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { extractors } from '../../extractor'
-import { findOrigin, findOrigins } from '../../drizzle/utils'
-import { listenIterator } from '../../drizzle/notifications'
+import { findOrigin, findOrigins } from '../../store/db'
+import { listenIterator } from '../../store/events'
 
 export const schema = _schema as string
 
@@ -18,7 +18,6 @@ export const resolvers = {
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         if (!args.input.id) return
 
-        // Subscribe to extractors
         const subscriptions = extractors.map(extractor =>
           extractor.client.subscription(
             ctx.params.query!,
@@ -26,21 +25,19 @@ export const resolvers = {
           ).subscribe(() => {})
         )
 
-        // Initial yield
-        const origin = await findOrigin(undefined, { id: args.input.id })
+        const origin = await findOrigin(args.input.id)
         if (origin) yield origin
 
-        // Listen for changes
-        const originListener = listenIterator({ table: 'origin', abortSignal: ctx.request.signal })
+        const originListener = listenIterator('origin:changed', { abortSignal: ctx.request.signal })
 
         try {
           for await (const _ of originListener) {
-            const updatedOrigin = await findOrigin(undefined, { id: args.input.id })
+            const updatedOrigin = await findOrigin(args.input.id)
             if (updatedOrigin) yield updatedOrigin
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          const finalOrigin = await findOrigin(undefined, { id: args.input.id })
+          const finalOrigin = await findOrigin(args.input.id)
           if (finalOrigin) return yield finalOrigin
         }
       }
@@ -50,7 +47,6 @@ export const resolvers = {
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         if (!args.input.ids || args.input.ids.length === 0) return
 
-        // Subscribe to extractors
         const subscriptions = extractors.map(extractor =>
           extractor.client.subscription(
             ctx.params.query!,
@@ -58,19 +54,19 @@ export const resolvers = {
           ).subscribe(() => {})
         )
 
-        // Initial yield
-        yield await findOrigins(undefined, { ids: args.input.ids, filters: args.input.filters ?? undefined })
+        const filters = args.input.filters?.map(f => f as 'IS_API_ONLY' | 'IS_NOT_API_ONLY') ?? undefined
 
-        // Listen for changes
-        const originListener = listenIterator({ table: 'origin', abortSignal: ctx.request.signal })
+        yield await findOrigins(args.input.ids, filters)
+
+        const originListener = listenIterator('origin:changed', { abortSignal: ctx.request.signal })
 
         try {
           for await (const _ of originListener) {
-            yield await findOrigins(undefined, { ids: args.input.ids, filters: args.input.filters ?? undefined })
+            yield await findOrigins(args.input.ids, filters)
           }
         } finally {
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
-          return yield await findOrigins(undefined, { ids: args.input.ids, filters: args.input.filters ?? undefined })
+          return yield await findOrigins(args.input.ids, filters)
         }
       }
     }

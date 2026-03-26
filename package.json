@@ -28,7 +28,6 @@
     "chai": "^5.2.1",
     "chai-as-promised": "^8.0.1",
     "chai-shallow-deep-equal": "^1.4.6",
-    "drizzle-kit": "^0.31.4",
     "playwright": "^1.54.2",
     "shx": "^0.4.0",
     "typescript": "^5.9.2",
@@ -38,7 +37,7 @@
   "scripts": {
     "dev": "vite --port 4560",
     "test-server": "vite --port 7357 --config vite.test.config.ts",
-    "build": "npm run gql-generate && npm run drizzle-generate && vite build",
+    "build": "npm run gql-generate && vite build",
     "build-test": "vite build --config vite.test.config.ts",
     "build-test-watch": "vite build --config vite.test.config.ts --watch",
     "test": "npm run build-test && playwright test",
@@ -46,7 +45,6 @@
     "test-watch-headful": "playwright test --ui",
     "gql-generate": "graphql-codegen --config codegen.ts",
     "gql-generate-watch": "graphql-codegen --config codegen.ts --watch",
-    "drizzle-generate": "shx rm -rf ./drizzle && drizzle-kit generate --name=init",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -59,10 +57,8 @@
     "@graphql-yoga/plugin-response-cache": "^3.17.2",
     "@urql/devtools": "^2.0.3",
     "@urql/exchange-graphcache": "^8.1.0",
-    "async-mutex": "^0.5.0",
     "dataloader": "^2.2.3",
     "dompurify": "^3.2.6",
-    "drizzle-orm": "^0.44.4",
     "graphql": "^16.11.0",
     "graphql-yoga": "^5.15.1",
     "kleur": "^4.1.5",
@@ -77,7 +73,6 @@
     "react-window": "^2.0.1",
     "seal-wasm": "^0.0.3",
     "urql": "^4.2.2",
-    "wa-sqlite": "^1.0.0",
     "wouter": "^3.7.1"
   }
 }

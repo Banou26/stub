@@ -22,9 +22,7 @@ export default defineConfig((_) => ({
   worker: {
     format: 'es'
   },
-  optimizeDeps: {
-    include: ['wa-sqlite']
-  },
+  optimizeDeps: {},
   resolve: {
     alias: {
       "react": "preact/compat",
