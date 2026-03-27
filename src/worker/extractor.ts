@@ -20,7 +20,7 @@ import { merge } from '../utils/merge'
 import { fetch } from './fetch'
 import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils/uri'
 import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
-import { aggregateMedia, recursivelyUnwrapMediaHandles, removeDuplicatesByField } from './store/aggregate'
+import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
 import { listenMultipleIterator } from './store/events'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -116,7 +116,6 @@ const listenForMediaChangesForContext = async function* (
 
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   const allUnwrapped = (medias as Media[]).flatMap(recursivelyUnwrapMediaHandles)
-  const uniqueMedias = removeDuplicatesByField('uri', allUnwrapped)
 
   const handlePairs: { mediaUri: string; handleUri: string }[] = []
   const seen = new Set<string>()
@@ -130,7 +129,7 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
     }
   }
 
-  await upsertMedia(uniqueMedias.map(normalizeToGrafeoMedia), handlePairs)
+  await upsertMedia(allUnwrapped.map(normalizeToGrafeoMedia), handlePairs)
   return medias
 }, {
   cache: false,
