@@ -1,5 +1,5 @@
 import type { ExtractorServerContext } from '../../extractor'
-import type { Media, Resolvers } from '../../../generated/schema/types.generated'
+import type { Media, MediaPage, MediaPageResolvers, Resolvers, SubscriptionResolver, SubscriptionResolvers } from '../../../generated/schema/types.generated'
 
 // @ts-expect-error
 import _schema from './schema.gql?raw'
@@ -39,7 +39,7 @@ export const resolvers = {
       resolve: (parent: Media) => parent,
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         if (!args.input.uri || !(isUri(args.input.uri) || isAggregatedUri(args.input.uri))) return
-        const subscriptions = proxyRequestToExtractors(ctx)
+        const { subscriptions } = proxyRequestToExtractors(ctx)
         const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
         try {
@@ -62,11 +62,21 @@ export const resolvers = {
     mediaPage: {
       resolve: (parent: Media[]) => ({ nodes: parent }),
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
-        const subscriptions = proxyRequestToExtractors(ctx)
-        const iterator = debouncedListenIterator(['media:changed'], 500, { abortSignal: ctx.request.signal })
+        const { subscriptions, insertedUris } =
+          proxyRequestToExtractors(
+            ctx,
+            (result: { data: { mediaPage: MediaPage } }) =>
+              result
+                ?.data
+                ?.mediaPage
+                ?.nodes
+                ?.map(({ uri }) => uri)
+          )
+        const iterator = debouncedListenIterator(['media:changed'], 100, { abortSignal: ctx.request.signal })
 
         const getPage = async () => {
-          const clusters = await findAllAggregatedMedia()
+          const uris = [...insertedUris]
+          const clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
           let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
 
           const sorts = args.input.sorts ?? []

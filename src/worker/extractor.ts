@@ -296,10 +296,20 @@ export const extractors =
       }
     })
 
-export const proxyRequestToExtractors = (ctx: ExtractorServerContext) =>
-  extractors.map(extractor =>
+export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUris?: (result: any) => string[]) => {
+  const insertedUris = new Set<string>()
+
+  const subscriptions = extractors.map(extractor =>
     extractor.client.subscription(
       ctx.params.query!,
       ctx.params.variables
-    ).subscribe(() => {})
+    ).subscribe((result) => {
+      if (!extractUris) return
+      for (const uri of extractUris(result) ?? []) {
+        insertedUris.add(uri)
+      }
+    })
   )
+
+  return { subscriptions, insertedUris }
+}
