@@ -1,5 +1,5 @@
 import type { Media, Episode, Origin } from './types'
-import { Graph, lastWriteLongestArray } from './graph'
+import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
 
 // ─── Edge labels ────────────────────────────────────────────────────────────
@@ -10,7 +10,7 @@ const HAS_EPISODE = 'has_episode'
 
 // ─── Stores ─────────────────────────────────────────────────────────────────
 
-export const graph = new Graph<Media | Episode>()
+export const graph = createGraph<Media | Episode>()
 const originMap = new Map<string, Origin>()
 
 graph.registerLabel('media', { merge: lastWriteLongestArray })
@@ -51,8 +51,8 @@ export async function findMediaByAggregatedId(aggregatedId: string): Promise<Med
   return findAggregatedMedia(aggregatedId)
 }
 
-export async function findAllAggregatedMedia(): Promise<Media[][]> {
-  return graph.clusters(MEDIA_SAME_AS, 'media') as Media[][]
+export async function findAllAggregatedMedia(uris?: string[]): Promise<Media[][]> {
+  return graph.clusters(MEDIA_SAME_AS, uris ? undefined : 'media', uris) as Media[][]
 }
 
 // ─── Episodes ───────────────────────────────────────────────────────────────
