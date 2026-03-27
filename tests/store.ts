@@ -45,9 +45,9 @@ export const test = async () => {
 }
 
 export const graphLabels = async () => {
-  const { Graph } = await import('../src/worker/store/graph')
+  const { createGraph } = await import('../src/worker/store/graph')
 
-  const g = new Graph<{ name: string; tags: string[] }>()
+  const g = createGraph<{ name: string; tags: string[] }>()
 
   // registerLabel stores a merge function
   const mergeFn = (incoming: any, existing: any) => ({ ...existing, ...incoming })
@@ -74,7 +74,7 @@ export const graphLabels = async () => {
     return result
   }
 
-  const g2 = new Graph<{ name: string; tags: string[] }>()
+  const g2 = createGraph<{ name: string; tags: string[] }>()
   g2.registerLabel('item', { merge })
 
   // First set — no existing node, stores as-is
@@ -92,13 +92,13 @@ export const graphLabels = async () => {
   expect(g2.get('a')!.tags).to.deep.equal(['a', 'b', 'c'])  // array: incoming is longer, wins
 
   // Set without label on unlabeled node — raw overwrite
-  const g3 = new Graph<{ name: string; tags: string[] }>()
+  const g3 = createGraph<{ name: string; tags: string[] }>()
   g3.set('b', { name: 'first', tags: ['1', '2'] })
   g3.set('b', { name: 'second', tags: [] })
   expect(g3.get('b')).to.deep.equal({ name: 'second', tags: [] })  // raw overwrite
 
   // --- setLabel ---
-  const g4 = new Graph<{ name: string; tags: string[] }>()
+  const g4 = createGraph<{ name: string; tags: string[] }>()
   g4.set('c', { name: 'test', tags: [] })
   g4.setLabel('c', 'item', 'special')
 
@@ -114,7 +114,7 @@ export const graphLabels = async () => {
   expect(g4.labeled('item').has('c')).to.equal(true)
 
   // --- clusters with nodeLabel ---
-  const g5 = new Graph<{ name: string; tags: string[] }>()
+  const g5 = createGraph<{ name: string; tags: string[] }>()
   g5.registerLabel('media')
   g5.registerLabel('episode')
 
