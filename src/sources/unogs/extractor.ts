@@ -202,6 +202,7 @@ const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: 
 
   if (title.vtype === 'series') {
     const seasonsRes = await fetchEpisodes(id, ctx)
+    if (!Array.isArray(seasonsRes)) return media
     const filtered = seasonNumber != null ? seasonsRes.filter(s => s.season === seasonNumber) : seasonsRes
     media.episodes = filtered.flatMap(season =>
       season.episodes.map((ep, i) => normalizeEpisode(ep, media.uri, i + 1))
@@ -279,6 +280,7 @@ export const resolvers: Resolvers = {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
       const seasonsRes = await fetchEpisodes(parent.id, ctx)
+      if (!Array.isArray(seasonsRes)) return parent.episodes ?? []
       return seasonsRes.flatMap(season =>
         season.episodes.map((ep, i) => normalizeEpisode(ep, parent.uri, i + 1))
       )

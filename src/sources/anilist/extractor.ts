@@ -4,6 +4,7 @@ import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
 import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from '../crunchyroll/extractor'
+import { makeMedia } from '../utils'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -231,13 +232,13 @@ const externalLinkHasSiteId =
 const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
   const malHandle =
     media.idMal
-      ? {
+      ? makeMedia({
         _id: crypto.randomUUID(),
         uri: `mal:${media.idMal}`,
         origin: 'mal',
         id: media.idMal.toString(),
         url: `https://myanimelist.net/anime/${media.idMal}`
-      } as GQLMedia
+      })
       : undefined
 
   const firstAiringNode = media.airingSchedule?.edges?.at(0)?.node
@@ -251,7 +252,7 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ? new Date(lastAiringNode.airingAt * 1000).toUTCString()
       : undefined
 
-  return {
+  return makeMedia({
     _id: crypto.randomUUID(),
     uri: `${origin}:${media.id}`,
     origin,
@@ -281,8 +282,6 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       // ...media.coverImage?.large ? [{ language: 'jp', url: media.coverImage.large }] : [],
       ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge }] : []
     ],
-    banners: [],
-    episodes: [],
     episodeCount: media.episodes,
     popularity: media.popularity,
     status:
@@ -303,7 +302,7 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
           thumbnail: media.trailer.thumbnail
         }]
         : [],
-  } satisfies GQLMedia
+  })
 }
 
 

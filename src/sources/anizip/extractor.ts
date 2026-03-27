@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { fromAggregatedUri, isAggregatedUri } from '../../utils/uri'
+import { makeMedia, makeEpisode } from '../utils'
 
 export const originUrl = 'https://api.ani.zip/' as const
 export const origin = 'anizip' as const
@@ -11,85 +12,79 @@ export const metadataOnly = true as const
 export const isApiOnly = true
 export const supportedUris = ['anidb', 'mal']
 
+// AniZip provides high-quality episode metadata (titles, thumbnails, descriptions)
+const TITLE_SCORE = 0.9
+const THUMBNAIL_SCORE = 0.9
+const DESCRIPTION_SCORE = 0.8
+const COVER_SCORE = 0.7
+
 const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => {
-  const uri = `${origin}:${media.mappings.anidb_id}`
-  return {
-    _id: crypto.randomUUID() as string,
-    uri,
+  const id = media.mappings.anidb_id.toString()
+  const uri = `${origin}:${id}`
+
+  // Build handles for all known mappings
+  const handles: GQLMedia[] = [
+    media.mappings.mal_id ? makeMedia({
+      origin: 'mal',
+      id: String(media.mappings.mal_id),
+      url: `https://myanimelist.net/anime/${media.mappings.mal_id}`,
+    }) : undefined,
+    media.mappings.anilist_id ? makeMedia({
+      origin: 'anilist',
+      id: String(media.mappings.anilist_id),
+      url: `https://anilist.co/anime/${media.mappings.anilist_id}`,
+    }) : undefined,
+  ].filter((handle): handle is NonNullable<typeof handle> => Boolean(handle))
+
+  return makeMedia({
     origin,
-    id: media.mappings.anidb_id.toString(),
-    url: `https://api.ani.zip/mappings?anidb_id=${media.mappings.anidb_id}`,
-    handles: [
-      {
-        _id: crypto.randomUUID(),
-        uri: `mal:${media.mappings.mal_id}`,
-        origin: 'mal',
-        id: media.mappings.mal_id.toString(),
-        url: `https://myanimelist.net/anime/${media.mappings.mal_id}`,
-        titles: [],
-        descriptions: [],
-        shortDescriptions: [],
-        covers: [],
-        banners: [],
-        episodes: [],
-        handles: [],
-        trailers: [],
-      } satisfies GQLMedia
-    ],
+    id,
+    url: `https://api.ani.zip/mappings?anidb_id=${id}`,
+    handles,
     titles: [
-      ...media.titles.en ? [{ language: 'en', title: media.titles.en }] : [],
-      ...media.titles.ja ? [{ language: 'ja', title: media.titles.ja }] : [],
+      ...media.titles.en ? [{ language: 'en', title: media.titles.en, score: TITLE_SCORE }] : [],
+      ...media.titles.ja ? [{ language: 'ja', title: media.titles.ja, score: TITLE_SCORE }] : [],
     ],
-    descriptions: [],
-    shortDescriptions: [],
-    trailers: [],
-    covers:
-      media
-        .images
-        ?.filter(image => image.coverType === 'Poster')
-        .map(image => ({ url: image.url }))
+    covers: media.images
+      ?.filter(image => image.coverType === 'Poster')
+      .map(image => ({ url: image.url, score: COVER_SCORE }))
       ?? [],
-    banners:
-      media
-        .images
-        ?.filter(image => image.coverType === 'Banner')
-        .map(image => ({ url: image.url }))
+    banners: media.images
+      ?.filter(image => image.coverType === 'Banner')
+      .map(image => ({ url: image.url, score: COVER_SCORE }))
       ?? [],
     episodeCount: media.episodeCount,
     episodes:
       Object
         .entries(media.episodes)
         .map(([episodeId, episode]) => {
-          const id = `${media.mappings.anidb_id}-${episodeId}`
-
-          return {
-            _id: crypto.randomUUID() as string,
-            uri: `${origin}:${id}`,
+          const epId = `${id}-${episodeId}`
+          return makeEpisode({
             origin,
-            id: id.toString(),
-            url: `https://api.ani.zip/mappings?anidb_id=${media.mappings.anidb_id}`,
-            handles: [],
+            id: epId,
             mediaUri: uri,
+            url: `https://api.ani.zip/mappings?anidb_id=${id}`,
             titles: [
-              ...episode.title.en ? [{ language: 'en', title: episode.title.en }] : [],
-              ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja }] : [],
+              ...episode.title.en ? [{ language: 'en', title: episode.title.en, score: TITLE_SCORE }] : [],
+              ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja, score: TITLE_SCORE }] : [],
             ],
-            descriptions:
-              episode.overview
-                ? [{ language: 'en', description: episode.overview }]
-                : [],
-            shortDescriptions:
-              episode.summary ? [{ language: 'en', shortDescription: episode.summary }]
-              : episode.overview ? [{ language: 'en', shortDescription: episode.overview }]
+            descriptions: episode.overview
+              ? [{ language: 'en', description: episode.overview, score: DESCRIPTION_SCORE }]
               : [],
-            thumbnails: episode.image ? [{ url: episode.image }] : [],
+            shortDescriptions: episode.summary
+              ? [{ language: 'en', shortDescription: episode.summary, score: DESCRIPTION_SCORE }]
+              : episode.overview
+                ? [{ language: 'en', shortDescription: episode.overview, score: DESCRIPTION_SCORE }]
+                : [],
+            thumbnails: episode.image ? [{ url: episode.image, score: THUMBNAIL_SCORE }] : [],
             seasonNumber: episode.seasonNumber,
             episodeNumber: episode.episodeNumber,
             absoluteEpisodeNumber: episode.absoluteEpisodeNumber,
-          } satisfies GQLEpisode
+            runtime: episode.runtime ?? episode.length,
+            releaseDate: episode.airDateUtc ?? episode.airdate,
+          })
         })
-      ?? []
-  } satisfies GQLMedia
+  })
 }
 
 const fetchAnizipJsonMappings = (providerId: 'anilist' | 'mal' | 'anidb', id: string, context: ExtractorServerContext) =>
@@ -101,8 +96,6 @@ const fetchAnizipMappings = (providerId: 'anilist' | 'mal' | 'anidb', id: string
     .then(animeData => normalizeMedia(animeData, context))
 
 const fetchMALMappings = (id: string, context: ExtractorServerContext) => fetchAnizipMappings('mal', id, context)
-const fetchAnidbMappings = (id: string, context: ExtractorServerContext) => fetchAnizipMappings('anidb', id, context)
-const fetchAnilistMappings = (id: string, context: ExtractorServerContext) => fetchAnizipMappings('anilist', id, context)
 
 export const resolvers: Resolvers = {
   Subscription: {
@@ -120,83 +113,61 @@ export const resolvers: Resolvers = {
   }
 }
 
-// Language-specific title type
-interface Title {
-  'x-jat'?: string;
-  ru?: string;
-  ko?: string;
-  cs?: string;
-  'zh-Hans'?: string;
-  en?: string;
-  ja?: string;
-  fr?: string;
-  pl?: string;
-  [key: string]: string | undefined; // Allow additional language codes
-}
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-// Episode-specific title (subset of main title languages)
 interface EpisodeTitle {
-  ja?: string;
-  en?: string;
-  fr?: string;
-  'x-jat'?: string;
+  ja?: string
+  en?: string
+  fr?: string
+  'x-jat'?: string
 }
 
-// Individual episode information
 interface Episode {
-  tvdbShowId: number;
-  tvdbId: number;
-  seasonNumber: number;
-  episodeNumber: number;
-  absoluteEpisodeNumber: number;
-  title: EpisodeTitle;
-  airDate: string; // Format: "YYYY-MM-DD"
-  airDateUtc: string; // ISO 8601 datetime
-  runtime: number;
-  overview?: string;
-  image?: string; // URL
-  episode: string;
-  anidbEid: number;
-  length: number;
-  airdate: string; // Format: "YYYY-MM-DD"
-  rating: string; // Numeric string
-  summary?: string;
-  finaleType?: 'season' | 'series'; // Optional, only on finale episodes
+  tvdbShowId: number
+  tvdbId: number
+  seasonNumber: number
+  episodeNumber: number
+  absoluteEpisodeNumber: number
+  title: EpisodeTitle
+  airDate: string
+  airDateUtc: string
+  runtime: number
+  overview?: string
+  image?: string
+  episode: string
+  anidbEid: number
+  length: number
+  airdate: string
+  rating: string
+  summary?: string
+  finaleType?: 'season' | 'series'
 }
 
-// Episodes collection
-interface Episodes {
-  [episodeNumber: string]: Episode;
-}
-
-// Image/artwork information
 interface Image {
-  coverType: 'Banner' | 'Poster' | 'Fanart' | 'Clearlogo';
-  url: string;
+  coverType: 'Banner' | 'Poster' | 'Fanart' | 'Clearlogo'
+  url: string
 }
 
-// External service mappings/IDs
 interface Mappings {
-  animeplanet_id: string;
-  kitsu_id: number;
-  mal_id: number;
-  type: 'TV' | 'Movie' | 'OVA' | 'ONA' | 'Special';
-  anilist_id: number;
-  anisearch_id: number;
-  anidb_id: number;
-  notifymoe_id: string;
-  livechart_id: number;
-  thetvdb_id: number;
-  imdb_id: string;
-  themoviedb_id: string;
+  animeplanet_id: string
+  kitsu_id: number
+  mal_id: number
+  type: 'TV' | 'Movie' | 'OVA' | 'ONA' | 'Special'
+  anilist_id: number
+  anisearch_id: number
+  anidb_id: number
+  notifymoe_id: string
+  livechart_id: number
+  thetvdb_id: number
+  imdb_id: string
+  themoviedb_id: string
 }
 
-// Main anime series type
 interface AnimeSeries {
-  titles: Title;
-  episodes: Episodes;
-  episodeCount: number;
-  specialCount: number;
-  images?: Image[];
-  mappings: Mappings;
+  titles: { [key: string]: string | undefined; en?: string; ja?: string }
+  episodes: { [episodeNumber: string]: Episode }
+  episodeCount: number
+  specialCount: number
+  images?: Image[]
+  mappings: Mappings
 }

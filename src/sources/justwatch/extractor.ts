@@ -305,17 +305,13 @@ const buildOffersAsHandles = async (
 
     if (!contentId) continue
 
-    handles.push(makeMedia({
-      origin: mappedOrigin,
-      id: contentId,
-      url,
-      titles: [
-        ...meta.title ? [{ language: 'en', title: meta.title }] : [],
-        { language: 'en', title: offer.package.clearName }
-      ],
-      ...desc(meta.shortDescription),
-      covers: img(meta.posterUrl)
-    }))
+    handles.push(
+      makeMedia({
+        origin: mappedOrigin,
+        id: contentId,
+        url
+      })
+    )
   }
 
   return handles
@@ -349,12 +345,17 @@ const normalizeMedia = async (
     origin,
     id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
-    handles: await buildOffersAsHandles(node.offers ?? [], {
-      shortDescription, title, posterUrl: resolveImageUrl(node.content.posterUrl), seasonNumber: opts.seasonNumber
-    }, ctx),
-    titles: [{ language: 'en', title }],
-    ...desc(shortDescription),
-    covers: img(resolveImageUrl(node.content.posterUrl)),
+    handles:
+      await buildOffersAsHandles(
+        node.offers ?? [],
+        {
+          shortDescription,
+          title,
+          posterUrl: resolveImageUrl(node.content.posterUrl),
+          seasonNumber: opts.seasonNumber
+        },
+        ctx
+      ),
     episodes,
     episodeCount: episodes.length || undefined
   })
