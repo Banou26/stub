@@ -75,6 +75,7 @@ input MediaShortDescriptionInput {
 type MediaShortDescription {
   language: String!
   shortDescription: String!
+  score: Float
 }
 
 enum MediaDescriptionContentType {
@@ -90,6 +91,7 @@ input MediaDescriptionInput {
 type MediaDescription {
   language: String!
   description: String!
+  score: Float
 }
 
 type MediaTrailer {
@@ -112,6 +114,7 @@ type MediaCover {
   width: Int
   """Average #hex color of cover image"""
   color: String
+  score: Float
 }
 
 type MediaBanner {
@@ -121,6 +124,7 @@ type MediaBanner {
   width: Int
   """Average #hex color of cover image"""
   color: String
+  score: Float
 }
 
 input MediaInput {

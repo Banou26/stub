@@ -12,11 +12,7 @@ export const metadataOnly = true as const
 export const isApiOnly = true
 export const supportedUris = ['anidb', 'mal']
 
-// AniZip provides high-quality episode metadata (titles, thumbnails, descriptions)
-const TITLE_SCORE = 0.9
-const THUMBNAIL_SCORE = 0.9
-const DESCRIPTION_SCORE = 0.8
-const COVER_SCORE = 0.7
+const SCORE = 0.9
 
 const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => {
   const id = media.mappings.anidb_id.toString()
@@ -42,16 +38,16 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
     url: `https://api.ani.zip/mappings?anidb_id=${id}`,
     handles,
     titles: [
-      ...media.titles.en ? [{ language: 'en', title: media.titles.en, score: TITLE_SCORE }] : [],
-      ...media.titles.ja ? [{ language: 'ja', title: media.titles.ja, score: TITLE_SCORE }] : [],
+      ...media.titles.en ? [{ language: 'en', title: media.titles.en, score: SCORE }] : [],
+      ...media.titles.ja ? [{ language: 'ja', title: media.titles.ja, score: SCORE }] : [],
     ],
     covers: media.images
       ?.filter(image => image.coverType === 'Poster')
-      .map(image => ({ url: image.url, score: COVER_SCORE }))
+      .map(image => ({ url: image.url, score: SCORE }))
       ?? [],
     banners: media.images
       ?.filter(image => image.coverType === 'Banner')
-      .map(image => ({ url: image.url, score: COVER_SCORE }))
+      .map(image => ({ url: image.url, score: SCORE }))
       ?? [],
     episodeCount: media.episodeCount,
     episodes:
@@ -64,19 +60,20 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
             id: epId,
             mediaUri: uri,
             url: `https://api.ani.zip/mappings?anidb_id=${id}`,
+            score: SCORE,
             titles: [
-              ...episode.title.en ? [{ language: 'en', title: episode.title.en, score: TITLE_SCORE }] : [],
-              ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja, score: TITLE_SCORE }] : [],
+              ...episode.title.en ? [{ language: 'en', title: episode.title.en, score: SCORE }] : [],
+              ...episode.title.ja ? [{ language: 'ja', title: episode.title.ja, score: SCORE }] : [],
             ],
             descriptions: episode.overview
-              ? [{ language: 'en', description: episode.overview, score: DESCRIPTION_SCORE }]
+              ? [{ language: 'en', description: episode.overview, score: SCORE }]
               : [],
             shortDescriptions: episode.summary
-              ? [{ language: 'en', shortDescription: episode.summary, score: DESCRIPTION_SCORE }]
+              ? [{ language: 'en', shortDescription: episode.summary, score: SCORE }]
               : episode.overview
-                ? [{ language: 'en', shortDescription: episode.overview, score: DESCRIPTION_SCORE }]
+                ? [{ language: 'en', shortDescription: episode.overview, score: SCORE }]
                 : [],
-            thumbnails: episode.image ? [{ url: episode.image, score: THUMBNAIL_SCORE }] : [],
+            thumbnails: episode.image ? [{ url: episode.image, score: SCORE }] : [],
             seasonNumber: episode.seasonNumber,
             episodeNumber: episode.episodeNumber,
             absoluteEpisodeNumber: episode.absoluteEpisodeNumber,

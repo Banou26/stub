@@ -3,6 +3,8 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
+const SCORE = 0.5
+
 export const icon = 'https://static.crunchyroll.com/cxweb/assets/img/favicons/favicon-96x96.png'
 export const originUrl = 'https://www.crunchyroll.com'
 export const categories = ['ANIME'] as const
@@ -141,10 +143,11 @@ const normalizeMedia = (id: string, title: string, description: string, series: 
     origin,
     id,
     url: `https://www.crunchyroll.com/series/${series.id}/${series.slug_title}`,
-    titles: [{ language: 'en', title }],
-    ...desc(description),
-    covers: img(bestImage(series.images?.poster_tall)),
-    banners: img(bestImage(series.images?.poster_wide)),
+    score: SCORE,
+    titles: [{ language: 'en', title, score: SCORE }],
+    ...desc(description, SCORE),
+    covers: img(bestImage(series.images?.poster_tall), SCORE),
+    banners: img(bestImage(series.images?.poster_wide), SCORE),
     episodeCount
   })
 
@@ -154,9 +157,10 @@ const normalizeEpisode = (ep: CrEpisode, mediaUri: string): GQLEpisode =>
     id: crunchyrollId(ep.series_id, ep.season_id, ep.id),
     mediaUri,
     url: `https://www.crunchyroll.com/watch/${ep.id}`,
-    titles: [{ language: 'en', title: ep.title }],
-    ...desc(ep.description),
-    thumbnails: img(bestImage(ep.images?.thumbnail)),
+    score: SCORE,
+    titles: [{ language: 'en', title: ep.title, score: SCORE }],
+    ...desc(ep.description, SCORE),
+    thumbnails: img(bestImage(ep.images?.thumbnail), SCORE),
     seasonNumber: ep.season_number,
     episodeNumber: ep.episode_number,
     absoluteEpisodeNumber: ep.sequence_number,

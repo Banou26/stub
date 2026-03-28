@@ -47,6 +47,7 @@ input EpisodeShortDescriptionInput {
 type EpisodeShortDescription {
   language: String!
   shortDescription: String!
+  score: Float
 }
 
 enum EpisodeDescriptionContentType {
@@ -62,6 +63,7 @@ input EpisodeDescriptionInput {
 type EpisodeDescription {
   language: String!
   description: String!
+  score: Float
 }
 
 
@@ -72,4 +74,5 @@ type EpisodeThumbnail {
   width: Int
   """Average #hex color of cover image"""
   color: String
+  score: Float
 }

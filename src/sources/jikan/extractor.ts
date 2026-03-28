@@ -13,6 +13,9 @@ export const metadataOnly = true
 export const isApiOnly = false
 export const supportedUris = ['mal']
 
+const SCORE = 0.9
+const DESCRIPTION_SCORE = 0.9
+
 const youtubeEmbedRegex = /\/embed\/([a-zA-Z0-9_-]{11})/
 
 const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {
@@ -81,24 +84,25 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       ...anidbHandle ? [anidbHandle] : [],
       ...anizipHandle ? [anizipHandle] : []
     ],
-    score: 1,
+    score: SCORE,
     averageScore: data.score,
     descriptions:
       data.synopsis
-        ? [{ language: 'en', description: data.synopsis }]
+        ? [{ language: 'en', description: data.synopsis, score: DESCRIPTION_SCORE }]
         : [],
     shortDescriptions:
       data.synopsis
-        ? [{ language: 'en', shortDescription: data.synopsis }]
+        ? [{ language: 'en', shortDescription: data.synopsis, score: DESCRIPTION_SCORE }]
         : [],
     titles: [
-      ... data.title_english ? [{ language: 'en', title: data.title_english, score: 1 }] : [],
-      ... data.title ? [{ language: 'jp-en', title: data.title, score: 1 }] : [],
-      ... data.title_japanese ? [{ language: 'jp', title: data.title_japanese, score: 1 }] : []
+      ... data.title_english ? [{ language: 'en', title: data.title_english, score: SCORE }] : [],
+      ... data.title ? [{ language: 'jp-en', title: data.title, score: SCORE }] : [],
+      ... data.title_japanese ? [{ language: 'jp', title: data.title_japanese, score: SCORE }] : []
     ],
     covers: [{
       language: 'en',
-      url: data.images.webp.large_image_url
+      url: data.images.webp.large_image_url,
+      score: SCORE
     }],
     banners: [],
     episodes: [],

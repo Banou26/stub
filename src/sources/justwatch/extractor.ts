@@ -4,6 +4,8 @@ import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../..
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
 
+const SCORE = 0.2
+
 export const icon = 'https://www.justwatch.com/appasset/img/favicon/favicon-32x32.png'
 export const originUrl = 'https://www.justwatch.com'
 export const categories = ['ANIME'] as const
@@ -345,6 +347,7 @@ const normalizeMedia = async (
     origin,
     id,
     url: `https://www.justwatch.com${node.content.fullPath}`,
+    score: SCORE,
     handles:
       await buildOffersAsHandles(
         node.offers ?? [],
@@ -366,8 +369,9 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
     origin,
     id: String(ep.objectId),
     mediaUri,
-    titles: [{ language: 'en', title: ep.content.title }],
-    ...desc(ep.content.shortDescription),
+    score: SCORE,
+    titles: [{ language: 'en', title: ep.content.title, score: SCORE }],
+    ...desc(ep.content.shortDescription, SCORE),
     seasonNumber: ep.content.seasonNumber,
     episodeNumber: ep.content.episodeNumber,
     runtime: ep.content.runtime ?? undefined

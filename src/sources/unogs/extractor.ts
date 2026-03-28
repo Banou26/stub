@@ -3,6 +3,8 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia } from '../utils'
 
+const SCORE = 0.2
+
 export const icon = 'https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2023.ico'
 export const originUrl = 'https://www.netflix.com'
 export const categories = ['ANIME'] as const
@@ -135,25 +137,26 @@ const findMatchingSeason = (
 // Normalization
 
 const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia => {
-  const covers: { url: string }[] = []
-  const banners: { url: string }[] = []
-  if (title.img) covers.push({ url: httpsUrl(title.img) })
+  const covers: { url: string, score: number }[] = []
+  const banners: { url: string, score: number }[] = []
+  if (title.img) covers.push({ url: httpsUrl(title.img), score: SCORE })
   if (bgImages) {
     const poster = bgImages.bo166x236?.[0]?.url
-    if (poster && !covers.some(c => c.url === poster)) covers.push({ url: poster })
+    if (poster && !covers.some(c => c.url === poster)) covers.push({ url: poster, score: SCORE })
     const banner = bgImages.bo665x375?.[0]?.url ?? bgImages.bo342x192?.[0]?.url
-    if (banner) banners.push({ url: banner })
+    if (banner) banners.push({ url: banner, score: SCORE })
     const bg = bgImages.bg?.[0]?.url
-    if (bg) banners.push({ url: bg })
+    if (bg) banners.push({ url: bg, score: SCORE })
   }
-  if (title.lgimg && !banners.some(b => b.url === title.lgimg)) banners.push({ url: title.lgimg })
+  if (title.lgimg && !banners.some(b => b.url === title.lgimg)) banners.push({ url: title.lgimg, score: SCORE })
 
   return makeMedia({
     origin,
     id: String(title.netflixid),
     url: `https://www.netflix.com/title/${title.netflixid}`,
-    titles: [{ language: 'en', title: decode(title.title) }],
-    ...desc(title.synopsis ? decode(title.synopsis) : undefined),
+    score: SCORE,
+    titles: [{ language: 'en', title: decode(title.title), score: SCORE }],
+    ...desc(title.synopsis ? decode(title.synopsis) : undefined, SCORE),
     covers, banners,
     startDate: title.nfdate ? new Date(title.nfdate).toISOString() : undefined,
     averageScore: title.imdbrating ?? undefined
@@ -165,9 +168,10 @@ const normalizeSearchResult = (result: { title: string, nfid: number, synopsis: 
     origin,
     id: String(result.nfid),
     url: `https://www.netflix.com/title/${result.nfid}`,
-    titles: [{ language: 'en', title: decode(result.title) }],
-    ...desc(result.synopsis ? decode(result.synopsis) : undefined),
-    covers: result.img ? img(httpsUrl(result.img)) : []
+    score: SCORE,
+    titles: [{ language: 'en', title: decode(result.title), score: SCORE }],
+    ...desc(result.synopsis ? decode(result.synopsis) : undefined, SCORE),
+    covers: result.img ? img(httpsUrl(result.img), SCORE) : []
   })
 
 const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber: number): GQLEpisode => {
@@ -179,9 +183,10 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber
     id: String(episode.epid),
     mediaUri,
     url: `https://www.netflix.com/watch/${episode.epid}`,
-    titles: [{ language: 'en', title: decode(episode.title) }],
-    ...desc(decodedSynopsis),
-    thumbnails: episode.img ? img(httpsUrl(episode.img)) : [],
+    score: SCORE,
+    titles: [{ language: 'en', title: decode(episode.title), score: SCORE }],
+    ...desc(decodedSynopsis, SCORE),
+    thumbnails: episode.img ? img(httpsUrl(episode.img), SCORE) : [],
     seasonNumber: episode.seasnum,
     episodeNumber
   })

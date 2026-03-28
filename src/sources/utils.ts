@@ -36,23 +36,25 @@ export const makeEpisode = ({ origin, id, mediaUri, ...fields }: { origin: strin
   ...fields
 })
 
-export const desc = (description?: string | null) =>
+export const desc = (description?: string | null, score?: number) =>
   description
     ? {
       descriptions: [{
         language: 'en',
-        description: description
+        description: description,
+        score
       }],
       shortDescriptions: [{
         language: 'en',
-        shortDescription: description
+        shortDescription: description,
+        score
       }]
     }
     : {}
 
-export const img = (url?: string | null) =>
+export const img = (url?: string | null, score?: number) =>
   url
-    ? [{ url }]
+    ? [{ url, score }]
     : []
 
 export const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>

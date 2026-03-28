@@ -113,6 +113,11 @@ const GET_MEDIA = `
   }
 `
 
+const TITLE_SCORE = 0.7
+const THUMBNAIL_SCORE = 0.9
+const DESCRIPTION_SCORE = 0.7
+const COVER_SCORE = 0.7
+
 const siteMappings = [
   {
     // link example: https://www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites
@@ -266,21 +271,21 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
     averageScore: media.averageScore,
     descriptions:
       media.description
-        ? [{ language: 'en', description: media.description }]
+        ? [{ language: 'en', description: media.description, score: DESCRIPTION_SCORE }]
         : [],
     shortDescriptions:
       media.description
-        ? [{ language: 'en', shortDescription: media.description }]
+        ? [{ language: 'en', shortDescription: media.description, score: DESCRIPTION_SCORE }]
         : [],
     titles: [
-      ...media.title?.english ? [{ language: 'en', title: media.title.english, score: 0.9 }] : [],
-      ...media.title?.romaji ? [{ language: 'jp-en', title: media.title.romaji, score: 0.9 }] : [],
-      ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: 0.9 }] : []
+      ...media.title?.english ? [{ language: 'en', title: media.title.english, score: TITLE_SCORE }] : [],
+      ...media.title?.romaji ? [{ language: 'jp-en', title: media.title.romaji, score: TITLE_SCORE }] : [],
+      ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: TITLE_SCORE }] : []
     ],
     covers: [
       // ...media.coverImage?.medium ? [{ language: 'en', url: media.coverImage.medium }] : [],
       // ...media.coverImage?.large ? [{ language: 'jp', url: media.coverImage.large }] : [],
-      ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge }] : []
+      ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge, score: COVER_SCORE }] : []
     ],
     episodeCount: media.episodes,
     popularity: media.popularity,
