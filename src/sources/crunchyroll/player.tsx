@@ -1,10 +1,59 @@
-import type { Frame } from '@fkn/lib'
+import type { Frame, VideoHandle } from '@fkn/lib'
 
 import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
 import { newFrame } from '@fkn/lib'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { createPlayer, useMediaAttach } from '@videojs/react'
+import { VideoSkin, videoFeatures } from '@videojs/react/video'
+
+const { Provider } = createPlayer({ features: videoFeatures })
+
+const toTimeRanges = (ranges: Array<{ start: number; end: number }>) => ({
+  length: ranges.length,
+  start: (i: number) => ranges[i]!.start,
+  end: (i: number) => ranges[i]!.end,
+})
+
+const asMediaElement = (handle: VideoHandle) => Object.create(handle, {
+  buffered: { get() { return toTimeRanges(handle.buffered) } },
+  seekable: { get() { return toTimeRanges(handle.duration ? [{ start: 0, end: handle.duration }] : []) } },
+  error: { value: null },
+  load: { value: () => {} },
+})
+
+const RemoteMediaProvider = ({ media }: { media: ReturnType<typeof asMediaElement> }) => {
+  const setMedia = useMediaAttach()
+  useEffect(() => {
+    setMedia?.(media)
+    return () => { setMedia?.(null) }
+  }, [media, setMedia])
+  return null
+}
+
+const VideoOverlay = ({ handle }: { handle: VideoHandle }) => {
+  const media = asMediaElement(handle)
+  return (
+    <Provider>
+      <RemoteMediaProvider media={media} />
+      <div
+        css={css`
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          pointer-events: none;
+
+          & > * {
+            pointer-events: auto;
+          }
+        `}
+      >
+        <VideoSkin />
+      </div>
+    </Provider>
+  )
+}
 
 const CRUNCHYROLL_DOMAINS = [
   'crunchyroll.com',
@@ -21,6 +70,9 @@ const CRUNCHYROLL_OUTER_CSS = `
     position: absolute !important;
     inset: 0 !important;
     z-index: 9999999;
+  }
+  [data-testid="player-controls-root"] {
+    display: none !important;
   }
 `
 
@@ -67,6 +119,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [loading, setLoading] = useState(true)
   const [loggedOut, setLoggedOut] = useState(false)
   const [error, setError] = useState<string>()
+  const [videoHandle, setVideoHandle] = useState<VideoHandle | null>(null)
 
   useEffect(() => {
     if (!iframe || frameRef.current) return
@@ -84,15 +137,28 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       setLoading(false)
       const isLoggedIn = await checkIsLoggedIn(frame)
       if (cancelled) return
-      if (!isLoggedIn) setLoggedOut(true)
+      if (!isLoggedIn) {
+        setLoggedOut(true)
+        return
+      }
+      const handle = await frame.locator('video').video()
+      if (cancelled) return
+      setVideoHandle(handle)
     })().catch(err => {
       console.error(err)
       if (cancelled) return
       setLoading(false)
       setError(err?.message ?? 'Failed to load player')
     })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [iframe, url])
+
+  useEffect(() => {
+    if (!videoHandle) return
+    return () => { videoHandle[Symbol.dispose]() }
+  }, [videoHandle])
 
   const openLogin = useCallback(() => {
     const popup = globalThis.open(CRUNCHYROLL_LOGIN_URL, '_blank', 'width=500,height=700')
@@ -102,6 +168,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       clearInterval(interval)
       frameRef.current = undefined
       setLoggedOut(false)
+      setVideoHandle(null)
       setLoading(true)
     }, 500)
   }, [url])
@@ -120,7 +187,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
         border-radius: 0.8rem;
         font-size: 1.4rem;
         color: rgba(255, 255, 255, 0.8);
-        z-index: 1;
+        z-index: 3;
       `}
     >
       {loggedOut && (
@@ -158,6 +225,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       `}
     >
       {overlay}
+      {videoHandle && <VideoOverlay handle={videoHandle} />}
       <iframe
         ref={setIframe}
         referrerPolicy="no-referrer"
