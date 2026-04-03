@@ -14,24 +14,10 @@ const CRUNCHYROLL_DOMAINS = [
 ]
 
 const CRUNCHYROLL_OUTER_CSS = `
-  #onetrust-consent-sdk {
+  *:not(:has(.video-player-wrapper)):not(.video-player-wrapper):not(.video-player-wrapper *) {
     display: none !important;
   }
-  .video-player-wrapper, [class*="app-layout__content--"] {
-    position: initial !important;
-  }
-  html {
-    overflow: hidden !important;
-  }
-  html::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 999999;
-    pointer-events: none;
-  }
-  .video-player, .player-container {
+  .video-player-wrapper, .video-player, .player-container {
     position: absolute !important;
     inset: 0 !important;
     z-index: 9999999;
