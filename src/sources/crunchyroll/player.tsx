@@ -31,7 +31,7 @@ const CRUNCHYROLL_OUTER_CSS = `
     z-index: 999999;
     pointer-events: none;
   }
-  .video-player {
+  .video-player, .player-container {
     position: absolute !important;
     inset: 0 !important;
     z-index: 9999999;
