@@ -7,14 +7,20 @@ import { newFrame } from '@fkn/lib'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { createPlayer, useMediaAttach } from '@videojs/react'
 import { VideoSkin, videoFeatures } from '@videojs/react/video'
+import '@videojs/react/video/skin.css'
 
 const { Provider } = createPlayer({ features: videoFeatures })
 
-const toTimeRanges = (ranges: Array<{ start: number; end: number }>) => ({
-  length: ranges.length,
-  start: (i: number) => ranges[i]!.start,
-  end: (i: number) => ranges[i]!.end,
-})
+const EMPTY_TIME_RANGES = { length: 0, start: () => 0, end: () => 0 }
+
+const toTimeRanges = (ranges?: Array<{ start: number; end: number }>) => {
+  if (!ranges?.length) return EMPTY_TIME_RANGES
+  return {
+    length: ranges.length,
+    start: (i: number) => ranges[i]!.start,
+    end: (i: number) => ranges[i]!.end,
+  }
+}
 
 const asMediaElement = (handle: VideoHandle) => Object.create(handle, {
   buffered: { get() { return toTimeRanges(handle.buffered) } },
@@ -43,9 +49,16 @@ const VideoOverlay = ({ handle }: { handle: VideoHandle }) => {
           inset: 0;
           z-index: 2;
           pointer-events: none;
+          background: transparent;
 
           & > * {
             pointer-events: auto;
+          }
+
+          [class*="media-default-skin"],
+          [class*="media-poster"],
+          [class*="media-container"] {
+            background: transparent !important;
           }
         `}
       >
@@ -140,6 +153,11 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       if (!isLoggedIn) {
         setLoggedOut(true)
         return
+      }
+      let playerDoesntExists = true
+      while (playerDoesntExists) {
+        playerDoesntExists = !(await frame.locator('video').exists())
+        await new Promise(resolve => setTimeout(resolve, 100))
       }
       const handle = await frame.locator('video').video()
       if (cancelled) return
