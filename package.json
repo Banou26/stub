@@ -57,6 +57,7 @@
     "@graphql-yoga/plugin-response-cache": "^3.17.2",
     "@urql/devtools": "^2.0.3",
     "@urql/exchange-graphcache": "^8.1.0",
+    "@videojs/react": "^10.0.0-beta.14",
     "dataloader": "^2.2.3",
     "dompurify": "^3.2.6",
     "graphql": "^16.11.0",
