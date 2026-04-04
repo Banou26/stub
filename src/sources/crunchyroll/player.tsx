@@ -4,7 +4,7 @@ import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
 import { newFrame } from '@fkn/lib'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { createPlayer, useMediaAttach } from '@videojs/react'
 import { VideoSkin, videoFeatures } from '@videojs/react/video'
 import '@videojs/react/video/skin.css'
@@ -22,11 +22,34 @@ const toTimeRanges = (ranges?: Array<{ start: number; end: number }>) => {
   }
 }
 
-const asMediaElement = (handle: VideoHandle) => Object.create(handle, {
-  buffered: { get() { return toTimeRanges(handle.buffered) } },
-  seekable: { get() { return toTimeRanges(handle.duration ? [{ start: 0, end: handle.duration }] : []) } },
-  error: { value: null },
-  load: { value: () => {} },
+const EMPTY_TEXT_TRACKS = { length: 0, [Symbol.iterator]: function* () {}, addEventListener: () => {}, removeEventListener: () => {} }
+
+const asMediaElement = (handle: VideoHandle) => ({
+  get paused() { return handle.paused },
+  get currentTime() { return handle.currentTime },
+  set currentTime(v: number) { handle.currentTime = v },
+  get duration() { return handle.duration },
+  get volume() { return handle.volume },
+  set volume(v: number) { handle.volume = v },
+  get muted() { return handle.muted },
+  set muted(v: boolean) { handle.muted = v },
+  get playbackRate() { return handle.playbackRate },
+  set playbackRate(v: number) { handle.playbackRate = v },
+  get ended() { return handle.ended },
+  get seeking() { return false },
+  get readyState() { return handle.readyState },
+  get src() { return handle.src },
+  get currentSrc() { return handle.currentSrc },
+  get buffered() { return toTimeRanges(handle.buffered) },
+  get seekable() { return toTimeRanges(handle.duration ? [{ start: 0, end: handle.duration }] : []) },
+  get error() { return null },
+  get textTracks() { return EMPTY_TEXT_TRACKS },
+  play: () => handle.play(),
+  pause: () => { handle.pause() },
+  load: () => {},
+  addEventListener: (...args: Parameters<EventTarget['addEventListener']>) => handle.addEventListener(...args),
+  removeEventListener: (...args: Parameters<EventTarget['removeEventListener']>) => handle.removeEventListener(...args),
+  dispatchEvent: (...args: Parameters<EventTarget['dispatchEvent']>) => handle.dispatchEvent(...args),
 })
 
 const RemoteMediaProvider = ({ media }: { media: ReturnType<typeof asMediaElement> }) => {
@@ -39,7 +62,7 @@ const RemoteMediaProvider = ({ media }: { media: ReturnType<typeof asMediaElemen
 }
 
 const VideoOverlay = ({ handle }: { handle: VideoHandle }) => {
-  const media = asMediaElement(handle)
+  const media = useMemo(() => asMediaElement(handle), [handle])
   return (
     <Provider>
       <RemoteMediaProvider media={media} />
