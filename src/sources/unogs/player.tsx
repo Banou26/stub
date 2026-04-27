@@ -3,7 +3,7 @@ import type { Frame } from '@fkn/lib'
 import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
-import { newFrame } from '@fkn/lib'
+import { attachFrame } from '@fkn/lib'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 const NETFLIX_DOMAINS = [
@@ -72,7 +72,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
     if (!iframe || frameRef.current) return
     let cancelled = false
     ;(async () => {
-      const frame = await newFrame({
+      const frame = await attachFrame({
         iframe,
         domains: NETFLIX_DOMAINS
       })

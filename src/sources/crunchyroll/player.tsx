@@ -3,7 +3,7 @@ import type { Frame } from '@fkn/lib'
 import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
-import { newFrame } from '@fkn/lib'
+import { attachFrame } from '@fkn/lib'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 import CrunchyrollVideoJSPlayer from './cr-videojs-player'
@@ -173,7 +173,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     let cancelled = false
     const isCancelled = () => cancelled
     ;(async () => {
-      const frame = await newFrame({
+      const frame = await attachFrame({
         iframe,
         domains: CRUNCHYROLL_DOMAINS
       })
@@ -184,8 +184,17 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       // *same* document. CR's subsequent internal route change
       // (`/watch/X` → its localised equivalent) replaces the document
       // entirely, so we re-apply once we've seen a live `<video>`.
+      console.log('goto', url)
       await frame.goto(url, { waitUntil: 'documentstart' })
-      await waitForContentScript(() => frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS }))
+      console.log('goto done')
+      setInterval(() => {
+        console.log('interval addstyle')
+        frame.addStyleTag({ content: ` * { background-color: red; } ` })
+        console.log('interval addstyle done')
+      }, 1000)
+      console.log('addstyle')
+      await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
+      console.log('addstyle done')
       if (cancelled) return
       setLoading(false)
       const isLoggedIn = await checkIsLoggedIn(frame)
@@ -194,16 +203,8 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
         setLoggedOut(true)
         return
       }
-      // Wait for a playable `<video>` to appear; the video.js skin
-      // mounts once we can hand it a live handle.
       const handle = await waitForVideoHandle(frame, isCancelled)
       if (cancelled || !handle) return
-      // Re-apply the CSS now that CR has finished its internal
-      // navigation + Bitmovin mount; the post-navigation document
-      // needs its own style injection.
-      frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS }).catch(() => {})
-      // Route `currentTime` writes through Bitmovin's own scrubber so
-      // out-of-buffer seeks actually fetch the required segments.
       setVideoHandle(wrapWithBitmovin(handle, frame))
     })().catch(err => {
       console.error(err)
