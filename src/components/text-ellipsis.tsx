@@ -22,7 +22,9 @@ export const TextEllipsis = (
 
   useEffect(() => {
     if (!ref) return
-    const resizeObserver = new ResizeObserver(() => {
+
+    let frame = 0
+    const update = () => {
       const computedStyle = window.getComputedStyle(ref)
       let lineHeightPx: number
 
@@ -33,15 +35,31 @@ export const TextEllipsis = (
         lineHeightPx = parseFloat(computedStyle.lineHeight)
       }
 
-      setLineHeight(lineHeightPx)
       const height = ref.clientHeight
+      setLineHeight(prev => (prev === lineHeightPx ? prev : lineHeightPx))
       if (lineHeightPx && height) {
-        setLineClamp(Math.floor(height / lineHeightPx))
+        const nextClamp = Math.max(1, Math.floor(height / lineHeightPx))
+        setLineClamp(prev => (prev === nextClamp ? prev : nextClamp))
       }
+    }
+
+    // Measure on the next frame instead of mutating synchronously inside the
+    // observer callback: writing line-clamp/height back onto the observed
+    // element re-enters the observer in the same delivery, which is what throws
+    // "ResizeObserver loop completed with undelivered notifications", and
+    // sub-pixel rounding of the written height kept the floor flip-flopping so
+    // it never settled. Guarded updates + the min-1 floor converge on a stable
+    // line count and quiet the observer.
+    const resizeObserver = new ResizeObserver(() => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(update)
     })
 
     resizeObserver.observe(ref)
-    return () => resizeObserver.disconnect()
+    return () => {
+      cancelAnimationFrame(frame)
+      resizeObserver.disconnect()
+    }
   }, [ref])
 
   return (
