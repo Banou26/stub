@@ -67,7 +67,7 @@
     "lru-cache": "^11.2.1",
     "lucide-react": "^0.536.0",
     "marked": "^17.0.5",
-    "osra": "^0.3.3",
+    "osra": "^0.4.4",
     "preact": "^11.0.0-beta.0",
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.2",
