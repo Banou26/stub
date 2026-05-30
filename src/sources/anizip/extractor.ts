@@ -90,21 +90,25 @@ const fetchAnizipJsonMappings = (providerId: 'anilist' | 'mal' | 'anidb', id: st
 
 const fetchAnizipMappings = (providerId: 'anilist' | 'mal' | 'anidb', id: string, context: ExtractorServerContext) =>
   fetchAnizipJsonMappings(providerId, id, context)
-    .then(animeData => normalizeMedia(animeData, context))
+    // api.ani.zip answers unknown ids with a 200 "Not Found" string rather than
+    // an AnimeSeries, so guard the shape before normalizing to avoid throwing.
+    .then(animeData => animeData?.mappings?.anidb_id != null ? normalizeMedia(animeData, context) : null)
 
 const fetchMALMappings = (id: string, context: ExtractorServerContext) => fetchAnizipMappings('mal', id, context)
 
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
-      resolve: (parent: GQLMedia) => parent,
+      // Always yield once (null when AniZip has nothing for this media). A
+      // subscription generator that completes without yielding makes yoga
+      // respond 204 No Content, which surfaces as a urql network error in the
+      // extractor client ("Network error on …: Caused by: No Content").
       subscribe: async function*(_, { input: { uri } }, ctx: ExtractorServerContext) {
-        if (!uri || !isAggregatedUri(uri)) return
+        if (!uri || !isAggregatedUri(uri)) return yield { media: null }
         const uris = fromAggregatedUri(uri)
         const malId = uris?.handleUrisValues.find(uri => uri.origin === 'mal')
-        if (malId) {
-          yield await fetchMALMappings(malId.id, ctx)
-        }
+        if (!malId) return yield { media: null }
+        yield { media: await fetchMALMappings(malId.id, ctx) }
       }
     }
   }
