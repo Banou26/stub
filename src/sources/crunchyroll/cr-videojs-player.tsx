@@ -1,5 +1,6 @@
-import type { Frame } from '@fkn/lib'
+import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { Media } from '@videojs/core/dom'
+import type { ComponentChildren } from 'preact'
 
 import { css } from '@emotion/react'
 import { useEffect } from 'preact/hooks'
@@ -8,101 +9,99 @@ import { createPlayer, useMediaAttach } from '@videojs/react'
 import { VideoSkin } from '@videojs/react/video'
 import '@videojs/react/video/skin.css'
 
-// Structural shape for the handle returned by @fkn/lib's
-// `videoElement()` action — see player.tsx for the longer note.
-type VideoHandle = EventTarget & {
-  currentTime: number
-  volume: number
-  muted: boolean
-  playbackRate: number
-  readonly duration: number
-  readonly paused: boolean
-  readonly ended: boolean
-  readonly readyState: number
-  readonly currentSrc: string
-  readonly buffered: ReadonlyArray<{ start: number; end: number }>
-  play(): Promise<void>
-  pause(): void
+// Crunchyroll ships Bitmovin for playback. Bitmovin drives its own MSE
+// segment fetcher off *its* UI events, not off raw `video.currentTime`
+// writes — so a bare setter only lands inside the already-buffered
+// range; anything outside lets the browser fire `seeking` but no bytes
+// get fetched and the video hangs. CR's timeline is a native
+// `<input type="range">` (`.timeline-slider`) whose `max` matches the
+// duration in seconds; driving it with the locator's `fill` makes
+// React's onChange fire, which tells Bitmovin's scheduler to seek and
+// re-fetch segments just like a user drag. So we intercept `currentTime`
+// writes and replay them onto that slider — no arbitrary-code bridge
+// into the frame, just a named element with a numeric value through the
+// existing locator actions.
+const CR_TIMELINE_SELECTOR = '.timeline-slider'
+const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
+
+// The published @fkn/lib types `fill` as (value, OperationTimeoutOptions)
+// and don't yet surface the permission `reason`; narrow to the shape we
+// rely on so the reason rides along — harmlessly ignored by builds that
+// predate it.
+type SeekableLocator = { fill: (value: string, options?: { reason?: string }) => Promise<unknown> }
+
+const seekViaTimeline = (frame: Frame, value: number) => {
+  (frame.locator(CR_TIMELINE_SELECTOR) as unknown as SeekableLocator)
+    .fill(String(value), { reason: SEEK_REASON })
+    .catch(err => console.warn('[cr] timeline seek failed:', err))
 }
 
-// Video.js v10 decouples the player store from the DOM: its "media"
-// object is a structural contract (EventTarget + play/pause/…/buffered),
-// not a literal HTMLMediaElement. `VideoHandle` from @fkn/lib already
-// covers most of the surface, but is missing a few fields the core
-// feature set's capability detectors look for (`seeking`, `load`,
-// `seekable`, `error`, `textTracks`) and returns `buffered` as a plain
-// `Array<{start, end}>` rather than the `TimeRangeLike` shape the
-// buffer feature wants. A Proxy patches those in-place so video.js's
-// feature attach succeeds, without touching the underlying handle.
-const adaptVideoHandle = (handle: VideoHandle): Media => {
-  const emptyRanges = { length: 0, start: () => 0, end: () => 0 }
-  const asTimeRanges = (arr: ReadonlyArray<{ start: number, end: number }> | undefined) => ({
-    length: arr?.length ?? 0,
-    start: (i: number) => arr?.[i]?.start ?? 0,
-    end: (i: number) => arr?.[i]?.end ?? 0,
-  })
-  return new Proxy(handle as unknown as Record<string, unknown>, {
-    get(target, prop) {
-      if (prop === 'seeking') return false
-      if (prop === 'load') return () => {}
-      if (prop === 'seekable') return emptyRanges
-      if (prop === 'error') return null
-      if (prop === 'textTracks') return { length: 0, [Symbol.iterator]: function*() { /* empty */ } }
-      if (prop === 'buffered') {
-        return asTimeRanges((target as unknown as VideoHandle).buffered)
+// video.js v10 decouples its store from the DOM: "media" is a structural
+// contract (EventTarget + play/pause/buffered/…), not a literal
+// HTMLMediaElement. @fkn/lib's RemoteVideoElement already satisfies it —
+// real TimeRanges for buffered/seekable, a MediaError for error, plus
+// seeking/load/readyState — so no compatibility shim is needed; the text
+// -track feature self-skips when `textTracks` is absent. The only
+// wrapping left is the seek interception: a `set` trap that replays
+// `currentTime` onto CR's timeline while the optimistic write still falls
+// through to the handle so the scrubber UI reflects it immediately.
+const withTimelineSeek = (remote: RemoteVideoElement, frame: Frame): Media =>
+  new Proxy(remote, {
+    set(target, prop, value, receiver) {
+      if (prop === 'currentTime' && typeof value === 'number' && Number.isFinite(value)) {
+        seekViaTimeline(frame, value)
       }
-      return Reflect.get(target, prop)
+      return Reflect.set(target, prop, value, receiver)
     },
   }) as unknown as Media
-}
 
 const { Provider } = createPlayer({ features: videoFeatures })
 
-const MediaAttach = ({ handle }: { handle: VideoHandle }) => {
+const MediaAttach = ({ remote, frame }: { remote: RemoteVideoElement | null, frame: Frame | null }) => {
   const setMedia = useMediaAttach()
   useEffect(() => {
-    if (!setMedia) return
-    setMedia(adaptVideoHandle(handle))
+    if (!setMedia || !remote || !frame) return
+    setMedia(withTimelineSeek(remote, frame))
     return () => setMedia(null)
-  }, [handle, setMedia])
+  }, [remote, frame, setMedia])
   return null
 }
 
-// The skin root passes pointer events through so clicks on empty video
-// area can still reach CR's iframe below; the controls / overlays /
-// popovers reclaim `pointer-events: auto` so buttons still respond.
-const POINTER_EVENTS_OVERRIDE = `
-  .media-default-skin .media-controls,
-  .media-default-skin .media-controls *,
-  .media-default-skin .media-error,
-  .media-default-skin .media-error *,
-  .media-default-skin .media-popover,
-  .media-default-skin .media-popover * {
-    pointer-events: auto;
-  }
-`
+type Props = {
+  remote: RemoteVideoElement | null
+  frame: Frame | null
+  children?: ComponentChildren
+}
 
-type Props = { readonly handle: VideoHandle }
-
-const CrunchyrollVideoJSPlayer = ({ handle }: Props) => (
+// The CR iframe is rendered *inside* the skin's Container (as its first
+// child) for two reasons the sibling layout couldn't satisfy:
+//   1. Fullscreen — the player fullscreens its Container element, so the
+//      iframe carrying the actual video must live inside it, or
+//      fullscreen shows only the transparent skin.
+//   2. Pointer events — the iframe is `pointer-events: none` (its CR
+//      chrome is hidden anyway), so taps land on the skin's gesture layer
+//      above it (tap → play/pause, double-tap → fullscreen) instead of
+//      falling through to a dead iframe. The skin keeps its default
+//      pointer handling; no root override needed.
+const CrunchyrollVideoJSPlayer = ({ remote, frame, children }: Props) => (
   <Provider>
-    <MediaAttach handle={handle} />
-    <style>{POINTER_EVENTS_OVERRIDE}</style>
+    <MediaAttach remote={remote} frame={frame} />
     <VideoSkin
       css={css`
         position: absolute;
         inset: 0;
         border-radius: 0.8rem;
         /* The v10 media-default-skin--video preset otherwise paints a
-           solid black background that would hide the CR iframe's
-           pixels; force-transparent the root + the variant selector. */
+           solid black background; keep it transparent so the iframe's
+           video pixels (the Container's first child) show through. */
         background: transparent !important;
         &.media-default-skin--video {
           background: transparent !important;
         }
-        pointer-events: none;
       `}
-    />
+    >
+      {children}
+    </VideoSkin>
   </Provider>
 )
 
