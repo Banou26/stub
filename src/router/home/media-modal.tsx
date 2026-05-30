@@ -9,7 +9,7 @@ import {
 } from '@floating-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
-import { Link, Redirect, useParams } from 'wouter'
+import { Link, Redirect, useLocation, useParams } from 'wouter'
 
 import { MediaDescriptionContentType, OriginFilter } from '../../generated/graphql'
 import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
@@ -417,8 +417,18 @@ const Episode = (
 
 const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const params = useParams<RouteParams['MEDIA']>()
+  const [, navigate] = useLocation()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
-  const { uri } = params
+
+  const [uri, setUri] = useState(params.uri)
+  useEffect(() => {
+    setUri(prev =>
+      prev && isAggregatedUri(prev) && isAggregatedUri(params.uri) && matchAggregatedUris(prev, params.uri)
+        ? prev
+        : params.uri
+    )
+  }, [params.uri])
+
   const [{ data }] = useSubscription({
     query: GET_MEDIA_MODAL,
     variables: {
@@ -432,7 +442,6 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     pause: !uri
   })
   const media = data?.media ?? foundMedia
-  console.log('media', media)
   const origins =
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues
@@ -460,14 +469,18 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const cover = useMemo(() => media?.covers?.at(0), [media])
 
   const [bannedTrailerUris, setBannedTrailerUris] = useState<string[]>([])
+  const [pinnedTrailerUri, setPinnedTrailerUri] = useState<string>()
   const selectedTrailer = useMemo(
-    () =>
-      media
-        ?.trailers
-        .filter((trailer) => !bannedTrailerUris.includes(trailer.uri))
-        .at(0),
-    [media?.trailers?.map(trailer => trailer.uri), bannedTrailerUris]
+    () => {
+      const trailers = (media?.trailers ?? []).filter((trailer) => !bannedTrailerUris.includes(trailer.uri))
+      return trailers.find(trailer => trailer.uri === pinnedTrailerUri) ?? trailers.at(0)
+    },
+    [media?.trailers, bannedTrailerUris, pinnedTrailerUri]
   )
+
+  useEffect(() => {
+    if (selectedTrailer?.uri && selectedTrailer.uri !== pinnedTrailerUri) setPinnedTrailerUri(selectedTrailer.uri)
+  }, [selectedTrailer?.uri, pinnedTrailerUri])
 
   const onTrailerError = useCallback(() => {
     if (!selectedTrailer) return
@@ -489,15 +502,17 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const [playerMuted, setPlayerMuted] = useState(true)
   const [playerVolume, setPlayerVolume] = useState(0.25)
 
-  if (!open) return <Redirect to="/" />
-
-  if (media?.uri && isAggregatedUri(media.uri) && params.uri && isAggregatedUri(params.uri)) {
+  useEffect(() => {
+    if (!media?.uri || !isAggregatedUri(media.uri) || !params.uri || !isAggregatedUri(params.uri)) return
     const mediaAggregatedUris = fromAggregatedUri(media.uri)?.handleUris ?? []
     const paramsAggregatedUris = fromAggregatedUri(params.uri)?.handleUris ?? []
     if (mediaAggregatedUris.length > paramsAggregatedUris.length) {
-      return <Redirect to={getRoutePath(Route.MEDIA, { uri: media.uri })} replace={true} />
+      navigate(getRoutePath(Route.MEDIA, { uri: media.uri }), { replace: true })
     }
-  }
+  }, [media?.uri, params.uri])
+
+  if (!open) return <Redirect to="/" />
+
   return (
     <FloatingPortal>
       <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>
@@ -508,7 +523,8 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                 selectedTrailer?.url
                   ? (
                     <YoutubeMinimalPlayer
-                      url={selectedTrailer?.url}
+                      key={selectedTrailer.url}
+                      url={selectedTrailer.url}
                       className="player"
                       onError={onTrailerError}
                       paused={playerPaused}
@@ -583,7 +599,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   media
                     .episodes
                     ?.map((episode, index) =>
-                      <Episode episode={episode} index={index} mediaUri={media.uri} />
+                      <Episode key={episode.episodeNumber ?? episode.uri ?? index} episode={episode} index={index} mediaUri={media.uri} />
                     )
                 }
               </div>
