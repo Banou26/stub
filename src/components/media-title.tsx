@@ -9,6 +9,7 @@ import TextEllipsis from './text-ellipsis'
 
 const style = css`
 &.card, .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

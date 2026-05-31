@@ -105,6 +105,28 @@ const SEARCH_QUERY = `
   }
 `
 
+const SEARCH_MEDIA_QUERY = `
+  query (
+    $search: String
+    $page: Int
+  ) {
+    Page(page: $page) {
+      pageInfo {
+        lastPage
+        hasNextPage
+        total
+      }
+      media(
+        search: $search
+        type: ANIME
+        sort: SEARCH_MATCH
+      ) {
+        ${MEDIA_FIELDS.split('\n').join('\n      ')}
+      }
+    }
+  }
+`
+
 const GET_MEDIA = `
   query GetMedia ($id: Int, $idMal: Int, $type: MediaType) {
     Media(idMal: $idMal, id: $id, type: $type) {
@@ -318,6 +340,11 @@ export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
   return getFullMediaSeason({ season: season, year: seasonYear }, context)
 }
 
+const searchMedia = async (search: string, context: ExtractorServerContext) => {
+  const { data } = await fetchAnilist<{ Page: Page }>({ query: SEARCH_MEDIA_QUERY, variables: { search, page: 1 } }, context)
+  return (data?.Page?.media ?? []).map(media => normalizeMedia(media as Media))
+}
+
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
@@ -337,6 +364,13 @@ export const resolvers: Resolvers = {
           return yield {
             mediaPage: {
               nodes: await getAnimeSeasonNow(ctx)
+            }
+          }
+        }
+        if (search) {
+          return yield {
+            mediaPage: {
+              nodes: await searchMedia(search, ctx)
             }
           }
         }

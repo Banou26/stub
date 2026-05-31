@@ -182,20 +182,15 @@ export const resolvers: Resolvers = {
             }
           }
         }
-        throw new Error('Not implemented')
-        // if (search) {
-        //   return yield {
-        //     mediaPage: {
-        //       nodes: await Promise.all(await fetchSearchAnime({ search }, ctx))
-        //     }
-        //   }
-        // } else if (season && seasonYear) {
-        //   return yield {
-        //     mediaPage: {
-        //       nodes: await Promise.all(await getFullSeasonNow(undefined, { seasonYear, season }, ctx, undefined))
-        //     }
-        //   }
-        // }
+        if (search) {
+          const results = await fetchSearchAnime({ search }, ctx)
+          return yield {
+            mediaPage: {
+              nodes: results ? await Promise.all(results) : []
+            }
+          }
+        }
+        yield { mediaPage: { nodes: [] } }
       }
     },
   }
