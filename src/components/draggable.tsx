@@ -17,7 +17,7 @@ const Draggable = (
   { children, isDragging, setIsDragging }:
   { children: ReactNode, isDragging: boolean, setIsDragging: (val: boolean) => void }
 ) => {
-  if ('ontouchstart' in document.documentElement) return children
+  if ('ontouchstart' in document.documentElement) return <>{children}</>
   const [ourRef, setOurRef] = useState<HTMLDivElement | null>(null)
   const [isMouseDown, setIsMouseDown] = useState(false)
   const [isDraggingTimeout, setIsDraggingTimeout] = useState<number>()

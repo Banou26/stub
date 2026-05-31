@@ -1,5 +1,5 @@
 import type { Path } from 'wouter'
-import type { HTMLAttributes, ReactEventHandler } from 'react'
+import type { HTMLAttributes, EventHandler, TargetedEvent } from 'react'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
@@ -30,7 +30,7 @@ export const YoutubeMinimalPlayer = (
     redirectTo?: Path
     volume?: number
     paused?: boolean
-    onError?: ReactEventHandler<HTMLVideoElement>
+    onError?: EventHandler<TargetedEvent<HTMLVideoElement>>
   }
 ) => {
   const [ref, setRef] = useState<HTMLVideoElement | null>(null)

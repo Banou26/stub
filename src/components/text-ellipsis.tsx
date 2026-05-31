@@ -68,7 +68,7 @@ export const TextEllipsis = (
       ref={setRef}
       css={style}
       style={{
-        ...rest.style,
+        ...(typeof rest.style === 'object' ? rest.style : undefined),
         WebkitLineClamp: lineClamp,
         height: lineHeight && lineClamp ? lineClamp * lineHeight : undefined
       }}

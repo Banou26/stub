@@ -165,7 +165,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     shortDescriptions: byScore(merged.shortDescriptions ?? []),
     covers: byScore(merged.covers ?? []),
     banners: byScore(merged.banners ?? []),
-    trailers: removeDuplicatesByField('uri', byScore(merged.trailers ?? [])),
+    trailers: removeDuplicatesByField('uri', merged.trailers ?? []),
   }
 }
 

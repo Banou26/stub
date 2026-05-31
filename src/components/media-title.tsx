@@ -79,7 +79,7 @@ const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivEl
       {...rest}
       css={style}
       className="card category-item"
-      style={{ ...rest.style, backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover' }}
+      style={{ ...(typeof rest.style === 'object' ? rest.style : undefined), backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover' }}
     >
       <Link
         tabIndex={-1}

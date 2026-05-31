@@ -25,7 +25,7 @@ import { listenMultipleIterator } from './store/events'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
-  findAggregatedMedia: (uri: Uri) => Promise<Media | undefined>
+  findAggregatedMedia: (uri: string) => Promise<Media | undefined>
   listenForMediaChanges: (params: { uri: string }, options?: { abortSignal?: AbortSignal }) => AsyncGenerator<Media | undefined>
 }
 
@@ -36,7 +36,7 @@ export type ExtractorUserContext = {
 // ─── Normalization helpers ───────────────────────────────────────────────────
 
 const normalizeToGrafeoMedia = (media: Media): GrafeoMedia => ({
-  uri: media.uri,
+  uri: media.uri as Uri,
   origin: media.origin,
   id: media.id,
   url: media.url ?? null,
@@ -59,11 +59,11 @@ const normalizeToGrafeoMedia = (media: Media): GrafeoMedia => ({
 })
 
 const normalizeToGrafeoEpisode = (episode: Episode): GrafeoEpisode => ({
-  uri: episode.uri,
+  uri: episode.uri as Uri,
   origin: episode.origin,
   id: episode.id,
   url: episode.url ?? null,
-  mediaUri: episode.mediaUri,
+  mediaUri: episode.mediaUri as Uri,
   score: episode.score ?? null,
   titles: episode.titles ?? [],
   descriptions: episode.descriptions ?? [],
@@ -281,7 +281,7 @@ export const extractors =
             new Request(input, init),
             {
               fetch,
-              findAggregatedMedia: (uri: Uri) => findAggregatedMediaForContext(uri),
+              findAggregatedMedia: (uri: string) => findAggregatedMediaForContext(uri),
               listenForMediaChanges: listenForMediaChangesForContext
             }
           )

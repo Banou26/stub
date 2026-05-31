@@ -10,7 +10,6 @@ import { devtoolsExchange } from '@urql/devtools'
 import { cacheExchange } from '@urql/exchange-graphcache'
 
 import { handleRequest } from './worker'
-// @ts-expect-error
 import introspection from './generated/graphql.schema.json'
 
 export const keyResolvers = {

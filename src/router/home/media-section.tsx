@@ -1,4 +1,4 @@
-import type { CellComponentProps } from 'react-window'
+import type { CSSProperties } from 'react'
 import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 
 import { css } from '@emotion/react'
@@ -72,10 +72,11 @@ position: relative;
 `
 
 const CellComponent = (
-  { style, mediaNodes, columnIndex }:
-  CellComponentProps<{
+  { style, mediaNodes, columnIndex }: {
+    style: CSSProperties
+    columnIndex: number
     mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes']
-  }>
+  }
 ) => {
   const media = mediaNodes[columnIndex]
   if (!media) return null

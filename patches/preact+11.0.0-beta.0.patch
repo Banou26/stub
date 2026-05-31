@@ -1,0 +1,26 @@
+diff --git a/node_modules/preact/compat/src/index.d.ts b/node_modules/preact/compat/src/index.d.ts
+index eb3fa7b..4556f26 100644
+--- a/node_modules/preact/compat/src/index.d.ts
++++ b/node_modules/preact/compat/src/index.d.ts
+@@ -10,7 +10,7 @@ declare namespace preact {
+ 		(
+ 			props: preact1.RenderableProps<P>,
+ 			context?: any
+-		): preact1.ComponentChildren;
++		): preact1.VNode<any> | null;
+ 		displayName?: string;
+ 		defaultProps?: Partial<P> | undefined;
+ 	}
+diff --git a/node_modules/preact/src/index.d.ts b/node_modules/preact/src/index.d.ts
+index 45c38e2..5f1ca91 100644
+--- a/node_modules/preact/src/index.d.ts
++++ b/node_modules/preact/src/index.d.ts
+@@ -89,7 +89,7 @@ export type ComponentProps<
+ 		: {};
+ 
+ export interface FunctionComponent<P = {}> {
+-	(props: RenderableProps<P>, context?: any): ComponentChildren;
++	(props: RenderableProps<P>, context?: any): VNode<any> | null;
+ 	displayName?: string;
+ }
+ export interface FunctionalComponent<P = {}> extends FunctionComponent<P> {}

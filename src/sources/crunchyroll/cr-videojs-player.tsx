@@ -1,12 +1,14 @@
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { Media } from '@videojs/core/dom'
-import type { ComponentChildren } from 'preact'
+import type { ComponentChildren, FunctionComponent } from 'preact'
 
 import { css } from '@emotion/react'
 import { useEffect } from 'preact/hooks'
 import { videoFeatures } from '@videojs/core/dom'
 import { createPlayer, useMediaAttach } from '@videojs/react'
-import { VideoSkin } from '@videojs/react/video'
+import { VideoSkin as VideoSkinBase } from '@videojs/react/video'
+
+const VideoSkin = VideoSkinBase as FunctionComponent<Parameters<typeof VideoSkinBase>[0]>
 import '@videojs/react/video/skin.css'
 
 // Crunchyroll ships Bitmovin for playback. Bitmovin drives its own MSE

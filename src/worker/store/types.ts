@@ -9,10 +9,10 @@ export type MediaStatus = typeof mediaStatusEnum[number]
 export type Title = { language: string; title: string; score?: number | null }
 export type Description = { language: string; description: string; score?: number | null }
 export type ShortDescription = { language: string; shortDescription: string; score?: number | null }
-export type Cover = { language?: string; url: string; height?: number; width?: number; color?: string; score?: number | null }
-export type Banner = { language?: string; url: string; height?: number; width?: number; color?: string; score?: number | null }
-export type Trailer = { uri: string; origin: string; id: string; url?: string; language?: string; thumbnail?: string; score?: number | null }
-export type Thumbnail = { language?: string; url: string; height?: number; width?: number; color?: string; score?: number | null }
+export type Cover = { language?: string | null; url: string; height?: number | null; width?: number | null; color?: string | null; score?: number | null }
+export type Banner = { language?: string | null; url: string; height?: number | null; width?: number | null; color?: string | null; score?: number | null }
+export type Trailer = { uri: string; origin: string; id: string; url?: string | null; language?: string | null; thumbnail?: string | null; score?: number | null }
+export type Thumbnail = { language?: string | null; url: string; height?: number | null; width?: number | null; color?: string | null; score?: number | null }
 
 export type Media = {
   uri: Uri
