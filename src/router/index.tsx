@@ -5,6 +5,7 @@ import { getRouterRoutePath, Route } from './path'
 import Header from '../components/header'
 import Home from './home'
 import Search from './search'
+import Legal from './legal'
 import Watch from './watch'
 
 const LoginCallback = () => {
@@ -19,6 +20,7 @@ const RouterRoot = () => (
       <WRoute path={getRouterRoutePath(Route.HOME)} component={Home}/>
       <WRoute path={getRouterRoutePath(Route.MEDIA)} component={Home}/>
       <WRoute path={getRouterRoutePath(Route.SEARCH)} component={Search}/>
+      <WRoute path={getRouterRoutePath(Route.LEGAL)} component={Legal}/>
       <WRoute path={getRouterRoutePath(Route.WATCH)} component={Watch}/>
       <WRoute path={getRouterRoutePath(Route.LOGIN_CALLBACK)} component={LoginCallback}/>
       <WRoute component={() => <div>404 No page found</div>}/>

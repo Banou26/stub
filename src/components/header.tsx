@@ -35,6 +35,16 @@ const style = css`
     }
   }
 
+  .legal {
+    font-size: 1.4rem;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.55);
+
+    &:hover {
+      color: #fff;
+    }
+  }
+
   .search {
     display: flex;
     align-items: center;
@@ -100,6 +110,7 @@ export const Header = () => {
   return (
     <header css={style}>
       <Link to={getRoutePath(Route.HOME)} className="logo">stub</Link>
+      <Link to={getRoutePath(Route.LEGAL)} className="legal">Legal</Link>
       <form
         className="search"
         onSubmit={event => {
