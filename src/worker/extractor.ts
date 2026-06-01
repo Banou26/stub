@@ -25,6 +25,7 @@ import { listenMultipleIterator } from './store/events'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
+  key: (origin: string) => string | undefined
   findAggregatedMedia: (uri: string) => Promise<Media | undefined>
   listenForMediaChanges: (params: { uri: string }, options?: { abortSignal?: AbortSignal }) => AsyncGenerator<Media | undefined>
 }
@@ -32,6 +33,11 @@ export type ExtractorServerContext = YogaInitialContext & {
 export type ExtractorUserContext = {
 
 }
+
+// User-supplied API keys (BYOK), pushed from the main thread's settings page over osra
+// and read by keyful extractors via ctx.key(origin). Absent key -> the source no-ops.
+let userKeys: Record<string, string> = {}
+export const setUserKeys = (keys: Record<string, string>) => { userKeys = keys ?? {} }
 
 // ─── Normalization helpers ───────────────────────────────────────────────────
 
@@ -281,6 +287,7 @@ export const extractors =
             new Request(input, init),
             {
               fetch,
+              key: (origin: string) => userKeys[origin],
               findAggregatedMedia: (uri: string) => findAggregatedMediaForContext(uri),
               listenForMediaChanges: listenForMediaChangesForContext
             }

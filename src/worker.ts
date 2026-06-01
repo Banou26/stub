@@ -22,7 +22,7 @@ expose<typeof resolvers>(
   }
 )
 
-const { handleRequest } = await expose<WorkerResolvers>(
+const { handleRequest, setUserKeys } = await expose<WorkerResolvers>(
   {},
   {
     transport: worker,
@@ -31,5 +31,6 @@ const { handleRequest } = await expose<WorkerResolvers>(
 )
 
 export {
-  handleRequest
+  handleRequest,
+  setUserKeys
 }

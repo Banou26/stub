@@ -7,6 +7,7 @@ import { expose } from 'osra'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
+import { setUserKeys } from './extractor'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -37,7 +38,8 @@ export const yoga = createYoga<Omit<ServerContext, keyof YogaInitialContext>, Us
 
 export const osraResolvers = {
   handleRequest: (input: RequestInfo | URL, init?: RequestInit) =>
-    yoga.handleRequest(new Request(input, init), {})
+    yoga.handleRequest(new Request(input, init), {}),
+  setUserKeys: (keys: Record<string, string>) => setUserKeys(keys)
 }
 
 export type Resolvers = typeof osraResolvers

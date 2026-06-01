@@ -5,6 +5,10 @@ import { Provider } from 'urql'
 import './worker.ts'
 import client from './urql'
 import Router from './router'
+import { pushKeys } from './utils/keys'
+
+// Push any stored BYOK keys into the worker so keyful sources are active from the first query.
+pushKeys()
 
 const style = css`
   @import url('/style.css');
