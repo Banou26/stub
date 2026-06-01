@@ -20,7 +20,6 @@ import { merge } from '../utils/merge'
 import { fetch } from './fetch'
 import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils/uri'
 import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
-import { streamingPlatforms } from '../sources/streaming-platforms'
 import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
 import { listenMultipleIterator } from './store/events'
 
@@ -295,14 +294,6 @@ export const extractors =
         extractor
       }
     })
-
-// Register branded metadata for streaming platforms surfaced by JustWatch but without
-// their own extractor, so their source buttons render with a name/logo/colour.
-upsertOrigins(
-  streamingPlatforms.map(platform =>
-    normalizeOrigin({ ...platform, isApiOnly: false })
-  )
-)
 
 export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUris?: (result: any) => string[]) => {
   const insertedUris = new Set<string>()
