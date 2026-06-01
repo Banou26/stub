@@ -9,6 +9,7 @@ import { gql } from '../../generated'
 import { MediaCategory } from '../../generated/graphql'
 import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
+import CategoryTabs from '../../components/category-tabs'
 
 const SEARCH_MEDIA_PAGE = gql(`
   subscription SearchMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
@@ -47,13 +48,6 @@ const SEARCH_MEDIA_PAGE = gql(`
   }
 `)
 
-const CATEGORY_TABS = [
-  { label: 'All', value: null },
-  { label: 'Anime', value: MediaCategory.Anime },
-  { label: 'Series', value: MediaCategory.Series },
-  { label: 'Movies', value: MediaCategory.Movie },
-] as const
-
 const style = css`
   padding: 10rem 3rem 4rem;
   min-height: 100vh;
@@ -66,28 +60,7 @@ const style = css`
   }
 
   .tabs {
-    display: flex;
-    gap: 0.6rem;
     margin-bottom: 2.5rem;
-  }
-
-  .tab {
-    padding: 0.5rem 1.3rem;
-    border-radius: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: transparent;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 1.4rem;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .tab:hover { color: rgba(255, 255, 255, 0.9); }
-
-  .tab.active {
-    background: #fff;
-    color: #000;
-    border-color: #fff;
   }
 
   .grid {
@@ -133,15 +106,7 @@ const Search = () => {
       </div>
       {query && (
         <div className="tabs">
-          {CATEGORY_TABS.map(tab => (
-            <button
-              key={tab.label}
-              className={category === tab.value ? 'tab active' : 'tab'}
-              onClick={() => setCategory(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
+          <CategoryTabs value={category} onChange={setCategory} />
         </div>
       )}
       {
