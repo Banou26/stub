@@ -4,11 +4,12 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// TMDB (themoviedb.org) — the shared metadata/episode backbone for the streaming platforms.
-// Free, documented, legal (attribution + non-commercial). Set VITE_TMDB_API_KEY (v3 key) in .env;
-// without it this source no-ops. Search + season/episode lists + watch-provider availability.
+// TMDB (themoviedb.org) — shared metadata/episode backbone. The public API needs a
+// licensed key, so instead we read TMDB's own server-rendered frontend pages through
+// the proxy (curl-impersonate bypasses their WAF), same approach as the CR/NF sources.
 
 const SCORE = 0.3
+const BASE = 'https://www.themoviedb.org'
 
 export const icon = 'https://www.themoviedb.org/favicon.ico'
 export const originUrl = 'https://www.themoviedb.org'
@@ -21,111 +22,119 @@ export const isApiOnly = true
 export const supportedUris = ['tmdb']
 export const color = '#01b4e4'
 
-const KEY = import.meta.env.VITE_TMDB_API_KEY as string | undefined
-const TMDB = 'https://api.themoviedb.org/3'
-const IMG = 'https://image.tmdb.org/t/p'
+const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ' }
+const decode = (s: string): string =>
+  s
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+    .replace(/&([a-z]+);/gi, (m, n) => ENTITIES[n.toLowerCase()] ?? m)
 
-const api = <T>(path: string, ctx: ExtractorServerContext): Promise<T | undefined> => {
-  if (!KEY) return Promise.resolve(undefined)
-  const sep = path.includes('?') ? '&' : '?'
-  return ctx.fetch(`${TMDB}${path}${sep}api_key=${KEY}`).then(r => r.json() as Promise<T>).catch(() => undefined)
-}
+const fetchHtml = (path: string, ctx: ExtractorServerContext): Promise<string | undefined> =>
+  ctx.fetch(`${BASE}${path}`).then(r => r.text()).catch(() => undefined)
 
-// TMDB watch-provider id -> stub origin
-const PROVIDER_ORIGIN: Record<number, string> = {
-  8: 'nf', 283: 'cr', 337: 'disney', 9: 'amazon', 119: 'amazon', 2: 'appletv',
-  15: 'hulu', 1899: 'hbo', 384: 'hbo', 386: 'peacock', 387: 'peacock', 531: 'paramount', 257: 'fubo',
-}
+const meta = (html: string, property: string): string | undefined =>
+  html.match(new RegExp(`<meta property="${property}" content="([^"]*)"`))?.[1]
 
-interface TmdbTv {
-  id: number
-  name?: string
-  title?: string
-  media_type?: string
-  overview?: string
-  poster_path?: string | null
-  backdrop_path?: string | null
-  first_air_date?: string
-  vote_average?: number
-  number_of_seasons?: number
-  seasons?: { season_number: number }[]
-  external_ids?: { imdb_id?: string | null }
-  'watch/providers'?: { results?: Record<string, { link?: string, flatrate?: { provider_id: number }[] }> }
-}
-interface TmdbEpisode {
-  id: number
-  episode_number?: number
-  season_number?: number
-  name?: string
-  overview?: string
-  still_path?: string | null
-  air_date?: string
-}
+type TmdbMedia = { id: string, title: string, overview?: string, poster?: string, banner?: string, score?: number }
+type TmdbEpisode = { number: number, title?: string, overview?: string, still?: string }
 
-const buildHandles = (tv: TmdbTv): GQLMedia[] => {
-  const handles: GQLMedia[] = []
-  const imdbId = tv.external_ids?.imdb_id
-  if (imdbId) handles.push(makeMedia({ origin: 'imdb', id: imdbId, url: `https://www.imdb.com/title/${imdbId}` }))
-
-  const us = tv['watch/providers']?.results?.US
-  const link = us?.link
-  for (const provider of us?.flatrate ?? []) {
-    const handleOrigin = PROVIDER_ORIGIN[provider.provider_id]
-    if (handleOrigin) handles.push(makeMedia({ origin: handleOrigin, id: String(tv.id), url: link }))
+const parseSearch = (html: string): TmdbMedia[] => {
+  const out: TmdbMedia[] = []
+  const seen = new Set<string>()
+  const re = /data-media-type="tv"[\s\S]{0,200}?href="\/tv\/(\d+)[^"]*"[\s\S]{0,400}?<img\s+alt="([^"]*)"(?:[\s\S]{0,300}?(?:src|data-src)="(https:\/\/[^"]+)")?/g
+  for (const m of html.matchAll(re)) {
+    const id = m[1]
+    if (!id || seen.has(id)) continue
+    seen.add(id)
+    out.push({ id, title: decode(m[2] ?? ''), poster: m[3] })
   }
-  return handles
+  return out
 }
 
-const normalizeMedia = (tv: TmdbTv, handles: GQLMedia[] = []): GQLMedia =>
+const parseShow = (html: string, id: string): TmdbMedia & { seasons: number[] } => {
+  const backdrop = html.match(/\/t\/p\/w1920[^"']+\.(?:jpg|png)/)?.[0]
+  const percent = html.match(/class="user_score_chart"[^>]*data-percent="([\d.]+)"/)?.[1]
+  const seasons = [...new Set([...html.matchAll(new RegExp(`/tv/${id}/season/(\\d+)`, 'g'))].map(m => Number(m[1])))]
+    .filter(n => n > 0)
+    .sort((a, b) => a - b)
+  return {
+    id,
+    title: decode(meta(html, 'og:title') ?? ''),
+    overview: decode(meta(html, 'og:description') ?? '') || undefined,
+    poster: meta(html, 'og:image'),
+    banner: backdrop ? `https://media.themoviedb.org${backdrop}` : undefined,
+    score: percent ? Math.round(Number(percent)) / 10 : undefined,
+    seasons,
+  }
+}
+
+const parseSeason = (html: string): TmdbEpisode[] => {
+  const out: TmdbEpisode[] = []
+  for (const card of html.split('<div class="card')) {
+    const num = card.match(/data-episode-number="(\d+)"/)?.[1]
+    if (!num) continue
+    const title = card.match(/<h3><a[^>]*>([^<]+)<\/a><\/h3>/)?.[1] ?? card.match(/<img[^>]*\balt="([^"]*)"/)?.[1]
+    const overview = card.match(/class="overview"[^>]*>\s*<p>([\s\S]*?)<\/p>/)?.[1]
+    out.push({
+      number: Number(num),
+      title: title ? decode(title) : undefined,
+      overview: overview ? decode(overview.replace(/<[^>]+>/g, '')).trim() : undefined,
+      still: card.match(/src="(https:\/\/media\.themoviedb\.org\/t\/p\/[^"]+)"/)?.[1],
+    })
+  }
+  return out
+}
+
+const normalizeMedia = (m: TmdbMedia): GQLMedia =>
   makeMedia({
     origin,
-    id: String(tv.id),
-    url: `https://www.themoviedb.org/tv/${tv.id}`,
-    handles,
+    id: m.id,
+    url: `${BASE}/tv/${m.id}`,
     score: SCORE,
-    titles: [{ language: 'en', title: tv.name ?? tv.title ?? '', score: SCORE }],
-    ...desc(tv.overview, SCORE),
-    covers: img(tv.poster_path ? `${IMG}/w500${tv.poster_path}` : undefined, SCORE),
-    banners: img(tv.backdrop_path ? `${IMG}/w1280${tv.backdrop_path}` : undefined, SCORE),
-    startDate: tv.first_air_date || undefined,
-    averageScore: tv.vote_average,
+    titles: [{ language: 'en', title: m.title, score: SCORE }],
+    ...desc(m.overview, SCORE),
+    covers: img(m.poster, SCORE),
+    banners: img(m.banner, SCORE),
+    averageScore: m.score,
   })
 
-const normalizeEpisode = (episode: TmdbEpisode, mediaUri: string): GQLEpisode =>
+const normalizeEpisode = (episode: TmdbEpisode, season: number, tvId: string, mediaUri: string): GQLEpisode =>
   makeEpisode({
     origin,
-    id: String(episode.id),
+    id: `${tvId}-s${season}e${episode.number}`,
     mediaUri,
     score: SCORE,
-    titles: episode.name ? [{ language: 'en', title: episode.name, score: SCORE }] : [],
+    titles: episode.title ? [{ language: 'en', title: episode.title, score: SCORE }] : [],
     ...desc(episode.overview, SCORE),
-    thumbnails: img(episode.still_path ? `${IMG}/w300${episode.still_path}` : undefined, SCORE),
-    seasonNumber: episode.season_number,
-    episodeNumber: episode.episode_number,
+    thumbnails: img(episode.still, SCORE),
+    seasonNumber: season,
+    episodeNumber: episode.number,
   })
 
-const fetchEpisodes = async (id: string, seasons: { season_number: number }[] | undefined, mediaUri: string, ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {
-  const numbers = (seasons ?? []).map(season => season.season_number).filter(n => n > 0)
+const fetchEpisodes = async (id: string, seasons: number[], mediaUri: string, ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {
   const perSeason = await Promise.all(
-    numbers.map(n =>
-      api<{ episodes?: TmdbEpisode[] }>(`/tv/${id}/season/${n}`, ctx).then(res => res?.episodes ?? [])
+    seasons.map(n =>
+      fetchHtml(`/tv/${id}/season/${n}?language=en-US`, ctx)
+        .then(html => html ? parseSeason(html).map(episode => normalizeEpisode(episode, n, id, mediaUri)) : [])
     )
   )
-  return perSeason.flat().map(episode => normalizeEpisode(episode, mediaUri))
+  return perSeason.flat()
 }
 
 const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
-  const tv = await api<TmdbTv>(`/tv/${id}?append_to_response=external_ids,watch/providers`, ctx)
-  if (!tv) return undefined
-  const media = normalizeMedia(tv, buildHandles(tv))
-  media.episodes = await fetchEpisodes(id, tv.seasons, media.uri, ctx)
+  const html = await fetchHtml(`/tv/${id}?language=en-US`, ctx)
+  if (!html) return undefined
+  const show = parseShow(html, id)
+  if (!show.title) return undefined
+  const media = normalizeMedia(show)
+  media.episodes = await fetchEpisodes(id, show.seasons, media.uri, ctx)
   media.episodeCount = media.episodes.length
   return media
 }
 
 const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
-  const res = await api<{ results?: TmdbTv[] }>(`/search/tv?query=${encodeURIComponent(query)}`, ctx)
-  return (res?.results ?? []).map(tv => normalizeMedia(tv))
+  const html = await fetchHtml(`/search/tv?query=${encodeURIComponent(query)}&language=en-US`, ctx)
+  return html ? parseSearch(html).map(normalizeMedia) : []
 }
 
 export const resolvers: Resolvers = {
@@ -149,8 +158,9 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
-      const tv = await api<TmdbTv>(`/tv/${parent.id}`, ctx)
-      return fetchEpisodes(parent.id, tv?.seasons, parent.uri, ctx)
+      const html = await fetchHtml(`/tv/${parent.id}?language=en-US`, ctx)
+      if (!html) return []
+      return fetchEpisodes(parent.id, parseShow(html, parent.id).seasons, parent.uri, ctx)
     }
   }
 }
