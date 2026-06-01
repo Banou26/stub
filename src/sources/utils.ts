@@ -75,6 +75,21 @@ export const titleSimilarity = async (a: string, b: string): Promise<number> => 
   return result.score / (maxLen * 2) // normalize to 0-1
 }
 
+// Search-relevance: how much of `query` is found in `title` (local alignment normalized by
+// the QUERY length, so a real match where the query appears in a long title still scores ~1,
+// unlike titleSimilarity which normalizes by the longer string).
+export const searchScore = async (query: string, title: string): Promise<number> => {
+  const q = query.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
+  const t = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
+  if (!q || !t) return 0
+  const result = await swAlign(q, t, { alignment: 'local', equal: 2, align: -1, insert: -1, delete: -1 })
+  return Math.min(1, result.score / (q.length * 2))
+}
+
+// Max search-relevance of `query` across all of a media's titles (en/romaji/native/...).
+export const searchRelevance = async (query: string, titles: string[]): Promise<number> =>
+  titles.length ? Math.max(...await Promise.all(titles.map(title => searchScore(query, title)))) : 0
+
 export const simplifyTitle = (title: string): string[] => {
   const queries: string[] = []
   const stripped = title.replace(/\s+(Season|Part|Cour)\s+\d+$/i, '').trim()

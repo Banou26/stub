@@ -8,10 +8,15 @@ import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForM
 import { aggregateMedia, aggregateEpisode } from '../../store/aggregate'
 import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
+import { searchRelevance } from '../../../sources/utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
 import { isAggregatedUri, isUri, fromAggregatedUri, type AggregatedUri } from '../../../utils/uri'
 
 export const schema = _schema as string
+
+// Drop search results whose title doesn't actually match the query — sources do loose,
+// sometimes semantic, server-side matching (e.g. Apple returns "WondLa" for "frieren").
+const SEARCH_RELEVANCE_THRESHOLD = 0.8
 
 const findAggregatedMediaForUri = async (uri: string) => {
   let cluster = await findAggregatedMedia(uri)
@@ -78,6 +83,17 @@ export const resolvers = {
           const uris = [...insertedUris]
           const clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
           let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
+
+          const search = args.input.search
+          if (search) {
+            const scored = await Promise.all(
+              aggregated.map(async media => ({
+                media,
+                score: await searchRelevance(search, (media.titles ?? []).map(title => title.title))
+              }))
+            )
+            aggregated = scored.filter(entry => entry.score >= SEARCH_RELEVANCE_THRESHOLD).map(entry => entry.media)
+          }
 
           const sorts = args.input.sorts ?? []
           for (const sort of sorts) {
