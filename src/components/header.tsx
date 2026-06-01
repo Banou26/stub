@@ -35,7 +35,7 @@ const style = css`
     }
   }
 
-  .legal {
+  .nav-link {
     font-size: 1.4rem;
     white-space: nowrap;
     color: rgba(255, 255, 255, 0.55);
@@ -110,7 +110,8 @@ export const Header = () => {
   return (
     <header css={style}>
       <Link to={getRoutePath(Route.HOME)} className="logo">stub</Link>
-      <Link to={getRoutePath(Route.LEGAL)} className="legal">Legal</Link>
+      <Link to={getRoutePath(Route.LEGAL)} className="nav-link">Legal</Link>
+      <Link to={getRoutePath(Route.PRIVACY)} className="nav-link">Privacy</Link>
       <form
         className="search"
         onSubmit={event => {

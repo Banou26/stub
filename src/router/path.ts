@@ -5,6 +5,7 @@ export enum Route {
   MEDIA_EPISODE = 'MEDIA_EPISODE',
   SEARCH = 'SEARCH',
   LEGAL = 'LEGAL',
+  PRIVACY = 'PRIVACY',
   WATCH = 'WATCH',
   LOGIN_CALLBACK = 'LOGIN_CALLBACK',
 }
@@ -15,6 +16,7 @@ const ROUTES = {
   [Route.MEDIA_EPISODE]: ({ uri, mediaUri }: { uri: string, mediaUri: string }) => `/media/${uri}/${mediaUri}`,
   [Route.SEARCH]: ({ query }: { query: string }) => `/search/${encodeURIComponent(query)}`,
   [Route.LEGAL]: () => '/legal',
+  [Route.PRIVACY]: () => '/privacy',
   [Route.WATCH]: ({ mediaUri, episodeUri, sourceUri }: { mediaUri: string, episodeUri: string, sourceUri?: string }) =>
     `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
   [Route.LOGIN_CALLBACK]: () => '/login/callback',
@@ -30,6 +32,7 @@ const RouterRoutes = {
   [Route.MEDIA_EPISODE]: '/media/:uri/:mediaUri',
   [Route.SEARCH]: '/search/:query',
   [Route.LEGAL]: '/legal',
+  [Route.PRIVACY]: '/privacy',
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',
   [Route.LOGIN_CALLBACK]: '/login/callback',
 }
