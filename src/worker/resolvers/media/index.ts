@@ -93,7 +93,11 @@ export const resolvers = {
                 score: await searchRelevance(search, (media.titles ?? []).map(title => title.title))
               }))
             )
-            aggregated = scored.filter(entry => entry.score >= SEARCH_RELEVANCE_THRESHOLD).map(entry => entry.media)
+            aggregated =
+              scored
+                .filter(entry => entry.score >= SEARCH_RELEVANCE_THRESHOLD)
+                .sort((a, b) => b.score - a.score || (b.media.popularity ?? 0) - (a.media.popularity ?? 0))
+                .map(entry => entry.media)
           }
 
           const sorts = args.input.sorts ?? []
