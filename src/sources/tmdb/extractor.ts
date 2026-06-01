@@ -90,6 +90,7 @@ const normalizeMedia = (m: TmdbMedia): GQLMedia =>
     origin,
     id: m.id,
     url: `${BASE}/tv/${m.id}`,
+    categories: ['SERIES'],
     score: SCORE,
     titles: [{ language: 'en', title: m.title, score: SCORE }],
     ...desc(m.overview, SCORE),

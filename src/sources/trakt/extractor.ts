@@ -93,6 +93,7 @@ const normalizeMedia = (show: TraktShow): GQLMedia | undefined => {
     id,
     url: `https://trakt.tv/shows/${id}`,
     handles: buildHandles(show.ids),
+    categories: ['SERIES'],
     score: SCORE,
     titles: show.title ? [{ language: 'en', title: show.title, score: SCORE }] : [],
     ...desc(show.overview, SCORE),

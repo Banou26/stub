@@ -35,6 +35,7 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
   return makeMedia({
     origin,
     id,
+    categories: ['ANIME', 'SERIES'],
     url: `https://api.ani.zip/mappings?anidb_id=${id}`,
     handles,
     titles: [

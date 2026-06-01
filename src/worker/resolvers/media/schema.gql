@@ -28,6 +28,14 @@ enum MediaStatus {
   HIATUS
 }
 
+"""Broad content category. A media can belong to several (e.g. an anime film is ANIME + MOVIE)."""
+enum MediaCategory {
+  ANIME
+  """An episodic series (TV / live-action / web)."""
+  SERIES
+  MOVIE
+}
+
 type Media {
   """Stable unique identifier that persists across URI changes and source additions"""
   _id: String!
@@ -45,6 +53,8 @@ type Media {
   score: Float
   titles: [MediaTitle!]!
   type: MediaType
+  """Broad categories this media belongs to (anime / series / movie); can be several."""
+  categories: [MediaCategory!]!
   status: MediaStatus
   shortDescriptions(input: MediaShortDescriptionInput): [MediaShortDescription!]!
   descriptions(input: MediaDescriptionInput): [MediaDescription!]!
@@ -143,6 +153,8 @@ input MediaPageInput {
   search: String
   """Filter by the media's current release status"""
   status: MediaStatus
+  """Filter by category (anime / series / movie); media matching ANY of these are kept."""
+  categories: [MediaCategory!]
 
   sorts: [MediaSort!]
 

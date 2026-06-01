@@ -85,6 +85,11 @@ export const resolvers = {
           const clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
           let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
 
+          const categories = args.input.categories
+          if (categories && categories.length) {
+            aggregated = aggregated.filter(media => media.categories.some(category => categories.includes(category)))
+          }
+
           const search = args.input.search
           if (search) {
             const scored = await Promise.all(
@@ -124,6 +129,7 @@ export const resolvers = {
   },
   Media: {
     _id: (parent) => parent._id,
+    categories: (parent) => parent.categories ?? [],
     episodes: async (parent) => {
       const handleUris = parent.handles?.map(h => h.uri) ?? []
       if (!handleUris.length) return parent.episodes ?? []

@@ -54,7 +54,7 @@ const fetchEpisodes = async (slug: string, mediaUri: string, ctx: ExtractorServe
 }
 
 const getMedia = async (slug: string, ctx: ExtractorServerContext): Promise<GQLMedia> => {
-  const media = makeMedia({ origin, id: slug, url: `${BASE}/shows/${slug}`, score: SCORE })
+  const media = makeMedia({ origin, id: slug, url: `${BASE}/shows/${slug}`, score: SCORE, categories: ['SERIES'] })
   media.episodes = await fetchEpisodes(slug, media.uri, ctx)
   media.episodeCount = media.episodes.length
   return media

@@ -285,6 +285,7 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
     origin,
     id: media.id.toString(),
     url: media.siteUrl,
+    categories: media.format === 'MOVIE' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
     handles: [
       ...extraHandles,
       ...malHandle ? [malHandle] : []

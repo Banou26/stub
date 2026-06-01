@@ -76,6 +76,7 @@ const normalizeTitle = (content: AppleItem): GQLMedia => {
     id: content.id,
     url: content.url,
     score: SCORE,
+    categories: content.type === 'Movie' ? ['MOVIE'] : ['SERIES'],
     titles: [{ language: 'en', title: content.title, score: SCORE }],
     ...desc(content.description, SCORE),
     covers: img(cover, SCORE),

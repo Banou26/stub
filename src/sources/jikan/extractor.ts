@@ -78,6 +78,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
     _id: crypto.randomUUID(),
     uri: `${origin}:${data.mal_id}`,
     origin,
+    categories: data.type === 'Movie' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
     id: data.mal_id.toString(),
     url: data.url,
     handles: [

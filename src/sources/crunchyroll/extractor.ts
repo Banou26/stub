@@ -144,6 +144,7 @@ const normalizeMedia = (id: string, title: string, description: string, series: 
     id,
     url: `https://www.crunchyroll.com/series/${series.id}/${series.slug_title}`,
     score: SCORE,
+    categories: ['ANIME', 'SERIES'],
     titles: [{ language: 'en', title, score: SCORE }],
     ...desc(description, SCORE),
     covers: img(bestImage(series.images?.poster_tall), SCORE),

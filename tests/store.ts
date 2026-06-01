@@ -10,8 +10,8 @@ export const test = async () => {
 
   await upsertMedia(
     [
-      { uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null },
-      { uri: 'mal:1', origin: 'mal', id: '1', url: null, score: 0.5, type: null, status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: null, startDate: null, endDate: null, isAdult: null, episodeCount: null },
+      { uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null },
+      { uri: 'mal:1', origin: 'mal', id: '1', url: null, score: 0.5, type: null, categories: [], status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: null, startDate: null, endDate: null, isAdult: null, episodeCount: null },
     ],
     [{ mediaUri: 'anilist:1', handleUri: 'mal:1' }]
   )
@@ -24,7 +24,7 @@ export const test = async () => {
 
   // Upsert anilist:1 again with empty titles — should keep existing (longer array wins)
   await upsertMedia(
-    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
+    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
     []
   )
 
@@ -35,7 +35,7 @@ export const test = async () => {
 
   // Scalar last-write-wins: popularity changes
   await upsertMedia(
-    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 2000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
+    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 2000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
     []
   )
   const updated2 = await findAggregatedMedia('anilist:1')

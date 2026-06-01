@@ -36,6 +36,7 @@ interface WatchmodeSearchResult {
 interface WatchmodeDetail {
   id?: number
   title?: string
+  type?: string
   plot_overview?: string | null
   year?: number
   imdb_id?: string | null
@@ -119,6 +120,9 @@ const dedupeHandles = (handles: GQLMedia[]): GQLMedia[] => {
   return out
 }
 
+const categoriesForType = (type: string | undefined): ('MOVIE' | 'SERIES')[] =>
+  type && (type.includes('movie') || type.includes('short_film')) ? ['MOVIE'] : ['SERIES']
+
 const normalizeSearchResult = (result: WatchmodeSearchResult): GQLMedia | undefined => {
   const wmId = result.id
   if (wmId == null) return undefined
@@ -129,6 +133,7 @@ const normalizeSearchResult = (result: WatchmodeSearchResult): GQLMedia | undefi
     url: `https://www.watchmode.com/title/${id}/`,
     handles: idHandles(result),
     score: SCORE,
+    categories: categoriesForType(result.type),
     titles: result.name ? [{ language: 'en', title: result.name, score: SCORE }] : [],
   })
 }
@@ -147,6 +152,7 @@ const normalizeDetail = (detail: WatchmodeDetail, sources: WatchmodeSource[]): G
     url: `https://www.watchmode.com/title/${id}/`,
     handles: dedupeHandles([...idHandles(detail), ...sourceHandles]),
     score: SCORE,
+    categories: categoriesForType(detail.type),
     titles: detail.title ? [{ language: 'en', title: detail.title, score: SCORE }] : [],
     ...desc(detail.plot_overview ?? undefined, SCORE),
     covers: img(detail.poster ?? undefined, SCORE),

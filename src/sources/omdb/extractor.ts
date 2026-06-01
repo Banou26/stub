@@ -39,7 +39,7 @@ interface OmdbDetail extends OmdbResult {
 interface OmdbEpisodeEntry { Title?: string, Episode?: string, imdbID?: string }
 interface OmdbSeason { Episodes?: OmdbEpisodeEntry[] }
 
-const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: string }, handles: GQLMedia[] = []): GQLMedia | undefined => {
+const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: string, Type?: string }, handles: GQLMedia[] = []): GQLMedia | undefined => {
   const id = result.imdbID
   if (!id) return undefined
   const rating = na(result.imdbRating)
@@ -48,6 +48,7 @@ const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: strin
     id,
     url: `https://www.imdb.com/title/${id}`,
     handles,
+    categories: result.Type === 'movie' ? ['MOVIE'] : ['SERIES'],
     score: SCORE,
     titles: result.Title ? [{ language: 'en', title: result.Title, score: SCORE }] : [],
     ...desc(na(result.Plot), SCORE),

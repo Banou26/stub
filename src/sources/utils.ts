@@ -11,6 +11,7 @@ export const makeMedia = ({ origin, id, ...fields }: { origin: string, id: strin
   id,
   url: undefined,
   handles: [],
+  categories: [],
   titles: [],
   descriptions: [],
   shortDescriptions: [],

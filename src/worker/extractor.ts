@@ -48,6 +48,7 @@ const normalizeToGrafeoMedia = (media: Media): GrafeoMedia => ({
   url: media.url ?? null,
   score: media.score ?? null,
   type: (media.type as GrafeoMedia['type']) ?? null,
+  categories: media.categories ?? [],
   status: (media.status as GrafeoMedia['status']) ?? null,
   titles: media.titles ?? [],
   descriptions: media.descriptions ?? [],
@@ -188,6 +189,7 @@ export const extractors =
                 Media: {
                   _id: (parent) => parent.uri,
                   handles: (parent) => parent.handles ?? [],
+                  categories: (parent) => parent.categories ?? [],
                   titles: (parent) => parent.titles ?? [],
                   descriptions: (parent) => parent.descriptions ?? [],
                   shortDescriptions: (parent) => parent.shortDescriptions ?? [],

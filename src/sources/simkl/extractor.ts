@@ -1,5 +1,5 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
@@ -82,6 +82,7 @@ const still = (path?: string): string | undefined => (path ? `${IMG}/episodes/${
 const detailPath = (type: SimklType): string => (type === 'tv' ? '/tv' : type === 'anime' ? '/anime' : '/movies')
 const episodesPath = (type: SimklType): string => (type === 'tv' ? '/tv/episodes' : '/anime/episodes')
 const normalizeType = (endpoint?: string): SimklType => (endpoint === 'anime' ? 'anime' : endpoint === 'movies' ? 'movies' : 'tv')
+const categoriesForType = (type: SimklType): MediaCategory[] => (type === 'movies' ? ['MOVIE'] : type === 'anime' ? ['ANIME', 'SERIES'] : ['SERIES'])
 
 const buildHandles = (ids?: SimklIds): GQLMedia[] => {
   if (!ids) return []
@@ -109,11 +110,13 @@ const buildTitles = (title?: string, enTitle?: string | null) => {
 const normalizeSearch = (entry: SimklSearchEntry): GQLMedia | undefined => {
   const id = entry.ids?.simkl ?? entry.ids?.simkl_id
   if (id === undefined) return undefined
+  const type = normalizeType(entry.endpoint_type)
   return makeMedia({
     origin,
     id: String(id),
-    url: `https://simkl.com/${normalizeType(entry.endpoint_type)}/${id}`,
+    url: `https://simkl.com/${type}/${id}`,
     handles: buildHandles(entry.ids),
+    categories: categoriesForType(type),
     score: SCORE,
     titles: buildTitles(entry.title),
     covers: img(poster(entry.poster), SCORE),
@@ -128,6 +131,7 @@ const normalizeDetail = (detail: SimklDetail, id: string, type: SimklType): GQLM
     id,
     url: `https://simkl.com/${type}/${id}`,
     handles: buildHandles(detail.ids),
+    categories: categoriesForType(type),
     score: SCORE,
     titles: buildTitles(detail.title, detail.en_title),
     ...desc(detail.overview, SCORE),

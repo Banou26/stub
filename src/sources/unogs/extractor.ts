@@ -155,6 +155,7 @@ const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia =
     id: String(title.netflixid),
     url: `https://www.netflix.com/title/${title.netflixid}`,
     score: SCORE,
+    categories: title.vtype === 'movie' ? ['MOVIE'] : ['SERIES'],
     titles: [{ language: 'en', title: decode(title.title), score: SCORE }],
     ...desc(title.synopsis ? decode(title.synopsis) : undefined, SCORE),
     covers, banners,
@@ -169,6 +170,7 @@ const normalizeSearchResult = (result: { title: string, nfid: number, synopsis: 
     id: String(result.nfid),
     url: `https://www.netflix.com/title/${result.nfid}`,
     score: SCORE,
+    categories: ['SERIES'],
     titles: [{ language: 'en', title: decode(result.title), score: SCORE }],
     ...desc(result.synopsis ? decode(result.synopsis) : undefined, SCORE),
     covers: result.img ? img(httpsUrl(result.img), SCORE) : []

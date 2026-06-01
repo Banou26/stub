@@ -6,6 +6,9 @@ export type MediaType = typeof mediaTypeEnum[number]
 export const mediaStatusEnum = ['FINISHED', 'RELEASING', 'NOT_YET_RELEASED', 'CANCELLED', 'HIATUS'] as const
 export type MediaStatus = typeof mediaStatusEnum[number]
 
+export const mediaCategoryEnum = ['ANIME', 'SERIES', 'MOVIE'] as const
+export type MediaCategory = typeof mediaCategoryEnum[number]
+
 export type Title = { language: string; title: string; score?: number | null }
 export type Description = { language: string; description: string; score?: number | null }
 export type ShortDescription = { language: string; shortDescription: string; score?: number | null }
@@ -21,6 +24,7 @@ export type Media = {
   url: string | null
   score: number | null
   type: MediaType | null
+  categories: MediaCategory[]
   status: MediaStatus | null
   titles: Title[]
   descriptions: Description[]

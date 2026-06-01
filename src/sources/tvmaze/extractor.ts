@@ -68,6 +68,7 @@ const normalizeMedia = (show: TvmazeShow, handles: GQLMedia[] = []): GQLMedia =>
     id: String(show.id),
     url: show.url ?? `https://www.tvmaze.com/shows/${show.id}`,
     handles,
+    categories: ['SERIES'],
     score: SCORE,
     titles: show.name ? [{ language: 'en', title: show.name, score: SCORE }] : [],
     ...desc(text(show.summary), SCORE),

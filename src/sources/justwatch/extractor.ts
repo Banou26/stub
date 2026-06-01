@@ -229,6 +229,7 @@ interface JWOffer {
 interface JWSearchNode {
   id: string
   objectId: number
+  objectType?: string
   content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null }
   offers: JWOffer[]
 }
@@ -346,6 +347,7 @@ const normalizeMedia = async (
   return makeMedia({
     origin,
     id,
+    categories: [node.objectType === 'MOVIE' ? 'MOVIE' : 'SERIES'],
     url: `https://www.justwatch.com${node.content.fullPath}`,
     score: SCORE,
     handles:

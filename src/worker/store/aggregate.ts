@@ -43,6 +43,7 @@ function mediaToGQL(media: Media): GQLMedia {
     url: media.url,
     score: media.score,
     type: media.type,
+    categories: media.categories ?? [],
     status: media.status,
     titles: media.titles ?? [],
     descriptions: media.descriptions ?? [],
@@ -140,6 +141,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
       isAdult: acc.isAdult ?? gql.isAdult,
       episodeCount: acc.episodeCount ?? gql.episodeCount,
       // Arrays: concatenate
+      categories: [...(acc.categories ?? []), ...(gql.categories ?? [])],
       titles: [...(acc.titles ?? []), ...(media.titles ?? [])],
       descriptions: [...(acc.descriptions ?? []), ...(media.descriptions ?? [])],
       shortDescriptions: [...(acc.shortDescriptions ?? []), ...(media.shortDescriptions ?? [])],
@@ -160,6 +162,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
 
   return {
     ...merged as GQLMedia,
+    categories: [...new Set(merged.categories ?? [])],
     titles: removeDuplicatesByField('title', byScore(merged.titles ?? [])),
     descriptions: byScore(merged.descriptions ?? []),
     shortDescriptions: byScore(merged.shortDescriptions ?? []),

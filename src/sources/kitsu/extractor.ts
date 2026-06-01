@@ -28,6 +28,7 @@ interface KitsuAnime {
   canonicalTitle?: string | null
   averageRating?: string | null
   startDate?: string | null
+  subtype?: string | null
   posterImage?: KitsuImage | null
   coverImage?: KitsuImage | null
 }
@@ -110,6 +111,7 @@ const normalizeMedia = (resource: KitsuResource<KitsuAnime>, handles: GQLMedia[]
     url: `https://kitsu.io/anime/${resource.id}`,
     handles,
     score: SCORE,
+    categories: attr.subtype === 'movie' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
     titles: buildTitles(attr),
     ...desc(attr.synopsis ?? undefined, SCORE),
     covers: img(attr.posterImage?.original ?? attr.posterImage?.large ?? attr.posterImage?.medium, SCORE),
