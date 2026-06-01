@@ -16,7 +16,8 @@ export const schema = _schema as string
 
 // Drop search results whose title doesn't actually match the query — sources do loose,
 // sometimes semantic, server-side matching (e.g. Apple returns "WondLa" for "frieren").
-const SEARCH_RELEVANCE_THRESHOLD = 0.8
+// Lenient on purpose: only the clearly-irrelevant is dropped, the user picks from the rest.
+const SEARCH_RELEVANCE_THRESHOLD = 0.7
 
 const findAggregatedMediaForUri = async (uri: string) => {
   let cluster = await findAggregatedMedia(uri)
