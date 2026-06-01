@@ -14,10 +14,15 @@ export type WatchSource = {
 const BRAND_COLORS: Record<string, string> = {
   cr: '#f47521',
   nf: '#e50914',
-  hulu: '#1ce783',
   jw: '#fcd53f',
-  disney: '#1f8fff',
-  hbo: '#a855f7',
+  disney: '#0063e5',
+  amazon: '#00a8e1',
+  appletv: '#e8e8ed',
+  hulu: '#1ce783',
+  hbo: '#7b5cff',
+  peacock: '#069de0',
+  paramount: '#0064ff',
+  fubo: '#fa4616',
 }
 
 const FALLBACK_COLOR = '#9aa0a6'
