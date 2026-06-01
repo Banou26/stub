@@ -1,6 +1,7 @@
 import type { GetMediaModalSubscription, GetReleasingMediaPageSubscription } from '../../generated/graphql'
 import type { Episode } from '../../generated/schema/types.generated'
 import type { RouteParams } from '../path'
+import type { WatchSource } from '../../components/source-selector'
 
 import { css } from '@emotion/react'
 import {
@@ -20,6 +21,8 @@ import Collapsible from '../../components/collapsible'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
+import { getPlayer } from '../../sources/players'
+import SourceSelector from '../../components/source-selector'
 
 const style = css`
 padding: 5rem 1rem;
@@ -202,17 +205,8 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
               position: relative;
               z-index: 1;
               display: flex;
-              gap: 1rem;
               align-items: center;
               margin-left: 1rem;
-
-              & > .origin {
-                height: 2rem;
-                & > img {
-                  height: 2rem;
-                  width: 2rem;
-                }
-              }
             }
           }
 
@@ -336,6 +330,29 @@ const Episode = (
     pause: !originIds
   })
 
+  const sources: WatchSource[] = (originData?.originPage?.nodes ?? [])
+    .map(origin => {
+      const handle = episode?.handles.find(h => h.origin === origin.id)
+      const sourceUri = handle?.uri
+      const playable = Boolean(getPlayer(origin.id) && handle?.url)
+      const watchPath =
+        sourceUri && episode.uri
+          ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri, sourceUri })
+          : undefined
+      return {
+        id: origin.id,
+        name: origin.name ?? origin.id,
+        icon: origin.icon,
+        color: origin.color,
+        href: playable ? watchPath : (handle?.url ?? undefined),
+        external: !playable,
+        active: false,
+      } satisfies WatchSource
+    })
+    .filter(source => source.href)
+    .sort((a, b) => Number(a.external) - Number(b.external))
+    .slice(0, 5)
+
   return (
     <div className="episode">
       {
@@ -361,29 +378,7 @@ const Episode = (
               <div className="header">
                 <div className="title">{episode.titles.at(0)?.title}</div>
                 <span className="origins">
-                  {
-                    originData
-                      ?.originPage
-                      ?.nodes
-                      ?.map(origin => {
-                        const link = episode?.handles.find(handle => handle.origin === origin.id)?.url
-                        if (!origin.icon) return undefined
-                        return (
-                          link
-                            ? (
-                              <a className="origin" href={link} target="_blank" rel="noreferrer" title={origin.name}>
-                                <img src={origin.icon}/>
-                              </a>
-                            )
-                            : (
-                              <div className="origin">
-                                <img src={origin.icon}/>
-                              </div>
-                            )
-                        )
-                      })
-                      .filter(Boolean)
-                  }
+                  <SourceSelector compact sources={sources} />
                 </span>
               </div>
               {

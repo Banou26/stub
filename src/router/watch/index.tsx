@@ -1,4 +1,5 @@
 import type { RouteParams } from '../path'
+import type { WatchSource } from '../../components/source-selector'
 
 import { css } from '@emotion/react'
 import { useMemo } from 'preact/hooks'
@@ -8,6 +9,7 @@ import { useParams } from 'wouter'
 import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
 import { getPlayer } from '../../sources/players'
+import SourceSelector from '../../components/source-selector'
 import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
@@ -133,59 +135,6 @@ const style = css`
       opacity: 0.6;
     }
   }
-
-  .sources {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-
-    .sources-label {
-      font-size: 1.2rem;
-      opacity: 0.6;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .sources-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-
-      .source {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 0.8rem 1.2rem;
-        background-color: rgb(35, 35, 35);
-        border-radius: 0.8rem;
-        text-decoration: none;
-        color: inherit;
-        transition: background-color 0.15s;
-        cursor: pointer;
-
-        &:hover {
-          background-color: rgb(50, 50, 50);
-        }
-
-        &.active {
-          background-color: rgb(60, 60, 60);
-          outline: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        img {
-          width: 2rem;
-          height: 2rem;
-          border-radius: 0.4rem;
-          object-fit: contain;
-        }
-
-        .source-name {
-          font-size: 1.2rem;
-          font-weight: 500;
-        }
-      }
-    }
-  }
 `
 
 const Watch = () => {
@@ -250,6 +199,29 @@ const Watch = () => {
     return `/embed.html?${embedParams}`
   }, [selectedSourceUri, episode?.handles, params.mediaUri, params.episodeUri])
 
+  const sources: WatchSource[] = useMemo(
+    () =>
+      (originData?.originPage?.nodes ?? []).map(origin => {
+        const handle = episode?.handles.find(h => h.origin === origin.id)
+        const sourceUri = handle?.uri
+        const playable = Boolean(handle?.embedUrl || (getPlayer(origin.id) && handle?.url))
+        const watchPath =
+          sourceUri
+            ? getRoutePath(Route.WATCH, { mediaUri: params.mediaUri, episodeUri: params.episodeUri, sourceUri })
+            : undefined
+        return {
+          id: origin.id,
+          name: origin.name ?? origin.id,
+          icon: origin.icon,
+          color: origin.color,
+          href: playable ? watchPath : (handle?.url ?? undefined),
+          external: !playable,
+          active: selectedSourceUri === sourceUri,
+        }
+      }),
+    [originData, episode?.handles, params.mediaUri, params.episodeUri, selectedSourceUri]
+  )
+
   return (
     <div css={style}>
       <div className="watch-container">
@@ -284,45 +256,7 @@ const Watch = () => {
             {mediaTitle ? <div className="media-title">{mediaTitle}</div> : undefined}
           </div>
 
-          {
-            originData?.originPage?.nodes?.length
-              ? (
-                <div className="sources">
-                  <div className="sources-label">Sources</div>
-                  <div className="sources-list">
-                    {
-                      originData.originPage.nodes.map(origin => {
-                        const handle = episode?.handles.find(h => h.origin === origin.id)
-                        const sourceUri = handle?.uri
-                        const isActive = selectedSourceUri === sourceUri
-                        const watchPath = sourceUri
-                          ? getRoutePath(Route.WATCH, {
-                            mediaUri: params.mediaUri,
-                            episodeUri: params.episodeUri,
-                            sourceUri
-                          })
-                          : undefined
-
-                        return (
-                          <a
-                            key={origin.id}
-                            className={`source${isActive ? ' active' : ''}`}
-                            href={watchPath ?? handle?.url ?? undefined}
-                            target={watchPath ? undefined : '_blank'}
-                            rel={watchPath ? undefined : 'noreferrer'}
-                            title={origin.name}
-                          >
-                            {origin.icon ? <img src={origin.icon} alt={origin.name} /> : undefined}
-                            <span className="source-name">{origin.name}</span>
-                          </a>
-                        )
-                      })
-                    }
-                  </div>
-                </div>
-              )
-              : undefined
-          }
+          <SourceSelector sources={sources} />
         </div>
       </div>
     </div>
