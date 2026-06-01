@@ -4,7 +4,7 @@ import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
 import { attachFrame } from '@fkn/lib'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 
 const NETFLIX_DOMAINS = [
   'netflix.com',
@@ -62,22 +62,46 @@ const checkIsLoggedIn = async (frame: Frame) => {
 
 const NetflixPlayer = ({ url }: PlayerProps) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
-  const frameRef = useRef<Frame>(undefined)
+  const [frame, setFrame] = useState<Frame | null>(null)
   const [loading, setLoading] = useState(true)
   const [loggedOut, setLoggedOut] = useState(false)
   const [error, setError] = useState<string>()
-  const [retryCount, setRetryCount] = useState(0)
+  const [reloadKey, setReloadKey] = useState(0)
 
+  // Attach once per iframe; the frame outlives navigation and re-logins.
   useEffect(() => {
-    if (!iframe || frameRef.current) return
+    if (!iframe) return
     let cancelled = false
     ;(async () => {
-      const frame = await attachFrame({
-        iframe,
-        domains: NETFLIX_DOMAINS
-      })
-      if (cancelled) return
-      frameRef.current = frame
+      for (let attempt = 0; !cancelled; attempt++) {
+        try {
+          const f = await attachFrame({ iframe, domains: NETFLIX_DOMAINS })
+          if (!cancelled) setFrame(f)
+          return
+        } catch (err) {
+          if (cancelled) return
+          if (attempt >= 4) {
+            console.error('Failed to attach Netflix frame', err)
+            setError(err instanceof Error ? err.message : 'Failed to load player')
+            setLoading(false)
+            return
+          }
+          await new Promise(resolve => setTimeout(resolve, 300 * (attempt + 1)))
+        }
+      }
+    })()
+    return () => { cancelled = true }
+  }, [iframe])
+
+  // Navigate to the episode URL, hide chrome, confirm login. Re-runs on url
+  // change (episode switch) and on reloadKey bump after a login round-trip.
+  useEffect(() => {
+    if (!frame) return
+    let cancelled = false
+    setLoading(true)
+    setError(undefined)
+    setLoggedOut(false)
+    ;(async () => {
       await frame.goto(url, { waitUntil: 'load' })
       await waitForContentScript(() => frame.addStyleTag({ content: NETFLIX_OUTER_CSS }))
       if (cancelled) return
@@ -86,13 +110,13 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
       if (cancelled) return
       if (!isLoggedIn) setLoggedOut(true)
     })().catch(err => {
-      console.error(err)
       if (cancelled) return
-      setLoading(false)
+      console.error('Failed to load Netflix player', err)
       setError(err?.message ?? 'Failed to load player')
+      setLoading(false)
     })
     return () => { cancelled = true }
-  }, [iframe, url, retryCount])
+  }, [frame, url, reloadKey])
 
   const openLogin = useCallback(() => {
     const popup = globalThis.open(NETFLIX_LOGIN_URL, '_blank', 'width=500,height=700')
@@ -100,10 +124,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
     const interval = setInterval(() => {
       if (!popup.closed) return
       clearInterval(interval)
-      frameRef.current = undefined
-      setLoggedOut(false)
-      setLoading(true)
-      setRetryCount(c => c + 1)
+      setReloadKey(k => k + 1)
     }, 500)
   }, [])
 
