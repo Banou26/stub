@@ -13,7 +13,6 @@ export type StreamingPlatform = {
 export const streamingPlatforms: StreamingPlatform[] = [
   { id: 'disney', name: 'Disney+', url: 'https://www.disneyplus.com', icon: 'https://www.disneyplus.com/favicon.ico', color: '#0063e5' },
   { id: 'amazon', name: 'Prime Video', url: 'https://www.primevideo.com', icon: 'https://www.primevideo.com/favicon.ico', color: '#00a8e1' },
-  { id: 'appletv', name: 'Apple TV+', url: 'https://tv.apple.com', icon: 'https://tv.apple.com/favicon.ico', color: '#e8e8ed' },
   { id: 'hulu', name: 'Hulu', url: 'https://www.hulu.com', icon: 'https://www.hulu.com/favicon.ico', color: '#1ce783' },
   { id: 'hbo', name: 'Max', url: 'https://www.max.com', icon: 'https://www.max.com/favicon.ico', color: '#7b5cff' },
   { id: 'peacock', name: 'Peacock', url: 'https://www.peacocktv.com', icon: 'https://www.peacocktv.com/favicon.ico', color: '#069de0' },
