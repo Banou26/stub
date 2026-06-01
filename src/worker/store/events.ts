@@ -1,4 +1,4 @@
-type GrafeoEventMap = {
+type StoreEventMap = {
   'media:changed': { uris?: string[] }
   'episode:changed': { uris?: string[] }
   'origin:changed': { ids?: string[] }
@@ -6,16 +6,16 @@ type GrafeoEventMap = {
 
 const eventBus = new EventTarget()
 
-export function emit<K extends keyof GrafeoEventMap>(
+export function emit<K extends keyof StoreEventMap>(
   type: K,
-  detail: GrafeoEventMap[K]
+  detail: StoreEventMap[K]
 ): void {
   eventBus.dispatchEvent(new CustomEvent(type, { detail }))
 }
 
-function listen<K extends keyof GrafeoEventMap>(
+function listen<K extends keyof StoreEventMap>(
   type: K,
-  callback: (detail: GrafeoEventMap[K]) => void
+  callback: (detail: StoreEventMap[K]) => void
 ): () => void {
   const handler = (e: Event) => callback((e as CustomEvent).detail)
   eventBus.addEventListener(type, handler)
@@ -70,12 +70,12 @@ function makeAsyncIterator<T>(
 
 // ─── Public iterators ────────────────────────────────────────────────────────
 
-export function listenIterator<K extends keyof GrafeoEventMap>(
+export function listenIterator<K extends keyof StoreEventMap>(
   type: K,
   options?: IteratorOptions
-): AsyncIterableIterator<GrafeoEventMap[K]> {
-  let resolve: ((result: IteratorResult<GrafeoEventMap[K]>) => void) | null = null
-  const buffer: GrafeoEventMap[K][] = []
+): AsyncIterableIterator<StoreEventMap[K]> {
+  let resolve: ((result: IteratorResult<StoreEventMap[K]>) => void) | null = null
+  const buffer: StoreEventMap[K][] = []
 
   const unlisten = listen(type, (detail) => {
     if (resolve) {
@@ -98,7 +98,7 @@ export function listenIterator<K extends keyof GrafeoEventMap>(
       if (buffer.length > 0) {
         return { value: buffer.shift()!, done: false as const }
       }
-      return new Promise<IteratorResult<GrafeoEventMap[K]>>(r => { resolve = r })
+      return new Promise<IteratorResult<StoreEventMap[K]>>(r => { resolve = r })
     },
     async return() {
       unlisten()
@@ -109,7 +109,7 @@ export function listenIterator<K extends keyof GrafeoEventMap>(
 }
 
 export function listenMultipleIterator(
-  types: (keyof GrafeoEventMap)[],
+  types: (keyof StoreEventMap)[],
   options?: IteratorOptions
 ): AsyncIterableIterator<void> {
   return makeAsyncIterator(
@@ -123,7 +123,7 @@ export function listenMultipleIterator(
 }
 
 export function debouncedListenIterator(
-  types: (keyof GrafeoEventMap)[],
+  types: (keyof StoreEventMap)[],
   debounceMs: number,
   options?: IteratorOptions
 ): AsyncIterableIterator<void> {

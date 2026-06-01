@@ -3,7 +3,7 @@ import type { Exchange } from 'urql'
 
 import type { Episode, Media, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { Uri } from 'src/utils/uri'
-import type { Media as GrafeoMedia, Episode as GrafeoEpisode, Origin as GrafeoOrigin } from './store/types'
+import type { Media as StoreMedia, Episode as StoreEpisode, Origin as StoreOrigin } from './store/types'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -41,15 +41,15 @@ export const setUserKeys = (keys: Record<string, string>) => { userKeys = keys ?
 
 // ─── Normalization helpers ───────────────────────────────────────────────────
 
-const normalizeToGrafeoMedia = (media: Media): GrafeoMedia => ({
+const normalizeToStoreMedia = (media: Media): StoreMedia => ({
   uri: media.uri as Uri,
   origin: media.origin,
   id: media.id,
   url: media.url ?? null,
   score: media.score ?? null,
-  type: (media.type as GrafeoMedia['type']) ?? null,
+  type: (media.type as StoreMedia['type']) ?? null,
   categories: media.categories ?? [],
-  status: (media.status as GrafeoMedia['status']) ?? null,
+  status: (media.status as StoreMedia['status']) ?? null,
   titles: media.titles ?? [],
   descriptions: media.descriptions ?? [],
   shortDescriptions: media.shortDescriptions ?? [],
@@ -65,7 +65,7 @@ const normalizeToGrafeoMedia = (media: Media): GrafeoMedia => ({
   episodeCount: media.episodeCount ?? null,
 })
 
-const normalizeToGrafeoEpisode = (episode: Episode): GrafeoEpisode => ({
+const normalizeToStoreEpisode = (episode: Episode): StoreEpisode => ({
   uri: episode.uri as Uri,
   origin: episode.origin,
   id: episode.id,
@@ -83,7 +83,7 @@ const normalizeToGrafeoEpisode = (episode: Episode): GrafeoEpisode => ({
   runtime: episode.runtime ?? null,
 })
 
-const normalizeOrigin = (origin: { id: string; url?: string | null; name: string; icon?: string | null; color?: string | null; isApiOnly: boolean }): GrafeoOrigin => ({
+const normalizeOrigin = (origin: { id: string; url?: string | null; name: string; icon?: string | null; color?: string | null; isApiOnly: boolean }): StoreOrigin => ({
   id: origin.id,
   url: origin.url ?? null,
   name: origin.name,
@@ -136,7 +136,7 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
     }
   }
 
-  await upsertMedia(allUnwrapped.map(normalizeToGrafeoMedia), handlePairs)
+  await upsertMedia(allUnwrapped.map(normalizeToStoreMedia), handlePairs)
   return medias
 }, {
   cache: false,
@@ -153,7 +153,7 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
     }
   }
 
-  await upsertEpisodes((episodes as Episode[]).map(normalizeToGrafeoEpisode), handlePairs)
+  await upsertEpisodes((episodes as Episode[]).map(normalizeToStoreEpisode), handlePairs)
   return episodes
 }, {
   cache: false,
