@@ -13,7 +13,7 @@ const ARTWORKS = 'https://artworks.thetvdb.com'
 
 export const icon = 'https://www.thetvdb.com/images/icon.png'
 export const originUrl = 'https://www.thetvdb.com'
-export const categories = ['ANIME', 'TV'] as const
+export const categories = ['SERIES'] as const
 export const name = 'TheTVDB'
 export const origin = 'tvdb'
 export const official = false

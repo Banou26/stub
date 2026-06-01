@@ -1,9 +1,19 @@
-import type { Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
 import type { Media, Episode } from './types'
 import { getRoutePath, Route } from '../../router/path'
 import { registerAggregatedId } from './db'
 
 // ─── Shared utilities ────────────────────────────────────────────────────────
+
+// A media is exactly one of MOVIE/SERIES (sources agree per title); keep the highest-scored
+// source's format + ANIME if present, so a merged media never lands in both Movies and Series.
+const reconcileCategories = (cats: MediaCategory[]): MediaCategory[] => {
+  const out: MediaCategory[] = []
+  if (cats.includes('ANIME')) out.push('ANIME')
+  const format = cats.find(category => category === 'MOVIE' || category === 'SERIES')
+  if (format) out.push(format)
+  return out
+}
 
 /** Sort array by score descending (highest first), nulls last */
 function byScore<T extends { score?: number | null }>(arr: T[]): T[] {
@@ -162,7 +172,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
 
   return {
     ...merged as GQLMedia,
-    categories: [...new Set(merged.categories ?? [])],
+    categories: reconcileCategories(merged.categories ?? []),
     titles: removeDuplicatesByField('title', byScore(merged.titles ?? [])),
     descriptions: byScore(merged.descriptions ?? []),
     shortDescriptions: byScore(merged.shortDescriptions ?? []),

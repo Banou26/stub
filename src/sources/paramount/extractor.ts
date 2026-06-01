@@ -13,7 +13,7 @@ const SCORE = 0.2
 
 export const icon = 'https://www.paramountplus.com/favicon.ico'
 export const originUrl = 'https://www.paramountplus.com'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES'] as const
 export const name = 'Paramount+'
 export const origin = 'paramount'
 export const official = false

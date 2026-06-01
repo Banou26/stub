@@ -8,7 +8,7 @@ import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.
 
 export const icon = 'https://www.fubo.tv/favicon.ico'
 export const originUrl = 'https://www.fubo.tv'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'Fubo'
 export const origin = 'fubo'
 export const official = false

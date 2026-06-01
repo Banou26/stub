@@ -8,7 +8,7 @@ import { makeMedia } from '../utils'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
-export const categories = ['ANIME'] as const
+export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const name = 'Anilist'
 export const origin = 'anilist'
 export const official = true

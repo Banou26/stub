@@ -14,7 +14,7 @@ const IMG = 'https://simkl.in'
 
 export const icon = 'https://simkl.com/favicon.ico'
 export const originUrl = 'https://simkl.com'
-export const categories = ['ANIME', 'TV'] as const
+export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const name = 'Simkl'
 export const origin = 'simkl'
 export const official = false

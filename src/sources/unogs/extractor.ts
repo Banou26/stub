@@ -7,7 +7,7 @@ const SCORE = 0.2
 
 export const icon = 'https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2023.ico'
 export const originUrl = 'https://www.netflix.com'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'Netflix'
 export const origin = 'nf'
 export const official = false

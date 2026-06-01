@@ -7,7 +7,7 @@ const SCORE = 0.5
 
 export const icon = 'https://static.crunchyroll.com/cxweb/assets/img/favicons/favicon-96x96.png'
 export const originUrl = 'https://www.crunchyroll.com'
-export const categories = ['ANIME'] as const
+export const categories = ['ANIME', 'SERIES'] as const
 export const name = 'Crunchyroll'
 export const origin = 'cr'
 export const official = true

@@ -7,7 +7,7 @@ import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.
 
 export const icon = 'https://www.peacocktv.com/favicon.ico'
 export const originUrl = 'https://www.peacocktv.com'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'Peacock'
 export const origin = 'peacock'
 export const official = false

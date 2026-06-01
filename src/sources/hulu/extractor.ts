@@ -7,7 +7,7 @@ import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.
 
 export const icon = 'https://www.hulu.com/favicon.ico'
 export const originUrl = 'https://www.hulu.com'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'Hulu'
 export const origin = 'hulu'
 export const official = false

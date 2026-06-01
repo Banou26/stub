@@ -12,7 +12,7 @@ const SCORE = 0.25
 
 export const icon = 'https://api.watchmode.com/favicon.ico'
 export const originUrl = 'https://www.watchmode.com'
-export const categories = ['ANIME', 'TV'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'Watchmode'
 export const origin = 'watchmode'
 export const official = false

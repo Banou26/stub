@@ -13,7 +13,7 @@ const BASE = 'https://api.trakt.tv'
 
 export const icon = 'https://walter.trakt.tv/hotlink-ok/public/favicon.ico'
 export const originUrl = 'https://trakt.tv'
-export const categories = ['ANIME', 'TV'] as const
+export const categories = ['SERIES'] as const
 export const name = 'Trakt'
 export const origin = 'trakt'
 export const official = false

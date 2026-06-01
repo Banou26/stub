@@ -13,7 +13,7 @@ const BASE = 'https://www.themoviedb.org'
 
 export const icon = 'https://www.themoviedb.org/favicon.ico'
 export const originUrl = 'https://www.themoviedb.org'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES'] as const
 export const name = 'TMDB'
 export const origin = 'tmdb'
 export const official = false

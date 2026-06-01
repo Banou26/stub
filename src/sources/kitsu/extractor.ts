@@ -12,7 +12,7 @@ const API = 'https://kitsu.io/api/edge'
 
 export const icon = 'https://kitsu.io/favicon.ico'
 export const originUrl = 'https://kitsu.io'
-export const categories = ['ANIME'] as const
+export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const name = 'Kitsu'
 export const origin = 'kitsu'
 export const official = false

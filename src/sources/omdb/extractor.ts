@@ -11,7 +11,7 @@ const SCORE = 0.3
 
 export const icon = 'https://www.omdbapi.com/favicon.ico'
 export const originUrl = 'https://www.omdbapi.com'
-export const categories = ['ANIME', 'TV'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'OMDb'
 export const origin = 'omdb'
 export const official = false

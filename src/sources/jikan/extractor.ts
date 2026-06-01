@@ -6,7 +6,7 @@ import { fromUri, isUri } from '../../utils/uri'
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
 export const origin = 'mal'
-export const categories = ['ANIME']
+export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const name = 'MyAnimeList'
 export const official = true
 export const metadataOnly = true

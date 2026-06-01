@@ -12,7 +12,7 @@ const API = 'https://api.tvmaze.com'
 
 export const icon = 'https://www.tvmaze.com/favicon.ico'
 export const originUrl = 'https://www.tvmaze.com'
-export const categories = ['ANIME', 'TV'] as const
+export const categories = ['SERIES'] as const
 export const name = 'TVmaze'
 export const origin = 'tvmaze'
 export const official = false

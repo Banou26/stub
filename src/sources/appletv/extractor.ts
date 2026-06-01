@@ -12,7 +12,7 @@ const SCORE = 0.2
 
 export const icon = 'https://tv.apple.com/favicon.ico'
 export const originUrl = 'https://tv.apple.com'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'Apple TV+'
 export const origin = 'appletv'
 export const official = false

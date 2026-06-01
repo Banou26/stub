@@ -8,7 +8,7 @@ const SCORE = 0.2
 
 export const icon = 'https://www.justwatch.com/appasset/img/favicon/favicon-32x32.png'
 export const originUrl = 'https://www.justwatch.com'
-export const categories = ['ANIME'] as const
+export const categories = ['SERIES', 'MOVIE'] as const
 export const name = 'JustWatch'
 export const origin = 'jw'
 export const official = false
