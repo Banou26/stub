@@ -97,19 +97,22 @@ interface CrEpisode {
 const CMS = 'https://www.crunchyroll.com/content/v2/cms'
 
 const fetchSeries = (id: string, ctx: ExtractorServerContext) =>
-  api<{ data: CrSeries[] }>(`${CMS}/series/${id}?preferred_audio_language=ja-JP&locale=en-US`, ctx)
+  api<{ data?: CrSeries[] }>(`${CMS}/series/${id}?preferred_audio_language=ja-JP&locale=en-US`, ctx)
+    .then(res => ({ data: res?.data ?? [] }))
 
 const fetchSeasons = (id: string, ctx: ExtractorServerContext) =>
-  api<{ data: CrSeason[] }>(`${CMS}/series/${id}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`, ctx)
+  api<{ data?: CrSeason[] }>(`${CMS}/series/${id}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`, ctx)
+    .then(res => ({ data: res?.data ?? [] }))
 
 const fetchEpisodes = (seasonId: string, ctx: ExtractorServerContext) =>
-  api<{ data: CrEpisode[] }>(`${CMS}/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`, ctx)
+  api<{ data?: CrEpisode[] }>(`${CMS}/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`, ctx)
+    .then(res => ({ data: res?.data ?? [] }))
 
 const searchSeries = (query: string, ctx: ExtractorServerContext) =>
-  api<{ data: { type: string, items: CrSeries[] }[] }>(
+  api<{ data?: { type: string, items: CrSeries[] }[] }>(
     `https://www.crunchyroll.com/content/v2/discover/search?q=${encodeURIComponent(query)}&n=50&type=series&locale=en-US`,
     ctx
-  )
+  ).then(res => ({ data: res?.data ?? [] }))
 
 export const resolveEpisodeToSeriesId = async (
   episodeId: string,
