@@ -25,6 +25,10 @@ import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 
 const style = css`
+/* Above the sticky header (z-index 100) + the category bar (z-index 1) so the
+   "All/Anime/Series/Movies" tabs don't paint over the modal. Stays below the
+   fullscreen source players (z-index 9999999) launched from within it. */
+z-index: 1000;
 padding: 5rem 1rem;
 background-color: hsla(0, 0%, 0%, 0.439);
 animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
