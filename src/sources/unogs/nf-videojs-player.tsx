@@ -24,7 +24,6 @@ import '@videojs/react/video/skin.css'
 const NF_TIMELINE_SELECTOR = '[data-uia="timeline"]'
 const NF_CANVAS_SELECTOR = '[data-uia="video-canvas"]'
 const NF_PLAYER_SELECTOR = '[data-uia="player"]'
-const NF_WATCH_VIDEO_SELECTOR = '.watch-video'
 const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
 const REVEAL_REASON = 'Reveals the player controls so the timeline can be used.'
 const SEEK_DEBOUNCE_MS = 140
@@ -32,32 +31,38 @@ const LAND_TOLERANCE_S = 2
 const OPTIMISTIC_TIMEOUT_MS = 12_000
 const REVEAL_ATTEMPTS = 26
 const REVEAL_POLL_MS = 110
-// Selectors probed when the timeline won't mount, to tell us WHY: is the player
-// frame even reachable (canvas), do the controls mount without the timeline, or
-// is some interstitial up (still-watching / next-episode / error)?
-const NF_DIAGNOSTIC_SELECTORS: Record<string, string> = {
-  canvas: NF_CANVAS_SELECTOR,
-  controls: '[data-uia="controls-standard"]',
-  player: NF_PLAYER_SELECTOR,
-  watchVideo: NF_WATCH_VIDEO_SELECTOR,
-  slider: '[role="slider"]',
-  stillWatching: '[data-uia="interrupt-autoplay-continue"], [data-uia="interrupter-title"]',
-  nextEp: '[data-uia="next-episode-seamless-button"], [data-uia="next-episode-seamless-button-draining"]',
+// Interstitials that legitimately block a seek, so a failed reveal can report WHY
+// instead of looking like a bug: the still-watching gate, a seamless next-episode
+// hand-off, or a playback error.
+const NF_INTERSTITIALS: Record<string, string> = {
+  'still-watching': '[data-uia="interrupt-autoplay-continue"], [data-uia="interrupter-title"]',
+  'next-episode': '[data-uia="next-episode-seamless-button"], [data-uia="next-episode-seamless-button-draining"]',
   error: '[data-uia="error-container"], [data-uia="nfp-error"]',
 }
 
-// `position` (fractional click) and `reason` (permission consent string) aren't in the
-// published @fkn/lib types yet; narrow to the shapes we rely on so they ride along —
+// `position` (fractional click/hover) and `reason` (permission consent string) aren't in
+// the published @fkn/lib types yet; narrow to the shapes we rely on so they ride along —
 // harmlessly ignored by builds that predate them (same trick CR uses for fill/reason).
 type SeekLocator = {
   click: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
-  hover: (options?: { reason?: string }) => Promise<unknown>
+  hover: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
   exists: (options?: { reason?: string }) => Promise<boolean>
   ensure: (operation: 'hover' | 'click', options?: { reason?: string }) => Promise<void>
 }
 
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
+
+// Netflix only re-reveals its controls on a pointermove whose coords DIFFER from the
+// last it saw (its akira UI de-dupes by pageX/pageY), so each reveal hover must land
+// somewhere fresh. Walk a small orbit near the player centre, advancing every call;
+// the generic `hover` op just points where we tell it (0..1 fraction of the box).
+let revealTick = 0
+const nextRevealPosition = () => {
+  const angle = revealTick * 1.1
+  revealTick++
+  return { x: 0.5 + Math.cos(angle) * 0.05, y: 0.5 + Math.sin(angle) * 0.05 }
+}
 
 const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
   // The target shown to the skin while Cadmium's real seek is in flight; cleared
@@ -112,31 +117,25 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
     const wasPaused = remote.paused === true
     if (wasPaused) { try { await remote.play() } catch { /* ignore */ } }
     let mounted = false
-    let hoverOk = 0
-    let lastHoverErr: string | undefined
     for (let attempt = 0; attempt < REVEAL_ATTEMPTS; attempt++) {
       if (attempt % 2 === 0) {
-        await (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).hover({ reason: REVEAL_REASON })
-          .then(() => { hoverOk++ }, e => { lastHoverErr = e?.message ?? String(e) })
-        await (frame.locator(NF_PLAYER_SELECTOR) as unknown as SeekLocator).hover({ reason: REVEAL_REASON }).catch(() => {})
+        await (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).hover({ position: nextRevealPosition(), reason: REVEAL_REASON }).catch(() => {})
+        await (frame.locator(NF_PLAYER_SELECTOR) as unknown as SeekLocator).hover({ position: nextRevealPosition(), reason: REVEAL_REASON }).catch(() => {})
       }
       if (await timeline.exists().catch(() => false)) { mounted = true; break }
       await sleep(REVEAL_POLL_MS)
     }
     if (!mounted) {
-      // Probe Netflix's DOM so we can see WHY: is the frame reachable (canvas), do
-      // the controls mount without the timeline, or is an interstitial up?
-      const dom = await Promise.all(
-        Object.entries(NF_DIAGNOSTIC_SELECTORS).map(async ([name, sel]) =>
-          `${name}:${(await (frame.locator(sel) as unknown as SeekLocator).exists().catch(() => false)) ? 1 : 0}`),
-      ).then(p => p.join(' ')).catch(() => 'probe-failed')
-      console.warn(`[nf] timeline never mounted — wasPaused:${wasPaused} nowPaused:${remote.paused} hoverOk:${hoverOk} hoverErr:${lastHoverErr ?? 'none'} | ${dom}`)
+      const blocked = await Promise.all(
+        Object.entries(NF_INTERSTITIALS).map(async ([name, sel]) =>
+          (await (frame.locator(sel) as unknown as SeekLocator).exists().catch(() => false)) ? name : ''),
+      ).then(names => names.filter(Boolean).join(', ')).catch(() => '')
+      console.warn(`[nf] seek aborted: controls never revealed${blocked ? ` (blocked by ${blocked})` : ''}`)
       if (wasPaused) { try { await remote.pause() } catch { /* ignore */ } }
       return
     }
     await timeline.click({ position: { x: fraction, y: 0.5 }, reason: SEEK_REASON })
-      .then(() => console.log(`[nf] seek → ${Math.round(targetSeconds)}s (x=${fraction.toFixed(3)})`),
-        err => console.warn('[nf] timeline click failed:', err?.message ?? err))
+      .catch(err => console.warn('[nf] timeline click failed:', err?.message ?? err))
     if (wasPaused) { try { await remote.pause() } catch { /* ignore */ } }
   }
 
