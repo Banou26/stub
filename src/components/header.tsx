@@ -83,6 +83,31 @@ const style = css`
       }
     }
   }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+
+    .logo {
+      font-size: 2rem;
+    }
+
+    .nav-link {
+      font-size: 1.3rem;
+    }
+
+    .search {
+      width: auto;
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: none;
+      padding: 0.6rem 1rem;
+
+      input {
+        font-size: 1.4rem;
+      }
+    }
+  }
 `
 
 export const Header = () => {

@@ -44,7 +44,8 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 80rem;
+  width: 100%;
+  max-width: 80rem;
   background-color: rgb(35, 35, 35);
   border-radius: 1rem;
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -52,13 +53,13 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   margin: auto;
 
   @media (min-width: 1024px) {
-      width: 100rem;
+      max-width: 100rem;
   }
   @media (min-width: 1440px) {
-      width: 130rem;
+      max-width: 130rem;
   }
   @media (min-width: 2560px) {
-      width: 180rem;
+      max-width: 180rem;
   }
 
 
@@ -228,6 +229,75 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .side {
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  padding: 4rem 0.6rem;
+
+  .modal {
+    .trailer {
+      /* The desktop crop is fixed-rem, tuned for an 80rem modal; on a full-width
+         mobile modal retune it in vw so the same crop ratio tracks the width. */
+      --trailer-height: 64vw;
+      --yt-height: 95vw;
+      --yt-top-margin: -15.5vw;
+
+      .player-controls {
+        padding: 1.5rem;
+      }
+    }
+
+    & > .content {
+      padding: 1.5rem;
+
+      & > .header > .title {
+        font-size: 2.2rem;
+      }
+
+      & > .header > .origins > .origin {
+        height: 3rem;
+        & > img {
+          height: 3rem;
+          width: 3rem;
+        }
+      }
+
+      & > .description {
+        margin-top: 1.5rem;
+        font-size: 1.4rem;
+      }
+
+      .episodes {
+        margin-top: 2.5rem;
+
+        .episode {
+          height: auto;
+          min-height: 7rem;
+          padding: 0.8rem 0;
+
+          .number {
+            min-width: 3.5rem;
+            font-size: 1.6rem;
+          }
+
+          .thumbnail {
+            height: 5rem;
+            margin-right: 1rem;
+          }
+
+          .content {
+            & > .header > .title {
+              font-size: 1.5rem;
+            }
+            & > .description {
+              font-size: 1.3rem;
+              max-height: 4.5rem;
+            }
+          }
         }
       }
     }

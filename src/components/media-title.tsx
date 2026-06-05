@@ -63,6 +63,17 @@ const style = css`
     }
   }
 }
+
+/* On mobile the search grid wants fluid cards (it sets no inline size); the home
+   carousel pins each cell with an inline width+height from react-window, which wins
+   over these, so it's unaffected. */
+@media (max-width: 768px) {
+  &.card {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 7;
+  }
+}
 `
 
 const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'titles' | 'covers'>, to: Path }) => {

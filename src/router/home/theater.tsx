@@ -98,6 +98,29 @@ height: 70vh;
     white-space: pre-wrap;
   }
 }
+
+@media (max-width: 768px) {
+  height: 56vh;
+
+  .information {
+    left: 1.5rem;
+    right: 1.5rem;
+    max-width: none;
+
+    .player-controls {
+      padding: 1.5rem 0;
+    }
+
+    .title {
+      font-size: 2.6rem;
+    }
+
+    .short-description {
+      font-size: 1.5rem;
+      max-height: 8rem;
+    }
+  }
+}
 `
 
 const GET_THEATHER_MEDIA = gql(`

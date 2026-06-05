@@ -21,6 +21,7 @@ const style = css`
 display: flex;
 flex-direction: column;
 position: relative;
+--card-gutter: 100px;
 & > .title {
   position: relative;
   margin-left: 10rem;
@@ -67,6 +68,19 @@ position: relative;
     padding-bottom: 0.5rem;
     scrollbar-width: thin;
     scrollbar-color: rgb(134, 132, 141) rgb(15, 15, 15);
+  }
+}
+
+@media (max-width: 768px) {
+  --card-gutter: 1.5rem;
+
+  & > .title {
+    margin-left: 1.5rem;
+    font-size: 2.4rem;
+  }
+
+  & > .list-container > .scroll-button {
+    display: none;
   }
 }
 `
@@ -132,7 +146,7 @@ const CellComponent = (
         style={{
           ...style,
           width: 250,
-          marginLeft: 100
+          marginLeft: 'var(--card-gutter, 100px)'
         }}
         onMouseEnter={(e) => {
           if (!(e.target instanceof HTMLElement)) return

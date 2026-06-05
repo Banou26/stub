@@ -74,6 +74,19 @@ const style = css`
     font-size: 1.8rem;
     color: rgba(255, 255, 255, 0.5);
   }
+
+  @media (max-width: 768px) {
+    padding: 7rem 1.5rem 3rem;
+
+    .heading {
+      font-size: 2rem;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+      gap: 1.2rem;
+    }
+  }
 `
 
 const Search = () => {
