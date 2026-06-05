@@ -3,6 +3,7 @@ import type { Media } from '@videojs/core/dom'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
 import { css } from '@emotion/react'
+import { permissions } from '@fkn/lib'
 import { useEffect } from 'preact/hooks'
 import { videoFeatures } from '@videojs/core/dom'
 import { createPlayer, useMediaAttach } from '@videojs/react'
@@ -25,6 +26,18 @@ const NF_TIMELINE_SELECTOR = '[data-uia="timeline"]'
 const NF_CANVAS_SELECTOR = '[data-uia="video-canvas"]'
 const NF_PLAYER_SELECTOR = '[data-uia="player"]'
 const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
+const REVEAL_REASON = 'Reveals the player controls so the timeline can be used.'
+
+// Seeking touches three gated ops on distinct selectors (hover the surface to reveal
+// controls, hover the player, click the timeline). Left to themselves each prompts
+// separately; requesting them together up front (the scope is the raw selector, the
+// key is the op's permission scope) batches them into ONE consent sheet — already
+// -granted ones resolve without a sheet, so this is safe to call before every seek.
+const SEEK_PERMISSIONS = [
+  { key: 'act.hover', scope: NF_CANVAS_SELECTOR, reason: REVEAL_REASON },
+  { key: 'act.hover', scope: NF_PLAYER_SELECTOR, reason: REVEAL_REASON },
+  { key: 'act.click', scope: NF_TIMELINE_SELECTOR, reason: SEEK_REASON },
+] as Parameters<typeof permissions.request>[0]
 const SEEK_DEBOUNCE_MS = 140
 const LAND_TOLERANCE_S = 2
 const OPTIMISTIC_TIMEOUT_MS = 12_000
@@ -50,6 +63,18 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
   let debounce: ReturnType<typeof setTimeout> | undefined
   let expire: ReturnType<typeof setTimeout> | undefined
 
+  // Batch all three seek permissions into one consent sheet on the first seek.
+  let permissionsPrimed = false
+  const primePermissions = async () => {
+    if (permissionsPrimed) return
+    try {
+      await permissions.request(SEEK_PERMISSIONS)
+      permissionsPrimed = true
+    } catch (err) {
+      console.warn('[nf] permission request failed:', err)
+    }
+  }
+
   const onTimeUpdate = () => {
     if (optimistic == null) return
     const real = remote.currentTime
@@ -64,6 +89,7 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
     const duration = remote.duration
     if (!Number.isFinite(duration) || duration <= 0) { console.warn('[nf] seek: duration unknown', duration); return }
     const fraction = clamp01(targetSeconds / duration)
+    await primePermissions()
     const timeline = frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator
     // Netflix only mounts its controls (incl. the timeline) while PLAYING and shortly
     // after mouse activity; fully paused it shows a title card with no scrubber. So play
