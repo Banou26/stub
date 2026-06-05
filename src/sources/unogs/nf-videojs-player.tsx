@@ -23,10 +23,13 @@ import '@videojs/react/video/skin.css'
 // of the element box (0..1), so we pass `targetSeconds / duration` — no pixel measuring.
 const NF_TIMELINE_SELECTOR = '[data-uia="timeline"]'
 const NF_CANVAS_SELECTOR = '[data-uia="video-canvas"]'
+const NF_PLAYER_SELECTOR = '[data-uia="player"]'
 const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
 const SEEK_DEBOUNCE_MS = 140
 const LAND_TOLERANCE_S = 2
 const OPTIMISTIC_TIMEOUT_MS = 12_000
+const REVEAL_ATTEMPTS = 16
+const REVEAL_POLL_MS = 110
 
 // `position` (fractional click) and `reason` (permission consent string) aren't in the
 // published @fkn/lib types yet; narrow to the shapes we rely on so they ride along —
@@ -34,8 +37,10 @@ const OPTIMISTIC_TIMEOUT_MS = 12_000
 type SeekLocator = {
   click: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
   hover: (options?: { reason?: string }) => Promise<unknown>
+  exists: (options?: { reason?: string }) => Promise<boolean>
 }
 
+const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
 
 const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
@@ -55,16 +60,29 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
   }
   remote.addEventListener('timeupdate', onTimeUpdate)
 
-  const commitSeek = (targetSeconds: number) => {
+  const commitSeek = async (targetSeconds: number) => {
     const duration = remote.duration
     if (!Number.isFinite(duration) || duration <= 0) return
     const fraction = clamp01(targetSeconds / duration)
-    ;(async () => {
-      // Netflix unmounts the controls (incl. the timeline) when idle — nudge them
-      // visible first so the timeline is mounted and hittable, then click it.
-      await (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).hover({ reason: SEEK_REASON }).catch(() => {})
-      await (frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator).click({ position: { x: fraction, y: 0.5 }, reason: SEEK_REASON })
-    })().catch(err => console.warn('[nf] timeline seek failed:', err))
+    const timeline = frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator
+    // @fkn/lib's locator does NOT auto-wait, and Netflix mounts its controls (incl. the
+    // timeline) a few hundred ms AFTER a mousemove and unmounts them when idle. So nudge
+    // the controls visible, poll until the timeline exists, then click it — clicking
+    // before it mounts throws "No elements found".
+    let mounted = false
+    for (let attempt = 0; attempt < REVEAL_ATTEMPTS; attempt++) {
+      if (attempt % 3 === 0) {
+        await (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).hover({ reason: SEEK_REASON }).catch(() => {})
+        await (frame.locator(NF_PLAYER_SELECTOR) as unknown as SeekLocator).hover({ reason: SEEK_REASON }).catch(() => {})
+      }
+      if (await timeline.exists().catch(() => false)) { mounted = true; break }
+      await sleep(REVEAL_POLL_MS)
+    }
+    if (!mounted) {
+      console.warn('[nf] Netflix timeline never mounted (video paused?); seek skipped')
+      return
+    }
+    await timeline.click({ position: { x: fraction, y: 0.5 }, reason: SEEK_REASON })
   }
 
   const media = new Proxy(remote, {
@@ -76,7 +94,7 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
       if (prop === 'currentTime' && typeof value === 'number' && Number.isFinite(value)) {
         optimistic = value
         if (debounce) clearTimeout(debounce)
-        debounce = setTimeout(() => commitSeek(value), SEEK_DEBOUNCE_MS)
+        debounce = setTimeout(() => { commitSeek(value).catch(err => console.warn('[nf] timeline seek failed:', err)) }, SEEK_DEBOUNCE_MS)
         if (expire) clearTimeout(expire)
         expire = setTimeout(() => { optimistic = null }, OPTIMISTIC_TIMEOUT_MS)
         return true
