@@ -33,19 +33,32 @@ const NETFLIX_OUTER_CSS = `
     overflow: hidden !important;
     background: #000 !important;
   }
-  [data-uia="controls-standard"],
-  .watch-video--bottom-controls-container,
-  .PlayerControlsNeo__layout,
-  .PlayerControlsNeo__core-controls,
-  .PlayerControlsNeo__button-control-row,
+  /* Truly-unwanted chrome — collapse it entirely. */
   .watch-video--evidence-overlay-container,
   .watch-video--skip-content,
   .watch-video--nextEpisode-seamless-button,
   .watch-video--back-container,
   [data-uia="player-back-to-browse"],
-  [data-uia="controls-time-remaining"] {
+  [data-uia="control-nav-back"],
+  [data-uia="control-flag"] {
     display: none !important;
     pointer-events: none !important;
+  }
+  /* Keep the controls bar in LAYOUT (so the seek adapter can locate + click the
+     [data-uia="timeline"] scrubber) but invisible and inert to real taps. NEVER
+     display:none here, or the scrubber loses its box and the seek no-ops — mirrors
+     Crunchyroll's opacity:0 timeline trick. The skin draws the visible controls. */
+  [data-uia="controls-standard"],
+  .watch-video--bottom-controls-container,
+  .PlayerControlsNeo__layout,
+  .PlayerControlsNeo__core-controls,
+  .PlayerControlsNeo__button-control-row {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  [data-uia="timeline"],
+  [data-uia="timeline"] * {
+    pointer-events: auto !important;
   }
   .watch-video,
   [data-uia="video-canvas"] {
@@ -246,7 +259,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
   // above it. `remote` is null until Netflix's <video> is ready, then media attaches.
   return (
     <div css={styles}>
-      <NetflixVideoJSPlayer remote={remoteVideo}>
+      <NetflixVideoJSPlayer remote={remoteVideo} frame={frame}>
         <iframe
           ref={setIframe}
           className="nf-frame"
