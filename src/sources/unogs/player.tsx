@@ -1,10 +1,12 @@
-import type { Frame } from '@fkn/lib'
+import type { Frame, RemoteVideoElement } from '@fkn/lib'
 
 import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
 import { attachFrame } from '@fkn/lib'
 import { useCallback, useEffect, useState } from 'preact/hooks'
+
+import NetflixVideoJSPlayer from './nf-videojs-player'
 
 const NETFLIX_DOMAINS = [
   'netflix.com',
@@ -18,22 +20,46 @@ const NETFLIX_DOMAINS = [
 
 const NETFLIX_LOGIN_URL = 'https://www.netflix.com/login'
 
+// Hide Netflix's page + player chrome and force the <video> to fill the iframe,
+// leaving stub's own skin (stacked above the pointer-events:none iframe) as the UI.
+// Selectors are best-effort: Netflix ships obfuscated, frequently-renamed classes,
+// so the controls list may need touch-ups when their player markup changes.
 const NETFLIX_OUTER_CSS = `
-  html {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     overflow: hidden !important;
+    background: #000 !important;
   }
-  html::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 999999;
-    pointer-events: none;
+  [data-uia="controls-standard"],
+  .watch-video--bottom-controls-container,
+  .PlayerControlsNeo__layout,
+  .PlayerControlsNeo__core-controls,
+  .PlayerControlsNeo__button-control-row,
+  .watch-video--evidence-overlay-container,
+  .watch-video--skip-content,
+  .watch-video--nextEpisode-seamless-button,
+  .watch-video--back-container,
+  [data-uia="player-back-to-browse"],
+  [data-uia="controls-time-remaining"] {
+    display: none !important;
+    pointer-events: none !important;
   }
-  .watch-video {
-    position: absolute !important;
+  .watch-video,
+  [data-uia="video-canvas"] {
+    position: fixed !important;
     inset: 0 !important;
-    z-index: 9999999;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999999 !important;
+  }
+  .watch-video video,
+  [data-uia="video-canvas"] video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
   }
 `
 
@@ -60,12 +86,76 @@ const checkIsLoggedIn = async (frame: Frame) => {
   return false
 }
 
+// Poll for Netflix's <video> once a watch page is mounted and revive it as a
+// RemoteVideoElement the skin can drive. Keeps waiting until it appears or the
+// effect is cancelled (e.g. episode switch / unmount).
+const waitForVideoElement = async (frame: Frame, isCancelled: () => boolean) => {
+  while (!isCancelled()) {
+    try {
+      if (await frame.locator('video').exists()) return await frame.locator('video').videoElement()
+    } catch { /* frame torn down or not ready yet; retry */ }
+    await new Promise(r => setTimeout(r, 200))
+  }
+  return null
+}
+
+const styles = css`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  user-select: none;
+  -webkit-user-select: none;
+
+  .nf-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #000;
+    /* Netflix's own chrome is hidden, so the iframe must not swallow taps —
+       they belong to the skin's gesture layer stacked above it. */
+    pointer-events: none;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+    background: #000;
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.8);
+    z-index: 30;
+  }
+
+  .login-button {
+    padding: 0.8rem 2rem;
+    background: #e50914;
+    color: #fff;
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: #c11119;
+    }
+  }
+`
+
 const NetflixPlayer = ({ url }: PlayerProps) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
   const [frame, setFrame] = useState<Frame | null>(null)
   const [loading, setLoading] = useState(true)
   const [loggedOut, setLoggedOut] = useState(false)
   const [error, setError] = useState<string>()
+  const [remoteVideo, setRemoteVideo] = useState<RemoteVideoElement | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
   // Attach once per iframe; the frame outlives navigation and re-logins.
@@ -98,9 +188,11 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
   useEffect(() => {
     if (!frame) return
     let cancelled = false
+    const isCancelled = () => cancelled
     setLoading(true)
     setError(undefined)
     setLoggedOut(false)
+    setRemoteVideo(null)
     ;(async () => {
       await frame.goto(url, { waitUntil: 'load' })
       await waitForContentScript(() => frame.addStyleTag({ content: NETFLIX_OUTER_CSS }))
@@ -108,7 +200,13 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
       setLoading(false)
       const isLoggedIn = await checkIsLoggedIn(frame)
       if (cancelled) return
-      if (!isLoggedIn) setLoggedOut(true)
+      if (!isLoggedIn) {
+        setLoggedOut(true)
+        return
+      }
+      const video = await waitForVideoElement(frame, isCancelled)
+      if (cancelled || !video) return
+      setRemoteVideo(video)
     })().catch(err => {
       if (cancelled) return
       console.error('Failed to load Netflix player', err)
@@ -129,41 +227,11 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
   }, [])
 
   const overlay = (loggedOut || error || loading) && (
-    <div
-      css={css`
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1.6rem;
-        background: #000;
-        border-radius: 0.8rem;
-        font-size: 1.4rem;
-        color: rgba(255, 255, 255, 0.8);
-        z-index: 1;
-      `}
-    >
+    <div className="overlay">
       {loggedOut && (
         <>
           You need to be logged in to Netflix to watch this content.
-          <button
-            onClick={openLogin}
-            css={css`
-              padding: 0.8rem 2rem;
-              background: #e50914;
-              color: #fff;
-              border: none;
-              border-radius: 0.4rem;
-              font-size: 1.4rem;
-              font-weight: 600;
-              cursor: pointer;
-              &:hover {
-                background: #c11119;
-              }
-            `}
-          >
+          <button className="login-button" onClick={openLogin}>
             Open Netflix Login Page
           </button>
         </>
@@ -173,25 +241,20 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
     </div>
   )
 
+  // The iframe is always mounted inside the skin's Container so attachFrame has it
+  // from the start, fullscreen carries the video, and the skin's gesture layer sits
+  // above it. `remote` is null until Netflix's <video> is ready, then media attaches.
   return (
-    <div
-      css={css`
-        position: relative;
-      `}
-    >
+    <div css={styles}>
+      <NetflixVideoJSPlayer remote={remoteVideo}>
+        <iframe
+          ref={setIframe}
+          className="nf-frame"
+          referrerPolicy="no-referrer"
+          allow="encrypted-media; autoplay; fullscreen;"
+        />
+      </NetflixVideoJSPlayer>
       {overlay}
-      <iframe
-        ref={setIframe}
-        referrerPolicy="no-referrer"
-        allow="encrypted-media; autoplay; fullscreen;"
-        css={css`
-          width: 100%;
-          aspect-ratio: 16 / 9;
-          border: none;
-          border-radius: 0.8rem;
-          background: #000;
-        `}
-      />
     </div>
   )
 }
