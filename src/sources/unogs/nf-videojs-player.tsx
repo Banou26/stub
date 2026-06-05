@@ -89,7 +89,10 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
     const duration = remote.duration
     if (!Number.isFinite(duration) || duration <= 0) { console.warn('[nf] seek: duration unknown', duration); return }
     const fraction = clamp01(targetSeconds / duration)
-    await primePermissions()
+    // Fire-and-forget: open the single batched consent sheet, but DON'T block the
+    // seek on it — the hover/click ops below self-gate and latch onto that sheet's
+    // rows (same key+scope dedupes), so it stays one prompt without stalling the seek.
+    void primePermissions()
     const timeline = frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator
     // Netflix only mounts its controls (incl. the timeline) while PLAYING and shortly
     // after mouse activity; fully paused it shows a title card with no scrubber. So play
