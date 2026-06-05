@@ -3,7 +3,6 @@ import type { Media } from '@videojs/core/dom'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
 import { css } from '@emotion/react'
-import { permissions } from '@fkn/lib'
 import { useEffect } from 'preact/hooks'
 import { videoFeatures } from '@videojs/core/dom'
 import { createPlayer, useMediaAttach } from '@videojs/react'
@@ -27,17 +26,6 @@ const NF_CANVAS_SELECTOR = '[data-uia="video-canvas"]'
 const NF_PLAYER_SELECTOR = '[data-uia="player"]'
 const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
 const REVEAL_REASON = 'Reveals the player controls so the timeline can be used.'
-
-// Seeking touches three gated ops on distinct selectors (hover the surface to reveal
-// controls, hover the player, click the timeline). Left to themselves each prompts
-// separately; requesting them together up front (the scope is the raw selector, the
-// key is the op's permission scope) batches them into ONE consent sheet — already
-// -granted ones resolve without a sheet, so this is safe to call before every seek.
-const SEEK_PERMISSIONS = [
-  { key: 'act.hover', scope: NF_CANVAS_SELECTOR, reason: REVEAL_REASON },
-  { key: 'act.hover', scope: NF_PLAYER_SELECTOR, reason: REVEAL_REASON },
-  { key: 'act.click', scope: NF_TIMELINE_SELECTOR, reason: SEEK_REASON },
-] as Parameters<typeof permissions.request>[0]
 const SEEK_DEBOUNCE_MS = 140
 const LAND_TOLERANCE_S = 2
 const OPTIMISTIC_TIMEOUT_MS = 12_000
@@ -51,6 +39,7 @@ type SeekLocator = {
   click: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
   hover: (options?: { reason?: string }) => Promise<unknown>
   exists: (options?: { reason?: string }) => Promise<boolean>
+  ensure: (operation: 'hover' | 'click', options?: { reason?: string }) => Promise<void>
 }
 
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
@@ -64,13 +53,21 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
   let expire: ReturnType<typeof setTimeout> | undefined
 
   // Batch all three seek permissions into one consent sheet on the first seek.
+  // Gate each op via the locator (no execution) so every row is highlightable;
+  // firing them together merges them into a single sheet, and the real ops below
+  // then find the grants and don't re-prompt.
   let permissionsPrimed = false
   const primePermissions = async () => {
     if (permissionsPrimed) return
+    permissionsPrimed = true
     try {
-      await permissions.request(SEEK_PERMISSIONS)
-      permissionsPrimed = true
+      await Promise.all([
+        (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).ensure('hover', { reason: REVEAL_REASON }),
+        (frame.locator(NF_PLAYER_SELECTOR) as unknown as SeekLocator).ensure('hover', { reason: REVEAL_REASON }),
+        (frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator).ensure('click', { reason: SEEK_REASON }),
+      ])
     } catch (err) {
+      permissionsPrimed = false
       console.warn('[nf] permission request failed:', err)
     }
   }
