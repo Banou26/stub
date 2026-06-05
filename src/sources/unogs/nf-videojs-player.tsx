@@ -62,27 +62,36 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
 
   const commitSeek = async (targetSeconds: number) => {
     const duration = remote.duration
-    if (!Number.isFinite(duration) || duration <= 0) return
+    if (!Number.isFinite(duration) || duration <= 0) { console.warn('[nf] seek: duration unknown', duration); return }
     const fraction = clamp01(targetSeconds / duration)
     const timeline = frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator
-    // @fkn/lib's locator does NOT auto-wait, and Netflix mounts its controls (incl. the
-    // timeline) a few hundred ms AFTER a mousemove and unmounts them when idle. So nudge
-    // the controls visible, poll until the timeline exists, then click it — clicking
-    // before it mounts throws "No elements found".
+    // Netflix only mounts its controls (incl. the timeline) while PLAYING and shortly
+    // after mouse activity; fully paused it shows a title card with no scrubber. So play
+    // if paused, keep nudging the controls visible until the timeline mounts (the bar
+    // idle-hides ~3s after one mousemove, so re-hover), click, then restore pause.
+    const wasPaused = remote.paused === true
+    if (wasPaused) { try { await remote.play() } catch { /* ignore */ } }
     let mounted = false
+    let hoverOk = 0
+    let lastHoverErr: string | undefined
     for (let attempt = 0; attempt < REVEAL_ATTEMPTS; attempt++) {
       if (attempt % 3 === 0) {
-        await (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).hover({ reason: SEEK_REASON }).catch(() => {})
+        await (frame.locator(NF_CANVAS_SELECTOR) as unknown as SeekLocator).hover({ reason: SEEK_REASON })
+          .then(() => { hoverOk++ }, e => { lastHoverErr = e?.message ?? String(e) })
         await (frame.locator(NF_PLAYER_SELECTOR) as unknown as SeekLocator).hover({ reason: SEEK_REASON }).catch(() => {})
       }
       if (await timeline.exists().catch(() => false)) { mounted = true; break }
       await sleep(REVEAL_POLL_MS)
     }
     if (!mounted) {
-      console.warn('[nf] Netflix timeline never mounted (video paused?); seek skipped')
+      console.warn(`[nf] timeline never mounted — wasPaused:${wasPaused} hoverOk:${hoverOk} hoverErr:${lastHoverErr ?? 'none'}`)
+      if (wasPaused) { try { await remote.pause() } catch { /* ignore */ } }
       return
     }
     await timeline.click({ position: { x: fraction, y: 0.5 }, reason: SEEK_REASON })
+      .then(() => console.log(`[nf] seek → ${Math.round(targetSeconds)}s (x=${fraction.toFixed(3)})`),
+        err => console.warn('[nf] timeline click failed:', err?.message ?? err))
+    if (wasPaused) { try { await remote.pause() } catch { /* ignore */ } }
   }
 
   const media = new Proxy(remote, {
