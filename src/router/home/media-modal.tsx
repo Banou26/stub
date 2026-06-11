@@ -23,6 +23,7 @@ import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregat
 import { getRoutePath, Route } from '../path'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
+import { useCoverUrl } from '../../utils/use-cover-url'
 
 const style = css`
 /* Above the sticky header (z-index 100) + the category bar (z-index 1) so the
@@ -535,7 +536,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
       ),
     [media]
   )
-  const cover = useMemo(() => media?.covers?.at(0), [media])
+  const coverUrl = useCoverUrl(media?.covers)
 
   const [bannedTrailerUris, setBannedTrailerUris] = useState<string[]>([])
   const [pinnedTrailerUri, setPinnedTrailerUri] = useState<string>()
@@ -587,7 +588,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
       <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>
         <FloatingFocusManager context={context}>
           <div className="modal" ref={refs.setFloating} {...getFloatingProps()}>
-            <div className="trailer" style={!selectedTrailer?.url && cover ? { backgroundImage: `url(${cover.url})` } : {}}>
+            <div className="trailer" style={!selectedTrailer?.url && coverUrl ? { backgroundImage: `url(${coverUrl})` } : {}}>
               {
                 selectedTrailer?.url
                   ? (

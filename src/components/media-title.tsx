@@ -4,8 +4,8 @@ import type { Path } from 'wouter'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
-import { useEffect, useState } from 'preact/hooks'
 import TextEllipsis from './text-ellipsis'
+import { useCoverUrl } from '../utils/use-cover-url'
 
 const style = css`
 &.card, .card {
@@ -78,13 +78,7 @@ const style = css`
 
 const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'titles' | 'covers'>, to: Path }) => {
   const title = media.titles?.at(0)?.title
-  const firstCover = media.covers?.at(0)?.url
-  const [coverUrl, setCoverUrl] = useState(firstCover)
-
-  useEffect(() => {
-    if (coverUrl) return
-    setCoverUrl(firstCover)
-  }, [media, coverUrl, firstCover])
+  const coverUrl = useCoverUrl(media.covers)
 
   return (
     <div
