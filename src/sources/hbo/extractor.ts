@@ -1,6 +1,6 @@
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 
-// Max (HBO Max) — metadata/episodes via TMDB, deep link via JustWatch (provider 1899).
+// Max (HBO Max) - metadata/episodes via TMDB, deep link via JustWatch (provider 1899).
 // Optional native enrichment (US-egress): mint an ANONYMOUS token
 //   POST https://comet.api.hbo.com/auth/tokens  { client_id/secret: 24fa5e36-3dc4-4ed0-b3f1-29909271b63d,
 //     grant_type: client_credentials, scope: 'browse video_playback_free' }

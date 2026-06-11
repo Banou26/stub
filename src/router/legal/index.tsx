@@ -17,7 +17,7 @@ const Legal = () => (
     <p>
       stub hosts, stores, and distributes no media of its own. All titles, descriptions,
       artwork, ratings, and playback streams are retrieved on demand from third-party
-      services — including AniList, MyAnimeList, Crunchyroll, JustWatch, and Netflix — and
+      services (including AniList, MyAnimeList, Crunchyroll, JustWatch, and Netflix) and
       remain the property of their respective owners. You access those services with your
       own accounts and are responsible for complying with their terms.
     </p>
@@ -37,7 +37,7 @@ const Legal = () => (
 
     <h2>Rights holders</h2>
     <p>
-      stub stores no content itself — anything you see lives on the third-party service it
+      stub stores no content itself; anything you see lives on the third-party service it
       came from. If you are a rights holder with a concern, you can reach the maintainer
       through the project repository at{' '}
       <a href="https://github.com/Banou26/stub" target="_blank" rel="noreferrer noopener">

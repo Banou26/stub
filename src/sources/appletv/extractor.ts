@@ -6,7 +6,7 @@ import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, titleS
 
 // Apple TV+ via the anonymous UTS web API (uts-api.itunes.apple.com). No token/login.
 // ⚠️ Endpoints are verified (HTTP 200) but the response field names below are best-effort
-// and untested against a live response — verify when the proxy is up. See docs/streaming-platform-apis.md.
+// and untested against a live response - verify when the proxy is up. See docs/streaming-platform-apis.md.
 
 const SCORE = 0.2
 
@@ -103,7 +103,7 @@ const fetchEpisodes = async (id: string, seasons: Record<string, AppleSeason> | 
   const seasonIds = Object.values(seasons ?? {}).map(season => season.id).filter(Boolean)
   if (!seasonIds.length) return []
   // ⚠️ UTS caps episodes per request (~6) and rejects nextToken; per-season is the workaround,
-  // but very long seasons may still be truncated — revisit pagination when verifying live.
+  // but very long seasons may still be truncated - revisit pagination when verifying live.
   const perSeason = await Promise.all(
     seasonIds.map(seasonId =>
       api<AppleEpisodesResponse>(`/shows/${id}/episodes?selectedSeasonId=${seasonId}`, ctx)

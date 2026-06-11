@@ -4,7 +4,7 @@ import { titleSimilarity } from '../../sources/utils'
 import { linkSameMediaPairs } from './db'
 
 // Catches the same-show clusters that explicit source handles missed. Conservative on
-// purpose — over-merging is the only dangerous failure mode: a pair must share a release
+// purpose - over-merging is the only dangerous failure mode: a pair must share a release
 // year (no year on either side = no merge), must not conflict on MOVIE/SERIES, and a
 // title pair must reach >=0.9 local-alignment similarity.
 const SIMILARITY_THRESHOLD = 0.9
@@ -59,7 +59,7 @@ const profileCluster = (cluster: Media[]): ClusterProfile => ({
       cluster
         .flatMap(media =>
           // one-off specials straddle the movie/series boundary (Netflix lists them as
-          // movies, anime sources as series) — keep them format-neutral
+          // movies, anime sources as series) - keep them format-neutral
           media.type === 'SPECIAL' || media.type === 'OVA' || media.type === 'ONA' ? []
           : [
             ...media.categories ?? [],
@@ -71,7 +71,7 @@ const profileCluster = (cluster: Media[]): ClusterProfile => ({
 })
 
 // Exact upper bound on titleSimilarity (alignment score <= 2×common chars, normalized by
-// 2×longer length) — skips the WASM alignment for pairs that can never reach the threshold
+// 2×longer length) - skips the WASM alignment for pairs that can never reach the threshold
 const maxPossibleSimilarity = (a: string, b: string) => {
   const counts = new Map<string, number>()
   for (const char of a) counts.set(char, (counts.get(char) ?? 0) + 1)
@@ -111,7 +111,7 @@ const pairKey = (a: ClusterProfile, b: ClusterProfile) => {
 
 const pairDecisions = new Map<string, boolean>()
 
-// Returns true if any new same_as links were created — the caller should re-read its clusters
+// Returns true if any new same_as links were created - the caller should re-read its clusters
 export const fuzzyMergeMediaClusters = async (clusters: Media[][]): Promise<boolean> => {
   const profiles = clusters.filter(cluster => cluster.length).map(profileCluster)
 

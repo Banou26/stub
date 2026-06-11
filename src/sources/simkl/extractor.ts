@@ -4,9 +4,9 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaCategory
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// Simkl (simkl.com) — keyful (BYOK) cross-id aggregator. The user's key is an app client_id,
+// Simkl (simkl.com) - keyful (BYOK) cross-id aggregator. The user's key is an app client_id,
 // passed as the 'simkl-api-key' header. Without a key the source no-ops. Simkl's value is its
-// strong id bridging — it emits imdb/tmdb/mal/anilist/kitsu handles so results merge with stub.
+// strong id bridging - it emits imdb/tmdb/mal/anilist/kitsu handles so results merge with stub.
 
 const SCORE = 0.3
 const API = 'https://api.simkl.com'

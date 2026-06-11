@@ -60,7 +60,7 @@ const Settings = () => {
       <h2>API keys</h2>
       <p className="intro">
         Some sources need your own API key. Keys are kept in this browser only and are used
-        solely to authenticate your requests to that source — leave a field blank to keep its
+        solely to authenticate your requests to that source. Leave a field blank to keep its
         source disabled.
       </p>
       <form className="keys" onSubmit={onSubmit}>

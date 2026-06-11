@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// Trakt (api.trakt.tv) — community TV/movie metadata. Keyful (BYOK): the user's key is the
+// Trakt (api.trakt.tv) - community TV/movie metadata. Keyful (BYOK): the user's key is the
 // app Client ID, sent as the trakt-api-key header; without a key the source no-ops. Trakt
 // exposes no images, so covers/thumbnails are absent. Bridges imdb/tmdb handles.
 

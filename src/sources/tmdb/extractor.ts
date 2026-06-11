@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// TMDB (themoviedb.org) — shared metadata/episode backbone. The public API needs a
+// TMDB (themoviedb.org) - shared metadata/episode backbone. The public API needs a
 // licensed key, so instead we read TMDB's own server-rendered frontend pages through
 // the proxy (curl-impersonate bypasses their WAF), same approach as the CR/NF sources.
 

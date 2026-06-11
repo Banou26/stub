@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// Watchmode (watchmode.com) — streaming-availability + metadata. Keyful (BYOK): reads the
+// Watchmode (watchmode.com) - streaming-availability + metadata. Keyful (BYOK): reads the
 // user's key via ctx.key('watchmode'); without a key the source no-ops. Emits imdb/tmdb
 // handles plus a handle per streaming source so results merge with stub's other sources.
 

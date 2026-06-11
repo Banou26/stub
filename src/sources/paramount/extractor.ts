@@ -4,10 +4,10 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, img } from '../utils'
 
-// Paramount+ native episode list — anonymous XHR, but US-geo (route through the FKN proxy with US egress).
+// Paramount+ native episode list - anonymous XHR, but US-geo (route through the FKN proxy with US egress).
 // No native search: title search/metadata come from TMDB; the show {slug} comes from the JustWatch
 // `paramountplus.com/shows/{slug}` deep link (extractContentId returns parts[1]). See docs/streaming-platform-apis.md.
-// ⚠️ Response field names below are from yt-dlp's extractor and untested live — verify when the proxy is up.
+// ⚠️ Response field names below are from yt-dlp's extractor and untested live - verify when the proxy is up.
 
 const SCORE = 0.2
 
@@ -69,7 +69,7 @@ export const resolvers: Resolvers = {
         yield { media: slug ? await getMedia(slug, ctx) : null }
       }
     },
-    // No native search — TMDB/JustWatch handle discovery.
+    // No native search - TMDB/JustWatch handle discovery.
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
       subscribe: async function* () { yield { mediaPage: { nodes: [] } } }

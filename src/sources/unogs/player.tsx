@@ -33,7 +33,7 @@ const NETFLIX_OUTER_CSS = `
     overflow: hidden !important;
     background: #000 !important;
   }
-  /* Truly-unwanted chrome — collapse it entirely. */
+  /* Truly-unwanted chrome - collapse it entirely. */
   .watch-video--evidence-overlay-container,
   .watch-video--skip-content,
   .watch-video--nextEpisode-seamless-button,
@@ -46,7 +46,7 @@ const NETFLIX_OUTER_CSS = `
   }
   /* Keep the controls bar in LAYOUT (so the seek adapter can locate + click the
      [data-uia="timeline"] scrubber) but invisible and inert to real taps. NEVER
-     display:none here, or the scrubber loses its box and the seek no-ops — mirrors
+     display:none here, or the scrubber loses its box and the seek no-ops - mirrors
      Crunchyroll's opacity:0 timeline trick. The skin draws the visible controls. */
   [data-uia="controls-standard"],
   .watch-video--bottom-controls-container,
@@ -127,7 +127,7 @@ const styles = css`
     height: 100%;
     border: none;
     background: #000;
-    /* Netflix's own chrome is hidden, so the iframe must not swallow taps —
+    /* Netflix's own chrome is hidden, so the iframe must not swallow taps -
        they belong to the skin's gesture layer stacked above it. */
     pointer-events: none;
   }

@@ -22,7 +22,7 @@ export const test = async () => {
   const allMedia = await findAllAggregatedMedia()
   expect(allMedia.length).to.equal(1)
 
-  // Upsert anilist:1 again with empty titles — should keep existing (longer array wins)
+  // Upsert anilist:1 again with empty titles - should keep existing (longer array wins)
   await upsertMedia(
     [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], externalLinks: null, averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
     []
@@ -76,7 +76,7 @@ export const fuzzyMerge = async () => {
       media('kitsu:600', "Frieren: Beyond Journey's End"),
       // article variant ("the"), same year → merge
       media('nf:700', "Frieren: Beyond the Journey's End", { startDate: '2023-01-01' }),
-      // TV special: anime side says SERIES+SPECIAL, Netflix side says MOVIE — the SPECIAL
+      // TV special: anime side says SERIES+SPECIAL, Netflix side says MOVIE - the SPECIAL
       // type keeps it format-neutral so the pair still merges
       media('anilist:800', 'Heart of Gold', { startDate: '2016-01-01', categories: ['ANIME', 'SERIES'], type: 'SPECIAL' }),
       media('nf:900', 'Heart of Gold', { startDate: '2016-01-01', categories: ['MOVIE'] }),
@@ -133,21 +133,21 @@ export const graphLabels = async () => {
   const g2 = createGraph<{ name: string; tags: string[] }>()
   g2.registerLabel('item', { merge })
 
-  // First set — no existing node, stores as-is
+  // First set - no existing node, stores as-is
   g2.set('a', { name: 'Alice', tags: ['x', 'y'] }, { addLabels: ['item'] })
   expect(g2.get('a')).to.deep.equal({ name: 'Alice', tags: ['x', 'y'] })
 
-  // Second set — existing node, merge runs: scalar last-write-wins, array longest-wins
+  // Second set - existing node, merge runs: scalar last-write-wins, array longest-wins
   g2.set('a', { name: 'Bob', tags: ['z'] }, { addLabels: ['item'] })
   expect(g2.get('a')!.name).to.equal('Bob')       // scalar: last write wins
   expect(g2.get('a')!.tags).to.deep.equal(['x', 'y'])  // array: existing is longer, kept
 
-  // Set without options on a labeled node — still merges
+  // Set without options on a labeled node - still merges
   g2.set('a', { name: 'Carol', tags: ['a', 'b', 'c'] })
   expect(g2.get('a')!.name).to.equal('Carol')     // scalar: last write wins
   expect(g2.get('a')!.tags).to.deep.equal(['a', 'b', 'c'])  // array: incoming is longer, wins
 
-  // Set without label on unlabeled node — raw overwrite
+  // Set without label on unlabeled node - raw overwrite
   const g3 = createGraph<{ name: string; tags: string[] }>()
   g3.set('b', { name: 'first', tags: ['1', '2'] })
   g3.set('b', { name: 'second', tags: [] })
@@ -180,12 +180,12 @@ export const graphLabels = async () => {
   g5.link('m1', 'm2', 'same_as')
   g5.edge('m1', 'e1', 'has_ep')
 
-  // clusters seeded from 'media' label — finds the m1+m2 cluster
+  // clusters seeded from 'media' label - finds the m1+m2 cluster
   const mediaClusters = g5.clusters('same_as', 'media')
   expect(mediaClusters.length).to.equal(1)
   expect(mediaClusters[0]!.length).to.equal(2)
 
-  // clusters without nodeLabel — finds all nodes (including isolated e1 as its own cluster)
+  // clusters without nodeLabel - finds all nodes (including isolated e1 as its own cluster)
   const allClusters = g5.clusters('same_as')
   expect(allClusters.length).to.equal(2) // [m1,m2] and [e1]
 }

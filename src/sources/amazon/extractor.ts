@@ -1,6 +1,6 @@
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 
-// Prime Video — no anonymous API. Native: atv-ps.amazon.com (GetPlaybackResources),
+// Prime Video - no anonymous API. Native: atv-ps.amazon.com (GetPlaybackResources),
 // requires login cookies + device registration. Ref: https://github.com/Sandmann79/xbmc
 // TODO: implement native fetch behind the web-extension session tunnel + FKN permission system.
 // For now: metadata/episodes via TMDB, deep link via JustWatch (imdbId).

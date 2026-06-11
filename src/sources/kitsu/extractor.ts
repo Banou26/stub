@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// Kitsu (kitsu.io) — keyless JSON:API anime source. Adds anilist + myanimelist id handles
+// Kitsu (kitsu.io) - keyless JSON:API anime source. Adds anilist + myanimelist id handles
 // (so results merge with stub's anime spine) plus Crunchyroll/Netflix streaming deep-links.
 
 const SCORE = 0.3

@@ -152,7 +152,7 @@ const normalizeMedia = (id: string, title: string, description: string, series: 
     ...desc(description, SCORE),
     covers: img(bestImage(series.images?.poster_tall), SCORE),
     banners: img(bestImage(series.images?.poster_wide), SCORE),
-    // launch year is the series premiere — only valid on the series-level media, not seasons
+    // launch year is the series premiere - only valid on the series-level media, not seasons
     startDate: id === series.id && series.series_metadata?.series_launch_year
       ? `${series.series_metadata.series_launch_year}-01-01`
       : undefined,

@@ -22,7 +22,7 @@ export default defineConfig((_) => ({
   worker: {
     format: 'es'
   },
-  // Don't pre-bundle the file:-linked @fkn/lib — its dep cache goes stale when we
+  // Don't pre-bundle the file:-linked @fkn/lib - its dep cache goes stale when we
   // rebuild the lib, which silently loads an old copy (e.g. a prod-origin /api iframe).
   optimizeDeps: { exclude: ['@fkn/lib'] },
   resolve: {
@@ -33,7 +33,7 @@ export default defineConfig((_) => ({
     }
   },
   plugins: [
-    // Pin the buffer polyfill shim absolutely so the file:-linked @fkn/lib resolves it (a resolve.alias won't — rolldown doesn't re-alias).
+    // Pin the buffer polyfill shim absolutely so the file:-linked @fkn/lib resolves it (a resolve.alias won't - rolldown doesn't re-alias).
     {
       name: 'fkn-resolve-node-polyfill-buffer-shim',
       enforce: 'pre',

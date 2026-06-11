@@ -16,7 +16,7 @@ const CRUNCHYROLL_DOMAINS = [
 ]
 
 // Hide the CR page chrome, force the player to fill the iframe, and keep
-// CR's native player UI hidden — but leave the scrubber
+// CR's native player UI hidden - but leave the scrubber
 // (`.timeline-slider`) layout-measurable so the Bitmovin-seek adapter can
 // drive it.
 //
@@ -138,7 +138,7 @@ const styles = css`
     height: 100%;
     border: none;
     background: #000;
-    /* CR's own chrome is hidden, so the iframe must not swallow clicks —
+    /* CR's own chrome is hidden, so the iframe must not swallow clicks -
        taps belong to the videojs gesture layer stacked above it. */
     pointer-events: none;
   }
@@ -260,7 +260,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   )
 
   // The skin is always mounted with the iframe nested inside its
-  // Container — attachFrame needs the iframe from the start, fullscreen
+  // Container - attachFrame needs the iframe from the start, fullscreen
   // needs the video inside the fullscreened element, and the skin's
   // gesture layer needs to sit above it. `remote`/`frame` are null until
   // the video is ready, at which point media attaches.

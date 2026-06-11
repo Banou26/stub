@@ -253,7 +253,7 @@ export function createGraph<T>(): Graph<T> {
         if (node) result.push(node)
       }
     } else {
-      // node exists but was never linked — singleton
+      // node exists but was never linked - singleton
       const node = nodes.get(start)
       if (node) result.push(node)
     }

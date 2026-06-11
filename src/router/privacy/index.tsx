@@ -28,7 +28,7 @@ const Privacy = () => (
         FKN platform privacy policy
       </a>
       . Each third-party service receives the requests made to it and applies its own
-      privacy policy — especially when you sign in to one (for example Crunchyroll) to watch.
+      privacy policy, especially when you sign in to one (for example Crunchyroll) to watch.
     </p>
 
     <h2>The optional browser extension</h2>

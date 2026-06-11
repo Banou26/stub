@@ -15,12 +15,12 @@ import '@videojs/react/video/skin.css'
 // segments only around the position its own scheduler believes it's at, so a raw
 // `video.currentTime` write lands in an unbuffered gap, desyncs the scheduler and
 // trips the M7375 error screen (currentTime is an *output* of Cadmium, not an input).
-// So — unlike Crunchyroll, where a bare currentTime write is merely ignored — we must
+// So - unlike Crunchyroll, where a bare currentTime write is merely ignored - we must
 // NOT let the write reach the element at all. We swallow it, replay the seek onto
 // Netflix's own timeline as a positional click (its scrubber is a custom div, not an
 // <input>, so CR's value-`fill` doesn't transfer), and show the target optimistically
 // until Cadmium's real seek lands. @fkn/lib's `click` takes position as a *fraction*
-// of the element box (0..1), so we pass `targetSeconds / duration` — no pixel measuring.
+// of the element box (0..1), so we pass `targetSeconds / duration` - no pixel measuring.
 const NF_TIMELINE_SELECTOR = '[data-uia="timeline"]'
 const NF_CANVAS_SELECTOR = '[data-uia="video-canvas"]'
 const NF_PLAYER_SELECTOR = '[data-uia="player"]'
@@ -41,7 +41,7 @@ const NF_INTERSTITIALS: Record<string, string> = {
 }
 
 // `position` (fractional click/hover) and `reason` (permission consent string) aren't in
-// the published @fkn/lib types yet; narrow to the shapes we rely on so they ride along —
+// the published @fkn/lib types yet; narrow to the shapes we rely on so they ride along -
 // harmlessly ignored by builds that predate them (same trick CR uses for fill/reason).
 type SeekLocator = {
   click: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
@@ -106,7 +106,7 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
     if (!Number.isFinite(duration) || duration <= 0) { console.warn('[nf] seek: duration unknown', duration); return }
     const fraction = clamp01(targetSeconds / duration)
     // Fire-and-forget: open the single batched consent sheet, but DON'T block the
-    // seek on it — the hover/click ops below self-gate and latch onto that sheet's
+    // seek on it - the hover/click ops below self-gate and latch onto that sheet's
     // rows (same key+scope dedupes), so it stays one prompt without stalling the seek.
     void primePermissions()
     const timeline = frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator

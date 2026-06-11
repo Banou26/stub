@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// TVmaze (tvmaze.com) — keyless JSON TV/anime metadata + episode backbone. No key or
+// TVmaze (tvmaze.com) - keyless JSON TV/anime metadata + episode backbone. No key or
 // account, CORS-open. Exposes externals.imdb for cross-source bridging.
 
 const SCORE = 0.3

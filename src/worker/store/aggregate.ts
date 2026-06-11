@@ -97,7 +97,7 @@ function episodeToGQL(episode: Episode): GQLEpisode {
 
 // ─── Aggregation helpers ─────────────────────────────────────────────────────
 
-// Stable opaque UUID per cluster — cached by smallest URI (which is stable across cluster growth)
+// Stable opaque UUID per cluster - cached by smallest URI (which is stable across cluster growth)
 const clusterIdCache = new Map<string, string>()
 
 function getStableClusterId(uris: string[]): string {

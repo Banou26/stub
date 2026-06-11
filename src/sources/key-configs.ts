@@ -1,5 +1,5 @@
 // Client-safe registry of sources that need a user-supplied API key (BYOK). Kept separate
-// from the extractors — which import seal-wasm — so the settings page can read it on the
+// from the extractors - which import seal-wasm - so the settings page can read it on the
 // main thread without pulling the worker/WASM bundle. Each keyful extractor reads its key
 // via ctx.key(origin); this just describes the key to the settings UI.
 
@@ -17,7 +17,7 @@ export const keyConfigs: KeyConfig[] = [
     name: 'OMDb',
     label: 'OMDb API key',
     getUrl: 'https://www.omdbapi.com/apikey.aspx',
-    help: 'Free tier: 1,000 requests/day — choose the "FREE" account type on the form.',
+    help: 'Free tier: 1,000 requests/day; choose the "FREE" account type on the form.',
   },
   {
     origin: 'trakt',
@@ -38,7 +38,7 @@ export const keyConfigs: KeyConfig[] = [
     name: 'TheTVDB',
     label: 'TheTVDB API key',
     getUrl: 'https://www.thetvdb.com/dashboard/account/apikey',
-    help: 'Paid/subscriber v4 key. User-supported keys also need a PIN — enter it as apikey:pin (e.g. ab12cd34:5678).',
+    help: 'Paid/subscriber v4 key. User-supported keys also need a PIN; enter it as apikey:pin (e.g. ab12cd34:5678).',
   },
   {
     origin: 'watchmode',

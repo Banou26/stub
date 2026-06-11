@@ -15,7 +15,7 @@ const probe = (url: string) => {
   return result
 }
 
-// First cover whose image actually loads — covers come straight from source CDNs which
+// First cover whose image actually loads - covers come straight from source CDNs which
 // intermittently 429/404, and aggregated media carry score-sorted alternates to fall back on
 export const useCoverUrl = (covers: ({ url: string } | null | undefined)[] | null | undefined) => {
   const urls = (covers ?? []).map(cover => cover?.url).filter((url): url is string => Boolean(url))

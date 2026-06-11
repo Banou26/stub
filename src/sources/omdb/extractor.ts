@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// OMDb (omdbapi.com) — IMDb-sourced movie/TV metadata. Keyful (BYOK): reads the user's key
+// OMDb (omdbapi.com) - IMDb-sourced movie/TV metadata. Keyful (BYOK): reads the user's key
 // via ctx.key('omdb'); without a key the source no-ops. Emits an imdb handle for bridging.
 
 const SCORE = 0.3
