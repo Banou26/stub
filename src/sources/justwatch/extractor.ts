@@ -230,7 +230,7 @@ interface JWSearchNode {
   id: string
   objectId: number
   objectType?: string
-  content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null }
+  content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null, originalReleaseYear?: number | null }
   offers: JWOffer[]
 }
 
@@ -362,7 +362,8 @@ const normalizeMedia = async (
         ctx
       ),
     episodes,
-    episodeCount: episodes.length || undefined
+    episodeCount: episodes.length || undefined,
+    startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
   })
 }
 

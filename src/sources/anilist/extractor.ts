@@ -1,6 +1,6 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
-import { MediaStatus as GQLMediaStatus } from '../../generated/graphql'
+import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
 import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from '../crunchyroll/extractor'
@@ -286,6 +286,13 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
     id: media.id.toString(),
     url: media.siteUrl,
     categories: media.format === 'MOVIE' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
+    type:
+      media.format === 'TV' || media.format === 'TV_SHORT' ? GQLMediaType.Tv
+      : media.format === 'MOVIE' ? GQLMediaType.Movie
+      : media.format === 'SPECIAL' ? GQLMediaType.Special
+      : media.format === 'OVA' ? GQLMediaType.Ova
+      : media.format === 'ONA' ? GQLMediaType.Ona
+      : undefined,
     handles: [
       ...extraHandles,
       ...malHandle ? [malHandle] : []

@@ -70,7 +70,7 @@ interface CrSeries {
   slug_title: string
   description: string
   images: { poster_tall?: { source: string }[][], poster_wide?: { source: string }[][] }
-  series_metadata?: { episode_count: number }
+  series_metadata?: { episode_count: number, series_launch_year?: number }
 }
 
 interface CrSeason {
@@ -152,6 +152,10 @@ const normalizeMedia = (id: string, title: string, description: string, series: 
     ...desc(description, SCORE),
     covers: img(bestImage(series.images?.poster_tall), SCORE),
     banners: img(bestImage(series.images?.poster_wide), SCORE),
+    // launch year is the series premiere — only valid on the series-level media, not seasons
+    startDate: id === series.id && series.series_metadata?.series_launch_year
+      ? `${series.series_metadata.series_launch_year}-01-01`
+      : undefined,
     episodeCount
   })
 

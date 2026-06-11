@@ -35,8 +35,16 @@ const fetchHtml = (path: string, ctx: ExtractorServerContext): Promise<string | 
 const meta = (html: string, property: string): string | undefined =>
   html.match(new RegExp(`<meta property="${property}" content="([^"]*)"`))?.[1]
 
-type TmdbMedia = { id: string, title: string, overview?: string, poster?: string, banner?: string, score?: number }
+type TmdbMedia = { id: string, title: string, overview?: string, poster?: string, banner?: string, score?: number, year?: number }
 type TmdbEpisode = { number: number, title?: string, overview?: string, still?: string }
+
+// The card's title anchor is followed by a release_date span; the date text is
+// locale-dependent so only the year is extracted
+const parseSearchYear = (html: string, id: string): number | undefined => {
+  const span = html.match(new RegExp(`href="/tv/${id}[^"]*"><h2[\\s\\S]{0,400}?class="release_date[^"]*">([^<]*)<`))?.[1]
+  const year = span?.match(/\b(?:19|20)\d{2}\b/)?.[0]
+  return year ? Number(year) : undefined
+}
 
 const parseSearch = (html: string): TmdbMedia[] => {
   const out: TmdbMedia[] = []
@@ -46,7 +54,7 @@ const parseSearch = (html: string): TmdbMedia[] => {
     const id = m[1]
     if (!id || seen.has(id)) continue
     seen.add(id)
-    out.push({ id, title: decode(m[2] ?? ''), poster: m[3] })
+    out.push({ id, title: decode(m[2] ?? ''), poster: m[3], year: parseSearchYear(html, id) })
   }
   return out
 }
@@ -97,6 +105,7 @@ const normalizeMedia = (m: TmdbMedia): GQLMedia =>
     covers: img(m.poster, SCORE),
     banners: img(m.banner, SCORE),
     averageScore: m.score,
+    startDate: m.year ? `${m.year}-01-01` : undefined,
   })
 
 const normalizeEpisode = (episode: TmdbEpisode, season: number, tvId: string, mediaUri: string): GQLEpisode =>

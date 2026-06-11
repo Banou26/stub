@@ -75,7 +75,19 @@ interface UnogsTitle {
   img: string
   lgimg: string
   nfdate: string
+  year: number | null
+  imdbid: string | null
   imdbrating: number | null
+}
+
+interface UnogsSearchResult {
+  title: string
+  nfid: number
+  synopsis: string
+  img: string
+  vtype?: string
+  year?: number | null
+  imdbid?: string | null
 }
 
 interface UnogsBgImages {
@@ -105,7 +117,7 @@ const fetchEpisodes = (id: string, ctx: ExtractorServerContext) =>
   api<{ season: number, episodes: UnogsEpisode[] }[]>(`${UNOGS}/title/episodes?netflixid=${id}`, ctx)
 
 const searchApi = (query: string, ctx: ExtractorServerContext) =>
-  api<{ results: { title: string, nfid: number, synopsis: string, img: string }[] }>(
+  api<{ results: UnogsSearchResult[] }>(
     `${UNOGS}/search?limit=50&offset=0&query=${encodeURIComponent(query)}&countrylist=&country_andorunique=&start_year=&end_year=&start_rating=&end_rating=&genrelist=&type=&audio=&subtitle=&audiosubtitle_andor=&person=&personid=&filterby=&orderby=`,
     ctx
   )
@@ -159,21 +171,22 @@ const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia =
     titles: [{ language: 'en', title: decode(title.title), score: SCORE }],
     ...desc(title.synopsis ? decode(title.synopsis) : undefined, SCORE),
     covers, banners,
-    startDate: title.nfdate ? new Date(title.nfdate).toISOString() : undefined,
+    startDate: title.year ? `${title.year}-01-01` : undefined,
     averageScore: title.imdbrating ?? undefined
   })
 }
 
-const normalizeSearchResult = (result: { title: string, nfid: number, synopsis: string, img: string }): GQLMedia =>
+const normalizeSearchResult = (result: UnogsSearchResult): GQLMedia =>
   makeMedia({
     origin,
     id: String(result.nfid),
     url: `https://www.netflix.com/title/${result.nfid}`,
     score: SCORE,
-    categories: ['SERIES'],
+    categories: result.vtype === 'movie' ? ['MOVIE'] : ['SERIES'],
     titles: [{ language: 'en', title: decode(result.title), score: SCORE }],
     ...desc(result.synopsis ? decode(result.synopsis) : undefined, SCORE),
-    covers: result.img ? img(httpsUrl(result.img), SCORE) : []
+    covers: result.img ? img(httpsUrl(result.img), SCORE) : [],
+    startDate: result.year ? `${result.year}-01-01` : undefined
   })
 
 const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber: number): GQLEpisode => {

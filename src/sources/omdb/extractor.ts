@@ -43,6 +43,7 @@ const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: strin
   const id = result.imdbID
   if (!id) return undefined
   const rating = na(result.imdbRating)
+  const year = na(result.Year)?.match(/\d{4}/)?.[0]
   return makeMedia({
     origin,
     id,
@@ -54,6 +55,7 @@ const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: strin
     ...desc(na(result.Plot), SCORE),
     covers: img(na(result.Poster), SCORE),
     averageScore: rating ? Number(rating) : undefined,
+    startDate: year ? `${year}-01-01` : undefined,
   })
 }
 

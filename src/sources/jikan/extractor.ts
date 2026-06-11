@@ -1,6 +1,6 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
-import { MediaStatus } from '../../generated/graphql'
+import { MediaStatus, MediaType } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
@@ -79,6 +79,13 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
     uri: `${origin}:${data.mal_id}`,
     origin,
     categories: data.type === 'Movie' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
+    type:
+      data.type === 'TV' ? MediaType.Tv
+      : data.type === 'Movie' ? MediaType.Movie
+      : data.type === 'Special' ? MediaType.Special
+      : data.type === 'OVA' ? MediaType.Ova
+      : data.type === 'ONA' ? MediaType.Ona
+      : undefined,
     id: data.mal_id.toString(),
     url: data.url,
     handles: [
@@ -114,8 +121,8 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       : data.status === 'Currently Airing' ? MediaStatus.Releasing
       : data.status === 'Finished Airing' ? MediaStatus.Finished
       : undefined,
-    startDate: new Date(data.aired.prop.from.year, data.aired.prop.from.month, data.aired.prop.from.day).toUTCString(),
-    endDate: new Date(data.aired.prop.to.year, data.aired.prop.to.month, data.aired.prop.to.day).toUTCString(),
+    startDate: data.aired?.from ?? null,
+    endDate: data.aired?.to ?? null,
     trailers
   } satisfies Media
 }
