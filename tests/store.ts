@@ -44,6 +44,62 @@ export const test = async () => {
   expect(anilist2.titles.length).to.equal(1) // still preserved
 }
 
+export const fuzzyMerge = async () => {
+  const { upsertMedia, findAllAggregatedMedia } = await import('../src/worker/store/db')
+  const { fuzzyMergeMediaClusters } = await import('../src/worker/store/fuzzy-merge')
+
+  const media = (uri: string, title: string, fields: Record<string, any> = {}) => {
+    const [origin, id] = uri.split(':')
+    return {
+      uri, origin: origin!, id: id!, url: null, score: 0.5, type: null,
+      categories: ['SERIES'], status: null,
+      titles: [{ language: 'en', title }],
+      descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [],
+      externalLinks: null, averageScore: null, popularity: null,
+      startDate: null, endDate: null, isAdult: null, episodeCount: null,
+      ...fields,
+    } as any
+  }
+
+  await upsertMedia(
+    [
+      media('anilist:100', "Frieren: Beyond Journey's End", { startDate: '2023-09-29', categories: ['ANIME', 'SERIES'] }),
+      // fuzzy-equal title (punctuation differs), same year → merge
+      media('tmdb:200', 'Frieren Beyond Journeys End', { startDate: '2023-01-01' }),
+      // same title, different year → NO merge
+      media('tvmaze:300', "Frieren: Beyond Journey's End", { startDate: '2016-01-01' }),
+      // different title, same year → NO merge
+      media('omdb:400', 'Solo Leveling', { startDate: '2023-01-01' }),
+      // same title + year, MOVIE vs SERIES → NO merge
+      media('jw:500', "Frieren: Beyond Journey's End", { startDate: '2023-01-01', categories: ['MOVIE'] }),
+      // same title, no year → NO merge (conservative)
+      media('kitsu:600', "Frieren: Beyond Journey's End"),
+      // article variant ("the"), same year → merge
+      media('nf:700', "Frieren: Beyond the Journey's End", { startDate: '2023-01-01' }),
+      // TV special: anime side says SERIES+SPECIAL, Netflix side says MOVIE — the SPECIAL
+      // type keeps it format-neutral so the pair still merges
+      media('anilist:800', 'Heart of Gold', { startDate: '2016-01-01', categories: ['ANIME', 'SERIES'], type: 'SPECIAL' }),
+      media('nf:900', 'Heart of Gold', { startDate: '2016-01-01', categories: ['MOVIE'] }),
+    ],
+    []
+  )
+
+  let clusters = await findAllAggregatedMedia()
+  expect(clusters.length).to.equal(9)
+
+  expect(await fuzzyMergeMediaClusters(clusters)).to.equal(true)
+
+  clusters = await findAllAggregatedMedia()
+  expect(clusters.length).to.equal(6)
+  const merged = clusters.find(cluster => cluster.length === 3)!
+  expect(merged.map(m => m.uri).sort()).to.deep.equal(['anilist:100', 'nf:700', 'tmdb:200'])
+  const special = clusters.find(cluster => cluster.some(m => m.uri === 'anilist:800'))!
+  expect(special.map(m => m.uri).sort()).to.deep.equal(['anilist:800', 'nf:900'])
+
+  // second pass is a no-op: the pair is already linked, the rest are cached negatives
+  expect(await fuzzyMergeMediaClusters(clusters)).to.equal(false)
+}
+
 export const graphLabels = async () => {
   const { createGraph } = await import('../src/worker/store/graph')
 

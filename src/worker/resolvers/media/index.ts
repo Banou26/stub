@@ -5,6 +5,7 @@ import type { Media, MediaPage, MediaPageResolvers, Resolvers, SubscriptionResol
 import _schema from './schema.gql?raw'
 import { proxyRequestToExtractors } from '../../extractor'
 import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaByAggregatedId } from '../../store/db'
+import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode } from '../../store/aggregate'
 import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
@@ -82,7 +83,10 @@ export const resolvers = {
 
         const getPage = async () => {
           const uris = [...insertedUris]
-          const clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
+          let clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
+          if (await fuzzyMergeMediaClusters(clusters)) {
+            clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
+          }
           let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
 
           const categories = args.input.categories

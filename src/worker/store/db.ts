@@ -37,6 +37,15 @@ export async function upsertMedia(
   if (changed) emit('media:changed', {})
 }
 
+export function linkSameMediaPairs(pairs: [string, string][]): boolean {
+  let changed = false
+  for (const [uriA, uriB] of pairs) {
+    if (graph.link(uriA, uriB, MEDIA_SAME_AS)) changed = true
+  }
+  if (changed) emit('media:changed', {})
+  return changed
+}
+
 export async function findAggregatedMedia(uri: string): Promise<Media[]> {
   const resolved = graph.resolve(uri)
   if (!graph.has(resolved)) return []
