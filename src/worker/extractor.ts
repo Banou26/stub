@@ -17,7 +17,7 @@ import { pipe, tap } from 'wonka'
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../sources'
 import { merge } from '../utils/merge'
-import { fetch } from './fetch'
+import { fetch, fetchWithBackoff } from './fetch'
 import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils/uri'
 import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
 import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
@@ -288,7 +288,7 @@ export const extractors =
           server.handleRequest(
             new Request(input, init),
             {
-              fetch,
+              fetch: fetchWithBackoff,
               key: (origin: string) => userKeys[origin],
               findAggregatedMedia: (uri: string) => findAggregatedMediaForContext(uri),
               listenForMediaChanges: listenForMediaChangesForContext
