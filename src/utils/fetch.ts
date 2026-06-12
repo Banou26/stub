@@ -1,4 +1,4 @@
-import { serverProxyFetch } from '@fkn/lib'
+import { cloud } from '@fkn/lib'
 
 export const fetch = (input: RequestInfo | URL, init?: RequestInit) =>
-  serverProxyFetch(input, init)
+  cloud.fetch(input, init)
