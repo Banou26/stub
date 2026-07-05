@@ -32,6 +32,7 @@ export const fetchWithBackoff = async (input: RequestInfo | URL, init?: RequestI
   for (let attempt = 0; ; attempt++) {
     const response = await fetch(input, init)
     if (!RETRYABLE_STATUSES.has(response.status) || attempt >= MAX_RETRIES) return response
+    void response.body?.cancel().catch(() => {})
     await new Promise(resolve => setTimeout(resolve, retryDelay(response, attempt)))
   }
 }
