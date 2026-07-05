@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks'
 
 const probeResults = new Map<string, Promise<boolean>>()
+const FAILED_PROBE_TTL_MS = 30_000
 
 const probe = (url: string) => {
   const existing = probeResults.get(url)
@@ -8,7 +9,10 @@ const probe = (url: string) => {
   const result = new Promise<boolean>(resolve => {
     const image = new Image()
     image.onload = () => resolve(true)
-    image.onerror = () => resolve(false)
+    image.onerror = () => {
+      setTimeout(() => probeResults.delete(url), FAILED_PROBE_TTL_MS)
+      resolve(false)
+    }
     image.src = url
   })
   probeResults.set(url, result)
