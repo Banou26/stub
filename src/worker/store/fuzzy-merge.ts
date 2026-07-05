@@ -3,10 +3,7 @@ import type { Media } from './types'
 import { titleSimilarity } from '../../sources/utils'
 import { linkSameMediaPairs } from './db'
 
-// Catches the same-show clusters that explicit source handles missed. Conservative on
-// purpose - over-merging is the only dangerous failure mode: a pair must share a release
-// year (no year on either side = no merge), must not conflict on MOVIE/SERIES, and a
-// title pair must reach >=0.9 local-alignment similarity.
+// conservative on purpose: merge needs shared year + non-conflicting format + >=0.9 title similarity
 const SIMILARITY_THRESHOLD = 0.9
 const MAX_TITLES_PER_CLUSTER = 6
 const MAX_CACHED_DECISIONS = 50_000
@@ -19,10 +16,10 @@ type ClusterProfile = {
   titles: string[]
   years: Set<number>
   formats: Set<Format>
+  cacheKey: string
 }
 
-// titleSimilarity's normalization (lowercase, alphanumeric) plus article stripping, so
-// "Beyond the Journey's End" and "Beyond Journey's End" compare equal
+// titleSimilarity's normalization plus article stripping, so "Beyond the Journey's End" == "Beyond Journey's End"
 const normalizeTitle = (title: string) =>
   title
     .toLowerCase()
@@ -37,29 +34,27 @@ const yearOf = (date: string | null) => {
   return Number.isNaN(parsed.getTime()) ? null : parsed.getUTCFullYear()
 }
 
-const profileCluster = (cluster: Media[]): ClusterProfile => ({
-  cluster,
-  key: cluster.map(media => media.uri).sort()[0]!,
-  titles:
+const profileCluster = (cluster: Media[]): ClusterProfile => {
+  const key = cluster.map(media => media.uri).sort()[0]!
+  const titles =
     [...new Set(
       cluster
         .flatMap(media => media.titles ?? [])
         .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
         .map(({ title }) => normalizeTitle(title))
         .filter(Boolean)
-    )].slice(0, MAX_TITLES_PER_CLUSTER),
-  years:
+    )].slice(0, MAX_TITLES_PER_CLUSTER)
+  const years =
     new Set(
       cluster
         .map(media => yearOf(media.startDate))
         .filter((year): year is number => year !== null)
-    ),
-  formats:
+    )
+  const formats =
     new Set(
       cluster
         .flatMap(media =>
-          // one-off specials straddle the movie/series boundary (Netflix lists them as
-          // movies, anime sources as series) - keep them format-neutral
+          // one-off specials straddle the movie/series boundary - keep them format-neutral
           media.type === 'SPECIAL' || media.type === 'OVA' || media.type === 'ONA' ? []
           : [
             ...media.categories ?? [],
@@ -67,11 +62,19 @@ const profileCluster = (cluster: Media[]): ClusterProfile => ({
           ]
         )
         .filter((category): category is Format => category === 'MOVIE' || category === 'SERIES')
-    ),
-})
+    )
+  return {
+    cluster,
+    key,
+    titles,
+    years,
+    formats,
+    // normalized titles only contain [a-z0-9\s], so ',' cannot collide
+    cacheKey: `${key}#${titles.join(',')}#${[...formats].sort().join(',')}`,
+  }
+}
 
-// Exact upper bound on titleSimilarity (alignment score <= 2×common chars, normalized by
-// 2×longer length) - skips the WASM alignment for pairs that can never reach the threshold
+// exact upper bound on titleSimilarity - skips the WASM alignment for pairs that can never reach the threshold
 const maxPossibleSimilarity = (a: string, b: string) => {
   const counts = new Map<string, number>()
   for (const char of a) counts.set(char, (counts.get(char) ?? 0) + 1)
@@ -99,15 +102,8 @@ const sameShow = async (a: ClusterProfile, b: ClusterProfile) => {
   return false
 }
 
-// normalized titles only contain [a-z0-9\s], so ',' cannot collide
-const profileKey = (profile: ClusterProfile) =>
-  `${profile.key}#${profile.titles.join(',')}#${[...profile.formats].sort().join(',')}`
-
-const pairKey = (a: ClusterProfile, b: ClusterProfile) => {
-  const keyA = profileKey(a)
-  const keyB = profileKey(b)
-  return keyA < keyB ? `${keyA}|${keyB}` : `${keyB}|${keyA}`
-}
+const pairKey = (a: ClusterProfile, b: ClusterProfile) =>
+  a.cacheKey < b.cacheKey ? `${a.cacheKey}|${b.cacheKey}` : `${b.cacheKey}|${a.cacheKey}`
 
 const pairDecisions = new Map<string, boolean>()
 
