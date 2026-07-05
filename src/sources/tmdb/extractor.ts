@@ -41,7 +41,7 @@ type TmdbEpisode = { number: number, title?: string, overview?: string, still?: 
 // The card's title anchor is followed by a release_date span; the date text is
 // locale-dependent so only the year is extracted
 const parseSearchYear = (html: string, id: string): number | undefined => {
-  const span = html.match(new RegExp(`href="/tv/${id}[^"]*"><h2[\\s\\S]{0,400}?class="release_date[^"]*">([^<]*)<`))?.[1]
+  const span = html.match(new RegExp(`href="/tv/${id}(?![0-9])[^"]*"><h2[\\s\\S]{0,400}?class="release_date[^"]*">([^<]*)<`))?.[1]
   const year = span?.match(/\b(?:19|20)\d{2}\b/)?.[0]
   return year ? Number(year) : undefined
 }
