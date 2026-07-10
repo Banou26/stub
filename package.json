@@ -1,47 +1,23 @@
 {
   "name": "@banou/stub",
   "version": "0.0.15",
-  "type": "module",
-  "license": "MIT",
-  "main": "build/index.js",
   "keywords": [
     "fkn",
     "fkn-type:app"
   ],
+  "license": "MIT",
   "files": [
     "build"
   ],
-  "devDependencies": {
-    "@eddeee888/gcg-typescript-resolver-files": "^0.12.1",
-    "@graphql-codegen/cli": "^5.0.7",
-    "@graphql-codegen/typescript": "^4.1.6",
-    "@graphql-codegen/typescript-document-nodes": "^4.0.16",
-    "@graphql-codegen/typescript-resolvers": "^4.5.1",
-    "@graphql-codegen/urql-introspection": "^3.0.1",
-    "@parcel/watcher": "^2.5.1",
-    "@playwright/test": "^1.54.2",
-    "@preact/preset-vite": "^2.10.2",
-    "@types/chai": "^5.2.2",
-    "@types/chai-as-promised": "^8.0.2",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^6.0.1",
-    "chai": "^5.2.1",
-    "chai-as-promised": "^8.0.1",
-    "chai-shallow-deep-equal": "^1.4.6",
-    "patch-package": "^8.0.1",
-    "playwright": "^1.54.2",
-    "shx": "^0.4.0",
-    "typescript": "^5.9.2",
-    "vite": "^8.0.0",
-    "vite-plugin-node-polyfills": "^0.25.0"
-  },
+  "type": "module",
+  "main": "build/index.js",
   "scripts": {
     "postinstall": "patch-package",
-    "dev": "vite --port 4560",
-    "test-server": "vite --port 7357 --config vite.test.config.ts",
-    "build": "npm run gql-generate && vite build",
-    "build-test": "vite build --config vite.test.config.ts",
-    "build-test-watch": "vite build --config vite.test.config.ts --watch",
+    "dev": "vp dev --port 4560",
+    "test-server": "vp dev --port 7357 --config vite.test.config.ts",
+    "build": "npm run gql-generate && vp build",
+    "build-test": "vp build --config vite.test.config.ts",
+    "build-test-watch": "vp build --config vite.test.config.ts --watch",
     "test": "npm run build-test && playwright test",
     "test-watch": "set PWTEST_WATCH=1 & playwright test",
     "test-watch-headful": "playwright test --ui",
@@ -78,7 +54,40 @@
     "urql": "^4.2.2",
     "wouter": "^3.7.1"
   },
+  "devDependencies": {
+    "@eddeee888/gcg-typescript-resolver-files": "^0.12.1",
+    "@graphql-codegen/cli": "^5.0.7",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-document-nodes": "^4.0.16",
+    "@graphql-codegen/typescript-resolvers": "^4.5.1",
+    "@graphql-codegen/urql-introspection": "^3.0.1",
+    "@parcel/watcher": "^2.5.1",
+    "@playwright/test": "^1.54.2",
+    "@preact/preset-vite": "^2.10.2",
+    "@types/chai": "^5.2.2",
+    "@types/chai-as-promised": "^8.0.2",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^6.0.1",
+    "chai": "^5.2.1",
+    "chai-as-promised": "^8.0.1",
+    "chai-shallow-deep-equal": "^1.4.6",
+    "patch-package": "^8.0.1",
+    "playwright": "^1.54.2",
+    "shx": "^0.4.0",
+    "typescript": "^5.9.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.4",
+    "vite-plugin-node-polyfills": "^0.25.0",
+    "vite-plus": "0.2.4"
+  },
   "overrides": {
-    "lodash": "^4.18.1"
+    "lodash": "^4.18.1",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.4"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "12.0.1",
+      "onFail": "download"
+    }
   }
 }
