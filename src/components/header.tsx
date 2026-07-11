@@ -135,8 +135,6 @@ export const Header = () => {
   return (
     <header css={style}>
       <Link to={getRoutePath(Route.HOME)} className="logo">stub</Link>
-      <Link to={getRoutePath(Route.LEGAL)} className="nav-link">Legal</Link>
-      <Link to={getRoutePath(Route.PRIVACY)} className="nav-link">Privacy</Link>
       <Link to={getRoutePath(Route.SETTINGS)} className="nav-link">Settings</Link>
       <form
         className="search"
