@@ -154,13 +154,15 @@ const getSeasonNow = (page = 1, context: ExtractorServerContext) =>
 
 const getFullSeasonNow = async (context: ExtractorServerContext) => {
   const { data, pagination } = await getSeasonNow(1, context)
+  // rate limited pages respond without data, degrade to whatever pages made it through
+  if (!data) return []
   return (
     [
       ...data,
       ...(await Promise.all(
-        new Array(Math.min(2, pagination.last_visible_page - 1))
+        new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
           .fill(undefined)
-          .map((_, i) => getSeasonNow(i + 2, context).then(({ data }) => data))
+          .map((_, i) => getSeasonNow(i + 2, context).then(({ data }) => data ?? []))
       )).flat()
     ]
       .map(mediaData => normalizeMedia(mediaData, context))
