@@ -62,6 +62,11 @@ const style = css`
       position: relative;
     }
   }
+
+  &.full-title .information,
+  &.full-title .information .title {
+    max-height: none;
+  }
 }
 
 /* On mobile the search grid wants fluid cards (it sets no inline size); the home
@@ -76,7 +81,7 @@ const style = css`
 }
 `
 
-const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'titles' | 'covers'>, to: Path }) => {
+const MediaTitle = ({ media, to, ellipsis = true, ...rest }: React.ButtonHTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement>, media: Pick<Media, 'titles' | 'covers'>, to: Path, ellipsis?: boolean }) => {
   const title = media.titles?.at(0)?.title
   const coverUrl = useCoverUrl(media.covers)
 
@@ -84,7 +89,7 @@ const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivEl
     <div
       {...rest}
       css={style}
-      className="card category-item"
+      className={`card category-item${ellipsis ? '' : ' full-title'}`}
       style={{ ...(typeof rest.style === 'object' ? rest.style : undefined), backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover' }}
     >
       <Link
@@ -95,7 +100,7 @@ const MediaTitle = ({ media, to, ...rest }: React.ButtonHTMLAttributes<HTMLDivEl
       <div className="information">
           <div className="title">
             <Link to={to} className="title-text">
-              <TextEllipsis>{title}</TextEllipsis>
+              {ellipsis ? <TextEllipsis>{title}</TextEllipsis> : title}
             </Link>
           </div>
       </div>

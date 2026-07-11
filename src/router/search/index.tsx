@@ -131,6 +131,7 @@ const Search = () => {
                   key={node._id}
                   media={node}
                   to={getRoutePath(Route.MEDIA, { uri: node.uri })}
+                  ellipsis={false}
                 />
               ))}
             </div>
