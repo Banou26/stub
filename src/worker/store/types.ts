@@ -46,6 +46,7 @@ export type Episode = {
   origin: string
   id: string
   url: string | null
+  embedUrl: string | null
   mediaUri: Uri
   score: number | null
   titles: Title[]

@@ -1,0 +1,23 @@
+{
+  "name": "@banou/stub-source-example",
+  "version": "0.0.1",
+  "description": "Example stub source plugin, a tiny static catalog served over the FKN packages API",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "fkn",
+    "fkn-type:plugin",
+    "fkn-plugin--stub"
+  ],
+  "scripts": {
+    "build": "vp build",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@fkn/lib": "^0.6.0",
+    "vite-plus": "^0.2.4"
+  }
+}

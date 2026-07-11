@@ -3,6 +3,7 @@ import { render } from 'preact'
 import { Provider } from 'urql'
 
 import './worker.ts'
+import './plugins.ts'
 import client from './urql'
 import Router from './router'
 import { pushKeys } from './utils/keys'
