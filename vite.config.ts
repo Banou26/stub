@@ -44,7 +44,8 @@ export default defineConfig((_) => ({
   },
   // Don't pre-bundle the file:-linked @fkn/lib - its dep cache goes stale when we
   // rebuild the lib, which silently loads an old copy (e.g. a prod-origin /api iframe).
-  optimizeDeps: { exclude: ['@fkn/lib'] },
+  // Its nested CJS dep still needs pre-bundling, else named imports (Address4) break in dev.
+  optimizeDeps: { exclude: ['@fkn/lib'], include: ['@fkn/lib > ip-address'] },
   resolve: {
     alias: {
       react: 'preact/compat',
