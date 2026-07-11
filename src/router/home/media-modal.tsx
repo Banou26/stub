@@ -187,11 +187,24 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .thumbnail {
+          position: relative;
+          flex-shrink: 0;
           margin: auto 0;
           height: 7.5rem;
+          aspect-ratio: 16 / 9;
+          object-fit: cover;
           background-color: rgba(255, 255, 255, .1);
           border-radius: .5rem;
           margin-right: 2.5rem;
+
+          /* a broken img renders as a normal element, so this covers the broken glyph; loaded images ignore it */
+          &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: .5rem;
+            background-color: rgb(35, 35, 35);
+          }
         }
 
         .content {
@@ -442,9 +455,9 @@ const Episode = (
       }
       <div className="number">{episode.episodeNumber}</div>
       {
-        episode.thumbnails?.at(0)
-          ? <img className="thumbnail" src={episode.thumbnails?.at(0)?.url}></img>
-          : undefined
+        episode.thumbnails?.at(0)?.url
+          ? <img className="thumbnail" src={episode.thumbnails.at(0)?.url}></img>
+          : <div className="thumbnail"></div>
       }
       {
         episode.titles?.length
