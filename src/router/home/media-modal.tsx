@@ -187,24 +187,16 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .thumbnail {
-          position: relative;
           flex-shrink: 0;
           margin: auto 0;
           height: 7.5rem;
           aspect-ratio: 16 / 9;
           object-fit: cover;
-          background-color: rgba(255, 255, 255, .1);
+          background-color: rgb(35, 35, 35);
           border-radius: .5rem;
           margin-right: 2.5rem;
-
-          /* a broken img renders as a normal element, so this covers the broken glyph; loaded images ignore it */
-          &::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: .5rem;
-            background-color: rgb(35, 35, 35);
-          }
+          /* decorative only, let the row link under it take hovers and clicks */
+          pointer-events: none;
         }
 
         .content {
@@ -407,6 +399,7 @@ const Episode = (
   { episode, index, mediaUri }:
   { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number, mediaUri: string }
 ) => {
+  const [thumbnailBroken, setThumbnailBroken] = useState(false)
   const origins =
     episode.uri
       ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
@@ -455,8 +448,8 @@ const Episode = (
       }
       <div className="number">{episode.episodeNumber}</div>
       {
-        episode.thumbnails?.at(0)?.url
-          ? <img className="thumbnail" src={episode.thumbnails.at(0)?.url}></img>
+        episode.thumbnails?.at(0)?.url && !thumbnailBroken
+          ? <img className="thumbnail" src={episode.thumbnails.at(0)?.url} onError={() => setThumbnailBroken(true)}></img>
           : <div className="thumbnail"></div>
       }
       {
