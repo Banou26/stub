@@ -68,7 +68,9 @@ export const YoutubeMinimalPlayer = (
       css={youtubeStyle}
       onPlaying={onPlaying}
       onWaiting={onWaiting}
-      controls={false}
+      // controls=0 gets youtube's minimal ui with a persistent center button, classic chrome idle
+      // hides instead, and both surfaces crop the iframe so the bar and title sit off screen
+      controls={true}
       src={url}
       loop={true}
       volume={volume}
