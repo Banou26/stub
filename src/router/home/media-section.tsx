@@ -132,7 +132,9 @@ const CellComponent = (
                 ...styles,
                 position: strategy,
                 top: y ?? 0,
-                left: x ?? 0
+                left: x ?? 0,
+                // above the category bar (z-index 1) and sticky header (100), below the media modal (1000)
+                zIndex: 150
               }}
               {...getFloatingProps()}
             />
