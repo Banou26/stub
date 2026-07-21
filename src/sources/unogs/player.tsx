@@ -3,7 +3,7 @@ import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
-import { attachFrame } from '@fkn/lib'
+import { attachFrame, isExtensionExposed } from '@fkn/lib'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import NetflixVideoJSPlayer from './nf-videojs-player'
@@ -106,7 +106,12 @@ const waitForVideoElement = async (frame: Frame, isCancelled: () => boolean) => 
   while (!isCancelled()) {
     try {
       if (await frame.locator('video').exists()) return await frame.locator('video').videoElement()
-    } catch { /* frame torn down or not ready yet; retry */ }
+    } catch (err) {
+      // Terminal: this backend can never produce the handle (the cloud path
+      // rejects videoElement); surface it instead of polling forever.
+      if ((err as Error | null)?.name === 'LocatorUnsupportedError') throw err
+      /* frame torn down or not ready yet; retry */
+    }
     await new Promise(r => setTimeout(r, 200))
   }
   return null
@@ -179,7 +184,17 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
       for (let attempt = 0; !cancelled; attempt++) {
         try {
           const f = await attachFrame({ iframe, domains: NETFLIX_DOMAINS })
-          if (!cancelled) setFrame(f)
+          if (cancelled) return
+          // Without an exposed extension, attachFrame degrades to the cloud
+          // render proxy, which cannot hand back the RemoteVideoElement this
+          // player is built around (and the skin-driven seek needs it). Say so
+          // instead of spinning forever against an unsupported backend.
+          if (!isExtensionExposed()) {
+            setError('Netflix playback currently needs the FKN browser extension.')
+            setLoading(false)
+            return
+          }
+          setFrame(f)
           return
         } catch (err) {
           if (cancelled) return

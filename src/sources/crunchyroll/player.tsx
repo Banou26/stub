@@ -3,7 +3,7 @@ import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
-import { attachFrame } from '@fkn/lib'
+import { attachFrame, isExtensionExposed } from '@fkn/lib'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import CrunchyrollVideoJSPlayer from './cr-videojs-player'
@@ -73,6 +73,42 @@ const CRUNCHYROLL_OUTER_CSS = `
   }
 `
 
+// The cloud render proxy cannot hand back a RemoteVideoElement, so on that
+// backend CR's own player stays in charge: hide only the page chrome AROUND
+// the player and stretch it, keeping CR's native controls visible and usable.
+const CRUNCHYROLL_CLOUD_CSS = `
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    background: #000 !important;
+  }
+  *:not(:has(.video-player-wrapper)):not(.video-player-wrapper):not(.video-player-wrapper *) {
+    display: none !important;
+  }
+  .video-player-wrapper,
+  .video-player,
+  .player-container,
+  .video-player-wrapper > *,
+  .video-player > *,
+  .player-container > * {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999999;
+  }
+  .video-player-wrapper video,
+  .video-player video,
+  .player-container video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+`
+
 const BASE_URL = 'https://www.crunchyroll.com'
 const CRUNCHYROLL_LOGIN_URL = (() => {
   const authorizeParams = new URLSearchParams({
@@ -84,6 +120,26 @@ const CRUNCHYROLL_LOGIN_URL = (() => {
 })()
 
 const LOGIN_TIMEOUT = 30_000
+// In-frame sign-in (cloud backend) is human-paced; poll for up to 5 minutes.
+const CLOUD_LOGIN_TIMEOUT = 300_000
+
+type Backend = 'detecting' | 'extension' | 'cloud'
+
+// Which attachFrame backend this player will get. Mirrors the library's own
+// quiet selection (an exposed extension wins, otherwise the cloud render
+// proxy) so the layout can be picked BEFORE the iframe mounts: the two
+// backends need different trees (skin-driven vs native controls) and moving
+// the iframe between parents would tear the attached frame down. On a page
+// that is still loading, wait for load plus a short grace so a document_start
+// content script gets its chance to expose.
+const detectBackend = async (): Promise<Backend> => {
+  if (isExtensionExposed()) return 'extension'
+  if (document.readyState !== 'complete') {
+    await new Promise<void>(resolve => window.addEventListener('load', () => resolve(), { once: true }))
+  }
+  await new Promise(r => setTimeout(r, 300))
+  return isExtensionExposed() ? 'extension' : 'cloud'
+}
 
 // Poll CR's header until it settles into a known auth state: while the
 // shell header is still mounting (`.shell-header`) we keep waiting; once
@@ -114,7 +170,12 @@ const waitForVideoElement = async (frame: Frame, isCancelled: () => boolean) => 
   while (!isCancelled()) {
     try {
       if (await frame.locator('video').exists()) return await frame.locator('video').videoElement()
-    } catch { /* frame torn down or not ready yet; retry */ }
+    } catch (err) {
+      // Terminal: this backend can never produce the handle (the cloud path
+      // rejects videoElement); surface it instead of polling forever.
+      if ((err as Error | null)?.name === 'LocatorUnsupportedError') throw err
+      /* frame torn down or not ready yet; retry */
+    }
     await new Promise(r => setTimeout(r, 100))
   }
   return null
@@ -141,6 +202,12 @@ const styles = css`
     /* CR's own chrome is hidden, so the iframe must not swallow clicks -
        taps belong to the videojs gesture layer stacked above it. */
     pointer-events: none;
+  }
+
+  /* On the cloud backend CR's native controls ARE the player UI (and the
+     in-frame sign-in needs a working form), so the frame takes the taps. */
+  .cr-frame.cloud {
+    pointer-events: auto;
   }
 
   .overlay {
@@ -176,21 +243,40 @@ const styles = css`
 `
 
 const CrunchyrollPlayer = ({ url }: PlayerProps) => {
+  const [mode, setMode] = useState<Backend>('detecting')
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
   const [frame, setFrame] = useState<Frame | null>(null)
   const [loading, setLoading] = useState(true)
   const [loggedOut, setLoggedOut] = useState(false)
+  const [loggingIn, setLoggingIn] = useState(false)
   const [error, setError] = useState<string>()
   const [remoteVideo, setRemoteVideo] = useState<RemoteVideoElement | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
-  // Attach the peer osra channel to the iframe once. The frame outlives
-  // re-logins; only the navigation/auth pass below re-runs.
   useEffect(() => {
-    if (!iframe) return
+    let cancelled = false
+    detectBackend().then(detected => { if (!cancelled) setMode(detected) })
+    return () => { cancelled = true }
+  }, [])
+
+  // Attach the peer osra channel to the iframe once. The frame outlives
+  // re-logins; only the navigation/auth pass below re-runs. If the library
+  // lands on the other backend after all (a content script exposing at the
+  // last moment), flip the mode: the keyed iframe remounts in the right
+  // tree and this effect re-attaches.
+  useEffect(() => {
+    if (!iframe || mode === 'detecting') return
     let cancelled = false
     attachFrame({ iframe, domains: CRUNCHYROLL_DOMAINS })
-      .then(f => { if (!cancelled) setFrame(f) })
+      .then(f => {
+        if (cancelled) return
+        const actual: Backend = isExtensionExposed() ? 'extension' : 'cloud'
+        if (actual !== mode) {
+          setMode(actual)
+          return
+        }
+        setFrame(f)
+      })
       .catch(err => {
         if (cancelled) return
         console.error('Failed to attach Crunchyroll frame', err)
@@ -198,11 +284,13 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
         setLoading(false)
       })
     return () => { cancelled = true }
-  }, [iframe])
+  }, [iframe, mode])
 
-  // Navigate to the watch URL, hide CR's chrome, confirm login, then wait
-  // for the video element. Re-runs when `reloadKey` bumps after a login
-  // round-trip (the cookies are now set, so the same URL resolves authed).
+  // Navigate to the watch URL, hide CR's chrome, confirm login, then (on the
+  // extension backend) wait for the video element. Re-runs when `reloadKey`
+  // bumps after a login round-trip (the cookies are now set, so the same URL
+  // resolves authed). On the cloud backend the proxied page keeps its native
+  // player, so the pass ends at the auth check.
   useEffect(() => {
     if (!frame) return
     let cancelled = false
@@ -212,6 +300,19 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     setLoggedOut(false)
     setRemoteVideo(null)
     ;(async () => {
+      if (mode === 'cloud') {
+        // 'load', not 'documentstart': the render proxy applies locator calls
+        // to the committed document, so the style injection must not race the
+        // navigation.
+        await frame.goto(url, { waitUntil: 'load' })
+        if (cancelled) return
+        await frame.addStyleTag({ content: CRUNCHYROLL_CLOUD_CSS })
+        const { isLoggedIn } = await checkIsLoggedIn(frame)
+        if (cancelled) return
+        setLoading(false)
+        if (!isLoggedIn) setLoggedOut(true)
+        return
+      }
       await frame.goto(url, { waitUntil: 'documentstart' })
       await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
       if (cancelled) return
@@ -232,9 +333,40 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       setLoading(false)
     })
     return () => { cancelled = true }
-  }, [frame, url, reloadKey])
+  }, [frame, url, reloadKey, mode])
 
   const openLogin = useCallback(() => {
+    if (mode === 'cloud') {
+      // The proxied frame reads the render proxy's own cookie jar, which a
+      // popup on the real site never writes. Sign in INSIDE the frame instead:
+      // the session lands in the persistent proxy jar and survives future
+      // attaches. Poll for the signed-in header (the login flow redirects to
+      // the CR home page on success), then return to the watch URL.
+      if (!frame) return
+      setLoggedOut(false)
+      setLoggingIn(true)
+      ;(async () => {
+        await frame.goto(CRUNCHYROLL_LOGIN_URL, { waitUntil: 'load' })
+        const deadline = Date.now() + CLOUD_LOGIN_TIMEOUT
+        while (Date.now() < deadline) {
+          await new Promise(r => setTimeout(r, 1000))
+          const authed = await frame.locator('#user-menu-authenticated').exists()
+            .catch(() => null)
+          if (authed === null) { setLoggingIn(false); return } // frame torn down
+          if (authed) {
+            setLoggingIn(false)
+            setReloadKey(k => k + 1)
+            return
+          }
+        }
+        setLoggingIn(false)
+        setLoggedOut(true)
+      })().catch(() => {
+        setLoggingIn(false)
+        setLoggedOut(true)
+      })
+      return
+    }
     const popup = globalThis.open(CRUNCHYROLL_LOGIN_URL, '_blank', 'width=500,height=700')
     if (!popup) return
     const interval = setInterval(() => {
@@ -242,15 +374,15 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       clearInterval(interval)
       setReloadKey(k => k + 1)
     }, 500)
-  }, [])
+  }, [mode, frame])
 
-  const overlay = (loggedOut || error || loading) && (
+  const overlay = (loggedOut || error || loading) && !loggingIn && (
     <div className="overlay">
       {loggedOut && (
         <>
           You need to be logged in to Crunchyroll to watch this content.
           <button className="login-button" onClick={openLogin}>
-            Open Crunchyroll Login Page
+            {mode === 'cloud' ? 'Sign in inside the player' : 'Open Crunchyroll Login Page'}
           </button>
         </>
       )}
@@ -259,21 +391,36 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     </div>
   )
 
-  // The skin is always mounted with the iframe nested inside its
-  // Container - attachFrame needs the iframe from the start, fullscreen
-  // needs the video inside the fullscreened element, and the skin's
-  // gesture layer needs to sit above it. `remote`/`frame` are null until
-  // the video is ready, at which point media attaches.
+  // Extension backend: the skin is always mounted with the iframe nested
+  // inside its Container - attachFrame needs the iframe from the start,
+  // fullscreen needs the video inside the fullscreened element, and the
+  // skin's gesture layer needs to sit above it. `remote`/`frame` are null
+  // until the video is ready, at which point media attaches.
+  // Cloud backend: no skin; CR's native player takes the pointer events and
+  // fullscreens itself through the delegated allow list. The keyed iframes
+  // keep a mode flip from silently reparenting an attached frame.
   return (
     <div css={styles}>
-      <CrunchyrollVideoJSPlayer remote={remoteVideo} frame={frame}>
+      {mode === 'extension' && (
+        <CrunchyrollVideoJSPlayer remote={remoteVideo} frame={frame}>
+          <iframe
+            key="extension"
+            ref={setIframe}
+            className="cr-frame"
+            referrerPolicy="no-referrer"
+            allow="encrypted-media; autoplay; fullscreen;"
+          />
+        </CrunchyrollVideoJSPlayer>
+      )}
+      {mode === 'cloud' && (
         <iframe
+          key="cloud"
           ref={setIframe}
-          className="cr-frame"
+          className="cr-frame cloud"
           referrerPolicy="no-referrer"
           allow="encrypted-media; autoplay; fullscreen;"
         />
-      </CrunchyrollVideoJSPlayer>
+      )}
       {overlay}
     </div>
   )
