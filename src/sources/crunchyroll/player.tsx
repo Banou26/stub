@@ -530,14 +530,17 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     setPopupBlocked(false)
     setPopupOpen(true)
     popupRef.current = popup
-    popupInterval.current = setInterval(() => {
+    const interval = setInterval(() => {
       if (!popup.closed) return
-      clearInterval(popupInterval.current!)
-      popupInterval.current = null
-      popupRef.current = null
+      clearInterval(interval)
+      // Only release the refs if they still belong to THIS popup: a stale tick
+      // from a previous episode's watcher must not clear a newer popup's.
+      if (popupInterval.current === interval) popupInterval.current = null
+      if (popupRef.current === popup) popupRef.current = null
       setPopupOpen(false)
       setReloadKey(k => k + 1)
     }, 500)
+    popupInterval.current = interval
   }, [url])
 
   // Release the close-watcher if the player unmounts with a popup still open.
