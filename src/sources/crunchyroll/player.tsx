@@ -544,7 +544,8 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
 
   // On an episode switch, close the old episode's login popup (it would
   // otherwise linger and its session write would never reload this episode),
-  // then drop the single-flight lock so this episode's login button works.
+  // then drop the single-flight lock and any blocked-popup notice so this
+  // episode's login button works.
   useEffect(() => {
     if (popupRef.current !== null) {
       popupRef.current.close()
@@ -555,6 +556,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       popupInterval.current = null
       setPopupOpen(false)
     }
+    setPopupBlocked(false)
   }, [url])
 
   // While logging in on the cloud backend the frame shows CR's own login page
