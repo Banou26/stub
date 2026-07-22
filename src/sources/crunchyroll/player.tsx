@@ -529,8 +529,13 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     }, 500)
   }, [url])
 
-  // Release the close-watcher if the player unmounts with a popup still open.
+  // Release the close-watcher and close the popup if the player unmounts with
+  // one still open, so it cannot linger as a duplicate player.
   useEffect(() => () => {
+    if (popupRef.current !== null) {
+      popupRef.current.close()
+      popupRef.current = null
+    }
     if (popupInterval.current !== null) {
       clearInterval(popupInterval.current)
       popupInterval.current = null
@@ -563,11 +568,22 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   // element anyway. Clearing frame and error lets the whole attach + navigate
   // pass start clean.
   const retry = useCallback(() => {
+    // Close any in-flight login popup: its stale close would otherwise fire a
+    // redundant reload against the fresh frame.
+    if (popupRef.current !== null) {
+      popupRef.current.close()
+      popupRef.current = null
+    }
+    if (popupInterval.current !== null) {
+      clearInterval(popupInterval.current)
+      popupInterval.current = null
+    }
     setFrame(null)
     setError(undefined)
     setRemoteVideo(null)
     setLoggedOut(false)
     setPopupBlocked(false)
+    setPopupOpen(false)
     setLoading(true)
     setAttachKey(k => k + 1)
   }, [])
