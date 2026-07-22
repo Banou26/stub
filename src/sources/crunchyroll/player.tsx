@@ -347,6 +347,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [popupOpen, setPopupOpen] = useState(false)
   const [popupBlocked, setPopupBlocked] = useState(false)
   const popupInterval = useRef<ReturnType<typeof setInterval> | null>(null)
+  const popupRef = useRef<Window | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -517,10 +518,12 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     }
     setPopupBlocked(false)
     setPopupOpen(true)
+    popupRef.current = popup
     popupInterval.current = setInterval(() => {
       if (!popup.closed) return
       clearInterval(popupInterval.current!)
       popupInterval.current = null
+      popupRef.current = null
       setPopupOpen(false)
       setReloadKey(k => k + 1)
     }, 500)
@@ -534,11 +537,14 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     }
   }, [])
 
-  // On an episode switch, drop the single-flight lock: the old popup (if still
-  // open) belongs to the previous episode, so its close should not reload this
-  // one, and this episode's login button must work. Close the old popup too so
-  // it cannot linger as a duplicate player.
+  // On an episode switch, close the old episode's login popup (it would
+  // otherwise linger and its session write would never reload this episode),
+  // then drop the single-flight lock so this episode's login button works.
   useEffect(() => {
+    if (popupRef.current !== null) {
+      popupRef.current.close()
+      popupRef.current = null
+    }
     if (popupInterval.current !== null) {
       clearInterval(popupInterval.current)
       popupInterval.current = null
