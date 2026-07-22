@@ -376,7 +376,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       .catch(err => {
         if (cancelled) return
         console.error('Failed to attach Crunchyroll frame', err)
-        setError(err?.message ?? 'Failed to load player')
+        setError(err?.message || 'Failed to load player')
         setLoading(false)
       })
     return () => { cancelled = true }
