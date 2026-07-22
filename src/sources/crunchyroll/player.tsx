@@ -345,6 +345,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [reloadKey, setReloadKey] = useState(0)
   const [attachKey, setAttachKey] = useState(0)
   const [popupOpen, setPopupOpen] = useState(false)
+  const [popupBlocked, setPopupBlocked] = useState(false)
   const popupInterval = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
@@ -507,11 +508,14 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     if (popupInterval.current !== null) return
     const popup = globalThis.open(buildLoginUrl(url, false), '_blank', 'width=500,height=700')
     if (!popup) {
-      // Popup blocked: tell the user instead of failing silently.
-      setError('The login popup was blocked. Allow popups for this page and try again.')
+      // Popup blocked: tell the user instead of failing silently. Track it
+      // separately from a real error so the retry button re-opens the popup
+      // rather than needlessly re-attaching the frame.
+      setPopupBlocked(true)
       setLoading(false)
       return
     }
+    setPopupBlocked(false)
     setPopupOpen(true)
     popupInterval.current = setInterval(() => {
       if (!popup.closed) return
@@ -556,10 +560,12 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     setFrame(null)
     setError(undefined)
     setRemoteVideo(null)
+    setLoggedOut(false)
+    setPopupBlocked(false)
     setLoading(true)
     setAttachKey(k => k + 1)
   }, [])
-  const overlay = (loading || error || (loggedOut && !loggingIn)) && (
+  const overlay = (loading || error || popupBlocked || (loggedOut && !loggingIn)) && (
     <div className="overlay">
       {loggedOut && !error && (
         <>
@@ -572,6 +578,12 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
             )
             : <button className="login-button" onClick={retry}>Try signing in again</button>
           }
+        </>
+      )}
+      {popupBlocked && !error && (
+        <>
+          The login popup was blocked. Allow popups for this page and try again.
+          <button className="login-button" onClick={openLogin}>Open Crunchyroll Login Page</button>
         </>
       )}
       {error && (
