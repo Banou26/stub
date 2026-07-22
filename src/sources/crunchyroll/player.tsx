@@ -258,7 +258,12 @@ const waitForVideoElement = async (frame: Frame, isCancelled: () => boolean) => 
   const deadline = Date.now() + VIDEO_TIMEOUT
   while (!isCancelled() && Date.now() < deadline) {
     try {
-      if (await frame.locator('video').exists()) return await frame.locator('video').videoElement()
+      if (await frame.locator('video').exists()) {
+        // Recheck after the awaited query: a cancel during it must not create a
+        // handle against a frame the next pass may be navigating.
+        if (isCancelled()) return null
+        return await frame.locator('video').videoElement()
+      }
     } catch (err) {
       // Terminal: this backend can never produce the handle (the cloud path
       // rejects videoElement); surface it instead of polling forever.
