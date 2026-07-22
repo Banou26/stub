@@ -4,7 +4,7 @@ import type { PlayerProps } from '../players'
 
 import { css } from '@emotion/react'
 import { attachFrame, isExtensionExposed } from '@fkn/lib'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 import CrunchyrollVideoJSPlayer from './cr-videojs-player'
 
@@ -147,7 +147,20 @@ type Backend = 'detecting' | 'extension' | 'cloud'
 const detectBackend = async (): Promise<Backend> => {
   if (isExtensionExposed()) return 'extension'
   if (document.readyState !== 'complete') {
-    await new Promise<void>(resolve => window.addEventListener('load', () => resolve(), { once: true }))
+    // Cap the wait for load: a stalled subresource must not leave the player
+    // stuck in 'detecting' forever. Mirrors the library's own selection grace.
+    // Remove the listener whichever side resolves so a timeout does not leak it.
+    await new Promise<void>(resolve => {
+      const onLoad = () => {
+        clearTimeout(timer)
+        resolve()
+      }
+      const timer = setTimeout(() => {
+        window.removeEventListener('load', onLoad)
+        resolve()
+      }, 10_000)
+      window.addEventListener('load', onLoad, { once: true })
+    })
   }
   await new Promise(r => setTimeout(r, 300))
   return isExtensionExposed() ? 'extension' : 'cloud'
@@ -156,10 +169,12 @@ const detectBackend = async (): Promise<Backend> => {
 // Poll CR's header until it settles into a known auth state: while the
 // shell header is still mounting (`.shell-header`) we keep waiting; once
 // it resolves, `#user-menu-anonymous` means logged out and
-// `#user-menu-authenticated` means logged in.
-const checkIsLoggedIn = async (frame: Frame) => {
+// `#user-menu-authenticated` means logged in. Stops early if the owning
+// effect is cancelled (episode switch, unmount) so a stale pass does not keep
+// issuing locator calls against the shared frame.
+const checkIsLoggedIn = async (frame: Frame, isCancelled: () => boolean) => {
   const deadline = Date.now() + LOGIN_TIMEOUT
-  while (Date.now() < deadline) {
+  while (!isCancelled() && Date.now() < deadline) {
     if (await frame.locator('.shell-header').exists()) {
       await new Promise(r => setTimeout(r, 100))
       continue
@@ -232,11 +247,13 @@ const waitForLoginReturn = async (frame: Frame, isCancelled: () => boolean) => {
 }
 
 // Poll for CR's `<video>` and hand back the revived RemoteVideoElement
-// once the player mounts. On non-watch pages CR's player-wrapper stays
-// empty, so the loop simply keeps waiting until a playable page loads or
-// the effect is cancelled.
+// once the player mounts. Bounded: if no video appears in time the episode is
+// unavailable or the player failed to mount, so surface that instead of
+// leaving a black, inert player.
+const VIDEO_TIMEOUT = 30_000
 const waitForVideoElement = async (frame: Frame, isCancelled: () => boolean) => {
-  while (!isCancelled()) {
+  const deadline = Date.now() + VIDEO_TIMEOUT
+  while (!isCancelled() && Date.now() < deadline) {
     try {
       if (await frame.locator('video').exists()) return await frame.locator('video').videoElement()
     } catch (err) {
@@ -308,6 +325,11 @@ const styles = css`
     &:hover {
       background: #e0651a;
     }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
   }
 `
 
@@ -321,6 +343,9 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [error, setError] = useState<string>()
   const [remoteVideo, setRemoteVideo] = useState<RemoteVideoElement | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
+  const [attachKey, setAttachKey] = useState(0)
+  const [popupOpen, setPopupOpen] = useState(false)
+  const popupInterval = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -377,7 +402,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
         // to the committed document, so nothing may race the navigation.
         await frame.goto(url, { waitUntil: 'load' })
         if (cancelled) return
-        const { isLoggedIn } = await checkIsLoggedIn(frame)
+        const { isLoggedIn } = await checkIsLoggedIn(frame, isCancelled)
         if (cancelled) return
         if (isLoggedIn) {
           // Authed: hide the page chrome and surface CR's native player. The
@@ -423,7 +448,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
         setLoggedOut(false)
         await frame.goto(url, { waitUntil: 'load' })
         if (cancelled) return
-        const { isLoggedIn: stillAuthed } = await checkIsLoggedIn(frame)
+        const { isLoggedIn: stillAuthed } = await checkIsLoggedIn(frame, isCancelled)
         if (cancelled) return
         if (!stillAuthed) {
           setLoading(false)
@@ -431,6 +456,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
           return
         }
         await frame.addStyleTag({ content: CRUNCHYROLL_CLOUD_CSS })
+        if (cancelled) return
         setLoading(false)
         return
       }
@@ -442,18 +468,23 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       await frame.goto(url, { waitUntil: 'documentstart' })
       await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
       if (cancelled) return
-      const { isLoggedIn } = await checkIsLoggedIn(frame)
+      const { isLoggedIn } = await checkIsLoggedIn(frame, isCancelled)
       if (cancelled) return
-      setLoading(false)
       if (!isLoggedIn) {
+        setLoading(false)
         // The frame shares the user's real browser session, so a popup on the
         // real site sets the cookie the frame uses. The overlay's login button
         // drives that round-trip.
         setLoggedOut(true)
         return
       }
+      // Keep the loading overlay up while the video mounts so a slow start
+      // shows progress instead of a black player. On timeout this throws to a
+      // recoverable error (Retry re-attaches).
       const video = await waitForVideoElement(frame, isCancelled)
-      if (cancelled || !video) return
+      if (cancelled) return
+      setLoading(false)
+      if (!video) throw new Error('The episode did not load a player. It may be unavailable or require a different plan.')
       setRemoteVideo(video)
     })().catch(err => {
       if (cancelled) return
@@ -471,13 +502,44 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   // it does not start a second player there), then reload the player once it
   // closes.
   const openLogin = useCallback(() => {
+    // Single-flight: one popup and one close-watcher at a time, so a second
+    // click cannot open a parallel login or fire a redundant reload on close.
+    if (popupInterval.current !== null) return
     const popup = globalThis.open(buildLoginUrl(url, false), '_blank', 'width=500,height=700')
-    if (!popup) return
-    const interval = setInterval(() => {
+    if (!popup) {
+      // Popup blocked: tell the user instead of failing silently.
+      setError('The login popup was blocked. Allow popups for this page and try again.')
+      setLoading(false)
+      return
+    }
+    setPopupOpen(true)
+    popupInterval.current = setInterval(() => {
       if (!popup.closed) return
-      clearInterval(interval)
+      clearInterval(popupInterval.current!)
+      popupInterval.current = null
+      setPopupOpen(false)
       setReloadKey(k => k + 1)
     }, 500)
+  }, [url])
+
+  // Release the close-watcher if the player unmounts with a popup still open.
+  useEffect(() => () => {
+    if (popupInterval.current !== null) {
+      clearInterval(popupInterval.current)
+      popupInterval.current = null
+    }
+  }, [])
+
+  // On an episode switch, drop the single-flight lock: the old popup (if still
+  // open) belongs to the previous episode, so its close should not reload this
+  // one, and this episode's login button must work. Close the old popup too so
+  // it cannot linger as a duplicate player.
+  useEffect(() => {
+    if (popupInterval.current !== null) {
+      clearInterval(popupInterval.current)
+      popupInterval.current = null
+      setPopupOpen(false)
+    }
   }, [url])
 
   // While logging in on the cloud backend the frame shows CR's own login page
@@ -485,14 +547,29 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   // loading / error, and a logged-out prompt: a popup-driven login button on
   // the extension backend, or on cloud (after the user backed out of the
   // in-frame sign-in) a retry that re-runs the automatic in-frame login.
-  const retry = useCallback(() => setReloadKey(k => k + 1), [])
+  // Retry after an error. Bumping attachKey remounts the iframe (keyed on it)
+  // so attachFrame runs against a fresh element: the cloud backend refuses to
+  // re-attach an iframe it already attached, and a lost frame needs a fresh
+  // element anyway. Clearing frame and error lets the whole attach + navigate
+  // pass start clean.
+  const retry = useCallback(() => {
+    setFrame(null)
+    setError(undefined)
+    setRemoteVideo(null)
+    setLoading(true)
+    setAttachKey(k => k + 1)
+  }, [])
   const overlay = (loading || error || (loggedOut && !loggingIn)) && (
     <div className="overlay">
       {loggedOut && !error && (
         <>
           You need to be logged in to Crunchyroll to watch this content.
           {mode === 'extension'
-            ? <button className="login-button" onClick={openLogin}>Open Crunchyroll Login Page</button>
+            ? (
+              <button className="login-button" onClick={openLogin} disabled={popupOpen}>
+                {popupOpen ? 'Finish signing in the popup...' : 'Open Crunchyroll Login Page'}
+              </button>
+            )
             : <button className="login-button" onClick={retry}>Try signing in again</button>
           }
         </>
@@ -520,7 +597,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       {mode === 'extension' && (
         <CrunchyrollVideoJSPlayer remote={remoteVideo} frame={frame}>
           <iframe
-            key="extension"
+            key={`extension-${attachKey}`}
             ref={setIframe}
             className="cr-frame"
             referrerPolicy="no-referrer"
@@ -530,7 +607,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       )}
       {mode === 'cloud' && (
         <iframe
-          key="cloud"
+          key={`cloud-${attachKey}`}
           ref={setIframe}
           className="cr-frame cloud"
           referrerPolicy="no-referrer"
