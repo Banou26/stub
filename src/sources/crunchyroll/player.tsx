@@ -529,28 +529,22 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     }, 500)
   }, [url])
 
-  // Release the close-watcher and close the popup if the player unmounts with
-  // one still open, so it cannot linger as a duplicate player.
+  // Release the close-watcher if the player unmounts with a popup still open.
+  // Leave the popup itself open: it returns to a neutral page (not the
+  // episode), so it cannot become a duplicate player, and closing it mid
+  // sign-in would abort the SSO before the shared session cookie is set.
   useEffect(() => () => {
-    if (popupRef.current !== null) {
-      popupRef.current.close()
-      popupRef.current = null
-    }
     if (popupInterval.current !== null) {
       clearInterval(popupInterval.current)
       popupInterval.current = null
     }
   }, [])
 
-  // On an episode switch, close the old episode's login popup (it would
-  // otherwise linger and its session write would never reload this episode),
-  // then drop the single-flight lock and any blocked-popup notice so this
-  // episode's login button works.
+  // On an episode switch, drop the single-flight lock and any blocked-popup
+  // notice so this episode's login button works. Leave the popup open for the
+  // same reason as unmount: its session write still lands in the shared
+  // browser jar, and this episode rechecks auth on its own navigation.
   useEffect(() => {
-    if (popupRef.current !== null) {
-      popupRef.current.close()
-      popupRef.current = null
-    }
     if (popupInterval.current !== null) {
       clearInterval(popupInterval.current)
       popupInterval.current = null
