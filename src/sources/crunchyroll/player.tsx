@@ -179,6 +179,9 @@ const checkIsLoggedIn = async (frame: Frame, isCancelled: () => boolean) => {
       await new Promise(r => setTimeout(r, 100))
       continue
     }
+    // Recheck after the awaited query: a cancel during it must not launch the
+    // auth-marker locators against a frame the next pass may be navigating.
+    if (isCancelled()) throw new Error('Login state check timed out')
     const [isLoggedOut, isLoggedIn] = await Promise.all([
       frame.locator('#user-menu-anonymous').exists(),
       frame.locator('#user-menu-authenticated').exists()
@@ -583,6 +586,15 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     setLoading(true)
     setAttachKey(k => k + 1)
   }, [])
+
+  // Shallow restart for a cloud backout: the frame is healthy, so just re-run
+  // the navigation/auth pass (which re-enters the in-frame login) instead of
+  // paying for a fresh attach.
+  const retryLogin = useCallback(() => {
+    setLoggedOut(false)
+    setLoading(true)
+    setReloadKey(k => k + 1)
+  }, [])
   const overlay = (loading || error || popupBlocked || (loggedOut && !loggingIn)) && (
     <div className="overlay">
       {loggedOut && !error && !popupBlocked && (
@@ -594,7 +606,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
                 {popupOpen ? 'Finish signing in the popup...' : 'Open Crunchyroll Login Page'}
               </button>
             )
-            : <button className="login-button" onClick={retry}>Try signing in again</button>
+            : <button className="login-button" onClick={retryLogin}>Try signing in again</button>
           }
         </>
       )}
