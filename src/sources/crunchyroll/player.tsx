@@ -476,6 +476,9 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       // On the wall page those selectors match nothing, so a logged-out user
       // is unaffected.
       await frame.goto(url, { waitUntil: 'documentstart' })
+      // Recheck before styling: a cancel during goto must not inject the CSS
+      // into a document the next pass may already be navigating.
+      if (cancelled) return
       await frame.addStyleTag({ content: CRUNCHYROLL_OUTER_CSS })
       if (cancelled) return
       const { isLoggedIn } = await checkIsLoggedIn(frame, isCancelled)
