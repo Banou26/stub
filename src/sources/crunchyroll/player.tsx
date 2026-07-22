@@ -76,6 +76,9 @@ const CRUNCHYROLL_OUTER_CSS = `
 // The cloud render proxy cannot hand back a RemoteVideoElement, so on that
 // backend CR's own player stays in charge: hide only the page chrome AROUND
 // the player and stretch it, keeping CR's native controls visible and usable.
+// The controls live in a separate `player-controls-root` OUTSIDE the wrapper,
+// so they must be excluded from the chrome collapse explicitly, not just
+// assumed to be inside it.
 const CRUNCHYROLL_CLOUD_CSS = `
   html, body {
     margin: 0 !important;
@@ -85,7 +88,7 @@ const CRUNCHYROLL_CLOUD_CSS = `
     overflow: hidden !important;
     background: #000 !important;
   }
-  *:not(:has(.video-player-wrapper)):not(.video-player-wrapper):not(.video-player-wrapper *) {
+  *:not(:has(.video-player-wrapper)):not(.video-player-wrapper):not(.video-player-wrapper *):not(div[data-testid="player-controls-root"]):not(div[data-testid="player-controls-root"] *) {
     display: none !important;
   }
   .video-player-wrapper,
@@ -106,6 +109,9 @@ const CRUNCHYROLL_CLOUD_CSS = `
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
+  }
+  div[data-testid="player-controls-root"] {
+    z-index: 99999999 !important;
   }
 `
 
