@@ -591,7 +591,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   }, [])
   const overlay = (loading || error || popupBlocked || (loggedOut && !loggingIn)) && (
     <div className="overlay">
-      {loggedOut && !error && (
+      {loggedOut && !error && !popupBlocked && (
         <>
           You need to be logged in to Crunchyroll to watch this content.
           {mode === 'extension'
