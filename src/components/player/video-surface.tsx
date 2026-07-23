@@ -110,8 +110,12 @@ type IntrinsicButton = {
   children?: ComponentChildren
 }
 
-const IconButton = (props: IntrinsicButton) => (
-  <button type="button" className="media-button media-button--subtle media-button--icon" {...props} />
+const IconButton = ({ className, ...props }: IntrinsicButton) => (
+  <button
+    type="button"
+    className={`media-button media-button--subtle media-button--icon${className ? ` ${className}` : ''}`}
+    {...props}
+  />
 )
 
 // Shared popover shell for the capability menus: a subtle icon trigger and a
