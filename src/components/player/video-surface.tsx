@@ -211,10 +211,11 @@ const VolumePopover = () => (
 export type VideoSurfaceProps = {
   capabilities?: PlayerCapabilities
   children?: ComponentChildren
+  className?: string
 } & Record<string, unknown>
 
-const VideoSurface = ({ capabilities, children, ...rest }: VideoSurfaceProps) => (
-  <ContainerC className="media-default-skin media-default-skin--video" {...rest}>
+const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfaceProps) => (
+  <ContainerC className={`media-default-skin media-default-skin--video${className ? ` ${className}` : ''}`} {...rest}>
     {children}
     <BufferingIndicatorC
       render={(props: Record<string, unknown>) => (
