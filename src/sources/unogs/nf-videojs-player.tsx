@@ -2,14 +2,8 @@ import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { Media } from '@videojs/core/dom'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
-import { css } from '@emotion/react'
-import { useEffect } from 'preact/hooks'
-import { videoFeatures } from '@videojs/core/dom'
-import { createPlayer, useMediaAttach } from '@videojs/react'
-import { VideoSkin as VideoSkinBase } from '@videojs/react/video'
-
-const VideoSkin = VideoSkinBase as FunctionComponent<Parameters<typeof VideoSkinBase>[0]>
-import '@videojs/react/video/skin.css'
+import Player from '../../components/player'
+import type { PlayerCapabilities } from '../../components/player'
 
 // Netflix's Cadmium is an MSE player that OWNS the <video> timeline: it appends
 // segments only around the position its own scheduler believes it's at, so a raw
@@ -166,45 +160,20 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
   return { media, dispose }
 }
 
-const { Provider } = createPlayer({ features: videoFeatures })
-
-const MediaAttach = ({ remote, frame }: { remote: RemoteVideoElement | null, frame: Frame | null }) => {
-  const setMedia = useMediaAttach()
-  useEffect(() => {
-    if (!setMedia || !remote || !frame) return
-    const { media, dispose } = createNetflixSeekMedia(remote, frame)
-    setMedia(media)
-    return () => { setMedia(null); dispose() }
-  }, [remote, frame, setMedia])
-  return null
-}
-
 type Props = {
   remote: RemoteVideoElement | null
   frame: Frame | null
+  capabilities?: PlayerCapabilities
   children?: ComponentChildren
 }
 
 // The Netflix iframe renders inside the skin's Container (as its first child) so
 // fullscreen (which fullscreens the Container) still carries the video, and so taps
 // land on the skin's gesture layer above the `pointer-events: none` iframe.
-const NetflixVideoJSPlayer = ({ remote, frame, children }: Props) => (
-  <Provider>
-    <MediaAttach remote={remote} frame={frame} />
-    <VideoSkin
-      css={css`
-        position: absolute;
-        inset: 0;
-        border-radius: 0.8rem;
-        background: transparent !important;
-        &.media-default-skin--video {
-          background: transparent !important;
-        }
-      `}
-    >
-      {children}
-    </VideoSkin>
-  </Provider>
+const NetflixVideoJSPlayer = ({ remote, frame, capabilities, children }: Props) => (
+  <Player remote={remote} frame={frame} adapter={createNetflixSeekMedia} capabilities={capabilities}>
+    {children}
+  </Player>
 )
 
-export default NetflixVideoJSPlayer
+export default NetflixVideoJSPlayer as FunctionComponent<Props>

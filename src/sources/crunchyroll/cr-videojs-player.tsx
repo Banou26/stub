@@ -1,15 +1,8 @@
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
-import type { Media } from '@videojs/core/dom'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
-import { css } from '@emotion/react'
-import { useEffect } from 'preact/hooks'
-import { videoFeatures } from '@videojs/core/dom'
-import { createPlayer, useMediaAttach } from '@videojs/react'
-import { VideoSkin as VideoSkinBase } from '@videojs/react/video'
-
-const VideoSkin = VideoSkinBase as FunctionComponent<Parameters<typeof VideoSkinBase>[0]>
-import '@videojs/react/video/skin.css'
+import Player from '../../components/player'
+import type { PlayerCapabilities } from '../../components/player'
 
 // Crunchyroll ships Bitmovin for playback. Bitmovin drives its own MSE
 // segment fetcher off *its* UI events, not off raw `video.currentTime`
@@ -47,7 +40,7 @@ const seekViaTimeline = (frame: Frame, value: number) => {
 // wrapping left is the seek interception: a `set` trap that replays
 // `currentTime` onto CR's timeline while the optimistic write still falls
 // through to the handle so the scrubber UI reflects it immediately.
-const withTimelineSeek = (remote: RemoteVideoElement, frame: Frame): Media =>
+const withTimelineSeek = (remote: RemoteVideoElement, frame: Frame) =>
   new Proxy(remote, {
     set(target, prop, value, receiver) {
       if (prop === 'currentTime' && typeof value === 'number' && Number.isFinite(value)) {
@@ -55,27 +48,16 @@ const withTimelineSeek = (remote: RemoteVideoElement, frame: Frame): Media =>
       }
       return Reflect.set(target, prop, value, receiver)
     },
-  }) as unknown as Media
-
-const { Provider } = createPlayer({ features: videoFeatures })
-
-const MediaAttach = ({ remote, frame }: { remote: RemoteVideoElement | null, frame: Frame | null }) => {
-  const setMedia = useMediaAttach()
-  useEffect(() => {
-    if (!setMedia || !remote || !frame) return
-    setMedia(withTimelineSeek(remote, frame))
-    return () => setMedia(null)
-  }, [remote, frame, setMedia])
-  return null
-}
+  })
 
 type Props = {
   remote: RemoteVideoElement | null
   frame: Frame | null
+  capabilities?: PlayerCapabilities
   children?: ComponentChildren
 }
 
-// The CR iframe is rendered *inside* the skin's Container (as its first
+// The CR iframe renders *inside* the skin's Container (as its first
 // child) for two reasons the sibling layout couldn't satisfy:
 //   1. Fullscreen - the player fullscreens its Container element, so the
 //      iframe carrying the actual video must live inside it, or
@@ -85,26 +67,10 @@ type Props = {
 //      above it (tap → play/pause, double-tap → fullscreen) instead of
 //      falling through to a dead iframe. The skin keeps its default
 //      pointer handling; no root override needed.
-const CrunchyrollVideoJSPlayer = ({ remote, frame, children }: Props) => (
-  <Provider>
-    <MediaAttach remote={remote} frame={frame} />
-    <VideoSkin
-      css={css`
-        position: absolute;
-        inset: 0;
-        border-radius: 0.8rem;
-        /* The v10 media-default-skin--video preset otherwise paints a
-           solid black background; keep it transparent so the iframe's
-           video pixels (the Container's first child) show through. */
-        background: transparent !important;
-        &.media-default-skin--video {
-          background: transparent !important;
-        }
-      `}
-    >
-      {children}
-    </VideoSkin>
-  </Provider>
+const CrunchyrollVideoJSPlayer = ({ remote, frame, capabilities, children }: Props) => (
+  <Player remote={remote} frame={frame} adapter={withTimelineSeek} capabilities={capabilities}>
+    {children}
+  </Player>
 )
 
-export default CrunchyrollVideoJSPlayer
+export default CrunchyrollVideoJSPlayer as FunctionComponent<Props>
