@@ -24,23 +24,24 @@ import {
   VolumeSlider,
 } from '@videojs/react'
 import {
-  AudioLines,
-  Captions,
-  CaptionsOff,
-  Check,
-  LoaderCircle,
-  Maximize,
-  Minimize,
-  Pause,
-  PictureInPicture2,
-  Play,
-  RotateCcw,
-  RotateCw,
-  Settings2,
-  Volume1,
-  Volume2,
-  VolumeX,
-} from 'lucide-react'
+  AudioTracksIcon,
+  CaptionsOffIcon,
+  CaptionsOnIcon,
+  CheckIcon,
+  FullscreenEnterIcon,
+  FullscreenExitIcon,
+  PauseIcon,
+  PipEnterIcon,
+  PipExitIcon,
+  PlayIcon,
+  QualityIcon,
+  RestartIcon,
+  SeekIcon,
+  SpinnerIcon,
+  VolumeHighIcon,
+  VolumeLowIcon,
+  VolumeOffIcon,
+} from './icons'
 
 const SEEK_TIME = 10
 
@@ -169,7 +170,7 @@ const SelectionMenu = ({ selection, icon }: { selection: PlayerSelection, icon: 
                 disabled={pending || ('disabled' in choice && choice.disabled)}
                 onClick={() => select(choice.id)}
               >
-                <span className="media-menu__check">{selected ? <Check size={14} /> : null}</span>
+                <span className="media-menu__check">{selected ? <CheckIcon className="media-icon" /> : null}</span>
                 <span className="media-menu__label">{choice.label}</span>
                 {'description' in choice && choice.description
                   ? <span className="media-menu__description">{choice.description}</span>
@@ -191,9 +192,9 @@ const VolumePopover = () => (
           className="media-button--mute"
           render={<IconButton />}
         >
-          <VolumeX className="media-icon media-icon--volume-off" />
-          <Volume1 className="media-icon media-icon--volume-low" />
-          <Volume2 className="media-icon media-icon--volume-high" />
+          <VolumeOffIcon className="media-icon media-icon--volume-off" />
+          <VolumeLowIcon className="media-icon media-icon--volume-low" />
+          <VolumeHighIcon className="media-icon media-icon--volume-high" />
         </MuteButtonC>
       }
     />
@@ -221,7 +222,7 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
       render={(props: Record<string, unknown>) => (
         <div {...props} className="media-buffering-indicator">
           <div className="media-surface">
-            <LoaderCircle className="media-icon" />
+            <SpinnerIcon className="media-icon" />
           </div>
         </div>
       )}
@@ -246,9 +247,9 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
             <TooltipTrigger
               render={
                 <PlayButtonC className="media-button--play" render={<IconButton />}>
-                  <RotateCcw className="media-icon media-icon--restart" />
-                  <Play className="media-icon media-icon--play" />
-                  <Pause className="media-icon media-icon--pause" />
+                  <RestartIcon className="media-icon media-icon--restart" />
+                  <PlayIcon className="media-icon media-icon--play" />
+                  <PauseIcon className="media-icon media-icon--pause" />
                 </PlayButtonC>
               }
             />
@@ -259,7 +260,7 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
               render={
                 <SeekButtonC seconds={-SEEK_TIME} className="media-button--seek" render={<IconButton />}>
                   <span className="media-icon__container">
-                    <RotateCcw className="media-icon media-icon--seek media-icon--flipped" />
+                    <SeekIcon className="media-icon media-icon--seek media-icon--flipped" />
                     <span className="media-icon__label">{SEEK_TIME}</span>
                   </span>
                 </SeekButtonC>
@@ -272,7 +273,7 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
               render={
                 <SeekButtonC seconds={SEEK_TIME} className="media-button--seek" render={<IconButton />}>
                   <span className="media-icon__container">
-                    <RotateCw className="media-icon media-icon--seek" />
+                    <SeekIcon className="media-icon media-icon--seek" />
                     <span className="media-icon__label">{SEEK_TIME}</span>
                   </span>
                 </SeekButtonC>
@@ -309,22 +310,22 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
             <SelectionMenu
               selection={capabilities.subtitles}
               icon={capabilities.subtitles.selectedId
-                ? <Captions className="media-icon" />
-                : <CaptionsOff className="media-icon" />}
+                ? <CaptionsOnIcon className="media-icon" />
+                : <CaptionsOffIcon className="media-icon" />}
             />
           )}
           {capabilities?.audioTracks && (
-            <SelectionMenu selection={capabilities.audioTracks} icon={<AudioLines className="media-icon" />} />
+            <SelectionMenu selection={capabilities.audioTracks} icon={<AudioTracksIcon className="media-icon" />} />
           )}
           {capabilities?.qualityLevels && (
-            <SelectionMenu selection={capabilities.qualityLevels} icon={<Settings2 className="media-icon" />} />
+            <SelectionMenu selection={capabilities.qualityLevels} icon={<QualityIcon className="media-icon" />} />
           )}
           <TooltipRoot side="top">
             <TooltipTrigger
               render={
                 <PiPButtonC className="media-button--pip" render={<IconButton />}>
-                  <PictureInPicture2 className="media-icon media-icon--pip-enter" />
-                  <PictureInPicture2 className="media-icon media-icon--pip-exit" />
+                  <PipEnterIcon className="media-icon media-icon--pip-enter" />
+                  <PipExitIcon className="media-icon media-icon--pip-exit" />
                 </PiPButtonC>
               }
             />
@@ -334,8 +335,8 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
             <TooltipTrigger
               render={
                 <FullscreenButtonC className="media-button--fullscreen" render={<IconButton />}>
-                  <Maximize className="media-icon media-icon--fullscreen-enter" />
-                  <Minimize className="media-icon media-icon--fullscreen-exit" />
+                  <FullscreenEnterIcon className="media-icon media-icon--fullscreen-enter" />
+                  <FullscreenExitIcon className="media-icon media-icon--fullscreen-exit" />
                 </FullscreenButtonC>
               }
             />
