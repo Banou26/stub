@@ -1,8 +1,10 @@
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
-import Player from '../../components/player'
 import type { PlayerCapabilities } from '../../components/player'
+
+import Player from '../../components/player'
+import { seekCrunchyrollTimeline } from './cr-native-controls'
 
 // Crunchyroll ships Bitmovin for playback. Bitmovin drives its own MSE
 // segment fetcher off *its* UI events, not off raw `video.currentTime`
@@ -16,18 +18,10 @@ import type { PlayerCapabilities } from '../../components/player'
 // writes and replay them onto that slider - no arbitrary-code bridge
 // into the frame, just a named element with a numeric value through the
 // existing locator actions.
-const CR_TIMELINE_SELECTOR = '.timeline-slider'
 const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
 
-// The published @fkn/lib types `fill` as (value, OperationTimeoutOptions)
-// and don't yet surface the permission `reason`; narrow to the shape we
-// rely on so the reason rides along - harmlessly ignored by builds that
-// predate it.
-type SeekableLocator = { fill: (value: string, options?: { reason?: string }) => Promise<unknown> }
-
 const seekViaTimeline = (frame: Frame, value: number) => {
-  (frame.locator(CR_TIMELINE_SELECTOR) as unknown as SeekableLocator)
-    .fill(String(value), { reason: SEEK_REASON })
+  seekCrunchyrollTimeline(frame, value, SEEK_REASON)
     .catch(err => console.warn('[cr] timeline seek failed:', err))
 }
 

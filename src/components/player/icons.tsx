@@ -1,18 +1,9 @@
 import type { FunctionComponent } from 'preact'
 
-// Local icon set matching the stock videojs v10 icon style: 18x18 viewBox,
-// fill="currentColor", simple geometric paths. The videojs icons are
-// internal-only (not exported from @videojs/react), so the paths are copied
-// here. Icons videojs does not provide (settings, audio tracks, quality) are
-// custom but follow the same visual language.
-
 type IconProps = {
   className?: string
 }
 
-// The preact/emotion JSX runtime returns Element, not VNode, so the
-// FunctionComponent annotation fails. The asFC cast is the same trick used
-// for the videojs components in video-surface.tsx.
 const asFC = <P,>(component: unknown): FunctionComponent<P> => component as FunctionComponent<P>
 
 const Icon = asFC<IconProps & { children: any }>(({ className, children }: IconProps & { children: any }) => (
@@ -165,7 +156,8 @@ export const CaptionsOffIcon = asFC<IconProps>(({ className }) => (
 
 export const SpinnerIcon = asFC<IconProps>(({ className }) => (
   <Icon className={className}>
-    <rect width={2} height={5} x={8} y={0.5} opacity={0.5} rx={1}>
+    <g fill="currentColor">
+      <rect width={2} height={5} x={8} y={0.5} opacity={0.5} rx={1}>
       <animate attributeName="opacity" begin="0s" calcMode="linear" dur="1s" repeatCount="indefinite" values="1;0" />
     </rect>
     <rect width={2} height={5} x={12.243} y={2.257} opacity={0.45} rx={1} transform="rotate(45 13.243 4.757)">
@@ -186,15 +178,12 @@ export const SpinnerIcon = asFC<IconProps>(({ className }) => (
     <rect width={5} height={2} x={0.5} y={8} opacity={0.15} rx={1}>
       <animate attributeName="opacity" begin="0.75s" calcMode="linear" dur="1s" repeatCount="indefinite" values="1;0" />
     </rect>
-    <rect width={5} height={2} x={2.257} y={3.757} opacity={0.1} rx={1} transform="rotate(45 4.757 4.757)">
-      <animate attributeName="opacity" begin="0.875s" calcMode="linear" dur="1s" repeatCount="indefinite" values="1;0" />
-    </rect>
+      <rect width={5} height={2} x={2.257} y={3.757} opacity={0.1} rx={1} transform="rotate(45 4.757 4.757)">
+        <animate attributeName="opacity" begin="0.875s" calcMode="linear" dur="1s" repeatCount="indefinite" values="1;0" />
+      </rect>
+    </g>
   </Icon>
 ))
-
-// Custom icons for capabilities videojs does not cover: audio track selection,
-// subtitle settings, and quality selection. These follow the same 18x18
-// fill-based style.
 
 export const AudioTracksIcon = asFC<IconProps>(({ className }) => (
   <Icon className={className}>

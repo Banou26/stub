@@ -1,7 +1,7 @@
 import type { ComponentChildren, FunctionComponent } from 'preact'
 import type { PlayerCapabilities, PlayerSelection } from './types'
 
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import {
   AlertDialog,
   BufferingIndicator,
@@ -44,22 +44,6 @@ import {
 } from './icons'
 
 const SEEK_TIME = 10
-
-// Recomposes the videojs default video skin from its exported parts so the
-// optional capability menus (subtitles, audio tracks, quality) can sit in the
-// controls row as first-class popovers. The stock `VideoSkin` preset renders
-// the same controls hardcoded with no slot for additions, and its captions
-// button only understands DOM textTracks, which a remote media handle does
-// not expose - so the surface is rebuilt here with the source-driven menus in
-// its place. The container keeps the stock `media-default-skin` classes so
-// the published skin.css applies unchanged, and children stay the first
-// child (the media surface: the source iframe).
-//
-// The library's components are typed against React and return
-// `ComponentChild`; under stub's preact/compat aliasing that is not a valid
-// JSX return, so every library component is narrowed to a preact
-// FunctionComponent (same runtime, same trick the per-source players used for
-// `VideoSkin`).
 
 const asFC = <P,>(component: unknown): FunctionComponent<P> => component as FunctionComponent<P>
 
@@ -118,12 +102,12 @@ const IconButton = ({ className, ...props }: IntrinsicButton) => (
   />
 )
 
-// Shared popover shell for the capability menus: a subtle icon trigger and a
-// surface popup listing the choices, mirroring the skin's volume popover.
 const SelectionMenu = ({ selection, icon }: { selection: PlayerSelection, icon: ComponentChildren }) => {
   const [open, setOpen] = useState(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
+
+  useEffect(() => setFailed(false), [selection.selectedId])
 
   const choices = [
     ...(selection.offLabel ? [{ id: null as string | null, label: selection.offLabel }] : []),
@@ -312,6 +296,7 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
           <VolumePopover />
           {capabilities?.subtitles && (
             <SelectionMenu
+              key="subtitles"
               selection={capabilities.subtitles}
               icon={capabilities.subtitles.selectedId
                 ? <CaptionsOnIcon className="media-icon" />
@@ -319,10 +304,10 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
             />
           )}
           {capabilities?.audioTracks && (
-            <SelectionMenu selection={capabilities.audioTracks} icon={<AudioTracksIcon className="media-icon" />} />
+            <SelectionMenu key="audio" selection={capabilities.audioTracks} icon={<AudioTracksIcon className="media-icon" />} />
           )}
           {capabilities?.qualityLevels && (
-            <SelectionMenu selection={capabilities.qualityLevels} icon={<QualityIcon className="media-icon" />} />
+            <SelectionMenu key="quality" selection={capabilities.qualityLevels} icon={<QualityIcon className="media-icon" />} />
           )}
           <TooltipRoot side="top">
             <TooltipTrigger

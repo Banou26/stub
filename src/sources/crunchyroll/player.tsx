@@ -1,12 +1,15 @@
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
 
+import type { PlayerCapabilities } from '../../components/player'
 import type { PlayerProps } from '../players'
+import type { CrunchyrollTrackKind, CrunchyrollTracks } from './cr-native-controls'
 
 import { css } from '@emotion/react'
 import { attachFrame, isExtensionExposed } from '@fkn/lib'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 import CrunchyrollVideoJSPlayer from './cr-videojs-player'
+import { discoverCrunchyrollTracks, selectCrunchyrollTrack } from './cr-native-controls'
 
 const CRUNCHYROLL_DOMAINS = [
   'crunchyroll.com',
@@ -329,6 +332,33 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [popupBlocked, setPopupBlocked] = useState(false)
   const popupInterval = useRef<ReturnType<typeof setInterval> | null>(null)
   const popupRef = useRef<Window | null>(null)
+  const [tracks, setTracks] = useState<CrunchyrollTracks>()
+  const trackGeneration = useRef(0)
+  const trackQueue = useRef({ generation: 0, tail: Promise.resolve() })
+  const mounted = useRef(true)
+
+  const invalidateTracks = useCallback(() => {
+    const generation = trackGeneration.current + 1
+    trackGeneration.current = generation
+    trackQueue.current = { generation, tail: Promise.resolve() }
+    setTracks(undefined)
+    return generation
+  }, [])
+
+  const runTrackOperation = useCallback(<T,>(generation: number, operation: () => Promise<T>) => {
+    if (trackQueue.current.generation !== generation) {
+      return Promise.reject(new Error('Crunchyroll track operation cancelled'))
+    }
+    const queue = trackQueue.current
+    const next = queue.tail.then(operation)
+    queue.tail = next.then(() => {}, () => {})
+    return next
+  }, [])
+
+  useEffect(() => () => {
+    mounted.current = false
+    trackGeneration.current += 1
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -379,6 +409,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     setLoggedOut(false)
     setLoggingIn(false)
     setRemoteVideo(null)
+    invalidateTracks()
     ;(async () => {
       if (mode === 'cloud') {
         // 'load', not 'documentstart': the render proxy applies locator calls
@@ -490,7 +521,85 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
       setLoggingIn(false)
     })
     return () => { cancelled = true }
-  }, [frame, url, reloadKey, mode])
+  }, [frame, url, reloadKey, mode, invalidateTracks])
+
+  useEffect(() => {
+    if (!frame || !remoteVideo) return
+    const generation = invalidateTracks()
+    let cancelled = false
+    const isCancelled = () => cancelled || !mounted.current || generation !== trackGeneration.current
+
+    void (async () => {
+      let lastError: unknown
+      let discovered: CrunchyrollTracks | undefined
+      for (let attempt = 0; attempt < 5 && !isCancelled(); attempt += 1) {
+        try {
+          discovered = await runTrackOperation(
+            generation,
+            () => discoverCrunchyrollTracks(frame, isCancelled),
+          )
+          lastError = undefined
+          if (isCancelled()) return
+          setTracks(discovered)
+          if (discovered.audio && discovered.subtitles) return
+        } catch (err) {
+          lastError = err
+        }
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+      if (!discovered && lastError) throw lastError
+    })().then(
+      () => {},
+      err => { if (!isCancelled()) console.warn('[cr] track discovery failed:', err) },
+    )
+
+    return () => { cancelled = true }
+  }, [frame, remoteVideo, invalidateTracks, runTrackOperation])
+
+  const trackSession = trackGeneration.current
+  const selectTrack = useCallback((kind: CrunchyrollTrackKind, id: string | null) => {
+    if (!frame || !remoteVideo) return Promise.reject(new Error('Crunchyroll player is not ready'))
+    const isCancelled = () => !mounted.current || trackSession !== trackGeneration.current
+
+    return runTrackOperation(trackSession, async () => {
+      try {
+        const nextTracks = await selectCrunchyrollTrack(frame, remoteVideo, kind, id, isCancelled)
+        if (isCancelled()) throw new Error('Crunchyroll track operation cancelled')
+        setTracks(nextTracks)
+      } catch (err) {
+        if (!isCancelled()) {
+          try {
+            const currentTracks = await discoverCrunchyrollTracks(frame, isCancelled)
+            if (!isCancelled()) setTracks(currentTracks)
+          } catch {}
+        }
+        throw err
+      }
+    })
+  }, [frame, remoteVideo, runTrackOperation, trackSession])
+
+  const capabilities: PlayerCapabilities | undefined = tracks?.subtitles || tracks?.audio
+    ? {
+        ...(tracks.subtitles
+          ? {
+              subtitles: {
+                label: 'Subtitles',
+                ...tracks.subtitles,
+                onSelect: id => selectTrack('subtitles', id),
+              },
+            }
+          : {}),
+        ...(tracks.audio
+          ? {
+              audioTracks: {
+                label: 'Audio',
+                ...tracks.audio,
+                onSelect: id => selectTrack('audio', id),
+              },
+            }
+          : {}),
+      }
+    : undefined
 
   // On the extension backend the frame shares the user's real browser session,
   // so a popup on the real site sets the cookie the frame uses. Point it at the
@@ -574,12 +683,13 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     setFrame(null)
     setError(undefined)
     setRemoteVideo(null)
+    invalidateTracks()
     setLoggedOut(false)
     setPopupBlocked(false)
     setPopupOpen(false)
     setLoading(true)
     setAttachKey(k => k + 1)
-  }, [])
+  }, [invalidateTracks])
 
   // Shallow restart for a cloud backout: the frame is healthy, so just re-run
   // the navigation/auth pass (which re-enters the in-frame login) instead of
@@ -629,7 +739,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   return (
     <div css={styles}>
       {mode !== 'detecting' && (
-        <CrunchyrollVideoJSPlayer remote={remoteVideo} frame={frame}>
+        <CrunchyrollVideoJSPlayer remote={remoteVideo} frame={frame} capabilities={capabilities}>
           <iframe
             key={`${mode}-${attachKey}`}
             ref={setIframe}

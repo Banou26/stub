@@ -16,9 +16,6 @@ const { Provider } = createPlayer({ features: videoFeatures })
 const normalizeBinding = (value: Media | PlayerMediaBinding): PlayerMediaBinding =>
   'media' in value ? value : { media: value }
 
-// Attaches the (adapter-shaped) remote media to the player store while the
-// source has produced both the revived <video> and its frame. Detaches and
-// disposes the binding on change/unmount.
 const MediaAttach = ({ remote, frame, adapter }: {
   remote: RemoteVideoElement | null
   frame: Frame | null
@@ -40,9 +37,6 @@ const MediaAttach = ({ remote, frame, adapter }: {
 }
 
 const style = css`
-  /* The v10 media-default-skin--video preset otherwise paints a solid black
-     background; keep it transparent so the iframe's video pixels (the
-     Container's first child) show through. */
   position: absolute;
   inset: 0;
   border-radius: 0.8rem;
@@ -51,8 +45,6 @@ const style = css`
     background: transparent !important;
   }
 
-  /* The capability menus reuse the skin's surface styling; only the list
-     itself needs layout. */
   .media-popover--menu {
     padding: 0.4rem;
   }
@@ -113,18 +105,11 @@ const style = css`
 export type PlayerProps = {
   remote: RemoteVideoElement | null
   frame: Frame | null
-  // Per-source media shaping (seek interception, optimistic state). Omit for
-  // sources whose <video> behaves like a plain media element.
   adapter?: PlayerMediaAdapter
-  // Source-controlled menus; an omitted capability renders no UI for it.
   capabilities?: PlayerCapabilities
   children?: ComponentChildren
 }
 
-// The generic source player: one videojs v10 skin over a revived
-// RemoteVideoElement. The iframe mounts as the skin's first child (the media
-// surface) so attachFrame has it from the start, fullscreen carries the
-// video, and the gesture layer stacks above the pointer-events:none iframe.
 const Player = ({ remote, frame, adapter, capabilities, children }: PlayerProps) => (
   <Provider>
     <MediaAttach remote={remote} frame={frame} adapter={adapter} />

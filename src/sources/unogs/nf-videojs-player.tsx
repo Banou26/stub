@@ -2,8 +2,9 @@ import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { Media } from '@videojs/core/dom'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
-import Player from '../../components/player'
 import type { PlayerCapabilities } from '../../components/player'
+
+import Player from '../../components/player'
 
 // Netflix's Cadmium is an MSE player that OWNS the <video> timeline: it appends
 // segments only around the position its own scheduler believes it's at, so a raw
