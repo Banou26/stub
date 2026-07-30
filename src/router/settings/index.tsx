@@ -3,7 +3,7 @@ import { css } from '@emotion/react'
 
 import { keyConfigs } from '../../sources/key-configs'
 import { loadKeys, saveKeys } from '../../utils/keys'
-import { addPlugins, disablePlugin, onPluginsChange, pluginStatuses, type PluginStatus } from '../../plugins'
+import { addPlugins, disablePlugin, enablePlugin, onPluginsChange, pluginStatuses, type PluginStatus } from '../../plugins'
 
 const style = css`
   max-width: 720px;
@@ -41,6 +41,20 @@ const style = css`
   }
   .saved { color: #4ade80; font-size: .9rem; }
 
+  .add-uri { display: flex; gap: .6rem; margin-top: 1rem; }
+  .add-uri input {
+    flex: 1;
+    min-width: 0;
+    padding: .55rem .8rem;
+    border-radius: .4rem;
+    border: 1px solid rgba(255, 255, 255, .18);
+    background: rgba(255, 255, 255, .05);
+    color: inherit;
+    font-family: monospace;
+  }
+  .add-uri input:focus { outline: none; border-color: rgba(255, 255, 255, .45); }
+  .add-error { color: #f87171; font-size: .85rem; margin: .5rem 0 0; overflow-wrap: anywhere; }
+
   .plugins { display: flex; flex-direction: column; gap: .75rem; margin: 1.5rem 0; }
   .plugin {
     display: flex;
@@ -68,9 +82,30 @@ const Settings = () => {
   const [keys, setKeys] = useState<Record<string, string>>({})
   const [saved, setSaved] = useState(false)
   const [plugins, setPlugins] = useState<PluginStatus[]>(pluginStatuses)
+  const [uri, setUri] = useState('')
+  const [addError, setAddError] = useState('')
 
   useEffect(() => { setKeys(loadKeys()) }, [])
-  useEffect(() => onPluginsChange(() => setPlugins(pluginStatuses())), [])
+  // Re-read on subscribe, not just on notify: a plugin whose frame is already warm connects in a few
+  // milliseconds, which beats the effect that subscribes, and that notify would otherwise be the only
+  // one this row ever gets - leaving a connected source stuck reading "connecting".
+  useEffect(() => {
+    setPlugins(pluginStatuses())
+    return onPluginsChange(() => setPlugins(pluginStatuses()))
+  }, [])
+
+  const onAddUri = (event: Event) => {
+    event.preventDefault()
+    const trimmed = uri.trim()
+    if (!trimmed) return
+    setAddError('')
+    // An address that never installs gets no plugin row, so its failure has nowhere else to show.
+    // Keep the text in the field on failure: a rejected address is usually one worth correcting.
+    enablePlugin(trimmed)
+      .then(() => setUri(''))
+      .catch(error => setAddError(error instanceof Error ? error.message : String(error)))
+      .finally(() => setPlugins(pluginStatuses()))
+  }
 
   const onSubmit = (event: Event) => {
     event.preventDefault()
@@ -114,6 +149,18 @@ const Settings = () => {
           Add sources
         </button>
       </div>
+      <form className="add-uri" onSubmit={onAddUri}>
+        <input
+          type="text"
+          autoComplete="off"
+          spellcheck={false}
+          placeholder="Or add one by address, e.g. npm:@banou/example or localhost:4599"
+          value={uri}
+          onInput={event => setUri((event.target as HTMLInputElement).value)}
+        />
+        <button type="submit">Add</button>
+      </form>
+      {addError && <p className="add-error">{addError}</p>}
       <h2>API keys</h2>
       <p className="intro">
         Some sources need your own API key. Keys are kept in this browser only and are used
