@@ -1,7 +1,10 @@
 import type { Media } from '../../../src/generated/schema/types.generated'
 import type { StubPluginAPI } from '../../../src/plugin-api'
 
-import { packages } from '@fkn/lib'
+// The '@fkn/lib' barrel pulls in the webvpn net/http surface, which needs node stream polyfills a
+// plain vite config does not install, and the bundle then dies on evaluation before onConnect runs.
+// Import the subpath: a plugin needs the packages API and nothing else.
+import * as packages from '@fkn/lib/packages'
 
 // A complete stub source plugin. Publish this package with the keywords in package.json and it
 // becomes discoverable in stub's Add sources picker; stub installs it through FKN, boots it in a
