@@ -316,8 +316,9 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
   }
 }
 
-// Mutable on purpose: remote plugin sources register and unregister at runtime, and every fan-out
-// path maps over this array at subscribe time, so registrations are picked up immediately.
+// Mutable on purpose: remote plugin sources register and unregister at runtime. Reading it at
+// subscribe time is not enough on its own, so registration also joins the fan-outs already running
+// (see `fanouts` below).
 export const extractors = Object.values(extractorDefinitions).map(makeExtractor)
 
 // ─── Remote plugin sources (FKN packages) ────────────────────────────────────
@@ -392,6 +393,11 @@ export const registerRemoteExtractor = async (port: MessagePort, pluginUri: stri
   const remote = await attach(port) as RemotePluginSource
   const origin = typeof remote.origin === 'string' ? remote.origin : ''
   if (!PLUGIN_ORIGIN_TOKEN.test(origin)) throw new Error(`plugin '${pluginUri}': origin must be a short lowercase token`)
+  // A reconnect re-registers the same plugin, so drop its own previous entry before the collision
+  // check. Without this it collides with itself and can never come back: the frame died, its entry
+  // outlived the connection, and every retry is refused for an origin nothing is serving any more.
+  // The check below still refuses a DIFFERENT plugin claiming an origin that is already taken.
+  unregisterRemoteExtractor(pluginUri)
   if (extractors.some(entry => entry.extractor.origin === origin)) throw new Error(`plugin '${pluginUri}': origin '${origin}' is already registered`)
   const definition: ExtractorDefinition = {
     origin,
@@ -406,29 +412,77 @@ export const registerRemoteExtractor = async (port: MessagePort, pluginUri: stri
   const entry = makeExtractor(definition)
   entry.pluginUri = pluginUri
   extractors.push(entry)
+  for (const fanout of fanouts) joinFanout(fanout, entry)
   return { origin, name: definition.name }
 }
 
 export const unregisterRemoteExtractor = (pluginUri: string) => {
   for (let index = extractors.length - 1; index >= 0; index -= 1) {
-    if (extractors[index]!.pluginUri === pluginUri) extractors.splice(index, 1)
+    const entry = extractors[index]!
+    if (entry.pluginUri !== pluginUri) continue
+    extractors.splice(index, 1)
+    for (const fanout of fanouts) leaveFanout(fanout, entry)
   }
 }
 
+type ExtractorEntry = (typeof extractors)[number]
+type FanoutSubscription = ReturnType<ReturnType<ExtractorEntry['client']['subscription']>['subscribe']>
+
+type SubscriptionArgs = Parameters<ExtractorEntry['client']['subscription']>
+
+type Fanout = {
+  query: SubscriptionArgs[0]
+  variables: SubscriptionArgs[1]
+  insertedUris: Set<string>
+  extractUris?: (result: any) => string[]
+  /** the same array the caller holds and unsubscribes, so late joiners are torn down with the rest */
+  subscriptions: FanoutSubscription[]
+  joined: Map<ExtractorEntry, FanoutSubscription>
+}
+
+// Every in-flight fan-out, so a source that registers mid-subscription can still join it. Without
+// this a plugin installed while a page is open contributes nothing until a full navigation: the
+// extractor list was read once at subscribe time and never consulted again.
+const fanouts = new Set<Fanout>()
+
+const joinFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
+  if (fanout.joined.has(extractor)) return
+  const subscription = extractor.client.subscription(fanout.query, fanout.variables).subscribe((result) => {
+    if (!fanout.extractUris) return
+    for (const uri of fanout.extractUris(result) ?? []) {
+      fanout.insertedUris.add(uri)
+    }
+  })
+  fanout.joined.set(extractor, subscription)
+  fanout.subscriptions.push(subscription)
+}
+
+const leaveFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
+  const subscription = fanout.joined.get(extractor)
+  if (!subscription) return
+  fanout.joined.delete(extractor)
+  const index = fanout.subscriptions.indexOf(subscription)
+  if (index !== -1) fanout.subscriptions.splice(index, 1)
+  // a disconnected plugin cannot answer, and the caller's teardown will no longer see this one
+  Promise.resolve(subscription.unsubscribe()).catch(() => {})
+}
+
 export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUris?: (result: any) => string[]) => {
-  const insertedUris = new Set<string>()
+  const fanout: Fanout = {
+    query: ctx.params.query!,
+    variables: ctx.params.variables,
+    insertedUris: new Set<string>(),
+    extractUris,
+    subscriptions: [],
+    joined: new Map(),
+  }
+  for (const extractor of extractors) joinFanout(fanout, extractor)
+  fanouts.add(fanout)
 
-  const subscriptions = extractors.map(extractor =>
-    extractor.client.subscription(
-      ctx.params.query!,
-      ctx.params.variables
-    ).subscribe((result) => {
-      if (!extractUris) return
-      for (const uri of extractUris(result) ?? []) {
-        insertedUris.add(uri)
-      }
-    })
-  )
-
-  return { subscriptions, insertedUris }
+  return {
+    subscriptions: fanout.subscriptions,
+    insertedUris: fanout.insertedUris,
+    /** stop accepting late joiners; the caller still unsubscribes what it holds */
+    close: () => { fanouts.delete(fanout) },
+  }
 }

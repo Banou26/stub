@@ -46,7 +46,7 @@ export const resolvers = {
       resolve: (parent: Media) => parent,
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         if (!args.input.uri || !(isUri(args.input.uri) || isAggregatedUri(args.input.uri))) return
-        const { subscriptions } = proxyRequestToExtractors(ctx)
+        const { subscriptions, close } = proxyRequestToExtractors(ctx)
         const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
         try {
@@ -62,6 +62,7 @@ export const resolvers = {
             }
           }
         } finally {
+          close()
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
         }
       }
@@ -69,7 +70,7 @@ export const resolvers = {
     mediaPage: {
       resolve: (parent: Media[]) => ({ nodes: parent }),
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
-        const { subscriptions, insertedUris } =
+        const { subscriptions, insertedUris, close } =
           proxyRequestToExtractors(
             ctx,
             (result: { data: { mediaPage: MediaPage } }) =>
@@ -126,6 +127,7 @@ export const resolvers = {
             yield await getPage()
           }
         } finally {
+          close()
           await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
         }
       }
