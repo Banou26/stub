@@ -5,6 +5,7 @@ import type { StubPluginAPI } from '../../../src/plugin-api'
 // plain vite config does not install, and the bundle then dies on evaluation before onConnect runs.
 // Import the subpath: a plugin needs the packages API and nothing else.
 import * as packages from '@fkn/lib/packages'
+import { info } from '@fkn/lib/account'
 
 // A complete stub source plugin. Publish this package with the keywords in package.json and it
 // becomes discoverable in stub's Add sources picker; stub installs it through FKN, boots it in a
@@ -70,4 +71,7 @@ packages.onConnect(() => ({
   },
 } satisfies StubPluginAPI), ({ name, version, from, protocol }) => {
   console.log(`${name}@${version}: connected by ${from} over ${protocol}`)
+  // A package follows the host app's FKN account with no second sign-in, and acts as ITSELF: quota,
+  // storage scope and usage all key on this package's own id, never the app's.
+  info().then(account => console.log(`${name}: signed in as`, account?.name ?? 'nobody'))
 })
