@@ -9,7 +9,9 @@ import { info } from '@fkn/lib/account'
 // not '@fkn/lib/cloud': that barrel carries the webvpn net/http surface, which reads node stream
 // internals as it evaluates and takes the whole bundle down before onConnect can run
 import { fetch } from '@fkn/lib/cloud/fetch'
-import { writeFile } from '@fkn/lib/cloud/fs'
+// the promises subpath: '@fkn/lib/cloud/fs' is the node callback-style api, so awaiting it resolves
+// instantly with undefined and then throws when it calls the callback that was never passed
+import { writeFile } from '@fkn/lib/cloud/fs/promises'
 
 // A complete stub source plugin. Publish this package with the keywords in package.json and it
 // becomes discoverable in stub's Add sources picker; stub installs it through FKN, boots it in a
