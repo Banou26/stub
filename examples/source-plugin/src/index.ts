@@ -9,6 +9,7 @@ import { info } from '@fkn/lib/account'
 // not '@fkn/lib/cloud': that barrel carries the webvpn net/http surface, which reads node stream
 // internals as it evaluates and takes the whole bundle down before onConnect can run
 import { fetch } from '@fkn/lib/cloud/fetch'
+import { writeFile } from '@fkn/lib/cloud/fs'
 
 // A complete stub source plugin. Publish this package with the keywords in package.json and it
 // becomes discoverable in stub's Add sources picker; stub installs it through FKN, boots it in a
@@ -62,6 +63,21 @@ const pullCoverArt = async (): Promise<void> => {
   }
 }
 
+// Cloud storage is keyed on the package, like its usage and its quota, so this writes into the
+// PACKAGE's own scope and not into the scope of whichever app mounted it. Two apps hosting this
+// source therefore see one cache, not two.
+//
+// Encrypted storage is sealed until the account is unlocked, and a write while sealed is what asks
+// the host app's page for that unlock. Failing is normal on a first run and costs only the cache.
+const cacheCatalog = async (): Promise<void> => {
+  try {
+    await writeFile('catalog.json', JSON.stringify(CATALOG))
+    console.log('Example Source: cached its catalog in its own cloud storage')
+  } catch (error) {
+    console.warn('Example Source: could not cache the catalog', error)
+  }
+}
+
 packages.onConnect(() => ({
   origin: 'example',
   originUrl: 'https://github.com/Banou26/stub',
@@ -97,5 +113,5 @@ packages.onConnect(() => ({
   // A package follows the host app's FKN account with no second sign-in, and acts as ITSELF: quota,
   // storage scope and usage all key on this package's own id, never the app's.
   info().then(account => console.log(`${name}: signed in as`, account?.name ?? 'nobody'))
-  pullCoverArt().catch(() => {})
+  pullCoverArt().then(cacheCatalog).catch(() => {})
 })
