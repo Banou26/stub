@@ -6,11 +6,13 @@ import type { StubPluginAPI } from '../../../src/plugin-api'
 // Import the subpath: a plugin needs the packages API and nothing else.
 import * as packages from '@fkn/lib/packages'
 import { info } from '@fkn/lib/account'
+// not '@fkn/lib/cloud': that barrel carries the webvpn net/http surface, which reads node stream
+// internals as it evaluates and takes the whole bundle down before onConnect can run
+import { fetch } from '@fkn/lib/cloud/fetch'
 
 // A complete stub source plugin. Publish this package with the keywords in package.json and it
 // becomes discoverable in stub's Add sources picker; stub installs it through FKN, boots it in a
-// hidden sandbox frame, and connects over a brokered port. Real plugins would fetch from an API
-// with the plugin's own @fkn/lib `fetch` here instead of serving a static catalog.
+// hidden sandbox frame, and connects over a brokered port.
 
 const media = (entry: { id: string, title: string, description: string, cover: string }): Media => ({
   _id: `example:${entry.id}`,
@@ -29,15 +31,36 @@ const CATALOG = [
     id: '1',
     title: 'The Example Saga',
     description: 'A demonstration entry served by the stub example source plugin.',
-    cover: 'https://picsum.photos/seed/example1/460/650',
+    cover: 'https://placehold.co/460x650/1f2933/e5e7eb.png?text=The+Example+Saga',
   }),
   media({
     id: '2',
     title: 'Plugin Protocol II',
     description: 'The second demonstration entry, mostly here so search has something to find.',
-    cover: 'https://picsum.photos/seed/example2/460/650',
+    cover: 'https://placehold.co/460x650/1f2933/e5e7eb.png?text=Plugin+Protocol+II',
   }),
 ]
+
+// A real source plugin fetches its catalog from somewhere. This one's catalog is static, so it
+// pulls its own cover art instead: the point is that the request goes through the PACKAGE's own
+// `fetch`, so the bytes meter against the package rather than against the app embedding it.
+//
+// Run once per connection rather than per query, so a plugin that is installed but never browsed
+// still shows a tally. Failures are logged and swallowed: cover art is decoration, and a source
+// that cannot reach the network should still serve the catalog it already holds.
+const pullCoverArt = async (): Promise<void> => {
+  for (const entry of CATALOG) {
+    const url = entry.covers?.[0]?.url
+    if (!url) continue
+    try {
+      const response = await fetch(url)
+      const bytes = (await response.arrayBuffer()).byteLength
+      console.log(`Example Source: pulled ${bytes} bytes of cover art from ${url}`)
+    } catch (error) {
+      console.warn(`Example Source: could not pull ${url}`, error)
+    }
+  }
+}
 
 packages.onConnect(() => ({
   origin: 'example',
@@ -74,4 +97,5 @@ packages.onConnect(() => ({
   // A package follows the host app's FKN account with no second sign-in, and acts as ITSELF: quota,
   // storage scope and usage all key on this package's own id, never the app's.
   info().then(account => console.log(`${name}: signed in as`, account?.name ?? 'nobody'))
+  pullCoverArt().catch(() => {})
 })
