@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
 
 // Simkl (simkl.com) - keyful (BYOK) cross-id aggregator. The user's key is an app client_id,
 // passed as the 'simkl-api-key' header. Without a key the source no-ops. Simkl's value is its
@@ -159,6 +159,7 @@ const normalizeEpisode = (episode: SimklEpisode, mediaId: string, mediaUri: stri
 }
 
 const fetchEpisodes = async (id: string, type: SimklType, mediaUri: string, ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {
+  // Movies get their single synthetic episode in getMedia, which has the media to derive it from.
   if (type === 'movies') return []
   const list = await api<SimklEpisode[]>(`${episodesPath(type)}/${id}?extended=full`, ctx)
   return (Array.isArray(list) ? list : [])
@@ -171,6 +172,11 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
     const detail = await api<SimklDetail>(`${detailPath(type)}/${id}?extended=full`, ctx)
     const media = detail ? normalizeDetail(detail, id, type) : undefined
     if (!media) continue
+    if (isMovie(media)) {
+      media.episodes = [makeMovieEpisode(media)]
+      media.episodeCount = 1
+      return media
+    }
     media.episodes = await fetchEpisodes(id, type, media.uri, ctx)
     media.episodeCount = media.episodes.length
     return media
@@ -220,6 +226,7 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
+      if (isMovie(parent)) return [makeMovieEpisode(parent)]
       const media = await getMedia(parent.id, ctx)
       return media?.episodes ?? []
     }

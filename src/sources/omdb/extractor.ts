@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
 
 // OMDb (omdbapi.com) - IMDb-sourced movie/TV metadata. Keyful (BYOK): reads the user's key
 // via ctx.key('omdb'); without a key the source no-ops. Emits an imdb handle for bridging.
@@ -91,6 +91,9 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
   if (totalSeasons) {
     media.episodes = await fetchEpisodes(id, Number(totalSeasons), media.uri, ctx)
     media.episodeCount = media.episodes.length
+  } else if (isMovie(media)) {
+    media.episodes = [makeMovieEpisode(media)]
+    media.episodeCount = 1
   }
   return media
 }
@@ -123,6 +126,7 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
+      if (isMovie(parent)) return [makeMovieEpisode(parent)]
       const detail = await api<OmdbDetail>(`i=${parent.id}&plot=short`, ctx)
       const totalSeasons = na(detail?.totalSeasons)
       return totalSeasons ? fetchEpisodes(parent.id, Number(totalSeasons), parent.uri, ctx) : []

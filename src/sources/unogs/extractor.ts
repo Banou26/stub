@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia } from '../utils'
 
 const SCORE = 0.2
 
@@ -207,6 +207,11 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber
   })
 }
 
+// Netflix serves movies at /watch/<id> just like episodes, so the synthetic
+// episode gets a genuinely playable url rather than the /title/<id> media url.
+const normalizeMovieAsEpisode = (media: GQLMedia): GQLEpisode =>
+  makeMovieEpisode(media, { url: `https://www.netflix.com/watch/${media.id}`, score: SCORE })
+
 // Core data fetching
 
 const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: number): Promise<GQLMedia | undefined> => {
@@ -228,6 +233,9 @@ const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: 
       season.episodes.map((ep, i) => normalizeEpisode(ep, media.uri, i + 1))
     )
     media.episodeCount = media.episodes.length
+  } else {
+    media.episodes = [normalizeMovieAsEpisode(media)]
+    media.episodeCount = 1
   }
 
   return media
@@ -299,6 +307,7 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
+      if (isMovie(parent)) return [normalizeMovieAsEpisode(parent)]
       const seasonsRes = await fetchEpisodes(parent.id, ctx)
       if (!Array.isArray(seasonsRes)) return parent.episodes ?? []
       return seasonsRes.flatMap(season =>

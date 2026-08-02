@@ -37,6 +37,37 @@ export const makeEpisode = ({ origin, id, mediaUri, ...fields }: { origin: strin
   ...fields
 })
 
+/**
+ * A movie is modelled as a one episode series so it can reuse the episode keyed
+ * playback path, which is the only path the watch route and the source selector
+ * understand. The episode id suffixes the media id, so the uri comes out as
+ * `${media.uri}-1`, matching the toUriEpisodeId convention in utils/uri.
+ *
+ * episodeNumber must stay 1 rather than null: the media episodes resolver drops
+ * every episode with a null episodeNumber, and groups the rest by that number,
+ * which is what merges one movie's per-source episodes into a single row.
+ */
+export const makeMovieEpisode = (
+  media: GQLMedia,
+  overrides: Partial<GQLEpisode> = {}
+): GQLEpisode =>
+  makeEpisode({
+    origin: media.origin,
+    id: `${media.id}-1`,
+    mediaUri: media.uri,
+    url: media.url,
+    score: media.score ?? undefined,
+    titles: (media.titles ?? []).map(({ language, title, score }) => ({ language, title, score })),
+    descriptions: (media.descriptions ?? []).map(({ language, description, score }) => ({ language, description, score })),
+    shortDescriptions: (media.shortDescriptions ?? []).map(({ language, shortDescription, score }) => ({ language, shortDescription, score })),
+    thumbnails: (media.covers ?? []).map(({ url, score }) => ({ url, score })),
+    episodeNumber: 1,
+    ...overrides
+  })
+
+export const isMovie = (media: { categories?: readonly string[] | null }) =>
+  Boolean(media.categories?.includes('MOVIE'))
+
 export const desc = (description?: string | null, score?: number) =>
   description
     ? {

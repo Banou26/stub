@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, buildHandlesFromUri, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, buildHandlesFromUri, waitForMedia } from '../utils'
 
 // Apple TV+ via the anonymous UTS web API (uts-api.itunes.apple.com). No token/login.
 // ⚠️ Endpoints are verified (HTTP 200) but the response field names below are best-effort
@@ -119,6 +119,11 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
   const content = res.data?.content
   if (!content) return undefined
   const media = normalizeTitle(content)
+  if (isMovie(media)) {
+    media.episodes = [makeMovieEpisode(media)]
+    media.episodeCount = 1
+    return media
+  }
   media.episodes = await fetchEpisodes(id, res.data?.seasons, media.uri, ctx)
   media.episodeCount = media.episodes.length
   return media
@@ -180,6 +185,7 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
+      if (isMovie(parent)) return [makeMovieEpisode(parent)]
       const res = await api<AppleShowResponse>(`/shows/${parent.id}`, ctx)
       return fetchEpisodes(parent.id, res.data?.seasons, parent.uri, ctx)
     }

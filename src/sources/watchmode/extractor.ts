@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
 
 // Watchmode (watchmode.com) - streaming-availability + metadata. Keyful (BYOK): reads the
 // user's key via ctx.key('watchmode'); without a key the source no-ops. Emits imdb/tmdb
@@ -166,7 +166,12 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
     api<WatchmodeSource[]>(`/title/${encodeURIComponent(id)}/sources/`, ctx),
   ])
   if (!detail) return undefined
-  return normalizeDetail(detail, Array.isArray(sources) ? sources : [])
+  const media = normalizeDetail(detail, Array.isArray(sources) ? sources : [])
+  if (media && isMovie(media)) {
+    media.episodes = [makeMovieEpisode(media)]
+    media.episodeCount = 1
+  }
+  return media
 }
 
 const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
@@ -197,7 +202,10 @@ export const resolvers: Resolvers = {
     }
   },
   Media: {
-    episodes: async (parent, _, _ctx: ExtractorServerContext): Promise<GQLEpisode[]> =>
-      parent.origin !== origin ? parent.episodes ?? [] : parent.episodes ?? []
+    episodes: async (parent, _, _ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {
+      if (parent.origin !== origin) return parent.episodes ?? []
+      if (parent.episodes?.length) return parent.episodes
+      return isMovie(parent) ? [makeMovieEpisode(parent)] : []
+    }
   }
 }

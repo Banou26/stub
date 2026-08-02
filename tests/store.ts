@@ -189,3 +189,47 @@ export const graphLabels = async () => {
   const allClusters = g5.clusters('same_as')
   expect(allClusters.length).to.equal(2) // [m1,m2] and [e1]
 }
+
+export const movieAsSingleEpisode = async () => {
+  const { upsertMedia, upsertEpisodes, findAggregatedMedia, findAggregatedEpisodesForMedia } = await import('../src/worker/store/db')
+  const { makeMedia, makeMovieEpisode, isMovie } = await import('../src/sources/utils')
+
+  const movie = (origin: string, id: string, title: string) =>
+    makeMedia({ origin, id, score: 0.2, categories: ['MOVIE'], titles: [{ language: 'en', title, score: 0.2 }] })
+
+  const nf = movie('nf', 'movie-81234567', 'Blade Runner 2049')
+  const jw = movie('jw', 'movie-99', 'Blade Runner 2049')
+  const nfEpisode = makeMovieEpisode(nf, { url: `https://www.netflix.com/watch/${nf.id}` })
+  const jwEpisode = makeMovieEpisode(jw)
+
+  // The episode uri suffixes the media uri, which keeps it a distinct graph node.
+  // Reusing the media uri makes graph.set throw, since the node would carry both
+  // the 'media' and 'episode' labels and each registers a merge function.
+  expect(isMovie(nf)).to.equal(true)
+  expect(nfEpisode.uri).to.equal(`${nf.uri}-1`)
+  expect(nfEpisode.mediaUri).to.equal(nf.uri)
+  expect(nfEpisode.episodeNumber).to.equal(1)
+  expect(nfEpisode.url).to.equal('https://www.netflix.com/watch/movie-81234567')
+  expect(nfEpisode.titles[0]!.title).to.equal('Blade Runner 2049')
+
+  // The store narrows uri to `${string}:${string}`; the generated GraphQL types widen it to string.
+  await upsertMedia([nf, jw] as any, [{ mediaUri: nf.uri, handleUri: jw.uri }])
+  await upsertEpisodes([nfEpisode, jwEpisode] as any, [])
+
+  const cluster = await findAggregatedMedia(nf.uri)
+  expect(cluster.map(media => media.uri).sort()).to.deep.equal(['jw:movie-99', 'nf:movie-81234567'])
+
+  const groups = await findAggregatedEpisodesForMedia([nf.uri, jw.uri])
+  const episodes = groups.flat().filter(episode => episode.episodeNumber != null)
+  expect(episodes.map(episode => episode.uri).sort()).to.deep.equal(['jw:movie-99-1', 'nf:movie-81234567-1'])
+
+  // Mirrors the group-by-episodeNumber in resolvers/media/index.ts: both sources'
+  // synthetic episodes collapse into the single row the source selector renders.
+  const grouped = new Map<number, typeof episodes>()
+  for (const episode of episodes) {
+    if (!grouped.has(episode.episodeNumber!)) grouped.set(episode.episodeNumber!, [])
+    grouped.get(episode.episodeNumber!)!.push(episode)
+  }
+  expect(grouped.size).to.equal(1)
+  expect(grouped.get(1)!.length).to.equal(2)
+}

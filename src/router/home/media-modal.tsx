@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { Link, Redirect, useLocation, useParams } from 'wouter'
 
-import { MediaDescriptionContentType, OriginFilter } from '../../generated/graphql'
+import { MediaCategory, MediaDescriptionContentType, OriginFilter } from '../../generated/graphql'
 import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import VolumeControl from '../../components/volume-control'
@@ -340,6 +340,7 @@ const GET_MEDIA_MODAL = gql(`
         thumbnail
       }
       popularity
+      categories
       episodes {
         ...EpisodeFragment
         episodeNumber
@@ -396,8 +397,8 @@ const GET_MEDIA_MODAL_ORIGINS = gql(`
 `)
 
 const Episode = (
-  { episode, index, mediaUri }:
-  { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number, mediaUri: string }
+  { episode, index, mediaUri, isMovie }:
+  { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number, mediaUri: string, isMovie?: boolean }
 ) => {
   const [thumbnailBroken, setThumbnailBroken] = useState(false)
   const origins =
@@ -446,14 +447,26 @@ const Episode = (
           )
           : undefined
       }
-      <div className="number">{episode.episodeNumber}</div>
+      {isMovie ? undefined : <div className="number">{episode.episodeNumber}</div>}
       {
         episode.thumbnails?.at(0)?.url && !thumbnailBroken
           ? <img className="thumbnail" src={episode.thumbnails.at(0)?.url} onError={() => setThumbnailBroken(true)}></img>
           : <div className="thumbnail"></div>
       }
       {
-        episode.titles?.length
+        // A movie's single episode repeats the media title, so label the row by what it does instead.
+        isMovie
+          ? (
+            <div className="content">
+              <div className="header">
+                <div className="title">Play</div>
+                <span className="origins">
+                  <SourceSelector compact sources={sources} />
+                </span>
+              </div>
+            </div>
+          )
+          : episode.titles?.length
           ? (
             <div className="content">
               <div className="header">
@@ -675,7 +688,13 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   media
                     .episodes
                     ?.map((episode, index) =>
-                      <Episode key={episode.episodeNumber ?? episode.uri ?? index} episode={episode} index={index} mediaUri={media.uri} />
+                      <Episode
+                        key={episode.episodeNumber ?? episode.uri ?? index}
+                        episode={episode}
+                        index={index}
+                        mediaUri={media.uri}
+                        isMovie={'categories' in media && media.categories?.includes(MediaCategory.Movie)}
+                      />
                     )
                 }
               </div>

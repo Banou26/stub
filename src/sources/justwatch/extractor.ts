@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
-import { makeMedia, makeEpisode, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
 
 const SCORE = 0.2
 
@@ -344,7 +344,7 @@ const normalizeMedia = async (
       .map(ep => normalizeEpisode(ep, toUri({ origin, id })))
   )
 
-  return makeMedia({
+  const media = makeMedia({
     origin,
     id,
     categories: [node.objectType === 'MOVIE' ? 'MOVIE' : 'SERIES'],
@@ -365,6 +365,19 @@ const normalizeMedia = async (
     episodeCount: episodes.length || undefined,
     startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
   })
+
+  // JustWatch keeps title and description on the per provider offer handles rather
+  // than on the media itself, so the synthetic episode takes them from the node.
+  if (isMovie(media)) {
+    media.episodes = [makeMovieEpisode(media, {
+      score: SCORE,
+      titles: [{ language: 'en', title, score: SCORE }],
+      ...desc(shortDescription, SCORE)
+    })]
+    media.episodeCount = 1
+  }
+
+  return media
 }
 
 const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
@@ -469,6 +482,7 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
+      if (isMovie(parent)) return [makeMovieEpisode(parent, { score: SCORE })]
       const detailRes = await getNodeDetails(`ts${parent.id}`, ctx)
       const node = detailRes.data?.node
       if (!node?.seasons) return []
