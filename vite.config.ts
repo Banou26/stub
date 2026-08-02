@@ -54,7 +54,11 @@ export default defineConfig((_) => ({
     },
   },
   plugins: lazyPlugins(() => [
-    // Pin the buffer polyfill shim absolutely so the file:-linked @fkn/lib resolves it (a resolve.alias won't - rolldown doesn't re-alias).
+    // Pin the buffer polyfill shim to its single ESM build. The shim's exports map is dual
+    // (require -> dist/index.cjs, import -> dist/index.js), so without this the specifier resolves
+    // to two distinct modules and the buffer implementation is bundled twice (+26kB, and a second
+    // Buffer whose instances fail instanceof against the first). A resolve.alias won't do it:
+    // rolldown doesn't re-alias.
     {
       name: 'fkn-resolve-node-polyfill-buffer-shim',
       enforce: 'pre',
