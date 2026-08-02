@@ -36,7 +36,7 @@ export const resolvers = {
             if (updatedOrigin) yield updatedOrigin
           }
         } finally {
-          await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
+          await Promise.allSettled(subscriptions.map(subscription => subscription.unsubscribe()))
           const finalOrigin = await findOrigin(args.input.id)
           if (finalOrigin) return yield finalOrigin
         }
@@ -65,7 +65,7 @@ export const resolvers = {
             yield await findOrigins(args.input.ids, filters)
           }
         } finally {
-          await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
+          await Promise.allSettled(subscriptions.map(subscription => subscription.unsubscribe()))
           return yield await findOrigins(args.input.ids, filters)
         }
       }

@@ -63,7 +63,7 @@ export const resolvers = {
           }
         } finally {
           close()
-          await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
+          await Promise.allSettled(subscriptions.map(subscription => subscription.unsubscribe()))
         }
       }
     },
@@ -128,7 +128,7 @@ export const resolvers = {
           }
         } finally {
           close()
-          await Promise.all(subscriptions.map(subscription => subscription.unsubscribe()))
+          await Promise.allSettled(subscriptions.map(subscription => subscription.unsubscribe()))
         }
       }
     }

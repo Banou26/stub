@@ -412,7 +412,15 @@ export const registerRemoteExtractor = async (port: MessagePort, pluginUri: stri
   const entry = makeExtractor(definition)
   entry.pluginUri = pluginUri
   extractors.push(entry)
-  for (const fanout of fanouts) joinFanout(fanout, entry)
+  // Never leave a half-registered source in the list. The entry is pushed before it joins the live
+  // fan-outs, so a failure in between would strand a broken extractor that every later fan-out has
+  // to walk over, turning one bad plugin into an app-wide data outage that outlives the connection.
+  try {
+    for (const fanout of fanouts) joinFanout(fanout, entry)
+  } catch (error) {
+    unregisterRemoteExtractor(pluginUri)
+    throw error
+  }
   return { origin, name: definition.name }
 }
 
@@ -445,14 +453,28 @@ type Fanout = {
 // extractor list was read once at subscribe time and never consulted again.
 const fanouts = new Set<Fanout>()
 
+// One source must never be able to take down the fan-out. The join loops below walk every
+// extractor in order, so a throw here used to abort the loop: every source after the failing one
+// was left unsubscribed and the page got no data at all from anyone. A source that cannot start
+// is skipped instead, which is the same outcome as a source that answers with nothing.
 const joinFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
   if (fanout.joined.has(extractor)) return
-  const subscription = extractor.client.subscription(fanout.query, fanout.variables).subscribe((result) => {
-    if (!fanout.extractUris) return
-    for (const uri of fanout.extractUris(result) ?? []) {
-      fanout.insertedUris.add(uri)
-    }
-  })
+  let subscription: FanoutSubscription
+  try {
+    subscription = extractor.client.subscription(fanout.query, fanout.variables).subscribe((result) => {
+      if (!fanout.extractUris) return
+      try {
+        for (const uri of fanout.extractUris(result) ?? []) {
+          fanout.insertedUris.add(uri)
+        }
+      } catch (error) {
+        console.error(new Error(`Extractor ${extractor.name} produced an unreadable fan-out result`, { cause: error }))
+      }
+    })
+  } catch (error) {
+    console.error(new Error(`Extractor ${extractor.name} failed to join the fan-out`, { cause: error }))
+    return
+  }
   fanout.joined.set(extractor, subscription)
   fanout.subscriptions.push(subscription)
 }
