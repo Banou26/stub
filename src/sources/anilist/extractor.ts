@@ -161,19 +161,38 @@ const siteMappings = [
   }
 ]
 
-const fetchAnilist = <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<{ data: T }> =>
-  context
-    .fetch('https://graphql.anilist.co/', {
-      method: 'POST',
-      "headers": {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        query,
-        variables
-      })
+type AnilistResponse<T> = {
+  data?: T | null
+  errors?: { message?: string, status?: number }[]
+}
+
+// AniList reports failures with an HTTP 200 and a `{ data: null, errors: [...] }` body, rate limits
+// above all. Typing data as always-present made every call site dereference it unguarded, so a rate
+// limit surfaced as "Cannot read properties of null (reading 'Page')" with the real reason lost.
+// Returning undefined forces callers to degrade to an empty result instead of throwing.
+const fetchAnilist = async <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<T | undefined> => {
+  const response = await context.fetch('https://graphql.anilist.co/', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      query,
+      variables
     })
-    .then((response) => response.json() as Promise<{ data: T }>)
+  })
+  const body = await response.json().catch(() => undefined) as AnilistResponse<T> | undefined
+  if (body?.errors?.length) {
+    const reason = body.errors.map(error => error.message).filter(Boolean).join('; ')
+    console.error(`AniList request failed (HTTP ${response.status}): ${reason || 'no message'}`)
+  }
+  // A GraphQL response may carry partial data alongside errors, so only give up when there is none
+  if (body?.data == null) {
+    if (!body?.errors?.length) console.error(`AniList returned no data (HTTP ${response.status})`)
+    return undefined
+  }
+  return body.data
+}
 
 const mediaSeasons = [MediaSeason.Winter, MediaSeason.Spring, MediaSeason.Summer, MediaSeason.Fall]
 
@@ -194,8 +213,8 @@ const getPreviousMediaSeason = (date = new Date()) =>
   ?? MediaSeason.Fall
 
 const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
-  const { data } = await fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
-  if (!data.Media) return undefined
+  const data = await fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
+  if (!data?.Media) return undefined
 
   const startDate =
     data.Media.startDate?.year
@@ -235,16 +254,17 @@ const fetchMediaSeason = (
   fetchAnilist<{ Page: Page }>({ query: SEARCH_QUERY, variables: { season, year, page } }, context)
 
 const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year: number }, context: ExtractorServerContext) => {
-  const { data } = await fetchMediaSeason({ season, year, page: 1 }, context)
+  const data = await fetchMediaSeason({ season, year, page: 1 }, context)
+  const lastPage = data?.Page?.pageInfo?.lastPage
 
   return (
     [
-      ...data.Page.media ?? [],
-      ...data.Page.pageInfo?.lastPage
+      ...data?.Page?.media ?? [],
+      ...lastPage
         ? (await Promise.all(
-          new Array(Math.min(2, data.Page.pageInfo.lastPage - 1))
+          new Array(Math.min(2, lastPage - 1))
             .fill(undefined)
-            .map((_, i) => fetchMediaSeason({ season, year, page: i + 2 }, context).then(({ data }) => data.Page.media ?? []))
+            .map((_, i) => fetchMediaSeason({ season, year, page: i + 2 }, context).then(data => data?.Page?.media ?? []))
         )).flat()
         : []
     ]
@@ -349,7 +369,7 @@ export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
 }
 
 const searchMedia = async (search: string, context: ExtractorServerContext) => {
-  const { data } = await fetchAnilist<{ Page: Page }>({ query: SEARCH_MEDIA_QUERY, variables: { search, page: 1 } }, context)
+  const data = await fetchAnilist<{ Page: Page }>({ query: SEARCH_MEDIA_QUERY, variables: { search, page: 1 } }, context)
   return (data?.Page?.media ?? []).map(media => normalizeMedia(media as Media))
 }
 
