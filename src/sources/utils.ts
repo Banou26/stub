@@ -68,6 +68,28 @@ export const makeMovieEpisode = (
 export const isMovie = (media: { categories?: readonly string[] | null }) =>
   Boolean(media.categories?.includes('MOVIE'))
 
+/**
+ * Normalize a page of upstream records, dropping only the ones that fail.
+ *
+ * A page resolver is all-or-nothing by default: a plain `.map` throws and a `Promise.all` rejects
+ * as soon as one record is malformed, so the source yields nothing and one bad entry costs the
+ * whole page. That is what turns a single odd upstream record into an empty feed, and it defeats
+ * the point of having several sources, since the surviving source goes dark too.
+ */
+export const normalizePage = async <T, R>(
+  items: readonly T[],
+  normalize: (item: T) => R | Promise<R>,
+  label: string
+): Promise<R[]> => {
+  const settled = await Promise.allSettled(items.map(async item => normalize(item)))
+  const kept: R[] = []
+  for (const result of settled) {
+    if (result.status === 'fulfilled') kept.push(result.value)
+    else console.error(`${label}: dropped a record that failed to normalize`, result.reason)
+  }
+  return kept
+}
+
 export const desc = (description?: string | null, score?: number) =>
   description
     ? {

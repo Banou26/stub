@@ -2,6 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus, MediaType } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
+import { normalizePage } from '../utils'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -131,9 +132,13 @@ const fetchSearchAnime = ({ search }: { search: string }, context: ExtractorServ
   context
     .fetch(`https://api.jikan.moe/v4/anime?q=${search}`)
     .then(response => response.json() as Promise<AnimeSearchResponse>)
+    .catch(error => {
+      console.error('Jikan search failed', error)
+      return {} as AnimeSearchResponse
+    })
     .then(json =>
       json.data
-        ? json.data.map(media => normalizeMedia(media, context))
+        ? normalizePage(json.data, media => normalizeMedia(media, context), 'Jikan search')
         : undefined
     )
 
@@ -147,25 +152,30 @@ const fetchMedia = ({ id }: { id: number }, context: ExtractorServerContext) =>
         : undefined
     )
 
-const getSeasonNow = (page = 1, context: ExtractorServerContext) =>
+// A rate limited page answers with an HTML body rather than JSON, so the parse itself can reject.
+// Swallowing that here keeps one bad page from taking down the whole season.
+const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeSearchResponse> =>
   context
     .fetch(`https://api.jikan.moe/v4/seasons/now?page=${page}&sfw=true`)
     .then(response => response.json() as Promise<AnimeSearchResponse>)
+    .catch(error => {
+      console.error(`Jikan season page ${page} failed`, error)
+      return {} as AnimeSearchResponse
+    })
 
 const getFullSeasonNow = async (context: ExtractorServerContext) => {
   const { data, pagination } = await getSeasonNow(1, context)
   // rate limited pages respond without data, degrade to whatever pages made it through
   if (!data) return []
-  return (
-    [
-      ...data,
-      ...(await Promise.all(
-        new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
-          .fill(undefined)
-          .map((_, i) => getSeasonNow(i + 2, context).then(({ data }) => data ?? []))
-      )).flat()
-    ]
-      .map(mediaData => normalizeMedia(mediaData, context))
+  const extraPages = await Promise.all(
+    new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
+      .fill(undefined)
+      .map((_, i) => getSeasonNow(i + 2, context).then(({ data }) => data ?? []))
+  )
+  return normalizePage(
+    [...data, ...extraPages.flat()],
+    mediaData => normalizeMedia(mediaData, context),
+    'Jikan season'
   )
 }
 
@@ -188,7 +198,7 @@ export const resolvers: Resolvers = {
         if (status === 'RELEASING') {
           return yield {
             mediaPage: {
-              nodes: await Promise.all(await getFullSeasonNow(ctx))
+              nodes: await getFullSeasonNow(ctx)
             }
           }
         }
@@ -196,7 +206,7 @@ export const resolvers: Resolvers = {
           const results = await fetchSearchAnime({ search }, ctx)
           return yield {
             mediaPage: {
-              nodes: results ? await Promise.all(results) : []
+              nodes: results ?? []
             }
           }
         }

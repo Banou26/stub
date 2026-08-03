@@ -4,7 +4,7 @@ import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
 import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from '../crunchyroll/extractor'
-import { makeMedia } from '../utils'
+import { makeMedia, normalizePage } from '../utils'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -257,7 +257,7 @@ const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year:
   const data = await fetchMediaSeason({ season, year, page: 1 }, context)
   const lastPage = data?.Page?.pageInfo?.lastPage
 
-  return (
+  return normalizePage(
     [
       ...data?.Page?.media ?? [],
       ...lastPage
@@ -267,8 +267,9 @@ const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year:
             .map((_, i) => fetchMediaSeason({ season, year, page: i + 2 }, context).then(data => data?.Page?.media ?? []))
         )).flat()
         : []
-    ]
-      .map(media => normalizeMedia(media as Media))
+    ],
+    media => normalizeMedia(media as Media),
+    'AniList season'
   )
 }
 
@@ -370,7 +371,7 @@ export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
 
 const searchMedia = async (search: string, context: ExtractorServerContext) => {
   const data = await fetchAnilist<{ Page: Page }>({ query: SEARCH_MEDIA_QUERY, variables: { search, page: 1 } }, context)
-  return (data?.Page?.media ?? []).map(media => normalizeMedia(media as Media))
+  return normalizePage(data?.Page?.media ?? [], media => normalizeMedia(media as Media), 'AniList search')
 }
 
 export const resolvers: Resolvers = {
