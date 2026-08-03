@@ -5,3 +5,5 @@
 /src/generated
 /examples/source-plugin/dist
 /examples/source-plugin/node_modules
+
+.playwright-mcp/
