@@ -104,21 +104,6 @@ const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQ
   return (res ?? []).map(result => normalizeMedia(result.show, buildHandles(result.show)))
 }
 
-// Today's airings, so the home feed has a second non-anime source. A show with several entries in a
-// day appears once, and the schedule embeds the full show object so no extra request is needed.
-const scheduleApi = async (ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
-  const res = await api<{ show?: TvmazeShow }[]>('/schedule?country=US', ctx)
-  const shows = [
-    ...new Map(
-      (res ?? [])
-        .map(entry => entry.show)
-        .filter((show): show is TvmazeShow => Boolean(show?.id))
-        .map(show => [show.id, show] as const)
-    ).values()
-  ]
-  return shows.map(show => normalizeMedia(show, buildHandles(show)))
-}
-
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
@@ -130,8 +115,7 @@ export const resolvers: Resolvers = {
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
-      subscribe: async function* (_, { input: { search, status } }, ctx: ExtractorServerContext) {
-        if (status === 'RELEASING' && !search) return yield { mediaPage: { nodes: await scheduleApi(ctx) } }
+      subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
         if (!search) return yield { mediaPage: { nodes: [] } }
         yield { mediaPage: { nodes: await searchApi(search, ctx) } }
       }

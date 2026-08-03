@@ -147,30 +147,6 @@ const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQ
   return html ? parseSearch(html).map(normalizeMedia) : []
 }
 
-// The discover listings use a different card than the search results: the poster anchor carries the
-// id and the title, and the image is a srcset rather than a src. Verified against the live
-// /tv/on-the-air markup. language=en-US is required, the page is otherwise localised by geo.
-const parseDiscover = (html: string): TmdbMedia[] => {
-  const out: TmdbMedia[] = []
-  const seen = new Set<string>()
-  const re = /href="\/tv\/(\d+)[^"]*"[^>]*>\s*<div class="image[\s\S]{0,300}?<img alt="([^"]*)"[\s\S]{0,300}?srcset="(https:\/\/[^ ",]+)/g
-  for (const m of html.matchAll(re)) {
-    const id = m[1]
-    if (!id || seen.has(id)) continue
-    seen.add(id)
-    const dateText = html.match(new RegExp(`href="/tv/${id}[^"]*"><h2[^>]*>[^<]*</h2></a><span class="release_date[^"]*">([^<]*)<`))?.[1]
-    const year = dateText?.match(/\b(?:19|20)\d{2}\b/)?.[0]
-    out.push({ id, title: decode(m[2] ?? ''), poster: m[3], year: year ? Number(year) : undefined })
-  }
-  return out
-}
-
-// Currently airing shows, so the home feed has a source that does not depend on the anime APIs
-const discoverApi = async (ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
-  const html = await fetchHtml('/tv/on-the-air?language=en-US', ctx)
-  return html ? parseDiscover(html).map(normalizeMedia) : []
-}
-
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
@@ -182,8 +158,7 @@ export const resolvers: Resolvers = {
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
-      subscribe: async function* (_, { input: { search, status } }, ctx: ExtractorServerContext) {
-        if (status === 'RELEASING' && !search) return yield { mediaPage: { nodes: await discoverApi(ctx) } }
+      subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
         if (!search) return yield { mediaPage: { nodes: [] } }
         yield { mediaPage: { nodes: await searchApi(search, ctx) } }
       }
