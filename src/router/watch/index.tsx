@@ -2,9 +2,11 @@ import type { RouteParams } from '../path'
 import type { WatchSource } from '../../components/source-selector'
 
 import { css } from '@emotion/react'
-import { useMemo } from 'preact/hooks'
+import { useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
-import { useParams } from 'wouter'
+import { useLocation, useParams } from 'wouter'
+
+import { remotePicker } from '../../worker'
 
 import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
@@ -143,6 +145,7 @@ const style = css`
 
 const Watch = () => {
   const params = useParams<RouteParams['WATCH']>()
+  const [, navigate] = useLocation()
 
   const [{ data }] = useSubscription({
     query: GET_WATCH_MEDIA,
@@ -202,6 +205,22 @@ const Watch = () => {
     return `/embed.html?${embedParams}`
   }, [selectedSourceUri, episode?.handles, params.mediaUri, params.episodeUri])
 
+  // a plugin source renders its own picker; which origins do is only known to the worker holding the
+  // plugin connection, so it is resolved here and folded into the source list
+  const pickerOrigins = (originData?.originPage?.nodes ?? []).map(origin => origin.id).join(',')
+  const [pickers, setPickers] = useState<Record<string, string>>({})
+  useEffect(() => {
+    let cancelled = false
+    const ids = pickerOrigins ? pickerOrigins.split(',') : []
+    Promise.all(ids.map(async id => [id, (await remotePicker(id))?.pluginUri] as const))
+      .then(entries => {
+        if (cancelled) return
+        setPickers(Object.fromEntries(entries.filter((entry): entry is [string, string] => !!entry[1])))
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [pickerOrigins])
+
   const sources: WatchSource[] = useMemo(
     () =>
       (originData?.originPage?.nodes ?? []).map(origin => {
@@ -232,9 +251,10 @@ const Watch = () => {
           external: first ? !playableHandle(first) : true,
           active: releases.some(release => release.active),
           releases: releases.length > 1 ? releases : undefined,
+          picker: pickers[origin.id] ? { pluginUri: pickers[origin.id]! } : undefined,
         }
       }),
-    [originData, episode?.handles, params.mediaUri, params.episodeUri, selectedSourceUri]
+    [originData, episode?.handles, params.mediaUri, params.episodeUri, selectedSourceUri, pickers]
   )
 
   return (
@@ -271,7 +291,15 @@ const Watch = () => {
             {mediaTitle ? <div className="media-title">{mediaTitle}</div> : undefined}
           </div>
 
-          <SourceSelector sources={sources} />
+          <SourceSelector
+            sources={sources}
+            onPickRelease={uri =>
+              navigate(getRoutePath(Route.WATCH, {
+                mediaUri: params.mediaUri,
+                episodeUri: params.episodeUri,
+                sourceUri: uri
+              }))}
+          />
         </div>
       </div>
     </div>

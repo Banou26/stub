@@ -370,6 +370,22 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
   } as Resolvers
 }
 
+// the plugin frame renders its own picker, so the app needs both the package to show and the call
+// that drives it; keyed by origin because that is all the source selector knows about a source
+type RemotePicker = { pluginUri: string, select: (uris: string[]) => Promise<string | null> }
+const pickers = new Map<string, RemotePicker>()
+
+export const remotePicker = (origin: string): { pluginUri: string } | null => {
+  const picker = pickers.get(origin)
+  return picker ? { pluginUri: picker.pluginUri } : null
+}
+
+export const selectRemoteRelease = async (origin: string, uris: string[]): Promise<string | null> => {
+  const picker = pickers.get(origin)
+  if (!picker) return null
+  return (await picker.select(uris)) ?? null
+}
+
 export const registerRemoteExtractor = async (
   port: MessagePort,
   pluginUri: string
@@ -390,6 +406,10 @@ export const registerRemoteExtractor = async (
       const entry = makeExtractor({ ...meta, resolvers: makeDelegatingResolvers(meta.origin, source as RemotePluginSource) })
       entry.pluginUri = pluginUri
       extractors.push(entry)
+      const select = (source as { selectRelease?: unknown }).selectRelease
+      if (typeof select === 'function') {
+        pickers.set(meta.origin, { pluginUri, select: select as RemotePicker['select'] })
+      }
       for (const fanout of fanouts) joinFanout(fanout, entry)
       registered.push({ origin: meta.origin, name: meta.name })
     } catch (error) {
@@ -411,6 +431,9 @@ export const registerRemoteExtractor = async (
 }
 
 export const unregisterRemoteExtractor = (pluginUri: string) => {
+  for (const [origin, picker] of pickers) {
+    if (picker.pluginUri === pluginUri) pickers.delete(origin)
+  }
   for (let index = extractors.length - 1; index >= 0; index -= 1) {
     const entry = extractors[index]!
     if (entry.pluginUri !== pluginUri) continue

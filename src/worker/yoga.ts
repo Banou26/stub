@@ -7,7 +7,7 @@ import { expose } from 'osra'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
-import { setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor } from './extractor'
+import { setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, selectRemoteRelease } from './extractor'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -47,7 +47,9 @@ export const osraResolvers = {
       return { error: error instanceof Error ? error.message : String(error) }
     }
   },
-  unregisterRemoteSource: (pluginUri: string) => unregisterRemoteExtractor(pluginUri)
+  unregisterRemoteSource: (pluginUri: string) => unregisterRemoteExtractor(pluginUri),
+  remotePicker: (origin: string) => remotePicker(origin),
+  selectRemoteRelease: (origin: string, uris: string[]) => selectRemoteRelease(origin, uris)
 }
 
 export type Resolvers = typeof osraResolvers

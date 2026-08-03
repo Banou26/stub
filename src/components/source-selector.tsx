@@ -1,6 +1,8 @@
 import { css } from '@emotion/react'
 import { useState } from 'preact/hooks'
 
+import SourcePopup from './source-popup'
+
 /** One concrete pick within an origin, e.g. a single release out of an indexer's several. */
 export type SourceRelease = {
   uri: string
@@ -27,6 +29,8 @@ export type WatchSource = {
    * instead, and the compact selector routes to the watch page so the choice has somewhere to happen.
    */
   releases?: SourceRelease[]
+  /** set when the source is a plugin that renders its own picker, which replaces the inline list */
+  picker?: { pluginUri: string }
 }
 
 const BRAND_COLORS: Record<string, string> = {
@@ -339,7 +343,12 @@ const SourceIcon = ({ source }: { source: WatchSource }) => {
   )
 }
 
-export const SourceSelector = ({ sources, compact = false }: { sources: WatchSource[], compact?: boolean }) => {
+export const SourceSelector = (
+  { sources, compact = false, onPickRelease }:
+  { sources: WatchSource[], compact?: boolean, onPickRelease?: (uri: string) => void }
+) => {
+  const [picking, setPicking] = useState<WatchSource | null>(null)
+
   if (!sources.length) return null
 
   if (compact) {
@@ -368,7 +377,7 @@ export const SourceSelector = ({ sources, compact = false }: { sources: WatchSou
       <div className="list">
         {sources.map(source =>
           source.releases && source.releases.length > 1
-            ? <MultiReleaseSource key={source.id} source={source} />
+            ? <MultiReleaseSource key={source.id} source={source} onOpenPicker={() => setPicking(source)} />
             : (
               <a
                 key={source.id}
@@ -390,29 +399,45 @@ export const SourceSelector = ({ sources, compact = false }: { sources: WatchSou
             )
         )}
       </div>
+      {picking?.picker
+        ? (
+          <SourcePopup
+            pluginUri={picking.picker.pluginUri}
+            origin={picking.id}
+            name={picking.name}
+            uris={(picking.releases ?? []).map(release => release.uri)}
+            onPick={uri => { setPicking(null); onPickRelease?.(uri) }}
+            onClose={() => setPicking(null)}
+          />
+        )
+        : undefined}
     </div>
   )
 }
 
-const MultiReleaseSource = ({ source }: { source: WatchSource }) => {
+const MultiReleaseSource = ({ source, onOpenPicker }: { source: WatchSource, onOpenPicker: () => void }) => {
   const releases = source.releases ?? []
   const [open, setOpen] = useState(releases.some(release => release.active))
+  // a plugin that renders its own picker replaces the inline list entirely: it knows what its releases
+  // are (seeders, size, subtitle tracks) where stub only ever sees a flattened label
+  const owned = Boolean(source.picker)
   return (
     <div className="source-group" style={{ '--brand': brandColor(source) }}>
       <button
         type="button"
         className={`source${source.active ? ' active' : ''}`}
         style={{ '--brand': brandColor(source) }}
-        onClick={() => setOpen(value => !value)}
+        onClick={() => owned ? onOpenPicker() : setOpen(value => !value)}
         title={`${releases.length} releases on ${source.name}`}
-        aria-expanded={open}
+        aria-expanded={owned ? undefined : open}
+        aria-haspopup={owned ? 'dialog' : undefined}
       >
         <SourceIcon source={source} />
         <span className="name">{source.name}</span>
         <span className="count">{releases.length}</span>
-        <span className="chevron">{open ? '▾' : '▸'}</span>
+        <span className="chevron">{owned ? '›' : open ? '▾' : '▸'}</span>
       </button>
-      {open
+      {!owned && open
         ? (
           <div className="releases">
             {releases.map(release => (
