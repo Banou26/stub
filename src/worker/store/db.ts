@@ -3,6 +3,22 @@ import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
 
 const MEDIA_SAME_AS = 'media:same_as'
+
+// Origins whose id names a SHOW and has no season-level equivalent to name instead.
+//
+// A handle is an identity claim: linking it says "this media and that one are the same thing". An
+// IMDb `tt` id is the series, so every season of a show carries the same one and the claim is that
+// they are all one media - which is what merged Mushoku Tensei's three seasons even after JustWatch,
+// TMDB and TVmaze each stopped doing it, because five separate sources (tvmaze, trakt, simkl, omdb,
+// watchmode) all emit it.
+//
+// TMDB and TVmaze could be scoped because both model seasons; IMDb does not, so there is no honest
+// season id to mint and scoping would invent one that no source could independently reproduce. Until
+// there is a way to attach a handle for its LINK without asserting identity, it is not linked at all.
+// The cost is the IMDb link disappearing from the aggregated media, which is the smaller loss.
+const SHOW_LEVEL_ORIGINS = new Set(['imdb'])
+
+const originOf = (uri: string) => uri.slice(0, uri.indexOf(':'))
 const EPISODE_SAME_AS = 'episode:same_as'
 const HAS_EPISODE = 'has_episode'
 
@@ -25,6 +41,7 @@ export async function upsertMedia(
   }
 
   for (const { mediaUri, handleUri } of handles) {
+    if (SHOW_LEVEL_ORIGINS.has(originOf(handleUri))) continue
     if (graph.link(mediaUri, handleUri, MEDIA_SAME_AS)) changed = true
   }
 

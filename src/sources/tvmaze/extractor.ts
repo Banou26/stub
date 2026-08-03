@@ -2,7 +2,8 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img } from '../utils'
+import { makeMedia, makeEpisode, desc, img, getFirstTitle, waitForMedia } from '../utils'
+import { parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from '../season'
 
 const SCORE = 0.3
 const API = 'https://api.tvmaze.com'
@@ -59,10 +60,14 @@ const buildHandles = (show: TvmazeShow): GQLMedia[] => {
   return imdb ? [makeMedia({ origin: 'imdb', id: imdb, url: `https://www.imdb.com/title/${imdb}` })] : []
 }
 
-const normalizeMedia = (show: TvmazeShow, handles: GQLMedia[] = []): GQLMedia =>
+// TVmaze describes a SHOW while a stub media is one season, so a season-scoped media cannot carry the
+// bare show id: every season would hand back the same one and clustering union-finds them into a
+// single media. Same defect TMDB and JustWatch had, same '-s<n>' fix. A show-level id is still minted
+// for SEARCH, where there is no cluster to corrupt and TVmaze genuinely is describing the show.
+const normalizeMedia = (show: TvmazeShow, seasonNumber?: number, handles: GQLMedia[] = []): GQLMedia =>
   makeMedia({
     origin,
-    id: String(show.id),
+    id: seasonNumber == null ? String(show.id) : seasonScopedId(show.id, seasonNumber),
     url: show.url ?? `https://www.tvmaze.com/shows/${show.id}`,
     handles,
     categories: ['SERIES'],
@@ -87,18 +92,45 @@ const normalizeEpisode = (episode: TvmazeEpisode, mediaUri: string): GQLEpisode 
     episodeNumber: episode.number,
   })
 
-const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+/** Season sizes, straight off the embedded episode list - no extra request to count them. */
+const seasonsOf = (episodes: TvmazeEpisode[]) => {
+  const counts = new Map<number, number>()
+  for (const episode of episodes) {
+    if (episode.season == null) continue
+    counts.set(episode.season, (counts.get(episode.season) ?? 0) + 1)
+  }
+  return [...counts].map(([seasonNumber, episodeCount]) => ({ seasonNumber, episodeCount }))
+}
+
+const getMedia = async (uri: string, id: string, pinned: number | undefined, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
   const show = await api<TvmazeShow>(`/shows/${id}?embed=episodes`, ctx)
   if (!show) return undefined
-  const media = normalizeMedia(show, buildHandles(show))
-  media.episodes = (show._embedded?.episodes ?? []).map(episode => normalizeEpisode(episode, media.uri))
+  const all = show._embedded?.episodes ?? []
+  const seasons = seasonsOf(all)
+
+  // The probe stays SYNCHRONOUS: waitForMedia keeps the first result it finds truthy, and a promise
+  // is always truthy, so an async one would succeed instantly with a value that resolves to nothing.
+  const seasonNumber = pinned ?? (seasons.length === 1 ? seasons[0]!.seasonNumber : await waitForMedia(uri, ctx, (media: any) => {
+    const title = getFirstTitle(media)
+    const parsed = title ? parseSeasonNumber(title) : undefined
+    if (parsed != null) return parsed
+    const count = media?.episodeCount ?? media?.episodes?.length
+    return count ? pickSeasonByEpisodeCount(seasons, count) : undefined
+  }))
+
+  // a series whose season cannot be determined has no identity here: see normalizeMedia
+  if (seasonNumber == null && seasons.length > 1) return undefined
+
+  const media = normalizeMedia(show, seasonNumber, buildHandles(show))
+  const episodes = seasonNumber == null ? all : all.filter(episode => episode.season === seasonNumber)
+  media.episodes = episodes.map(episode => normalizeEpisode(episode, media.uri))
   media.episodeCount = media.episodes.length
   return media
 }
 
 const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
   const res = await api<{ show: TvmazeShow }[]>(`/search/shows?q=${encodeURIComponent(query)}`, ctx)
-  return (res ?? []).map(result => normalizeMedia(result.show, buildHandles(result.show)))
+  return (res ?? []).map(result => normalizeMedia(result.show, undefined, buildHandles(result.show)))
 }
 
 export const resolvers: Resolvers = {
@@ -107,7 +139,10 @@ export const resolvers: Resolvers = {
       subscribe: async function* (_, { input: { uri } }, ctx: ExtractorServerContext) {
         if (!uri || !(isUri(uri) || isAggregatedUri(uri))) return yield { media: null }
         const tvmazeUri = extractAggregatedUriOrigin(uri, origin)
-        yield { media: tvmazeUri ? (await getMedia(tvmazeUri.id, ctx)) ?? null : null }
+        if (!tvmazeUri) return yield { media: null }
+        // the uri may already pin the season, since that is now part of the id
+        const { showId, seasonNumber } = splitSeasonScopedId(tvmazeUri.id)
+        yield { media: (await getMedia(uri, showId, seasonNumber, ctx)) ?? null }
       }
     },
     mediaPage: {
@@ -122,8 +157,11 @@ export const resolvers: Resolvers = {
     episodes: async (parent, _, ctx: ExtractorServerContext) => {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
-      const episodes = await api<TvmazeEpisode[]>(`/shows/${parent.id}/episodes`, ctx)
-      return (episodes ?? []).map(episode => normalizeEpisode(episode, parent.uri))
+      // parent.id is '<show>-s<season>' now, so the show has to be split back out of it
+      const { showId, seasonNumber } = splitSeasonScopedId(parent.id)
+      const episodes = await api<TvmazeEpisode[]>(`/shows/${showId}/episodes`, ctx)
+      const kept = seasonNumber == null ? (episodes ?? []) : (episodes ?? []).filter(episode => episode.season === seasonNumber)
+      return kept.map(episode => normalizeEpisode(episode, parent.uri))
     }
   }
 }
