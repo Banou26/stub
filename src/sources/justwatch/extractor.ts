@@ -113,6 +113,7 @@ const SEARCH_QUERY = `
           }
           ... on Show {
             seasons(sortDirection: ASC) {
+              objectId
               totalEpisodeCount
               content(country: $country, language: $language) {
                 seasonNumber
@@ -242,6 +243,8 @@ interface JWSearchNode {
 }
 
 interface JWSeason {
+  /** JustWatch's own id for the season, which is what a media uri is scoped by */
+  objectId: number
   totalEpisodeCount: number
   content: { seasonNumber: number, isReleased: boolean }
   episodes: JWEpisode[]
@@ -321,7 +324,10 @@ const normalizeMedia = async (
 ): Promise<GQLMedia | null> => {
   // refusing to build the media is the point: the bare node id is shared by every season of the show and merges them
   if (opts.seasonNumber == null && showRequiresSeason(node.objectType)) return null
-  const id = opts.seasonNumber == null ? String(node.objectId) : jwId(node.objectId, opts.seasonNumber)
+  // the uri is scoped by the season's OWN id; the number is what the episode lists are keyed on
+  const season = (opts.seasons ?? []).find(entry => entry.content.seasonNumber === opts.seasonNumber)
+  if (opts.seasonNumber != null && season?.objectId == null) return null
+  const id = opts.seasonNumber == null ? String(node.objectId) : jwId(node.objectId, season!.objectId)
   const { shortDescription } = node.content
 
   const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
@@ -435,10 +441,14 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   const jwUri = extractAggregatedUriOrigin(uri, origin)
   if (jwUri) {
-    const { objectId, seasonNumber: pinned } = splitJwId(jwUri.id)
+    const { objectId, seasonObjectId } = splitJwId(jwUri.id)
     const detailRes = await getNodeDetails(`ts${objectId}`, ctx)
     const node = detailRes.data?.node
     if (!node) return null
+    // the uri pins a season by ITS id, so the number the episode lists use is looked up, not assumed
+    const pinned = seasonObjectId != null
+      ? node.seasons?.find(season => season.objectId === seasonObjectId)?.content.seasonNumber
+      : undefined
     const seasonNumber = pinned ?? (isAggregatedUri(uri) ? await resolveSeasonNumber(uri, node, ctx) : undefined)
     const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
     if (!media) return null
@@ -477,10 +487,13 @@ export const resolvers: Resolvers = {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
       if (isMovie(parent)) return [makeMovieEpisode(parent, { score: SCORE })]
-      const { objectId, seasonNumber: pinned } = splitJwId(parent.id)
+      const { objectId, seasonObjectId } = splitJwId(parent.id)
       const detailRes = await getNodeDetails(`ts${objectId}`, ctx)
       const node = detailRes.data?.node
       if (!node?.seasons) return []
+      const pinned = seasonObjectId != null
+        ? node.seasons.find(season => season.objectId === seasonObjectId)?.content.seasonNumber
+        : undefined
       const seasonNumber = pinned ?? (parent.titles?.[0]?.title ? parseSeasonNumber(parent.titles[0].title) : undefined)
       const seasons = seasonNumber != null
         ? node.seasons.filter(s => s.content.seasonNumber === seasonNumber)

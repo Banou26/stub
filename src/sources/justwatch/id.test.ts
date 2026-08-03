@@ -2,24 +2,32 @@ import { describe, expect, test } from 'vitest'
 
 import { jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
 
-// ts222366 is Mushoku Tensei: one JustWatch node carrying seasons 1, 2 and 3 (23, 24 and 6 released
-// episodes respectively). Every season handing back `jw:222366` is what merged them into one media.
+// ts222366 is Mushoku Tensei: one JustWatch node carrying three seasons, whose own objectIds are
+// 230388, 378206 and 490814. Every season handing back `jw:222366` is what merged them into one media.
 const MUSHOKU = 222366
+const SEASONS = [230388, 378206, 490814]
 
 describe('jwId', () => {
   test('every season of one show gets a DISTINCT id, or clustering merges them', () => {
-    const ids = [1, 2, 3].map(season => jwId(MUSHOKU, season))
+    const ids = SEASONS.map(season => jwId(MUSHOKU, season))
     expect(new Set(ids).size).toBe(3)
-    expect(ids).toEqual(['222366-1', '222366-2', '222366-3'])
+    expect(ids).toEqual(['222366-230388', '222366-378206', '222366-490814'])
+  })
+
+  // an ordinal moves when a season is renumbered, split into cours, or has a recap inserted ahead of
+  // it; the season's own id does not, so an existing uri keeps pointing at the same episodes
+  test("the suffix is the season's own id, not its position", () => {
+    expect(jwId(MUSHOKU, 490814)).toBe('222366-490814')
+    expect(jwId(MUSHOKU, 490814)).not.toBe('222366-3')
   })
 })
 
 describe('splitJwId', () => {
-  // resolving `jw:222366-3` has to end up asking JustWatch for node ts222366 and then keeping
-  // season 3 - the id is the only place that season survives
+  // resolving `jw:222366-490814` has to end up asking JustWatch for node ts222366 and then keeping
+  // the season whose objectId is 490814 - the id is the only place that season survives
   test('a season-scoped id resolves back to the node AND the season', () => {
-    expect(splitJwId(jwId(MUSHOKU, 3))).toEqual({ objectId: '222366', seasonNumber: 3 })
-    expect(splitJwId('222366-1')).toEqual({ objectId: '222366', seasonNumber: 1 })
+    expect(splitJwId(jwId(MUSHOKU, 490814))).toEqual({ objectId: '222366', seasonObjectId: 490814 })
+    expect(splitJwId('222366-230388')).toEqual({ objectId: '222366', seasonObjectId: 230388 })
   })
 
   test('a movie id has no season and is passed through whole', () => {

@@ -8,16 +8,21 @@
 // out of search opened season 3, an aggregated uri carried two anilist ids and two mal ids at once,
 // and two unrelated shows merged once a shared handle bridged their clusters.
 //
-// So the rule is absolute: a series media is `<node>-<season>`, never the bare node id. A show whose
-// season cannot be determined has no identity here and is not emitted at all - see showRequiresSeason.
+// So the rule is absolute: a series media is `<node>-<season>`, never the bare node id.
+//
+// The suffix is the SEASON'S OWN objectId, not its ordinal. JustWatch gives every season one
+// (Mushoku Tensei is 222366 with seasons 230388, 378206, 490814), so this is a real id in their space
+// rather than a position in a list - it does not move when a season is renumbered, split into cours,
+// or has a recap inserted ahead of it, all of which happen and all of which would otherwise silently
+// repoint an existing uri at different episodes.
 
 /** A JustWatch node id scoped to one season. This is the only id shape a series media may carry. */
-export const jwId = (objectId: string | number, seasonNumber: number) => `${objectId}-${seasonNumber}`
+export const jwId = (objectId: string | number, seasonObjectId: string | number) => `${objectId}-${seasonObjectId}`
 
 /** Reverse of jwId: the node to ask JustWatch for, and the season the uri pinned. */
-export const splitJwId = (id: string): { objectId: string, seasonNumber?: number } => {
+export const splitJwId = (id: string): { objectId: string, seasonObjectId?: number } => {
   const match = /^(\d+)-(\d+)$/.exec(id)
-  return match ? { objectId: match[1]!, seasonNumber: Number(match[2]) } : { objectId: id }
+  return match ? { objectId: match[1]!, seasonObjectId: Number(match[2]) } : { objectId: id }
 }
 
 /**
