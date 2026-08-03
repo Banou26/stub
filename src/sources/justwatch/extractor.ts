@@ -111,6 +111,15 @@ const SEARCH_QUERY = `
               icon(profile: S100)
             }
           }
+          ... on Show {
+            seasons(sortDirection: ASC) {
+              totalEpisodeCount
+              content(country: $country, language: $language) {
+                seasonNumber
+                isReleased
+              }
+            }
+          }
         }
       }
     }
@@ -228,6 +237,8 @@ interface JWSearchNode {
   objectType?: string
   content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null, originalReleaseYear?: number | null }
   offers: JWOffer[]
+  /** present on a Show; the search query asks for it so a result can be expanded per season */
+  seasons?: JWSeason[]
 }
 
 interface JWSeason {
@@ -345,7 +356,9 @@ const normalizeMedia = async (
         ctx
       ),
     episodes,
-    episodeCount: episodes.length || undefined,
+    // the search query carries totalEpisodeCount but not the episodes themselves, so an expanded
+    // season still reports how long it is - which is also what season matching elsewhere keys on
+    episodeCount: episodes.length || filteredSeasons.reduce((total, season) => total + (season.totalEpisodeCount ?? 0), 0) || undefined,
     startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
   })
 
