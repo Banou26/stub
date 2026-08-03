@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
 import { useState } from 'preact/hooks'
 
+/** One concrete pick within an origin, e.g. a single release out of an indexer's several. */
 export type SourceRelease = {
   uri: string
   label: string
@@ -17,6 +18,14 @@ export type WatchSource = {
   href?: string
   external: boolean
   active: boolean
+  /**
+   * Every handle this origin contributed for the episode, when there is more than one.
+   *
+   * An origin used to resolve to exactly one handle via `handles.find(h => h.origin === id)`, which
+   * silently dropped the rest: an indexer contributing five releases for one episode showed a single
+   * button pointing at whichever sorted first. When this is set the origin expands into a choice
+   * instead, and the compact selector routes to the watch page so the choice has somewhere to happen.
+   */
   releases?: SourceRelease[]
 }
 

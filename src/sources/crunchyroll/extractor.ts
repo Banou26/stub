@@ -168,6 +168,7 @@ const normalizeEpisode = (ep: CrEpisode, mediaUri: string): GQLEpisode =>
   })
 
 // regular episodes come after specials in CR's ordering, so the last per episode_number wins
+/** Keep only the last episode per episode_number (regular episodes come after specials in CR's ordering) */
 const deduplicateEpisodes = (episodes: GQLEpisode[]): GQLEpisode[] => {
   const lastByNumber = new Map<number, GQLEpisode>()
   for (const ep of episodes) {

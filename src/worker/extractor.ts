@@ -311,6 +311,7 @@ export const extractors = Object.values(extractorDefinitions).map(makeExtractor)
 
 // data fields materialize locally, resolver functions stay remote and execute inside the plugin's own sandbox frame
 type RemotePluginSubscribe = (parent: undefined, args: unknown, ctx: Record<string, never>) => Promise<AsyncIterable<any>>
+/** One connection may carry several sources, so a package can ship a whole family of them. */
 type RemotePluginPayload = RemotePluginSource & { sources?: unknown }
 type RemotePluginSource = {
   origin?: unknown
@@ -429,6 +430,7 @@ type Fanout = {
   insertedUris: Set<string>
   extractUris?: (result: any) => string[]
   // the same array the caller holds and unsubscribes, so late joiners are torn down with the rest
+  /** the same array the caller holds and unsubscribes, so late joiners are torn down with the rest */
   subscriptions: FanoutSubscription[]
   joined: Map<ExtractorEntry, FanoutSubscription>
 }
@@ -484,6 +486,7 @@ export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUri
     subscriptions: fanout.subscriptions,
     insertedUris: fanout.insertedUris,
     // stop accepting late joiners; the caller still unsubscribes what it holds
+    /** stop accepting late joiners; the caller still unsubscribes what it holds */
     close: () => { fanouts.delete(fanout) },
   }
 }

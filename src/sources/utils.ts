@@ -38,6 +38,16 @@ export const makeEpisode = ({ origin, id, mediaUri, ...fields }: { origin: strin
 })
 
 // the episode id suffixes the media id to match the toUriEpisodeId convention in utils/uri, and episodeNumber must stay 1: the media episodes resolver drops every episode with a null episodeNumber
+/**
+ * A movie is modelled as a one episode series so it can reuse the episode keyed
+ * playback path, which is the only path the watch route and the source selector
+ * understand. The episode id suffixes the media id, so the uri comes out as
+ * `${media.uri}-1`, matching the toUriEpisodeId convention in utils/uri.
+ *
+ * episodeNumber must stay 1 rather than null: the media episodes resolver drops
+ * every episode with a null episodeNumber, and groups the rest by that number,
+ * which is what merges one movie's per-source episodes into a single row.
+ */
 export const makeMovieEpisode = (
   media: GQLMedia,
   overrides: Partial<GQLEpisode> = {}
@@ -59,6 +69,14 @@ export const makeMovieEpisode = (
 export const isMovie = (media: { categories?: readonly string[] | null }) =>
   Boolean(media.categories?.includes('MOVIE'))
 
+/**
+ * Normalize a page of upstream records, dropping only the ones that fail.
+ *
+ * A page resolver is all-or-nothing by default: a plain `.map` throws and a `Promise.all` rejects
+ * as soon as one record is malformed, so the source yields nothing and one bad entry costs the
+ * whole page. That is what turns a single odd upstream record into an empty feed, and it defeats
+ * the point of having several sources, since the surviving source goes dark too.
+ */
 export const normalizePage = async <T, R>(
   items: readonly T[],
   normalize: (item: T) => R | Promise<R>,

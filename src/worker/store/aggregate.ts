@@ -13,6 +13,7 @@ const reconcileCategories = (cats: MediaCategory[]): MediaCategory[] => {
   return out
 }
 
+/** Sort array by score descending (highest first), nulls last */
 function byScore<T extends { score?: number | null }>(arr: T[]): T[] {
   return [...arr].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
 }

@@ -1,5 +1,6 @@
 // nothing here touches the graph or the source barrel, so it stays importable outside a browser
 
+/** A short lowercase token. Origins name things across the store, the UI and the uri grammar. */
 export const PLUGIN_ORIGIN_TOKEN = /^[a-z0-9][a-z0-9-]{0,31}$/
 
 export type PluginSourceInput = {
@@ -13,6 +14,7 @@ export type PluginSourceInput = {
   resolvers?: unknown
 }
 
+/** Everything about a source except its resolvers, which only extractor.ts can build. */
 export type PluginSourceMeta = {
   origin: string
   originUrl: string
@@ -26,6 +28,19 @@ export type PluginSourceMeta = {
 export type RejectedSource = { origin: string, reason: string }
 
 // the single-source shape stays supported: it is what the example plugin and every plugin written before this sends
+/**
+ * The sources a payload declares, each validated on its own.
+ *
+ * A payload is either ONE source, or a `sources` list so a single package can ship a family of them
+ * (an indexer package serving animetosho and nyaa, say). The single shape stays supported because it
+ * is what the example plugin and every plugin written before this sends.
+ *
+ * A source in a family is an ordinary standalone source that happens to arrive over a shared
+ * connection. So a malformed one is REPORTED and skipped, never fatal to its siblings: the same rule
+ * the fan-out follows for a failing extractor and the source layer follows for a bad record. Dropping
+ * the whole family because one entry is wrong would make a package strictly more fragile than the
+ * same sources shipped separately, which is backwards.
+ */
 export const readPluginSources = (
   payload: PluginSourceInput & { sources?: unknown },
   pluginUri: string

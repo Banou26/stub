@@ -9,7 +9,9 @@ const RECONNECT_DELAY_MS = 3_000
 export type PluginStatus = {
   uri: string
   state: 'connecting' | 'connected' | 'error'
+  /** every source the package registered; one package may ship a family of them */
   sources?: { origin: string, name: string }[]
+  /** sources the package declared that could not be registered; the rest still serve */
   rejected?: { origin: string, reason: string }[]
   error?: string
 }
@@ -111,11 +113,13 @@ const cancelReconnect = (uri: string) => {
   if (timer !== undefined) { clearTimeout(timer); retryTimers.delete(uri) }
 }
 
+// `silent` is not in @fkn/lib's published types yet; an older broker ignores it and still confirms
+type InstallOptions = NonNullable<Parameters<typeof packages.install>[1]> & { silent?: boolean }
+
 // install through FKN first and only persist to the enabled list once it took: FKN refuses to connect a package this app has not installed, so a mistyped address written straight to the list is retried forever
 // key everything on the id FKN hands back, never the caller's string: FKN canonicalizes a version away ('npm:x@1.2.3' installs as 'npm:x')
-// resolves the address FKN registered it under, or null when the FKN install confirm was turned down
-export const enablePlugin = async (uri: string): Promise<string | null> => {
-  const installed = await packages.install(uri)
+export const enablePlugin = async (uri: string, options?: InstallOptions): Promise<string | null> => {
+  const installed = await packages.install(uri, options)
   if (!installed) return null
   saveEnabled([...new Set([...loadEnabled(), installed.uri])])
   await connectPlugin(installed.uri)

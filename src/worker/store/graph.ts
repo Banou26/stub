@@ -275,6 +275,7 @@ export function createGraph<T>(): Graph<T> {
 
 const emptySet: ReadonlySet<string> = new Set()
 
+/** Merge strategy: scalars last-write-wins, arrays longest-wins. */
 export function lastWriteLongestArray<T extends Record<string, unknown>>(incoming: T, existing: T): T {
   const result = { ...existing } as Record<string, unknown>
   for (const key in incoming) {
