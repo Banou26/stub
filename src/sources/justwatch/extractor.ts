@@ -3,6 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 import { jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
+import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
 
 const SCORE = 0.2
@@ -247,20 +248,12 @@ interface JWNodeResponse { data: { node: JWShowNode } }
 const resolveImageUrl = (url: string | null | undefined) =>
   url ? (url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`) : undefined
 
-const parseSeasonNumber = (title: string) => {
-  const m = title.match(/\b(?:Season|Part|Cour)\s+(\d+)\b/i)
-  return m ? Number(m[1]) : undefined
-}
-
-const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | undefined => {
-  if (seasons.length <= 1) return undefined
-  let best: { num: number, diff: number } | undefined
-  for (const s of seasons) {
-    const diff = Math.abs(s.totalEpisodeCount - targetCount)
-    if (!best || diff < best.diff) best = { num: s.content.seasonNumber, diff }
-  }
-  return best?.num
-}
+// shared with tmdb, which has the same show-vs-season problem: see ../season.ts
+const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | undefined =>
+  pickSeasonByEpisodeCount(
+    seasons.map(season => ({ seasonNumber: season.content.seasonNumber, episodeCount: season.totalEpisodeCount })),
+    targetCount
+  )
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
