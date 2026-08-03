@@ -50,7 +50,11 @@ const style = css`
 
   .close:hover { background: rgba(255, 255, 255, 0.14); }
 
-  .panel {
+  /* The slot IS the panel, not a child of one. fkn reads the placeholder's own computed
+     border-radius and clips the package frame to it, so a radius on a wrapper would leave the frame
+     painting square corners over a rounded box. */
+  .slot,
+  .fallback {
     flex: 1;
     min-height: 0;
     border-radius: 0.8rem;
@@ -59,14 +63,10 @@ const style = css`
     overflow: hidden;
   }
 
-  /* fkn keeps the package frame aligned to this, so it stays empty and correctly sized */
-  .slot { width: 100%; height: 100%; }
-
   .fallback {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     padding: 2rem;
     text-align: center;
     color: rgba(255, 255, 255, 0.55);
@@ -140,11 +140,9 @@ export const SourcePopup = ({ pluginUri, origin, name, uris, onPick, onClose }: 
           <span className="spacer"/>
           <button type="button" className="close" onClick={onClose}>Close</button>
         </div>
-        <div className="panel">
-          {failed
-            ? <div className="fallback">This source could not open its picker. {failed}</div>
-            : <div className="slot" ref={slot}/>}
-        </div>
+        {failed
+          ? <div className="fallback">This source could not open its picker. {failed}</div>
+          : <div className="slot" ref={slot}/>}
       </div>
     </div>
   )
