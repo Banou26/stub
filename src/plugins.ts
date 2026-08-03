@@ -113,8 +113,8 @@ const cancelReconnect = (uri: string) => {
   if (timer !== undefined) { clearTimeout(timer); retryTimers.delete(uri) }
 }
 
-// `silent` is not in @fkn/lib's published types yet; an older broker ignores it and still confirms
-type InstallOptions = NonNullable<Parameters<typeof packages.install>[1]> & { silent?: boolean }
+// `noConfirm` is not in @fkn/lib's published types yet; an older broker ignores it and still confirms
+type InstallOptions = NonNullable<Parameters<typeof packages.install>[1]> & { noConfirm?: boolean }
 
 // install through FKN first and only persist to the enabled list once it took: FKN refuses to connect a package this app has not installed, so a mistyped address written straight to the list is retried forever
 // key everything on the id FKN hands back, never the caller's string: FKN canonicalizes a version away ('npm:x@1.2.3' installs as 'npm:x')
