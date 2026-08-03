@@ -50,8 +50,9 @@ export const acceptInvites = async (): Promise<void> => {
   notify()
   for (const uri of pending) {
     try {
-      // null is FKN's install confirm being turned down, which is a refusal and must be recorded
-      if (!await enablePlugin(uri)) declined.add(comparablePluginUri(uri))
+      // silent: this dialog is the consent, so FKN notifies instead of confirming; null only comes
+      // back from a broker too old to honour it, which still confirms and can still be refused
+      if (!await enablePlugin(uri, { silent: true })) declined.add(comparablePluginUri(uri))
       invites.delete(uri)
     } catch (error) {
       invites.set(uri, { uri, state: 'error', error: error instanceof Error ? error.message : String(error) })
