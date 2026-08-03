@@ -1,3 +1,5 @@
+import type { InstallOptions } from '@fkn/lib/packages'
+
 import { packages } from '@fkn/lib'
 
 import { registerRemoteSource, unregisterRemoteSource } from './worker'
@@ -112,9 +114,6 @@ const cancelReconnect = (uri: string) => {
   const timer = retryTimers.get(uri)
   if (timer !== undefined) { clearTimeout(timer); retryTimers.delete(uri) }
 }
-
-// `noConfirm` is not in @fkn/lib's published types yet; an older broker ignores it and still confirms
-type InstallOptions = NonNullable<Parameters<typeof packages.install>[1]> & { noConfirm?: boolean }
 
 // install through FKN first and only persist to the enabled list once it took: FKN refuses to connect a package this app has not installed, so a mistyped address written straight to the list is retried forever
 // key everything on the id FKN hands back, never the caller's string: FKN canonicalizes a version away ('npm:x@1.2.3' installs as 'npm:x')
