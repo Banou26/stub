@@ -4,10 +4,6 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, buildHandlesFromUri, waitForMedia } from '../utils'
 
-// Apple TV+ via the anonymous UTS web API (uts-api.itunes.apple.com). No token/login.
-// ⚠️ Endpoints are verified (HTTP 200) but the response field names below are best-effort
-// and untested against a live response - verify when the proxy is up. See docs/streaming-platform-apis.md.
-
 const SCORE = 0.2
 
 export const icon = 'https://tv.apple.com/favicon.ico'
@@ -29,7 +25,6 @@ const api = <T>(path: string, ctx: ExtractorServerContext): Promise<T> =>
     .fetch(`${ATV}${path}${path.includes('?') ? '&' : '?'}${PARAMS}`)
     .then(r => r.json() as Promise<T>)
 
-// mzstatic image urls are templates: `.../{w}x{h}{c}.{f}`
 const image = (img: AppleImage | undefined, w: number, h: number): string | undefined =>
   img?.url
     ?.replace('{w}', String(w))
@@ -102,8 +97,7 @@ const normalizeEpisode = (episode: AppleEpisode, mediaUri: string): GQLEpisode =
 const fetchEpisodes = async (id: string, seasons: Record<string, AppleSeason> | undefined, mediaUri: string, ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {
   const seasonIds = Object.values(seasons ?? {}).map(season => season.id).filter(Boolean)
   if (!seasonIds.length) return []
-  // ⚠️ UTS caps episodes per request (~6) and rejects nextToken; per-season is the workaround,
-  // but very long seasons may still be truncated - revisit pagination when verifying live.
+  // ⚠️ UTS caps episodes per request (~6) and rejects nextToken; per-season is the workaround
   const perSeason = await Promise.all(
     seasonIds.map(seasonId =>
       api<AppleEpisodesResponse>(`/shows/${id}/episodes?selectedSeasonId=${seasonId}`, ctx)

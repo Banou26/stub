@@ -6,8 +6,7 @@ use(chaiAsPromised)
 use(chaiShallowDeepEqual)
 
 // AniList reports failures with an HTTP 200 and `{ data: null, errors: [...] }`, rate limits above
-// all. Every call site used to dereference data unguarded, so a rate limit took down the home feed
-// with "Cannot read properties of null (reading 'Page')" and lost the actual reason.
+// all. Every call site used to dereference data unguarded, so a rate limit took down the home feed.
 const RATE_LIMITED = { data: null, errors: [{ message: 'Too Many Requests', status: 429 }] }
 
 const ctxWith = (body: unknown, status = 200) => ({
@@ -39,7 +38,6 @@ const mediaPage = async (input: Record<string, unknown>, ctx: any) => {
 export const rateLimitedReleasingPage = async () => {
   const [yielded, errors] = await captureErrors(() => mediaPage({ status: 'RELEASING' }, ctxWith(RATE_LIMITED)))
   expect(yielded).to.deep.equal([{ mediaPage: { nodes: [] } }])
-  // the real reason is surfaced rather than lost behind a TypeError
   expect(errors).to.contain('Too Many Requests')
 }
 
@@ -55,7 +53,6 @@ export const malformedBody = async () => {
   expect(errors).to.contain('502')
 }
 
-// A GraphQL response may carry partial data alongside errors, which is still worth rendering.
 export const partialDataIsKept = async () => {
   const body = {
     data: { Page: { pageInfo: { lastPage: 1 }, media: [{ id: 1, title: { romaji: 'Frieren' }, format: 'TV' }] } },

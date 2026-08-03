@@ -1,21 +1,14 @@
 import type { Media } from '../../../src/generated/schema/types.generated'
 import type { StubPluginAPI } from '../../../src/plugin-api'
 
-// The '@fkn/lib' barrel pulls in the webvpn net/http surface, which needs node stream polyfills a
-// plain vite config does not install, and the bundle then dies on evaluation before onConnect runs.
-// Import the subpath: a plugin needs the packages API and nothing else.
+// import subpaths, never the '@fkn/lib' barrel: it pulls in the webvpn net/http surface, which needs node stream polyfills a plain vite config does not install
 import * as packages from '@fkn/lib/packages'
 import { info } from '@fkn/lib/account'
-// not '@fkn/lib/cloud': that barrel carries the webvpn net/http surface, which reads node stream
-// internals as it evaluates and takes the whole bundle down before onConnect can run
 import { fetch } from '@fkn/lib/cloud/fetch'
-// the promises subpath: '@fkn/lib/cloud/fs' is the node callback-style api, so awaiting it resolves
-// instantly with undefined and then throws when it calls the callback that was never passed
+// the promises subpath: '@fkn/lib/cloud/fs' is the node callback-style api
 import { writeFile } from '@fkn/lib/cloud/fs/promises'
 
-// A complete stub source plugin. Publish this package with the keywords in package.json and it
-// becomes discoverable in stub's Add sources picker; stub installs it through FKN, boots it in a
-// hidden sandbox frame, and connects over a brokered port.
+// publish this package with the keywords in package.json and it becomes discoverable in stub's Add sources picker
 
 const media = (entry: { id: string, title: string, description: string, cover: string }): Media => ({
   _id: `example:${entry.id}`,
@@ -44,13 +37,7 @@ const CATALOG = [
   }),
 ]
 
-// A real source plugin fetches its catalog from somewhere. This one's catalog is static, so it
-// pulls its own cover art instead: the point is that the request goes through the PACKAGE's own
-// `fetch`, so the bytes meter against the package rather than against the app embedding it.
-//
-// Run once per connection rather than per query, so a plugin that is installed but never browsed
-// still shows a tally. Failures are logged and swallowed: cover art is decoration, and a source
-// that cannot reach the network should still serve the catalog it already holds.
+// the request goes through the PACKAGE's own `fetch`, so the bytes meter against the package rather than against the app embedding it
 const pullCoverArt = async (): Promise<void> => {
   for (const entry of CATALOG) {
     const url = entry.covers?.[0]?.url
@@ -65,14 +52,10 @@ const pullCoverArt = async (): Promise<void> => {
   }
 }
 
-// Cloud storage is keyed on the package, like its usage and its quota, so this writes into the
-// PACKAGE's own scope and not into the scope of whichever app mounted it. Two apps hosting this
-// source therefore see one cache, not two.
-//
-// Encrypted storage is sealed until the account is unlocked, and a write while sealed is what asks
-// the host app's page for that unlock. Failing is normal on a first run and costs only the cache.
+// cloud storage is keyed on the package, like its usage and its quota, so two apps hosting this source see one cache, not two
 const cacheCatalog = async (): Promise<void> => {
   try {
+    // encrypted storage is sealed until the account is unlocked, and a write while sealed is what asks the host app's page for that unlock: failing here is normal on a first run and costs only the cache
     await writeFile('catalog.json', JSON.stringify(CATALOG))
     console.log('Example Source: cached its catalog in its own cloud storage')
   } catch (error) {
@@ -112,8 +95,6 @@ packages.onConnect(() => ({
   },
 } satisfies StubPluginAPI), ({ name, version, from, protocol }) => {
   console.log(`${name}@${version}: connected by ${from} over ${protocol}`)
-  // A package follows the host app's FKN account with no second sign-in, and acts as ITSELF: quota,
-  // storage scope and usage all key on this package's own id, never the app's.
   info().then(account => console.log(`${name}: signed in as`, account?.name ?? 'nobody'))
   pullCoverArt().then(cacheCatalog).catch(() => {})
 })

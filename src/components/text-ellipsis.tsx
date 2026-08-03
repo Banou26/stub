@@ -36,6 +36,7 @@ export const TextEllipsis = (
       }
 
       const height = ref.clientHeight
+      // the min-1 floor and the prev === next guards: sub-pixel rounding of the written height kept the line count flip-flopping so it never settled
       setLineHeight(prev => (prev === lineHeightPx ? prev : lineHeightPx))
       if (lineHeightPx && height) {
         const nextClamp = Math.max(1, Math.floor(height / lineHeightPx))
@@ -43,13 +44,7 @@ export const TextEllipsis = (
       }
     }
 
-    // Measure on the next frame instead of mutating synchronously inside the
-    // observer callback: writing line-clamp/height back onto the observed
-    // element re-enters the observer in the same delivery, which is what throws
-    // "ResizeObserver loop completed with undelivered notifications", and
-    // sub-pixel rounding of the written height kept the floor flip-flopping so
-    // it never settled. Guarded updates + the min-1 floor converge on a stable
-    // line count and quiet the observer.
+    // Measure on the next frame: writing line-clamp/height back onto the observed element re-enters the observer, which throws "ResizeObserver loop completed with undelivered notifications"
     const resizeObserver = new ResizeObserver(() => {
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(update)

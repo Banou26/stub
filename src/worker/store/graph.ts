@@ -1,5 +1,3 @@
-// ─── Types ───────────────────────────────────────────────────────────────────
-
 export type LabelOptions<T> = {
   merge?: (incoming: T, existing: T) => T
 }
@@ -33,12 +31,10 @@ export type Graph<T> = {
   clusters(label: string, nodeLabel?: string, uris?: string[]): T[][]
 }
 
-// ─── Union-Find with cached components ──────────────────────────────────────
-
 export function createUnionFind(): UnionFind {
   const parent = new Map<string, string>()
   const rank = new Map<string, number>()
-  const components = new Map<string, Set<string>>() // root → members
+  const components = new Map<string, Set<string>>()
 
   function ensure(x: string): void {
     if (!parent.has(x)) {
@@ -52,7 +48,6 @@ export function createUnionFind(): UnionFind {
     ensure(x)
     let root = x
     while (parent.get(root) !== root) root = parent.get(root)!
-    // path compression
     let current = x
     while (current !== root) {
       const next = parent.get(current)!
@@ -103,25 +98,18 @@ export function createUnionFind(): UnionFind {
   return { has, find, union, component, allComponents }
 }
 
-// ─── Minimalist labeled graph ────────────────────────────────────────────────
-
 export function createGraph<T>(): Graph<T> {
   const nodes = new Map<string, T>()
-  const aliases = new Map<string, string>() // alias → canonical key
+  const aliases = new Map<string, string>()
 
-  // label → key → Set<key>  (kept for link() isNew check + directed edges)
   const undirected = new Map<string, Map<string, Set<string>>>()
   const directed = new Map<string, Map<string, Set<string>>>()
 
-  // incremental clustering: one union-find per undirected edge label
   const unionFinds = new Map<string, UnionFind>()
 
-  // node labels
-  const nodeLabels = new Map<string, Set<string>>()     // node key → label names
-  const labelIndex = new Map<string, Set<string>>()     // label name → node keys
-  const mergers = new Map<string, (incoming: T, existing: T) => T>()  // label → merge fn
-
-  // ── helpers ────────────────────────────────────────────────────────────────
+  const nodeLabels = new Map<string, Set<string>>()
+  const labelIndex = new Map<string, Set<string>>()
+  const mergers = new Map<string, (incoming: T, existing: T) => T>()
 
   function adjFor(store: Map<string, Map<string, Set<string>>>, label: string): Map<string, Set<string>> {
     let adj = store.get(label)
@@ -135,16 +123,12 @@ export function createGraph<T>(): Graph<T> {
     return uf
   }
 
-  // ── Nodes ──────────────────────────────────────────────────────────────────
-
   function set(key: string, value: T, options?: SetOptions): void {
-    // Compute effective labels
     const existing = nodeLabels.get(key)
     const effective = new Set(existing)
     if (options?.addLabels) for (const l of options.addLabels) effective.add(l)
     if (options?.removeLabels) for (const l of options.removeLabels) effective.delete(l)
 
-    // Find merge function
     const mergeFns: ((incoming: T, existing: T) => T)[] = []
     for (const label of effective) {
       const fn = mergers.get(label)
@@ -154,7 +138,6 @@ export function createGraph<T>(): Graph<T> {
       throw new Error(`Node "${key}" has multiple labels with merge functions: cannot resolve which to use`)
     }
 
-    // Merge or overwrite
     const current = nodes.get(key)
     const merged = (mergeFns.length === 1 && current != null)
       ? mergeFns[0]!(value, current)
@@ -162,7 +145,6 @@ export function createGraph<T>(): Graph<T> {
 
     nodes.set(key, merged)
 
-    // Update label indexes
     if (existing) {
       for (const l of existing) {
         if (!effective.has(l)) labelIndex.get(l)?.delete(key)
@@ -178,8 +160,6 @@ export function createGraph<T>(): Graph<T> {
       nodeLabels.delete(key)
     }
   }
-
-  // ── Labels ─────────────────────────────────────────────────────────────────
 
   function registerLabel(label: string, options?: LabelOptions<T>): void {
     if (options?.merge) {
@@ -217,8 +197,6 @@ export function createGraph<T>(): Graph<T> {
 
   function resolve(key: string): string { return aliases.get(key) ?? key }
 
-  // ── Edges ──────────────────────────────────────────────────────────────────
-
   function link(a: string, b: string, label: string): boolean {
     const adj = adjFor(undirected, label)
     const isNew = !adj.get(a)?.has(b)
@@ -226,7 +204,6 @@ export function createGraph<T>(): Graph<T> {
     if (!adj.has(b)) adj.set(b, new Set())
     adj.get(a)!.add(b)
     adj.get(b)!.add(a)
-    // maintain union-find incrementally
     ufFor(label).union(a, b)
     return isNew
   }
@@ -241,8 +218,6 @@ export function createGraph<T>(): Graph<T> {
     return directed.get(label)?.get(key) ?? emptySet
   }
 
-  // ── Traversal (O(1) component lookup via union-find) ─────────────────────
-
   function cluster(start: string, label: string): T[] {
     const uf = unionFinds.get(label)
     const members = uf?.has(start) ? uf.component(start) : undefined
@@ -253,7 +228,6 @@ export function createGraph<T>(): Graph<T> {
         if (node) result.push(node)
       }
     } else {
-      // node exists but was never linked - singleton
       const node = nodes.get(start)
       if (node) result.push(node)
     }
@@ -270,7 +244,6 @@ export function createGraph<T>(): Graph<T> {
       : nodeLabel ? labelIndex.get(nodeLabel) ?? emptySet : nodes.keys()
 
     for (const key of seeds) {
-      // deduplicate by union-find root (or by key itself for unlinked nodes)
       const root = uf?.has(key) ? uf.find(key) : key
       if (visited.has(root)) continue
       visited.add(root)
@@ -302,9 +275,6 @@ export function createGraph<T>(): Graph<T> {
 
 const emptySet: ReadonlySet<string> = new Set()
 
-// ─── Merge strategies ───────────────────────────────────────────────────────
-
-/** Merge strategy: scalars last-write-wins, arrays longest-wins. */
 export function lastWriteLongestArray<T extends Record<string, unknown>>(incoming: T, existing: T): T {
   const result = { ...existing } as Record<string, unknown>
   for (const key in incoming) {

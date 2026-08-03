@@ -40,8 +40,6 @@ export const osraResolvers = {
   handleRequest: (input: RequestInfo | URL, init?: RequestInit) =>
     yoga.handleRequest(new Request(input, init), {}),
   setUserKeys: (keys: Record<string, string>) => setUserKeys(keys),
-  // One end of a brokered FKN packages connection, transferred from the main thread. The worker
-  // attaches osra on the port itself so plugin calls skip the main thread entirely.
   registerRemoteSource: async (port: MessagePort, pluginUri: string): Promise<{ ok: { sources: { origin: string, name: string }[], rejected: { origin: string, reason: string }[] } } | { error: string }> => {
     try {
       return { ok: await registerRemoteExtractor(port, pluginUri) }

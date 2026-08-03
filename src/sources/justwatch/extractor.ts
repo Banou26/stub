@@ -27,8 +27,6 @@ const PACKAGE_ORIGIN_MAP: Record<string, string> = {
   hlu: 'hulu', hbm: 'hbo', pcp: 'peacock', pmp: 'paramount', fuv: 'fubo'
 }
 
-// URL extraction
-
 const extractRealUrl = (affiliateUrl: string): string | undefined => {
   try {
     const url = new URL(affiliateUrl)
@@ -65,8 +63,6 @@ const extractCrunchyrollEpisodeId = (url: string): string | undefined => {
   } catch {}
   return undefined
 }
-
-// API
 
 const jwFetch = async <T>(query: string, variables: Record<string, unknown>, ctx: ExtractorServerContext): Promise<T> => {
   const res = await ctx.fetch(JW_API, {
@@ -219,8 +215,6 @@ const getNodeDetails = (nodeId: string, ctx: ExtractorServerContext) =>
     jwFetch<JWNodeResponse>(NODE_QUERY, { nodeId, language: LANGUAGE, country: COUNTRY }, ctx)
   )
 
-// Types
-
 interface JWOffer {
   monetizationType: string
   standardWebURL: string | null
@@ -250,8 +244,6 @@ interface JWShowNode extends JWSearchNode { seasons: JWSeason[] }
 interface JWSearchResponse { data: { popularTitles: { edges: { node: JWSearchNode }[] } } }
 interface JWNodeResponse { data: { node: JWShowNode } }
 
-// Helpers
-
 const resolveImageUrl = (url: string | null | undefined) =>
   url ? (url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`) : undefined
 
@@ -269,8 +261,6 @@ const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | 
   }
   return best?.num
 }
-
-// Handle building from offers
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
@@ -302,8 +292,7 @@ const buildOffersAsHandles = async (
         if (resolved) contentId = crunchyrollId(resolved.seriesId, resolved.seasonId)
       }
     } else if (rawContentId) {
-      // a provider's series url names the SHOW, so on a season-scoped media that id spans every season
-      // and clustering unions them: the same defect as the jw id itself, one layer down. See ./id.ts.
+      // a provider's series url names the SHOW, so without the season that id spans every season and clustering unions them
       contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber)
     }
 
@@ -321,15 +310,12 @@ const buildOffersAsHandles = async (
   return handles
 }
 
-// Normalization
-
 const normalizeMedia = async (
   node: JWSearchNode,
   opts: { seasons?: JWSeason[], seasonNumber?: number },
   ctx: ExtractorServerContext
 ): Promise<GQLMedia | null> => {
-  // A series without a season has no identity here: the bare node id is shared by every season of the
-  // show and merges them. Refusing to build the media is the whole point - see ./id.ts.
+  // refusing to build the media is the point: the bare node id is shared by every season of the show and merges them
   if (opts.seasonNumber == null && showRequiresSeason(node.objectType)) return null
   const id = opts.seasonNumber == null ? String(node.objectId) : jwId(node.objectId, opts.seasonNumber)
   const { shortDescription } = node.content
@@ -370,8 +356,7 @@ const normalizeMedia = async (
     startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
   })
 
-  // JustWatch keeps title and description on the per provider offer handles rather
-  // than on the media itself, so the synthetic episode takes them from the node.
+  // JustWatch keeps title and description on the per provider offer handles, not on the media itself
   if (isMovie(media)) {
     media.episodes = [makeMovieEpisode(media, {
       score: SCORE,
@@ -397,11 +382,8 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
     runtime: ep.content.runtime ?? undefined
   })
 
-// Season resolution
-
 const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: ExtractorServerContext) => {
   if (!node.seasons?.length) return undefined
-  // a single season is not ambiguous: it IS the season, and the id still has to name it
   if (node.seasons.length === 1) return node.seasons[0]!.content.seasonNumber
   return waitForMedia(uri, ctx, m => {
     const title = getFirstTitle(m)
@@ -410,8 +392,6 @@ const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: Extractor
     return epCount ? findMatchingSeason(node.seasons, epCount) : undefined
   })
 }
-
-// Core resolution
 
 const TITLE_MATCH_THRESHOLD = 0.5
 
@@ -425,7 +405,6 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
     const node = detailRes.data?.node
     if (!node?.content?.title) continue
 
-    // Validate title match using Smith-Waterman alignment
     const similarity = await titleSimilarity(title, node.content.title)
     if (similarity < TITLE_MATCH_THRESHOLD) continue
 
@@ -450,7 +429,6 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   const jwUri = extractAggregatedUriOrigin(uri, origin)
   if (jwUri) {
-    // the uri may already pin the season, since that is now part of the id
     const { objectId, seasonNumber: pinned } = splitJwId(jwUri.id)
     const detailRes = await getNodeDetails(`ts${objectId}`, ctx)
     const node = detailRes.data?.node
@@ -467,8 +445,6 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
   return searchAndLinkMedia(title, uri, ctx)
 }
 
-// Resolvers
-
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
@@ -482,10 +458,7 @@ export const resolvers: Resolvers = {
       subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
         if (!search) return yield { mediaPage: { nodes: [] } }
         const searchRes = await searchTitles(search, ctx)
-        // The search query does not fetch seasons, so a series result cannot say WHICH season it is
-        // and normalizeMedia declines it. Movies still come through. Dropping those entries is the
-        // point rather than a cost: a season-less series media is exactly the one whose show-level
-        // handles merged every season of the show together.
+        // the search query does not fetch seasons, so normalizeMedia declines every series result and only movies come through
         const nodes = await Promise.all(
           (searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeMedia(e.node, {}, ctx))
         )
@@ -498,7 +471,6 @@ export const resolvers: Resolvers = {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
       if (isMovie(parent)) return [makeMovieEpisode(parent, { score: SCORE })]
-      // parent.id is '<node>-<season>' now, so the node has to be split back out of it
       const { objectId, seasonNumber: pinned } = splitJwId(parent.id)
       const detailRes = await getNodeDetails(`ts${objectId}`, ctx)
       const node = detailRes.data?.node

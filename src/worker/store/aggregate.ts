@@ -4,10 +4,7 @@ import { getRoutePath, Route } from '../../router/path'
 import { registerAggregatedId } from './db'
 import { isRoutableUri } from '../../utils/uri'
 
-// ─── Shared utilities ────────────────────────────────────────────────────────
-
-// A media is exactly one of MOVIE/SERIES (sources agree per title); keep the highest-scored
-// source's format + ANIME if present, so a merged media never lands in both Movies and Series.
+// keep ANIME plus exactly ONE of MOVIE/SERIES (highest-scored source's format wins), so a merged media never lands in both the Movies and the Series listing
 const reconcileCategories = (cats: MediaCategory[]): MediaCategory[] => {
   const out: MediaCategory[] = []
   if (cats.includes('ANIME')) out.push('ANIME')
@@ -16,7 +13,6 @@ const reconcileCategories = (cats: MediaCategory[]): MediaCategory[] => {
   return out
 }
 
-/** Sort array by score descending (highest first), nulls last */
 function byScore<T extends { score?: number | null }>(arr: T[]): T[] {
   return [...arr].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
 }
@@ -42,8 +38,6 @@ export function recursivelyUnwrapMediaHandles(media: GQLMedia): GQLMedia[] {
   if (media.handles) unwrapMediaCache.set(media, result)
   return result
 }
-
-// ─── GQL conversion ─────────────────────────────────────────────────────────
 
 function mediaToGQL(media: Media): GQLMedia {
   return {
@@ -97,9 +91,7 @@ function episodeToGQL(episode: Episode): GQLEpisode {
   }
 }
 
-// ─── Aggregation helpers ─────────────────────────────────────────────────────
-
-// Stable opaque UUID per cluster - cached by smallest URI (which is stable across cluster growth)
+// keyed by the smallest uri, which is stable across cluster growth
 const clusterIdCache = new Map<string, string>()
 
 function getStableClusterId(uris: string[]): string {
@@ -109,10 +101,7 @@ function getStableClusterId(uris: string[]): string {
 }
 
 function buildAggregatedIdentity(uris: string[]): { uri: string; id: string } {
-  // One handle carrying a ',' or a '/' would split the list or the route path, and the media's whole
-  // watch page becomes unreachable. Drop it here rather than anywhere upstream: this is the single
-  // place a handle uri becomes something a route has to match, so it is the only place that can be
-  // sure. Falls back to the unfiltered list if that would leave nothing to identify the cluster by.
+  // one handle carrying a ',' or a '/' would split the list or the route path, and the media's whole watch page becomes unreachable
   const routable = uris.filter(isRoutableUri)
   const sorted = [...(routable.length ? routable : uris)].sort()
   return {
@@ -120,8 +109,6 @@ function buildAggregatedIdentity(uris: string[]): { uri: string; id: string } {
     id: `(${sorted.join(',')})`,
   }
 }
-
-// ─── Aggregate media cluster ─────────────────────────────────────────────────
 
 export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedia {
   if (medias.length === 0) throw new Error('Cannot aggregate empty cluster')
@@ -146,7 +133,6 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     return {
       ...gql,
       ...acc,
-      // Scalars: keep first non-null value (highest-scored source wins, fallback to others)
       url: acc.url ?? gql.url,
       type: acc.type ?? gql.type,
       status: acc.status ?? gql.status,
@@ -157,7 +143,6 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
       endDate: acc.endDate ?? gql.endDate,
       isAdult: acc.isAdult ?? gql.isAdult,
       episodeCount: acc.episodeCount ?? gql.episodeCount,
-      // Arrays: concatenate
       categories: [...(acc.categories ?? []), ...(gql.categories ?? [])],
       titles: [...(acc.titles ?? []), ...(media.titles ?? [])],
       descriptions: [...(acc.descriptions ?? []), ...(media.descriptions ?? [])],
@@ -188,8 +173,6 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     trailers: removeDuplicatesByField('uri', merged.trailers ?? []),
   }
 }
-
-// ─── Aggregate episode cluster ───────────────────────────────────────────────
 
 export function aggregateEpisode(episodes: Episode[], locationOrigin: string): GQLEpisode {
   if (episodes.length === 0) throw new Error('Cannot aggregate empty cluster')

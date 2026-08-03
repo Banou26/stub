@@ -15,8 +15,6 @@ export const metadataOnly = true
 export const isApiOnly = false
 export const supportedUris = ['nf']
 
-// Auth
-
 let _token: string | undefined
 let _tokenExpiry: number = 0
 let _tokenPromise: Promise<string> | undefined
@@ -42,8 +40,6 @@ const getToken = async (ctx: ExtractorServerContext): Promise<string> => {
   })().finally(() => { _tokenPromise = undefined })
   return _tokenPromise
 }
-
-// API
 
 const _inflight = new Map<string, Promise<unknown>>()
 
@@ -122,8 +118,6 @@ const searchApi = (query: string, ctx: ExtractorServerContext) =>
     ctx
   )
 
-// Helpers
-
 const decode = (str: string): string =>
   str
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
@@ -145,8 +139,6 @@ const findMatchingSeason = (
   }
   return best?.season
 }
-
-// Normalization
 
 const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia => {
   const covers: { url: string, score: number }[] = []
@@ -207,12 +199,9 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber
   })
 }
 
-// Netflix serves movies at /watch/<id> just like episodes, so the synthetic
-// episode gets a genuinely playable url rather than the /title/<id> media url.
+// Netflix serves movies at /watch/<id> just like episodes, so the synthetic episode gets a playable url rather than /title/<id>
 const normalizeMovieAsEpisode = (media: GQLMedia): GQLEpisode =>
   makeMovieEpisode(media, { url: `https://www.netflix.com/watch/${media.id}`, score: SCORE })
-
-// Core data fetching
 
 const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: number): Promise<GQLMedia | undefined> => {
   const [detailRes, bgImagesRes] = await Promise.all([fetchDetail(id, ctx), fetchBgImages(id, ctx)])
@@ -241,8 +230,6 @@ const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: 
   return media
 }
 
-// Media resolution
-
 const resolveSeasonNumber = async (nfId: string, aggregatedUri: string, ctx: ExtractorServerContext) => {
   const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
   if (!epCount) return undefined
@@ -267,7 +254,7 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   const nfUri = extractAggregatedUriOrigin(uri, origin)
   if (nfUri) {
-    // nfUri.id may contain a season suffix (e.g., '81726714-2') from a previous aggregation
+    // nfUri.id may carry a season suffix (e.g. '81726714-2') from a previous aggregation
     const dashIdx = nfUri.id.indexOf('-')
     const nfId = dashIdx !== -1 ? nfUri.id.slice(0, dashIdx) : nfUri.id
     const existingSeason = dashIdx !== -1 ? Number(nfUri.id.slice(dashIdx + 1)) : undefined
@@ -283,8 +270,6 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
   if (!title) return null
   return searchAndLinkMedia(title, uri, ctx)
 }
-
-// Resolvers
 
 export const resolvers: Resolvers = {
   Subscription: {

@@ -50,15 +50,7 @@ export const isUri = (uri: string): uri is Uri => {
   return parts.length === 2
 }
 
-// Whether a uri can survive the two places every handle uri is carried: the comma-joined list inside
-// `ag:(...)`, and ONE segment of a route path ('/watch/:mediaUri/:episodeUri'). So a ',' splits the
-// handle list and a '/' splits the route, and either one silently turns a working uri into one no
-// route matches, which renders as a bare "404 No page found" naming nothing.
-//
-// A uri failing this is always a producer bug - a source putting a url where an id belongs. It is
-// dropped from the aggregate rather than trusted, because the cost is wildly asymmetric: the handle
-// contributes nothing on its own (a url clusters with no other source), while letting it through
-// takes out the whole watch page for that media.
+// a ',' splits the handle list inside `ag:(...)` and a '/' splits ONE segment of a route path ('/watch/:mediaUri/:episodeUri'), so either one silently turns a working uri into one no route matches
 const UNROUTABLE_IN_ID = /[,/()]/
 
 export const isRoutableUri = (uri: string): boolean => {
@@ -80,7 +72,6 @@ export const isAggregatedUri = (uri: string): uri is AggregatedUri => {
   const match = uri.match(SCANNARR_REGEX)
   if (!match) return false
   const uris = match?.[1]
-  // allow empty ag uris
   return !uris || isUris(uris)
 }
 
@@ -124,7 +115,7 @@ export const fromAggregatedUri = (uri: AggregatedUri) => {
     origin: 'ag' as const,
     id: `(${joinUris(uris.map(toUri))})`,
     handleUris: uris.map(toUri),
-    handleUrisString: joinUris(uris.map(toUri)), // match[1] as Uris,
+    handleUrisString: joinUris(uris.map(toUri)),
     handleUrisValues: uris,
     episodeId: match[2] as string
   })
@@ -156,7 +147,6 @@ export const matchAggregatedUris = (uri1: AggregatedUri, uri2: AggregatedUri): b
 
   if (!parsed1 || !parsed2) return false
 
-  // Check if any inner URI from uri1 matches any inner URI from uri2
   return parsed1.handleUris.some(innerUri1 =>
     parsed2.handleUris.some(innerUri2 => innerUri1 === innerUri2)
   )

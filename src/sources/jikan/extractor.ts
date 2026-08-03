@@ -153,7 +153,6 @@ const fetchMedia = ({ id }: { id: number }, context: ExtractorServerContext) =>
     )
 
 // A rate limited page answers with an HTML body rather than JSON, so the parse itself can reject.
-// Swallowing that here keeps one bad page from taking down the whole season.
 const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeSearchResponse> =>
   context
     .fetch(`https://api.jikan.moe/v4/seasons/now?page=${page}&sfw=true`)
@@ -165,7 +164,6 @@ const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeS
 
 const getFullSeasonNow = async (context: ExtractorServerContext) => {
   const { data, pagination } = await getSeasonNow(1, context)
-  // rate limited pages respond without data, degrade to whatever pages made it through
   if (!data) return []
   const extraPages = await Promise.all(
     new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
@@ -353,7 +351,6 @@ interface AnimeResponse {
 
 type SearchAnimeData = Omit<AnimeData, 'relations'| 'theme'| 'external'| 'streaming'>
 
-// Search-specific interfaces
 interface PaginationItems {
   count: number;
   total: number;

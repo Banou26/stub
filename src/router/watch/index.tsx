@@ -169,9 +169,7 @@ const Watch = () => {
     [episode?.uri]
   )
 
-  // Deduped: an origin contributing several handles for this episode (an indexer with several
-  // releases) repeats in the aggregated uri, and findOrigins maps ids positionally, so without this
-  // the same origin renders once per handle.
+  // an origin contributing several handles repeats in the aggregated uri, and findOrigins maps ids positionally, so without this the same origin renders once per handle
   const originIds = useMemo(
     () => origins && [...new Set(origins.map(o => o.origin))],
     [origins]
@@ -192,9 +190,7 @@ const Watch = () => {
     if (!selectedSourceUri) return undefined
     const handle = episode?.handles.find(h => h.uri === selectedSourceUri)
     if (!handle) return undefined
-    // Prefer extractor/plugin-provided embedUrl
     if (handle.embedUrl) return handle.embedUrl
-    // Fall back to built-in embed page for supported origins
     const { origin } = fromUri(selectedSourceUri as `${string}:${string}`)
     if (!getPlayer(origin) || !handle.url) return undefined
     const embedParams = new URLSearchParams({
@@ -209,8 +205,6 @@ const Watch = () => {
   const sources: WatchSource[] = useMemo(
     () =>
       (originData?.originPage?.nodes ?? []).map(origin => {
-        // every handle this origin contributed, not just the first: an indexer can offer several
-        // releases for one episode and each is a separate, selectable source
         const handles = (episode?.handles ?? []).filter(h => h.origin === origin.id)
         const playableHandle = (handle: typeof handles[number]) =>
           Boolean(handle?.embedUrl || (getPlayer(origin.id) && handle?.url))

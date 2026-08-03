@@ -22,8 +22,6 @@ function listen<K extends keyof StoreEventMap>(
   return () => eventBus.removeEventListener(type, handler)
 }
 
-// ─── Async iterator factory ──────────────────────────────────────────────────
-
 type IteratorOptions = { abortSignal?: AbortSignal }
 
 function makeAsyncIterator<T>(
@@ -67,8 +65,6 @@ function makeAsyncIterator<T>(
     [Symbol.asyncIterator]() { return this },
   }
 }
-
-// ─── Public iterators ────────────────────────────────────────────────────────
 
 export function listenIterator<K extends keyof StoreEventMap>(
   type: K,

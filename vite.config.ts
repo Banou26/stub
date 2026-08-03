@@ -4,8 +4,7 @@ import { defineConfig, lazyPlugins } from 'vite-plus'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import preact from '@preact/preset-vite'
 
-// Surfaced in the footer. Read here rather than importing package.json so the manifest does not end
-// up in the bundle, and so a stale value is impossible: this is the same file npm publishes from.
+// read rather than imported so the manifest does not end up in the bundle
 const { version } = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8')) as { version: string }
 
 export default defineConfig((_) => ({
@@ -33,9 +32,6 @@ export default defineConfig((_) => ({
     ],
   },
   experimental: {
-    // bundledDev: true,
-    // fullBundleMode: true,
-    // renderBuiltUrl: true,
   },
   build: {
     target: 'esnext',
@@ -50,9 +46,7 @@ export default defineConfig((_) => ({
   worker: {
     format: 'es',
   },
-  // Don't pre-bundle the file:-linked @fkn/lib - its dep cache goes stale when we
-  // rebuild the lib, which silently loads an old copy (e.g. a prod-origin /api iframe).
-  // Its nested CJS dep still needs pre-bundling, else named imports (Address4) break in dev.
+  // the file:-linked @fkn/lib goes stale when the lib is rebuilt, but its nested CJS dep still needs pre-bundling, else named imports (Address4) break in dev
   optimizeDeps: { exclude: ['@fkn/lib'], include: ['@fkn/lib > ip-address'] },
   resolve: {
     alias: {
@@ -62,11 +56,7 @@ export default defineConfig((_) => ({
     },
   },
   plugins: lazyPlugins(() => [
-    // Pin the buffer polyfill shim to its single ESM build. The shim's exports map is dual
-    // (require -> dist/index.cjs, import -> dist/index.js), so without this the specifier resolves
-    // to two distinct modules and the buffer implementation is bundled twice (+26kB, and a second
-    // Buffer whose instances fail instanceof against the first). A resolve.alias won't do it:
-    // rolldown doesn't re-alias.
+    // the shim's dual exports map bundles buffer twice unless pinned to one build, and a resolve.alias won't do it: rolldown doesn't re-alias
     {
       name: 'fkn-resolve-node-polyfill-buffer-shim',
       enforce: 'pre',

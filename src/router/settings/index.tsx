@@ -86,9 +86,7 @@ const Settings = () => {
   const [addError, setAddError] = useState('')
 
   useEffect(() => { setKeys(loadKeys()) }, [])
-  // Re-read on subscribe, not just on notify: a plugin whose frame is already warm connects in a few
-  // milliseconds, which beats the effect that subscribes, and that notify would otherwise be the only
-  // one this row ever gets - leaving a connected source stuck reading "connecting".
+  // Re-read on subscribe, not just on notify: a plugin whose frame is already warm connects before the effect subscribes, leaving a connected source stuck reading "connecting"
   useEffect(() => {
     setPlugins(pluginStatuses())
     return onPluginsChange(() => setPlugins(pluginStatuses()))
@@ -99,8 +97,6 @@ const Settings = () => {
     const trimmed = uri.trim()
     if (!trimmed) return
     setAddError('')
-    // An address that never installs gets no plugin row, so its failure has nowhere else to show.
-    // Keep the text in the field on failure: a rejected address is usually one worth correcting.
     enablePlugin(trimmed)
       .then(() => setUri(''))
       .catch(error => setAddError(error instanceof Error ? error.message : String(error)))
@@ -134,11 +130,9 @@ const Settings = () => {
                 </span>
                 <span className="uri">
                   {plugin.uri}
-                  {/* a package may register a family of sources, so say how many rather than
-                      showing only the first and looking like the rest failed */}
+                  {/* a package may register a family of sources, so say how many rather than showing only the first */}
                   {plugin.sources && plugin.sources.length > 1 ? ` · ${plugin.sources.length} sources` : ''}
-                  {/* a package can register some of its sources and not others, so a partial
-                      success is reported rather than looking like a clean connection */}
+                  {/* a package can register some of its sources and not others, so a partial success is reported */}
                   {plugin.rejected?.length ? ` · ${plugin.rejected.length} unavailable` : ''}
                 </span>
               </div>

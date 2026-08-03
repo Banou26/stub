@@ -37,12 +37,8 @@ export type ExtractorUserContext = {
 
 }
 
-// User-supplied API keys (BYOK), pushed from the main thread's settings page over osra
-// and read by keyful extractors via ctx.key(origin). Absent key -> the source no-ops.
 let userKeys: Record<string, string> = {}
 export const setUserKeys = (keys: Record<string, string>) => { userKeys = keys ?? {} }
-
-// ─── Normalization helpers ───────────────────────────────────────────────────
 
 const normalizeToStoreMedia = (media: Media): StoreMedia => ({
   uri: media.uri as Uri,
@@ -96,8 +92,6 @@ const normalizeOrigin = (origin: { id: string; url?: string | null; name: string
   isApiOnly: origin.isApiOnly,
 })
 
-// ─── Context helpers ─────────────────────────────────────────────────────────
-
 const findAggregatedMediaForContext = async (uri: string): Promise<Media | undefined> => {
   let cluster = await findAggregatedMedia(uri)
   if (!cluster.length && isAggregatedUri(uri)) {
@@ -122,8 +116,6 @@ const listenForMediaChangesForContext = async function* (
     yield await findAggregatedMediaForContext(params.uri)
   }
 }
-
-// ─── DataLoaders ─────────────────────────────────────────────────────────────
 
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   const allUnwrapped = (medias as Media[]).flatMap(recursivelyUnwrapMediaHandles)
@@ -175,8 +167,6 @@ const originInserter = new DataLoader<Origin, Origin>(async (origins) => {
   maxBatchSize: 50,
   batchScheduleFn: (callback) => setTimeout(callback, 50)
 })
-
-// ─── Extractors ──────────────────────────────────────────────────────────────
 
 export type ExtractorDefinition = {
   origin: string
@@ -317,18 +307,10 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
   }
 }
 
-// Mutable on purpose: remote plugin sources register and unregister at runtime. Reading it at
-// subscribe time is not enough on its own, so registration also joins the fan-outs already running
-// (see `fanouts` below).
 export const extractors = Object.values(extractorDefinitions).map(makeExtractor)
 
-// ─── Remote plugin sources (FKN packages) ────────────────────────────────────
-
-// One end of a brokered FKN packages connection; the plugin's payload is a source module shape
-// (see src/plugin-api.ts). Data fields materialize locally, resolver functions stay remote and
-// execute inside the plugin's own sandbox frame.
+// data fields materialize locally, resolver functions stay remote and execute inside the plugin's own sandbox frame
 type RemotePluginSubscribe = (parent: undefined, args: unknown, ctx: Record<string, never>) => Promise<AsyncIterable<any>>
-/** One connection may carry several sources, so a package can ship a whole family of them. */
 type RemotePluginPayload = RemotePluginSource & { sources?: unknown }
 type RemotePluginSource = {
   origin?: unknown
@@ -346,9 +328,7 @@ type RemotePluginSource = {
   }
 }
 
-// A plugin only speaks for its own registered origin: mismatching top-level media is dropped so a
-// plugin cannot masquerade as another source. Nested handles stay untouched - cross-origin handles
-// are how clustering works (accepted residual, bounded by the aggregation score threshold).
+// nested handles stay untouched: cross-origin handles are how clustering works (accepted residual, bounded by the aggregation score threshold)
 const enforcePluginOrigin = (origin: string, field: 'media' | 'mediaPage', payload: any): any => {
   if (field === 'media') {
     if (payload?.media && payload.media.origin !== origin) {
@@ -373,8 +353,7 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
     subscribe: async function* (_parent: unknown, args: unknown) {
       const subscribe = subscription?.[field]?.subscribe
       if (!subscribe) return
-      // ctx stays empty across the connection: the plugin uses its own @fkn/lib fetch, and stub's
-      // privileged context (store reads, user keys) never crosses to third-party code
+      // ctx stays empty across the connection: stub's privileged context (store reads, user keys) never crosses to third-party code
       for await (const payload of await subscribe(undefined, args, {})) {
         yield enforcePluginOrigin(origin, field, payload)
       }
@@ -397,15 +376,9 @@ export const registerRemoteExtractor = async (
   const remote = await attach(port) as RemotePluginPayload
   const { sources, rejected } = readPluginSources(remote, pluginUri)
 
-  // A reconnect re-registers the same plugin, so drop its own previous entries before the collision
-  // check. Without this it collides with itself and can never come back: the frame died, its entries
-  // outlived the connection, and every retry is refused for origins nothing is serving any more.
-  // The check below still refuses a DIFFERENT plugin claiming an origin that is already taken.
+  // a reconnect re-registers the same plugin, so drop its own previous entries before the collision check
   unregisterRemoteExtractor(pluginUri)
 
-  // Each source registers on its own. A source that arrives over a shared connection is still an
-  // ordinary standalone source, so one that cannot be registered costs only itself: its siblings are
-  // unaffected, exactly as they would be if the package had shipped them separately.
   const registered: { origin: string, name: string }[] = []
   const failed = [...rejected]
   for (const { meta, source } of sources) {
@@ -428,8 +401,6 @@ export const registerRemoteExtractor = async (
   for (const entry of failed) {
     console.warn(`plugin '${pluginUri}': skipped source '${entry.origin}' (${entry.reason})`)
   }
-  // Nothing registered at all is a genuine connection failure: the plugin has nothing to contribute,
-  // so say so rather than reporting a healthy connection that serves no source.
   if (!registered.length) {
     const detail = failed.map(entry => `${entry.origin}: ${entry.reason}`).join('; ')
     throw new Error(`plugin '${pluginUri}': no source could be registered${detail ? ` (${detail})` : ''}`)
@@ -457,20 +428,15 @@ type Fanout = {
   variables: SubscriptionArgs[1]
   insertedUris: Set<string>
   extractUris?: (result: any) => string[]
-  /** the same array the caller holds and unsubscribes, so late joiners are torn down with the rest */
+  // the same array the caller holds and unsubscribes, so late joiners are torn down with the rest
   subscriptions: FanoutSubscription[]
   joined: Map<ExtractorEntry, FanoutSubscription>
 }
 
-// Every in-flight fan-out, so a source that registers mid-subscription can still join it. Without
-// this a plugin installed while a page is open contributes nothing until a full navigation: the
-// extractor list was read once at subscribe time and never consulted again.
+// every in-flight fan-out, so a source that registers mid-subscription can still join it
 const fanouts = new Set<Fanout>()
 
-// One source must never be able to take down the fan-out. The join loops below walk every
-// extractor in order, so a throw here used to abort the loop: every source after the failing one
-// was left unsubscribed and the page got no data at all from anyone. A source that cannot start
-// is skipped instead, which is the same outcome as a source that answers with nothing.
+// one source must never be able to take down the fan-out: a source that cannot start is skipped
 const joinFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
   if (fanout.joined.has(extractor)) return
   let subscription: FanoutSubscription
@@ -499,7 +465,6 @@ const leaveFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
   fanout.joined.delete(extractor)
   const index = fanout.subscriptions.indexOf(subscription)
   if (index !== -1) fanout.subscriptions.splice(index, 1)
-  // a disconnected plugin cannot answer, and the caller's teardown will no longer see this one
   Promise.resolve(subscription.unsubscribe()).catch(() => {})
 }
 
@@ -518,7 +483,7 @@ export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUri
   return {
     subscriptions: fanout.subscriptions,
     insertedUris: fanout.insertedUris,
-    /** stop accepting late joiners; the caller still unsubscribes what it holds */
+    // stop accepting late joiners; the caller still unsubscribes what it holds
     close: () => { fanouts.delete(fanout) },
   }
 }

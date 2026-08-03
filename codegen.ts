@@ -13,20 +13,6 @@ const config: CodegenConfig = {
         }
       }
     }),
-    // './src/generated/graphql.ts': {
-    //   plugins: [
-    //     'typescript',
-    //     'typescript-resolvers',
-    //     'typescript-document-nodes',
-    //   ],
-    //   config: {
-    //     useTypeImports: true,
-    //     contextType: '../worker/yoga#ServerContext',
-    //     scalars: {
-    //       Date: 'string'
-    //     }
-    //   }
-    // },
     './src/generated/graphql.schema.json': {
       plugins: [
         'urql-introspection'

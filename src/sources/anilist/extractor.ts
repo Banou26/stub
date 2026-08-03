@@ -142,7 +142,6 @@ const COVER_SCORE = 0.7
 
 const siteMappings = [
   {
-    // link example: https://www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites
     siteId: 5,
     mapper: async (
       externalLink: MediaExternalLink,
@@ -166,10 +165,7 @@ type AnilistResponse<T> = {
   errors?: { message?: string, status?: number }[]
 }
 
-// AniList reports failures with an HTTP 200 and a `{ data: null, errors: [...] }` body, rate limits
-// above all. Typing data as always-present made every call site dereference it unguarded, so a rate
-// limit surfaced as "Cannot read properties of null (reading 'Page')" with the real reason lost.
-// Returning undefined forces callers to degrade to an empty result instead of throwing.
+// AniList reports failures with an HTTP 200 and a `{ data: null, errors: [...] }` body, rate limits above all
 const fetchAnilist = async <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<T | undefined> => {
   const response = await context.fetch('https://graphql.anilist.co/', {
     method: 'POST',
@@ -186,7 +182,6 @@ const fetchAnilist = async <T>({ query, variables }: { query: string, variables:
     const reason = body.errors.map(error => error.message).filter(Boolean).join('; ')
     console.error(`AniList request failed (HTTP ${response.status}): ${reason || 'no message'}`)
   }
-  // A GraphQL response may carry partial data alongside errors, so only give up when there is none
   if (body?.data == null) {
     if (!body?.errors?.length) console.error(`AniList returned no data (HTTP ${response.status})`)
     return undefined
@@ -200,10 +195,10 @@ const getMediaSeason = (date = new Date()): MediaSeason => {
   const month = date.getMonth()
 
   return (
-    month >= 0 && month <= 2 ? MediaSeason.Winter // January to March
-    : month >= 3 && month <= 5 ? MediaSeason.Spring // April to June
-    : month >= 6 && month <= 8 ? MediaSeason.Summer // July to September
-    : month >= 9 && month <= 11 ? MediaSeason.Fall // October to December
+    month >= 0 && month <= 2 ? MediaSeason.Winter
+    : month >= 3 && month <= 5 ? MediaSeason.Spring
+    : month >= 6 && month <= 8 ? MediaSeason.Summer
+    : month >= 9 && month <= 11 ? MediaSeason.Fall
     : undefined as never
   )
 }
@@ -334,8 +329,6 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: TITLE_SCORE }] : []
     ],
     covers: [
-      // ...media.coverImage?.medium ? [{ language: 'en', url: media.coverImage.medium }] : [],
-      // ...media.coverImage?.large ? [{ language: 'jp', url: media.coverImage.large }] : [],
       ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge, score: COVER_SCORE }] : []
     ],
     episodeCount: media.episodes,

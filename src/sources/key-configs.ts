@@ -1,7 +1,4 @@
-// Client-safe registry of sources that need a user-supplied API key (BYOK). Kept separate
-// from the extractors - which import seal-wasm - so the settings page can read it on the
-// main thread without pulling the worker/WASM bundle. Each keyful extractor reads its key
-// via ctx.key(origin); this just describes the key to the settings UI.
+// Kept separate from the extractors - which import seal-wasm - so the settings page can read it on the main thread without pulling the worker/WASM bundle
 
 export interface KeyConfig {
   origin: string

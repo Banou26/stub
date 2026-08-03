@@ -1,10 +1,6 @@
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 
-// Disney+ - no anonymous API. Native: Disney Streaming "global" GraphQL
-// (disney.api.edge.bamgrid.com), BAMGRID device-grant + email/password login + switchProfile.
-// Ref: https://github.com/pam-param-pam/Disney-Plus-api-wrapper
-// TODO: implement native fetch behind the web-extension session tunnel + FKN permission system.
-// For now: metadata/episodes via TMDB, deep link via JustWatch.
+// Disney+ - no anonymous API. For now: metadata/episodes via TMDB, deep link via JustWatch.
 
 export const icon = 'https://www.disneyplus.com/favicon.ico'
 export const originUrl = 'https://www.disneyplus.com'

@@ -15,8 +15,6 @@ export const metadataOnly = false
 export const isApiOnly = false
 export const supportedUris = ['cr']
 
-// Auth
-
 type Token = { timestamp: number, access_token: string, expires_in: number }
 let _token: Token | undefined
 let _tokenPromise: Promise<Token> | undefined
@@ -41,8 +39,6 @@ const getToken = async (ctx: ExtractorServerContext): Promise<Token> => {
   })().finally(() => { _tokenPromise = undefined })
   return _tokenPromise
 }
-
-// API
 
 const _inflight = new Map<string, Promise<unknown>>()
 
@@ -125,8 +121,6 @@ export const resolveEpisodeToSeriesId = async (
   return meta?.series_id ? { seriesId: meta.series_id, seasonId: meta.season_id } : undefined
 }
 
-// ID utils
-
 const stripLocale = (id: string) => id.replace(/JAJP$/, '')
 
 const resolveSeasonId = (season: CrSeason): string =>
@@ -136,8 +130,6 @@ const resolveSeasonId = (season: CrSeason): string =>
 
 export const crunchyrollId = (seriesId: string, seasonId?: string, episodeId?: string) =>
   [seriesId, seasonId && stripLocale(seasonId), episodeId].filter(Boolean).join('-')
-
-// Normalization
 
 const bestImage = (images?: { source: string }[][]) => images?.at(-1)?.at(-1)?.source
 
@@ -152,7 +144,7 @@ const normalizeMedia = (id: string, title: string, description: string, series: 
     ...desc(description, SCORE),
     covers: img(bestImage(series.images?.poster_tall), SCORE),
     banners: img(bestImage(series.images?.poster_wide), SCORE),
-    // launch year is the series premiere - only valid on the series-level media, not seasons
+    // launch year is the series premiere, only valid on the series-level media, not seasons
     startDate: id === series.id && series.series_metadata?.series_launch_year
       ? `${series.series_metadata.series_launch_year}-01-01`
       : undefined,
@@ -175,7 +167,7 @@ const normalizeEpisode = (ep: CrEpisode, mediaUri: string): GQLEpisode =>
     releaseDate: ep.episode_air_date ? new Date(ep.episode_air_date).toISOString() : undefined
   })
 
-/** Keep only the last episode per episode_number (regular episodes come after specials in CR's ordering) */
+// regular episodes come after specials in CR's ordering, so the last per episode_number wins
 const deduplicateEpisodes = (episodes: GQLEpisode[]): GQLEpisode[] => {
   const lastByNumber = new Map<number, GQLEpisode>()
   for (const ep of episodes) {
@@ -188,8 +180,6 @@ const fetchNormalizedEpisodes = async (seasonId: string, mediaUri: string, ctx: 
   const { data } = await fetchEpisodes(seasonId, ctx)
   return deduplicateEpisodes(data.map(ep => normalizeEpisode(ep, mediaUri)))
 }
-
-// Core data fetching
 
 const findSeason = (seasons: CrSeason[], seasonId: string) =>
   seasons.find(s => stripLocale(s.id) === seasonId || resolveSeasonId(s) === seasonId)
@@ -249,8 +239,6 @@ export const matchSeasonByDate = async (
   }
   return best ? crunchyrollId(seriesId, best.id) : undefined
 }
-
-// Resolvers
 
 export const resolvers: Resolvers = {
   Subscription: {

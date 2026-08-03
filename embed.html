@@ -9,14 +9,9 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        /* The embed is a media player - nothing in it is meant to be
-           selectable. Suppress selection everywhere so the double-tap-to
-           -fullscreen gesture can't word-select the player chrome. */
         user-select: none;
         -webkit-user-select: none;
       }
-      /* Belt-and-braces: even if a selection is somehow started, render
-         it transparent so it never flashes blue. */
       ::selection {
         background: transparent;
       }

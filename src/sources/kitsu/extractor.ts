@@ -5,9 +5,6 @@ import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 import { streamContentId } from './stream-id'
 
-// Kitsu (kitsu.io) - keyless JSON:API anime source. Adds anilist + myanimelist id handles
-// (so results merge with stub's anime spine) plus Crunchyroll/Netflix streaming deep-links.
-
 const SCORE = 0.3
 const API = 'https://kitsu.io/api/edge'
 
@@ -83,8 +80,7 @@ const streamHandles = (streams: KitsuStream[]): GQLMedia[] => {
     if (!url) continue
     const match = STREAM_ORIGIN.find(([re]) => re.test(url))
     if (!match) continue
-    // no id in the provider's own space means no handle: a url is not an identity, and putting one
-    // here used to build a media uri no route could match. See ./stream-id.ts.
+    // no id in the provider's own space means no handle: a url is not an identity. See ./stream-id.ts
     const id = streamContentId(url)
     if (id) handles.push(makeMedia({ origin: match[1], id, url }))
   }

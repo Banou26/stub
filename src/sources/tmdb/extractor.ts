@@ -4,9 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// TMDB (themoviedb.org) - shared metadata/episode backbone. The public API needs a
-// licensed key, so instead we read TMDB's own server-rendered frontend pages through
-// the proxy (curl-impersonate bypasses their WAF), same approach as the CR/NF sources.
+// TMDB (themoviedb.org) - the public API needs a licensed key, so instead we read TMDB's own server-rendered frontend pages through the FKN proxy, whose curl-impersonate gets past their WAF, same approach as the CR/NF sources.
 
 const SCORE = 0.3
 const BASE = 'https://www.themoviedb.org'
@@ -38,8 +36,6 @@ const meta = (html: string, property: string): string | undefined =>
 type TmdbMedia = { id: string, title: string, overview?: string, poster?: string, banner?: string, score?: number, year?: number }
 type TmdbEpisode = { number: number, title?: string, overview?: string, still?: string }
 
-// The card's title anchor is followed by a release_date span; the date text is
-// locale-dependent so only the year is extracted
 const parseSearchYear = (html: string, id: string): number | undefined => {
   const span = html.match(new RegExp(`href="/tv/${id}(?![0-9])[^"]*"><h2[\\s\\S]{0,400}?class="release_date[^"]*">([^<]*)<`))?.[1]
   const year = span?.match(/\b(?:19|20)\d{2}\b/)?.[0]

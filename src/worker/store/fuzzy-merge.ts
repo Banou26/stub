@@ -3,7 +3,6 @@ import type { Media } from './types'
 import { titleSimilarity } from '../../sources/utils'
 import { linkSameMediaPairs } from './db'
 
-// conservative on purpose: merge needs shared year + non-conflicting format + >=0.9 title similarity
 const SIMILARITY_THRESHOLD = 0.9
 const MAX_TITLES_PER_CLUSTER = 6
 const MAX_CACHED_DECISIONS = 50_000
@@ -19,7 +18,6 @@ type ClusterProfile = {
   cacheKey: string
 }
 
-// titleSimilarity's normalization plus article stripping, so "Beyond the Journey's End" == "Beyond Journey's End"
 const normalizeTitle = (title: string) =>
   title
     .toLowerCase()
@@ -69,7 +67,7 @@ const profileCluster = (cluster: Media[]): ClusterProfile => {
     titles,
     years,
     formats,
-    // normalized titles only contain [a-z0-9\s], so ',' cannot collide
+    // joining titles with ',' is safe only because normalizeTitle strips everything outside [a-z0-9\s]: keep punctuation there and cache keys start colliding silently
     cacheKey: `${key}#${titles.join(',')}#${[...formats].sort().join(',')}`,
   }
 }
@@ -107,7 +105,6 @@ const pairKey = (a: ClusterProfile, b: ClusterProfile) =>
 
 const pairDecisions = new Map<string, boolean>()
 
-// Returns true if any new same_as links were created - the caller should re-read its clusters
 export const fuzzyMergeMediaClusters = async (clusters: Media[][]): Promise<boolean> => {
   const profiles = clusters.filter(cluster => cluster.length).map(profileCluster)
 

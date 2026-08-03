@@ -5,10 +5,7 @@ import chaiShallowDeepEqual from 'chai-shallow-deep-equal'
 use(chaiAsPromised)
 use(chaiShallowDeepEqual)
 
-// The point of having several anime sources is that one going down leaves the others serving. That
-// only holds if a source survives its own bad data: normalizeMedia can throw on a record (a
-// malformed AniDB url, missing images), and under Promise.all one such record used to reject the
-// whole page, so a single odd entry blanked the entire season.
+// normalizeMedia can throw on a record (a malformed AniDB url, missing images), and under Promise.all one such record used to reject the whole page, so a single odd entry blanked the entire season
 const anime = (id: number, title: string, extra: Record<string, unknown> = {}) => ({
   mal_id: id,
   type: 'TV',
@@ -59,9 +56,9 @@ export const malformedRecordDoesNotBlankTheSeason = async () => {
     pagination: { last_visible_page: 1 },
     data: [
       anime(1, 'Good One'),
-      anime(2, 'Bad AniDB Url', { external: [{ name: 'AniDB', url: 'not-a-url' }] }), // new URL throws
+      anime(2, 'Bad AniDB Url', { external: [{ name: 'AniDB', url: 'not-a-url' }] }),
       anime(3, 'Good Two'),
-      anime(4, 'No Images', { images: undefined }) // data.images.webp throws
+      anime(4, 'No Images', { images: undefined })
     ]
   }
   const [yielded, errors] = await captureErrors(() => mediaPage({ status: 'RELEASING' }, ctxYielding(body)))

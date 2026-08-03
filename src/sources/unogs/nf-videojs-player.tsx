@@ -6,16 +6,7 @@ import type { PlayerCapabilities } from '../../components/player'
 
 import Player from '../../components/player'
 
-// Netflix's Cadmium is an MSE player that OWNS the <video> timeline: it appends
-// segments only around the position its own scheduler believes it's at, so a raw
-// `video.currentTime` write lands in an unbuffered gap, desyncs the scheduler and
-// trips the M7375 error screen (currentTime is an *output* of Cadmium, not an input).
-// So - unlike Crunchyroll, where a bare currentTime write is merely ignored - we must
-// NOT let the write reach the element at all. We swallow it, replay the seek onto
-// Netflix's own timeline as a positional click (its scrubber is a custom div, not an
-// <input>, so CR's value-`fill` doesn't transfer), and show the target optimistically
-// until Cadmium's real seek lands. @fkn/lib's `click` takes position as a *fraction*
-// of the element box (0..1), so we pass `targetSeconds / duration` - no pixel measuring.
+// Cadmium OWNS the <video> timeline: a raw `video.currentTime` write desyncs its scheduler and trips the M7375 error screen, so we must NOT let the write reach the element at all
 const NF_TIMELINE_SELECTOR = '[data-uia="timeline"]'
 const NF_CANVAS_SELECTOR = '[data-uia="video-canvas"]'
 const NF_PLAYER_SELECTOR = '[data-uia="player"]'
@@ -26,18 +17,13 @@ const LAND_TOLERANCE_S = 2
 const OPTIMISTIC_TIMEOUT_MS = 12_000
 const REVEAL_ATTEMPTS = 26
 const REVEAL_POLL_MS = 110
-// Interstitials that legitimately block a seek, so a failed reveal can report WHY
-// instead of looking like a bug: the still-watching gate, a seamless next-episode
-// hand-off, or a playback error.
 const NF_INTERSTITIALS: Record<string, string> = {
   'still-watching': '[data-uia="interrupt-autoplay-continue"], [data-uia="interrupter-title"]',
   'next-episode': '[data-uia="next-episode-seamless-button"], [data-uia="next-episode-seamless-button-draining"]',
   error: '[data-uia="error-container"], [data-uia="nfp-error"]',
 }
 
-// `position` (fractional click/hover) and `reason` (permission consent string) aren't in
-// the published @fkn/lib types yet; narrow to the shapes we rely on so they ride along -
-// harmlessly ignored by builds that predate them (same trick CR uses for fill/reason).
+// `position` and `reason` aren't in the published @fkn/lib types yet; narrow to the shapes we rely on so they ride along
 type SeekLocator = {
   click: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
   hover: (options?: { position?: { x?: number, y?: number }, reason?: string }) => Promise<unknown>
@@ -48,10 +34,7 @@ type SeekLocator = {
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
 
-// Netflix only re-reveals its controls on a pointermove whose coords DIFFER from the
-// last it saw (its akira UI de-dupes by pageX/pageY), so each reveal hover must land
-// somewhere fresh. Walk a small orbit near the player centre, advancing every call;
-// the generic `hover` op just points where we tell it (0..1 fraction of the box).
+// Netflix only re-reveals its controls on a pointermove whose coords DIFFER from the last it saw (its akira UI de-dupes by pageX/pageY), so each reveal hover must land somewhere fresh
 let revealTick = 0
 const nextRevealPosition = () => {
   const angle = revealTick * 1.1
@@ -60,16 +43,11 @@ const nextRevealPosition = () => {
 }
 
 const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
-  // The target shown to the skin while Cadmium's real seek is in flight; cleared
-  // once the element actually reaches it (or after a timeout, if the seek failed).
   let optimistic: number | null = null
   let debounce: ReturnType<typeof setTimeout> | undefined
   let expire: ReturnType<typeof setTimeout> | undefined
 
-  // Batch all three seek permissions into one consent sheet on the first seek.
-  // Gate each op via the locator (no execution) so every row is highlightable;
-  // firing them together merges them into a single sheet, and the real ops below
-  // then find the grants and don't re-prompt.
+  // firing all three gates together merges them into a single consent sheet, and the real ops below then find the grants and don't re-prompt
   let permissionsPrimed = false
   const primePermissions = async () => {
     if (permissionsPrimed) return
@@ -99,16 +77,12 @@ const createNetflixSeekMedia = (remote: RemoteVideoElement, frame: Frame) => {
   const commitSeek = async (targetSeconds: number) => {
     const duration = remote.duration
     if (!Number.isFinite(duration) || duration <= 0) { console.warn('[nf] seek: duration unknown', duration); return }
+    // Netflix's scrubber is a custom div, not an <input>, so CR's value-`fill` seek cannot be reused; @fkn/lib's click takes position as a 0..1 fraction of the element box, hence targetSeconds/duration with no pixel measuring
     const fraction = clamp01(targetSeconds / duration)
-    // Fire-and-forget: open the single batched consent sheet, but DON'T block the
-    // seek on it - the hover/click ops below self-gate and latch onto that sheet's
-    // rows (same key+scope dedupes), so it stays one prompt without stalling the seek.
+    // fire-and-forget on purpose: the hover/click ops below self-gate and latch onto the same consent sheet (same key+scope dedupes), so awaiting it would stall the seek for one prompt it already gets
     void primePermissions()
     const timeline = frame.locator(NF_TIMELINE_SELECTOR) as unknown as SeekLocator
-    // Netflix only mounts its controls (incl. the timeline) while PLAYING and shortly
-    // after mouse activity; fully paused it shows a title card with no scrubber. So play
-    // if paused, keep nudging the controls visible until the timeline mounts (the bar
-    // idle-hides ~3s after one mousemove, so re-hover), click, then restore pause.
+    // Netflix only mounts its controls while PLAYING and shortly after mouse activity, and the bar idle-hides ~3s after one mousemove, so re-hover
     const wasPaused = remote.paused === true
     if (wasPaused) { try { await remote.play() } catch { /* ignore */ } }
     let mounted = false
@@ -168,9 +142,6 @@ type Props = {
   children?: ComponentChildren
 }
 
-// The Netflix iframe renders inside the skin's Container (as its first child) so
-// fullscreen (which fullscreens the Container) still carries the video, and so taps
-// land on the skin's gesture layer above the `pointer-events: none` iframe.
 const NetflixVideoJSPlayer = ({ remote, frame, capabilities, children }: Props) => (
   <Player remote={remote} frame={frame} adapter={createNetflixSeekMedia} capabilities={capabilities}>
     {children}

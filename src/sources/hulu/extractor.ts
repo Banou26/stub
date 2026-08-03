@@ -1,9 +1,6 @@
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 
-// Hulu - no anonymous API. Native: discover.hulu.com/content/v5 search, requires logged-in
-// cookies + US. Ref: https://github.com/dhleong/babbling/blob/main/src/apps/hulu/api.ts
-// TODO: implement native fetch behind the web-extension session tunnel + FKN permission system.
-// For now: metadata/episodes via TMDB, deep link via JustWatch.
+// Hulu - no anonymous API. For now: metadata/episodes via TMDB, deep link via JustWatch.
 
 export const icon = 'https://www.hulu.com/favicon.ico'
 export const originUrl = 'https://www.hulu.com'

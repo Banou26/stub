@@ -2,21 +2,15 @@ import type { Media, Episode, Origin } from './types'
 import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
 
-// ─── Edge labels ────────────────────────────────────────────────────────────
-
 const MEDIA_SAME_AS = 'media:same_as'
 const EPISODE_SAME_AS = 'episode:same_as'
 const HAS_EPISODE = 'has_episode'
-
-// ─── Stores ─────────────────────────────────────────────────────────────────
 
 export const graph = createGraph<Media | Episode>()
 const originMap = new Map<string, Origin>()
 
 graph.registerLabel('media', { merge: lastWriteLongestArray })
 graph.registerLabel('episode', { merge: lastWriteLongestArray })
-
-// ─── Media ──────────────────────────────────────────────────────────────────
 
 export async function upsertMedia(
   newMedias: Media[],
@@ -64,8 +58,6 @@ export async function findAllAggregatedMedia(uris?: string[]): Promise<Media[][]
   return graph.clusters(MEDIA_SAME_AS, uris ? undefined : 'media', uris) as Media[][]
 }
 
-// ─── Episodes ───────────────────────────────────────────────────────────────
-
 export async function upsertEpisodes(
   newEpisodes: Episode[],
   handles: { episodeUri: string; handleUri: string }[]
@@ -106,8 +98,6 @@ export async function findAggregatedEpisodesForMedia(mediaUris: string[]): Promi
 
   return groups
 }
-
-// ─── Origins ────────────────────────────────────────────────────────────────
 
 export async function upsertOrigins(newOrigins: Origin[]) {
   for (const origin of newOrigins) {

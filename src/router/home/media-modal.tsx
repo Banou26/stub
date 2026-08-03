@@ -418,9 +418,7 @@ const Episode = (
       const handle = handles.at(0)
       const sourceUri = handle?.uri
       const playable = Boolean(getPlayer(origin.id) && handle?.url)
-      // With several releases from one origin there is nothing to pick between here, so send the
-      // user to the watch page (no sourceUri) and let them choose there rather than silently
-      // opening whichever handle happened to sort first.
+      // several releases always route inward with no sourceUri, so the user picks on the watch page
       const watchPath =
         episode.uri
           ? handles.length > 1
@@ -429,8 +427,6 @@ const Episode = (
               ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri, sourceUri })
               : undefined
           : undefined
-      // several releases always route inward, even when none of them is in-app playable: the watch
-      // page lists them and each release keeps its own external link
       const multiple = handles.length > 1
       return {
         id: origin.id,
@@ -465,7 +461,6 @@ const Episode = (
           : <div className="thumbnail"></div>
       }
       {
-        // A movie's single episode repeats the media title, so label the row by what it does instead.
         isMovie
           ? (
             <div className="content">

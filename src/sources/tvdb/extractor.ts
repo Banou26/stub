@@ -4,9 +4,6 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 
-// TheTVDB v4 (api4.thetvdb.com) - keyful (BYOK). Login flow: POST /login { apikey, pin? }
-// returns a ~1-month bearer token, cached module-level and refreshed on a 401.
-
 const SCORE = 0.3
 const BASE = 'https://api4.thetvdb.com/v4'
 const ARTWORKS = 'https://artworks.thetvdb.com'

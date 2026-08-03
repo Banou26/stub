@@ -20,10 +20,7 @@ const NETFLIX_DOMAINS = [
 
 const NETFLIX_LOGIN_URL = 'https://www.netflix.com/login'
 
-// Hide Netflix's page + player chrome and force the <video> to fill the iframe,
-// leaving stub's own skin (stacked above the pointer-events:none iframe) as the UI.
-// Selectors are best-effort: Netflix ships obfuscated, frequently-renamed classes,
-// so the controls list may need touch-ups when their player markup changes.
+// selectors are best-effort: Netflix ships obfuscated, frequently-renamed classes
 const NETFLIX_OUTER_CSS = `
   html, body {
     margin: 0 !important;
@@ -99,18 +96,13 @@ const checkIsLoggedIn = async (frame: Frame) => {
   return false
 }
 
-// Poll for Netflix's <video> once a watch page is mounted and revive it as a
-// RemoteVideoElement the skin can drive. Keeps waiting until it appears or the
-// effect is cancelled (e.g. episode switch / unmount).
 const waitForVideoElement = async (frame: Frame, isCancelled: () => boolean) => {
   while (!isCancelled()) {
     try {
       if (await frame.locator('video').exists()) return await frame.locator('video').videoElement()
     } catch (err) {
-      // Terminal: this backend can never produce the handle (the cloud path
-      // rejects videoElement); surface it instead of polling forever.
+      // terminal: the cloud path rejects videoElement, so surface it instead of polling forever
       if ((err as Error | null)?.name === 'LocatorUnsupportedError') throw err
-      /* frame torn down or not ready yet; retry */
     }
     await new Promise(r => setTimeout(r, 200))
   }
@@ -176,7 +168,6 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
   const [remoteVideo, setRemoteVideo] = useState<RemoteVideoElement | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
-  // Attach once per iframe; the frame outlives navigation and re-logins.
   useEffect(() => {
     if (!iframe) return
     let cancelled = false
@@ -185,10 +176,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
         try {
           const f = await attachFrame({ iframe, domains: NETFLIX_DOMAINS })
           if (cancelled) return
-          // Without an exposed extension, attachFrame degrades to the cloud
-          // render proxy, which cannot hand back the RemoteVideoElement this
-          // player is built around (and the skin-driven seek needs it). Say so
-          // instead of spinning forever against an unsupported backend.
+          // without an exposed extension, attachFrame degrades to the cloud render proxy, which cannot hand back a RemoteVideoElement
           if (!isExtensionExposed()) {
             setError('Netflix playback currently needs the FKN browser extension.')
             setLoading(false)
@@ -211,8 +199,6 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
     return () => { cancelled = true }
   }, [iframe])
 
-  // Navigate to the episode URL, hide chrome, confirm login. Re-runs on url
-  // change (episode switch) and on reloadKey bump after a login round-trip.
   useEffect(() => {
     if (!frame) return
     let cancelled = false
@@ -269,9 +255,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
     </div>
   )
 
-  // The iframe is always mounted inside the skin's Container so attachFrame has it
-  // from the start, fullscreen carries the video, and the skin's gesture layer sits
-  // above it. `remote` is null until Netflix's <video> is ready, then media attaches.
+  // the iframe is always mounted inside the skin's Container so attachFrame has it from the start
   return (
     <div css={styles}>
       <NetflixVideoJSPlayer remote={remoteVideo} frame={frame}>
