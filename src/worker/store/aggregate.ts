@@ -2,6 +2,7 @@ import type { Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '..
 import type { Media, Episode } from './types'
 import { getRoutePath, Route } from '../../router/path'
 import { registerAggregatedId } from './db'
+import { isRoutableUri } from '../../utils/uri'
 
 // ─── Shared utilities ────────────────────────────────────────────────────────
 
@@ -108,7 +109,12 @@ function getStableClusterId(uris: string[]): string {
 }
 
 function buildAggregatedIdentity(uris: string[]): { uri: string; id: string } {
-  const sorted = [...uris].sort()
+  // One handle carrying a ',' or a '/' would split the list or the route path, and the media's whole
+  // watch page becomes unreachable. Drop it here rather than anywhere upstream: this is the single
+  // place a handle uri becomes something a route has to match, so it is the only place that can be
+  // sure. Falls back to the unfiltered list if that would leave nothing to identify the cluster by.
+  const routable = uris.filter(isRoutableUri)
+  const sorted = [...(routable.length ? routable : uris)].sort()
   return {
     uri: `ag:(${sorted.join(',')})`,
     id: `(${sorted.join(',')})`,

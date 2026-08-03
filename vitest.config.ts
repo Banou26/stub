@@ -13,7 +13,7 @@ import { defineConfig } from 'vitest/config'
 // which is a confusing failure for a file that looks like an ordinary unit test.
 export default defineConfig({
   test: {
-    include: ['src/worker/**/*.test.ts', 'src/sources/**/*.test.ts'],
+    include: ['src/worker/**/*.test.ts', 'src/sources/**/*.test.ts', 'src/utils/**/*.test.ts'],
     environment: 'node',
   },
 })

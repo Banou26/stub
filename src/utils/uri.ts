@@ -50,6 +50,22 @@ export const isUri = (uri: string): uri is Uri => {
   return parts.length === 2
 }
 
+// Whether a uri can survive the two places every handle uri is carried: the comma-joined list inside
+// `ag:(...)`, and ONE segment of a route path ('/watch/:mediaUri/:episodeUri'). So a ',' splits the
+// handle list and a '/' splits the route, and either one silently turns a working uri into one no
+// route matches, which renders as a bare "404 No page found" naming nothing.
+//
+// A uri failing this is always a producer bug - a source putting a url where an id belongs. It is
+// dropped from the aggregate rather than trusted, because the cost is wildly asymmetric: the handle
+// contributes nothing on its own (a url clusters with no other source), while letting it through
+// takes out the whole watch page for that media.
+const UNROUTABLE_IN_ID = /[,/()]/
+
+export const isRoutableUri = (uri: string): boolean => {
+  const colon = uri.indexOf(':')
+  return colon > 0 && !UNROUTABLE_IN_ID.test(uri.slice(colon + 1))
+}
+
 export const isUris = (uri: string): uri is Uris =>
   uri
     .split(',')
