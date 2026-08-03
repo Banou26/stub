@@ -22,6 +22,13 @@ const style = css`
     }
   }
 
+  .version {
+    margin-left: auto;
+    font-size: 1.2rem;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
   .nav-link {
     font-size: 1.4rem;
     white-space: nowrap;
@@ -49,6 +56,7 @@ export const Footer = () => {
       <Link to={getRoutePath(Route.HOME)} className="wordmark">stub</Link>
       <Link to={getRoutePath(Route.LEGAL)} className="nav-link">Legal</Link>
       <Link to={getRoutePath(Route.PRIVACY)} className="nav-link">Privacy</Link>
+      <span className="version" title="stub version">v{__STUB_VERSION__}</span>
     </footer>
   )
 }

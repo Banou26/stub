@@ -1,9 +1,17 @@
+import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { defineConfig, lazyPlugins } from 'vite-plus'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import preact from '@preact/preset-vite'
 
+// Surfaced in the footer. Read here rather than importing package.json so the manifest does not end
+// up in the bundle, and so a stale value is impossible: this is the same file npm publishes from.
+const { version } = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8')) as { version: string }
+
 export default defineConfig((_) => ({
+  define: {
+    __STUB_VERSION__: JSON.stringify(version),
+  },
   fmt: { semi: false, singleQuote: true },
   lint: {
     jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
