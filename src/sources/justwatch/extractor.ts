@@ -2,6 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
+import { jwId, providerContentId, splitJwId } from './id'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
 
 const SCORE = 0.2
@@ -301,9 +302,9 @@ const buildOffersAsHandles = async (
         if (resolved) contentId = crunchyrollId(resolved.seriesId, resolved.seasonId)
       }
     } else if (rawContentId) {
-      contentId = (mappedOrigin === 'nf' && meta.seasonNumber != null)
-        ? `${rawContentId}-${meta.seasonNumber}`
-        : rawContentId
+      // a provider's series url names the SHOW, so on a season-scoped media that id spans every season
+      // and clustering unions them: the same defect as the jw id itself, one layer down. See ./id.ts.
+      contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber)
     }
 
     if (!contentId) continue
@@ -327,7 +328,7 @@ const normalizeMedia = async (
   opts: { seasons?: JWSeason[], seasonNumber?: number },
   ctx: ExtractorServerContext
 ): Promise<GQLMedia> => {
-  const id = String(node.objectId)
+  const id = jwId(node.objectId, opts.seasonNumber)
   const { shortDescription } = node.content
 
   const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
@@ -442,10 +443,12 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   const jwUri = extractAggregatedUriOrigin(uri, origin)
   if (jwUri) {
-    const detailRes = await getNodeDetails(`ts${jwUri.id}`, ctx)
+    // the uri may already pin the season, since that is now part of the id
+    const { objectId, seasonNumber: pinned } = splitJwId(jwUri.id)
+    const detailRes = await getNodeDetails(`ts${objectId}`, ctx)
     const node = detailRes.data?.node
     if (!node) return null
-    const seasonNumber = isAggregatedUri(uri) ? await resolveSeasonNumber(uri, node, ctx) : undefined
+    const seasonNumber = pinned ?? (isAggregatedUri(uri) ? await resolveSeasonNumber(uri, node, ctx) : undefined)
     const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
     if (isAggregatedUri(uri)) mergeHandles(media, uri)
     return media
