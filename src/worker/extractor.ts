@@ -24,6 +24,7 @@ import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils
 import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
 import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
 import { listenMultipleIterator } from './store/events'
+import { readPluginSources } from './plugin-sources'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -327,6 +328,8 @@ export const extractors = Object.values(extractorDefinitions).map(makeExtractor)
 // (see src/plugin-api.ts). Data fields materialize locally, resolver functions stay remote and
 // execute inside the plugin's own sandbox frame.
 type RemotePluginSubscribe = (parent: undefined, args: unknown, ctx: Record<string, never>) => Promise<AsyncIterable<any>>
+/** One connection may carry several sources, so a package can ship a whole family of them. */
+type RemotePluginPayload = RemotePluginSource & { sources?: unknown }
 type RemotePluginSource = {
   origin?: unknown
   originUrl?: unknown
@@ -342,8 +345,6 @@ type RemotePluginSource = {
     }
   }
 }
-
-const PLUGIN_ORIGIN_TOKEN = /^[a-z0-9][a-z0-9-]{0,31}$/
 
 // A plugin only speaks for its own registered origin: mismatching top-level media is dropped so a
 // plugin cannot masquerade as another source. Nested handles stay untouched - cross-origin handles
@@ -389,39 +390,39 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
   } as Resolvers
 }
 
-export const registerRemoteExtractor = async (port: MessagePort, pluginUri: string): Promise<{ origin: string, name: string }> => {
-  const remote = await attach(port) as RemotePluginSource
-  const origin = typeof remote.origin === 'string' ? remote.origin : ''
-  if (!PLUGIN_ORIGIN_TOKEN.test(origin)) throw new Error(`plugin '${pluginUri}': origin must be a short lowercase token`)
-  // A reconnect re-registers the same plugin, so drop its own previous entry before the collision
-  // check. Without this it collides with itself and can never come back: the frame died, its entry
-  // outlived the connection, and every retry is refused for an origin nothing is serving any more.
+export const registerRemoteExtractor = async (port: MessagePort, pluginUri: string): Promise<{ sources: { origin: string, name: string }[] }> => {
+  const remote = await attach(port) as RemotePluginPayload
+  const definitions: ExtractorDefinition[] = readPluginSources(remote, pluginUri)
+    .map(({ meta, source }) => ({ ...meta, resolvers: makeDelegatingResolvers(meta.origin, source as RemotePluginSource) }))
+
+  // A reconnect re-registers the same plugin, so drop its own previous entries before the collision
+  // check. Without this it collides with itself and can never come back: the frame died, its entries
+  // outlived the connection, and every retry is refused for origins nothing is serving any more.
   // The check below still refuses a DIFFERENT plugin claiming an origin that is already taken.
   unregisterRemoteExtractor(pluginUri)
-  if (extractors.some(entry => entry.extractor.origin === origin)) throw new Error(`plugin '${pluginUri}': origin '${origin}' is already registered`)
-  const definition: ExtractorDefinition = {
-    origin,
-    originUrl: typeof remote.originUrl === 'string' ? remote.originUrl : '',
-    name: typeof remote.name === 'string' && remote.name ? remote.name.slice(0, 64) : origin,
-    icon: typeof remote.icon === 'string' ? remote.icon : null,
-    color: typeof remote.color === 'string' ? remote.color : null,
-    isApiOnly: remote.isApiOnly === true,
-    metadataOnly: remote.metadataOnly === true,
-    resolvers: makeDelegatingResolvers(origin, remote)
+  for (const definition of definitions) {
+    if (extractors.some(entry => entry.extractor.origin === definition.origin)) {
+      throw new Error(`plugin '${pluginUri}': origin '${definition.origin}' is already registered`)
+    }
   }
-  const entry = makeExtractor(definition)
-  entry.pluginUri = pluginUri
-  extractors.push(entry)
-  // Never leave a half-registered source in the list. The entry is pushed before it joins the live
-  // fan-outs, so a failure in between would strand a broken extractor that every later fan-out has
-  // to walk over, turning one bad plugin into an app-wide data outage that outlives the connection.
+
+  // Never leave a half-registered plugin in the list. Entries are pushed before they join the live
+  // fan-outs, so a failure part-way would strand broken extractors that every later fan-out has to
+  // walk over, turning one bad plugin into an app-wide data outage that outlives the connection.
+  // All-or-nothing across the whole family, so a package cannot half-register.
   try {
-    for (const fanout of fanouts) joinFanout(fanout, entry)
+    for (const definition of definitions) {
+      const entry = makeExtractor(definition)
+      entry.pluginUri = pluginUri
+      extractors.push(entry)
+      for (const fanout of fanouts) joinFanout(fanout, entry)
+    }
   } catch (error) {
     unregisterRemoteExtractor(pluginUri)
     throw error
   }
-  return { origin, name: definition.name }
+
+  return { sources: definitions.map(({ origin, name }) => ({ origin, name })) }
 }
 
 export const unregisterRemoteExtractor = (pluginUri: string) => {

@@ -14,8 +14,8 @@ const RECONNECT_DELAY_MS = 3_000
 export type PluginStatus = {
   uri: string
   state: 'connecting' | 'connected' | 'error'
-  origin?: string
-  name?: string
+  /** every source the package registered; one package may ship a family of them */
+  sources?: { origin: string, name: string }[]
   error?: string
 }
 
@@ -106,7 +106,7 @@ const connectPlugin = async (uri: string, attempt = 1): Promise<void> => {
       closed.then(() => ({ error: 'the package closed before the source registered' as string })),
     ]), `'${uri}' connected but never registered its source`)
     if ('error' in result) throw new Error(result.error)
-    setStatus(uri, { state: 'connected', origin: result.ok.origin, name: result.ok.name })
+    setStatus(uri, { state: 'connected', sources: result.ok.sources })
   } catch (error) {
     connected.delete(uri)
     const message = error instanceof Error ? error.message : String(error)

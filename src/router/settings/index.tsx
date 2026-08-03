@@ -127,8 +127,17 @@ const Settings = () => {
           {plugins.map(plugin => (
             <div className="plugin" key={plugin.uri}>
               <div className="info">
-                <span className="name">{plugin.name ?? plugin.uri}</span>
-                <span className="uri">{plugin.uri}</span>
+                <span className="name">
+                  {plugin.sources?.length
+                    ? plugin.sources.map(source => source.name).join(', ')
+                    : plugin.uri}
+                </span>
+                <span className="uri">
+                  {plugin.uri}
+                  {/* a package may register a family of sources, so say how many rather than
+                      showing only the first and looking like the rest failed */}
+                  {plugin.sources && plugin.sources.length > 1 ? ` · ${plugin.sources.length} sources` : ''}
+                </span>
               </div>
               <span className={`state${plugin.state === 'error' ? ' error' : ''}`}>
                 {plugin.state === 'connected' ? 'connected' : plugin.state === 'error' ? (plugin.error ?? 'error') : 'connecting…'}
