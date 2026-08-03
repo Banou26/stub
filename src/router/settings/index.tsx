@@ -137,6 +137,9 @@ const Settings = () => {
                   {/* a package may register a family of sources, so say how many rather than
                       showing only the first and looking like the rest failed */}
                   {plugin.sources && plugin.sources.length > 1 ? ` · ${plugin.sources.length} sources` : ''}
+                  {/* a package can register some of its sources and not others, so a partial
+                      success is reported rather than looking like a clean connection */}
+                  {plugin.rejected?.length ? ` · ${plugin.rejected.length} unavailable` : ''}
                 </span>
               </div>
               <span className={`state${plugin.state === 'error' ? ' error' : ''}`}>

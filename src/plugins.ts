@@ -16,6 +16,8 @@ export type PluginStatus = {
   state: 'connecting' | 'connected' | 'error'
   /** every source the package registered; one package may ship a family of them */
   sources?: { origin: string, name: string }[]
+  /** sources the package declared that could not be registered; the rest still serve */
+  rejected?: { origin: string, reason: string }[]
   error?: string
 }
 
@@ -106,7 +108,7 @@ const connectPlugin = async (uri: string, attempt = 1): Promise<void> => {
       closed.then(() => ({ error: 'the package closed before the source registered' as string })),
     ]), `'${uri}' connected but never registered its source`)
     if ('error' in result) throw new Error(result.error)
-    setStatus(uri, { state: 'connected', sources: result.ok.sources })
+    setStatus(uri, { state: 'connected', sources: result.ok.sources, rejected: result.ok.rejected })
   } catch (error) {
     connected.delete(uri)
     const message = error instanceof Error ? error.message : String(error)

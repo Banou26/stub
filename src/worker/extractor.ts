@@ -390,39 +390,52 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
   } as Resolvers
 }
 
-export const registerRemoteExtractor = async (port: MessagePort, pluginUri: string): Promise<{ sources: { origin: string, name: string }[] }> => {
+export const registerRemoteExtractor = async (
+  port: MessagePort,
+  pluginUri: string
+): Promise<{ sources: { origin: string, name: string }[], rejected: { origin: string, reason: string }[] }> => {
   const remote = await attach(port) as RemotePluginPayload
-  const definitions: ExtractorDefinition[] = readPluginSources(remote, pluginUri)
-    .map(({ meta, source }) => ({ ...meta, resolvers: makeDelegatingResolvers(meta.origin, source as RemotePluginSource) }))
+  const { sources, rejected } = readPluginSources(remote, pluginUri)
 
   // A reconnect re-registers the same plugin, so drop its own previous entries before the collision
   // check. Without this it collides with itself and can never come back: the frame died, its entries
   // outlived the connection, and every retry is refused for origins nothing is serving any more.
   // The check below still refuses a DIFFERENT plugin claiming an origin that is already taken.
   unregisterRemoteExtractor(pluginUri)
-  for (const definition of definitions) {
-    if (extractors.some(entry => entry.extractor.origin === definition.origin)) {
-      throw new Error(`plugin '${pluginUri}': origin '${definition.origin}' is already registered`)
-    }
-  }
 
-  // Never leave a half-registered plugin in the list. Entries are pushed before they join the live
-  // fan-outs, so a failure part-way would strand broken extractors that every later fan-out has to
-  // walk over, turning one bad plugin into an app-wide data outage that outlives the connection.
-  // All-or-nothing across the whole family, so a package cannot half-register.
-  try {
-    for (const definition of definitions) {
-      const entry = makeExtractor(definition)
+  // Each source registers on its own. A source that arrives over a shared connection is still an
+  // ordinary standalone source, so one that cannot be registered costs only itself: its siblings are
+  // unaffected, exactly as they would be if the package had shipped them separately.
+  const registered: { origin: string, name: string }[] = []
+  const failed = [...rejected]
+  for (const { meta, source } of sources) {
+    try {
+      if (extractors.some(entry => entry.extractor.origin === meta.origin)) {
+        throw new Error(`origin '${meta.origin}' is already registered by another source`)
+      }
+      const entry = makeExtractor({ ...meta, resolvers: makeDelegatingResolvers(meta.origin, source as RemotePluginSource) })
       entry.pluginUri = pluginUri
       extractors.push(entry)
       for (const fanout of fanouts) joinFanout(fanout, entry)
+      registered.push({ origin: meta.origin, name: meta.name })
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error)
+      console.error(new Error(`plugin '${pluginUri}': source '${meta.origin}' failed to register`, { cause: error }))
+      failed.push({ origin: meta.origin, reason })
     }
-  } catch (error) {
-    unregisterRemoteExtractor(pluginUri)
-    throw error
   }
 
-  return { sources: definitions.map(({ origin, name }) => ({ origin, name })) }
+  for (const entry of failed) {
+    console.warn(`plugin '${pluginUri}': skipped source '${entry.origin}' (${entry.reason})`)
+  }
+  // Nothing registered at all is a genuine connection failure: the plugin has nothing to contribute,
+  // so say so rather than reporting a healthy connection that serves no source.
+  if (!registered.length) {
+    const detail = failed.map(entry => `${entry.origin}: ${entry.reason}`).join('; ')
+    throw new Error(`plugin '${pluginUri}': no source could be registered${detail ? ` (${detail})` : ''}`)
+  }
+
+  return { sources: registered, rejected: failed }
 }
 
 export const unregisterRemoteExtractor = (pluginUri: string) => {

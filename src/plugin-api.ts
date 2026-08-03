@@ -9,7 +9,7 @@ import type { Resolvers } from './generated/schema/types.generated'
 // `fetch` (its own quota and identity, never stub's) and the resolver ctx is empty - stub's
 // privileged context (store reads, user keys) never crosses the connection.
 
-export type StubPluginAPI = {
+export type StubSource = {
   /** unique lowercase origin slug, e.g. 'myanime' - all yielded media must carry it */
   origin: string
   originUrl: string
@@ -20,5 +20,16 @@ export type StubPluginAPI = {
   metadataOnly?: boolean
   resolvers: Resolvers
 }
+
+/**
+ * What a plugin serves: one source, or a family of them.
+ *
+ * A source in a family is an ordinary standalone source that happens to arrive over a shared
+ * connection. Each registers under its own origin with its own name, icon and colour, and each fails
+ * on its own: a malformed or colliding source is skipped and reported while its siblings serve
+ * normally, so grouping sources into one package never makes them more fragile than shipping them
+ * separately. They are torn down together when the package disconnects.
+ */
+export type StubPluginAPI = StubSource | { sources: StubSource[] }
 
 export const STUB_SOURCE_PROTOCOL = 'stub-source@1'

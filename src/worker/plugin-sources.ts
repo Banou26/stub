@@ -29,31 +29,47 @@ export type PluginSourceMeta = {
   metadataOnly: boolean
 }
 
+export type RejectedSource = { origin: string, reason: string }
+
 /**
- * The sources a payload declares, validated.
+ * The sources a payload declares, each validated on its own.
  *
  * A payload is either ONE source, or a `sources` list so a single package can ship a family of them
  * (an indexer package serving animetosho and nyaa, say). The single shape stays supported because it
  * is what the example plugin and every plugin written before this sends.
  *
- * Throws rather than dropping a bad entry: registration is all-or-nothing, so a package cannot
- * half-register and leave the app serving an inconsistent subset of what it claimed.
+ * A source in a family is an ordinary standalone source that happens to arrive over a shared
+ * connection. So a malformed one is REPORTED and skipped, never fatal to its siblings: the same rule
+ * the fan-out follows for a failing extractor and the source layer follows for a bad record. Dropping
+ * the whole family because one entry is wrong would make a package strictly more fragile than the
+ * same sources shipped separately, which is backwards.
  */
 export const readPluginSources = (
   payload: PluginSourceInput & { sources?: unknown },
   pluginUri: string
-): { meta: PluginSourceMeta, source: PluginSourceInput }[] => {
+): { sources: { meta: PluginSourceMeta, source: PluginSourceInput }[], rejected: RejectedSource[] } => {
   const incoming: PluginSourceInput[] =
     Array.isArray(payload.sources) && payload.sources.length
       ? payload.sources as PluginSourceInput[]
       : [payload]
 
-  const read = incoming.map(source => {
+  const sources: { meta: PluginSourceMeta, source: PluginSourceInput }[] = []
+  const rejected: RejectedSource[] = []
+  const claimed = new Set<string>()
+
+  for (const source of incoming) {
     const origin = typeof source.origin === 'string' ? source.origin : ''
     if (!PLUGIN_ORIGIN_TOKEN.test(origin)) {
-      throw new Error(`plugin '${pluginUri}': origin must be a short lowercase token`)
+      rejected.push({ origin: origin || '(none)', reason: 'origin must be a short lowercase token' })
+      continue
     }
-    return {
+    // the FIRST claim wins; a repeat is the package's own mistake and only costs that entry
+    if (claimed.has(origin)) {
+      rejected.push({ origin, reason: `declared twice by '${pluginUri}'` })
+      continue
+    }
+    claimed.add(origin)
+    sources.push({
       source,
       meta: {
         origin,
@@ -64,14 +80,8 @@ export const readPluginSources = (
         isApiOnly: source.isApiOnly === true,
         metadataOnly: source.metadataOnly === true,
       },
-    }
-  })
+    })
+  }
 
-  // Caught here rather than at the registry's collision check, which would report the package as
-  // colliding with itself and read as "someone else already took that origin".
-  const duplicate = read.find((entry, index) =>
-    read.findIndex(other => other.meta.origin === entry.meta.origin) !== index)
-  if (duplicate) throw new Error(`plugin '${pluginUri}': declares origin '${duplicate.meta.origin}' twice`)
-
-  return read
+  return { sources, rejected }
 }
