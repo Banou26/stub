@@ -414,20 +414,31 @@ const Episode = (
 
   const sources: WatchSource[] = (originData?.originPage?.nodes ?? [])
     .map(origin => {
-      const handle = episode?.handles.find(h => h.origin === origin.id)
+      const handles = (episode?.handles ?? []).filter(h => h.origin === origin.id)
+      const handle = handles.at(0)
       const sourceUri = handle?.uri
       const playable = Boolean(getPlayer(origin.id) && handle?.url)
+      // With several releases from one origin there is nothing to pick between here, so send the
+      // user to the watch page (no sourceUri) and let them choose there rather than silently
+      // opening whichever handle happened to sort first.
       const watchPath =
-        sourceUri && episode.uri
-          ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri, sourceUri })
+        episode.uri
+          ? handles.length > 1
+            ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri })
+            : sourceUri
+              ? getRoutePath(Route.WATCH, { mediaUri, episodeUri: episode.uri, sourceUri })
+              : undefined
           : undefined
+      // several releases always route inward, even when none of them is in-app playable: the watch
+      // page lists them and each release keeps its own external link
+      const multiple = handles.length > 1
       return {
         id: origin.id,
         name: origin.name ?? origin.id,
         icon: origin.icon,
         color: origin.color,
-        href: playable ? watchPath : (handle?.url ?? undefined),
-        external: !playable,
+        href: multiple ? watchPath : playable ? watchPath : (handle?.url ?? undefined),
+        external: multiple ? false : !playable,
         active: false,
       } satisfies WatchSource
     })

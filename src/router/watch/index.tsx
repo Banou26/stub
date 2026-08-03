@@ -44,6 +44,10 @@ const GET_WATCH_MEDIA = gql(`
           titles {
             title
           }
+          shortDescriptions {
+            language
+            shortDescription
+          }
         }
       }
       handles {
@@ -165,8 +169,11 @@ const Watch = () => {
     [episode?.uri]
   )
 
+  // Deduped: an origin contributing several handles for this episode (an indexer with several
+  // releases) repeats in the aggregated uri, and findOrigins maps ids positionally, so without this
+  // the same origin renders once per handle.
   const originIds = useMemo(
-    () => origins?.map(o => o.origin),
+    () => origins && [...new Set(origins.map(o => o.origin))],
     [origins]
   )
 
@@ -202,21 +209,35 @@ const Watch = () => {
   const sources: WatchSource[] = useMemo(
     () =>
       (originData?.originPage?.nodes ?? []).map(origin => {
-        const handle = episode?.handles.find(h => h.origin === origin.id)
-        const sourceUri = handle?.uri
-        const playable = Boolean(handle?.embedUrl || (getPlayer(origin.id) && handle?.url))
-        const watchPath =
-          sourceUri
-            ? getRoutePath(Route.WATCH, { mediaUri: params.mediaUri, episodeUri: params.episodeUri, sourceUri })
-            : undefined
+        // every handle this origin contributed, not just the first: an indexer can offer several
+        // releases for one episode and each is a separate, selectable source
+        const handles = (episode?.handles ?? []).filter(h => h.origin === origin.id)
+        const playableHandle = (handle: typeof handles[number]) =>
+          Boolean(handle?.embedUrl || (getPlayer(origin.id) && handle?.url))
+        const pathFor = (sourceUri: string) =>
+          getRoutePath(Route.WATCH, { mediaUri: params.mediaUri, episodeUri: params.episodeUri, sourceUri })
+
+        const releases = handles.map(handle => ({
+          uri: handle.uri,
+          label:
+            handle.shortDescriptions?.at(0)?.shortDescription
+            ?? handle.titles?.at(0)?.title
+            ?? fromUri(handle.uri as `${string}:${string}`).id,
+          href: playableHandle(handle) ? pathFor(handle.uri) : (handle.url ?? undefined),
+          external: !playableHandle(handle),
+          active: selectedSourceUri === handle.uri,
+        }))
+
+        const first = handles.at(0)
         return {
           id: origin.id,
           name: origin.name ?? origin.id,
           icon: origin.icon,
           color: origin.color,
-          href: playable ? watchPath : (handle?.url ?? undefined),
-          external: !playable,
-          active: selectedSourceUri === sourceUri,
+          href: first ? (releases.at(0)?.href) : undefined,
+          external: first ? !playableHandle(first) : true,
+          active: releases.some(release => release.active),
+          releases: releases.length > 1 ? releases : undefined,
         }
       }),
     [originData, episode?.handles, params.mediaUri, params.episodeUri, selectedSourceUri]

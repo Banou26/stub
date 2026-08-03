@@ -1,6 +1,15 @@
 import { css } from '@emotion/react'
 import { useState } from 'preact/hooks'
 
+/** One concrete pick within an origin, e.g. a single release out of an indexer's several. */
+export type SourceRelease = {
+  uri: string
+  label: string
+  href?: string
+  external: boolean
+  active: boolean
+}
+
 export type WatchSource = {
   id: string
   name: string
@@ -9,6 +18,15 @@ export type WatchSource = {
   href?: string
   external: boolean
   active: boolean
+  /**
+   * Every handle this origin contributed for the episode, when there is more than one.
+   *
+   * An origin used to resolve to exactly one handle via `handles.find(h => h.origin === id)`, which
+   * silently dropped the rest: an indexer contributing five releases for one episode showed a single
+   * button pointing at whichever sorted first. When this is set the origin expands into a choice
+   * instead, and the compact selector routes to the watch page so the choice has somewhere to happen.
+   */
+  releases?: SourceRelease[]
 }
 
 const BRAND_COLORS: Record<string, string> = {
@@ -186,6 +204,76 @@ const style = css`
     }
   }
 
+  .source-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    .source {
+      width: 100%;
+      font: inherit;
+      text-align: left;
+    }
+
+    .count {
+      flex-shrink: 0;
+      padding: 0.1rem 0.6rem;
+      border-radius: 1rem;
+      background: color-mix(in srgb, var(--brand) 22%, rgba(255, 255, 255, 0.06));
+      color: var(--brand);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .chevron {
+      flex-shrink: 0;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+  }
+
+  .releases {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-left: 1.2rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+
+    .release {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 1rem;
+      border-radius: 0.7rem;
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 1.25rem;
+      text-decoration: none;
+      transition: background 0.12s ease, color 0.12s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff;
+
+        .play {
+          opacity: 0.9;
+        }
+      }
+
+      &.active {
+        background: color-mix(in srgb, var(--brand) 18%, transparent);
+        color: #fff;
+      }
+    }
+
+    .release-label {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   @keyframes source-eq {
     0%, 100% { transform: scaleY(0.35); }
     50% { transform: scaleY(1); }
@@ -278,26 +366,77 @@ export const SourceSelector = ({ sources, compact = false }: { sources: WatchSou
     <div css={style}>
       <div className="label">Watch on</div>
       <div className="list">
-        {sources.map(source => (
-          <a
-            key={source.id}
-            className={`source${source.active ? ' active' : ''}`}
-            style={{ '--brand': brandColor(source) }}
-            href={source.href}
-            target={source.external ? '_blank' : undefined}
-            rel={source.external ? 'noreferrer' : undefined}
-            title={source.name}
-          >
-            <SourceIcon source={source} />
-            <span className="name">{source.name}</span>
-            {source.active
-              ? <span className="playing"><i/><i/><i/></span>
-              : source.external
-                ? <span className="ext">↗</span>
-                : <span className="play">▶</span>}
-          </a>
-        ))}
+        {sources.map(source =>
+          source.releases && source.releases.length > 1
+            ? <MultiReleaseSource key={source.id} source={source} />
+            : (
+              <a
+                key={source.id}
+                className={`source${source.active ? ' active' : ''}`}
+                style={{ '--brand': brandColor(source) }}
+                href={source.href}
+                target={source.external ? '_blank' : undefined}
+                rel={source.external ? 'noreferrer' : undefined}
+                title={source.name}
+              >
+                <SourceIcon source={source} />
+                <span className="name">{source.name}</span>
+                {source.active
+                  ? <span className="playing"><i/><i/><i/></span>
+                  : source.external
+                    ? <span className="ext">↗</span>
+                    : <span className="play">▶</span>}
+              </a>
+            )
+        )}
       </div>
+    </div>
+  )
+}
+
+// An origin that contributed several handles for this episode. Collapsed it shows the count; opened
+// it lists every release so one can be picked, rather than the UI choosing silently.
+const MultiReleaseSource = ({ source }: { source: WatchSource }) => {
+  const releases = source.releases ?? []
+  const [open, setOpen] = useState(releases.some(release => release.active))
+  return (
+    <div className="source-group" style={{ '--brand': brandColor(source) }}>
+      <button
+        type="button"
+        className={`source${source.active ? ' active' : ''}`}
+        style={{ '--brand': brandColor(source) }}
+        onClick={() => setOpen(value => !value)}
+        title={`${releases.length} releases on ${source.name}`}
+        aria-expanded={open}
+      >
+        <SourceIcon source={source} />
+        <span className="name">{source.name}</span>
+        <span className="count">{releases.length}</span>
+        <span className="chevron">{open ? '▾' : '▸'}</span>
+      </button>
+      {open
+        ? (
+          <div className="releases">
+            {releases.map(release => (
+              <a
+                key={release.uri}
+                className={`release${release.active ? ' active' : ''}`}
+                href={release.href}
+                target={release.external ? '_blank' : undefined}
+                rel={release.external ? 'noreferrer' : undefined}
+                title={release.label}
+              >
+                <span className="release-label">{release.label}</span>
+                {release.active
+                  ? <span className="playing"><i/><i/><i/></span>
+                  : release.external
+                    ? <span className="ext">↗</span>
+                    : <span className="play">▶</span>}
+              </a>
+            ))}
+          </div>
+        )
+        : undefined}
     </div>
   )
 }
