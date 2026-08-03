@@ -1,0 +1,52 @@
+export const PLUGIN_PARAM = 'plugin'
+
+const parse = (url: string, base?: string): URL | undefined => {
+  try {
+    return new URL(url, base)
+  } catch {
+    return undefined
+  }
+}
+
+const dedupe = (uris: string[]): string[] => {
+  const seen = new Set<string>()
+  return uris.filter(uri => {
+    const key = comparablePluginUri(uri)
+    if (!key || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+// FKN canonicalizes a version away on install ('npm:x@1.2.3' registers as 'npm:x')
+export const comparablePluginUri = (uri: string): string =>
+  uri.trim().replace(/\/+$/, '').replace(/@\d[^@/]*$/, '')
+
+export const readPluginUris = (url: string, base?: string): string[] => {
+  const parsed = parse(url, base)
+  if (!parsed) return []
+  return dedupe(parsed.searchParams.getAll(PLUGIN_PARAM).map(uri => uri.trim()))
+}
+
+// not the URLSearchParams serializer: it percent-encodes ':' '@' '/', which every plugin address is
+// made of, and these are legal unencoded in a query
+const encodeUri = (uri: string) =>
+  encodeURIComponent(uri)
+    .replace(/%3A/g, ':')
+    .replace(/%2F/g, '/')
+    .replace(/%40/g, '@')
+
+export const writePluginUris = (url: string, uris: string[], base: string): string => {
+  const parsed = parse(url, base)
+  const from = parse(base)
+  if (!parsed || !from || parsed.origin !== from.origin) return url
+  parsed.searchParams.delete(PLUGIN_PARAM)
+  const others = parsed.searchParams.toString()
+  const plugins =
+    dedupe(uris.map(uri => uri.trim()))
+      .sort()
+      .map(uri => `${PLUGIN_PARAM}=${encodeUri(uri)}`)
+      .join('&')
+  parsed.search = [others, plugins].filter(Boolean).join('&')
+  return parsed.href
+}

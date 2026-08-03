@@ -27,6 +27,8 @@ export const onPluginsChange = (listener: () => void): (() => void) => {
 export const pluginStatuses = (): PluginStatus[] =>
   loadEnabled().map(uri => statuses.get(uri) ?? { uri, state: 'connecting' })
 
+export const enabledPluginUris = (): string[] => loadEnabled()
+
 const loadEnabled = (): string[] => {
   try {
     const parsed = JSON.parse(localStorage.getItem(ENABLED_KEY) ?? '[]')
@@ -111,11 +113,13 @@ const cancelReconnect = (uri: string) => {
 
 // install through FKN first and only persist to the enabled list once it took: FKN refuses to connect a package this app has not installed, so a mistyped address written straight to the list is retried forever
 // key everything on the id FKN hands back, never the caller's string: FKN canonicalizes a version away ('npm:x@1.2.3' installs as 'npm:x')
-export const enablePlugin = async (uri: string): Promise<void> => {
+// resolves the address FKN registered it under, or null when the FKN install confirm was turned down
+export const enablePlugin = async (uri: string): Promise<string | null> => {
   const installed = await packages.install(uri)
-  if (!installed) return
+  if (!installed) return null
   saveEnabled([...new Set([...loadEnabled(), installed.uri])])
   await connectPlugin(installed.uri)
+  return installed.uri
 }
 
 export const disablePlugin = async (uri: string): Promise<void> => {
