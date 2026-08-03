@@ -18,12 +18,13 @@
     "build": "npm run gql-generate && vp build",
     "build-test": "vp build --config vite.test.config.ts",
     "build-test-watch": "vp build --config vite.test.config.ts --watch",
-    "test": "npm run build-test && playwright test",
+    "test": "npm run test:unit && npm run build-test && playwright test",
     "test-watch": "set PWTEST_WATCH=1 & playwright test",
     "test-watch-headful": "playwright test --ui",
     "gql-generate": "graphql-codegen --config codegen.ts",
     "gql-generate-watch": "graphql-codegen --config codegen.ts --watch",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:unit": "vitest run"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

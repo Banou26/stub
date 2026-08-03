@@ -14,6 +14,10 @@ const detectChromePath = (): string | undefined => {
 }
 
 export default defineConfig({
+  // Scoped to tests/, or playwright also collects the vitest specs under src/worker and dies trying
+  // to run describe() from the wrong runner. The two suites are deliberately separate: playwright
+  // drives a real browser, vitest covers worker-realm modules that cannot be loaded in one.
+  testDir: './tests',
   use: {
     launchOptions: {
       executablePath: detectChromePath(),
