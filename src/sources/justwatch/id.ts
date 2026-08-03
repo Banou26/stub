@@ -1,24 +1,33 @@
 // How a JustWatch result is identified. Split out of extractor.ts so it can be tested: that module
 // imports the crunchyroll extractor and the source barrel, which cannot be loaded outside a browser.
 //
-// The whole point of this file is that JustWatch has no season-level node. 'ts222366' is Mushoku
-// Tensei entire, seasons 1 through 3 hanging off one id, and the same is true of the provider deep
-// links it carries (a hulu.com/series/<uuid> url names the show, not the season).
+// JustWatch has no season-level node. 'ts222366' is Mushoku Tensei entire, seasons 1 through 3 hanging
+// off one id, and its provider deep links are show-level too (a hulu.com/series/<uuid> url names the
+// show). Stub has no notion of a show - every media here is ONE season - so a show-level id lands on
+// all of them and union-finds them into a single media. That was visible three ways: picking season 2
+// out of search opened season 3, an aggregated uri carried two anilist ids and two mal ids at once,
+// and two unrelated shows merged once a shared handle bridged their clusters.
 //
-// Stub clusters media by shared handle, so an id that spans seasons union-finds them into ONE media.
-// That was visible three ways: picking season 2 out of search opened season 3, an aggregated uri
-// carried two anilist ids and two mal ids at once, and two unrelated shows merged when a shared
-// handle bridged their clusters.
+// So the rule is absolute: a series media is `<node>-<season>`, never the bare node id. A show whose
+// season cannot be determined has no identity here and is not emitted at all - see showRequiresSeason.
 
-/** A JustWatch node id, scoped to the season this media represents. */
-export const jwId = (objectId: string | number, seasonNumber?: number) =>
-  seasonNumber == null ? String(objectId) : `${objectId}-${seasonNumber}`
+/** A JustWatch node id scoped to one season. This is the only id shape a series media may carry. */
+export const jwId = (objectId: string | number, seasonNumber: number) => `${objectId}-${seasonNumber}`
 
-/** Reverse of jwId: the node to ask JustWatch for, and the season the uri already pinned. */
+/** Reverse of jwId: the node to ask JustWatch for, and the season the uri pinned. */
 export const splitJwId = (id: string): { objectId: string, seasonNumber?: number } => {
   const match = /^(\d+)-(\d+)$/.exec(id)
   return match ? { objectId: match[1]!, seasonNumber: Number(match[2]) } : { objectId: id }
 }
+
+/**
+ * Whether this node needs a season before it can become a media.
+ *
+ * A movie has no seasons to be confused between, so its bare node id identifies it exactly. Anything
+ * else is a series, and a series without a season number is precisely the id that merges every season
+ * of the show together.
+ */
+export const showRequiresSeason = (objectType: string | undefined) => objectType !== 'MOVIE'
 
 /**
  * The id a provider handle carries, or undefined when it cannot be given one worth minting.
@@ -32,15 +41,8 @@ export const splitJwId = (id: string): { objectId: string, seasonNumber?: number
 export const providerContentId = (
   mappedOrigin: string,
   rawContentId: string,
-  seasonNumber?: number,
-  multiSeason = false
+  seasonNumber?: number
 ): string | undefined => {
-  // A show whose season we could not determine is the SEARCH path: the mediaPage resolver normalizes
-  // the node with no season at all, because JustWatch answers a query with the show. Its provider ids
-  // are then correct for the show and poison for stub, which has no show - every media here is one
-  // season, so a show-level hulu or crunchyroll id lands on all of them and unions the lot. The jw id
-  // itself is safe to leave bare (nothing else mints `jw:`), so the show still appears in search; it
-  // just stops dragging every season together through another source's id space.
-  if (seasonNumber == null) return multiSeason ? undefined : rawContentId
+  if (seasonNumber == null) return rawContentId
   return mappedOrigin === 'cr' ? undefined : `${rawContentId}-${seasonNumber}`
 }

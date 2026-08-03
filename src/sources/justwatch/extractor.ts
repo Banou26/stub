@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
-import { jwId, providerContentId, splitJwId } from './id'
+import { jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
 
 const SCORE = 0.2
@@ -274,7 +274,7 @@ const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | 
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
-  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number, multiSeason?: boolean },
+  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number },
   ctx: ExtractorServerContext
 ): Promise<GQLMedia[]> => {
   const seen = new Set<string>()
@@ -304,7 +304,7 @@ const buildOffersAsHandles = async (
     } else if (rawContentId) {
       // a provider's series url names the SHOW, so on a season-scoped media that id spans every season
       // and clustering unions them: the same defect as the jw id itself, one layer down. See ./id.ts.
-      contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber, meta.multiSeason)
+      contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber)
     }
 
     if (!contentId) continue
@@ -327,8 +327,11 @@ const normalizeMedia = async (
   node: JWSearchNode,
   opts: { seasons?: JWSeason[], seasonNumber?: number },
   ctx: ExtractorServerContext
-): Promise<GQLMedia> => {
-  const id = jwId(node.objectId, opts.seasonNumber)
+): Promise<GQLMedia | null> => {
+  // A series without a season has no identity here: the bare node id is shared by every season of the
+  // show and merges them. Refusing to build the media is the whole point - see ./id.ts.
+  if (opts.seasonNumber == null && showRequiresSeason(node.objectType)) return null
+  const id = opts.seasonNumber == null ? String(node.objectId) : jwId(node.objectId, opts.seasonNumber)
   const { shortDescription } = node.content
 
   const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
@@ -358,9 +361,7 @@ const normalizeMedia = async (
           shortDescription,
           title,
           posterUrl: resolveImageUrl(node.content.posterUrl),
-          seasonNumber: opts.seasonNumber,
-          // the show has seasons but this media is not scoped to one: see providerContentId
-          multiSeason: (opts.seasons?.length ?? 0) > 1
+          seasonNumber: opts.seasonNumber
         },
         ctx
       ),
@@ -399,7 +400,9 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
 // Season resolution
 
 const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: ExtractorServerContext) => {
-  if (!node.seasons || node.seasons.length <= 1) return undefined
+  if (!node.seasons?.length) return undefined
+  // a single season is not ambiguous: it IS the season, and the id still has to name it
+  if (node.seasons.length === 1) return node.seasons[0]!.content.seasonNumber
   return waitForMedia(uri, ctx, m => {
     const title = getFirstTitle(m)
     if (title) { const n = parseSeasonNumber(title); if (n) return n }
@@ -427,7 +430,8 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
     if (similarity < TITLE_MATCH_THRESHOLD) continue
 
     let seasonNumber: number | undefined
-    if (node.seasons?.length > 1) {
+    if (node.seasons?.length === 1) seasonNumber = node.seasons[0]!.content.seasonNumber
+    else if (node.seasons?.length > 1) {
       seasonNumber = parseSeasonNumber(title)
       if (!seasonNumber) {
         const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
@@ -436,6 +440,7 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
     }
 
     const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
+    if (!media) continue
     mergeHandles(media, aggregatedUri)
     return media
   }
@@ -452,6 +457,7 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
     if (!node) return null
     const seasonNumber = pinned ?? (isAggregatedUri(uri) ? await resolveSeasonNumber(uri, node, ctx) : undefined)
     const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
+    if (!media) return null
     if (isAggregatedUri(uri)) mergeHandles(media, uri)
     return media
   }
@@ -476,10 +482,14 @@ export const resolvers: Resolvers = {
       subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
         if (!search) return yield { mediaPage: { nodes: [] } }
         const searchRes = await searchTitles(search, ctx)
+        // The search query does not fetch seasons, so a series result cannot say WHICH season it is
+        // and normalizeMedia declines it. Movies still come through. Dropping those entries is the
+        // point rather than a cost: a season-less series media is exactly the one whose show-level
+        // handles merged every season of the show together.
         const nodes = await Promise.all(
           (searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeMedia(e.node, {}, ctx))
         )
-        yield { mediaPage: { nodes } }
+        yield { mediaPage: { nodes: nodes.filter((media): media is GQLMedia => media !== null) } }
       }
     }
   },
@@ -488,10 +498,12 @@ export const resolvers: Resolvers = {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
       if (isMovie(parent)) return [makeMovieEpisode(parent, { score: SCORE })]
-      const detailRes = await getNodeDetails(`ts${parent.id}`, ctx)
+      // parent.id is '<node>-<season>' now, so the node has to be split back out of it
+      const { objectId, seasonNumber: pinned } = splitJwId(parent.id)
+      const detailRes = await getNodeDetails(`ts${objectId}`, ctx)
       const node = detailRes.data?.node
       if (!node?.seasons) return []
-      const seasonNumber = parent.titles?.[0]?.title ? parseSeasonNumber(parent.titles[0].title) : undefined
+      const seasonNumber = pinned ?? (parent.titles?.[0]?.title ? parseSeasonNumber(parent.titles[0].title) : undefined)
       const seasons = seasonNumber != null
         ? node.seasons.filter(s => s.content.seasonNumber === seasonNumber)
         : node.seasons
