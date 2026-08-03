@@ -32,8 +32,15 @@ export const splitJwId = (id: string): { objectId: string, seasonNumber?: number
 export const providerContentId = (
   mappedOrigin: string,
   rawContentId: string,
-  seasonNumber?: number
+  seasonNumber?: number,
+  multiSeason = false
 ): string | undefined => {
-  if (seasonNumber == null) return rawContentId
+  // A show whose season we could not determine is the SEARCH path: the mediaPage resolver normalizes
+  // the node with no season at all, because JustWatch answers a query with the show. Its provider ids
+  // are then correct for the show and poison for stub, which has no show - every media here is one
+  // season, so a show-level hulu or crunchyroll id lands on all of them and unions the lot. The jw id
+  // itself is safe to leave bare (nothing else mints `jw:`), so the show still appears in search; it
+  // just stops dragging every season together through another source's id space.
+  if (seasonNumber == null) return multiSeason ? undefined : rawContentId
   return mappedOrigin === 'cr' ? undefined : `${rawContentId}-${seasonNumber}`
 }

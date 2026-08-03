@@ -274,7 +274,7 @@ const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | 
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
-  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number },
+  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number, multiSeason?: boolean },
   ctx: ExtractorServerContext
 ): Promise<GQLMedia[]> => {
   const seen = new Set<string>()
@@ -304,7 +304,7 @@ const buildOffersAsHandles = async (
     } else if (rawContentId) {
       // a provider's series url names the SHOW, so on a season-scoped media that id spans every season
       // and clustering unions them: the same defect as the jw id itself, one layer down. See ./id.ts.
-      contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber)
+      contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber, meta.multiSeason)
     }
 
     if (!contentId) continue
@@ -358,7 +358,9 @@ const normalizeMedia = async (
           shortDescription,
           title,
           posterUrl: resolveImageUrl(node.content.posterUrl),
-          seasonNumber: opts.seasonNumber
+          seasonNumber: opts.seasonNumber,
+          // the show has seasons but this media is not scoped to one: see providerContentId
+          multiSeason: (opts.seasons?.length ?? 0) > 1
         },
         ctx
       ),

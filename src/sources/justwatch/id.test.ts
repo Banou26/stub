@@ -47,3 +47,18 @@ describe('providerContentId', () => {
     expect(providerContentId('cr', 'G24H1N3MP')).toBe('G24H1N3MP')
   })
 })
+
+// The search path: mediaPage normalizes the node with no season, because JustWatch answers a query
+// with the SHOW. Its provider ids are correct for the show and poison for stub, where every media is
+// one season - a show-level hulu id lands on all of them and unions the lot.
+describe('providerContentId on the search path', () => {
+  test('a multi-season show contributes NO provider handle when the season is unknown', () => {
+    expect(providerContentId('hulu', '95e491fa-cdad', undefined, true)).toBeUndefined()
+    expect(providerContentId('cr', 'G24H1N3MP', undefined, true)).toBeUndefined()
+    expect(providerContentId('nf', '80987039', undefined, true)).toBeUndefined()
+  })
+
+  test('a single-season show is unaffected: there is nothing for its id to merge with', () => {
+    expect(providerContentId('hulu', '95e491fa-cdad', undefined, false)).toBe('95e491fa-cdad')
+  })
+})
