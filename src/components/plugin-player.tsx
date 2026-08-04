@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import { packages } from '@fkn/lib'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
+import { STUB_SOURCE_PROTOCOL } from '../plugin-api'
 import { fromUri } from '../utils/uri'
 
 const style = css`
@@ -68,7 +69,14 @@ export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerP
 
     const run = async () => {
       try {
-        const connection = await packages.mount<PluginPayload>(pluginUri, { element })
+        // the SAME contract tag the worker connects under. Both are stub asking for `stub-source@1`, and
+        // this is the hop that renders the package into stub's own document, so it is the last one that
+        // should arrive unnamed: a package reading `protocol` to decide what it serves would otherwise
+        // see null here and have to guess.
+        const connection = await packages.mount<PluginPayload>(pluginUri, {
+          element,
+          protocol: STUB_SOURCE_PROTOCOL,
+        })
         if (done) { connection.unmount(); return }
         mounted = connection
         // one package may ship a family of sources, so the one that owns this release is picked by the
