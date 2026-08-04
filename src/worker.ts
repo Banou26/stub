@@ -22,7 +22,7 @@ expose<typeof resolvers>(
   }
 )
 
-const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, selectRemoteRelease } = await expose<WorkerResolvers>(
+const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease } = await expose<WorkerResolvers>(
   {},
   {
     transport: worker,
@@ -36,5 +36,6 @@ export {
   registerRemoteSource,
   unregisterRemoteSource,
   remotePicker,
+  remotePlayer,
   selectRemoteRelease
 }

@@ -13,6 +13,21 @@ export type StubSource = {
   isApiOnly: boolean
   metadataOnly?: boolean
   resolvers: Resolvers
+  /**
+   * Render this source's own picker for the given handle uris. Stub shows the package's frame with
+   * `packages.show` and awaits this call; the resolution IS the pick.
+   */
+  selectRelease?: (uris: string[]) => Promise<string | null>
+  /**
+   * Play a release inside the package's own frame, resolving true once its player is up.
+   *
+   * Declaring this is what makes a source self-playing: stub MOUNTS the package into its player area
+   * with `packages.mount` and calls this on that connection, so the package renders inside stub's
+   * layout and fullscreens with it. Stub never learns how the source plays anything, which is the
+   * point: a torrent index can hand its release to a torrent client without stub knowing torrents
+   * exist.
+   */
+  play?: (release: { uri: string, url?: string }) => Promise<boolean>
 }
 
 /**

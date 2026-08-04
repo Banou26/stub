@@ -386,6 +386,17 @@ export const selectRemoteRelease = async (origin: string, uris: string[]): Promi
   return (await picker.select(uris)) ?? null
 }
 
+// A source that plays its own releases, unlike the picker, is only ever announced here: the app MOUNTS
+// the package's frame in its player area and calls `play` on that connection, not on this one. The two
+// are different documents of the same package, so a call made here would render into a frame nobody is
+// looking at. All the app needs from the worker is which package to mount.
+const players = new Map<string, string>()
+
+export const remotePlayer = (origin: string): { pluginUri: string } | null => {
+  const pluginUri = players.get(origin)
+  return pluginUri ? { pluginUri } : null
+}
+
 export const registerRemoteExtractor = async (
   port: MessagePort,
   pluginUri: string
@@ -410,6 +421,7 @@ export const registerRemoteExtractor = async (
       if (typeof select === 'function') {
         pickers.set(meta.origin, { pluginUri, select: select as RemotePicker['select'] })
       }
+      if (typeof (source as { play?: unknown }).play === 'function') players.set(meta.origin, pluginUri)
       for (const fanout of fanouts) joinFanout(fanout, entry)
       registered.push({ origin: meta.origin, name: meta.name })
     } catch (error) {
@@ -433,6 +445,9 @@ export const registerRemoteExtractor = async (
 export const unregisterRemoteExtractor = (pluginUri: string) => {
   for (const [origin, picker] of pickers) {
     if (picker.pluginUri === pluginUri) pickers.delete(origin)
+  }
+  for (const [origin, uri] of players) {
+    if (uri === pluginUri) players.delete(origin)
   }
   for (let index = extractors.length - 1; index >= 0; index -= 1) {
     const entry = extractors[index]!

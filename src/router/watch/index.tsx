@@ -6,12 +6,13 @@ import { useEffect, useMemo, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { useLocation, useParams } from 'wouter'
 
-import { remotePicker } from '../../worker'
+import { remotePicker, remotePlayer } from '../../worker'
 
 import { OriginFilter } from '../../generated/graphql'
 import { gql } from '../../generated'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
+import PluginPlayer from '../../components/plugin-player'
 import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
@@ -209,24 +210,53 @@ const Watch = () => {
   // plugin connection, so it is resolved here and folded into the source list
   const pickerOrigins = (originData?.originPage?.nodes ?? []).map(origin => origin.id).join(',')
   const [pickers, setPickers] = useState<Record<string, string>>({})
+  // and separately, which origins play their own releases: stub mounts the package in the player box
+  // and the source renders whatever it wants there. Read together, in one pass over the same origins.
+  const [players, setPlayers] = useState<Record<string, string>>({})
   useEffect(() => {
     let cancelled = false
     const ids = pickerOrigins ? pickerOrigins.split(',') : []
-    Promise.all(ids.map(async id => [id, (await remotePicker(id))?.pluginUri] as const))
-      .then(entries => {
+    const collect = async (lookup: (id: string) => Promise<{ pluginUri: string } | null>) =>
+      Object.fromEntries(
+        (await Promise.all(ids.map(async id => [id, (await lookup(id))?.pluginUri] as const)))
+          .filter((entry): entry is [string, string] => !!entry[1])
+      )
+    Promise.all([collect(remotePicker), collect(remotePlayer)])
+      .then(([picked, played]) => {
         if (cancelled) return
-        setPickers(Object.fromEntries(entries.filter((entry): entry is [string, string] => !!entry[1])))
+        setPickers(picked)
+        setPlayers(played)
       })
       .catch(() => {})
     return () => { cancelled = true }
   }, [pickerOrigins])
 
+  // The source's own player wins over stub's built-in ones: it is the source saying how its releases
+  // are played, and a release stub cannot open any other way (a magnet) is exactly the case for it.
+  const pluginPlayer = useMemo(() => {
+    if (!selectedSourceUri) return undefined
+    const { origin } = fromUri(selectedSourceUri as `${string}:${string}`)
+    const pluginUri = players[origin]
+    if (!pluginUri) return undefined
+    const handle = episode?.handles.find(h => h.uri === selectedSourceUri)
+    return { pluginUri, release: { uri: selectedSourceUri, url: handle?.url ?? undefined } }
+  }, [selectedSourceUri, players, episode?.handles])
+
+  // a source that declined this release falls back to whatever stub would have done, which is the
+  // external link the selector already offers
+  const [declined, setDeclined] = useState<string>()
+  useEffect(() => { setDeclined(undefined) }, [selectedSourceUri])
+
   const sources: WatchSource[] = useMemo(
     () =>
       (originData?.originPage?.nodes ?? []).map(origin => {
         const handles = (episode?.handles ?? []).filter(h => h.origin === origin.id)
+        // a source that plays its own releases makes every one of them playable IN stub, so the link
+        // goes to the watch route rather than out to whatever the raw url opens (for a torrent index
+        // that url is a magnet, which leaves the browser entirely)
+        const selfPlaying = Boolean(players[origin.id])
         const playableHandle = (handle: typeof handles[number]) =>
-          Boolean(handle?.embedUrl || (getPlayer(origin.id) && handle?.url))
+          Boolean(handle?.embedUrl || selfPlaying || (getPlayer(origin.id) && handle?.url))
         const pathFor = (sourceUri: string) =>
           getRoutePath(Route.WATCH, { mediaUri: params.mediaUri, episodeUri: params.episodeUri, sourceUri })
 
@@ -254,13 +284,21 @@ const Watch = () => {
           picker: pickers[origin.id] ? { pluginUri: pickers[origin.id]! } : undefined,
         }
       }),
-    [originData, episode?.handles, params.mediaUri, params.episodeUri, selectedSourceUri, pickers]
+    [originData, episode?.handles, params.mediaUri, params.episodeUri, selectedSourceUri, pickers, players]
   )
 
   return (
     <div css={style}>
       <div className="watch-container">
-        {embedUrl
+        {pluginPlayer && declined !== selectedSourceUri
+          ? (
+            <PluginPlayer
+              pluginUri={pluginPlayer.pluginUri}
+              release={pluginPlayer.release}
+              onUnplayable={() => setDeclined(selectedSourceUri)}
+            />
+          )
+          : embedUrl
           ? (
             <iframe
               src={embedUrl}

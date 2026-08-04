@@ -7,7 +7,7 @@ import { expose } from 'osra'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
-import { setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, selectRemoteRelease } from './extractor'
+import { setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -49,6 +49,7 @@ export const osraResolvers = {
   },
   unregisterRemoteSource: (pluginUri: string) => unregisterRemoteExtractor(pluginUri),
   remotePicker: (origin: string) => remotePicker(origin),
+  remotePlayer: (origin: string) => remotePlayer(origin),
   selectRemoteRelease: (origin: string, uris: string[]) => selectRemoteRelease(origin, uris)
 }
 
