@@ -20,12 +20,14 @@ const style = css`
   }
 
   .failed {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     padding: 2rem;
     text-align: center;
+    background: #000;
     color: rgba(255, 255, 255, 0.55);
     font-size: 1.4rem;
   }
@@ -48,21 +50,21 @@ export type PluginPlayerProps = {
 /**
  * Plays a release inside the source package's own frame.
  *
- * `mount` rather than `show`: the frame is created in THIS document, so it lays out in the player box,
- * scrolls with the page and fullscreens natively. `show` would paint it in FKN's overlay at the top of
- * the stacking order, which is fine for a modal picker and wrong for a player sitting in a page that
- * has its own chrome over it.
+ * `mount` rather than `show`: the frame is ours, so it lays out in the player box, scrolls with the page
+ * and fullscreens natively. `show` would paint it in FKN's overlay at the top of the stacking order,
+ * which is fine for a modal picker and wrong for a player sitting in a page that has its own chrome
+ * over it.
  *
  * The connection is this component's own, separate from the worker's: they are two documents of one
  * package, so calling `play` on the worker's connection would render into a frame nobody can see.
  */
 export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerProps) => {
-  const slot = useRef<HTMLDivElement>(null)
+  const slot = useRef<HTMLIFrameElement>(null)
   const [failed, setFailed] = useState('')
 
   useEffect(() => {
-    const element = slot.current
-    if (!element) return
+    const iframe = slot.current
+    if (!iframe) return
     let done = false
     let mounted: { unmount: () => void } | undefined
     setFailed('')
@@ -74,7 +76,7 @@ export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerP
         // should arrive unnamed: a package reading `protocol` to decide what it serves would otherwise
         // see null here and have to guess.
         const connection = await packages.mount<PluginPayload>(pluginUri, {
-          element,
+          iframe,
           protocol: STUB_SOURCE_PROTOCOL,
         })
         if (done) { connection.unmount(); return }
@@ -104,9 +106,21 @@ export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerP
 
   return (
     <div css={style}>
-      {failed
-        ? <div className="failed">This source could not start playback. {failed}</div>
-        : <div ref={slot} style={{ width: '100%', height: '100%' }}/>}
+      {/*
+        Rendered unconditionally, and the failure message covers it rather than replacing it. The effect
+        needs this ref to exist to mount at all, so swapping the frame out on failure would mean a source
+        that failed once could never be retried, not even for a different release.
+
+        The capabilities are granted HERE because permissions policy is read at navigation and is not
+        inherited. The plugin passes the same set down to whatever it nests inside itself (ripple, for a
+        torrent release), and it can only pass on what this frame was granted.
+      */}
+      <iframe
+        ref={slot}
+        sandbox="allow-scripts allow-same-origin"
+        allow="fullscreen; autoplay; encrypted-media; cross-origin-isolated"
+      />
+      {failed ? <div className="failed">This source could not start playback. {failed}</div> : null}
     </div>
   )
 }
