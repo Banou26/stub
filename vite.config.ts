@@ -47,13 +47,31 @@ export default defineConfig((_) => ({
     format: 'es',
   },
   // the file:-linked @fkn/lib goes stale when the lib is rebuilt, but its nested CJS dep still needs pre-bundling, else named imports (Address4) break in dev
-  optimizeDeps: { exclude: ['@fkn/lib'], include: ['@fkn/lib > ip-address'] },
+  //
+  // react and react-dom are named although neither package is installed: the alias below rewrites
+  // them to preact/compat, and naming them gives every pre-bundled dependency ONE shared compat
+  // chunk rather than a copy inlined into each. @banou/media-player's own React deps are pulled in
+  // through it, because a dependency of an un-optimised dependency is not discovered by the scanner.
+  optimizeDeps: {
+    exclude: ['@fkn/lib'],
+    include: [
+      '@fkn/lib > ip-address',
+      'react',
+      'react-dom',
+      '@banou/media-player > react-tooltip',
+      '@banou/media-player > react-feather',
+    ],
+  },
   resolve: {
     alias: {
       react: 'preact/compat',
       'react-dom': 'preact/compat',
       'react/jsx-runtime': 'preact/jsx-runtime',
     },
+    // One @videojs/core is load-bearing: two means the chrome subscribes to one store while the
+    // player writes the other, and nothing throws, the controls simply stop responding. Same for
+    // emotion, whose second copy would inject into a different cache and lose the styles.
+    dedupe: ['react', 'react-dom', '@emotion/react', '@videojs/core', '@videojs/react'],
   },
   plugins: lazyPlugins(() => [
     // the shim's dual exports map bundles buffer twice unless pinned to one build, and a resolve.alias won't do it: rolldown doesn't re-alias

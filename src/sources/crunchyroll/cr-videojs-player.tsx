@@ -1,42 +1,47 @@
+import type { DelegatedTracks } from '@banou/media-player'
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 
-import type { PlayerCapabilities } from '../../components/player'
+import { MediaPlayer } from '@banou/media-player'
+import { useMemo } from 'preact/hooks'
 
-import Player from '../../components/player'
-import { seekCrunchyrollTimeline } from './cr-native-controls'
+import { withTimelineSeek } from './timeline-seek'
 
-// a bare `video.currentTime` setter only lands inside Bitmovin's already-buffered range, so writes are replayed onto `.timeline-slider`, a native `<input type="range">` whose `max` is the duration in seconds
-const SEEK_REASON = 'Seeks the video to the point you pick on the timeline.'
-
-const seekViaTimeline = (frame: Frame, value: number) => {
-  seekCrunchyrollTimeline(frame, value, SEEK_REASON)
-    .catch(err => console.warn('[cr] timeline seek failed:', err))
-}
-
-// @fkn/lib's RemoteVideoElement already satisfies video.js v10's structural "media" contract, so no compatibility shim is needed
-const withTimelineSeek = (remote: RemoteVideoElement, frame: Frame) =>
-  new Proxy(remote, {
-    set(target, prop, value, receiver) {
-      if (prop === 'currentTime' && typeof value === 'number' && Number.isFinite(value)) {
-        seekViaTimeline(frame, value)
-      }
-      return Reflect.set(target, prop, value, receiver)
-    },
-  })
-
+// No `title`: the player would draw one over the picture, but the episode name is not in PlayerProps
+// (it carries uris only), so supplying it means a query this component does not otherwise need.
 type Props = {
   remote: RemoteVideoElement | null
   frame: Frame | null
-  capabilities?: PlayerCapabilities
+  subtitles?: DelegatedTracks
+  audioTracks?: DelegatedTracks
+  /** False while Crunchyroll's own sign-in form is the thing in the frame that has to be reachable. */
+  controls?: boolean
   children?: ComponentChildren
 }
 
-// the iframe renders *inside* the skin's Container: the player fullscreens its Container element, and the `pointer-events: none` iframe lets taps land on the skin's gesture layer above it
-const CrunchyrollVideoJSPlayer = ({ remote, frame, capabilities, children }: Props) => (
-  <Player remote={remote} frame={frame} adapter={withTimelineSeek} capabilities={capabilities}>
-    {children}
-  </Player>
-)
+// the iframe renders *inside* the chrome's `.video` div: the player fullscreens its container
+// element, and the `pointer-events: none` iframe lets taps land on the click region above it
+const CrunchyrollVideoJSPlayer = ({ remote, frame, subtitles, audioTracks, controls, children }: Props) => {
+  // memoized on both inputs: the player re-attaches whenever the media identity changes, so a fresh
+  // Proxy every render would tear the store's attach down and rebuild it on every paint
+  const media = useMemo(
+    () => (remote && frame ? withTimelineSeek(remote, frame) : null),
+    [remote, frame],
+  )
+
+  return (
+    <MediaPlayer
+      // Always pass the key, even as null. Its PRESENCE is what selects the arm that drives a media
+      // it does not own; spreading it conditionally would fall through to the local arm, which draws
+      // an idle <video> over the Crunchyroll frame below.
+      media={media}
+      subtitles={subtitles}
+      audioTracks={audioTracks}
+      controls={controls}
+    >
+      {children}
+    </MediaPlayer>
+  )
+}
 
 export default CrunchyrollVideoJSPlayer as FunctionComponent<Props>

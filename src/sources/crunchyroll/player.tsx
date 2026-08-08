@@ -1,12 +1,12 @@
+import type { DelegatedTracks } from '@banou/media-player'
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
 
-import type { PlayerCapabilities } from '../../components/player'
 import type { PlayerProps } from '../players'
 import type { CrunchyrollTrackKind, CrunchyrollTracks } from './cr-native-controls'
 
 import { css } from '@emotion/react'
 import { attachFrame, isExtensionExposed } from '@fkn/lib'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 
 import CrunchyrollVideoJSPlayer from './cr-videojs-player'
 import { discoverCrunchyrollTracks, selectCrunchyrollTrack } from './cr-native-controls'
@@ -456,28 +456,25 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
     })
   }, [frame, remoteVideo, runTrackOperation, trackSession])
 
-  const capabilities: PlayerCapabilities | undefined = tracks?.subtitles || tracks?.audio
-    ? {
-        ...(tracks.subtitles
-          ? {
-              subtitles: {
-                label: 'Subtitles',
-                ...tracks.subtitles,
-                onSelect: id => selectTrack('subtitles', id),
-              },
-            }
-          : {}),
-        ...(tracks.audio
-          ? {
-              audioTracks: {
-                label: 'Audio',
-                ...tracks.audio,
-                onSelect: id => selectTrack('audio', id),
-              },
-            }
-          : {}),
-      }
-    : undefined
+  // Crunchyroll's own track shape is already a DelegatedSelection but for the callback name, so this
+  // is a rename rather than a translation. The `select` promise is handed over unresolved on purpose:
+  // a switch here drives Crunchyroll's menu and takes seconds, and the player's menu is the only
+  // thing that can hold itself open, withhold the tick, and report a failure.
+  //
+  // Memoized for the same reason the media is: a fresh object every render re-publishes the whole
+  // track list to the store on every paint.
+  const subtitles = useMemo<DelegatedTracks | undefined>(
+    () => tracks?.subtitles && {
+      selection: { ...tracks.subtitles, select: (id: string | null) => selectTrack('subtitles', id) },
+    },
+    [tracks?.subtitles, selectTrack],
+  )
+  const audioTracks = useMemo<DelegatedTracks | undefined>(
+    () => tracks?.audio && {
+      selection: { ...tracks.audio, select: (id: string | null) => selectTrack('audio', id) },
+    },
+    [tracks?.audio, selectTrack],
+  )
 
   // the extension frame shares the user's real browser session, so a popup on the real site sets the cookie the frame uses
   const openLogin = useCallback(() => {
@@ -579,7 +576,16 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   return (
     <div css={styles}>
       {mode !== 'detecting' && (
-        <CrunchyrollVideoJSPlayer remote={remoteVideo} frame={frame} capabilities={capabilities}>
+        <CrunchyrollVideoJSPlayer
+          remote={remoteVideo}
+          frame={frame}
+          subtitles={subtitles}
+          audioTracks={audioTracks}
+          // While the cloud sign-in runs, Crunchyroll's own form is what the viewer has to reach and
+          // the frame is deliberately interactive. A control bar for a media that has not loaded yet
+          // would sit over the bottom of that form and take the clicks.
+          controls={!loggingIn}
+        >
           <iframe
             key={`${mode}-${attachKey}`}
             ref={setIframe}
