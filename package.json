@@ -27,7 +27,7 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
-    "@banou/media-player": "^0.8.4",
+    "@banou/media-player": "^0.8.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@envelop/on-resolve": "^6.0.0",
