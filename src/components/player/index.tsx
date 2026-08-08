@@ -1,5 +1,5 @@
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
-import type { Media } from '@videojs/core/dom'
+import type { Media } from '@videojs/media/dom'
 import type { ComponentChildren, FunctionComponent } from 'preact'
 import type { PlayerCapabilities, PlayerMediaAdapter, PlayerMediaBinding } from './types'
 
@@ -48,14 +48,24 @@ const style = css`
   .media-popover--menu {
     padding: 0.4rem;
   }
-  .media-menu {
+
+  /**
+   * The track menu is stub's own markup, so it carries a stub prefix rather than a media one.
+   *
+   * It was named \`media-menu\` when the skin had no menu of its own. videojs beta.26 added one, and
+   * upstream's nested \`.media-default-skin .media-menu .media-menu__item\` is specificity (0,3,0)
+   * against this file's (0,2,0), so it silently took over padding, gap, cursor and justification the
+   * moment the dependency moved. A prefix upstream will never mint is the only durable fix; matching
+   * their specificity would just move the race to insertion order.
+   */
+  .stub-menu {
     display: flex;
     flex-direction: column;
     min-width: 18rem;
     max-height: 32rem;
     overflow-y: auto;
   }
-  .media-menu__heading {
+  .stub-menu__heading {
     padding: 0.6rem 1rem 0.4rem;
     font-size: 1.1rem;
     font-weight: 600;
@@ -63,7 +73,7 @@ const style = css`
     text-transform: uppercase;
     opacity: 0.6;
   }
-  .media-menu__item {
+  .stub-menu__item {
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -85,15 +95,15 @@ const style = css`
       cursor: default;
     }
   }
-  .media-menu__check {
+  .stub-menu__check {
     display: inline-flex;
     width: 1.6rem;
     flex: none;
   }
-  .media-menu__label {
+  .stub-menu__label {
     flex: 1;
   }
-  .media-menu__description {
+  .stub-menu__description {
     opacity: 0.6;
     font-size: 1.1rem;
   }

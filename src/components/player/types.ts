@@ -1,5 +1,5 @@
 import type { Frame, RemoteVideoElement } from '@fkn/lib'
-import type { Media } from '@videojs/core/dom'
+import type { Media } from '@videojs/media/dom'
 
 export type PlayerChoice = {
   id: string

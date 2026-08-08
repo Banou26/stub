@@ -144,8 +144,8 @@ const SelectionMenu = ({ selection, icon }: { selection: PlayerSelection, icon: 
         {icon}
       </PopoverTrigger>
       <PopoverPopup className="media-surface media-popover media-popover--menu">
-        <div className="media-menu" role="menu" aria-label={selection.label}>
-          <div className="media-menu__heading">{selection.label}</div>
+        <div className="stub-menu" role="menu" aria-label={selection.label}>
+          <div className="stub-menu__heading">{selection.label}</div>
           {choices.map(choice => {
             const selected = choice.id === selection.selectedId
             return (
@@ -154,14 +154,14 @@ const SelectionMenu = ({ selection, icon }: { selection: PlayerSelection, icon: 
                 role="menuitemradio"
                 aria-checked={selected}
                 key={choice.id ?? '__off__'}
-                className={`media-menu__item${selected ? ' media-menu__item--active' : ''}`}
+                className={`stub-menu__item${selected ? ' stub-menu__item--active' : ''}`}
                 disabled={pending || ('disabled' in choice && choice.disabled)}
                 onClick={() => select(choice.id)}
               >
-                <span className="media-menu__check">{selected ? <CheckIcon className="media-icon" /> : null}</span>
-                <span className="media-menu__label">{choice.label}</span>
+                <span className="stub-menu__check">{selected ? <CheckIcon className="media-icon" /> : null}</span>
+                <span className="stub-menu__label">{choice.label}</span>
                 {'description' in choice && choice.description
-                  ? <span className="media-menu__description">{choice.description}</span>
+                  ? <span className="stub-menu__description">{choice.description}</span>
                   : null}
               </button>
             )
@@ -278,8 +278,10 @@ const VideoSurface = ({ capabilities, children, className, ...rest }: VideoSurfa
               <SliderBuffer className="media-slider__buffer" />
             </SliderTrack>
             <SliderThumb className="media-slider__thumb" />
-            <div className="media-surface media-preview media-slider__preview">
-              <SliderValue type="pointer" className="media-time media-preview__time" />
+            {/* media-thumbnail, not media-preview: videojs beta.26 renamed the block, and the old
+                name matches nothing, which costs the readout its positioning and its backdrop */}
+            <div className="media-surface media-thumbnail media-slider__preview">
+              <SliderValue type="pointer" className="media-time media-thumbnail__time" />
             </div>
           </TimeSliderRoot>
           <TimeValue type="duration" className="media-time" />
