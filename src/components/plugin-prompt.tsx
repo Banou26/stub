@@ -6,7 +6,11 @@ import { acceptInvites, declineInvites, dismissInvite, onInvitesChange, pluginIn
 const style = css`
   position: fixed;
   inset: 0;
-  z-index: 200;
+  /* Above the media modal (z-index 1000). This mounts at the router root, a sibling of the modal's
+     portal rather than a child of it, so it competes in the root stacking context and 200 put it
+     behind the modal on any /media route. Stays below the fullscreen source players (9999999),
+     which own the screen while they are up. */
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
