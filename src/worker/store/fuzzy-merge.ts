@@ -1,6 +1,6 @@
 import type { Media } from './types'
 
-import { titleSimilarity } from '../../sources/utils'
+import { stripTitle, titleSimilarity } from '../../sources/utils'
 import { linkSameMediaPairs } from './db'
 
 const SIMILARITY_THRESHOLD = 0.9
@@ -18,13 +18,16 @@ type ClusterProfile = {
   cacheKey: string
 }
 
+// shares titleSimilarity's strip. Widen only this one and the similarity path strips a title back down to its
+// latin fragment, so two Vanguard seasons both reduce to "divinez" and score a perfect 1.
 const normalizeTitle = (title: string) =>
-  title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
+  stripTitle(title)
     .replace(/\b(?:the|a|an)\b/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
+
+// a title with no letter left is a year or a season number, never an identity, and a bad link is permanent: graph.link has no inverse
+const HAS_LETTER = /\p{L}/u
 
 const yearOf = (date: string | null) => {
   if (!date) return null
@@ -40,7 +43,7 @@ const profileCluster = (cluster: Media[]): ClusterProfile => {
         .flatMap(media => media.titles ?? [])
         .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
         .map(({ title }) => normalizeTitle(title))
-        .filter(Boolean)
+        .filter(title => HAS_LETTER.test(title))
     )].slice(0, MAX_TITLES_PER_CLUSTER)
   const years =
     new Set(
@@ -67,7 +70,7 @@ const profileCluster = (cluster: Media[]): ClusterProfile => {
     titles,
     years,
     formats,
-    // joining titles with ',' is safe only because normalizeTitle strips everything outside [a-z0-9\s]: keep punctuation there and cache keys start colliding silently
+    // joining titles with ',' is safe only because normalizeTitle keeps nothing but letters, numbers and single spaces, so no separator can survive inside a title: let punctuation through there and cache keys start colliding silently
     cacheKey: `${key}#${titles.join(',')}#${[...formats].sort().join(',')}`,
   }
 }

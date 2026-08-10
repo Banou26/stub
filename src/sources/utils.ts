@@ -115,9 +115,18 @@ export const img = (url?: string | null, score?: number) =>
 export const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>
   media?.titles?.[0]?.title
 
+// keeps letters of every script. Stripping to [a-z0-9] erased a japanese title down to its ascii digits, so
+// ani.zip's "転生したらスライムだった件 (2026)" was the literal string "2026" and was equal to every other 2026 show.
+export const stripTitle = (title: string) =>
+  title
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
 export const titleSimilarity = async (a: string, b: string): Promise<number> => {
-  const normalA = a.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
-  const normalB = b.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
+  const normalA = stripTitle(a)
+  const normalB = stripTitle(b)
   if (!normalA || !normalB) return 0
   const result = await swAlign(normalA, normalB, {
     alignment: 'local',
