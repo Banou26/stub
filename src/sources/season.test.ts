@@ -68,6 +68,17 @@ describe('parseSeasonNumber, non-English forms', () => {
     expect(parseSeasonNumber('Youjo Senki S2')).toBe(2)
   })
 
+  // Found by comparing this grammar against sacha's over 2271 real titles: the two disagreed on
+  // exactly these two, and sacha was right. The prefix pattern read straight through the ordinal
+  // and took the subtitle's number, so the 4th season was gated as the 2nd.
+  test('an ordinal outranks a number that follows the word', () => {
+    expect(parseSeasonNumber('Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e 4th Season 2-nensei-hen Ichi Gakki')).toBe(4)
+    expect(parseSeasonNumber('ようこそ実力至上主義の教室へ 4th Season 2年生編1学期')).toBe(4)
+    // and the plain forms are unchanged, because `Season 4` carries no ordinal to find
+    expect(parseSeasonNumber('JUJUTSU KAISEN Season 3: The Culling Game Part 1')).toBe(3)
+    expect(parseSeasonNumber('Pokémon Concierge: Season 1: Part 2')).toBe(1)
+  })
+
   test('十 multiplies rather than counting as a digit', () => {
     expect(parseSeasonNumber('なにか 第十期')).toBe(10)
     expect(parseSeasonNumber('なにか 第十二期')).toBe(12)

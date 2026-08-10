@@ -35,9 +35,14 @@ const cjkNumber = (text: string): number | undefined => {
 // season-less and a show could not be told apart from its own next season.
 //
 // 話 and 集 are deliberately absent: those count episodes.
+//
+// The ordinal form is tried FIRST because the prefix form can read straight through it: the number
+// after the word in `4th Season 2-nensei-hen Ichi Gakki` belongs to the subtitle, and matching
+// `Season 2` there called the 4th season the 2nd. Nothing is lost by the order, since `Season 4`
+// carries no ordinal for the first pattern to find.
 const SEASON_PATTERNS = [
-  /\b(?:season|part|cour)\s*(\d{1,3})\b/i,
   /\b(\d{1,3})(?:st|nd|rd|th)\s+(?:season|part|cour)\b/i,
+  /\b(?:season|part|cour)\s*(\d{1,3})\b/i,
   /シーズン\s*(\d{1,3})/,
   /第\s*([\d〇零一二三四五六七八九十]{1,4})\s*[期季]/,
   /(\d{1,3})\s*[期기]/,
