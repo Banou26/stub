@@ -44,6 +44,22 @@ const SEASON_PATTERNS = [
   /\bS(\d{1,2})\b/,
 ]
 
+/**
+ * The same grammar as a REMOVAL, for building a shorter search query out of a title.
+ *
+ * Deliberately narrower than SEASON_PATTERNS, because reading a number and deleting text carry
+ * different risks. `\bS\d\b` is left out: it reads a season fine but deleting a bare `S2` out of a
+ * title that merely contains one costs more than the query it would buy. The word ordinals are here
+ * and not above for the mirror reason, they only ever appear as a season and there is nothing to
+ * read off them that the catalogue query needs.
+ *
+ * Global, so a title carrying both `Season 2` and `Part 2` loses both.
+ */
+export const SEASON_MARKER: readonly RegExp[] = [
+  /\s*\b(?:(?:season|part|cour)\s*\d{1,3}|\d{1,3}(?:st|nd|rd|th)\s+(?:season|part|cour)|(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\s+(?:season|part|cour))\b/gi,
+  /\s*(?:シーズン\s*\d{1,3}|第\s*[\d〇零一二三四五六七八九十]{1,4}\s*[期季])/g,
+]
+
 /** 'Mushoku Tensei Season 3', '... 2nd Season', '転生したら剣でした 第2期', '幼女战记 第二季' -> the number. */
 export const parseSeasonNumber = (title: string): number | undefined => {
   for (const pattern of SEASON_PATTERNS) {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { pickTitleMatch, searchScore, searchRelevance, stripTitle, titleSimilarity } from './utils'
+import { pickTitleMatch, searchScore, searchRelevance, simplifyTitle, stripTitle, titleSimilarity } from './utils'
 
 // The home and search pages filter on searchRelevance at 0.7, so a query that normalizes to nothing
 // returns an empty page and a query that normalizes to one letter returns nearly the whole catalogue.
@@ -35,6 +35,50 @@ test('stripTitle keeps letters of every script and drops only punctuation', () =
   expect(stripTitle('Onii-chan wa Oshimai!')).toBe('oniichan wa oshimai')
   expect(stripTitle('転生したらスライムだった件 (2026)')).toBe('転生したらスライムだった件 2026')
   expect(stripTitle('あはれ！名作くん (2026)')).toBe('あはれ名作くん 2026')
+})
+
+describe('simplifyTitle', () => {
+  // The two links an anchored season pattern used to lose, measured live against unOGS.
+  test('reaches a season sitting behind a decorated subtitle', () => {
+    expect(simplifyTitle('Solo Leveling Season 2 -Arise from the Shadow-'))
+      .toEqual(['Solo Leveling Season 2', 'Solo Leveling'])
+    expect(simplifyTitle('Ace of the Diamond act II -Second Season-'))
+      .toEqual(['Ace of the Diamond act II', 'Ace of Diamond act II'])
+  })
+
+  test('the rungs get shorter, never longer', () => {
+    for (const title of [
+      'Mission: Yozakura Family Season 2 Part 2',
+      'Kaguya-sama: Love Is War -Stairway to Adulthood-',
+      '転生したらスライムだった件 第4期',
+      'Frieren: Beyond Journey’s End Season 2',
+    ]) {
+      const rungs = simplifyTitle(title)
+      for (const [index, rung] of rungs.entries()) {
+        expect(rung.length).toBeLessThan((rungs[index - 1] ?? title).length)
+      }
+    }
+  })
+
+  test('keeps what the shipped behaviour already found', () => {
+    expect(simplifyTitle('Naruto: Shippuden')).toEqual(['Naruto'])
+    expect(simplifyTitle('That Time I Got Reincarnated as a Slime Season 4'))
+      .toContain('That Time I Got Reincarnated as a Slime')
+    expect(simplifyTitle('転生したらスライムだった件 第4期')).toEqual(['転生したらスライムだった件'])
+  })
+
+  test('a title with nothing to strip yields nothing', () => {
+    expect(simplifyTitle('One Piece')).toEqual([])
+    expect(simplifyTitle('BEASTARS')).toEqual([])
+    expect(simplifyTitle('鬼滅の刃')).toEqual([])
+  })
+
+  // A hyphen inside a word is not a subtitle delimiter, and a lone trailing one opens nothing.
+  test('an internal hyphen is not a decoration', () => {
+    expect(simplifyTitle('Onii-chan wa Oshimai!')).toEqual([])
+    expect(simplifyTitle('Hi-Score Girl')).toEqual([])
+    expect(simplifyTitle('BAKI-DOU')).toEqual([])
+  })
 })
 
 // Taking results[0] from a catalogue search unchecked welded the wrong Netflix title onto 14 of 62 live
