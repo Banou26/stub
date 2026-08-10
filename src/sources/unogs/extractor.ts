@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch } from '../utils'
 
 const SCORE = 0.2
 
@@ -237,11 +237,30 @@ const resolveSeasonNumber = async (nfId: string, aggregatedUri: string, ctx: Ext
   return seasons.length > 1 ? findMatchingSeason(seasons, epCount) : undefined
 }
 
-const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
+const searchAndLinkMedia = async (
+  title: string,
+  aggregatedUri: string,
+  ctx: ExtractorServerContext,
+  categories?: readonly string[] | null
+): Promise<GQLMedia | null> => {
   for (const query of [title, ...simplifyTitle(title)]) {
     const { results = [] } = await searchApi(query, ctx)
     if (!results.length) continue
-    const nfId = String(results[0]!.nfid)
+    // gate BEFORE resolveSeasonNumber and getMedia, which are four requests spent on a hit that may
+    // name nothing we asked for. The search response already carries everything the gate reads.
+    const match = await pickTitleMatch(
+      query,
+      results.map(result => ({
+        result,
+        // the search payload leaves the title html-escaped, and normalizeSearchResult is the only place
+        // that decoded it, so a raw compare would put `&amp;` against `&`
+        title: decode(result.title),
+        categories: result.vtype === 'movie' ? ['MOVIE'] : ['SERIES'],
+      })),
+      categories
+    )
+    if (!match) continue
+    const nfId = String(match.result.nfid)
     const seasonNumber = await resolveSeasonNumber(nfId, aggregatedUri, ctx)
     const media = await getMedia(nfId, ctx, seasonNumber)
     if (!media) continue
@@ -266,9 +285,12 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
     return media
   }
   if (!isAggregatedUri(uri)) return null
-  const title = await waitForMedia(uri, ctx, m => getFirstTitle(m), 30_000)
+  // the whole media, not just its title, because the format gate needs its categories and a second
+  // waitForMedia would race the first
+  const known = await waitForMedia(uri, ctx, m => (getFirstTitle(m) ? m : undefined), 30_000)
+  const title = getFirstTitle(known)
   if (!title) return null
-  return searchAndLinkMedia(title, uri, ctx)
+  return searchAndLinkMedia(title, uri, ctx, known?.categories)
 }
 
 export const resolvers: Resolvers = {

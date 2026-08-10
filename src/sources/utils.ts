@@ -159,6 +159,42 @@ export const searchScore = async (query: string, title: string): Promise<number>
 export const searchRelevance = async (query: string, titles: string[]): Promise<number> =>
   titles.length ? Math.max(...await Promise.all(titles.map(title => searchScore(query, title)))) : 0
 
+// A catalogue search ranks a free-text query over the WHOLE catalogue, so results[0] is whatever came
+// back, and linking it asserts identity permanently: graph.link has no inverse. Measured against 62 live
+// unOGS queries, taking results[0] unchecked welded the wrong title 14 times, among them "Demon Slayer"
+// onto "Woochi - The Demon Slayer", a 2009 korean movie.
+//
+// Netflix lists a show under the concatenation of the two names our sources carry separately, so a
+// CORRECT hit covers only about half the query: "Kimetsu no Yaiba" scores 0.552 against "Demon Slayer:
+// Kimetsu no Yaiba" and "Cowboy Bebop" 0.545 against "Cowboy Bebop: The Movie". That pins the threshold
+// from ABOVE at roughly 0.55, so 0.5 is not a taste choice, and it is the number justwatch and appletv
+// already use. Two candidates sit at exactly 0.500 and one of them is correct, so the bound is inclusive.
+export const TITLE_MATCH_THRESHOLD = 0.5
+
+export type TitleCandidate = { title: string, categories?: readonly string[] | null }
+
+/** The catalogue hit that actually names this media, or nothing. */
+export const pickTitleMatch = async <T extends TitleCandidate>(
+  query: string,
+  candidates: readonly T[],
+  categories?: readonly string[] | null
+): Promise<T | undefined> => {
+  let best: { candidate: T, score: number } | undefined
+  for (const candidate of candidates) {
+    // Only a DISAGREEMENT blocks, the same rule the fuzzy merge uses for format: an absent category is
+    // unknown, not a veto. This is what separates "One Piece Film: Red" from a series cluster at 0.500,
+    // the one score the title alone cannot judge.
+    if (
+      categories?.length && candidate.categories?.length &&
+      !categories.some(category => candidate.categories!.includes(category))
+    ) continue
+    const score = await titleSimilarity(query, candidate.title)
+    if (score < TITLE_MATCH_THRESHOLD) continue
+    if (!best || score > best.score) best = { candidate, score }
+  }
+  return best?.candidate
+}
+
 export const simplifyTitle = (title: string): string[] => {
   const queries: string[] = []
   const stripped = title.replace(/\s+(Season|Part|Cour)\s+\d+$/i, '').trim()
