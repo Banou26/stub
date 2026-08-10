@@ -124,6 +124,10 @@ export const stripTitle = (title: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
+// swAlign scores per code point while String.length counts utf-16 units, so a title written in astral-plane
+// kanji scored 0.5 against itself and could not be found by its own name
+const codePoints = (text: string) => [...text].length
+
 export const titleSimilarity = async (a: string, b: string): Promise<number> => {
   const normalA = stripTitle(a)
   const normalB = stripTitle(b)
@@ -135,17 +139,21 @@ export const titleSimilarity = async (a: string, b: string): Promise<number> => 
     insert: -1,
     delete: -1,
   })
-  const maxLen = Math.max(normalA.length, normalB.length)
+  const maxLen = Math.max(codePoints(normalA), codePoints(normalB))
   return result.score / (maxLen * 2)
 }
 
-// normalized by the QUERY length, unlike titleSimilarity which normalizes by the longer string
+// Normalized by the QUERY length, unlike titleSimilarity which normalizes by the longer string, so this
+// measures containment and saturates: every title holding the query scores 1 and popularity breaks the tie.
+// It shares titleSimilarity's strip because the ascii-only one left "Aランクパーティを離脱した俺は..." as the single
+// letter "a", which then scored 1.0 against 841 of 903 shows, while 587 of them could not be found by their
+// own native title at all.
 export const searchScore = async (query: string, title: string): Promise<number> => {
-  const q = query.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
-  const t = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
+  const q = stripTitle(query)
+  const t = stripTitle(title)
   if (!q || !t) return 0
   const result = await swAlign(q, t, { alignment: 'local', equal: 2, align: -1, insert: -1, delete: -1 })
-  return Math.min(1, result.score / (q.length * 2))
+  return Math.min(1, result.score / (codePoints(q) * 2))
 }
 
 export const searchRelevance = async (query: string, titles: string[]): Promise<number> =>
