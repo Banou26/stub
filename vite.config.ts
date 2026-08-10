@@ -1,3 +1,4 @@
+import { execSync } from 'child_process'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { defineConfig, lazyPlugins } from 'vite-plus'
@@ -7,9 +8,23 @@ import preact from '@preact/preset-vite'
 // read rather than imported so the manifest does not end up in the bundle
 const { version } = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8')) as { version: string }
 
+// Cloudflare Pages hands the sha in as an env var, and its checkout may carry no usable git metadata, so
+// that is the source to trust there. Falls back to git for a local build, and to 'dev' when neither
+// answers, because a footer that renders `undefined` is worse than one that admits it does not know.
+const commit = (() => {
+  const fromPages = process.env.CF_PAGES_COMMIT_SHA
+  if (fromPages) return fromPages.slice(0, 7)
+  try {
+    return execSync('git rev-parse --short=7 HEAD', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+  } catch {
+    return 'dev'
+  }
+})()
+
 export default defineConfig((_) => ({
   define: {
     __STUB_VERSION__: JSON.stringify(version),
+    __STUB_COMMIT__: JSON.stringify(commit),
   },
   fmt: { semi: false, singleQuote: true },
   lint: {

@@ -29,6 +29,12 @@ const style = css`
     color: rgba(255, 255, 255, 0.35);
   }
 
+  .commit {
+    /* dimmer than the version: it identifies a build for a bug report, it is not a thing to read */
+    font-family: ui-monospace, monospace;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
   .nav-link {
     font-size: 1.4rem;
     white-space: nowrap;
@@ -56,7 +62,7 @@ export const Footer = () => {
       <Link to={getRoutePath(Route.HOME)} className="wordmark">stub</Link>
       <Link to={getRoutePath(Route.LEGAL)} className="nav-link">Legal</Link>
       <Link to={getRoutePath(Route.PRIVACY)} className="nav-link">Privacy</Link>
-      <span className="version" title="stub version">v{__STUB_VERSION__}</span>
+      <span className="version" title={`stub v${__STUB_VERSION__}, commit ${__STUB_COMMIT__}`}>v{__STUB_VERSION__} <span className="commit">{__STUB_COMMIT__}</span></span>
     </footer>
   )
 }
