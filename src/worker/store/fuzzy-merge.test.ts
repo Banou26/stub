@@ -65,3 +65,56 @@ test('a bare number title is not an identity', async () => {
   const cluster = await findAggregatedMedia('anilist:3000')
   expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:3000'])
 })
+
+// A season number is identity, not similarity. `Slime Season 3` and `Season 4` score 0.929 and
+// `Onii-chan!` and `Oniichan` score 0.833, so no threshold tells them apart: alignment charges the
+// same for the digit that IS the identity as for the hyphen that is noise.
+test('two seasons of one show do not merge on a shared alias', async () => {
+  const third = [media('anilist:4000', [['Slime Season 3', 0.7], ['TenSura', 0.9]], SPRING_2026)]
+  const fourth = [media('anilist:4001', [['Slime Season 4', 0.7], ['TenSura', 0.9]], SPRING_2026)]
+
+  await upsertMedia([...third, ...fourth], [])
+  await fuzzyMergeMediaClusters([third, fourth])
+
+  const cluster = await findAggregatedMedia('anilist:4000')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4000'])
+})
+
+// `第4期` and `Season 4` are the same claim, so the gate has to read both and let the pair through.
+// Same shape as the test above with only the season changed, which is the whole difference.
+test('the same season spelled two ways still merges', async () => {
+  const romaji = [media('anilist:4100', [['Slime Season 4', 0.7], ['TenSura', 0.9]], SPRING_2026)]
+  const native = [media('anizip:4101', [['転生したらスライムだった件 第4期', 0.9], ['TenSura', 0.9]], SPRING_2026)]
+
+  await upsertMedia([...romaji, ...native], [])
+  await fuzzyMergeMediaClusters([romaji, native])
+
+  const cluster = await findAggregatedMedia('anilist:4100')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4100', 'anizip:4101'])
+})
+
+// A bare trailing number is not a season (284 of 4159 real titles end in one and most name no
+// season), so the season gate cannot see this pair. The values still have to be compared as numbers.
+test('a bare trailing number is compared as a value', async () => {
+  const sixteen = [media('anilist:4200', [['Yami Shibai 16', 0.9]], SPRING_2026)]
+  const seventeen = [media('anilist:4201', [['Yami Shibai 17', 0.9]], SPRING_2026)]
+
+  await upsertMedia([...sixteen, ...seventeen], [])
+  await fuzzyMergeMediaClusters([sixteen, seventeen])
+
+  const cluster = await findAggregatedMedia('anilist:4200')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4200'])
+})
+
+// The guard above must not cost the merges the whole pass exists for: punctuation is still the
+// normalizer's job and still free.
+test('punctuation differences still merge', async () => {
+  const hyphen = [media('anilist:4300', [['Onii-chan wa Oshimai!', 0.7]], SPRING_2026)]
+  const joined = [media('mal:4301', [['Oniichan wa Oshimai', 0.9]], SPRING_2026)]
+
+  await upsertMedia([...hyphen, ...joined], [])
+  await fuzzyMergeMediaClusters([hyphen, joined])
+
+  const cluster = await findAggregatedMedia('anilist:4300')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4300', 'mal:4301'])
+})

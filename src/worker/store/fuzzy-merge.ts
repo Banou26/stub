@@ -1,6 +1,7 @@
 import type { Media } from './types'
 
 import { stripTitle, titleSimilarity } from '../../sources/utils'
+import { parseSeasonNumber } from '../../sources/season'
 import { linkSameMediaPairs } from './db'
 
 const SIMILARITY_THRESHOLD = 0.9
@@ -15,6 +16,7 @@ type ClusterProfile = {
   titles: string[]
   years: Set<number>
   formats: Set<Format>
+  seasons: Set<number>
   cacheKey: string
 }
 
@@ -64,14 +66,24 @@ const profileCluster = (cluster: Media[]): ClusterProfile => {
         )
         .filter((category): category is Format => category === 'MOVIE' || category === 'SERIES')
     )
+  // read off the RAW titles, because normalizeTitle folds `Season 4` and `Season 40` closer together
+  // and drops the delimiters `第 4 期` is allowed to carry
+  const seasons =
+    new Set(
+      cluster
+        .flatMap(media => media.titles ?? [])
+        .map(({ title }) => parseSeasonNumber(title))
+        .filter((season): season is number => season !== undefined)
+    )
   return {
     cluster,
     key,
     titles,
     years,
     formats,
+    seasons,
     // joining titles with ',' is safe only because normalizeTitle keeps nothing but letters, numbers and single spaces, so no separator can survive inside a title: let punctuation through there and cache keys start colliding silently
-    cacheKey: `${key}#${titles.join(',')}#${[...formats].sort().join(',')}`,
+    cacheKey: `${key}#${titles.join(',')}#${[...formats].sort().join(',')}#${[...seasons].sort().join(',')}`,
   }
 }
 
@@ -90,12 +102,30 @@ const maxPossibleSimilarity = (a: string, b: string) => {
   return common / Math.max(a.length, b.length)
 }
 
+const trailingNumber = (title: string) => {
+  const match = /^(.*?)\s*(\d+)$/.exec(title)
+  return match ? { stem: match[1]!, value: Number(match[2]) } : { stem: title, value: null }
+}
+
+// A trailing number is compared as a VALUE, never as characters. "yami shibai 16" and "yami shibai 17"
+// score 0.929 and "onii-chan!" and "oniichan" score 0.833, so no threshold tells one from the other:
+// alignment charges the same for a digit that is the whole identity as for a hyphen that is noise.
+const differOnlyByTrailingNumber = (a: string, b: string) => {
+  const left = trailingNumber(a)
+  const right = trailingNumber(b)
+  return left.value !== right.value && left.stem === right.stem
+}
+
 // Year equality is guaranteed by the caller's bucketing
 const sameShow = async (a: ClusterProfile, b: ClusterProfile) => {
   if (a.formats.size && b.formats.size && ![...a.formats].some(format => b.formats.has(format))) return false
+  // Only a DISAGREEMENT blocks. A cluster whose sources never spell the season out has to stay free to
+  // merge, or the pass stops doing the job it exists for.
+  if (a.seasons.size && b.seasons.size && ![...a.seasons].some(season => b.seasons.has(season))) return false
   for (const titleA of a.titles) {
     for (const titleB of b.titles) {
       if (titleA === titleB) return true
+      if (differOnlyByTrailingNumber(titleA, titleB)) continue
       if (maxPossibleSimilarity(titleA, titleB) < SIMILARITY_THRESHOLD) continue
       if (await titleSimilarity(titleA, titleB) >= SIMILARITY_THRESHOLD) return true
     }

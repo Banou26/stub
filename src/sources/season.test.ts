@@ -48,3 +48,43 @@ describe('seasonScopedId', () => {
     expect(splitSeasonScopedId('94664-s3e1')).toEqual({ showId: '94664-s3e1' })
   })
 })
+
+// Counted over 4159 real AniList and ani.zip titles, the English prefix form is only 176 of the 438
+// titles that name a season at all. The rest read as ordinary title words until now.
+describe('parseSeasonNumber, non-English forms', () => {
+  test('reads the English ordinal form', () => {
+    expect(parseSeasonNumber('Sousou no Frieren 2nd Season')).toBe(2)
+    expect(parseSeasonNumber('Tensei Shitara Slime Datta Ken 4th Season')).toBe(4)
+    expect(parseSeasonNumber('Kanojo Okarishimasu 1st Season')).toBe(1)
+    expect(parseSeasonNumber('Osomatsu-san 3rd Season')).toBe(3)
+  })
+
+  test('reads the CJK forms, including Chinese numerals', () => {
+    expect(parseSeasonNumber('転生したら剣でした 第2期')).toBe(2)
+    expect(parseSeasonNumber('幼女战记 第二季')).toBe(2)
+    expect(parseSeasonNumber('小书痴的下克上 第四季')).toBe(4)
+    expect(parseSeasonNumber('おでかけ子ザメ シーズン2')).toBe(2)
+    expect(parseSeasonNumber('전생했더니 슬라임이었던 건에 대하여 4기')).toBe(4)
+    expect(parseSeasonNumber('Youjo Senki S2')).toBe(2)
+  })
+
+  test('十 multiplies rather than counting as a digit', () => {
+    expect(parseSeasonNumber('なにか 第十期')).toBe(10)
+    expect(parseSeasonNumber('なにか 第十二期')).toBe(12)
+    expect(parseSeasonNumber('なにか 第二十期')).toBe(20)
+  })
+
+  // A season number gates a merge, so inventing one silently blocks two records of one show
+  // from ever joining.
+  test('does not invent a season', () => {
+    expect(parseSeasonNumber('Death Note')).toBeUndefined()
+    expect(parseSeasonNumber('Cowboy Bebop')).toBeUndefined()
+    // 話 and 集 count episodes
+    expect(parseSeasonNumber('進撃の巨人 第1話')).toBeUndefined()
+    expect(parseSeasonNumber('鬼滅の刃 第25集')).toBeUndefined()
+    // a bare trailing number names nothing: 284 of the 4159 real titles end in one and most are
+    // not seasons, so `Kidou Keisatsu Patlabor EZY File 1` must stay season-less
+    expect(parseSeasonNumber('Yami Shibai 17')).toBeUndefined()
+    expect(parseSeasonNumber('Kidou Keisatsu Patlabor EZY File 1')).toBeUndefined()
+  })
+})
