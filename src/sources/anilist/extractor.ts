@@ -136,10 +136,14 @@ const GET_MEDIA = `
   }
 `
 
-const TITLE_SCORE = 0.7
-const THUMBNAIL_SCORE = 0.9
-const DESCRIPTION_SCORE = 0.7
-const COVER_SCORE = 0.7
+/**
+ * One score for every field, matching the media-level 0.9 this source already emitted.
+ *
+ * It replaces four constants that disagreed with each other: title, description and cover sat at
+ * 0.7 while `THUMBNAIL_SCORE` was declared at 0.9 and never referenced, so covers went out at 0.7
+ * and lost the merge to MyAnimeList and AniZip at 0.9. AniList has the best art of the three.
+ */
+const SCORE = 0.9
 
 const siteMappings = [
   {
@@ -355,23 +359,23 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ...extraHandles,
       ...malHandle ? [malHandle] : []
     ],
-    score: 0.9,
+    score: SCORE,
     averageScore: media.averageScore,
     descriptions:
       media.description
-        ? [{ language: 'en', description: media.description, score: DESCRIPTION_SCORE }]
+        ? [{ language: 'en', description: media.description, score: SCORE }]
         : [],
     shortDescriptions:
       media.description
-        ? [{ language: 'en', shortDescription: media.description, score: DESCRIPTION_SCORE }]
+        ? [{ language: 'en', shortDescription: media.description, score: SCORE }]
         : [],
     titles: [
-      ...media.title?.english ? [{ language: 'en', title: media.title.english, score: TITLE_SCORE }] : [],
-      ...media.title?.romaji ? [{ language: 'jp-en', title: media.title.romaji, score: TITLE_SCORE }] : [],
-      ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: TITLE_SCORE }] : []
+      ...media.title?.english ? [{ language: 'en', title: media.title.english, score: SCORE }] : [],
+      ...media.title?.romaji ? [{ language: 'jp-en', title: media.title.romaji, score: SCORE }] : [],
+      ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: SCORE }] : []
     ],
     covers: [
-      ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge, score: COVER_SCORE }] : []
+      ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge, score: SCORE }] : []
     ],
     episodeCount: media.episodes,
     popularity: media.popularity,
