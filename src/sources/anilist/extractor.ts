@@ -5,6 +5,7 @@ import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
 import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from '../crunchyroll/extractor'
 import { makeMedia, normalizePage } from '../utils'
+import { createAnilistFrontendSession } from './frontend'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
 export const originUrl = 'https://anilist.co'
@@ -165,8 +166,32 @@ type AnilistResponse<T> = {
   errors?: { message?: string, status?: number }[]
 }
 
+/**
+ * How long the public API stays skipped after it has failed.
+ *
+ * It is either up or switched off wholesale rather than flaky per request, so once it has answered
+ * 403 there is no point paying for a round trip on every call. The expiry is the half that matters:
+ * it is what lets this source return to the public API on its own when AniList turns it back on,
+ * with no deploy and nothing to remember.
+ */
+const PUBLIC_API_RETRY_MS = 5 * 60 * 1000
+let publicApiDownUntil = 0
+
+/**
+ * One frontend session for the module, so the CSRF pair is acquired once rather than per query.
+ *
+ * The fetch is read at call time rather than captured, because the session outlives any single
+ * request context. In practice every context shares the one bridge in ../../worker/fetch.ts, so
+ * this only ever guards against that stopping being true.
+ */
+let latestFetch: ExtractorServerContext['fetch'] | undefined
+const frontend = createAnilistFrontendSession((input, init) => {
+  if (!latestFetch) throw new Error('AniList frontend: queried before any request context bound a fetch')
+  return latestFetch(input, init)
+})
+
 // AniList reports failures with an HTTP 200 and a `{ data: null, errors: [...] }` body, rate limits above all
-const fetchAnilist = async <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<T | undefined> => {
+const fetchPublicAnilist = async <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<T | undefined> => {
   const response = await context.fetch('https://graphql.anilist.co/', {
     method: 'POST',
     headers: {
@@ -187,6 +212,23 @@ const fetchAnilist = async <T>({ query, variables }: { query: string, variables:
     return undefined
   }
   return body.data
+}
+
+/**
+ * The public API, falling back to AniList's own frontend endpoint when it is not answering.
+ *
+ * Measured 2026-08-16: graphql.anilist.co returned 403 "The AniList API has been temporarily
+ * disabled due to severe stability issues" to everyone, while anilist.co/graphql served this exact
+ * query with every field populated. See ./frontend.ts for what the fallback has to satisfy.
+ */
+const fetchAnilist = async <T>(request: { query: string, variables: any }, context: ExtractorServerContext): Promise<T | undefined> => {
+  latestFetch = context.fetch
+  if (Date.now() >= publicApiDownUntil) {
+    const data = await fetchPublicAnilist<T>(request, context).catch(() => undefined)
+    if (data != null) return data
+    publicApiDownUntil = Date.now() + PUBLIC_API_RETRY_MS
+  }
+  return frontend.query<T>(request)
 }
 
 const mediaSeasons = [MediaSeason.Winter, MediaSeason.Spring, MediaSeason.Summer, MediaSeason.Fall]
