@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 
-import { MAL_TYPE, malDate, parseMalSeason } from './season-scrape'
+import { MAL_CONTINUING_SECTION, MAL_TYPE, isContinuing, malDate, parseMalSeason } from './season-scrape'
 
 // Real bytes taken from myanimelist.net/anime/season on 2026-08-16, one card per type id plus a
 // card with no synopsis. A hand-written fixture would only ever test the regexes against
@@ -59,6 +59,8 @@ describe('parseMalSeason', () => {
       episodes: undefined,
       startDate: undefined,
       typeId: 1,
+      // no heading above it, so it belongs to no section and is never treated as carried over
+      section: '',
     }])
   })
 
@@ -105,6 +107,67 @@ describe('parseMalSeason', () => {
   test('an empty or junk document yields nothing rather than throwing', () => {
     expect(parseMalSeason('')).toEqual([])
     expect(parseMalSeason('<html><body>no anime here</body></html>')).toEqual([])
+  })
+
+  /**
+   * The fixture above carries no headings, which is the shape this parser handled before sections
+   * existed. Such a page must still yield every card, because returning nothing would empty the
+   * homepage; the extractor logs the case instead.
+   */
+  test('a page with no headings still yields every card, unsectioned', () => {
+    expect(entries).toHaveLength(6)
+    for (const entry of entries) expect(entry.section).toBe('')
+    expect(entries.some(isContinuing)).toBe(false)
+  })
+})
+
+/**
+ * MAL files carried-over long-runners under their own heading, and the season row sorts on members,
+ * so the two biggest of them took the first two slots of "current season": One Piece (2.7M members,
+ * started 1999) and Meitantei Conan (381k, started 1996).
+ *
+ * Real bytes, two cards from each of the two TV sections of the live page.
+ */
+describe('parseMalSeason, on a page with MAL\'s section headings', () => {
+  const sectioned = parseMalSeason(
+    readFileSync(new URL('./__fixtures__/mal-season-sections.html', import.meta.url), 'utf8')
+  )
+  const byId = (id: string) => sectioned.find(entry => entry.id === id)
+
+  test('tags every card with the heading it sat under', () => {
+    expect(sectioned).toHaveLength(4)
+    expect(byId('59193')?.section).toBe('TV (New)')
+    expect(byId('49233')?.section).toBe('TV (New)')
+    expect(byId('21')?.section).toBe(MAL_CONTINUING_SECTION)
+    expect(byId('235')?.section).toBe(MAL_CONTINUING_SECTION)
+  })
+
+  // the exact two titles that showed up first on the homepage
+  test('One Piece and Meitantei Conan are carried over, not new', () => {
+    expect(isContinuing(byId('21')!)).toBe(true)
+    expect(isContinuing(byId('235')!)).toBe(true)
+  })
+
+  /**
+   * The filter has to keep this season's shows. Mushoku Tensei III is the one AniList also returns
+   * for SUMMER 2026, so it is the case that proves the filter is not simply dropping everything.
+   */
+  test('this season\'s shows survive the filter', () => {
+    const seasonal = sectioned.filter(entry => !isContinuing(entry))
+    expect(seasonal.map(entry => entry.id).sort()).toEqual(['49233', '59193'])
+    expect(seasonal.find(entry => entry.id === '59193')?.title)
+      .toBe('Mushoku Tensei III: Isekai Ittara Honki Dasu')
+  })
+
+  // sections must not cost any of the fields the homepage renders
+  test('a sectioned card still parses every field', () => {
+    expect(byId('59193')).toMatchObject({
+      id: '59193',
+      typeId: 1,
+      startDate: '2026-07-06',
+    })
+    expect(byId('59193')?.cover).toMatch(/^https:\/\/cdn\.myanimelist\.net\/images\/anime\//)
+    expect(byId('59193')?.members).toBeGreaterThan(0)
   })
 })
 

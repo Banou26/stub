@@ -23,7 +23,29 @@ export type MalSeasonEntry = {
   episodes?: number
   startDate?: string
   typeId?: number
+  /** MAL's own heading for the block this card sat in, empty when the page carries no headings. */
+  section?: string
 }
+
+/**
+ * The heading MAL files long-running shows under, and the reason this parser tracks sections at all.
+ *
+ * MEASURED 2026-08-16 against the live page: 56 of 209 entries sit under it, and the two largest by
+ * `members` are One Piece (2.7M, started 1999) and Meitantei Conan (381k, started 1996). The season
+ * row sorts on `members`, so those two took the first two slots of "current season" on every load,
+ * arriving a few seconds late because the 1 MB page resolves after the other sources.
+ *
+ * Dropping the section is not a judgement about what "this season" means, it is what makes this
+ * source AGREE with the other two. AniList assigns every entry in it to an earlier season, measured
+ * one by one: One Piece FALL 1999, Conan WINTER 1996, and the two-cour carryovers (Re:Zero 4th,
+ * Tensei Slime 4th, Yomi no Tsugai) SPRING 2026. None of them appear in AniList's SUMMER 2026 result
+ * or in Kitsu's, so before this the scrape was the only seasonal source adding them.
+ */
+export const MAL_CONTINUING_SECTION = 'TV (Continuing)'
+
+/** An entry MAL itself files as carried over from an earlier season rather than new this one. */
+export const isContinuing = (entry: MalSeasonEntry): boolean =>
+  entry.section === MAL_CONTINUING_SECTION
 
 /**
  * MAL's own numeric type ids, confirmed against the section headings on the same page: the counts
@@ -69,35 +91,55 @@ const one = (block: string, pattern: RegExp) => pattern.exec(block)?.[1]
  * puts on each card, and counting it gave exactly the 209 the page claims, where matching a nested
  * `<div>` would need real parsing to find its close tag.
  */
+/**
+ * The page split at MAL's own section headings, each body running to the next heading.
+ *
+ * A page with no headings comes back as one unnamed section holding everything, which keeps this
+ * parser working on any markup it does not recognise. That direction is deliberate: an unrecognised
+ * page then behaves exactly as it did before sections existed, where returning nothing would empty
+ * the homepage. `scrapeSeasonNow` logs the case so a markup change is visible rather than silent.
+ */
+const sectionsOf = (html: string): { name: string, body: string }[] => {
+  const heads = [...html.matchAll(/class="anime-header">([^<]*)</g)]
+  if (!heads.length) return [{ name: '', body: html }]
+  return heads.map((head, i) => ({
+    name: text(head[1]) ?? '',
+    body: html.slice(head.index ?? 0, heads[i + 1]?.index ?? html.length),
+  }))
+}
+
 export const parseMalSeason = (html: string): MalSeasonEntry[] => {
   const entries: MalSeasonEntry[] = []
   const seen = new Set<string>()
 
-  for (const block of html.split('js-anime-category-producer').slice(1)) {
-    const id = one(block, /myanimelist\.net\/anime\/(\d+)/) ?? one(block, /class="genres js-genre" id="(\d+)"/)
-    const title = text(one(block, /class="link-title">([^<]+)</))
-    // A card with no id cannot be merged with anything, and one with no title cannot be displayed.
-    if (!id || !title || seen.has(id)) continue
-    seen.add(id)
+  for (const section of sectionsOf(html)) {
+    for (const block of section.body.split('js-anime-category-producer').slice(1)) {
+      const id = one(block, /myanimelist\.net\/anime\/(\d+)/) ?? one(block, /class="genres js-genre" id="(\d+)"/)
+      const title = text(one(block, /class="link-title">([^<]+)</))
+      // A card with no id cannot be merged with anything, and one with no title cannot be displayed.
+      if (!id || !title || seen.has(id)) continue
+      seen.add(id)
 
-    // The grid lazy-loads further down the page, so the same img is `src` on the first screenful
-    // and `data-src` after it. Matching only one silently loses most of the covers.
-    const cover = one(block, /<img[^>]*\bdata-src="(https:\/\/cdn\.myanimelist\.net\/images\/anime\/[^"]+)"/)
-      ?? one(block, /<img[^>]*\bsrc="(https:\/\/cdn\.myanimelist\.net\/images\/anime\/[^"]+)"/)
+      // The grid lazy-loads further down the page, so the same img is `src` on the first screenful
+      // and `data-src` after it. Matching only one silently loses most of the covers.
+      const cover = one(block, /<img[^>]*\bdata-src="(https:\/\/cdn\.myanimelist\.net\/images\/anime\/[^"]+)"/)
+        ?? one(block, /<img[^>]*\bsrc="(https:\/\/cdn\.myanimelist\.net\/images\/anime\/[^"]+)"/)
 
-    entries.push({
-      id,
-      title,
-      englishTitle: text(one(block, /class="h3_anime_subtitle">([^<]*)</)),
-      cover,
-      synopsis: text(one(block, /class="preline">([\s\S]*?)<\/p>/)),
-      // js-score carries `N/A` for an unrated title, which must not become NaN
-      score: num(one(block, /class="js-score">([\d.]+)</)),
-      members: num(one(block, /class="js-members">([\d,]+)</)),
-      episodes: num(one(block, /<span>\s*(\d+)\s*eps?\s*<\/span>/)),
-      startDate: malDate(one(block, /class="js-start_date">(\d+)</)),
-      typeId: num(one(block, /js-anime-type-(\d+)/)),
-    })
+      entries.push({
+        id,
+        title,
+        englishTitle: text(one(block, /class="h3_anime_subtitle">([^<]*)</)),
+        cover,
+        synopsis: text(one(block, /class="preline">([\s\S]*?)<\/p>/)),
+        // js-score carries `N/A` for an unrated title, which must not become NaN
+        score: num(one(block, /class="js-score">([\d.]+)</)),
+        members: num(one(block, /class="js-members">([\d,]+)</)),
+        episodes: num(one(block, /<span>\s*(\d+)\s*eps?\s*<\/span>/)),
+        startDate: malDate(one(block, /class="js-start_date">(\d+)</)),
+        typeId: num(one(block, /js-anime-type-(\d+)/)),
+        section: section.name,
+      })
+    }
   }
   return entries
 }

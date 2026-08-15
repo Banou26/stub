@@ -3,7 +3,7 @@ import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/type
 import { MediaStatus, MediaType } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
 import { makeMedia, normalizePage } from '../utils'
-import { MAL_TYPE, parseMalSeason, type MalSeasonEntry } from './season-scrape'
+import { MAL_TYPE, isContinuing, parseMalSeason, type MalSeasonEntry } from './season-scrape'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -215,7 +215,14 @@ const scrapeSeasonNow = async (context: ExtractorServerContext): Promise<Media[]
       console.error(`MyAnimeList season scrape parsed no entries from ${html.length} bytes`)
       return []
     }
-    return entries.map(normalizeScrapedMedia)
+    // MAL's page carries a "TV (Continuing)" block of long-runners that no other seasonal source
+    // returns, and the row sorts on members, so One Piece and Meitantei Conan took the first two
+    // slots. See MAL_CONTINUING_SECTION for the measurements.
+    const seasonal = entries.filter(entry => !isContinuing(entry))
+    if (!entries.some(entry => entry.section)) {
+      console.error('MyAnimeList season scrape found no section headings, so carried-over shows cannot be told apart')
+    }
+    return seasonal.map(normalizeScrapedMedia)
   } catch (error) {
     console.error('MyAnimeList season scrape failed', error)
     return []
