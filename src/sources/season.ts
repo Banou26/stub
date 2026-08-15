@@ -9,6 +9,25 @@
 // Split into its own module with NO imports so it can be tested: an extractor pulls in the source
 // barrel and, through it, a CommonJS `require('react')` that cannot load outside a browser.
 
+/**
+ * The four broadcast seasons, indexed by calendar quarter.
+ *
+ * Every catalogue that models a season agrees on this split (Jan to Mar is winter, and so on), so a
+ * source only has to spell the names differently, never the boundaries.
+ */
+export const ANIME_SEASONS = ['winter', 'spring', 'summer', 'fall'] as const
+export type AnimeSeason = (typeof ANIME_SEASONS)[number]
+
+/**
+ * Which season a date falls in. Shared rather than per-extractor so a new seasonal source cannot
+ * quietly disagree with the others about which season "now" is, which would show two different
+ * catalogues on one page for the three months they disagreed.
+ */
+export const animeSeasonOf = (date = new Date()): { season: AnimeSeason, year: number } => ({
+  season: ANIME_SEASONS[Math.floor(date.getMonth() / 3)]!,
+  year: date.getFullYear()
+})
+
 const CJK_DIGITS: Record<string, number> = { 〇: 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 }
 
 // 十 is a multiplier, not a digit: 十二 is 12, 二十 is 20, 二十一 is 21.

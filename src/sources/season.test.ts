@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from './season'
+import { animeSeasonOf, parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from './season'
 
 describe('parseSeasonNumber', () => {
   test('reads the forms a title actually uses', () => {
@@ -97,5 +97,37 @@ describe('parseSeasonNumber, non-English forms', () => {
     // not seasons, so `Kidou Keisatsu Patlabor EZY File 1` must stay season-less
     expect(parseSeasonNumber('Yami Shibai 17')).toBeUndefined()
     expect(parseSeasonNumber('Kidou Keisatsu Patlabor EZY File 1')).toBeUndefined()
+  })
+})
+
+describe('animeSeasonOf', () => {
+  // Local-time constructors, not UTC strings: animeSeasonOf reads getMonth(), so a UTC literal would
+  // land in the previous month for any runner west of Greenwich and the boundary cases would flip.
+  const on = (year: number, month1: number, day: number) => new Date(year, month1 - 1, day)
+
+  // Every seasonal source reads this, so a disagreement here would put two different catalogues on
+  // one page. The quarter boundaries are the part worth pinning.
+  test('each calendar quarter is its season', () => {
+    expect(animeSeasonOf(on(2026, 1, 1)).season).toBe('winter')
+    expect(animeSeasonOf(on(2026, 3, 31)).season).toBe('winter')
+    expect(animeSeasonOf(on(2026, 4, 1)).season).toBe('spring')
+    expect(animeSeasonOf(on(2026, 6, 30)).season).toBe('spring')
+    expect(animeSeasonOf(on(2026, 7, 1)).season).toBe('summer')
+    expect(animeSeasonOf(on(2026, 9, 30)).season).toBe('summer')
+    expect(animeSeasonOf(on(2026, 10, 1)).season).toBe('fall')
+    expect(animeSeasonOf(on(2026, 12, 31)).season).toBe('fall')
+  })
+
+  test('the year comes from the same date', () => {
+    expect(animeSeasonOf(on(2026, 8, 16))).toEqual({ season: 'summer', year: 2026 })
+    expect(animeSeasonOf(on(2025, 12, 31))).toEqual({ season: 'fall', year: 2025 })
+  })
+
+  // Four names, four quarters. A fifth or a gap would make Math.floor(month / 3) index off the end.
+  test('every month maps to one of the four seasons', () => {
+    const seasons = new Set(
+      Array.from({ length: 12 }, (_, month) => animeSeasonOf(on(2026, month + 1, 15)).season)
+    )
+    expect(seasons).toEqual(new Set(['winter', 'spring', 'summer', 'fall']))
   })
 })
