@@ -2,7 +2,8 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus, MediaType } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
-import { normalizePage } from '../utils'
+import { makeMedia, normalizePage } from '../utils'
+import { MAL_TYPE, parseMalSeason, type MalSeasonEntry } from './season-scrape'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -162,9 +163,70 @@ const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeS
       return {} as AnimeSearchResponse
     })
 
+const normalizeScrapedMedia = (entry: MalSeasonEntry): Media => {
+  const kind = MAL_TYPE[entry.typeId as keyof typeof MAL_TYPE]
+  return makeMedia({
+    origin,
+    id: entry.id,
+    uri: `${origin}:${entry.id}`,
+    url: `https://myanimelist.net/anime/${entry.id}`,
+    categories: kind === 'MOVIE' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
+    type:
+      kind === 'TV' ? MediaType.Tv
+      : kind === 'MOVIE' ? MediaType.Movie
+      : kind === 'SPECIAL' ? MediaType.Special
+      : kind === 'OVA' ? MediaType.Ova
+      : kind === 'ONA' ? MediaType.Ona
+      : undefined,
+    score: SCORE,
+    titles: [
+      ...entry.englishTitle ? [{ language: 'en', title: entry.englishTitle, score: SCORE }] : [],
+      { language: 'jp-en', title: entry.title, score: SCORE },
+    ],
+    covers: entry.cover ? [{ language: 'en', url: entry.cover, score: SCORE }] : [],
+    descriptions: entry.synopsis ? [{ language: 'en', description: entry.synopsis, score: DESCRIPTION_SCORE }] : [],
+    shortDescriptions: entry.synopsis ? [{ language: 'en', shortDescription: entry.synopsis, score: DESCRIPTION_SCORE }] : [],
+    episodeCount: entry.episodes,
+    // members, the same figure the API returns as `members`, so both paths sort the same way
+    popularity: entry.members,
+    averageScore: entry.score,
+    startDate: entry.startDate,
+  })
+}
+
+/**
+ * The seasonal grid off myanimelist.net itself, for when the API cannot be reached.
+ *
+ * Jikan is unreachable from the FKN proxy's egress: measured 2026-08-16, every Jikan endpoint
+ * answered 504 "Jikan failed to connect to MyAnimeList" from both Prague and Hong Kong, repeatedly
+ * and cache-busted, while myanimelist.net answered the same egress with the full 1 MB page. So the
+ * API being down does not mean this source is down.
+ *
+ * Measured against that page: 209 entries with 100% covers, synopses, scores, members and start
+ * dates, which is more of the season than the API's own first three pages carry. What it does not
+ * have is a trailer or a banner, so this degrades the hero rather than the season row.
+ */
+const scrapeSeasonNow = async (context: ExtractorServerContext): Promise<Media[]> => {
+  try {
+    const response = await context.fetch('https://myanimelist.net/anime/season')
+    const html = await response.text()
+    const entries = parseMalSeason(html)
+    if (!entries.length) {
+      console.error(`MyAnimeList season scrape parsed no entries from ${html.length} bytes`)
+      return []
+    }
+    return entries.map(normalizeScrapedMedia)
+  } catch (error) {
+    console.error('MyAnimeList season scrape failed', error)
+    return []
+  }
+}
+
 const getFullSeasonNow = async (context: ExtractorServerContext) => {
   const { data, pagination } = await getSeasonNow(1, context)
-  if (!data) return []
+  // The API answers a 504 with a JSON error envelope, so `.json()` resolves and only the missing
+  // `data` says anything went wrong. Falling through here is what keeps the season on the page.
+  if (!data?.length) return scrapeSeasonNow(context)
   const extraPages = await Promise.all(
     new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
       .fill(undefined)
