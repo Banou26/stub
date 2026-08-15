@@ -10,6 +10,7 @@ import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
 import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
 import { gql } from '../../generated'
+import { pickTheaterIndex, theaterCandidates } from '../../utils/theater'
 import { getRouterRoutePath, Route } from '../path'
 
 const style = css`
@@ -158,16 +159,17 @@ const GET_THEATHER_MEDIA = gql(`
 
 const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const [matchMediaRoute] = useRoute(getRouterRoutePath(Route.MEDIA))
-  const hasHighQualityMedia = mediaNodes.some((media) => media.score && media.score >= 0.8)
   const [bannedMediaIndexes, setBannedMediaIndexes] = useState<number[]>([])
-  const mediaIndex = useMemo(() => {
-    let index = Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0))
-    while (bannedMediaIndexes.includes(index)) {
-      index = Math.floor(Math.random() * Math.min(10, mediaNodes.length ?? 0))
-    }
-    return index
-  }, [hasHighQualityMedia, mediaNodes.length >= 10, bannedMediaIndexes])
-  const selectedMedia = useMemo(() => hasHighQualityMedia ? mediaNodes.at(mediaIndex) : undefined, [hasHighQualityMedia, mediaNodes, mediaIndex])
+  // selected on the fields the hero renders rather than on a source-confidence score, see ../../utils/theater
+  const candidates = useMemo(() => theaterCandidates(mediaNodes), [mediaNodes])
+  const mediaIndex = useMemo(
+    () => pickTheaterIndex(candidates.length, bannedMediaIndexes),
+    [candidates.length, bannedMediaIndexes]
+  )
+  const selectedMedia = useMemo(
+    () => mediaIndex === undefined ? undefined : candidates.at(mediaIndex),
+    [candidates, mediaIndex]
+  )
   const [{ data }] = useSubscription({
     query: GET_THEATHER_MEDIA,
     variables: {
@@ -192,8 +194,10 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const [playerVolume, setPlayerVolume] = useState(0.25)
 
   const onTrailerError = useCallback(() => {
-    setBannedMediaIndexes([...bannedMediaIndexes, mediaIndex])
-  }, [bannedMediaIndexes, mediaIndex])
+    // nothing was selected, so there is no choice to ban and re-picking would loop on the same miss
+    if (mediaIndex === undefined) return
+    setBannedMediaIndexes(banned => banned.includes(mediaIndex) ? banned : [...banned, mediaIndex])
+  }, [mediaIndex])
 
   return (
     <div css={style} className='theater'>
