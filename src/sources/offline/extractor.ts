@@ -16,17 +16,18 @@ import {
 } from './index-lookup'
 
 // No icon, deliberately, and anizip is the precedent: it is the other source that exists to link
-// records rather than to be visited, and it ships none either.
+// records rather than to be visited, and it ships none either. A badge would imply the show lives on
+// a site you can go to, for what is actually a table compiled at build time.
 //
-// This is not cosmetic. `media-modal.tsx` renders the origin row as `if (!origin.icon) return
-// undefined`, so an icon here would paint this source into the "available on" list beside AniList
-// and Kitsu. It would also render the LINKLESS branch, because the lookup is
-// `handles.find(handle => handle.origin === origin.id)` and this source's records never carry a
-// handle to themselves. The result would be a badge implying the show lives on a site you can go
-// to, for what is actually a table compiled at build time. Omitting the icon drops the row.
+// But know what actually keeps this out of the UI, because it is NOT the missing icon.
+// `media-modal.tsx:662` really does render the origin row as `if (!origin.icon) return undefined`,
+// and that check is real, but it is unreachable from here: `isApiOnly` below is true, and all three
+// `originPage` consumers pass `OriginFilter.IsNotApiOnly`, which `db.ts:144-146` resolves to keeping
+// only `!isApiOnly`. Kitsu is `isApiOnly = true` too, so it is absent from that row as well. So the
+// icon is dead weight rather than a hazard, and nobody should later treat its absence as the guard.
 //
-// Note `metadataOnly` does not do this job: nothing reads it for a barrel source, only
-// `plugin-sources.ts` reads it, and only for third-party packages.
+// `metadataOnly` gates nothing at all, for anybody: `normalizeOrigin` drops it, it is not in the
+// GraphQL schema, and the one value read of it feeds a field nothing consumes.
 //
 // `originUrl` is never rendered anywhere, so it carries no weight in the UI. It names the database
 // that supplies the seasonal listings, which is the visible half. It is NOT the attribution: this
