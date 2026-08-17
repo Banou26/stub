@@ -39,6 +39,10 @@
 // would still produce a plausible looking index, so a silent degrade would ship a build with no
 // season listings and no Kitsu or AniDB ids while looking entirely healthy.
 //
+// The release is named through two independent endpoints, because they fail independently. See
+// `newestRelease`: the list endpoint can answer 200 with an empty array during a GitHub incident,
+// which reads as "this repo has no releases" and is not that at all.
+//
 // LICENSING
 //
 // stub is MIT, and neither upstream is, so the derived data carries its own terms rather than the
@@ -69,6 +73,7 @@ const CACHE = resolve(ROOT, 'node_modules/.cache/stub-anime-data.json')
 const REPO = 'manami-project/anime-offline-database'
 const ASSET = 'anime-offline-database.jsonl.zst'
 const FETCH_TIMEOUT_MS = 120_000
+const RETRY_DELAY_MS = 2_000
 
 // Attribution is PER ARTIFACT, not one blanket notice, because the two artifacts are not derived
 // from the same things. anime-seasons is manami alone. anime-index is a merge in which arm supplies
@@ -126,25 +131,80 @@ const idIn = (sources, host) => {
 /* manami: fetch, trim, cache                                                                       */
 /* --------------------------------------------------------------------------------------------- */
 
-const newestRelease = async signal => {
-  const response = await fetch(`https://api.github.com/repos/${REPO}/releases?per_page=100`, {
+const assetIn = release => release?.assets?.find(candidate => candidate.name === ASSET)
+
+const askGitHub = async (path, signal) => {
+  const response = await fetch(`https://api.github.com/repos/${REPO}/${path}`, {
     headers: { accept: 'application/vnd.github+json', 'user-agent': 'stub-build' },
     signal,
   })
-  if (!response.ok) throw new Error(`GitHub releases: HTTP ${response.status}`)
+  if (!response.ok) throw new Error(`GET ${path}: HTTP ${response.status}`)
+  return response.json()
+}
+
+// The list endpoint names every dated release, so it is the only one that can pick the newest.
+const fromReleaseList = async signal => {
+  const list = await askGitHub('releases?per_page=100', signal)
+
+  // A 200 carrying an empty array is what api.github.com answers during an incident, and nothing
+  // about it looks wrong: there is no status to check and no exception to catch. It is NOT evidence
+  // that the repo has no releases, so it must not be reported as "no release carries the asset",
+  // which is a true sentence about a false premise. That message failed a stub deploy on
+  // 2026-08-18 while every tag was still in place and releases/latest was answering normally.
+  if (!Array.isArray(list) || !list.length) throw new Error('the release list answered 200 with nothing in it')
 
   // Ordered by the tag's own YYYY-WW, never by published_at: the repo carries a rolling `latest`
   // tag whose published_at is frozen at the date it was first created, more than a year before the
   // assets it currently points at, so "newest by date" picks the oldest thing in the list.
-  const dated = (await response.json())
+  const dated = list
     .filter(release => /^\d{4}-\d{2}$/.test(release.tag_name))
     .sort((a, b) => b.tag_name.localeCompare(a.tag_name))
 
   for (const release of dated) {
-    const asset = release.assets.find(candidate => candidate.name === ASSET)
+    const asset = assetIn(release)
     if (asset) return { tag: release.tag_name, url: asset.browser_download_url }
   }
-  throw new Error(`no release carries ${ASSET}`)
+  throw new Error(`none of the ${list.length} listed releases carries ${ASSET}`)
+}
+
+// One release, named by GitHub rather than chosen here, and served by a code path that stayed up
+// through the incident above. It cannot pick the newest dated tag, which is why it is the fallback
+// and not the primary. Whatever tag it names is accepted, including the rolling `latest` one,
+// because a slightly older dump still yields a full season window (buildExtract anchors the window
+// on the dump's own cut date rather than on today) and the alternative here is no deploy at all.
+const fromLatestRelease = async signal => {
+  const release = await askGitHub('releases/latest', signal)
+  const asset = assetIn(release)
+  if (!asset) throw new Error(`releases/latest (${release?.tag_name ?? 'untagged'}) does not carry ${ASSET}`)
+  return { tag: release.tag_name, url: asset.browser_download_url }
+}
+
+const RELEASE_SOURCES = [
+  { name: 'the release list', find: fromReleaseList },
+  { name: 'releases/latest', find: fromLatestRelease },
+]
+
+// Two endpoints, twice, because the ways this fails are all transient and none of them are the
+// repo actually lacking the asset. Every attempt is reported on the way out, so a build that took
+// the fallback says so in its log rather than looking like an ordinary one.
+const newestRelease = async signal => {
+  const failures = []
+  for (const round of [0, 1]) {
+    if (round) {
+      if (signal.aborted) break
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS))
+    }
+    for (const source of RELEASE_SOURCES) {
+      try {
+        const release = await source.find(signal)
+        if (failures.length) warn(`named ${release.tag} through ${source.name}, after ${failures.length} failed attempt(s): ${[...new Set(failures)].join('; ')}`)
+        return release
+      } catch (error) {
+        failures.push(error.message)
+      }
+    }
+  }
+  throw new Error([...new Set(failures)].join('; '))
 }
 
 const catalogIds = entry => Object.fromEntries(CATALOGS.map(({ key, host }) => [key, idIn(entry.sources, host)]))
@@ -377,7 +437,9 @@ const main = async () => {
     ) +
     emit(
       { file: 'anime-seasons.ts', types: '{ seasons: Record<string, { t: string, ty: string, p: string, ep?: number, ml?: number, al?: number, ku?: number, sc?: number }[]> }' },
-      { tag: manami.tag, updated: manami.updated, anchor: `${anchor.year}-${anchor.season}`, seasons },
+      // Already formatted by buildExtract, and formatted again here it produced the literal string
+      // "undefined-undefined" in every shipped artifact, because a string has no .year or .season.
+      { tag: manami.tag, updated: manami.updated, anchor, seasons },
       provenance,
       [MANAMI],
     )
