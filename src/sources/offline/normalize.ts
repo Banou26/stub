@@ -1,4 +1,4 @@
-// Turning a bundled manami record into a stub media, kept apart from the extractor so it can be
+// Turning a bundled offline-database record into a stub media, kept apart from the extractor so it can be
 // tested. The extractor pulls in the generated data module, which only exists after `npm run
 // data:build`, and through the source barrel it also reaches a CommonJS `require('react')` that
 // cannot load outside a browser. Same reason src/sources/season.ts and kitsu/season-paging.ts are
@@ -9,7 +9,7 @@ import type { Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaType } from '../../generated/graphql'
 import { makeMedia } from '../utils'
 
-export const origin = 'manami'
+export const origin = 'offline'
 
 /**
  * Low on purpose, and below kitsu's 0.3.

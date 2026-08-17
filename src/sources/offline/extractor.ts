@@ -18,7 +18,7 @@ import {
 export const icon = 'https://github.com/manami-project.png'
 export const originUrl = 'https://github.com/manami-project/anime-offline-database'
 export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
-export const name = 'manami'
+export const name = 'Offline database'
 export const origin = sourceOrigin
 export const official = false
 export const metadataOnly = true
@@ -26,7 +26,7 @@ export const isApiOnly = true
 // Answers about other catalogues' uris, not only its own, which is the anizip pattern. Note this
 // export is declarative only: nothing in the worker reads it, so what actually decides is the
 // resolver below.
-export const supportedUris = ['manami', ...INDEXED_ORIGINS]
+export const supportedUris = ['offline', ...INDEXED_ORIGINS]
 export const color = '#2b6cb0'
 
 type SeasonBundle = { tag: string, updated: string, seasons: Record<string, ManamiRecord[]> }
@@ -39,9 +39,13 @@ type SeasonBundle = { tag: string, updated: string, seasons: Record<string, Mana
  * season" with zero media because AniList answered 403 and Jikan 504 at the same time, with the
  * user's connection perfectly healthy.
  *
- * Note what it is NOT. stub has no service worker and no Cache Storage, so it has no offline mode,
- * and these bundles arrive over the same network as every other chunk. This survives an UPSTREAM
- * outage, not a disconnected user.
+ * READ THE NAME CAREFULLY. "offline" describes the DATA, which is an offline database in the sense
+ * its upstream uses the word, bundled at build time rather than queried. It does NOT mean stub works
+ * offline. stub has no service worker and no Cache Storage (grepped, with a control), so these
+ * bundles arrive over the same network as every other chunk and are just as unavailable to a
+ * disconnected user. What this survives is an UPSTREAM outage, which is the failure that actually
+ * happened. If stub ever does gain a worker, this source becomes the offline catalogue for real,
+ * but that is a separate piece of work and nothing here should be read as having done it.
  *
  * TWO bundles, loaded independently, because they are wanted at different moments. The homepage
  * needs seasons and never the index; opening one show needs the index and never the seasons. Split
@@ -64,7 +68,7 @@ const loadSeasons = (): Promise<SeasonBundle> =>
   (seasons ??= import('../../generated/anime-seasons')
     .then(module => module.default as SeasonBundle)
     .catch(error => {
-      console.error('manami: the bundled season data could not be loaded', error)
+      console.error('offline: the bundled season data could not be loaded', error)
       return { tag: 'unavailable', updated: '', seasons: {} }
     }))
 
@@ -72,7 +76,7 @@ const loadIndex = (): Promise<CatalogIndex> =>
   (index ??= import('../../generated/anime-index')
     .then(module => readIndex(module.default as IndexBundle))
     .catch(error => {
-      console.error('manami: the bundled id index could not be loaded', error)
+      console.error('offline: the bundled id index could not be loaded', error)
       return readIndex({ mal: [], anilist: [], kitsu: [], anidb: [] })
     }))
 
@@ -88,7 +92,7 @@ const getSeasonNow = async (): Promise<GQLMedia[]> => {
   const key = seasonKey(animeSeasonOf())
   const records = data.seasons[key]
   if (!records) {
-    console.warn(`manami: no bundled data for ${key}, the dump (${data.tag}) predates it. Rebuild to refresh.`)
+    console.warn(`offline: no bundled data for ${key}, the dump (${data.tag}) predates it. Rebuild to refresh.`)
     return []
   }
   return seasonPage(records)

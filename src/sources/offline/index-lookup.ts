@@ -79,7 +79,7 @@ export const readIndex = (bundle: IndexBundle): CatalogIndex => {
  *
  * This is what makes the two halves of this source ONE node rather than two. A show in the current
  * season is described by a seasonal record carrying a title and a cover, and by an index row
- * carrying nothing but ids. Both resolve to `manami:mal-<id>`, so the graph sees one media that
+ * carrying nothing but ids. Both resolve to `offline:mal-<id>`, so the graph sees one media that
  * happens to have been supplied twice, instead of two that have to be merged.
  */
 export const rowId = (row: CatalogRow): string | undefined =>
