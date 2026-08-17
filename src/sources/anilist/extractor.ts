@@ -137,13 +137,21 @@ const GET_MEDIA = `
 `
 
 /**
- * One score for every field, matching the media-level 0.9 this source already emitted.
+ * One score for every field, deliberately BELOW jikan and anizip, which both sit at 0.9.
  *
- * It replaces four constants that disagreed with each other: title, description and cover sat at
- * 0.7 while `THUMBNAIL_SCORE` was declared at 0.9 and never referenced, so covers went out at 0.7
- * and lost the merge to MyAnimeList and AniZip at 0.9. AniList has the best art of the three.
+ * Owner's call, 2026-08-18. Know what it does, because `byScore` in `store/aggregate.ts` sorts
+ * descending and the top source takes the field outright: wherever all three describe the same
+ * media, jikan and anizip now win the title, the cover, the description and every media-level
+ * field (`status`, `startDate`, `episodeCount`, `type`, `averageScore`). AniList still supplies
+ * anything neither of them has, because the aggregate falls through with `??`.
+ *
+ * That reverses an earlier deliberate change, and the reasoning it replaces is worth keeping:
+ * four constants used to disagree, with title, description and cover at 0.7 while a declared
+ * `THUMBNAIL_SCORE` of 0.9 was never referenced, so covers went out at 0.7 and lost to MyAnimeList
+ * and AniZip. The note then was that AniList has the best art of the three. If the art regressing
+ * is not wanted, the fix is not to raise this back to 0.9 but to score the cover separately.
  */
-const SCORE = 0.9
+const SCORE = 0.8
 
 const siteMappings = [
   {
