@@ -1,11 +1,22 @@
 # Anime data
 
 Two databases are merged at build time into the artifacts stub loads lazily. They have different
-licenses, and this directory exists to keep the ODbL one apart from stub's own MIT code.
+licenses, and this directory exists to keep them apart from stub's own MIT code.
+
+Attribution is **per artifact**, because the two are not derived from the same things:
+
+| artifact | derived from |
+| --- | --- |
+| `src/generated/anime-index.ts` | `@kawaiioverflow/arm` (MIT) **and** anime-offline-database (ODbL) |
+| `src/generated/anime-seasons.ts` | anime-offline-database (ODbL) only |
+
+Each file repeats its own credits in a header comment and in a `sources` field inside the data. In
+the index, arm supplies the larger share (20,754 of the MyAnimeList to AniList pairs against
+manami's 18,858), so crediting only manami there would name the smaller contributor and omit the
+larger one.
 
 ## manami-project/anime-offline-database
 
-`src/generated/anime-index.ts` and `src/generated/anime-seasons.ts` are built from
 [anime-offline-database](https://github.com/manami-project/anime-offline-database) by manami-project,
 made available under the **Open Database License (ODbL) v1.0**.
 

@@ -15,7 +15,24 @@ import {
   type IndexedOrigin,
 } from './index-lookup'
 
-export const icon = 'https://github.com/manami-project.png'
+// No icon, deliberately, and anizip is the precedent: it is the other source that exists to link
+// records rather than to be visited, and it ships none either.
+//
+// This is not cosmetic. `media-modal.tsx` renders the origin row as `if (!origin.icon) return
+// undefined`, so an icon here would paint this source into the "available on" list beside AniList
+// and Kitsu. It would also render the LINKLESS branch, because the lookup is
+// `handles.find(handle => handle.origin === origin.id)` and this source's records never carry a
+// handle to themselves. The result would be a badge implying the show lives on a site you can go
+// to, for what is actually a table compiled at build time. Omitting the icon drops the row.
+//
+// Note `metadataOnly` does not do this job: nothing reads it for a barrel source, only
+// `plugin-sources.ts` reads it, and only for third-party packages.
+//
+// `originUrl` is never rendered anywhere, so it carries no weight in the UI. It names the database
+// that supplies the seasonal listings, which is the visible half. It is NOT the attribution: this
+// source merges TWO upstreams with different licenses, manami under ODbL and @kawaiioverflow/arm
+// under MIT, and one string cannot credit both. Both are named in the header of every generated
+// artifact and in data/README.md, which is the attribution of record.
 export const originUrl = 'https://github.com/manami-project/anime-offline-database'
 export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const name = 'Offline database'
