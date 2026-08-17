@@ -88,3 +88,42 @@ export const rowId = (row: CatalogRow): string | undefined =>
   : row.kitsu ? `kitsu-${row.kitsu}`
   : row.anidb ? `anidb-${row.anidb}`
   : undefined
+
+const BORROWED_ID = /^([a-z]+)-(\d+)$/
+
+/**
+ * Every catalogue row a uri points at, including through this source's own borrowed id.
+ *
+ * The second half is what makes the index reachable at all, and it is not obvious. This source's id
+ * is borrowed from a catalogue (`mal-59193`), and as soon as it contributes once, `offline:mal-59193`
+ * is part of the cluster's aggregated uri forever. A resolver that saw its own origin and stopped
+ * there would answer from the seasonal bundle or not at all, so a show outside the season window
+ * would resolve to nothing even though the index holds its row, and the index would never load.
+ * Measured against the deployed build: the first season card resolves to
+ * `ag:(anilist:178789,kitsu:49002,mal:59193,offline:mal-59193)`, so the own-origin branch is the
+ * common case rather than an edge one.
+ *
+ * `ownOrigin` is passed rather than imported to keep this module free of the extractor.
+ */
+export const catalogRefs = (
+  uris: readonly { origin: string, id: string }[],
+  ownOrigin: string,
+): { origin: IndexedOrigin, id: number }[] => {
+  const refs: { origin: IndexedOrigin, id: number }[] = []
+  const seen = new Set<string>()
+  for (const uri of uris) {
+    const [rawOrigin, rawId] =
+      uri.origin === ownOrigin
+        ? (BORROWED_ID.exec(uri.id)?.slice(1, 3) ?? [])
+        : [uri.origin, uri.id]
+    if (!rawOrigin || !rawId) continue
+    if (!INDEXED_ORIGINS.includes(rawOrigin as IndexedOrigin)) continue
+    const id = Number(rawId)
+    if (!Number.isInteger(id) || id <= 0) continue
+    const key = `${rawOrigin}:${id}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    refs.push({ origin: rawOrigin as IndexedOrigin, id })
+  }
+  return refs
+}

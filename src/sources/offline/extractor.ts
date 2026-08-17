@@ -7,12 +7,12 @@ import { animeSeasonOf } from '../season'
 import { origin as sourceOrigin, SCORE, seasonKey, seasonPage, type ManamiRecord } from './normalize'
 import {
   INDEXED_ORIGINS,
+  catalogRefs,
   readIndex,
   rowId,
   type CatalogIndex,
   type CatalogRow,
   type IndexBundle,
-  type IndexedOrigin,
 } from './index-lookup'
 
 // No icon, deliberately, and anizip is the precedent: it is the other source that exists to link
@@ -179,15 +179,22 @@ const getMedia = async (uri: string): Promise<GQLMedia | null> => {
   const uris = urisOf(uri)
   if (!uris.length) return null
 
+  // The seasonal record wherever one exists, because it is the only half carrying a title and a
+  // cover. This must NOT return when it misses: a uri naming this source is the COMMON case once it
+  // has contributed once, so an early return here made the index unreachable in production and
+  // answered null for every show outside the season window.
   const own = uris.find(candidate => candidate.origin === origin)
-  if (own) return (await seasonalById(own.id)) ?? null
+  if (own) {
+    const seasonal = await seasonalById(own.id)
+    if (seasonal) return seasonal
+  }
+
+  const refs = catalogRefs(uris, origin)
+  if (!refs.length) return null
 
   const table = await loadIndex()
-  for (const candidate of uris) {
-    if (!INDEXED_ORIGINS.includes(candidate.origin as IndexedOrigin)) continue
-    const id = Number(candidate.id)
-    if (!Number.isInteger(id) || id <= 0) continue
-    const row = table.lookup(candidate.origin as IndexedOrigin, id)
+  for (const ref of refs) {
+    const row = table.lookup(ref.origin, ref.id)
     if (!row) continue
     const carrier = handleCarrier(row)
     if (!carrier) continue

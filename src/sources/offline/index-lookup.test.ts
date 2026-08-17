@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { readIndex, rowId, type IndexBundle } from './index-lookup'
+import { catalogRefs, readIndex, rowId, type IndexBundle } from './index-lookup'
 
 // mal ids 10, 25, 25 (absent), 60 encoded as deltas against the running total.
 const bundle: IndexBundle = {
@@ -62,5 +62,45 @@ describe('rowId', () => {
 
   test('has no id for an empty row', () => {
     expect(rowId({ mal: 0, anilist: 0, kitsu: 0, anidb: 0 })).toBeUndefined()
+  })
+})
+
+describe('catalogRefs', () => {
+  // The bug this exists to prevent, found by driving the deployed build: this source's own id is
+  // borrowed from a catalogue, so once it contributes once its origin is in the cluster's aggregated
+  // uri forever. A resolver that saw its own origin and stopped could never reach the index again.
+  test('reads a catalogue row through this source\'s own borrowed id', () => {
+    expect(catalogRefs([{ origin: 'offline', id: 'mal-59193' }], 'offline'))
+      .toEqual([{ origin: 'mal', id: 59193 }])
+  })
+
+  test('reads other catalogues directly', () => {
+    expect(catalogRefs([{ origin: 'anilist', id: '178789' }, { origin: 'kitsu', id: '49002' }], 'offline'))
+      .toEqual([{ origin: 'anilist', id: 178789 }, { origin: 'kitsu', id: 49002 }])
+  })
+
+  // The real shape, taken verbatim from the deployed build's first season card.
+  test('handles a real aggregated uri without duplicating the borrowed ref', () => {
+    const refs = catalogRefs([
+      { origin: 'anilist', id: '178789' },
+      { origin: 'kitsu', id: '49002' },
+      { origin: 'mal', id: '59193' },
+      { origin: 'offline', id: 'mal-59193' },
+    ], 'offline')
+    expect(refs).toEqual([
+      { origin: 'anilist', id: 178789 },
+      { origin: 'kitsu', id: 49002 },
+      { origin: 'mal', id: 59193 },
+    ])
+  })
+
+  test('ignores origins the index has no column for, and unparseable ids', () => {
+    expect(catalogRefs([
+      { origin: 'tmdb', id: '123' },
+      { origin: 'imdb', id: 'tt0123' },
+      { origin: 'mal', id: 'not-a-number' },
+      { origin: 'mal', id: '0' },
+      { origin: 'offline', id: 'nonsense' },
+    ], 'offline')).toEqual([])
   })
 })
