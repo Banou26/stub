@@ -1,0 +1,59 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # src/generated is gitignored, so a checkout carries none of it and both halves of the suite
+      # need it before they can even import: src/sources/offline/normalize.ts takes MediaType as a
+      # VALUE from src/generated/graphql, and without this step vitest fails that file at import with
+      # "Cannot find module '../../generated/graphql'". The codegen reads local .gql files only.
+      - run: npm run gql-generate
+
+      # The manami release the anime data is built from is fetched fresh on every build, and
+      # scripts/build-anime-data.mjs deliberately REFUSES rather than emitting a thinner artifact when
+      # it cannot reach the release and has no cache. That is right for a deploy and wrong for a gate,
+      # since a GitHub incident then reds the run over nobody's code. Carrying the script's own build
+      # cache between runs gives it the same fallback a local rebuild has. It restores AFTER npm ci
+      # because npm ci empties node_modules, and it saves at the end of the job, by which point
+      # data:build has refreshed it whenever the network was fine.
+      - uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/stub-anime-data.json
+          key: stub-anime-data-${{ github.run_id }}
+          restore-keys: stub-anime-data-
+
+      # Emits src/generated/anime-index.ts and anime-seasons.ts, which type-check needs:
+      # src/sources/offline/extractor.ts imports both, so tsc reports TS2307 on them otherwise.
+      - run: npm run data:build
+      - run: npm run type-check
+
+      # `npm test` is `test:unit && build-test && playwright test`, and the playwright half drives a
+      # real browser, so a runner needs the bundled chromium plus its shared libraries. chromium alone:
+      # playwright.config.ts declares no projects, so the default one is all that runs.
+      - run: npx playwright install --with-deps chromium
+
+      # ubuntu runners restrict unprivileged user namespaces through AppArmor, which is what chromium's
+      # own sandbox needs. Lift the restriction rather than passing --no-sandbox, which would turn the
+      # sandbox off instead. Tolerated failure covers a kernel image without the knob.
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+
+      # The browser specs are CI safe: tests/anilist.ts and tests/jikan.ts drive the extractors through
+      # a stub ctx.fetch, tests/crunchyroll-player.ts is pure functions and tests/store.ts is in-memory,
+      # so nothing here reaches AniList, Jikan or TMDB and the gate does not ride on their uptime. The
+      # run is headless, which is playwright's default and needs no display.
+      - run: npm test
