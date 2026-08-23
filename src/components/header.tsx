@@ -9,7 +9,9 @@ import { getRouterRoutePath, getRoutePath, Route } from '../router/path'
 
 const style = css`
   position: fixed;
-  top: 0;
+  /* the FKN broker's docked bar reserves the page's top strip with a root margin, which cannot
+     move a fixed element; the variable is its half of the contract and reads 0 everywhere else */
+  top: var(--fkn-inset-top, 0px);
   left: 0;
   right: 0;
   z-index: 100;
