@@ -29,6 +29,11 @@ const shellStyle = css`
   }
 `
 
+// the header is fixed, so a route that starts its own flow at y=0 renders its first line behind the bar
+const notFoundStyle = css`
+  padding: calc(var(--stub-header-height) + 3rem) 3rem 4rem;
+`
+
 const RouterRoot = () => (
   <Router hrefs={pluginHref}>
     <div css={shellStyle}>
@@ -43,7 +48,7 @@ const RouterRoot = () => (
           <WRoute path={getRouterRoutePath(Route.SETTINGS)} component={Settings}/>
           <WRoute path={getRouterRoutePath(Route.WATCH)} component={Watch}/>
           <WRoute path={getRouterRoutePath(Route.LOGIN_CALLBACK)} component={LoginCallback}/>
-          <WRoute component={() => <div>404 No page found</div>}/>
+          <WRoute component={() => <div css={notFoundStyle}>404 No page found</div>}/>
         </Switch>
       </div>
       <Footer/>

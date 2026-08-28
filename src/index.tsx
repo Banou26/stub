@@ -16,6 +16,15 @@ const style = css`
 
   :root {
     color-scheme: dark;
+    /* the fixed header's own height. Every page that has to start below the bar reads this instead of
+       guessing, which is how /settings ended up 8px short of a header it never measured */
+    --stub-header-height: 7rem;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --stub-header-height: 6.4rem;
+    }
   }
 
   *, *::before, *::after {

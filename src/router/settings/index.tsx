@@ -7,7 +7,7 @@ import { addPlugins, disablePlugin, enablePlugin, onPluginsChange, pluginStatuse
 
 const style = css`
   max-width: 720px;
-  margin: 6rem auto 4rem;
+  margin: calc(var(--stub-header-height) + 3rem) auto 4rem;
   padding: 0 1.5rem;
 
   h1 { font-size: 2rem; margin-bottom: .25rem; }

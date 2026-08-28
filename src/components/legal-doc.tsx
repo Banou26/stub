@@ -5,7 +5,7 @@ import { css } from '@emotion/react'
 const style = css`
   max-width: 72rem;
   margin: 0 auto;
-  padding: 10rem 3rem 6rem;
+  padding: calc(var(--stub-header-height) + 3rem) 3rem 6rem;
   color: rgba(255, 255, 255, 0.8);
 
   h1 {

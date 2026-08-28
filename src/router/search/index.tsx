@@ -49,7 +49,7 @@ const SEARCH_MEDIA_PAGE = gql(`
 `)
 
 const style = css`
-  padding: 10rem 3rem 4rem;
+  padding: calc(var(--stub-header-height) + 3rem) 3rem 4rem;
   min-height: 100vh;
 
   .heading {
@@ -76,7 +76,7 @@ const style = css`
   }
 
   @media (max-width: 768px) {
-    padding: 7rem 1.5rem 3rem;
+    padding: calc(var(--stub-header-height) + 1rem) 1.5rem 3rem;
 
     .heading {
       font-size: 2rem;
