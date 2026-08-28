@@ -520,9 +520,36 @@ export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUri
   for (const extractor of extractors) joinFanout(fanout, extractor)
   fanouts.add(fanout)
 
+  /**
+   * Ask a subset of the sources again, with a question they can actually answer.
+   *
+   * A source identifies itself by finding its own handle inside the uri it is handed, and that uri is
+   * captured once above. So a source whose id is contributed LATER by another source was asked before
+   * that id existed, answered "not mine", and ended: its `Subscription.media` is a yield-once
+   * generator with no retry (crunchyroll/extractor.ts:247-252). Re-asking is the only way it ever
+   * fetches its own data on the click path, which is the whole of what a reload does differently.
+   *
+   * Deliberately NOT recorded in `fanout.joined`, which tracks the original variables so a source
+   * registering mid-flight joins exactly once. These land in `subscriptions`, so the caller's
+   * teardown collects them with the rest.
+   */
+  const askOrigins = (originIds: string[], variables: SubscriptionArgs[1]) => {
+    for (const extractor of extractors) {
+      if (!originIds.includes(extractor.extractor.origin)) continue
+      try {
+        fanout.subscriptions.push(
+          extractor.client.subscription(fanout.query, variables).subscribe(() => {})
+        )
+      } catch (error) {
+        console.error(new Error(`Extractor ${extractor.name} failed to re-join the fan-out`, { cause: error }))
+      }
+    }
+  }
+
   return {
     subscriptions: fanout.subscriptions,
     insertedUris: fanout.insertedUris,
+    askOrigins,
     // stop accepting late joiners; the caller still unsubscribes what it holds
     /** stop accepting late joiners; the caller still unsubscribes what it holds */
     close: () => { fanouts.delete(fanout) },

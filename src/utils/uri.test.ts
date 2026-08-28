@@ -1,6 +1,37 @@
 import { describe, expect, test } from 'vitest'
 
-import { isRoutableUri } from './uri'
+import { isRoutableUri, originsOfUri } from './uri'
+
+describe('originsOfUri', () => {
+  test('lists the origins an aggregated uri lets a source recognise itself by', () => {
+    expect(originsOfUri('ag:(anilist:108465,kitsu:41371,mal:39535)').sort())
+      .toEqual(['anilist', 'kitsu', 'mal'])
+  })
+
+  // one origin can contribute several handles to a cluster, and the caller only ever asks whether that
+  // source is addressable at all, so the repeat must not show up twice
+  test('deduplicates an origin that contributed several handles', () => {
+    expect(originsOfUri('ag:(cr:G24H1N3MP,cr:GRDQCGX5E,mal:39535)').sort())
+      .toEqual(['cr', 'mal'])
+  })
+
+  test('a bare handle uri is its own single origin', () => {
+    expect(originsOfUri('anilist:108465')).toEqual(['anilist'])
+  })
+
+  test('something that is not a uri names no origins', () => {
+    expect(originsOfUri('nocolon')).toEqual([])
+    expect(originsOfUri('')).toEqual([])
+  })
+
+  // the whole point of the re-ask: what a narrow uri is MISSING is what has to be asked again
+  test('a grown uri names origins the narrow one did not', () => {
+    const narrow = originsOfUri('ag:(anilist:108465,kitsu:41371,mal:39535,offline:x)')
+    const grown = originsOfUri('ag:(anilist:108465,cr:G24H1N3MP,kitsu:41371,mal:39535,nf:81074276,offline:x)')
+    expect(grown.filter(origin => !narrow.includes(origin)).sort()).toEqual(['cr', 'nf'])
+    expect(narrow.filter(origin => !grown.includes(origin))).toEqual([])
+  })
+})
 
 describe('isRoutableUri', () => {
   test('an ordinary handle uri passes, including the compound ids sources mint', () => {

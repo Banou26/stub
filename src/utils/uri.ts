@@ -121,6 +121,20 @@ export const fromAggregatedUri = (uri: AggregatedUri) => {
   })
 }
 
+/**
+ * The origins a uri lets a source recognise itself by, deduplicated.
+ *
+ * One origin can contribute several handles to the same cluster, so the raw handle list repeats it.
+ * What callers want is the SET, because a source is either addressable in this uri or it is not.
+ */
+export const originsOfUri = (uri: string): string[] => {
+  if (isAggregatedUri(uri)) {
+    return [...new Set(fromAggregatedUri(uri)?.handleUrisValues.map(handle => handle.origin) ?? [])]
+  }
+  if (isUri(uri)) return [fromUri(uri).origin]
+  return []
+}
+
 export const mergeAggregatedUris = (uris: AggregatedUri[]) =>
   toAggregatedUri(
     [

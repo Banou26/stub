@@ -11,7 +11,7 @@ import { listenMultipleIterator, debouncedListenIterator } from '../../store/eve
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { searchRelevance } from '../../../sources/utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
-import { isAggregatedUri, isUri, fromAggregatedUri, type AggregatedUri } from '../../../utils/uri'
+import { isAggregatedUri, isUri, fromAggregatedUri, originsOfUri, type AggregatedUri } from '../../../utils/uri'
 
 export const schema = _schema as string
 
@@ -43,21 +43,51 @@ export const resolvers = {
     media: {
       resolve: (parent: Media) => parent,
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
-        if (!args.input.uri || !(isUri(args.input.uri) || isAggregatedUri(args.input.uri))) return
-        const { subscriptions, close } = proxyRequestToExtractors(ctx)
+        const requestedUri = args.input.uri
+        if (!requestedUri || !(isUri(requestedUri) || isAggregatedUri(requestedUri))) return
+        const { subscriptions, close, askOrigins } = proxyRequestToExtractors(ctx)
         const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
+        /**
+         * The uri the sources were asked about is the one the caller had at subscribe time, and a card
+         * on the home page links to a narrow one: the listing builds its media without running the
+         * mappers that mint a `cr:` handle (sources/anilist/extractor.ts:320 against :295). A source
+         * can only recognise itself by finding its own handle in the uri it is handed, so every source
+         * missing from that narrow uri answered "not mine" and ENDED, milliseconds before another
+         * source contributed its id.
+         *
+         * So track which origins have been asked with a uri that actually named them, and re-ask the
+         * ones that only just became addressable. Asking the newly named origins rather than re-running
+         * the whole fan-out matters: nothing caches this path (@envelop/response-cache hooks onExecute
+         * and skips subscriptions), so a blanket re-fan would re-hit every upstream on every merge.
+         *
+         * Terminates: an origin enters the set once and never leaves, and the cluster only ever gains
+         * members (union-find unions, it never splits), so each source is asked at most twice.
+         */
+        const askedOrigins = new Set(originsOfUri(requestedUri))
+        const askUnasked = (mediaUri: string) => {
+          const unasked = originsOfUri(mediaUri).filter(origin => !askedOrigins.has(origin))
+          if (!unasked.length) return
+          for (const origin of unasked) askedOrigins.add(origin)
+          const variables = ctx.params.variables as { input?: Record<string, unknown> } | undefined
+          askOrigins(unasked, { ...variables, input: { ...variables?.input, uri: mediaUri } })
+        }
+
+        const read = async () => {
+          const cluster = await findAggregatedMediaForUri(requestedUri)
+          if (!cluster.length) return undefined
+          const media = aggregateMedia(cluster, location.origin)
+          askUnasked(media.uri)
+          return media
+        }
+
         try {
-          const cluster = await findAggregatedMediaForUri(args.input.uri)
-          if (cluster.length) {
-            yield aggregateMedia(cluster, location.origin)
-          }
+          const first = await read()
+          if (first) yield first
 
           for await (const _ of iterator) {
-            const cluster = await findAggregatedMediaForUri(args.input.uri)
-            if (cluster.length) {
-              yield aggregateMedia(cluster, location.origin)
-            }
+            const next = await read()
+            if (next) yield next
           }
         } finally {
           close()
