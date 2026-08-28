@@ -84,6 +84,24 @@ export const SEASON_MARKER: readonly RegExp[] = [
   /\s*(?:シーズン\s*\d{1,3}|第\s*[\d〇零一二三四五六七八九十]{1,4}\s*[期季])/g,
 ]
 
+const HAS_LETTER = /\p{L}/u
+
+/**
+ * A title that is nothing but a season label, so it names a POSITION and never a show.
+ *
+ * Crunchyroll titles a season the way its catalogue does, which for a great many series is the literal
+ * string "Season 3", and that title reaches the store as the media's own. Two unrelated shows both
+ * carrying it are then identical to any comparison made on titles alone: it is what merged
+ * "Grand Blue Dreaming Season 3" into "Mushoku Tensei Season 3", measured on the exact-title shortcut
+ * in the fuzzy merge, and it merged a different pair on almost every run because it only needs two
+ * shows on their third season to be on screen together.
+ *
+ * `\p{L}` alone does not catch these: "season 3" is full of letters. What makes it empty is that
+ * removing the season markers leaves nothing behind.
+ */
+export const isOnlySeasonLabel = (title: string): boolean =>
+  !HAS_LETTER.test(SEASON_MARKER.reduce((text, marker) => text.replace(marker, ' '), title))
+
 /** 'Mushoku Tensei Season 3', '... 2nd Season', '転生したら剣でした 第2期', '幼女战记 第二季' -> the number. */
 export const parseSeasonNumber = (title: string): number | undefined => {
   for (const pattern of SEASON_PATTERNS) {

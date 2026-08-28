@@ -1,7 +1,7 @@
 import type { Media } from './types'
 
 import { stripTitle, titleSimilarity } from '../../sources/utils'
-import { parseSeasonNumber } from '../../sources/season'
+import { isOnlySeasonLabel, parseSeasonNumber } from '../../sources/season'
 import { linkSameMediaPairs } from './db'
 
 const SIMILARITY_THRESHOLD = 0.9
@@ -31,6 +31,10 @@ const normalizeTitle = (title: string) =>
 // a title with no letter left is a year or a season number, never an identity, and a bad link is permanent: graph.link has no inverse
 const HAS_LETTER = /\p{L}/u
 
+// ...and neither is one that has letters but says only which season it is, which HAS_LETTER waves
+// through: see isOnlySeasonLabel for the pair of shows that cost
+const carriesIdentity = (title: string) => HAS_LETTER.test(title) && !isOnlySeasonLabel(title)
+
 const yearOf = (date: string | null) => {
   if (!date) return null
   const parsed = new Date(date)
@@ -45,7 +49,7 @@ const profileCluster = (cluster: Media[]): ClusterProfile => {
         .flatMap(media => media.titles ?? [])
         .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
         .map(({ title }) => normalizeTitle(title))
-        .filter(title => HAS_LETTER.test(title))
+        .filter(carriesIdentity)
     )].slice(0, MAX_TITLES_PER_CLUSTER)
   const years =
     new Set(
