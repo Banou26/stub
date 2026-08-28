@@ -19,6 +19,8 @@ export default defineConfig({
   use: {
     launchOptions: {
       executablePath: detectChromePath(),
+      // this is the owner's machine: no run gets to make noise on it, headless or not
+      args: ['--mute-audio'],
     },
   },
   webServer: {
