@@ -5,7 +5,7 @@ import {
 } from '@floating-ui/react'
 import { ConnectButton } from '@fkn/lib/react'
 import { ChevronDown, ExternalLink, LogOut } from 'lucide-react'
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 
 import { useAccount } from '../utils/use-account'
 
@@ -137,9 +137,26 @@ export const AccountWidget = () => {
     useRole(context, { role: 'menu' })
   ])
 
+  /**
+   * The menu belongs to a signed-in account and cannot outlive one.
+   *
+   * Without this, the early return below unmounts the menu VISUALLY while leaving `open` and `busy`
+   * set, so the state outlives the thing it describes: reconnecting brings the menu straight back
+   * unasked, and an account that disappears mid-disconnect leaves the row stuck reading
+   * "Disconnecting...". It covers every path the click handler never sees, which is the 30 second
+   * poll, a logout in another tab, and the read cap in useAccount resolving null for a broker that
+   * is merely slow.
+   */
+  useEffect(() => {
+    if (info) return
+    setOpen(false)
+    setBusy(false)
+  }, [info])
+
   const onDisconnect = async () => {
     setBusy(true)
     try {
+      // bounded inside useAccount, so this can no longer wait forever on a broker that never answers
       await logout()
     } finally {
       setBusy(false)
