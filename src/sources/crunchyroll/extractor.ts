@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
+import { isOnlySeasonLabel } from '../season'
 import {
   makeMedia, makeEpisode, desc, img,
   bestTitleScore, buildHandlesFromUri, getFirstTitle, simplifyTitle, waitForMedia
@@ -203,8 +204,18 @@ export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise
 
   if (seasonId && !targetSeason) return undefined
 
+  // Crunchyroll names a great many seasons with nothing but their position, so `targetSeason.title` is
+  // routinely the literal "Season 3". Publishing that as the media's own title puts a string naming no
+  // show into the store, where anything comparing titles reads it as an identity: it is what merged
+  // Grand Blue into Mushoku Tensei. Fall back to the series, which always names the show.
+  const seasonTitle = targetSeason && !isOnlySeasonLabel(targetSeason.title) ? targetSeason.title : undefined
   const media = targetSeason
-    ? normalizeMedia(crunchyrollId(seriesId, resolveSeasonId(targetSeason)), targetSeason.title, targetSeason.description, series)
+    ? normalizeMedia(
+      crunchyrollId(seriesId, resolveSeasonId(targetSeason)),
+      seasonTitle ?? series.title,
+      targetSeason.description || series.description,
+      series
+    )
     : normalizeMedia(series.id, series.title, series.description, series)
 
   media.episodes = targetSeason
