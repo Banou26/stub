@@ -1,7 +1,10 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img } from '../utils'
+import {
+  makeMedia, makeEpisode, desc, img,
+  bestTitleScore, buildHandlesFromUri, getFirstTitle, simplifyTitle, waitForMedia
+} from '../utils'
 
 const SCORE = 0.5
 
@@ -211,34 +214,135 @@ export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise
   return media
 }
 
-export const matchSeasonByDate = async (
-  seriesId: string, startDate: string, ctx: ExtractorServerContext
-): Promise<string | undefined> => {
-  const targetDate = new Date(startDate)
-  if (isNaN(targetDate.getTime())) return undefined
-
+const seasonAirDates = async (seriesId: string, ctx: ExtractorServerContext) => {
   const { data: seasons } = await fetchSeasons(seriesId, ctx)
-  if (!seasons.length) return undefined
-  if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, resolveSeasonId(seasons[0]))
+  if (!seasons.length) return { seasons, dates: [] }
 
   const jaSeasons = seasons.filter(s => s.audio_locale === 'ja-JP')
   const candidates = jaSeasons.length > 0 ? jaSeasons : seasons
 
-  const seasonDates = await Promise.all(
+  const dates = await Promise.all(
     candidates.map(async season => {
       const resolvedId = resolveSeasonId(season)
       const { data } = await fetchEpisodes(resolvedId, ctx)
       return { resolvedId, airDate: data[0]?.episode_air_date ? new Date(data[0].episode_air_date) : undefined }
     })
   )
+  return { seasons, dates }
+}
 
+const closestSeason = (
+  dates: { resolvedId: string, airDate?: Date }[],
+  targetDate: Date
+): { id: string, diff: number } | undefined => {
   let best: { id: string, diff: number } | undefined
-  for (const { resolvedId, airDate } of seasonDates) {
+  for (const { resolvedId, airDate } of dates) {
     if (!airDate) continue
     const diff = Math.abs(airDate.getTime() - targetDate.getTime())
     if (!best || diff < best.diff) best = { id: resolvedId, diff }
   }
+  return best
+}
+
+export const matchSeasonByDate = async (
+  seriesId: string, startDate: string, ctx: ExtractorServerContext
+): Promise<string | undefined> => {
+  const targetDate = new Date(startDate)
+  if (isNaN(targetDate.getTime())) return undefined
+
+  const { seasons, dates } = await seasonAirDates(seriesId, ctx)
+  if (!seasons.length) return undefined
+  // the series id came from a source that already asserted identity, so a lone season needs no date to
+  // agree with. The search path below cannot make that assumption and deliberately does not call this.
+  if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, resolveSeasonId(seasons[0]))
+
+  const best = closestSeason(dates, targetDate)
   return best ? crunchyrollId(seriesId, best.id) : undefined
+}
+
+/**
+ * Linking a search hit asserts identity PERMANENTLY: `graph.link` is a union-find union with no
+ * inverse, so a wrong hit is not a bad row, it is a different show welded to this title for the rest
+ * of the session, and every episode and every play button under it belongs to that other show. The
+ * same mistake measured on unOGS welded "Demon Slayer" onto a 2009 korean movie 14 times in 62
+ * queries (sources/utils.ts:163-166). So the gate here is deliberately stricter than the shared one.
+ *
+ * TWO INDEPENDENT AXES, and both must agree:
+ *
+ *   TITLE decides the franchise. Season markers come off both sides first, because a catalogue that
+ *   models a show as one series with several seasons names it once without the season, and charging a
+ *   correct match for that difference is what would force the threshold back down. Every title the
+ *   cluster knows is tried and the best wins, since catalogues disagree about the canonical name.
+ *
+ *   DATE decides the season. The candidate season's first episode must have aired within
+ *   SEASON_DATE_WINDOW of this media's start date.
+ *
+ * Neither axis alone is close to sufficient, which is the whole reason both are here. Title alone
+ * cannot separate the 2001 and 2019 "Fruits Basket", nor season 1 from season 3 of anything, and it
+ * is exactly a multi-season show that this path exists to rescue. Date alone matches every show that
+ * aired the same week. Requiring both is what makes a hit worth trusting.
+ *
+ * Anything missing is a refusal, never a guess: no start date, no titles, nothing over the threshold,
+ * or nothing inside the window, and this returns undefined and Crunchyroll simply does not appear.
+ * That is the correct trade. A missing row is a nuisance; a wrong row is a lie about what the user is
+ * about to watch, and it is not recoverable without a reload.
+ */
+const CONFIDENT_TITLE_THRESHOLD = 0.9
+const SEASON_DATE_WINDOW = 45 * 24 * 60 * 60 * 1000
+// a franchise can be split across several catalogue entries, so the runners-up are date-checked too,
+// but the list is capped: each one costs a seasons call plus an episodes call per season
+const MAX_SERIES_CANDIDATES = 3
+const MAX_SEARCH_QUERIES = 4
+
+const searchAndLinkMedia = async (
+  aggregatedUri: string,
+  ctx: ExtractorServerContext
+): Promise<GQLMedia | undefined> => {
+  const known = await waitForMedia(aggregatedUri, ctx, media => (getFirstTitle(media) ? media : undefined), 30_000)
+  if (!known) return undefined
+
+  const startDate = known.startDate
+  if (!startDate) return undefined
+  const targetDate = new Date(startDate)
+  if (isNaN(targetDate.getTime())) return undefined
+
+  const knownTitles = (known.titles ?? []).map(title => title.title).filter(Boolean)
+  const primary = knownTitles[0]
+  if (!primary) return undefined
+
+  const queries = [...new Set([primary, ...simplifyTitle(primary)])].slice(0, MAX_SEARCH_QUERIES)
+
+  for (const query of queries) {
+    const { data } = await searchSeries(query, ctx)
+    const items = data.find(entry => entry.type === 'series')?.items ?? []
+    if (!items.length) continue
+
+    // gate on title BEFORE spending any season or episode requests: the search payload already carries
+    // everything this axis reads, and a rejected candidate must cost nothing
+    const scored = (await Promise.all(
+      items.map(async series => ({ series, score: await bestTitleScore(knownTitles, series.title) }))
+    ))
+      .filter(entry => entry.score >= CONFIDENT_TITLE_THRESHOLD)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, MAX_SERIES_CANDIDATES)
+    if (!scored.length) continue
+
+    let best: { seriesId: string, seasonId: string, diff: number } | undefined
+    for (const { series } of scored) {
+      const { dates } = await seasonAirDates(series.id, ctx)
+      const season = closestSeason(dates, targetDate)
+      if (!season || season.diff > SEASON_DATE_WINDOW) continue
+      if (!best || season.diff < best.diff) best = { seriesId: series.id, seasonId: season.id, diff: season.diff }
+    }
+    if (!best) continue
+
+    const media = await getMedia(crunchyrollId(best.seriesId, best.seasonId), ctx)
+    if (!media) continue
+    media.handles = buildHandlesFromUri(aggregatedUri, origin)
+    return media
+  }
+
+  return undefined
 }
 
 export const resolvers: Resolvers = {
@@ -247,8 +351,10 @@ export const resolvers: Resolvers = {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
         const uri = extractAggregatedUriOrigin(_uri, origin)
-        if (!uri) return yield { media: null }
-        yield { media: await getMedia(uri.id, ctx) ?? null }
+        if (uri) return yield { media: await getMedia(uri.id, ctx) ?? null }
+        // no `cr:` in the uri, so no source ever supplied one. Search, under the gate above.
+        if (!isAggregatedUri(_uri)) return yield { media: null }
+        yield { media: await searchAndLinkMedia(_uri, ctx) ?? null }
       }
     },
     mediaPage: {
