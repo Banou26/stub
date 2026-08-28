@@ -24,7 +24,7 @@ test('a latin query is unchanged', async () => {
   expect(await searchScore('frieren', 'Cowboy Bebop')).toBeLessThan(0.7)
 })
 
-// swAlign counts code points; String.length counts utf-16 units, so an astral-plane title used to
+// the matcher counts code points; String.length counts utf-16 units, so an astral-plane title used to
 // score 0.5 against itself and sat below the 0.7 filter.
 test('an astral-plane title matches itself exactly', async () => {
   expect(await searchScore('𩸽', '𩸽')).toBe(1)

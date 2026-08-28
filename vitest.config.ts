@@ -5,5 +5,7 @@ export default defineConfig({
   test: {
     include: ['src/worker/**/*.test.ts', 'src/sources/**/*.test.ts', 'src/utils/**/*.test.ts'],
     environment: 'node',
+    // seeds sacha's wasm, which cannot self-init under node. See the file for why it is not inlined.
+    setupFiles: ['./vitest.setup.ts'],
   },
 })

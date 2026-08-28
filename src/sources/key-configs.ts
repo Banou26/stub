@@ -1,4 +1,4 @@
-// Kept separate from the extractors - which import seal-wasm - so the settings page can read it on the main thread without pulling the worker/WASM bundle
+// Kept separate from the extractors - which pull in the frizbee and sacha wasm modules - so the settings page can read it on the main thread without pulling the worker/WASM bundle
 
 export interface KeyConfig {
   origin: string

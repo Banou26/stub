@@ -1,7 +1,8 @@
 import type { ExtractorServerContext } from '../worker/extractor'
 import type { Media as GQLMedia, Episode as GQLEpisode } from '../generated/schema/types.generated'
 
-import { swAlign } from 'seal-wasm'
+import initFrizbee, { Matcher } from 'frizbee'
+import initSacha, { parse as parseMediaName } from 'sacha'
 import { fromAggregatedUri, toUri } from '../utils/uri'
 import { SEASON_MARKER } from './season'
 
@@ -125,23 +126,81 @@ export const stripTitle = (title: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-// swAlign scores per code point while String.length counts utf-16 units, so a title written in astral-plane
-// kanji scored 0.5 against itself and could not be found by its own name
-const codePoints = (text: string) => [...text].length
+/**
+ * Both wasm modules initialise once, lazily, because only the matching paths need them and the
+ * settings page deliberately stays clear of this module for that reason (see key-configs.ts).
+ */
+let frizbeeReady: Promise<unknown> | undefined
+const readyFrizbee = () => (frizbeeReady ??= initFrizbee())
+/**
+ * sacha ships no node entry the way frizbee does, so its default init builds a `file:` URL and
+ * fetches it, which node cannot do. That belongs in the test setup, NOT here: naming `node:fs` in
+ * this module, even inside a branch the browser never takes, makes vite fail to resolve it and serve
+ * `src/sources/utils.ts` as a 500, which takes the whole extractor worker down with it.
+ *
+ * `vitest.setup.ts` calls sacha's `initSync` with the bytes, and both of sacha's entry points return
+ * early once the module is live, so this stays a no-op there.
+ */
+let sachaReady: Promise<unknown> | undefined
+const readySacha = () => (sachaReady ??= initSacha())
 
+/**
+ * `maxTypos: Infinity` is what turns frizbee from a FILTER into a SCORER.
+ *
+ * At its default of 0 it answers "does the needle appear in this haystack, in order", so
+ * ("grand blue dreaming", "grand blue") scores a flat 0 rather than "mostly". Every non-containment
+ * pair collapses to zero and no threshold can be placed. With typos unlimited it scores every pair,
+ * which is what a similarity needs.
+ */
+const MATCH_CONFIG = { maxTypos: Infinity, casing: 'ignore', unicode: 'always' } as const
+
+// one matcher for the module's lifetime: setPattern keeps the config and skips identical patterns, so
+// the O(n^2) cluster comparison in fuzzy-merge does not allocate a wasm object per pair
+let matcher: Matcher | undefined
+const alignScore = (needle: string, haystack: string): number => {
+  if (!matcher) matcher = new Matcher(needle, MATCH_CONFIG)
+  else matcher.setPattern(needle)
+  return matcher.matchOne(haystack, 0)?.score ?? 0
+}
+
+// separate matcher because the mode is part of the config, and switching it per call would thrash the
+// one above; substring requires the needle as a contiguous run, which is exactly "does this contain it"
+let substringMatcher: Matcher | undefined
+const containsNeedle = (needle: string, haystack: string): boolean => {
+  const config = { ...MATCH_CONFIG, maxTypos: 0, matching: 'substring' } as const
+  if (!substringMatcher) substringMatcher = new Matcher(needle, config)
+  else substringMatcher.setPattern(needle)
+  return (substringMatcher.matchOne(haystack, 0)?.score ?? 0) > 0
+}
+
+// a string's score against itself is its ceiling, and it is asked for repeatedly across a merge pass
+const selfScores = new Map<string, number>()
+const selfScore = (text: string): number => {
+  const cached = selfScores.get(text)
+  if (cached !== undefined) return cached
+  const score = alignScore(text, text)
+  selfScores.set(text, score)
+  return score
+}
+
+/**
+ * Symmetric 0..1 similarity: how much of each string the other accounts for, taking the WEAKER
+ * direction.
+ *
+ * frizbee scores a needle against a haystack, which is directional and unbounded, so a short title
+ * fully contained in a longer one scores near its own ceiling one way round and much lower the other.
+ * Taking the minimum is what stops containment reading as identity: "Attack on Titan" is entirely
+ * inside "Attack on Titan: Junior High" and still only reaches 0.513 here, which is the whole point.
+ */
 export const titleSimilarity = async (a: string, b: string): Promise<number> => {
   const normalA = stripTitle(a)
   const normalB = stripTitle(b)
   if (!normalA || !normalB) return 0
-  const result = await swAlign(normalA, normalB, {
-    alignment: 'local',
-    equal: 2,
-    align: -1,
-    insert: -1,
-    delete: -1,
-  })
-  const maxLen = Math.max(codePoints(normalA), codePoints(normalB))
-  return result.score / (maxLen * 2)
+  await readyFrizbee()
+  const ceilingA = selfScore(normalA)
+  const ceilingB = selfScore(normalB)
+  if (!ceilingA || !ceilingB) return 0
+  return Math.min(alignScore(normalA, normalB) / ceilingA, alignScore(normalB, normalA) / ceilingB)
 }
 
 // Normalized by the QUERY length, unlike titleSimilarity which normalizes by the longer string, so this
@@ -153,8 +212,15 @@ export const searchScore = async (query: string, title: string): Promise<number>
   const q = stripTitle(query)
   const t = stripTitle(title)
   if (!q || !t) return 0
-  const result = await swAlign(q, t, { alignment: 'local', equal: 2, align: -1, insert: -1, delete: -1 })
-  return Math.min(1, result.score / (codePoints(q) * 2))
+  await readyFrizbee()
+  // Containment saturates, which is the property the ranking is built on: every title holding the
+  // query scores 1 so popularity breaks the tie rather than title length. It needs asserting
+  // separately here because frizbee pays a positional bonus the query only collects at position 0,
+  // so "frieren" inside "sousou no frieren" reaches 116 of its own 132 rather than all of it.
+  if (containsNeedle(q, t)) return 1
+  const ceiling = selfScore(q)
+  if (!ceiling) return 0
+  return Math.min(1, alignScore(q, t) / ceiling)
 }
 
 export const searchRelevance = async (query: string, titles: string[]): Promise<number> =>
@@ -166,11 +232,42 @@ export const searchRelevance = async (query: string, titles: string[]): Promise<
 // onto "Woochi - The Demon Slayer", a 2009 korean movie.
 //
 // Netflix lists a show under the concatenation of the two names our sources carry separately, so a
-// CORRECT hit covers only about half the query: "Kimetsu no Yaiba" scores 0.552 against "Demon Slayer:
-// Kimetsu no Yaiba" and "Cowboy Bebop" 0.545 against "Cowboy Bebop: The Movie". That pins the threshold
-// from ABOVE at roughly 0.55, so 0.5 is not a taste choice, and it is the number justwatch and appletv
-// already use. Two candidates sit at exactly 0.500 and one of them is correct, so the bound is inclusive.
-export const TITLE_MATCH_THRESHOLD = 0.5
+// CORRECT hit covers only about half the query, which pins the threshold from ABOVE. Re-measured on
+// frizbee, which scores these containment-shaped pairs lower than seal-wasm did:
+//
+//   0.552  "Kimetsu no Yaiba"  vs  "Demon Slayer: Kimetsu no Yaiba"   (was 0.552)
+//   0.505  "Cowboy Bebop"      vs  "Cowboy Bebop: The Movie"          (was 0.545)
+//   0.447  "One Piece"         vs  "One Piece Film: Red"              (was 0.500)
+//
+// The last is the binding one and it is a correct match, so the bound is inclusive and 0.44 is where
+// 0.5 used to sit. The ordering is unchanged; only the scale moved.
+//
+// CAUTION: the original 0.5 was calibrated against 62 LIVE unOGS queries, and that measurement has not
+// been re-run on frizbee. This value preserves every anchor the old comment recorded, which is the
+// most that can be claimed for it without repeating that sweep.
+export const TITLE_MATCH_THRESHOLD = 0.44
+
+/**
+ * How well a candidate names the same FRANCHISE as any title a media already carries.
+ *
+ * Every known title is tried and the best wins, because catalogues disagree about which name is the
+ * canonical one and a correct hit often matches exactly one of them. AniList carries "Kimetsu no Yaiba"
+ * as romaji and "Demon Slayer: Kimetsu no Yaiba" as english; a catalogue listing the latter scores 0.41
+ * against the former and 1.0 against the latter, and taking the max is the difference between finding
+ * the show and refusing it.
+ */
+export const bestTitleScore = async (
+  knownTitles: readonly string[],
+  candidateTitle: string
+): Promise<number> => {
+  const candidate = await franchiseTitle(candidateTitle)
+  const scores = await Promise.all(
+    knownTitles
+      .filter(title => Boolean(title?.trim()))
+      .map(async title => titleSimilarity(await franchiseTitle(title), candidate))
+  )
+  return scores.length ? Math.max(...scores) : 0
+}
 
 export type TitleCandidate = { title: string, categories?: readonly string[] | null }
 
@@ -213,6 +310,29 @@ const withoutDecoratedSuffix = (title: string) => {
 }
 const withoutSeason = (title: string) =>
   squash(SEASON_MARKER.reduce((text, marker) => text.replace(marker, ' '), title))
+
+/**
+ * The franchise a title names, with the season it names dropped.
+ *
+ * sacha parses a media name the way anitomy does, so it separates "Mushoku Tensei: Jobless
+ * Reincarnation" from "Season 3", and it does the same for `2nd Season` and for `第2期`, which the
+ * regex here handles less well and only because each form was added to it by hand.
+ *
+ * A catalogue that models a show as one series with several seasons names it once, without the
+ * season, while our sources name the individual season. Comparing those directly charges a correct
+ * match for the difference, and the season is not what a title identifies well anyway: a date is.
+ */
+export const franchiseTitle = async (title: string): Promise<string> => {
+  if (!title.trim()) return title
+  await readySacha()
+  try {
+    return parseMediaName(title).titles?.[0] ?? title
+  } catch {
+    // the parser throws rather than declining on input it cannot read, and a title it chokes on must
+    // cost that one comparison its season stripping, never the whole match
+    return title
+  }
+}
 const withoutArticles = (title: string) => squash(title.replace(ARTICLES, ' '))
 const beforeColon = (title: string) => {
   const idx = title.indexOf(':')

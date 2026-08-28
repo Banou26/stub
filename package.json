@@ -44,6 +44,7 @@
     "@videojs/react": "10.0.0-beta.26",
     "dataloader": "^2.2.3",
     "dompurify": "^3.2.6",
+    "frizbee": "^0.13.0",
     "graphql": "^16.11.0",
     "graphql-yoga": "^5.15.1",
     "kleur": "^4.1.5",
@@ -56,7 +57,7 @@
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.2",
     "react-window": "^2.0.1",
-    "seal-wasm": "^0.0.3",
+    "sacha": "^0.2.3",
     "urql": "^4.2.2",
     "wouter": "^3.7.1"
   },
