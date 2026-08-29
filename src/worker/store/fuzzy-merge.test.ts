@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
 import { upsertMedia, findAggregatedMedia } from './db'
-import { fuzzyMergeMediaClusters } from './fuzzy-merge'
+import { fuzzyMergeMediaClusters, profileCluster } from './fuzzy-merge'
 
 const SPRING_2026 = '2026-04-03T15:00:00Z'
 const SUMMER_2026 = '2026-07-05T15:00:00Z'
@@ -159,4 +159,133 @@ test('the other season-only labels are refused too', async () => {
 
   const cluster = await findAggregatedMedia('anilist:4400')
   expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4400', 'cr:AAA'])
+})
+
+// Seeded, because the property under test is that the outcome does not vary: an unseeded shuffle that
+// only sometimes picks the arrival order that flips it is a flake, and a flake here reads as noise
+// rather than as the regression it is.
+const mulberry32 = (seed: number) => () => {
+  seed = (seed + 0x6d2b79f5) | 0
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+}
+
+const shuffle = <T>(items: readonly T[], random: () => number): T[] => {
+  const shuffled = [...items]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    const swap = shuffled[i]!
+    shuffled[i] = shuffled[j]!
+    shuffled[j] = swap
+  }
+  return shuffled
+}
+
+// Mushoku Tensei as the store actually holds it: two MAL cours and ani.zip's record already welded into
+// one component by their handles, EIGHT distinct normalized titles all carrying the same score 0.9,
+// against a cap of six. Only ani.zip renders the short name, and the short name is the only title
+// JustWatch carries, so which two of the eight get sliced off decides whether JustWatch attaches.
+const MUSHOKU: [string, [string, number][]][] = [
+  ['mal:39535', [
+    ['Mushoku Tensei: Jobless Reincarnation', 0.9],
+    ['Mushoku Tensei: Isekai Ittara Honki Dasu', 0.9],
+    ['無職転生 異世界行ったら本気だす', 0.9],
+  ]],
+  ['mal:45576', [
+    ['Mushoku Tensei: Jobless Reincarnation Part 2', 0.9],
+    ['Mushoku Tensei: Isekai Ittara Honki Dasu Part 2', 0.9],
+    ['無職転生 異世界行ったら本気だす 第2クール', 0.9],
+  ]],
+  ['anizip:15669', [
+    ['Mushoku Tensei', 0.9],
+    ['無職転生', 0.9],
+  ]],
+]
+
+// Every ordering in this test is one an extractor response can actually produce: the member order of a
+// union-find component is [surviving root's members..., absorbed root's members...], so it is decided by
+// which handle link was made first and with which argument first, i.e. by which HTTP response landed
+// first. Measured before the fix: the component order [mal, mal, anizip] leaves ani.zip's two titles at
+// positions 7 and 8 of the tied block, both are sliced off, and the only comparison left for
+// "mushoku tensei" is against the long renderings, whose upper bound is 0.389, 0.359 and 0.326 against
+// SIMILARITY_THRESHOLD 0.9. Any other order keeps the short name and the pair matches exactly. Same
+// inputs, opposite result, chosen by the network.
+test('the merge outcome does not depend on the order the medias arrived in', async () => {
+  const random = mulberry32(20260829)
+  const outcomes = new Set<string>()
+
+  for (let permutation = 0; permutation < 24; permutation++) {
+    const run = `-p${permutation}`
+    const component = MUSHOKU.map(([uri, titles]) => media(uri + run, shuffle(titles, random), SPRING_2026))
+    const justwatch = media(`jw:tsmushokutensei${run}`, [['Mushoku Tensei', 0.2]], SPRING_2026)
+    const handles =
+      shuffle([
+        { mediaUri: `mal:39535${run}`, handleUri: `mal:45576${run}` },
+        { mediaUri: `mal:39535${run}`, handleUri: `anizip:15669${run}` },
+      ], random)
+        .map(handle =>
+          random() < 0.5 ? { mediaUri: handle.handleUri, handleUri: handle.mediaUri } : handle
+        )
+
+    await upsertMedia(shuffle([...component, justwatch], random), handles)
+    await fuzzyMergeMediaClusters(
+      shuffle([
+        await findAggregatedMedia(`mal:39535${run}`),
+        await findAggregatedMedia(`jw:tsmushokutensei${run}`),
+      ], random)
+    )
+
+    const merged = await findAggregatedMedia(`jw:tsmushokutensei${run}`)
+    outcomes.add(merged.map(m => m.uri.replace(/-p\d+$/, '')).sort().join(' '))
+  }
+
+  expect([...outcomes]).toEqual([
+    'anizip:15669 jw:tsmushokutensei mal:39535 mal:45576',
+  ])
+})
+
+// The cap has to fall on the SET of titles, so the same six survive whichever member of the component
+// happens to render them first.
+test('the profile of a cluster is a function of its titles, not of their order', async () => {
+  const random = mulberry32(4159)
+  const cluster = MUSHOKU.map(([uri, titles]) => media(uri, titles, SPRING_2026))
+  const expected = profileCluster(cluster)
+
+  for (let permutation = 0; permutation < 50; permutation++) {
+    const shuffled =
+      shuffle(cluster, random)
+        .map(member => ({ ...member, titles: shuffle(member.titles, random) }))
+    const profile = profileCluster(shuffled)
+    expect(profile.titles).toEqual(expected.titles)
+    expect(profile.cacheKey).toEqual(expected.cacheKey)
+  }
+
+  // and the six keep the SHORT name of each script, which is the name a catalogue lists the show
+  // under and the one JustWatch's 0.2 title has to meet. Ordering a tier by the title is prefix order
+  // inside a script, so "mushoku tensei" sorts above its own longer forms and 無職転生 above its own,
+  // and the cap falls on the long ones. Eight titles tie at 0.9 here, so two are genuinely dropped.
+  expect(expected.titles).toContain('mushoku tensei')
+  expect(expected.titles).toContain('無職転生')
+})
+
+// A verdict is computed against a snapshot taken before the first await, and the pass then awaits the
+// matcher hundreds of times while extractor.ts keeps flushing its 50ms DataLoader batch, so a component
+// judged season-less can carry a second cour by the time the link is applied. Here ani.zip is welded to
+// the second cour after its profile was taken, exactly as that batch does it, and the season
+// disagreement it now has with Crunchyroll's season 1 has to be read before the link goes in: there is
+// no way back out of graph.link.
+test('a verdict is applied only if the two components still agree when it lands', async () => {
+  const crunchyroll = [media('cr:GRQ8VE29Y-s1', [['Mushoku Tensei', 0.5], ['Season 1', 0.5]], SPRING_2026)]
+  const anizip = media('anizip:20001', [['Mushoku Tensei', 0.9]], SPRING_2026)
+  const secondCour = media('mal:20002', [['Mushoku Tensei Part 2', 0.9]], SPRING_2026)
+
+  await upsertMedia([anizip, ...crunchyroll], [])
+  const staleProfile = await findAggregatedMedia('anizip:20001')
+
+  await upsertMedia([secondCour], [{ mediaUri: 'anizip:20001', handleUri: 'mal:20002' }])
+  await fuzzyMergeMediaClusters([staleProfile, crunchyroll])
+
+  const cluster = await findAggregatedMedia('cr:GRQ8VE29Y-s1')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['cr:GRQ8VE29Y-s1'])
 })

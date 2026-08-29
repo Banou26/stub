@@ -2,9 +2,13 @@ import type { Media } from './types'
 
 import { stripTitle, titleSimilarity } from '../../sources/utils'
 import { isOnlySeasonLabel, parseSeasonNumber } from '../../sources/season'
-import { linkSameMediaPairs } from './db'
+import { findAggregatedMedia, linkSameMediaPairs } from './db'
 
 const SIMILARITY_THRESHOLD = 0.9
+// Bounds the wasm work, and it is the square that matters: sameShow compares every kept title of one
+// cluster against every kept title of the other, so a pair costs up to 36 alignments today and a year
+// bucket costs that times its pairs. Eight titles would take one pair to 64, +78% on the single loop
+// the whole pass spends its time in, so this is not a knob to turn without measuring the loop first.
 const MAX_TITLES_PER_CLUSTER = 6
 const MAX_CACHED_DECISIONS = 50_000
 
@@ -35,22 +39,100 @@ const HAS_LETTER = /\p{L}/u
 // through: see isOnlySeasonLabel for the pair of shows that cost
 const carriesIdentity = (title: string) => HAS_LETTER.test(title) && !isOnlySeasonLabel(title)
 
+// Code unit order rather than localeCompare, which is locale dependent: the point of every comparator
+// in this file is that two runs agree, and a collation that reads a locale off the host does not.
+const compareStrings = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0
+
 const yearOf = (date: string | null) => {
   if (!date) return null
   const parsed = new Date(date)
   return Number.isNaN(parsed.getTime()) ? null : parsed.getUTCFullYear()
 }
 
-const profileCluster = (cluster: Media[]): ClusterProfile => {
+/**
+ * The tie inside a score tier is broken by the title itself, and that choice was MEASURED rather than
+ * argued, because the obvious arguments point the wrong way.
+ *
+ * Three arms move when the ordering changes, over the manami database (41537 records, 2026-27), and
+ * no rule wins all three, so the numbers rather than a principle decide it:
+ *
+ *   A  two different shows sharing one junk franchise label, does it survive the slice on BOTH sides
+ *      and weld them ("Star"t and Agitation! both carry "irodorimidori"): 1547 pairs, lower is better
+ *   B  one show reaching the store as two clusters holding overlapping subsets of one title pool, do
+ *      they keep a title in common: 6502 cases, higher is better
+ *   C  a ONE-title streaming cluster meeting a fat metadata cluster, is that title among the six:
+ *      12399 cases, higher is better. This is JustWatch attaching to Mushoku Tensei.
+ *
+ *                       A weld     B split     C attach
+ *     arrival order      64.5%       94.9%        56.0%     what this replaces
+ *     title ascending    69.6%       99.9%        70.0%     what this is
+ *     longest first      53.8%      100.0%        19.9%     best on A and unusable on C
+ *     shortest first     82.7%      100.0%        98.7%     the control, and it inverts A as predicted
+ *
+ * So ordering by the title costs five points on A and buys five on B and fourteen on C. Both recall
+ * arms rise for the same reason: an ordering applied identically to both sides cannot drop a title one
+ * side keeps, which is exactly what arrival order was doing to one split cluster in twenty.
+ *
+ * Two things worth knowing before changing this again. Latin code points sort below CJK ones, so this
+ * does hand a tie to the english titles, and the intuition that this starves the native title and
+ * costs matches is measurably wrong: C rises, because a streaming catalogue lists in latin and the
+ * native title is not what it is looked up by. And A is not really the slice's job. Relying on a random
+ * six to drop a third of the wrong welds is relying on luck for correctness, and it is what made the
+ * same two shows merge on one load and not the next. The 255 of those 1547 where exactly one side
+ * names a season ("86" against "86 Part 2", both carrying "86 不存在的战区") are a veto gap, tracked
+ * separately, and closing it is what should pay A back.
+ */
+const orderWithinTier = (titles: string[]) => [...titles].sort(compareStrings)
+
+/**
+ * The titles this cluster is compared on, as a function of the SET of (title, score) pairs it holds
+ * and of nothing else.
+ *
+ * Every title's `score` is a single module constant per SOURCE (0.9 jikan and ani.zip, 0.8 anilist,
+ * 0.5 crunchyroll, 0.3 the english metadata block, 0.25 watchmode, 0.2 the streaming catalogues), so
+ * a comparator on it returns 0 for every pair inside a tier and Array.prototype.sort leaves those in
+ * insertion order. Insertion order was cluster order, which is union-find component order, which is
+ * [surviving root's members..., absorbed root's members...] and therefore the order the extractors'
+ * HTTP responses landed in. The same cluster then kept a different six from one run to the next, and
+ * the six decide whether it merges at all: an already welded Mushoku Tensei component carries eight
+ * distinct normalized titles at 0.9, and whether ani.zip's short "mushoku tensei" is among the six is
+ * the whole difference between JustWatch attaching and not. With the long titles only,
+ * maxPossibleSimilarity measures 0.389, 0.359 and 0.326 against them and refuses the pair before the
+ * matcher even runs.
+ *
+ * Deduplicating through a Map keyed on the normalized title rather than sorting and then deduplicating
+ * matters for the same reason: a dedup over a sorted array keeps whichever copy the sort left first,
+ * and inside a tier that is again arrival order.
+ */
+const selectTitles = (cluster: Media[]): string[] => {
+  const bestScore = new Map<string, number>()
+  for (const media of cluster) {
+    for (const { title, score } of media.titles ?? []) {
+      const normalized = normalizeTitle(title)
+      if (!carriesIdentity(normalized)) continue
+      const value = score ?? -1
+      const current = bestScore.get(normalized)
+      if (current === undefined || value > current) bestScore.set(normalized, value)
+    }
+  }
+
+  const byScore = new Map<number, string[]>()
+  for (const [title, score] of bestScore) {
+    const tier = byScore.get(score)
+    if (tier) tier.push(title)
+    else byScore.set(score, [title])
+  }
+
+  return [...byScore]
+    .sort(([a], [b]) => b - a)
+    .flatMap(([, titles]) => orderWithinTier(titles))
+    .slice(0, MAX_TITLES_PER_CLUSTER)
+}
+
+/** Everything the pass reads off a cluster. Nothing here may depend on the order of `cluster`. */
+export const profileCluster = (cluster: Media[]): ClusterProfile => {
   const key = cluster.map(media => media.uri).sort()[0]!
-  const titles =
-    [...new Set(
-      cluster
-        .flatMap(media => media.titles ?? [])
-        .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
-        .map(({ title }) => normalizeTitle(title))
-        .filter(carriesIdentity)
-    )].slice(0, MAX_TITLES_PER_CLUSTER)
+  const titles = selectTitles(cluster)
   const years =
     new Set(
       cluster
@@ -86,8 +168,17 @@ const profileCluster = (cluster: Media[]): ClusterProfile => {
     years,
     formats,
     seasons,
-    // joining titles with ',' is safe only because normalizeTitle keeps nothing but letters, numbers and single spaces, so no separator can survive inside a title: let punctuation through there and cache keys start colliding silently
-    cacheKey: `${key}#${titles.join(',')}#${[...formats].sort().join(',')}#${[...seasons].sort().join(',')}`,
+    // The key has to identify the SET of titles, because that is all sameShow's verdict depends on: its
+    // title comparison is an existential double loop, so no ordering of the same six can change the
+    // answer. Sorting here keeps one logical cluster on ONE cache entry, where joining them in
+    // selection order once wrote a second entry per arrival order for a pair whose verdict could not
+    // differ, re-ran every pair through the wasm loop on the pass after any merge, and counted twice
+    // toward the MAX_CACHED_DECISIONS wipe that then threw away the entries still worth keeping.
+    // Joining with ',' is safe only because normalizeTitle keeps nothing but letters, numbers and
+    // single spaces, so no separator can survive inside a title: let punctuation through there and
+    // cache keys start colliding silently. Seasons are joined numerically for legibility only, the
+    // default comparator canonicalizes them correctly too ([2,10,1] and [1,10,2] both give "1,10,2").
+    cacheKey: `${key}#${[...titles].sort(compareStrings).join(',')}#${[...formats].sort(compareStrings).join(',')}#${[...seasons].sort((a, b) => a - b).join(',')}`,
   }
 }
 
@@ -112,8 +203,10 @@ const trailingNumber = (title: string) => {
 }
 
 // A trailing number is compared as a VALUE, never as characters. "yami shibai 16" and "yami shibai 17"
-// score 0.929 and "onii-chan!" and "oniichan" score 0.833, so no threshold tells one from the other:
-// alignment charges the same for a digit that is the whole identity as for a hyphen that is noise.
+// are two different shows and score 0.8849, while "onii-chan!" and "oniichan" are one show and score
+// 1.0000, so no threshold tells them apart: alignment charges nothing for a hyphen that is noise and
+// almost nothing for a digit that is the whole identity. Both re-measured on frizbee 2026-08-29; they
+// read 0.929 and 0.833 here until then, which were seal-wasm's and outlived it.
 const differOnlyByTrailingNumber = (a: string, b: string) => {
   const left = trailingNumber(a)
   const right = trailingNumber(b)
@@ -142,6 +235,18 @@ const pairKey = (a: ClusterProfile, b: ClusterProfile) =>
 
 const pairDecisions = new Map<string, boolean>()
 
+// The cache is keyed on exactly the three fields sameShow reads plus the component's identity, so a
+// reused verdict is always still a verdict about the same inputs. That is what makes it safe to ask
+// again below without paying for the wasm loop twice when nothing has moved.
+const decide = async (a: ClusterProfile, b: ClusterProfile) => {
+  const key = pairKey(a, b)
+  const cached = pairDecisions.get(key)
+  if (cached !== undefined) return cached
+  const match = await sameShow(a, b)
+  pairDecisions.set(key, match)
+  return match
+}
+
 export const fuzzyMergeMediaClusters = async (clusters: Media[][]): Promise<boolean> => {
   const profiles = clusters.filter(cluster => cluster.length).map(profileCluster)
 
@@ -167,15 +272,45 @@ export const fuzzyMergeMediaClusters = async (clusters: Media[][]): Promise<bool
         const key = pairKey(a, b)
         if (visited.has(key)) continue
         visited.add(key)
-        let match = pairDecisions.get(key)
-        if (match === undefined) {
-          match = await sameShow(a, b)
-          pairDecisions.set(key, match)
-        }
-        if (match) links.push([a.cluster[0]!.uri, b.cluster[0]!.uri])
+        // The link names the two components by their `key`, the lowest uri each holds, and names them
+        // in a fixed order. Taking cluster[0] instead named them by union-find component order, and the
+        // ARGUMENT order is what graph.link hands to union(), which keeps the first argument's root on
+        // a rank tie (two fresh singletons, the common case) and appends the absorbed members after it.
+        // So arrival order chose the link direction, the link direction fixed the merged component's
+        // order, and that order chose which title the next pass sliced off: the loop this pass both
+        // consumed and fed.
+        if (await decide(a, b)) links.push(a.key < b.key ? [a.key, b.key] : [b.key, a.key])
       }
     }
   }
 
-  return links.length ? linkSameMediaPairs(links) : false
+  // ...and the SEQUENCE of unions decides root survival just as much as their direction does, so the
+  // links are applied in an order the bucket cannot influence either.
+  links.sort(([leftA, leftB], [rightA, rightB]) => compareStrings(leftA, rightA) || compareStrings(leftB, rightB))
+
+  let changed = false
+  for (const [uriA, uriB] of links) {
+    // Every verdict above was computed against a SNAPSHOT taken before the first await, and the pass
+    // awaits the wasm matcher hundreds of times: extractor.ts flushes its DataLoader batch on a 50ms
+    // timer throughout, and each flush can weld more medias into a component that has already been
+    // judged. Applying a verdict about a small component to whatever that component has become is how
+    // a Crunchyroll season 1 gets welded into a component that grew a season 2 while the pass ran, and
+    // graph.link has no inverse. So the two components are read again as they stand NOW and put
+    // through the same checks, with the link applied in the same turn as the check that allowed it.
+    // This can only ever REFUSE a link the snapshot allowed - it is an AND with the original verdict,
+    // never a replacement - and it costs one extra pass over the matched pairs only, which are few.
+    // The check is free whenever nothing moved, because an unchanged component profiles to the same
+    // cacheKey and the decision is already memoized.
+    const clusterA = await findAggregatedMedia(uriA)
+    const clusterB = await findAggregatedMedia(uriB)
+    if (!clusterA.length || !clusterB.length) continue
+    const a = profileCluster(clusterA)
+    const b = profileCluster(clusterB)
+    // already one component, so both profiles are the same component and there is nothing to link
+    if (a.key === b.key) continue
+    if (!await decide(a, b)) continue
+    if (linkSameMediaPairs([[uriA, uriB]])) changed = true
+  }
+
+  return changed
 }
