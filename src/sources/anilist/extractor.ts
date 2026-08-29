@@ -1,4 +1,5 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
+import { airedDate } from '../aired-date'
 import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
@@ -338,16 +339,8 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       })
       : undefined
 
-  const firstAiringNode = media.airingSchedule?.edges?.at(0)?.node
-  const startDate =
-    firstAiringNode?.airingAt
-      ? new Date(firstAiringNode.airingAt * 1000).toUTCString()
-      : undefined
-  const lastAiringNode = media.airingSchedule?.edges?.at(-1)?.node
-  const endDate =
-    lastAiringNode?.airingAt
-      ? new Date(lastAiringNode.airingAt * 1000).toUTCString()
-      : undefined
+  const startDate = airedDate(media.startDate, media.airingSchedule, 'first')
+  const endDate = airedDate(media.endDate, media.airingSchedule, 'last')
 
   return makeMedia({
     _id: crypto.randomUUID(),
