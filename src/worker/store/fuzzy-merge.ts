@@ -79,8 +79,8 @@ const yearOf = (date: string | null) => {
  * native title is not what it is looked up by. And A is not really the slice's job. Relying on a random
  * six to drop a third of the wrong welds is relying on luck for correctness, and it is what made the
  * same two shows merge on one load and not the next. The 255 of those 1547 where exactly one side
- * names a season ("86" against "86 Part 2", both carrying "86 不存在的战区") are a veto gap, tracked
- * separately, and closing it is what should pay A back.
+ * names a season ("86" against "86 Part 2", both carrying "86 不存在的战区") are a veto gap, and closing
+ * it was measured afterwards and does NOT pay A back: see the season check in sameShow for the numbers.
  */
 const orderWithinTier = (titles: string[]) => [...titles].sort(compareStrings)
 
@@ -218,6 +218,37 @@ const sameShow = async (a: ClusterProfile, b: ClusterProfile) => {
   if (a.formats.size && b.formats.size && ![...a.formats].some(format => b.formats.has(format))) return false
   // Only a DISAGREEMENT blocks. A cluster whose sources never spell the season out has to stay free to
   // merge, or the pass stops doing the job it exists for.
+  //
+  // Making silence itself block was MODELLED and REFUSED, over the manami database (41537 records,
+  // 2026-27) driven through this file's own profileCluster and titleSimilarity. The rule tried: refuse
+  // when one side declares season N>=2 and the other declares no season at all.
+  //
+  //   refuses  323 wrong welds
+  //   costs    592 of 33188 merges where one show arrives as two overlapping subsets of its titles
+  //            11415 of 181677 attaches where a ONE-title streaming cluster meets a fat metadata
+  //              cluster, which is arm C above and the job this pass exists for, over 2589 shows
+  //            2589 of 2824 on an adversarial split with every season-marked title on one side
+  //   ratio    0.55 / 0.03 / 0.12, combined 323 refused against 12007 lost, one wrong weld stopped
+  //              per 37 correct merges destroyed
+  //
+  // The year bucketing has already spent the separation the rule is imagined to buy: of the 373 pairs
+  // where exactly one side names a season, ZERO have year sets that differ, because this pass only ever
+  // compares within a year bucket, so "[Oshi no Ko]" 2023 against its 2024 second season is refused
+  // before any of this runs. What is left in that 373 is same-year split cours, recaps and specials.
+  // The cost is not bounded by the year at all, since both sides of a split cluster hold the same
+  // record and so the same year, so the rule is paid for out of "[Oshi no Ko] 2nd Season" (2024)
+  // attaching to a streaming cluster named "Oshi no Ko", and 2588 other shows. Ten narrower variants
+  // were measured too. The best of them (also require the season-less side to carry no season marker in
+  // ANY raw title, and the two clusters to hold a title pair that is equal once the marker is stripped
+  // and unequal before) keeps 126 of the 323 for 578 lost attaches across 468 shows, ratio 0.22, and
+  // still refuses that same Oshi no Ko attach. Nothing in the family reaches 1.
+  //
+  // WHAT THEREFORE GETS THROUGH, known rather than new: "86" and "86 Part 2", both 2021, both carrying
+  // the synonym "86 -不存在的战区-", one naming a season and one not, weld on the exact-title shortcut
+  // below. That is 373 of the 12674 pairs of distinct records that share a title after the slice; the
+  // other 12050 have NEITHER side naming a season and are franchise-label collisions ("minna no uta" is
+  // carried by 1039 records), which no season rule reaches. Pinned by the KNOWN GAP test in
+  // season-separation.test.ts, so closing it fails there loudly.
   if (a.seasons.size && b.seasons.size && ![...a.seasons].some(season => b.seasons.has(season))) return false
   for (const titleA of a.titles) {
     for (const titleB of b.titles) {
