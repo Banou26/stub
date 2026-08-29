@@ -161,6 +161,67 @@ test('the other season-only labels are refused too', async () => {
   expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4400', 'cr:AAA'])
 })
 
+// `media` above types everything TV, and these three need the type to differ per member.
+const typed = (uri: string, type: string | null, titles: [string, number][], startDate: string | null) => ({
+  ...media(uri, titles, startDate ?? ''), type, startDate,
+}) as any
+
+// The class the date axis cannot reach: a work and its own companion entry share a year, often share
+// a DAY, and share the native title unchanged, so the exact-title shortcut fires on 「ヴァンキッシュド
+// クイーンズ」 while the latin titles that do distinguish them are never the pair that matches. Both
+// signals are present here and both are needed: anilist calls the second one "Specials" and the two
+// catalogues type it OVA against SPECIAL.
+test('a work does not weld to its own companion entry', async () => {
+  const ova = [
+    typed('anilist:5000', 'OVA', [['Vanquished Queens', 0.8], ['ヴァンキッシュドクイーンズ', 0.8]], SPRING_2026),
+    typed('kitsu:5001', 'OVA', [['Vanquished Queens', 0.3]], SPRING_2026),
+  ]
+  const specials = [
+    typed('anilist:5002', 'SPECIAL', [['Vanquished Queens Specials', 0.8], ['ヴァンキッシュドクイーンズ', 0.8]], SPRING_2026),
+    typed('kitsu:5003', 'SPECIAL', [['Vanquished Queens Specials', 0.3]], SPRING_2026),
+  ]
+
+  await upsertMedia([...ova, ...specials], [
+    { mediaUri: 'anilist:5000', handleUri: 'kitsu:5001' },
+    { mediaUri: 'anilist:5002', handleUri: 'kitsu:5003' },
+  ])
+  await fuzzyMergeMediaClusters([ova, specials])
+
+  const cluster = await findAggregatedMedia('anilist:5000')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:5000', 'kitsu:5001'])
+})
+
+// ...and the marker on its own must not block, which is the whole reason the type disagreement is
+// required. One catalogue writing "Mirai Nikki OVA" where the other writes "Mirai Nikki" for THE SAME
+// entry is a naming convention, and the marker alone destroys 136 correct merges over the corpus
+// against the 2 the pair of signals costs. Measured on anilist 8460 against its kitsu record.
+test('one catalogue appending OVA to its own title still merges', async () => {
+  const anilist = [typed('anilist:5100', 'OVA', [['Mirai Nikki OVA', 0.8], ['未来日記', 0.8]], SPRING_2026)]
+  const kitsu = [typed('kitsu:5101', 'OVA', [['Mirai Nikki', 0.3], ['未来日記', 0.3]], SPRING_2026)]
+
+  await upsertMedia([...anilist, ...kitsu], [])
+  await fuzzyMergeMediaClusters([anilist, kitsu])
+
+  const cluster = await findAggregatedMedia('anilist:5100')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:5100', 'kitsu:5101'])
+})
+
+// A streaming catalogue fills no `type`, so silence never blocks and the attach the pass exists for
+// survives even when the metadata cluster's own title carries a marker. 0 of 17946 attaches lost.
+test('a streaming cluster still attaches to a cluster whose title carries a marker', async () => {
+  const metadata = [
+    typed('anilist:5200', 'SPECIAL', [['Keijo!!!!!!!! Specials', 0.8], ['競女 specials', 0.8]], SPRING_2026),
+    typed('kitsu:5201', 'SPECIAL', [['Keijo!!!!!!!!', 0.3], ['競女', 0.3]], SPRING_2026),
+  ]
+  const justwatch = [typed('jw:tskeijo', null, [['Keijo!!!!!!!!', 0.2]], '2026-01-01')]
+
+  await upsertMedia([...metadata, ...justwatch], [{ mediaUri: 'anilist:5200', handleUri: 'kitsu:5201' }])
+  await fuzzyMergeMediaClusters([metadata, justwatch])
+
+  const cluster = await findAggregatedMedia('anilist:5200')
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:5200', 'jw:tskeijo', 'kitsu:5201'])
+})
+
 // Seeded, because the property under test is that the outcome does not vary: an unseeded shuffle that
 // only sometimes picks the arrival order that flips it is a flake, and a flake here reads as noise
 // rather than as the regression it is.
