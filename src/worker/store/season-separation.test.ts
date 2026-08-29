@@ -110,3 +110,44 @@ test('KNOWN GAP: a silent side welds to a season-3 cluster through a shared titl
 
   expect(await welded('anilist:2490', 'anilist:2491')).toBe(true)
 })
+
+// A FOURTH way seasons weld, and it is not a merge rule at all: it is a source asserting the wrong
+// date. profileCluster builds `years` from EVERY member's startDate, and fuzzyMergeMediaClusters
+// buckets by year, so one member carrying season 1's date drops the whole season 3 cluster into season
+// 1's bucket, where a shared title is enough. Nothing downstream can recover: by then the two really
+// do share a year as far as the pass can tell.
+//
+// tvmaze/extractor.ts and tmdb/extractor.ts both did exactly this, minting a season-scoped id while
+// stamping the SHOW's premiere on it. Both are fixed at the source, and this pins WHY, because the
+// next source to model a show as one entity will be tempted the same way and the merge pass will not
+// save it.
+test('a member carrying another season\'s date widens the year set and welds', async () => {
+  const s1 = [media('anilist:301', [['Bungou Stray Dogs', 0.9]], '2016-04-07T00:00:00Z')]
+  const s3 = [
+    media('anilist:302', [['Bungou Stray Dogs', 0.9]], '2019-04-12T00:00:00Z'),
+    // a season-scoped media stamped with the SHOW's premiere, which is season 1's
+    media('tvmaze:556-s3', [['Bungou Stray Dogs', 0.9]], '2016-04-07T00:00:00Z'),
+  ]
+  await upsertMedia([...s1, ...s3], [{ mediaUri: 'anilist:302', handleUri: 'tvmaze:556-s3' }])
+  await fuzzyMergeMediaClusters([
+    await findAggregatedMedia('anilist:301'),
+    await findAggregatedMedia('anilist:302'),
+  ])
+
+  expect(await welded('anilist:301', 'anilist:302')).toBe(true)
+})
+
+test('the same clusters stay apart when every member carries its own season\'s date', async () => {
+  const s1 = [media('anilist:401', [['Bungou Stray Dogs', 0.9]], '2016-04-07T00:00:00Z')]
+  const s3 = [
+    media('anilist:402', [['Bungou Stray Dogs', 0.9]], '2019-04-12T00:00:00Z'),
+    media('tvmaze:557-s3', [['Bungou Stray Dogs', 0.9]], '2019-04-12T00:00:00Z'),
+  ]
+  await upsertMedia([...s1, ...s3], [{ mediaUri: 'anilist:402', handleUri: 'tvmaze:557-s3' }])
+  await fuzzyMergeMediaClusters([
+    await findAggregatedMedia('anilist:401'),
+    await findAggregatedMedia('anilist:402'),
+  ])
+
+  expect(await welded('anilist:401', 'anilist:402')).toBe(false)
+})

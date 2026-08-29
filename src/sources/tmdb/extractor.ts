@@ -110,7 +110,14 @@ const normalizeMedia = (m: TmdbMedia, seasonNumber?: number): GQLMedia =>
     covers: img(m.poster, SCORE),
     banners: img(m.banner, SCORE),
     averageScore: m.score,
-    startDate: m.year ? `${m.year}-01-01` : undefined,
+    // Only the SHOW-level media may carry the show's year. A season-scoped one must not: TMDB's search
+    // page yields one year for the whole series, so stamping it on season 3 puts season 1's year into
+    // that cluster's `years` set, and fuzzyMergeMediaClusters buckets by year, so the two seasons meet
+    // in one bucket where a shared title welds them. Same defect as tvmaze/extractor.ts, and unlike
+    // tvmaze there is no season air date to substitute: this scrapes HTML and only ever sees the one
+    // year. So the season-scoped media asserts no date at all, which costs a year bucket rather than
+    // risking a permanent weld.
+    startDate: seasonNumber == null && m.year ? `${m.year}-01-01` : undefined,
   })
 
 const normalizeEpisode = (episode: TmdbEpisode, season: number, tvId: string, mediaUri: string): GQLEpisode =>

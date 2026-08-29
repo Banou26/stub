@@ -51,6 +51,7 @@ interface TvmazeEpisode {
   name?: string
   season?: number
   number?: number
+  airdate?: string | null
   summary?: string | null
   image?: TvmazeImage | null
 }
@@ -64,7 +65,12 @@ const buildHandles = (show: TvmazeShow): GQLMedia[] => {
 // bare show id: every season would hand back the same one and clustering union-finds them into a
 // single media. Same defect TMDB and JustWatch had, same '-s<n>' fix. A show-level id is still minted
 // for SEARCH, where there is no cluster to corrupt and TVmaze genuinely is describing the show.
-const normalizeMedia = (show: TvmazeShow, seasonNumber?: number, handles: GQLMedia[] = []): GQLMedia =>
+const normalizeMedia = (
+  show: TvmazeShow,
+  seasonNumber?: number,
+  handles: GQLMedia[] = [],
+  seasonPremiere?: string
+): GQLMedia =>
   makeMedia({
     origin,
     id: seasonNumber == null ? String(show.id) : seasonScopedId(show.id, seasonNumber),
@@ -75,7 +81,20 @@ const normalizeMedia = (show: TvmazeShow, seasonNumber?: number, handles: GQLMed
     titles: show.name ? [{ language: 'en', title: show.name, score: SCORE }] : [],
     ...desc(text(show.summary), SCORE),
     covers: img(show.image?.original ?? show.image?.medium, SCORE),
-    startDate: show.premiered || undefined,
+    // A SEASON-scoped media may never carry the SHOW's premiere, which is season 1's date.
+    //
+    // It is not merely inaccurate, it welds seasons together, and by a route that looks nothing like a
+    // title problem: profileCluster derives its `years` set from every member's startDate, so a season 3
+    // cluster holding this media carries BOTH 2019 and season 1's 2016, and fuzzyMergeMediaClusters
+    // buckets by year, so it lands in season 1's bucket where a shared title is enough. Reproduced
+    // against the store on Bungou Stray Dogs: with the show date the two seasons come back as one
+    // component, with the season's own date they stay apart.
+    //
+    // The season's premiere is the earliest airdate among ITS episodes, taken by date rather than by
+    // episode number because a recap or special routinely carries episode 0 or an out-of-order number.
+    // Nothing is asserted when it is unknown: an absent date costs this source a year bucket, a wrong
+    // one costs a permanent weld, and graph.link has no inverse.
+    startDate: (seasonNumber == null ? show.premiered : seasonPremiere) || undefined,
     averageScore: show.rating?.average ?? undefined,
   })
 
@@ -91,6 +110,17 @@ const normalizeEpisode = (episode: TvmazeEpisode, mediaUri: string): GQLEpisode 
     seasonNumber: episode.season,
     episodeNumber: episode.number,
   })
+
+/** The earliest airdate among one season's episodes, off the embedded list, no extra request. */
+const seasonPremiere = (episodes: TvmazeEpisode[], seasonNumber?: number): string | undefined => {
+  if (seasonNumber == null) return undefined
+  let earliest: string | undefined
+  for (const episode of episodes) {
+    if (episode.season !== seasonNumber || !episode.airdate) continue
+    if (!earliest || episode.airdate < earliest) earliest = episode.airdate
+  }
+  return earliest
+}
 
 /** Season sizes, straight off the embedded episode list - no extra request to count them. */
 const seasonsOf = (episodes: TvmazeEpisode[]) => {
@@ -121,7 +151,7 @@ const getMedia = async (uri: string, id: string, pinned: number | undefined, ctx
   // a series whose season cannot be determined has no identity here: see normalizeMedia
   if (seasonNumber == null && seasons.length > 1) return undefined
 
-  const media = normalizeMedia(show, seasonNumber, buildHandles(show))
+  const media = normalizeMedia(show, seasonNumber, buildHandles(show), seasonPremiere(all, seasonNumber))
   const episodes = seasonNumber == null ? all : all.filter(episode => episode.season === seasonNumber)
   media.episodes = episodes.map(episode => normalizeEpisode(episode, media.uri))
   media.episodeCount = media.episodes.length
