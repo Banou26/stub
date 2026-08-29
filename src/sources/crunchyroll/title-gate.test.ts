@@ -8,13 +8,17 @@ import { bestTitleScore } from '../utils'
  *
  * 0.9 is measured, not chosen. Over the cases below every correct pairing scores exactly 1.000, because
  * stripping season markers and taking the best of the cluster's titles makes a true match exact, while
- * the highest scoring WRONG pairing is 0.837. The threshold sits in that 0.163 gap, nearer the wrong
+ * the highest scoring WRONG pairing is 0.8135. The threshold sits in that 0.1865 gap, nearer the wrong
  * side so ordinary punctuation and romanization noise still clears it.
  *
  * The two that bind it, both the dangerous shape (a real title plus a suffix):
- *   0.837  Mushoku Tensei: Jobless Reincarnation  vs  ... Gaiden   (spin-off)
- *   0.833  Steins;Gate                            vs  Steins;Gate 0 (sequel)
+ *   0.8135  Mushoku Tensei: Jobless Reincarnation  vs  ... Gaiden   (spin-off)
+ *   0.7685  Steins;Gate                            vs  Steins;Gate 0 (sequel)
  * Anything at or above 0.9 in this set is the same work under a different catalogue's name.
+ *
+ * Both numbers are frizbee's, re-measured 2026-08-29. They read 0.837 and 0.833 here until then, which
+ * were seal-wasm's and had survived the engine swap unchanged: the gap they described was 0.163 rather
+ * than the 0.1865 there actually is, so the margin was understated. The verdicts never moved.
  */
 const THRESHOLD = 0.9
 

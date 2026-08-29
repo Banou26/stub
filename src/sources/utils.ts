@@ -242,9 +242,29 @@ export const searchRelevance = async (query: string, titles: string[]): Promise<
 // The last is the binding one and it is a correct match, so the bound is inclusive and 0.44 is where
 // 0.5 used to sit. The ordering is unchanged; only the scale moved.
 //
-// CAUTION: the original 0.5 was calibrated against 62 LIVE unOGS queries, and that measurement has not
-// been re-run on frizbee. This value preserves every anchor the old comment recorded, which is the
-// most that can be claimed for it without repeating that sweep.
+// Re-measured 2026-08-29 against the whole manami database rather than the 62 live unOGS queries the
+// original 0.5 came from: 243194 synonym pairs as correct matches, 139507 relatedAnime pairs as the
+// sequels and spin-offs that must be refused, run through this exact function. `npm run calibrate`.
+//
+// KEEP 0.44. Every 0.01 step upward from it refuses fewer wrong links than the correct matches it
+// loses, ratio 0.76 to 0.97 the whole way to 0.50, so there is nothing above it to move to. Below it
+// the wrong-link arm climbs without the correct arm following.
+//
+// Two things that reading the table would otherwise get wrong, both cost a full sweep to learn:
+//
+//   - The anchor this number is pinned on is NOT reachable. simplifyTitle('One Piece Film: Red') is
+//     ['One Piece Film'], never 'One Piece', so the 0.447 pair below can only arise in the orientation
+//     that would be a WRONG link. The lowest anchor that is genuinely a correct match here is Cowboy
+//     Bebop at 0.505, which 0.44 and the old 0.5 both admit. The number survives its own justification
+//     failing, but do not defend it with that line again.
+//   - Sampling the two arms to equal COUNTS inverts the answer. The populations differ (243194 against
+//     139507), so equal counts make the wrong-link arm 1.743x denser and the ratio above reads 1.19 to
+//     1.93, which argues for 0.50. Same code, same line, opposite conclusion. The harness now runs full
+//     populations by default and says so in its header when an env var caps it.
+//
+// What this threshold does NOT do, measured, so nobody credits it: it does not refuse
+// "Demon Slayer" against "Woochi - The Demon Slayer", the wrong weld named below. That scores 0.5200
+// and passes at 0.44 and at 0.5 alike. The category veto in pickTitleMatch is what refuses it.
 export const TITLE_MATCH_THRESHOLD = 0.44
 
 /**
