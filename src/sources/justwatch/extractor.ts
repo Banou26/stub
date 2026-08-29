@@ -464,7 +464,16 @@ const datedLikeThisMedia = (startDate: string | null | undefined, node: JWShowNo
  * entirely on the search payload, so a candidate the title refuses costs zero requests.
  */
 const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
-  const known = await waitForMedia(aggregatedUri, ctx, media => (getFirstTitle(media) ? media : undefined), 30_000)
+  const known = await waitForMedia(
+    aggregatedUri,
+    ctx,
+    // BOTH, not just a title. This asked for a title alone and then refused two lines later when
+    // startDate had not landed, so whenever the title arrived on an earlier tick than the date the
+    // source gave up permanently and never linked. The gate needs the date, so the wait is what has
+    // to be told that.
+    media => (getFirstTitle(media) && media?.startDate ? media : undefined),
+    30_000
+  )
   if (!known) return null
 
   // anything missing is a refusal, never a guess: with no start date there is no date axis, and a gate
