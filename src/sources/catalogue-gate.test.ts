@@ -2,8 +2,11 @@ import { describe, expect, test } from 'vitest'
 
 import {
   CONFIDENT_TITLE_THRESHOLD,
+  closestSeasonByAirDate,
+  pickGatedCandidate,
   rankByTitle,
   searchQueries,
+  SEASON_DATE_WINDOW,
   yearAppearsInShow
 } from './catalogue-gate'
 import { bestTitleScore, titleSimilarity } from './utils'
@@ -209,5 +212,167 @@ describe('searchQueries', () => {
 
   test('a title with nothing to strip is its own only query', () => {
     expect(searchQueries('Hunter x Hunter')).toEqual(['Hunter x Hunter'])
+  })
+})
+
+
+/**
+ * The finer axis, which Apple TV can read and JustWatch cannot: a JustWatch season carries a YEAR, an
+ * Apple TV season carries a day.
+ *
+ * The Severance numbers below are the real payload, measured 2026-08-29 and re-derivable in one
+ * request:
+ *
+ *   curl -s 'https://uts-api.itunes.apple.com/uts/v3/shows/umc.cmc.1srk2goyh2q2zdxcx605w8vtx?caller=web&sf=143441&v=58&pfm=web&locale=en-US&utsk=0'
+ *
+ * season 1 releaseDate 1645142400000 (2022-02-18), season 2 1737072000000 (2025-01-17), and a
+ * show-level content.releaseDate of 1645142400000, which IS season 1's.
+ */
+describe('the Apple TV date axis: our start date within 45 days of a SEASON\'s premiere', () => {
+  const DAY = 24 * 60 * 60 * 1000
+  const SEVERANCE_SHOW_DATE = 1645142400000
+  const SEVERANCE_SEASONS = [
+    { seasonNumber: 1, releaseDate: 1645142400000 },
+    { seasonNumber: 2, releaseDate: 1737072000000 }
+  ]
+  const dateOf = (season: { seasonNumber?: number, releaseDate?: number }) => season.releaseDate
+
+  test('the nearest season is the one that aired, and the show-level date names the wrong one', () => {
+    const nearest = closestSeasonByAirDate('2025-01-17T00:00:00.000Z', SEVERANCE_SEASONS, dateOf)
+    expect(nearest?.season.seasonNumber).toBe(2)
+    expect(nearest?.diff).toBe(0)
+
+    // the show carries season 1's date, so a gate reading it puts season 2 nearly three years out and
+    // refuses the link this whole change exists to recover
+    const showLevel = closestSeasonByAirDate(
+      '2025-01-17T00:00:00.000Z',
+      [{ seasonNumber: 1, releaseDate: SEVERANCE_SHOW_DATE }],
+      dateOf
+    )
+    expect(showLevel!.diff).toBeGreaterThan(SEASON_DATE_WINDOW)
+  })
+
+  // THE UNITS, pinned as behaviour because the failure is silent: a seconds-valued field read as
+  // milliseconds is 1970, which is not a malformed date and not a January 1 that a precision guard
+  // would notice, it is simply a wrong answer 55 years out.
+  test('epoch MILLISECONDS: the same number read as seconds is refused', () => {
+    expect(new Date(1645142400000).toISOString()).toBe('2022-02-18T00:00:00.000Z')
+    expect(new Date(1645142400).toISOString()).toBe('1970-01-20T00:59:02.400Z')
+
+    const asSeconds = [{ seasonNumber: 1, releaseDate: 1645142400 }]
+    const nearest = closestSeasonByAirDate('2022-02-18T00:00:00.000Z', asSeconds, dateOf)
+    expect(nearest!.diff).toBeGreaterThan(SEASON_DATE_WINDOW)
+  })
+
+  test('45 days is inside the window and 46 is not', () => {
+    const premiere = Date.UTC(2025, 0, 17)
+    const at = (days: number) =>
+      closestSeasonByAirDate(new Date(premiere + days * DAY).toISOString(), [{ releaseDate: premiere }], dateOf)!.diff
+    expect(at(45)).toBe(SEASON_DATE_WINDOW)
+    expect(at(45) <= SEASON_DATE_WINDOW).toBe(true)
+    expect(at(46) <= SEASON_DATE_WINDOW).toBe(false)
+    // symmetric: a premiere BEFORE our date is the same distance as one after it
+    expect(at(-45)).toBe(SEASON_DATE_WINDOW)
+  })
+
+  describe('anything missing is a refusal, never a guess', () => {
+    test('no start date', () => {
+      expect(closestSeasonByAirDate(undefined, SEVERANCE_SEASONS, dateOf)).toBeUndefined()
+      expect(closestSeasonByAirDate(null, SEVERANCE_SEASONS, dateOf)).toBeUndefined()
+      expect(closestSeasonByAirDate('', SEVERANCE_SEASONS, dateOf)).toBeUndefined()
+      expect(closestSeasonByAirDate('not a date', SEVERANCE_SEASONS, dateOf)).toBeUndefined()
+    })
+
+    test('no seasons, or no season carrying a date', () => {
+      expect(closestSeasonByAirDate('2025-01-17', [], dateOf)).toBeUndefined()
+      expect(closestSeasonByAirDate('2025-01-17', [{ seasonNumber: 1 }, { seasonNumber: 2 }], dateOf)).toBeUndefined()
+    })
+  })
+})
+
+
+describe('the Apple TV gate, both axes composed', () => {
+  type Season = { seasonNumber?: number, releaseDate?: number }
+  type Candidate = { id: string, title: string, seasons: Season[] }
+
+  /** Exactly what appletv/extractor.ts calls, with the detail request recorded rather than made. */
+  const gate = (
+    known: { titles: string[], startDate?: string },
+    candidates: Candidate[],
+    spent: string[] = []
+  ) =>
+    pickGatedCandidate(
+      known,
+      candidates,
+      candidate => candidate.title,
+      async candidate => { spent.push(candidate.id); return candidate.seasons },
+      season => season.releaseDate
+    )
+
+  const soloLeveling = {
+    titles: ['Solo Leveling Season 2 -Arise from the Shadow-'],
+    startDate: '2026-01-04T00:00:00.000Z'
+  }
+  const soloLevelingShow = {
+    id: 'umc.solo',
+    title: 'Solo Leveling',
+    seasons: [
+      { seasonNumber: 1, releaseDate: Date.UTC(2024, 0, 6) },
+      { seasonNumber: 2, releaseDate: Date.UTC(2026, 0, 4) }
+    ]
+  }
+
+  // the whole point of the change: a catalogue that models the show as one entry names it once, without
+  // the season, and the shipped gate charged the correct match for that entire difference
+  test('a season-to-show link the shipped gate refused, and it names the SEASON it matched', async () => {
+    expect(await shippedGateAccepts(soloLeveling.titles[0]!, soloLevelingShow.title)).toBe(false)
+
+    const match = await gate(soloLeveling, [soloLevelingShow])
+    expect(match?.candidate.id).toBe('umc.solo')
+    expect(match?.season.seasonNumber).toBe(2)
+    expect(match?.diff).toBe(0)
+  })
+
+  // the floor the date axis exists for: 5583 of 139507 wrong pairs are EXACTLY equal after season
+  // stripping, so no similarity number in 0..1 can refuse them
+  test('a remake the title axis cannot refuse is refused by the date', async () => {
+    const known = { titles: ['Fruits Basket'], startDate: '2019-04-06T00:00:00.000Z' }
+    expect(await bestTitleScore(known.titles, 'Fruits Basket')).toBe(1)
+
+    const remake = { id: 'umc.fb2001', title: 'Fruits Basket', seasons: [{ seasonNumber: 1, releaseDate: Date.UTC(2001, 6, 5) }] }
+    const original = { id: 'umc.fb2019', title: 'Fruits Basket', seasons: [{ seasonNumber: 1, releaseDate: Date.UTC(2019, 3, 6) }] }
+    expect(await gate(known, [remake])).toBeUndefined()
+    expect((await gate(known, [original]))?.candidate.id).toBe('umc.fb2019')
+  })
+
+  test('the whole gate refuses a title it is sure of when the date is missing', async () => {
+    expect(await gate({ titles: soloLeveling.titles }, [soloLevelingShow])).toBeUndefined()
+    expect(await gate(soloLeveling, [{ ...soloLevelingShow, seasons: [] }])).toBeUndefined()
+    expect(await gate(soloLeveling, [{ ...soloLevelingShow, seasons: [{ seasonNumber: 2 }] }])).toBeUndefined()
+  })
+
+  // Apple's result order is not reproducible, and the shipped code took whichever passing candidate the
+  // shelves happened to list first. Both orders must give the same answer or the gate is a coin flip.
+  test('the best candidate wins whatever order the catalogue lists them in', async () => {
+    const near = { id: 'umc.near', title: 'Solo Leveling', seasons: [{ seasonNumber: 2, releaseDate: Date.UTC(2026, 0, 4) }] }
+    const far = { id: 'umc.far', title: 'Solo Leveling', seasons: [{ seasonNumber: 2, releaseDate: Date.UTC(2026, 0, 30) }] }
+
+    expect((await gate(soloLeveling, [far, near]))?.candidate.id).toBe('umc.near')
+    expect((await gate(soloLeveling, [near, far]))?.candidate.id).toBe('umc.near')
+    // both are inside the window, so this is a ranking rather than a rejection
+    expect((await gate(soloLeveling, [far]))?.candidate.id).toBe('umc.far')
+  })
+
+  // a detail request per candidate is what the cap in rankByTitle exists to bound, so a candidate the
+  // title axis already refused must cost nothing at all
+  test('a title-refused candidate never costs a detail request', async () => {
+    const spent: string[] = []
+    const match = await gate(
+      soloLeveling,
+      [{ id: 'umc.wrong', title: 'Fate/Zero', seasons: [{ seasonNumber: 1, releaseDate: Date.UTC(2026, 0, 4) }] }, soloLevelingShow],
+      spent
+    )
+    expect(match?.candidate.id).toBe('umc.solo')
+    expect(spent).toEqual(['umc.solo'])
   })
 })

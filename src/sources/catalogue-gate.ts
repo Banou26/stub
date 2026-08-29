@@ -1,19 +1,27 @@
 // The gate a metadata catalogue's search hit must clear before it may be linked, mirroring the one
-// crunchyroll/extractor.ts already ships. JustWatch uses it.
+// crunchyroll/extractor.ts already ships. JustWatch and Apple TV both use it.
 //
-// APPLE TV DELIBERATELY DOES NOT, and the reason is a precondition rather than a preference. This gate
-// matches a SEASON cluster to a catalogue's SHOW entry, which is correct only where the source then
-// mints a SEASON-scoped id: JustWatch has `jwId(objectId, seasonObjectId)` and crunchyroll has
-// `crunchyrollId(seriesId, seasonId)`. Apple TV mints `id: content.id`, the show's id with no season
-// component (appletv/extractor.ts, normalizeTitle), so linking two season clusters to one show hands
-// both of them the SAME `appletv:<id>` and union-find welds them. Verified against the real store:
-// two Mushoku Tensei clusters three years apart came back as one component, and this path is a HANDLE
-// link, so not one of the season vetoes in worker/store/fuzzy-merge.ts is even consulted. Adding
-// appletv to SHOW_LEVEL_ORIGINS does not help; db.ts tests the handle side only and Apple TV emits
-// itself as the mediaUri. Wiring Apple TV up therefore means season-scoping its ids and its episode
-// list first, which is its own change. The Apple TV rows in the table below are the measurement that
-// was taken before that was understood; they are kept because they are still the numbers that change
-// will be judged against.
+// APPLE TV NEEDED A PRECONDITION FIRST, recorded here because the next catalogue source will need the
+// same one. This gate matches a SEASON cluster to a catalogue's SHOW entry, which is correct only
+// where the source then mints a SEASON-scoped id: JustWatch has `jwId(objectId, seasonObjectId)` and
+// crunchyroll has `crunchyrollId(seriesId, seasonId)`. Apple TV used to mint `id: content.id`, the
+// show's id with no season component, so linking two season clusters to one show handed both of them
+// the SAME `appletv:<id>` and union-find welded them. Verified against the real store: two Mushoku
+// Tensei clusters three years apart came back as one component, and this path is a HANDLE link, so
+// not one of the season vetoes in worker/store/fuzzy-merge.ts is even consulted. Adding appletv to
+// SHOW_LEVEL_ORIGINS does not help; db.ts tests the handle side only and Apple TV emits itself as the
+// mediaUri. So appletv/extractor.ts now mints `seasonScopedId(content.id, seasonNumber)` and scopes
+// its episode list and its start date to that one season, and only then reads this gate. The Apple TV
+// rows in the table below were measured before that was understood; they are the numbers this change
+//
+// WHAT SEASON SCOPING BOUNDS BUT DOES NOT ELIMINATE. Two of our clusters that both clear the title
+// axis and both fall within the date window of the SAME catalogue season still receive the identical
+// season-scoped id, and union-find welds them at upsert. That is a handle link, so none of the season
+// mechanisms in worker/store/fuzzy-merge.ts is consulted, exactly as before; what changed is the size
+// of the class, from "every season of a show" to "two clusters inside one 45 day window of one
+// season". It is the residue of matching a season cluster to a catalogue that models shows, and it
+// cannot be closed here: the gate has one candidate and no view of the other cluster.
+// is judged against.
 //
 // Split into its own module, importing only ./utils and ./season, so it can be tested: an extractor
 // pulls in the player components and, through them, a CommonJS `require('react')` that no resolve
@@ -41,7 +49,18 @@ import { bestTitleScore, simplifyTitle } from './utils'
  *   what JustWatch shipped before                   28.085%    28.793%   (first title only, raw, 0.50)
  *   whole title list + franchiseTitle, no date      35.175%     5.116%   (0.90)
  *   the same, plus the season-level date axis       34.702%     1.062%   (JustWatch, 0.90)
- *   the same, plus a 45 day window                  34.408%     0.848%   (Apple TV, NOT wired up, upper bound)
+ *   the same, plus a 45 day window                  34.408%     0.848%   (Apple TV, 0.90, MODELLED)
+ *
+ * THE APPLE TV ROW IS A MODEL OF A CATALOGUE, NOT A MEASUREMENT OF APPLE'S. Every row here is computed
+ * over the manami corpus, which is the right way to compare the two axes against each other and says
+ * nothing about what a given catalogue actually returns. Measured against the UTS search endpoint this
+ * extractor really queries, 2026-08-30: 0 of 150 anime TV titles and 0 of 120 anime films produced ANY
+ * candidate clearing 0.90, while 88 and 69 of them returned items at all, and a positive control
+ * ("Severance") is admitted at 1.0000. So the gate is live and correct and Apple's search simply does
+ * not surface these shows under these titles. Read the row as what the gate would do if a candidate
+ * arrived, never as links this source is producing. The corpus rows also count welds on a
+ * title-plus-synonym pool, which over-counts relative to the main titles stub carries, so the weld
+ * column is an upper bound in a second way as well.
  *
  * So the date axis is worth 4.8 points of wrong links at unchanged recall, and against what shipped it
  * is a 27x reduction in wrong links with recall going UP.
@@ -55,7 +74,11 @@ import { bestTitleScore, simplifyTitle } from './utils'
  * the only thing that touches that floor:
  *
  *   season-level year membership (JustWatch)   4.002% -> 0.825%   removes 4432 of 5583
- *   season-level 45 day window (Apple TV)      4.002% -> 0.695%   removes 4614 of 5583 (upper bound)
+ *   season-level 45 day window (Apple TV)      4.002% -> 0.695%   removes 4614 of 5583
+ *
+ * Both date rows model a source that publishes a per-season date. JustWatch does, as a year. Apple TV
+ * does, as a day, and that it really does is measured under SEASON_DATE_WINDOW below rather than
+ * assumed: 0 of 150 seasons came back without one.
  *
  * WHY 0.90 AND NOT 0.50. Raising it to 0.94 refuses 208 more wrong links and costs 13046 correct ones,
  * a ratio of 0.016 against this repo's own exchange-rate bar of 1.0. Lowering it to 0.85 leaves 714
@@ -175,6 +198,100 @@ export const yearAppearsInShow = (
   const year = parseDate(startDate)?.getUTCFullYear()
   if (year === undefined) return false
   return seasonYears.some(seasonYear => seasonYear === year)
+}
+
+
+/**
+ * The widest gap between our start date and a catalogue season's premiere that still names the same
+ * season. The same 45 days crunchyroll/extractor.ts uses, and it produces the "plus a 45 day window"
+ * row of the table above: 34.408% recall at 0.848% wrong links, against 34.702% / 1.062% for the year
+ * membership axis JustWatch is limited to.
+ *
+ * A source may only read this axis if it has a real SEASON-level date to read, and Apple TV does, in
+ * the same `/shows/<id>` response the gate already holds: every entry of `data.seasons` carries its
+ * own `releaseDate`.
+ *
+ * THE UNITS ARE EPOCH MILLISECONDS, established from the values rather than assumed, because a
+ * seconds-based field read as milliseconds lands in 1970 and no January 1 precision guard would catch
+ * it. `Severance` season 1 comes back as 1645142400000, which is 2022-02-18, its real premiere; as
+ * seconds it would be 1970-01-20. Re-derivable in one request:
+ *
+ *   curl -s 'https://uts-api.itunes.apple.com/uts/v3/shows/umc.cmc.1srk2goyh2q2zdxcx605w8vtx?caller=web&sf=143441&v=58&pfm=web&locale=en-US&utsk=0'
+ *
+ * which also shows season 2 at 1737072000000, 2025-01-17, against a show-level `content.releaseDate`
+ * of 1645142400000: the show's date IS season 1's.
+ *
+ * Measured 2026-08-29 over the 150 seasons of the 83 shows UTS search returns for 28 Apple TV series
+ * titles, one `/shows/<id>` plus one episode request per season: 0 seasons missing `seasonNumber`, 0
+ * missing `releaseDate`, and a season's `releaseDate` equalled the earliest release date among that
+ * season's OWN episodes on 150 of 150. The show-level date named the wrong year for 66 of the 150
+ * (44.000%), and for 66 of the 106 (62.264%) once single-season shows are dropped.
+ */
+export const SEASON_DATE_WINDOW = 45 * 24 * 60 * 60 * 1000
+
+/**
+ * The candidate season whose premiere is nearest our start date, and how far off it is.
+ *
+ * DISTANCE rather than membership, which is the one thing Apple TV can do that JustWatch cannot: a
+ * JustWatch season carries a year and nothing finer, so `yearAppearsInShow` can only answer yes or no,
+ * while an Apple TV season carries a day. The window is applied by the caller, because the diff is
+ * also what ranks two candidates that both pass it.
+ *
+ * Anything missing is a refusal: no start date, no seasons, or no season carrying a date, and this
+ * returns undefined rather than a nearest-of-nothing.
+ */
+export const closestSeasonByAirDate = <T>(
+  startDate: string | number | null | undefined,
+  seasons: readonly T[],
+  releaseDateOf: (season: T) => string | number | null | undefined
+): { season: T, diff: number } | undefined => {
+  const target = parseDate(startDate)
+  if (!target) return undefined
+  let best: { season: T, diff: number } | undefined
+  for (const season of seasons) {
+    const aired = parseDate(releaseDateOf(season))
+    if (!aired) continue
+    const diff = Math.abs(aired.getTime() - target.getTime())
+    if (!best || diff < best.diff) best = { season, diff }
+  }
+  return best
+}
+
+export type GatedCandidate<T, S> = { candidate: T, season: S, diff: number }
+
+/**
+ * Both axes, composed exactly as a caller must compose them, so the composition is the thing under
+ * test rather than a reproduction of it in a test file.
+ *
+ * The order is load bearing and it is a cost decision as much as a correctness one: `rankByTitle` runs
+ * entirely on the search payload, so `seasonsOf` (a detail request, per candidate) is never spent on a
+ * candidate the title axis already refused.
+ *
+ * THE BEST WINS, NEVER THE FIRST TO PASS: see `rankByTitle` for what that was worth at Apple TV, which
+ * took whichever passing candidate the catalogue happened to list first. The ranking here is by DATE
+ * distance rather than by title score, and that is not a second opinion about the franchise: the title
+ * axis has already reduced every survivor to the same one, so the only question left is which season,
+ * and the diff is the only thing that answers it. Crunchyroll's search path resolves a tie the same
+ * way, over the same window.
+ */
+export const pickGatedCandidate = async <T, S>(
+  known: { titles: readonly string[], startDate?: string | null },
+  candidates: readonly T[],
+  titleOf: (candidate: T) => string | null | undefined,
+  seasonsOf: (candidate: T) => Promise<readonly S[]>,
+  releaseDateOf: (season: S) => string | number | null | undefined
+): Promise<GatedCandidate<T, S> | undefined> => {
+  // no start date is no date axis, and a gate running on one axis is the 4.002% floor of permanent
+  // wrong links with nothing left to catch it
+  if (!known.startDate) return undefined
+  const scored = await rankByTitle(known.titles, candidates, titleOf)
+  let best: GatedCandidate<T, S> | undefined
+  for (const { candidate } of scored) {
+    const nearest = closestSeasonByAirDate(known.startDate, await seasonsOf(candidate), releaseDateOf)
+    if (!nearest || nearest.diff > SEASON_DATE_WINDOW) continue
+    if (!best || nearest.diff < best.diff) best = { candidate, season: nearest.season, diff: nearest.diff }
+  }
+  return best
 }
 
 

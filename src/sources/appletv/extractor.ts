@@ -2,7 +2,9 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, buildHandlesFromUri, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, buildHandlesFromUri, waitForMedia } from '../utils'
+import { parseSeasonNumber, seasonScopedId, splitSeasonScopedId } from '../season'
+import { closestSeasonByAirDate, pickGatedCandidate, searchQueries, SEASON_DATE_WINDOW } from '../catalogue-gate'
 
 const SCORE = 0.2
 
@@ -44,10 +46,16 @@ interface AppleItem {
   title: string
   url?: string
   description?: string
+  /** epoch MILLISECONDS, and at SHOW level this is season 1's: see ../catalogue-gate.ts */
   releaseDate?: number
   images?: AppleImages
 }
-interface AppleSeason { id: string, seasonNumber?: number }
+interface AppleSeason {
+  id: string
+  seasonNumber?: number
+  /** epoch milliseconds, THIS season's premiere, present on every season measured: ../catalogue-gate.ts */
+  releaseDate?: number
+}
 interface AppleEpisode {
   id: string
   title: string
@@ -60,15 +68,35 @@ interface AppleEpisode {
 }
 
 interface AppleSearchResponse { data?: { canvas?: { shelves?: { items?: AppleItem[] }[] } } }
-interface AppleShowResponse { data?: { content?: AppleItem, seasons?: Record<string, AppleSeason> } }
+interface AppleContentData { content?: AppleItem, seasons?: Record<string, AppleSeason> }
+interface AppleContentResponse { data?: AppleContentData }
 interface AppleEpisodesResponse { data?: { episodes?: AppleEpisode[] } }
 
-const normalizeTitle = (content: AppleItem): GQLMedia => {
+/**
+ * Apple TV describes a SHOW while a stub media is one season, so a season-scoped media may not carry
+ * the bare `content.id`: every season hands back the same one, and because this source emits ITSELF as
+ * the mediaUri with our uris as handles, that id reaches `graph.link` as an identity claim spanning
+ * all of them. Same defect TMDB, TVmaze and JustWatch had, same '-s<n>' fix.
+ *
+ * A show-level id is still minted for SEARCH, where there is no cluster to corrupt and Apple TV
+ * genuinely is describing the show, which is the same fork tvmaze/extractor.ts draws.
+ *
+ * A MOVIE takes the bare id and keeps it, exactly as JustWatch's `showRequiresSeason` allows: it has
+ * no seasons to be confused between, and its own release date IS the work's date.
+ */
+const normalizeMedia = (content: AppleItem, season?: AppleSeason): GQLMedia => {
   const cover = image(content.images?.coverArt, 600, 900)
   const banner = image(content.images?.coverArt16X9, 1920, 1080)
+  const scoped = season?.seasonNumber != null
+  // A SEASON-scoped media may never carry the SHOW's date. It is not merely inaccurate, it welds
+  // seasons together: profileCluster derives its `years` set from every member's startDate and
+  // fuzzyMergeMediaClusters buckets by year, so a season 3 media stamped with the show's date drops
+  // the whole cluster into season 1's bucket where a shared title is enough. That is the bug just
+  // fixed in tvmaze and tmdb, and worker/store/season-separation.test.ts pins it.
+  const releaseDate = scoped ? season!.releaseDate : content.releaseDate
   return makeMedia({
     origin,
-    id: content.id,
+    id: scoped ? seasonScopedId(content.id, season!.seasonNumber!) : content.id,
     url: content.url,
     score: SCORE,
     categories: content.type === 'Movie' ? ['MOVIE'] : ['SERIES'],
@@ -76,7 +104,8 @@ const normalizeTitle = (content: AppleItem): GQLMedia => {
     ...desc(content.description, SCORE),
     covers: img(cover, SCORE),
     banners: img(banner, SCORE),
-    startDate: content.releaseDate ? new Date(content.releaseDate).toISOString() : undefined,
+    // epoch milliseconds, not seconds: ../catalogue-gate.ts names the request that shows it
+    startDate: releaseDate != null ? new Date(releaseDate).toISOString() : undefined,
   })
 }
 
@@ -94,52 +123,229 @@ const normalizeEpisode = (episode: AppleEpisode, mediaUri: string): GQLEpisode =
     episodeNumber: episode.episodeNumber,
   })
 
-const fetchEpisodes = async (id: string, seasons: Record<string, AppleSeason> | undefined, mediaUri: string, ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {
-  const seasonIds = Object.values(seasons ?? {}).map(season => season.id).filter(Boolean)
-  if (!seasonIds.length) return []
-  // ⚠️ UTS caps episodes per request (~6) and rejects nextToken; per-season is the workaround
+/**
+ * One season's episodes, and the filter is not a tidy-up.
+ *
+ * `selectedSeasonId` does not select a season, it positions a WINDOW in the show's flat episode list,
+ * so a per-season request routinely answers with the tail of the previous season attached. Season 2 of
+ * `Severance` answers with eleven episodes running 1x5 through 2x6:
+ *
+ *   curl -s 'https://uts-api.itunes.apple.com/uts/v3/shows/umc.cmc.1srk2goyh2q2zdxcx605w8vtx/episodes?selectedSeasonId=umc.cmc.uhm560ns0yg3a5fy454bb967&caller=web&sf=143441&v=58&pfm=web&locale=en-US&utsk=0'
+ *
+ * Measured 2026-08-29 over 150 seasons of 83 shows reachable from UTS search, one request per season:
+ * 335 of the 1228 episodes returned (27.280%) belong to a season other than the one requested, and 67
+ * of the 150 requests (44.667%) return at least one. So this source flattening every season's request
+ * together, as it did, produced a list that was both duplicated and cross-season; the dedupe by id is
+ * for the same reason, since a window can return an episode a neighbouring window already returned.
+ *
+ * There is no way to ask for the rest: `nextToken` is answered with `400 If nextToken is specified,
+ * nextToken should be specified and non-negative` whatever value it is given, so a long season comes
+ * back partial and that is the ceiling, not a bug to work around here.
+ */
+const fetchEpisodes = async (
+  showId: string,
+  seasons: Record<string, AppleSeason> | undefined,
+  mediaUri: string,
+  ctx: ExtractorServerContext,
+  seasonNumber?: number
+): Promise<GQLEpisode[]> => {
+  const wanted = Object.values(seasons ?? {})
+    .filter(season => seasonNumber == null || season.seasonNumber === seasonNumber)
+    .map(season => season.id)
+    .filter(Boolean)
+  if (!wanted.length) return []
   const perSeason = await Promise.all(
-    seasonIds.map(seasonId =>
-      api<AppleEpisodesResponse>(`/shows/${id}/episodes?selectedSeasonId=${seasonId}`, ctx)
+    wanted.map(seasonId =>
+      api<AppleEpisodesResponse>(`/shows/${showId}/episodes?selectedSeasonId=${seasonId}`, ctx)
         .then(res => res.data?.episodes ?? [])
         .catch(() => [])
     )
   )
-  return perSeason.flat().map(episode => normalizeEpisode(episode, mediaUri))
+  const byId = new Map<string, AppleEpisode>()
+  for (const episode of perSeason.flat()) {
+    if (seasonNumber != null && episode.seasonNumber !== seasonNumber) continue
+    if (!byId.has(episode.id)) byId.set(episode.id, episode)
+  }
+  // `data.seasons` is a record keyed by season id, so Object.values is in whatever order the payload
+  // happens to carry (Silo comes back 2, 1, 3), which the flatten used to publish as episode order
+  return [...byId.values()]
+    .sort((a, b) => (a.seasonNumber ?? 0) - (b.seasonNumber ?? 0) || (a.episodeNumber ?? 0) - (b.episodeNumber ?? 0))
+    .map(episode => normalizeEpisode(episode, mediaUri))
 }
 
-const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
-  const res = await api<AppleShowResponse>(`/shows/${id}`, ctx)
-  const content = res.data?.content
+/**
+ * The show or movie behind an id.
+ *
+ * `/shows/<id>` answers `404 {"code":404,"title":"NotFound","message":"show not found"}` for a movie,
+ * with no `data`, so every Apple TV movie resolved to nothing before this fallback existed: a movie
+ * came back from search, and opening it produced an empty media. The second request is only ever
+ * spent on an id `/shows` has already declined.
+ */
+const fetchContent = async (id: string, ctx: ExtractorServerContext): Promise<AppleContentData | undefined> => {
+  const show = await api<AppleContentResponse>(`/shows/${id}`, ctx)
+  if (show.data?.content) return show.data
+  const movie = await api<AppleContentResponse>(`/movies/${id}`, ctx)
+  return movie.data?.content ? movie.data : undefined
+}
+
+/**
+ * Which season this uri names, or nothing.
+ *
+ * The probe stays SYNCHRONOUS: waitForMedia keeps the first result it finds truthy, and a promise is
+ * always truthy, so an async one would succeed instantly with a value that resolves to nothing.
+ *
+ * The date is asked before nothing at all, and it is asked as a WINDOW rather than as a year, because
+ * a two-cour show split across a year boundary answers the year question wrongly and the distance
+ * question correctly.
+ */
+const pickSeason = async (
+  uri: string,
+  seasons: AppleSeason[],
+  pinned: number | undefined,
+  ctx: ExtractorServerContext
+): Promise<AppleSeason | undefined> => {
+  if (pinned != null) return seasons.find(season => season.seasonNumber === pinned)
+  if (seasons.length === 1) return seasons[0]
+  if (!seasons.length) return undefined
+  return waitForMedia(uri, ctx, (media: any) => {
+    const title = getFirstTitle(media)
+    const parsed = title ? parseSeasonNumber(title) : undefined
+    const named = parsed != null ? seasons.find(season => season.seasonNumber === parsed) : undefined
+    if (named) return named
+    const nearest = closestSeasonByAirDate(media?.startDate, seasons, season => season.releaseDate)
+    return nearest && nearest.diff <= SEASON_DATE_WINDOW ? nearest.season : undefined
+  })
+}
+
+const buildMedia = async (
+  data: AppleContentData,
+  season: AppleSeason | undefined,
+  ctx: ExtractorServerContext
+): Promise<GQLMedia | undefined> => {
+  const content = data.content
   if (!content) return undefined
-  const media = normalizeTitle(content)
-  if (isMovie(media)) {
+  if (content.type === 'Movie') {
+    const media = normalizeMedia(content)
     media.episodes = [makeMovieEpisode(media)]
     media.episodeCount = 1
     return media
   }
-  media.episodes = await fetchEpisodes(id, res.data?.seasons, media.uri, ctx)
+  // a series whose season cannot be determined has no identity here: see normalizeMedia
+  if (season?.seasonNumber == null) return undefined
+  const media = normalizeMedia(content, season)
+  media.episodes = await fetchEpisodes(content.id, data.seasons, media.uri, ctx, season.seasonNumber)
   media.episodeCount = media.episodes.length
   return media
 }
 
-const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<AppleItem[]> => {
-  const res = await api<AppleSearchResponse>(`/search?searchTerm=${encodeURIComponent(query)}`, ctx)
-  return (res.data?.canvas?.shelves ?? [])
-    .flatMap(shelf => shelf.items ?? [])
-    .filter(item => item.type === 'Show' || item.type === 'Movie')
+const getMedia = async (
+  uri: string,
+  id: string,
+  pinned: number | undefined,
+  ctx: ExtractorServerContext
+): Promise<GQLMedia | undefined> => {
+  const data = await fetchContent(id, ctx)
+  if (!data?.content) return undefined
+  // a movie carries no seasons, so this answers nothing for one and buildMedia keeps its bare id
+  const season = await pickSeason(uri, Object.values(data.seasons ?? {}), pinned, ctx)
+  return buildMedia(data, season, ctx)
 }
 
-const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
-  for (const query of [title, ...simplifyTitle(title)]) {
+const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<AppleItem[]> => {
+  const res = await api<AppleSearchResponse>(`/search?searchTerm=${encodeURIComponent(query)}`, ctx)
+  const items = (res.data?.canvas?.shelves ?? [])
+    .flatMap(shelf => shelf.items ?? [])
+    .filter(item => item.type === 'Show' || item.type === 'Movie')
+  // the shelves repeat the same entry: 22 items for 11 distinct shows on `searchTerm=Severance`. Left
+  // in, the duplicates fill MAX_CATALOGUE_CANDIDATES with copies of one show and the runners-up the cap
+  // exists to date-check are never reached
+  const byId = new Map<string, AppleItem>()
+  for (const item of items) if (!byId.has(item.id)) byId.set(item.id, item)
+  return [...byId.values()]
+}
+
+/**
+ * The seasons the gate's date axis reads for one candidate, one detail request each.
+ *
+ * A MOVIE is the entry with no seasons to read, and it is also the one with no show-vs-season gap to
+ * fall into, so its own `releaseDate` stands in as its single season. It carries no `seasonNumber`,
+ * which is exactly what makes `buildMedia` keep the bare id for it.
+ */
+const gateSeasons = (data: AppleContentData | undefined): AppleSeason[] => {
+  if (!data?.content) return []
+  if (data.content.type === 'Movie') return [{ id: data.content.id, releaseDate: data.content.releaseDate }]
+  return Object.values(data.seasons ?? {})
+}
+
+/**
+ * Linking a search hit asserts identity PERMANENTLY, so what this used to do is worth naming: it took
+ * the FIRST result whose raw title cleared a bare 0.5 against our first title, which is three separate
+ * mistakes. A weak early hit beat a strong later one; the season in our title was charged against a
+ * catalogue that names the show once; and no date was consulted at all, so the 4.002% of wrong pairs
+ * that are EXACTLY equal after season stripping had nothing to refuse them.
+ *
+ * The gate, the thresholds and what each axis measured are in ../catalogue-gate.ts.
+ *
+ * REQUEST COST, worst case, per media: 4 searches (down from 5, since the query list is now capped)
+ * and at most 3 detail requests each, so at most 12 detail requests plus one episode request for the
+ * winner. The old path had no such ceiling: it spent a detail request AND an episode request per season
+ * on every result whose raw title cleared 0.5, and only stopped when one of them produced a media, so a
+ * rung returning ten near-miss results paid for all ten.
+ *
+ * In practice this is far below its own ceiling: the title axis runs entirely on the search payload, so
+ * a refused candidate costs nothing, an id is fetched at most once per call (the `details` map, which
+ * `searchApi`'s dedupe does not replace, since two rungs return overlapping result sets), and the loop
+ * returns on the first query that produces a link.
+ */
+const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
+  const known = await waitForMedia(
+    aggregatedUri,
+    ctx,
+    // BOTH, not just a title. This asked for a title alone and then refused two lines later when
+    // startDate had not landed, so whenever the title arrived on an earlier tick than the date the
+    // source gave up permanently and never linked. The gate needs the date, so the wait is what has
+    // to be told that.
+    media => (getFirstTitle(media) && media?.startDate ? media : undefined),
+    30_000
+  )
+  if (!known) return null
+
+  // anything missing is a refusal, never a guess
+  const startDate: string | undefined = known.startDate ?? undefined
+  if (!startDate) return null
+
+  const knownTitles: string[] = (known.titles ?? []).map((title: { title: string }) => title.title).filter(Boolean)
+  const primary = knownTitles[0]
+  if (!primary) return null
+
+  const details = new Map<string, Promise<AppleContentData | undefined>>()
+  const detailsOf = (id: string) => {
+    const cached = details.get(id)
+    if (cached) return cached
+    const request = fetchContent(id, ctx).catch(() => undefined)
+    details.set(id, request)
+    return request
+  }
+
+  for (const query of searchQueries(primary)) {
     const results = await searchApi(query, ctx)
-    for (const result of results) {
-      if (await titleSimilarity(title, result.title) < 0.5) continue
-      const media = await getMedia(result.id, ctx)
-      if (!media) continue
-      media.handles = buildHandlesFromUri(aggregatedUri, origin)
-      return media
-    }
+    if (!results.length) continue
+
+    const match = await pickGatedCandidate(
+      { titles: knownTitles, startDate },
+      results,
+      item => item.title,
+      async item => gateSeasons(await detailsOf(item.id)),
+      season => season.releaseDate
+    )
+    if (!match) continue
+
+    const data = await detailsOf(match.candidate.id)
+    if (!data) continue
+    const media = await buildMedia(data, match.season, ctx)
+    if (!media) continue
+    media.handles = buildHandlesFromUri(aggregatedUri, origin)
+    return media
   }
   return null
 }
@@ -147,15 +353,16 @@ const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: Ext
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
   const atvUri = extractAggregatedUriOrigin(uri, origin)
   if (atvUri) {
-    const media = await getMedia(atvUri.id, ctx)
+    // the uri may already pin the season, since that is now part of the id
+    const { showId, seasonNumber } = splitSeasonScopedId(atvUri.id)
+    const media = await getMedia(uri, showId, seasonNumber, ctx)
     if (!media) return null
     if (isAggregatedUri(uri)) media.handles = buildHandlesFromUri(uri, origin)
     return media
   }
   if (!isAggregatedUri(uri)) return null
-  const title = await waitForMedia(uri, ctx, media => getFirstTitle(media), 30_000)
-  if (!title) return null
-  return searchAndLinkMedia(title, uri, ctx)
+  // no `appletv:` in the uri, so no source ever supplied one. Search, under the gate above.
+  return searchAndLinkMedia(uri, ctx)
 }
 
 export const resolvers: Resolvers = {
@@ -171,7 +378,7 @@ export const resolvers: Resolvers = {
       subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
         if (!search) return yield { mediaPage: { nodes: [] } }
         const results = await searchApi(search, ctx)
-        yield { mediaPage: { nodes: results.map(normalizeTitle) } }
+        yield { mediaPage: { nodes: results.map(item => normalizeMedia(item)) } }
       }
     }
   },
@@ -180,8 +387,10 @@ export const resolvers: Resolvers = {
       if (parent.origin !== origin) return parent.episodes ?? []
       if (parent.episodes?.length) return parent.episodes
       if (isMovie(parent)) return [makeMovieEpisode(parent)]
-      const res = await api<AppleShowResponse>(`/shows/${parent.id}`, ctx)
-      return fetchEpisodes(parent.id, res.data?.seasons, parent.uri, ctx)
+      // parent.id is '<show>-s<season>' now, so the show has to be split back out of it
+      const { showId, seasonNumber } = splitSeasonScopedId(parent.id)
+      const data = await fetchContent(showId, ctx)
+      return fetchEpisodes(showId, data?.seasons, parent.uri, ctx, seasonNumber)
     }
   }
 }
