@@ -4,7 +4,8 @@ import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../..
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 import { jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
 import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, titleSimilarity, mergeHandles, waitForMedia } from '../utils'
+import { rankByTitle, searchQueries, yearAppearsInShow } from '../catalogue-gate'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia } from '../utils'
 
 const SCORE = 0.2
 
@@ -246,7 +247,20 @@ interface JWSeason {
   /** JustWatch's own id for the season, which is what a media uri is scoped by */
   objectId: number
   totalEpisodeCount: number
-  content: { seasonNumber: number, isReleased: boolean }
+  content: {
+    seasonNumber: number
+    isReleased: boolean
+    /**
+     * The year THIS season premiered, which is the only date JustWatch exposes at season level and the
+     * one the search gate's date axis reads. NODE_QUERY has always asked for it; the field was simply
+     * dropped on the way into this type, so the gate had nothing but the show-level
+     * `content.originalReleaseYear` to compare against and could not tell season 1 from season 4.
+     *
+     * Optional because SEARCH_QUERY's seasons block asks only for seasonNumber and isReleased, so a
+     * season that came off a search payload genuinely does not carry it.
+     */
+    originalReleaseYear?: number | null
+  }
   episodes: JWEpisode[]
 }
 
@@ -329,6 +343,7 @@ const normalizeMedia = async (
   if (opts.seasonNumber != null && season?.objectId == null) return null
   const id = opts.seasonNumber == null ? String(node.objectId) : jwId(node.objectId, season!.objectId)
   const { shortDescription } = node.content
+  const seasonYear = season?.content?.originalReleaseYear ?? node.content.originalReleaseYear
 
   const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
     ? `${node.content.title} Season ${opts.seasonNumber}`
@@ -365,7 +380,11 @@ const normalizeMedia = async (
     // the search query carries totalEpisodeCount but not the episodes themselves, so an expanded
     // season still reports how long it is - which is also what season matching elsewhere keys on
     episodeCount: episodes.length || filteredSeasons.reduce((total, season) => total + (season.totalEpisodeCount ?? 0), 0) || undefined,
-    startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
+    // the SEASON's year when a season is pinned, falling back to the show's. A season media publishing
+    // the show's year publishes the franchise's FIRST season's year as its own start date, which every
+    // date comparison downstream then reads as this season's - the same show-vs-season confusion the
+    // uri scoping in ./id.ts exists to prevent, in the date field instead of the id.
+    startDate: seasonYear ? `${seasonYear}-01-01` : undefined
   })
 
   // JustWatch keeps title and description on the per provider offer handles, not on the media itself
@@ -405,35 +424,116 @@ const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: Extractor
   })
 }
 
-const TITLE_MATCH_THRESHOLD = 0.5
+/**
+ * Whether this catalogue entry is dated like the media we are looking at. The full measurement, the
+ * floor it removes and the show-level reading it must not be is in ../catalogue-gate.ts.
+ *
+ * JustWatch exposes a year and nothing finer, and it exposes it at two levels. Only the SEASON level
+ * is usable: `node.content.originalReleaseYear` is the show's, which is the first season's, so
+ * comparing our start date against it refuses 83% of the season-to-parent links this gate exists to
+ * recover. The per-season years come back in the same NODE_QUERY response the gate already holds, so
+ * reading them at season level costs no extra request at all.
+ *
+ * A movie is the one entry with no seasons to read, and it also has no show-vs-season gap to fall
+ * into: its own release year IS the work's year, so the show-level field is the right one there and
+ * only there. A SERIES with no season years is a refusal, never a fallback to the show's year.
+ */
+const datedLikeThisMedia = (startDate: string | null | undefined, node: JWShowNode): boolean => {
+  const seasonYears = (node.seasons ?? []).map(season => season.content?.originalReleaseYear)
+  if (seasonYears.length) return yearAppearsInShow(startDate, seasonYears)
+  return !showRequiresSeason(node.objectType) && yearAppearsInShow(startDate, [node.content.originalReleaseYear])
+}
 
-const searchAndLinkMedia = async (title: string, aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
-  for (const query of [title, ...simplifyTitle(title)]) {
+/**
+ * Linking a search hit asserts identity PERMANENTLY, so this gate is deliberately stricter than the
+ * shared one: see ../catalogue-gate.ts for the two axes, the thresholds and what each one measured.
+ *
+ * What changed here, and it is three separate mistakes rather than one. The gate used to score the
+ * SEARCH QUERY against the candidate, so the simplifyTitle rung that found the entry was also what
+ * judged it, which measured WORSE than not simplifying at all (margin 0.0765 against 0.0971). It
+ * scored only our FIRST title, so a catalogue listing the show under its other name was refused
+ * (whole list 0.3916 against primary only 0.0647 on the same pairs). And it fetched details for
+ * `results[0]` alone, so results[1..9] were never even looked at, while the search payload has
+ * carried `content.title` for all ten the whole time.
+ *
+ * REQUEST COST, worst case, per media: 4 searches (down from 5, since the query list is now capped)
+ * plus at most 3 node detail requests per query where there used to be exactly 1, so at most 12 detail
+ * requests against the old 5. In practice it is far below that: a node id is fetched at most once per
+ * call (see the `details` map, and read its comment before assuming `deduplicatedFetch` covers this),
+ * the loop returns on the first query that produces a linkable candidate, and the title axis runs
+ * entirely on the search payload, so a candidate the title refuses costs zero requests.
+ */
+const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {
+  const known = await waitForMedia(aggregatedUri, ctx, media => (getFirstTitle(media) ? media : undefined), 30_000)
+  if (!known) return null
+
+  // anything missing is a refusal, never a guess: with no start date there is no date axis, and a gate
+  // running on one axis is the 4.002% floor of permanent wrong links with nothing to catch it
+  const startDate: string | undefined = known.startDate ?? undefined
+  if (!startDate) return null
+
+  const knownTitles: string[] = (known.titles ?? []).map((title: { title: string }) => title.title).filter(Boolean)
+  const primary = knownTitles[0]
+  if (!primary) return null
+
+  // A node id is fetched at most once per call, and this map is what makes that true. `deduplicatedFetch`
+  // above CANNOT do it: it deletes its key in `.finally`, so it coalesces requests that are in flight at
+  // the same moment and caches nothing, while this loop awaits each candidate in turn, so the key is
+  // always gone before the next rung asks. Measured before this map existed: 4 rungs over 3 distinct
+  // node ids issued 12 requests rather than 3, and the rungs re-scoring the same entry is the COMMON
+  // case, since a shorter query returns a superset of what the longer one returned.
+  const details = new Map<string, Promise<JWNodeResponse>>()
+  const nodeDetails = (nodeId: string) => {
+    const cached = details.get(nodeId)
+    if (cached) return cached
+    const request = getNodeDetails(nodeId, ctx)
+    details.set(nodeId, request)
+    return request
+  }
+
+  for (const query of searchQueries(primary)) {
     const searchRes = await searchTitles(query, ctx)
-    const results = searchRes.data?.popularTitles?.edges ?? []
+    const results = (searchRes.data?.popularTitles?.edges ?? []).map(edge => edge.node)
     if (!results.length) continue
 
-    const detailRes = await getNodeDetails(results[0]!.node.id, ctx)
-    const node = detailRes.data?.node
-    if (!node?.content?.title) continue
+    // gate on title BEFORE spending a detail request: the search payload already carries everything
+    // this axis reads, and a refused candidate must cost nothing
+    const scored = await rankByTitle(knownTitles, results, node => node.content?.title)
+    if (!scored.length) continue
 
-    const similarity = await titleSimilarity(title, node.content.title)
-    if (similarity < TITLE_MATCH_THRESHOLD) continue
+    // the runners-up are date-checked too, because a franchise is routinely split across several
+    // catalogue entries, and the first survivor wins because `scored` is ordered by title score:
+    // JustWatch's date axis is a year MEMBERSHIP and so answers yes or no, with no distance to rank on
+    // the way Apple TV's window has
+    for (const { candidate } of scored) {
+      const detailRes = await nodeDetails(candidate.id)
+      const node = detailRes.data?.node
+      if (!node?.content?.title) continue
+      if (!datedLikeThisMedia(startDate, node)) continue
 
-    let seasonNumber: number | undefined
-    if (node.seasons?.length === 1) seasonNumber = node.seasons[0]!.content.seasonNumber
-    else if (node.seasons?.length > 1) {
-      seasonNumber = parseSeasonNumber(title)
-      if (!seasonNumber) {
-        const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
-        if (epCount) seasonNumber = findMatchingSeason(node.seasons, epCount)
+      let seasonNumber: number | undefined
+      if (node.seasons?.length === 1) seasonNumber = node.seasons[0]!.content.seasonNumber
+      else if (node.seasons?.length > 1) {
+        seasonNumber = parseSeasonNumber(primary)
+        // the year the date axis just agreed on names the season directly whenever exactly one season
+        // carries it, which is a better answer than counting episodes: two seasons of twelve are
+        // indistinguishable that way, and ../season.ts says so about its own fallback
+        if (!seasonNumber) {
+          const startYear = new Date(startDate).getUTCFullYear()
+          const dated = node.seasons.filter(season => season.content?.originalReleaseYear === startYear)
+          if (dated.length === 1) seasonNumber = dated[0]!.content.seasonNumber
+        }
+        if (!seasonNumber) {
+          const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
+          if (epCount) seasonNumber = findMatchingSeason(node.seasons, epCount)
+        }
       }
-    }
 
-    const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
-    if (!media) continue
-    mergeHandles(media, aggregatedUri)
-    return media
+      const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
+      if (!media) continue
+      mergeHandles(media, aggregatedUri)
+      return media
+    }
   }
   return null
 }
@@ -456,9 +556,8 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
     return media
   }
   if (!isAggregatedUri(uri)) return null
-  const title = await waitForMedia(uri, ctx, m => getFirstTitle(m), 30_000)
-  if (!title) return null
-  return searchAndLinkMedia(title, uri, ctx)
+  // no `jw:` in the uri, so no source ever supplied one. Search, under the gate above.
+  return searchAndLinkMedia(uri, ctx)
 }
 
 export const resolvers: Resolvers = {

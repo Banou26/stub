@@ -364,7 +364,116 @@ type Pair = {
   rightType: string
   leftYear: number | null
   rightYear: number | null
+  /**
+   * manami's `animeSeason.season`: WINTER, SPRING, SUMMER, FALL or UNDEFINED. Carried because it is
+   * the FINEST date resolution this corpus has, and the justwatch/appletv date-axis models below are
+   * the only thing that reads it. There is no day in the corpus at all, so a 45-day window is not
+   * expressible here and the quarter models say so in their own names rather than pretending.
+   */
+  leftSeason: string | null
+  rightSeason: string | null
+  /**
+   * THE DATES THE CATALOGUE ENTRY ITSELF COVERS, which is not the same thing as the date of the one
+   * record on the right, and the distinction decides the whole justwatch design.
+   *
+   * justwatch and appletv both model a franchise as ONE show entity carrying several seasons. Our media
+   * is one season. So there are two completely different date checks available and they have opposite
+   * recall behaviour:
+   *
+   *   SHOW-LEVEL. Compare our start year against the show's `content.originalReleaseYear`, which is the
+   *   FIRST season's year. For a media that is season 3 of anything, this refuses a correct match for a
+   *   structural reason, and season sequels are exactly what this change exists to recover. The
+   *   `SAME YEAR` and `SAME QUARTER` gates model this, because they compare our record's date against
+   *   the ONE record on the other side.
+   *
+   *   SEASON-LEVEL. Ask whether ANY season of the show carries our year. justwatch's NODE_QUERY already
+   *   requests `seasons { content { originalReleaseYear } }` at extractor.ts:174 and the details call is
+   *   already made at extractor.ts:416 BEFORE the gate, so this costs no extra request; only the
+   *   `JWSeason` interface at extractor.ts:249 omits the field, so the data arrives and TypeScript drops
+   *   it. appletv reaches the same thing through `AppleEpisode.releaseDate`, which `fetchEpisodes`
+   *   already pulls per season.
+   *
+   * These two fields model the season-level check. The set is the right-hand record plus every record
+   * manami relates to it that `relationOf` calls same-show, which is the closest this corpus gets to
+   * "the seasons a catalogue would file under one show". A correct match then always contains our own
+   * year, so the season-level check costs recall only on records manami never dated, while a wrong
+   * candidate still has to share a year with a franchise it does not belong to.
+   */
+  rightShowYears: number[]
+  rightShowQuarters: number[]
 }
+
+/* ------------------------------------------------------------------------------------------------
+ * The DATE axis, at the two resolutions the two catalogues can actually supply
+ *
+ * WHAT THE CORPUS HAS, and it decides what can honestly be claimed. manami carries `animeSeason` as
+ * {year, season} and NOTHING finer: 41537 records, 39980 with a year, and 6486 whose season is the
+ * literal string 'UNDEFINED'. There is no month and no day anywhere in it. So the 45-day window
+ * crunchyroll ships (extractor.ts:302) CANNOT be measured on this corpus, and any row claiming to be
+ * one would be a quarter row wearing a different label.
+ *
+ * What is measurable is a ladder of buckets, and one rung of it is a genuine BOUND rather than an
+ * approximation:
+ *
+ *   SAME YEAR          365 days wide, and the coarsest thing justwatch's originalReleaseYear can
+ *                      support. This is not an approximation of anything, it IS justwatch's axis.
+ *   YEAR +/- 1         two years wide. Modelled because a show premiering in late December sits in a
+ *                      different calendar year from the catalogue's release year for it, and an exact
+ *                      year match refuses that correct pair for a rounding reason.
+ *   SAME QUARTER       ~91 days. Neither a lower nor an upper bound on a 45-day window: two dates 30
+ *                      days apart straddling New Year are in different quarters, and two dates in one
+ *                      quarter can be 89 days apart. Reported because it is the closest single bucket.
+ *   ADJACENT QUARTER   ~182 days, and a STRICT SUPERSET of "within 45 days": two dates 45 days apart
+ *                      are necessarily in the same or neighbouring quarter, so every pair a 45-day
+ *                      window admits is admitted here too. Its hard-negative pass rate is therefore an
+ *                      upper bound on the 45-day window's, which is the direction a safety claim needs,
+ *                      and its recall is an upper bound too, which is the direction a recall claim must
+ *                      NOT be read in.
+ *
+ * MISSING IS A REFUSAL, never a guess, which is the rule crunchyroll's own header states at
+ * extractor.ts:296-299. A null year or an UNDEFINED season on either side fails every predicate here.
+ * That costs recall on records manami never dated, and the diagnostics block below reports that cost
+ * separately so it is not misread as the date logic being strict.
+ *
+ * THE ONE THING THIS MODEL FLATTERS, stated here because no number below repeats it. Both sides of a
+ * SYNONYM pair are two names off ONE manami record, so they carry one year and one season between
+ * them and no date predicate can ever refuse a synonym positive. Production has no such guarantee:
+ * our media's startDate comes from AniList and the catalogue's year comes from the catalogue, and they
+ * disagree for regional releases and for December premieres. So the date axis's recall cost is
+ * measurable here ONLY on the related-same-show arm, where it is real and large, and every aggregate
+ * recall number in a date-vetoed row is an OVERSTATEMENT by exactly the amount the synonym arm gets
+ * for free.
+ * ---------------------------------------------------------------------------------------------- */
+
+const QUARTER_INDEX: Record<string, number> = { WINTER: 0, SPRING: 1, SUMMER: 2, FALL: 3 }
+
+/** A quarter number on one axis, so adjacency across a year boundary is a subtraction, not a case. */
+const quarterOf = (year: number | null, season: string | null): number | null => {
+  if (year === null) return null
+  const offset = season === null ? undefined : QUARTER_INDEX[season]
+  return offset === undefined ? null : year * 4 + offset
+}
+
+const yearWithin = (pair: Pair, slack: number) =>
+  pair.leftYear !== null && pair.rightYear !== null && Math.abs(pair.leftYear - pair.rightYear) <= slack
+
+const quarterWithin = (pair: Pair, slack: number) => {
+  const left = quarterOf(pair.leftYear, pair.leftSeason)
+  const right = quarterOf(pair.rightYear, pair.rightSeason)
+  return left !== null && right !== null && Math.abs(left - right) <= slack
+}
+
+/** the season-level checks: does ANY season the catalogue files under this show carry our date */
+const yearInShow = (pair: Pair) =>
+  pair.leftYear !== null && pair.rightShowYears.includes(pair.leftYear)
+
+const quarterInShow = (pair: Pair, slack: number) => {
+  const left = quarterOf(pair.leftYear, pair.leftSeason)
+  return left !== null && pair.rightShowQuarters.some(quarter => Math.abs(quarter - left) <= slack)
+}
+
+/** the whole cluster's name set, which is what `media.titles` is at every one of these call sites */
+const wholeList = (pair: Pair) => [pair.left, ...pair.leftOthers]
 
 /* ------------------------------------------------------------------------------------------------
  * Gate models
@@ -510,6 +619,143 @@ const gates = (): Gate[] => [
     reaches: () => true,
     score: pair => bestTitleScore([pair.left], pair.right),
   },
+  /**
+   * THE 2x2 DECOMPOSITION of crunchyroll's 0.4000 margin, applied to justwatch and appletv.
+   *
+   * crunchyroll's gate differs from the justwatch/appletv one on TWO axes at once, and reading the two
+   * rows against each other attributes the whole difference to whichever axis the reader had in mind:
+   *
+   *                          | primary title only            | the cluster's WHOLE title list
+   *   ----------------------- ------------------------------- ---------------------------------------
+   *   raw titleSimilarity     | 'AS SHIPPED', above           | 'WHOLE LIST no franchiseTitle', below
+   *   franchiseTitle on both  | 'WITH franchiseTitle', above  | IS 'crunchyroll-bestTitleScore', below
+   *
+   * The fourth cell is not added as a row because it already exists: `bestTitleScore(whole list,
+   * candidate)` IS the crunchyroll model, byte for byte, and the distinctness control would (rightly)
+   * refuse two gates producing an identical sweep. So the decomposition is three new numbers against
+   * one existing one, and the block that prints it names the cell it is borrowing.
+   *
+   * Only the third cell is new, and it is the one that answers the question: whole list WITHOUT the
+   * season stripping. Against 'AS SHIPPED' it isolates the list; against crunchyroll it isolates
+   * franchiseTitle.
+   */
+  {
+    name: 'jw/atv WHOLE LIST no franchiseTitle',
+    site: 'hypothetical: score every title the cluster knows, the way crunchyroll does, but WITHOUT sacha',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: () => true,
+    score: async pair => {
+      const scores = await Promise.all(wholeList(pair).map(title => titleSimilarity(title, pair.right)))
+      return scores.length ? Math.max(...scores) : 0
+    },
+  },
+  /**
+   * THE DATE AXIS, four resolutions, all on the crunchyroll title model.
+   *
+   * Each of these is `bestTitleScore(whole list, candidate)` (the crunchyroll title axis, unchanged)
+   * with a date predicate as the `reaches` veto, so the difference between any of them and the
+   * `crunchyroll-bestTitleScore` row is the DATE and nothing else. That is what makes the floor column
+   * readable: the floor is the hard negatives that survive at a threshold of 1.00, which is exactly the
+   * set the date axis exists to clean up, and comparing floors across these rows says how much of it
+   * each resolution actually removes.
+   *
+   * WHICH SOURCE EACH ONE IS FOR, since the two catalogues supply different resolutions:
+   *
+   *   justwatch supplies a YEAR. `node.content.originalReleaseYear` (extractor.ts:368) is a year, and
+   *   so is the per-season `seasons.content.originalReleaseYear` the NODE_QUERY already asks for at
+   *   extractor.ts:174. Both SAME YEAR and YEAR +/- 1 are expressible there and nothing finer is.
+   *
+   *   appletv supplies a TIMESTAMP. `content.releaseDate` (extractor.ts:79) is milliseconds, and so is
+   *   the per-episode `AppleEpisode.releaseDate` the episodes call already returns. A real 45-day
+   *   window is expressible there, so ADJACENT QUARTER is carried as its upper bound and SAME QUARTER
+   *   as the nearest single bucket. Neither is the window itself; the corpus has no day.
+   */
+  {
+    name: 'jw/atv WHOLE LIST + franchise + SAME YEAR',
+    site: 'hypothetical justwatch: crunchyroll title axis + originalReleaseYear equality (extractor.ts:174/368)',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => yearWithin(pair, 0),
+    score: pair => bestTitleScore(wholeList(pair), pair.right),
+  },
+  {
+    name: 'jw/atv WHOLE LIST + franchise + YEAR +/-1',
+    site: 'hypothetical justwatch: the same axis with one year of slack for a December premiere',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => yearWithin(pair, 1),
+    score: pair => bestTitleScore(wholeList(pair), pair.right),
+  },
+  {
+    name: 'jw/atv WHOLE LIST + franchise + SAME QUARTER',
+    site: 'hypothetical appletv: crunchyroll title axis + a ~91 day bucket (releaseDate, extractor.ts:79)',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => quarterWithin(pair, 0),
+    score: pair => bestTitleScore(wholeList(pair), pair.right),
+  },
+  {
+    name: 'jw/atv WHOLE LIST + franchise + ADJACENT QUARTER',
+    site: 'hypothetical appletv: a STRICT SUPERSET of a 45 day window, so its hard-negative rate bounds it',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => quarterWithin(pair, 1),
+    score: pair => bestTitleScore(wholeList(pair), pair.right),
+  },
+  /**
+   * THE SEASON-LEVEL DATE CHECKS, which are the ones that would actually ship.
+   *
+   * Same title scoring again, and the only change from the two rows above is WHICH date the catalogue
+   * side contributes: the show's own (its first season's) against every season the show carries. Read
+   * the pair of rows together and the difference is the entire cost of gating a season-level media
+   * against a show-level date, which is the mistake this pair exists to make visible before it is
+   * written into an extractor.
+   *
+   * Neither costs an extra request. justwatch already has the per-season years in the details response
+   * it fetches before the gate (NODE_QUERY at extractor.ts:174, dropped by the JWSeason interface at
+   * extractor.ts:249); appletv already pulls per-episode releaseDate in fetchEpisodes.
+   */
+  {
+    name: 'jw/atv WHOLE LIST + franchise + YEAR IN SHOW',
+    site: 'hypothetical justwatch: any season of the hit carries our year (seasons.content.originalReleaseYear)',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => yearInShow(pair),
+    score: pair => bestTitleScore(wholeList(pair), pair.right),
+  },
+  {
+    name: 'jw/atv WHOLE LIST + franchise + QUARTER IN SHOW +/-1',
+    site: 'hypothetical appletv: an episode of the hit within a quarter of ours, bounding a 45 day window',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => quarterInShow(pair, 1),
+    score: pair => bestTitleScore(wholeList(pair), pair.right),
+  },
+  /**
+   * Is the date axis a SUBSTITUTE for the whole title list, or does it only stack with it?
+   *
+   * Worth its own row because it is the cheapest possible change: keep reading getFirstTitle, add a
+   * year check. If this row's margin approaches the whole-list rows, the list is not the lever after
+   * all and the smaller change ships. If it does not, the answer is that the two axes are independent
+   * and both are needed, which is what crunchyroll's own header claims about ITS two axes.
+   */
+  {
+    name: 'jw/atv PRIMARY + franchise + SAME YEAR',
+    site: 'hypothetical: the cheapest change, getFirstTitle kept and a year check added',
+    arm: STREAMING_ARM,
+    current: 0.5,
+    grid: WIDE_GRID,
+    reaches: pair => yearWithin(pair, 0),
+    score: pair => bestTitleScore([pair.left], pair.right),
+  },
   {
     name: 'crunchyroll-bestTitleScore',
     site: 'src/sources/crunchyroll/extractor.ts:336 CONFIDENT_TITLE_THRESHOLD (declared :301)',
@@ -607,6 +853,16 @@ const gridOf = (from: number, to: number, step: number) =>
 
 /** the 0.44 and 0.5 family: unogs, justwatch, appletv */
 const LOW_GRID = gridOf(0.30, 0.70, 0.01)
+/**
+ * The proposed justwatch/appletv models, which straddle both families and so cannot use either window.
+ *
+ * They are compared against the 0.50 those two sites ship today, which is in the LOW family, and their
+ * recommendation is expected to land near crunchyroll's 0.90, which is in the HIGH one. A window
+ * covering only one of the two would make the shipped row or the recommended row unprintable, and the
+ * fallback for a recommendation outside the window is `saturationFull`, which is correct but arrives
+ * with no table under it to argue with.
+ */
+const WIDE_GRID = gridOf(0.30, 0.99, 0.01)
 /** the 0.9 family: crunchyroll's CONFIDENT_TITLE_THRESHOLD and fuzzy-merge's SIMILARITY_THRESHOLD */
 const HIGH_GRID = gridOf(0.75, 0.99, 0.01)
 /** the search gate sits at 0.7 on a saturating scale of its own, so it gets the whole range */
@@ -782,6 +1038,37 @@ beforeAll(async () => {
 
   const rand = mulberry32(SEED)
 
+  /**
+   * The dates one CATALOGUE SHOW covers: the record itself plus every same-show relation of it.
+   *
+   * A catalogue that models a franchise as one entity with several seasons carries a date per season,
+   * so a candidate's date set is not one date. Built once per record here rather than per pair, since
+   * the same record appears on the right of thousands of pairs and resolving its relations again for
+   * each of them is the difference between a pass that finishes and one that does not.
+   *
+   * `relationOf` is what decides which relations count as seasons of the same show, and it is the same
+   * lexical split the ground-truth labelling uses, so this cannot smuggle in a judgement the arms do
+   * not already make. It is an approximation of how a catalogue bundles: manami has no season graph.
+   */
+  const showYears = new Map<Record_, number[]>()
+  const showQuarters = new Map<Record_, number[]>()
+  for (const record of corpus.records) {
+    const years = new Set<number>()
+    const quarters = new Set<number>()
+    const add = (entry: Record_) => {
+      if (entry.year !== null) years.add(entry.year)
+      const quarter = quarterOf(entry.year, entry.season)
+      if (quarter !== null) quarters.add(quarter)
+    }
+    add(record)
+    for (const url of record.related) {
+      const other = byUrl.get(url)
+      if (other && other !== record && relationOf(record.title, other.title) === 'same-show') add(other)
+    }
+    showYears.set(record, [...years])
+    showQuarters.set(record, [...quarters])
+  }
+
   const synonymPairs: Pair[] = []
   for (const record of corpus.records) {
     for (const synonym of record.synonyms) {
@@ -800,6 +1087,12 @@ beforeAll(async () => {
         rightType: record.type,
         leftYear: record.year,
         rightYear: record.year,
+        // one record, so one date between the two sides. Every date predicate passes here by
+        // construction, which is the flattery the date-axis header warns about.
+        leftSeason: record.season,
+        rightSeason: record.season,
+        rightShowYears: showYears.get(record)!,
+        rightShowQuarters: showQuarters.get(record)!,
       })
     }
   }
@@ -823,6 +1116,10 @@ beforeAll(async () => {
         rightType: other.type,
         leftYear: record.year,
         rightYear: other.year,
+        leftSeason: record.season,
+        rightSeason: other.season,
+        rightShowYears: showYears.get(other)!,
+        rightShowQuarters: showQuarters.get(other)!,
       }
       if (relationOf(record.title, other.title) === 'same-show') {
         sameShowPairs.push({ ...pair, kind: 'related-same-show' })
@@ -852,6 +1149,10 @@ beforeAll(async () => {
       rightType: b.type,
       leftYear: a.year,
       rightYear: b.year,
+      leftSeason: a.season,
+      rightSeason: b.season,
+      rightShowYears: showYears.get(b)!,
+      rightShowQuarters: showQuarters.get(b)!,
     })
   }
 
@@ -1005,6 +1306,52 @@ describe('control: the scorer is live', () => {
     expect([...mergeProfile('Mushoku Tensei', ['Mushoku Tensei 2nd Season'], 'TV', 2021).seasons]).toEqual([2])
     expect([...mergeProfile('Some OVA', [], 'OVA', 2021).formats]).toEqual([])
     expect([...mergeProfile('Some Movie', [], 'MOVIE', 2021).formats]).toEqual(['MOVIE'])
+  })
+
+  /**
+   * The date predicates, mutation-checked the way the scorers are.
+   *
+   * Two failure shapes and the existing controls only catch one of them. A predicate stuck at TRUE
+   * makes its gate byte-identical to `crunchyroll-bestTitleScore`, which the distinctness control
+   * refuses, so that one is covered. A predicate stuck at FALSE zeroes every arm, which
+   * `assertNotInert` refuses, so that one is covered too. What neither catches is a predicate that is
+   * live and WRONG: an off-by-one in the quarter index, or an adjacency test that does not cross a year
+   * boundary, both of which leave a plausible curve. Those are what this pins, on constructed pairs
+   * whose answers are arithmetic rather than corpus facts.
+   */
+  it('has LIVE date predicates: each resolution admits and refuses the pairs it should', () => {
+    const at = (leftYear: number | null, leftSeason: string | null, rightYear: number | null, rightSeason: string | null) =>
+      ({
+        kind: 'synonym', left: 'a', leftOthers: [], right: 'b', rightOthers: [],
+        leftType: 'TV', rightType: 'TV',
+        leftYear, rightYear, leftSeason, rightSeason,
+        rightShowYears: rightYear === null ? [] : [rightYear],
+        rightShowQuarters: (() => { const q = quarterOf(rightYear, rightSeason); return q === null ? [] : [q] })(),
+      }) as Pair
+
+    expect(yearWithin(at(2019, 'FALL', 2019, 'WINTER'), 0)).toBe(true)
+    expect(yearWithin(at(2019, 'FALL', 2020, 'WINTER'), 0)).toBe(false)
+    expect(yearWithin(at(2019, 'FALL', 2020, 'WINTER'), 1)).toBe(true)
+    // missing is a refusal, never a guess: crunchyroll/extractor.ts:296-299
+    expect(yearWithin(at(null, 'FALL', 2019, 'FALL'), 1)).toBe(false)
+    expect(quarterWithin(at(2019, 'FALL', 2019, 'FALL'), 0)).toBe(true)
+    expect(quarterWithin(at(2019, 'FALL', 2019, 'SUMMER'), 0)).toBe(false)
+    // the adjacency that has to cross a year boundary, which is the off-by-one the bound depends on:
+    // a show airing in December and one airing the following January are 45 days apart
+    expect(quarterWithin(at(2019, 'FALL', 2020, 'WINTER'), 1)).toBe(true)
+    expect(quarterWithin(at(2019, 'SPRING', 2020, 'WINTER'), 1)).toBe(false)
+    // 'UNDEFINED' is not a quarter, so it refuses rather than defaulting to one
+    expect(quarterWithin(at(2019, 'UNDEFINED', 2019, 'UNDEFINED'), 1)).toBe(false)
+    expect(quarterOf(2019, 'UNDEFINED')).toBeNull()
+
+    // the season-level checks read the SHOW's date set, so a season-3 media matches a show entity dated
+    // by its season 1, which is the whole point of having them
+    const seasonLevel = { ...at(2019, 'FALL', 2013, 'SPRING'), rightShowYears: [2013, 2017, 2019] } as Pair
+    expect(yearInShow(seasonLevel)).toBe(true)
+    expect(yearWithin(seasonLevel, 1)).toBe(false)
+    expect(yearInShow({ ...seasonLevel, rightShowYears: [2013, 2017] } as Pair)).toBe(false)
+    expect(quarterInShow({ ...at(2019, 'FALL', 2013, 'SPRING'), rightShowQuarters: [2019 * 4 + 2] } as Pair, 1)).toBe(true)
+    expect(quarterInShow({ ...at(2019, 'FALL', 2013, 'SPRING'), rightShowQuarters: [2019 * 4 + 1] } as Pair, 1)).toBe(false)
   })
 
   it('has a non-degenerate corpus: every arm is populated and the arms are different sets', () => {
@@ -1656,6 +2003,14 @@ describe('calibration', () => {
       'justwatch/appletv AS SHIPPED': [0.44, 0.50, 0.55, 0.60, 0.70],
       'justwatch/appletv WITH THE RUNG': [0.44, 0.50, 0.55, 0.60, 0.70],
       'justwatch/appletv WITH franchiseTitle': [0.44, 0.50, 0.55, 0.60, 0.70],
+      'jw/atv WHOLE LIST no franchiseTitle': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv WHOLE LIST + franchise + SAME YEAR': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv WHOLE LIST + franchise + YEAR +/-1': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv WHOLE LIST + franchise + SAME QUARTER': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv WHOLE LIST + franchise + ADJACENT QUARTER': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv WHOLE LIST + franchise + YEAR IN SHOW': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv WHOLE LIST + franchise + QUARTER IN SHOW +/-1': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
+      'jw/atv PRIMARY + franchise + SAME YEAR': [0.50, 0.70, 0.85, 0.90, 0.95, 1.00],
       'crunchyroll-bestTitleScore': [0.85, 0.90, 0.93, 0.96],
       'search-relevance WHOLE LIST': [0.60, 0.70, 0.78, 0.85],
       'search-relevance PRIMARY ONLY': [0.60, 0.70, 0.78, 0.85],
@@ -1714,6 +2069,261 @@ describe('calibration', () => {
     expect(lowered).toBeGreaterThan(0)
   })
 
+  /**
+   * QUESTION 1, decomposed rather than assumed: how much of crunchyroll's margin is the WHOLE LIST and
+   * how much is franchiseTitle?
+   *
+   * The four cells are the same corpus pairs under four preprocessings, so every difference between
+   * two cells is attributable to the one step that differs. The comparison is made on MARGIN (best
+   * recall-minus-hard-negative over the full 0.00-1.00 range) rather than at a fixed threshold, because
+   * the four cells do not share a scale: franchiseTitle raises a season sequel's score to 1.0 against
+   * its parent, so a number that is loose on one cell is strict on another and a fixed-threshold
+   * comparison would mostly be measuring that shift.
+   */
+  it('decomposes the crunchyroll margin into the whole list and franchiseTitle', () => {
+    const cell = (name: string) => {
+      const result = results.find(entry => entry.gate.name === name)!
+      const value = margin(result.fullRows, 'hardNegative')
+      const at = result.fullRows.reduce((a, b) =>
+        rate(b.positive) - rate(b.hardNegative) > rate(a.positive) - rate(a.hardNegative) ? b : a)
+      return { value, threshold: at.threshold, recall: rate(at.positive), hard: rate(at.hardNegative) }
+    }
+
+    const primaryRaw = cell('justwatch/appletv AS SHIPPED')
+    const primaryFranchise = cell('justwatch/appletv WITH franchiseTitle')
+    const listRaw = cell('jw/atv WHOLE LIST no franchiseTitle')
+    const listFranchise = cell('crunchyroll-bestTitleScore')
+
+    say('='.repeat(100))
+    say('DECOMPOSITION  what buys crunchyroll its margin, cell by cell')
+    say('='.repeat(100))
+    say('  The bottom-right cell is NOT a new measurement. bestTitleScore(whole list, candidate) IS the')
+    say('  crunchyroll gate, so adding it as a second row would produce an identical sweep and the')
+    say('  distinctness control would refuse it. It is borrowed from that row and labelled as borrowed.')
+    say()
+    say('                            margin   at     recall     hard-neg')
+    say('  ' + '-'.repeat(70))
+    for (const [label, value] of [
+      ['primary title, raw          ', primaryRaw],
+      ['primary title, franchise    ', primaryFranchise],
+      ['WHOLE LIST, raw             ', listRaw],
+      ['WHOLE LIST, franchise       ', listFranchise],
+    ] as const) {
+      say(`  ${label}${pad(value.value.toFixed(4), 7)}  ${value.threshold.toFixed(2)}   `
+        + `${pad(pct(value.recall), 9)}  ${pad(pct(value.hard), 9)}`)
+    }
+    say()
+    say('  THE TWO SINGLE-STEP DELTAS, each holding the other axis fixed:')
+    say(`    franchiseTitle alone, on the primary title   ${(primaryFranchise.value - primaryRaw.value >= 0 ? '+' : '')}`
+      + `${(primaryFranchise.value - primaryRaw.value).toFixed(4)}`)
+    say(`    franchiseTitle alone, on the whole list      ${(listFranchise.value - listRaw.value >= 0 ? '+' : '')}`
+      + `${(listFranchise.value - listRaw.value).toFixed(4)}`)
+    say(`    the whole list alone, raw scoring            ${(listRaw.value - primaryRaw.value >= 0 ? '+' : '')}`
+      + `${(listRaw.value - primaryRaw.value).toFixed(4)}`)
+    say(`    the whole list alone, franchise scoring      ${(listFranchise.value - primaryFranchise.value >= 0 ? '+' : '')}`
+      + `${(listFranchise.value - primaryFranchise.value).toFixed(4)}`)
+    say(`    both together                                ${(listFranchise.value - primaryRaw.value >= 0 ? '+' : '')}`
+      + `${(listFranchise.value - primaryRaw.value).toFixed(4)}`)
+    say()
+    say('  A step whose delta depends on the state of the other axis is an INTERACTION, not an')
+    say('  additive contribution, and the two franchiseTitle deltas above are the test for it.')
+    say()
+    expect(listFranchise.value).toBeGreaterThan(0)
+  })
+
+  /**
+   * QUESTION 3, and the block that decides whether this design is safe at all.
+   *
+   * The floor is the whole reason the date axis is on the table: franchiseTitle collapses a sequel onto
+   * its parent, so a title-only gate has hard negatives that pass at a threshold of 1.00 and no number
+   * refuses them. What a date resolution is worth is exactly how much of that floor it removes, and
+   * that is a subtraction between the floors of two rows that differ only in the veto.
+   *
+   * The recall side is reported per SUB-ARM because the aggregate is flattered. A synonym pair carries
+   * one manami record's date on both sides, so no date predicate can refuse it, and the synonym arm is
+   * 98% of the positive count. The related-same-show arm is the only place the date axis's real cost
+   * is visible, and it is the arm that holds "Solo Leveling Season 2" against "Solo Leveling", which is
+   * the exact pair this change exists to recover.
+   */
+  it('reports what each date resolution removes from the floor and what it costs per arm', () => {
+    const DATED = [
+      'crunchyroll-bestTitleScore',
+      'jw/atv WHOLE LIST + franchise + YEAR IN SHOW',
+      'jw/atv WHOLE LIST + franchise + QUARTER IN SHOW +/-1',
+      'jw/atv WHOLE LIST + franchise + YEAR +/-1',
+      'jw/atv WHOLE LIST + franchise + SAME YEAR',
+      'jw/atv WHOLE LIST + franchise + ADJACENT QUARTER',
+      'jw/atv WHOLE LIST + franchise + SAME QUARTER',
+    ]
+
+    say('='.repeat(100))
+    say('DATE AXIS  what each resolution buys, measured as floor removed rather than as margin')
+    say('='.repeat(100))
+    say('  The first row has NO date veto and is the baseline every other row is a subtraction from.')
+    say('  Every row below it is the same title scoring with one predicate added, so the difference is')
+    say('  the date and nothing else.')
+    say()
+    say('  NO ROW HERE IS A 45-DAY WINDOW. The corpus carries {year, season} and no day, so the finest')
+    say('  bucket available is a quarter. ADJACENT QUARTER is a strict superset of a 45-day window (two')
+    say('  dates 45 days apart are in the same or neighbouring quarter), so its hard-negative rate is an')
+    say('  UPPER BOUND on what a real 45-day window admits, and its recall is an upper bound too.')
+    say()
+
+    const sub = (result: GateResult, kind: PairKind, threshold: number) => {
+      const arm = result.entries.filter(entry => entry.pair.kind === kind)
+      const passed = arm.filter(entry => passes(entry, threshold, result.gate)).length
+      return arm.length ? `${passed}/${arm.length} ${pct(passed / arm.length)}` : 'empty'
+    }
+
+    for (const name of DATED) {
+      const result = results.find(entry => entry.gate.name === name)!
+      const chosen = result.analysis.saturation ?? result.analysis.saturationFull
+      const missing = (arm: GateArm) => {
+        const entries = result.entries.filter(entry => entry.arm === arm)
+        const refused = entries.filter(entry => !entry.reached)
+        // a pair the corpus never dated, as distinct from one whose dates disagree. The first is a
+        // property of manami, the second is the veto doing its job, and charging the veto for both
+        // overstates its recall cost.
+        const undated = refused.filter(entry =>
+          entry.pair.leftYear === null || entry.pair.rightYear === null
+          || quarterOf(entry.pair.leftYear, entry.pair.leftSeason) === null
+          || quarterOf(entry.pair.rightYear, entry.pair.rightSeason) === null).length
+        return entries.length
+          ? `${refused.length}/${entries.length} ${pct(refused.length / entries.length)} `
+            + `(${undated} of them undated in the corpus)`
+          : 'empty'
+      }
+      say(`  ${result.gate.name}`)
+      say(`    irreducible floor            ${pct(result.analysis.floor)} (${result.analysis.floorCount} hard negatives pass at 1.00)`)
+      say(`    recommended (saturation)     ${chosen.toFixed(2)}`)
+      say(`    vetoed before scoring        positives ${missing('positive')}`)
+      say(`                                 hard negs ${missing('hard-negative')}`)
+      say(`    recall at ${chosen.toFixed(2)}, by sub-arm:`)
+      say(`      synonym            ${sub(result, 'synonym', chosen)}   <- carries ONE date on both sides, so the veto is free here`)
+      say(`      related-same-show  ${sub(result, 'related-same-show', chosen)}   <- the arm the date axis actually costs`)
+      say(`      hard negatives     ${sub(result, 'related-different-entry', chosen)}`)
+      say()
+    }
+
+    const floorOf = (name: string) => results.find(entry => entry.gate.name === name)!.analysis
+    const base = floorOf('crunchyroll-bestTitleScore')
+    say('  FLOOR REMOVED, against the undated title-only baseline:')
+    for (const name of DATED.slice(1)) {
+      const analysis = floorOf(name)
+      say(`    ${name.padEnd(52)} ${pct(base.floor)} -> ${pct(analysis.floor)}   `
+        + `removes ${base.floorCount - analysis.floorCount} of ${base.floorCount} welds `
+        + `(${pct(1 - analysis.floorCount / Math.max(1, base.floorCount))})`)
+    }
+    say()
+    say('  Read the SAME YEAR row against the ADJACENT QUARTER row: the gap between them is the whole')
+    say('  cost of justwatch supplying a year where appletv supplies a timestamp.')
+    say()
+    expect(base.floorCount).toBeGreaterThan(0)
+  })
+
+  /**
+   * QUESTION 4: appletv returns the FIRST candidate over the line, not the best one.
+   *
+   * appletv/extractor.ts:136-142 loops the search results and returns on the first that clears 0.5, so
+   * a weak early hit wins over a strong later one. unogs already takes the best (utils.ts:311) and
+   * crunchyroll sorts by score before spending a request (extractor.ts:337). This block measures what
+   * the difference is worth.
+   *
+   * THE CANDIDATE SET is built from the corpus rather than from a live search, and that is the model's
+   * weakest joint, so it is stated rather than buried. For one media (one manami record) the candidates
+   * a search could plausibly return are: the names the record itself is known by (positives), and the
+   * franchise siblings manami links it to (hard negatives). Random unrelated records are excluded,
+   * because a catalogue search for "Attack on Titan" does not return "Yuru Camp" and counting it as a
+   * candidate would make every policy look good.
+   *
+   * THE ORDER IS UNKNOWN, and that is the honest limit. appletv's shelves are ranked by apple's own
+   * relevance, which this corpus cannot reproduce. So FIRST is reported as a uniform draw among the
+   * passing candidates, which is the neutral assumption, and the two extremes are printed beside it:
+   * if apple always ranks the correct entry first, FIRST never errs on a contested set; if it always
+   * ranks it last, FIRST errs on every contested set. BEST is not an assumption at all: it is a
+   * measured argmax, and it is the only one of the three that does not depend on the ordering.
+   */
+  it('measures taking the BEST candidate against the FIRST one that passes', () => {
+    say('='.repeat(100))
+    say('CANDIDATE POLICY  appletv/extractor.ts:136 returns the FIRST result over the line')
+    say('='.repeat(100))
+    say('  contested = a media for which BOTH a correct candidate and a wrong one clear the threshold.')
+    say('  It is the only situation in which the policy can matter: with no passing wrong candidate')
+    say('  every policy is right, and with no passing correct one every policy is wrong and the fault is')
+    say('  the threshold\'s.')
+    say()
+
+    const MODELS: [string, number][] = [
+      ['justwatch/appletv AS SHIPPED', 0.50],
+      ['jw/atv WHOLE LIST no franchiseTitle', 0.90],
+      ['crunchyroll-bestTitleScore', 0.90],
+      ['jw/atv WHOLE LIST + franchise + YEAR IN SHOW', 0.90],
+      ['jw/atv WHOLE LIST + franchise + QUARTER IN SHOW +/-1', 0.90],
+    ]
+
+    for (const [name, threshold] of MODELS) {
+      const result = results.find(entry => entry.gate.name === name)
+      if (!result) continue
+      // group by the CLUSTER, not by the title: two manami records can carry the same primary title and
+      // are different media, so keying on the title alone would pool two shows' candidate lists into one
+      const groups = new Map<string, { positive: Scored[], hard: Scored[] }>()
+      for (const entry of result.entries) {
+        if (entry.arm === 'easy-negative') continue
+        const key = JSON.stringify([entry.pair.left, entry.pair.leftOthers])
+        let group = groups.get(key)
+        if (!group) groups.set(key, (group = { positive: [], hard: [] }))
+        if (entry.arm === 'positive') group.positive.push(entry)
+        else group.hard.push(entry)
+      }
+
+      let contested = 0
+      let bestErrs = 0
+      let firstExpected = 0
+      let bothWrong = 0
+      const examples: string[] = []
+      for (const group of groups.values()) {
+        const passing = (entries: Scored[]) => entries.filter(entry => passes(entry, threshold, result.gate))
+        const positives = passing(group.positive)
+        const hard = passing(group.hard)
+        if (!hard.length) continue
+        if (!positives.length) { bothWrong++; continue }
+        contested++
+        const topPositive = Math.max(...positives.map(entry => entry.score))
+        const topHard = Math.max(...hard.map(entry => entry.score))
+        firstExpected += hard.length / (hard.length + positives.length)
+        if (topHard > topPositive) {
+          bestErrs++
+          if (examples.length < 6) {
+            const worst = hard.reduce((a, b) => (b.score > a.score ? b : a))
+            examples.push(`      ${worst.score.toFixed(4)} wrong  "${worst.pair.left}"  ->  "${worst.pair.right}"   `
+              + `(best correct candidate ${topPositive.toFixed(4)})`)
+          }
+        }
+      }
+
+      say(`  ${name}  at ${threshold.toFixed(2)}`)
+      say(`    media with a passing WRONG candidate and no passing correct one: ${bothWrong}`)
+      say(`      every policy welds these; the threshold and the date axis are what move them, not the policy`)
+      say(`    contested media: ${contested}`)
+      if (contested) {
+        say(`      BEST  (argmax, measured)            welds ${bestErrs} `
+          + `${pct(bestErrs / contested)} of contested`)
+        say(`      FIRST (uniform order, modelled)     welds ${firstExpected.toFixed(1)} `
+          + `${pct(firstExpected / contested)} of contested, in expectation`)
+        say(`      FIRST worst case (correct ranked last)  welds ${contested} 100.000% of contested`)
+        say(`      FIRST best case  (correct ranked first) welds 0 0.000% of contested`)
+        say(`      so switching to BEST removes at least ${Math.max(0, Math.round(firstExpected) - bestErrs)} welds `
+          + `on the neutral ordering assumption and at most ${contested - bestErrs} on the worst one`)
+        if (examples.length) {
+          say(`      contested media BEST still gets wrong (a wrong candidate outscores every correct one):`)
+          for (const example of examples) say(example)
+        }
+      }
+      say()
+    }
+    expect(results.length).toBeGreaterThan(0)
+  })
+
   it('puts the gates side by side', () => {
     say('='.repeat(100))
     say('GATE COMPARISON')
@@ -1722,12 +2332,12 @@ describe('calibration', () => {
     say('  honest summary of what a NUMBER can buy at a gate, because it is the best case over every')
     say('  number. A low margin means the two arms overlap and no threshold separates them.')
     say()
-    say('  gate                                    margin   at    shipped  recall   hard-neg   floor    rec.')
-    say('  ' + '-'.repeat(100))
+    say('  gate                                                  margin   at    shipped  recall   hard-neg   floor    rec.')
+    say('  ' + '-'.repeat(112))
     for (const result of results) {
       const shipped = result.rows.find(row => Math.abs(row.threshold - result.gate.current) < 1e-9)
       const chosen = result.analysis.saturation ?? result.analysis.saturationFull
-      say(`  ${result.gate.name.padEnd(38)}${pad(margin(result.fullRows, 'hardNegative').toFixed(4), 7)}  `
+      say(`  ${result.gate.name.padEnd(52)}${pad(margin(result.fullRows, 'hardNegative').toFixed(4), 7)}  `
         + `${result.analysis.bestMarginThreshold.toFixed(2)}   ${result.gate.current.toFixed(2)}     `
         + `${pad(shipped ? pct(rate(shipped.positive)) : 'n/a', 8)} ${pad(shipped ? pct(rate(shipped.hardNegative)) : 'n/a', 9)}  `
         + `${pad(pct(result.analysis.floor), 8)} ${chosen.toFixed(2)}`)
@@ -1740,7 +2350,7 @@ describe('calibration', () => {
     say('  The margin column is computed over the FULL 0.00-1.00 range, not over each gate\'s reported')
     say('  window, so it stays comparable between a gate swept 0.30-0.70 and one swept 0.75-0.99.')
     say()
-    expect(results.length).toBe(8)
+    expect(results.length).toBe(16)
   })
 
   it('writes the report where a later agent can read it without rerunning', () => {
