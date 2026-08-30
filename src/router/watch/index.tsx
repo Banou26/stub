@@ -89,6 +89,11 @@ const style = css`
   display: flex;
   flex-direction: column;
   height: 100vh;
+  /* The bar is fixed, so it takes no room in the flow and every other route pads itself out from
+     under it. This one has to as well: without the reservation the header floats over the top strip
+     of the player, which is exactly where the source puts its own title and controls. The height is
+     the whole viewport minus that strip, which border-box gives us for free. */
+  padding-top: var(--stub-header-height);
   overflow: hidden;
   color: rgb(255, 255, 255);
 

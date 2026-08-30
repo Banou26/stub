@@ -33,6 +33,19 @@ const style = css`
     pointer-events: auto;
   }
 
+  /* Docked rather than floating: /watch reserves this strip with its own top padding, so the bar sits
+     ON the page instead of over it and the gradient has nothing left to fade across. It stays fixed,
+     because "docked" here is about what is underneath it, not about scrolling away. Opaque and edged,
+     since the thing below is the source's own player chrome and the two need a seam.
+
+     The border costs no height: box-sizing is border-box globally, so --stub-header-height still IS
+     the bar, which is what the pages reserving it measure. */
+  &.docked {
+    background: #0f0f0f;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: auto;
+  }
+
   .logo {
     justify-self: start;
     font-size: 2.4rem;
@@ -142,6 +155,7 @@ export const Header = () => {
   const [, navigate] = useLocation()
   const [, searchParams] = useRoute<RouteParams['SEARCH']>(getRouterRoutePath(Route.SEARCH))
   const [onLoginCallback] = useRoute(getRouterRoutePath(Route.LOGIN_CALLBACK))
+  const [onWatch] = useRoute(getRouterRoutePath(Route.WATCH))
   const routeQuery = searchParams?.query ? decodeURIComponent(searchParams.query) : ''
   const [query, setQuery] = useState(routeQuery)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -163,7 +177,7 @@ export const Header = () => {
   if (onLoginCallback) return null
 
   return (
-    <header css={style}>
+    <header css={style} className={onWatch ? 'docked' : undefined}>
       <Link to={getRoutePath(Route.HOME)} className="logo">stub</Link>
       <form
         className="search"
