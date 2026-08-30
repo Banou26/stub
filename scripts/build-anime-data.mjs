@@ -33,15 +33,20 @@
 //
 // Every build takes the newest release, so a deploy is never older than the last one published.
 // Nothing generated is committed. A local build cache under node_modules/.cache keeps repeat builds
-// off the network, and a CI checkout has no cache, so CI always fetches.
+// off the network, and a CI checkout has no cache, so CI always fetches. On Cloudflare Pages the
+// cache is not merely absent but unreachable: the build restores a dependency cache and THEN runs
+// `npm clean-install`, which deletes node_modules, so nothing under it can ever survive into a
+// build. The network paths below are the only ones that exist there.
 //
 // If the fetch fails with no cache to fall back on, the build FAILS rather than degrading. arm alone
 // would still produce a plausible looking index, so a silent degrade would ship a build with no
 // season listings and no Kitsu or AniDB ids while looking entirely healthy.
 //
-// The release is named through two independent endpoints, because they fail independently. See
+// The release is named through three independent paths, because they fail independently. See
 // `newestRelease`: the list endpoint can answer 200 with an empty array during a GitHub incident,
-// which reads as "this repo has no releases" and is not that at all.
+// which reads as "this repo has no releases" and is not that at all, and BOTH api.github.com paths
+// go down together whenever the runner's unauthenticated per-IP budget is spent, which is why the
+// third one does not touch that host.
 //
 // LICENSING
 //
@@ -72,7 +77,12 @@ const CACHE = resolve(ROOT, 'node_modules/.cache/stub-anime-data.json')
 
 const REPO = 'manami-project/anime-offline-database'
 const ASSET = 'anime-offline-database.jsonl.zst'
-const FETCH_TIMEOUT_MS = 120_000
+// Two budgets, never one. Sharing a single allowance across naming the release and downloading it
+// meant a slow api.github.com could spend all of it before the fallback below was even chosen, and
+// the download then got an already-aborted signal: the route that exists for a refusing API died on
+// the one shape of refusal that is not fast.
+const NAME_TIMEOUT_MS = 15_000
+const DOWNLOAD_TIMEOUT_MS = 120_000
 const RETRY_DELAY_MS = 2_000
 
 // Attribution is PER ARTIFACT, not one blanket notice, because the two artifacts are not derived
@@ -133,18 +143,48 @@ const idIn = (sources, host) => {
 
 const assetIn = release => release?.assets?.find(candidate => candidate.name === ASSET)
 
-const askGitHub = async (path, signal) => {
+const askGitHub = async path => {
   const response = await fetch(`https://api.github.com/repos/${REPO}/${path}`, {
     headers: { accept: 'application/vnd.github+json', 'user-agent': 'stub-build' },
-    signal,
+    signal: AbortSignal.timeout(NAME_TIMEOUT_MS),
   })
-  if (!response.ok) throw new Error(`GET ${path}: HTTP ${response.status}`)
+  if (!response.ok) {
+    // A 403 here is almost always the UNAUTHENTICATED per-IP budget, 60 requests an hour, which a
+    // shared CI runner can arrive with already spent by another tenant. "HTTP 403" alone cannot be
+    // told apart from a block, an unusual user-agent or a private repo, all of which answer 403 too
+    // but with an html body and no ratelimit headers. A Cloudflare Pages build died on 2026-08-30
+    // with four of these and nothing to read, so carry out what the response actually said.
+    const detail = await response.text().then(
+      // One sentence of it. Upstream follows the useful half with a paragraph of boilerplate and
+      // this ends up on a single log line. The ip in "exceeded for 1.2.3.4." survives, because the
+      // split is on a full stop FOLLOWED BY A SPACE.
+      body => { try { return String(JSON.parse(body).message ?? '').split('. ')[0] } catch { return '' } },
+      () => ''
+    )
+    const remaining = response.headers.get('x-ratelimit-remaining')
+    const reset = Number(response.headers.get('x-ratelimit-reset'))
+    const error = new Error([
+      `HTTP ${response.status}`,
+      detail,
+      remaining === null ? '' : `ratelimit remaining ${remaining}`,
+      remaining === '0' && Number.isFinite(reset) && reset > 0
+        ? `clears in ${Math.max(0, Math.round((reset * 1000 - Date.now()) / 60_000))} min`
+        : '',
+    ].filter(Boolean).join(', '))
+    error.status = response.status
+    // Read off the headers, never off the prose, which is not a contract. Both limiters answer 403:
+    // the primary one exposes a spent budget, the secondary one hands back a retry-after.
+    error.quotaSpent =
+      (response.status === 403 || response.status === 429)
+      && (remaining === '0' || response.headers.has('retry-after'))
+    throw error
+  }
   return response.json()
 }
 
 // The list endpoint names every dated release, so it is the only one that can pick the newest.
-const fromReleaseList = async signal => {
-  const list = await askGitHub('releases?per_page=100', signal)
+const fromReleaseList = async () => {
+  const list = await askGitHub('releases?per_page=100')
 
   // A 200 carrying an empty array is what api.github.com answers during an incident, and nothing
   // about it looks wrong: there is no status to check and no exception to catch. It is NOT evidence
@@ -169,11 +209,13 @@ const fromReleaseList = async signal => {
 
 // One release, named by GitHub rather than chosen here, and served by a code path that stayed up
 // through the incident above. It cannot pick the newest dated tag, which is why it is the fallback
-// and not the primary. Whatever tag it names is accepted, including the rolling `latest` one,
-// because a slightly older dump still yields a full season window (buildExtract anchors the window
-// on the dump's own cut date rather than on today) and the alternative here is no deploy at all.
-const fromLatestRelease = async signal => {
-  const release = await askGitHub('releases/latest', signal)
+// and not the primary. Whatever tag it names is accepted: GitHub resolves this to the newest
+// non-draft non-prerelease release by created_at, which measured 2026-08-31 is the newest DATED tag
+// and not the rolling `latest` one this repo also carries. Even an older dump would be taken, since
+// it still yields a full season window (buildExtract anchors the window on the dump's own cut date
+// rather than on today) and the alternative here is no deploy at all.
+const fromLatestRelease = async () => {
+  const release = await askGitHub('releases/latest')
   const asset = assetIn(release)
   if (!asset) throw new Error(`releases/latest (${release?.tag_name ?? 'untagged'}) does not carry ${ASSET}`)
   return { tag: release.tag_name, url: asset.browser_download_url }
@@ -184,27 +226,70 @@ const RELEASE_SOURCES = [
   { name: 'releases/latest', find: fromLatestRelease },
 ]
 
+// The same asset, named by nobody. github.com serves this path as a redirect to the latest release's
+// asset, and github.com is a DIFFERENT service from api.github.com: it carries no unauthenticated
+// 60-per-hour per-IP budget, so it still answers on a shared CI runner whose budget another tenant
+// already spent. Not hypothetical. It failed a Cloudflare Pages build on 2026-08-30, four
+// api.github.com attempts refusing with 403 inside two seconds, while githubstatus reported every
+// system operational and a GitHub Actions run on the SAME commit reached the api fine.
+//
+// It costs nothing in freshness, and nothing in provenance either. Measured 2026-08-31 with the
+// unauthenticated budget deliberately spent:
+//
+//   /releases/latest/download/anime-offline-database.jsonl.zst
+//     -> 302 /releases/download/2026-27/anime-offline-database.jsonl.zst
+//
+// github.com resolves "latest" ITSELF, by created_at across releases that are neither draft nor
+// prerelease, so it lands on the newest DATED release rather than on the rolling `latest` tag this
+// repo also carries. The bytes are the ones the api names: sha256
+// 9ed7e3fd8f0f47b63d977e915a555b7f6e552a7a25a465773451dbccd9cb8e03 either way.
+//
+// So it is last for one property only, not for freshness: fromReleaseList sorts by the dated tag
+// name and walks PAST a release that does not carry the asset, which is the single case where the
+// three can disagree. releases/latest and this path resolve identically to each other.
+const DIRECT_DOWNLOAD = `https://github.com/${REPO}/releases/latest/download/${ASSET}`
+
+// The failures are rendered by kind rather than by message, because the message now carries a
+// decrementing ratelimit count and a Set of those dedupes nothing.
+const reportFailures = failures =>
+  [...failures.values()].map(({ text, n }) => (n > 1 ? `${text} (x${n})` : text)).join('; ')
+
 // Two endpoints, twice, because the ways this fails are all transient and none of them are the
 // repo actually lacking the asset. Every attempt is reported on the way out, so a build that took
 // the fallback says so in its log rather than looking like an ordinary one.
-const newestRelease = async signal => {
-  const failures = []
+//
+// The direct download sits OUTSIDE the loop deliberately. As a third entry in RELEASE_SOURCES it
+// would succeed on the first round without asking anything, and round 1 would then never run, so
+// the two API endpoints would silently lose the retry that is the whole point of the loop.
+const newestRelease = async () => {
+  const failures = new Map()
+  let quotaSpent = false
   for (const round of [0, 1]) {
+    // A budget that just answered `remaining: 0` has not refilled two seconds later, since it resets
+    // on the hour. Retrying into it buys nothing, and it is the hammering pattern that turns a
+    // primary refusal into a SECONDARY one, which is keyed per IP across github.com as a whole and
+    // would take the direct download down with it. The retry is for transient faults, not for this.
     if (round) {
-      if (signal.aborted) break
+      if (quotaSpent) break
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS))
     }
     for (const source of RELEASE_SOURCES) {
       try {
-        const release = await source.find(signal)
-        if (failures.length) warn(`named ${release.tag} through ${source.name}, after ${failures.length} failed attempt(s): ${[...new Set(failures)].join('; ')}`)
+        const release = await source.find()
+        if (failures.size) warn(`named ${release.tag} through ${source.name}, after ${reportFailures(failures)}`)
         return release
       } catch (error) {
-        failures.push(error.message)
+        quotaSpent ||= error.quotaSpent === true
+        // Keyed on the source, since a timeout's message names no endpoint at all.
+        const key = `${source.name}:${error.status ?? error.name}`
+        const seen = failures.get(key)
+        if (seen) seen.n += 1
+        else failures.set(key, { n: 1, text: `${source.name}: ${error.message}` })
       }
     }
   }
-  throw new Error([...new Set(failures)].join('; '))
+  warn(`api.github.com named nothing, falling back to the direct download: ${reportFailures(failures)}`)
+  return { tag: 'latest', url: DIRECT_DOWNLOAD, direct: true }
 }
 
 const catalogIds = entry => Object.fromEntries(CATALOGS.map(({ key, host }) => [key, idIn(entry.sources, host)]))
@@ -255,30 +340,31 @@ const buildExtract = (entries, meta, tag) => {
 }
 
 const refreshExtract = async () => {
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
-  try {
-    const release = await newestRelease(controller.signal)
-    log(`manami release ${release.tag}, downloading`)
+  const release = await newestRelease()
+  // Names the path as well as the release, because a green build is NOT evidence the fallback
+  // works: it almost always runs through the api. This line is the only thing that says otherwise.
+  log(`manami release ${release.tag}${release.direct ? ', github.com direct download' : ''}, downloading`)
 
-    const response = await fetch(release.url, { signal: controller.signal })
-    if (!response.ok) throw new Error(`download: HTTP ${response.status}`)
-    const jsonl = zstdDecompressSync(Buffer.from(await response.arrayBuffer())).toString('utf8')
+  // Its own budget, unspent by whatever the naming attempts above cost.
+  const response = await fetch(release.url, { signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS) })
+  if (!response.ok) throw new Error(`download ${release.url}: HTTP ${response.status}`)
+  const jsonl = zstdDecompressSync(Buffer.from(await response.arrayBuffer())).toString('utf8')
 
-    const lines = jsonl.split('\n').filter(Boolean)
-    const meta = JSON.parse(lines[0])
-    const entries = lines.slice(1).map(line => JSON.parse(line))
-    if (entries.length < 30_000) throw new Error(`only ${entries.length} entries, expected 30000+`)
+  const lines = jsonl.split('\n').filter(Boolean)
+  const meta = JSON.parse(lines[0])
+  const entries = lines.slice(1).map(line => JSON.parse(line))
+  if (entries.length < 30_000) throw new Error(`only ${entries.length} entries, expected 30000+`)
 
-    const extract = buildExtract(entries, meta, release.tag)
+  // The dump names the tag it was cut from in its own schema url, so a release reached without the
+  // API still records the dated tag rather than the rolling pointer that served it. Falls back to
+  // whatever named the release if upstream ever changes that url's shape.
+  const tag = /refs\/tags\/([^/]+)\//.exec(meta.$schema ?? '')?.[1] ?? release.tag
+  const extract = buildExtract(entries, meta, tag)
 
-    mkdirSync(dirname(CACHE), { recursive: true })
-    writeFileSync(CACHE, JSON.stringify(extract))
-    log(`${extract.rows.length} rows carrying an id, ${Object.keys(extract.seasons).length} seasons, cut ${meta.lastUpdate}`)
-    return extract
-  } finally {
-    clearTimeout(timer)
-  }
+  mkdirSync(dirname(CACHE), { recursive: true })
+  writeFileSync(CACHE, JSON.stringify(extract))
+  log(`${extract.rows.length} rows carrying an id, ${Object.keys(extract.seasons).length} seasons, cut ${meta.lastUpdate}`)
+  return extract
 }
 
 const loadManami = async () => {
