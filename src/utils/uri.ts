@@ -11,8 +11,37 @@ export type UriValues = {
   id: string
 }
 
+/**
+ * The handle of `origin` that a source should answer about, preferring the MOST SPECIFIC one.
+ *
+ * This used to take the first match of a list `fromAggregatedUri` sorts by id, and a show-level id is
+ * a strict PREFIX of its own season-scoped form, so the show always sorted first and always won.
+ * `cr:G24H1N3MP` beat `cr:G24H1N3MP-GS00374452` in every locale, which is how the Crunchyroll source
+ * came to be asked about a whole series while the correct handle for the run sat in the same cluster,
+ * unreachable. It answered with every season's episodes and a 14 episode season page listed 24 rows.
+ *
+ * SPECIFICITY IS PREFIX EXTENSION, NOT LENGTH, and the distinction is the whole safety of this. Two
+ * unrelated ids of one origin say nothing about each other however long they are, so the longer is not
+ * more specific and picking it would be a different arbitrary answer rather than a better one. Only
+ * `<a>` against `<a>-<something>` is a claim that the second names a part of the first, and that is
+ * exactly the shape every season-scoped id in this codebase is built in: `crunchyrollId` joins on '-',
+ * `jwId` and `seasonScopedId` likewise.
+ *
+ * TWO ids of one origin in one cluster is itself a defect and this does not fix it, it only stops the
+ * defect choosing the worst of them. When neither extends the other the first still wins, which is
+ * arbitrary but stable, and stability is what keeps a source answering the same way twice.
+ */
+const mostSpecific = (candidates: UriValues[]): UriValues | undefined => {
+  let best = candidates[0]
+  // the list arrives sorted by id, so a prefix always precedes what extends it and one pass suffices
+  for (const candidate of candidates) {
+    if (best && candidate.id.startsWith(`${best.id}-`)) best = candidate
+  }
+  return best
+}
+
 export const extractAggregatedUriOrigin = (uri: string, origin: string) =>
-  isAggregatedUri(uri) ? fromAggregatedUri(uri)?.handleUrisValues.find(uri => uri.origin === origin)
+  isAggregatedUri(uri) ? mostSpecific(fromAggregatedUri(uri)?.handleUrisValues.filter(uri => uri.origin === origin) ?? [])
   : isUri(uri) && fromUri(uri).origin === origin ? fromUri(uri)
   : undefined
 

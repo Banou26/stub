@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { isRoutableUri, originsOfUri } from './uri'
+import { extractAggregatedUriOrigin, isRoutableUri, originsOfUri } from './uri'
 
 describe('originsOfUri', () => {
   test('lists the origins an aggregated uri lets a source recognise itself by', () => {
@@ -58,5 +58,41 @@ describe('isRoutableUri', () => {
   test('something with no origin at all is not a uri', () => {
     expect(isRoutableUri('nocolon')).toBe(false)
     expect(isRoutableUri(':leading')).toBe(false)
+  })
+})
+
+// THE BUG. `fromAggregatedUri` sorts handles by id and this used to take the first match, so a
+// show-level id, being a strict prefix of its own season-scoped form, always won. Crunchyroll was
+// therefore asked about the whole series while the handle for the run was in the same cluster, and a
+// 14 episode season page listed 24 rows.
+describe('extractAggregatedUriOrigin', () => {
+  const MUSHOKU = 'ag:(anilist:178789,cr:G24H1N3MP,cr:G24H1N3MP-GS00374452,kitsu:49002)'
+
+  test('the season-scoped handle wins over the show it extends', () => {
+    expect(extractAggregatedUriOrigin(MUSHOKU, 'cr')?.id).toBe('G24H1N3MP-GS00374452')
+  })
+
+  // the control: the same call still answers for an origin with one handle, so the assertion above is
+  // a preference and not this function having stopped resolving anything
+  test('an origin with a single handle is unaffected', () => {
+    expect(extractAggregatedUriOrigin(MUSHOKU, 'kitsu')?.id).toBe('49002')
+    expect(extractAggregatedUriOrigin(MUSHOKU, 'anilist')?.id).toBe('178789')
+  })
+
+  test('an origin the uri does not carry is undefined', () => {
+    expect(extractAggregatedUriOrigin(MUSHOKU, 'nf')).toBeUndefined()
+  })
+
+  // SPECIFICITY IS PREFIX EXTENSION, NOT LENGTH. Two unrelated ids say nothing about each other, so
+  // the longer one is not the more specific one and picking it would be a different arbitrary answer.
+  // The first still wins there, which is arbitrary but stable, and stable is what matters.
+  test('a merely longer id does not win, only one that extends the other', () => {
+    const unrelated = 'ag:(cr:AAAA,cr:ZZZZZZZZZZZZ)'
+    expect(extractAggregatedUriOrigin(unrelated, 'cr')?.id).toBe('AAAA')
+  })
+
+  test('a plain uri of that origin still resolves to itself', () => {
+    expect(extractAggregatedUriOrigin('cr:G24H1N3MP-GS00374452', 'cr')?.id).toBe('G24H1N3MP-GS00374452')
+    expect(extractAggregatedUriOrigin('kitsu:49002', 'cr')).toBeUndefined()
   })
 })
