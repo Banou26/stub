@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { isOnlySeasonLabel } from '../season'
+import { isOnlySeasonLabel, namesADay } from '../season'
 import {
   makeMedia, makeEpisode, desc, img,
   bestTitleScore, buildHandlesFromUri, getFirstTitle, simplifyTitle, waitForMedia
@@ -269,6 +269,24 @@ const closestSeason = (
   return best
 }
 
+/**
+ * The season of `seriesId` that aired nearest `startDate`, or nothing.
+ *
+ * THE WINDOW IS APPLIED HERE, and it did not used to be. Until 2026-08-31 this returned
+ * `closestSeason`'s nearest hit at ANY distance and took a lone season without looking at the date at
+ * all, on the reasoning that the caller had already asserted identity for the SHOW. That reasoning
+ * covers the show and never covered the run, which is the distinction this whole file turns on: a
+ * caller certain that a series is Mushoku Tensei is saying nothing about WHICH of its runs is ours.
+ * Nearest-at-any-distance is how a 2021 cour gets attached to a 2026 media, and the lone-season
+ * shortcut is the same guess with the sample size hidden.
+ *
+ * So both paths now have to agree with the date, inside the same SEASON_DATE_WINDOW the search path
+ * below already applies and that catalogue-gate.ts and fuzzy-merge.ts independently settled on. What
+ * this costs is real and worth naming: a show AniList splits into two cours while Crunchyroll keeps
+ * one season now falls outside the window for the second cour and gets no Crunchyroll row. That is
+ * the correct refusal rather than an unfortunate one, because that single Crunchyroll season carries
+ * BOTH cours' episodes, so attaching it to either one was always going to list the wrong episodes.
+ */
 export const matchSeasonByDate = async (
   seriesId: string, startDate: string, ctx: ExtractorServerContext
 ): Promise<string | undefined> => {
@@ -277,12 +295,10 @@ export const matchSeasonByDate = async (
 
   const { seasons, dates } = await seasonAirDates(seriesId, ctx)
   if (!seasons.length) return undefined
-  // the series id came from a source that already asserted identity, so a lone season needs no date to
-  // agree with. The search path below cannot make that assumption and deliberately does not call this.
-  if (seasons.length === 1 && seasons[0]) return crunchyrollId(seriesId, resolveSeasonId(seasons[0]))
 
   const best = closestSeason(dates, targetDate)
-  return best ? crunchyrollId(seriesId, best.id) : undefined
+  if (!best || best.diff > SEASON_DATE_WINDOW) return undefined
+  return crunchyrollId(seriesId, best.id)
 }
 
 /**
@@ -370,8 +386,44 @@ const searchAndLinkMedia = async (
   return undefined
 }
 
+/**
+ * The run of a show that started nearest a date, for a caller holding nothing but the show.
+ *
+ * The show id already names the franchise, so this answers on the DATE alone and ignores `titles` and
+ * `episodeCount`: those exist for sources whose show id is a search hit rather than a link, where the
+ * franchise still has to be established. Here the caller has a `crunchyroll.com/series/<id>` url off
+ * its own record, and the only open question is which of that series' seasons is ours.
+ *
+ * Everything `matchSeasonByDate` refuses, this refuses: an unparseable date, a series with no seasons,
+ * a series whose seasons publish no air date, or nothing inside SEASON_DATE_WINDOW. Null is the
+ * expected answer for most shows and is never an error. Answering with the SERIES would put back
+ * exactly the show-level handle the caller came here to avoid minting.
+ *
+ * And one refusal of its own, because an open endpoint takes dates from callers that a hardcoded
+ * caller never was. Several sources template a bare year into `YYYY-01-01` and several more answer
+ * `YYYY-MM-01` when the day is unknown, so a date that names no day is thrown out before it reaches a
+ * 45 day window it cannot possibly be measured against. See `namesADay`.
+ */
+const seasonForShow = async (
+  input: { showId: string, startDate: string },
+  ctx: ExtractorServerContext
+): Promise<GQLMedia | undefined> => {
+  if (!namesADay(input.startDate)) return undefined
+  const composite = await matchSeasonByDate(input.showId, input.startDate, ctx)
+  if (!composite) return undefined
+  return await getMedia(composite, ctx)
+}
+
 export const resolvers: Resolvers = {
   Subscription: {
+    mediaSeason: {
+      // always yield once: a generator that completes without yielding makes yoga respond 204 and the
+      // caller waits out its timeout instead of reading the refusal
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        if (!input?.showId || !input?.startDate) return yield { mediaSeason: null }
+        yield { mediaSeason: await seasonForShow(input, ctx) ?? null }
+      }
+    },
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }

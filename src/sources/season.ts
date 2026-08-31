@@ -146,3 +146,36 @@ export const splitSeasonScopedId = (id: string): { showId: string, seasonNumber?
   const match = SEASON_SCOPED.exec(id)
   return match ? { showId: match[1]!, seasonNumber: Number(match[2]) } : { showId: id }
 }
+
+/**
+ * Whether a start date is precise enough to pick a RUN with, as opposed to naming a year.
+ *
+ * Seven extractors BUILD a date out of a bare year and template it as January 1: justwatch, omdb,
+ * tmdb, tvdb, unogs (twice) and crunchyroll's own show-level media all do it, and nothing downstream
+ * can tell one of those from a show that really did premiere on New Year's Day. kitsu and jikan do
+ * the softer version, answering `YYYY-MM-01` whenever only the month is known, which is up to 30 days
+ * out while reading as exact.
+ *
+ * Against a 45 day window that is not a rounding error, it is the difference between naming a cour
+ * and naming a year, so a coerced date has to be refused rather than matched. Refusing costs a source
+ * its link; accepting welds it to whichever run happens to sit nearest a date nobody asserted.
+ *
+ * This is the same reasoning, and the same two shapes, that `startDay` in worker/store/fuzzy-merge.ts
+ * drops before comparing two clusters. It lives here rather than there because this module imports
+ * nothing, so an extractor can read it without dragging the store in.
+ *
+ * A genuine first-of-month premiere is refused too. That is the safe direction: the caller simply
+ * does not get a season-scoped handle, which is where it was before it asked.
+ *
+ * READS THE UTC DAY, so hand it a UTC or ISO string. A date built with `new Date(y, m, d)` is LOCAL
+ * midnight, and anilist/extractor.ts builds exactly that before calling `.toUTCString()`, so east of
+ * UTC a local January 1 is December 31 in UTC and would slip past this check. Everything that reaches
+ * here today is an upstream `YYYY-MM-DD` or an ISO string, which parses as UTC; the trap is worth
+ * knowing before this is pointed at a locally-constructed date.
+ */
+export const namesADay = (date: string | null | undefined): boolean => {
+  if (!date) return false
+  const parsed = new Date(date)
+  if (Number.isNaN(parsed.getTime())) return false
+  return parsed.getUTCDate() !== 1
+}
