@@ -23,8 +23,21 @@
  * runs are one media, and that is wrong however Netflix models it. So a collision is always a wrong
  * weld, and the count of runs collapsed into another run is the benefit any repair has to earn.
  *
- * THE COST IS A REFUSAL: a run that gets no season gets no Netflix row, so unOGS simply does not
- * appear on that page. A nuisance against a permanent wrong cluster, but real, and reported beside it.
+ * WHAT A REFUSAL COSTS, and this file said the wrong thing about it until 2026-09-01. It claimed "a
+ * run that gets no season gets no Netflix row, so unOGS simply does not appear on that page". That is
+ * FALSE, and it is false in the direction that flatters the fix this rig was built to justify.
+ *
+ * Read the call site. `searchAndLinkMedia` (unogs/extractor.ts:292-296) passes the refusal straight
+ * into `getMedia(nfId, ctx, undefined)`, which skips the season suffix at :200-203, so `media.uri`
+ * stays the BARE `nf:<showId>`; :208 then stops filtering and attaches every season's episodes; and
+ * :295 attaches the cluster's handles regardless. So a refusal does not remove the row, it mints a
+ * SHOW-LEVEL id and links it, and two runs that both refuse are welded exactly as two runs that both
+ * picked the same season are.
+ *
+ * That makes a refusal a weld rather than a nuisance, so both arms are scored on it below. It also
+ * inverts the reading of the original table: tightening the matcher converts wrong assignments into
+ * show-level welds, and is an improvement only if the bare-id welds it creates are fewer than the
+ * season collisions it removes.
  */
 import { readFileSync } from 'node:fs'
 
@@ -56,42 +69,52 @@ const bestDiff = (seasons: Season[], target: number) =>
  * `shipped` calls the repo's exported `pickSeasonByEpisodeCount`, which is byte-equivalent to unOGS's
  * private `findMatchingSeason`, so the baseline is the real function rather than a reproduction.
  */
-const ARMS: Record<string, (seasons: Season[], run: Run) => number | undefined> = {
+/**
+ * What an arm answers, and the third case is the point:
+ *   a number  -> mints `nf:<show>-<n>`, a season-scoped uri
+ *   BARE      -> mints `nf:<show>`, the SHOW-level uri, which is what a refusal does TODAY
+ *   NONE      -> mints nothing at all, which is what the function's own doc says a refusal means
+ */
+const BARE = 'BARE'
+const NONE = 'NONE'
+type Answer = number | typeof BARE | typeof NONE
+
+const ARMS: Record<string, (seasons: Season[], run: Run) => Answer> = {
   // The function as it stood before 2026-09-01, kept verbatim so the baseline row does not move when
   // the real one is repaired. Reproducing it here rather than importing it is deliberate: an arm that
   // called the live function would silently become a copy of `current` and the table would report a
   // 78% improvement over itself.
   'was-nearest-first': (seasons, run) => {
-    if (seasons.length <= 1) return undefined
+    if (seasons.length <= 1) return BARE
     let best: { seasonNumber: number, diff: number } | undefined
     for (const season of seasons) {
       const diff = Math.abs(season.episodeCount - run.episodes)
       if (!best || diff < best.diff) best = { seasonNumber: season.seasonNumber, diff }
     }
-    return best?.seasonNumber
+    return best?.seasonNumber ?? BARE
   },
 
   // what unOGS ships TODAY: the cluster's title first, then the repaired shared fallback
   current: (seasons, run) => {
     const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
     if (named != null && seasons.some(season => season.seasonNumber === named)) return named
-    return pickSeasonByEpisodeCount(seasons, run.episodes)
+    return pickSeasonByEpisodeCount(seasons, run.episodes) ?? BARE
   },
 
   // refuse when the count cannot choose, which is the minimum honest answer
   'refuse-tie': (seasons, run) => {
-    if (seasons.length <= 1) return undefined
+    if (seasons.length <= 1) return BARE
     const tied = nearestSeasons(seasons, run.episodes)
-    return tied.length === 1 ? tied[0]!.seasonNumber : undefined
+    return tied.length === 1 ? tied[0]!.seasonNumber : BARE
   },
 
   // what tmdb and tvmaze already do: read the ordinal off our own title first, count second
   'title-then-tie': (seasons, run) => {
     const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
     if (named != null && seasons.some(season => season.seasonNumber === named)) return named
-    if (seasons.length <= 1) return undefined
+    if (seasons.length <= 1) return BARE
     const tied = nearestSeasons(seasons, run.episodes)
-    return tied.length === 1 ? tied[0]!.seasonNumber : undefined
+    return tied.length === 1 ? tied[0]!.seasonNumber : BARE
   },
 
   // and refuse a match that is merely nearest rather than close. Netflix splits Fullmetal Alchemist's
@@ -99,11 +122,32 @@ const ARMS: Record<string, (seasons: Season[], run: Run) => number | undefined> 
   'title-tie-tolerance': (seasons, run) => {
     const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
     if (named != null && seasons.some(season => season.seasonNumber === named)) return named
-    if (seasons.length <= 1) return undefined
+    if (seasons.length <= 1) return BARE
     const tied = nearestSeasons(seasons, run.episodes)
-    if (tied.length !== 1) return undefined
+    if (tied.length !== 1) return BARE
     const diff = bestDiff(seasons, run.episodes)
-    return diff <= Math.max(2, run.episodes * 0.25) ? tied[0]!.seasonNumber : undefined
+    return diff <= Math.max(2, run.episodes * 0.25) ? tied[0]!.seasonNumber : BARE
+  },
+
+  // CANDIDATE. Exactly today's matcher, but a refusal mints NOTHING instead of the show-level id.
+  // This is the behaviour resolveSeasonNumber's own doc already claims to have.
+  'refuse-properly': (seasons, run) => {
+    const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
+    if (named != null && seasons.some(season => season.seasonNumber === named)) return named
+    return pickSeasonByEpisodeCount(seasons, run.episodes) ?? NONE
+  },
+
+  // CANDIDATE. The same, plus the lone-season case: pickSeasonByEpisodeCount refuses whenever Netflix
+  // lists ONE season, which is most ordinary anime, so a naive refusal would drop nearly every
+  // single-cour show. Accept that one season when its episode count is exactly ours, which keeps the
+  // ordinary case and still declines a Netflix title that has folded several of our runs into one.
+  'refuse-properly-lone': (seasons, run) => {
+    const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
+    if (named != null && seasons.some(season => season.seasonNumber === named)) return named
+    if (seasons.length === 1) {
+      return seasons[0]!.episodeCount === run.episodes ? seasons[0]!.seasonNumber : NONE
+    }
+    return pickSeasonByEpisodeCount(seasons, run.episodes) ?? NONE
   },
 }
 
@@ -148,32 +192,40 @@ test('unOGS season assignment: collisions and refusals per arm', async () => {
   for (const [name, arm] of Object.entries(ARMS)) {
     let assigned = 0
     let refused = 0
-    let collapsed = 0          // runs that landed on a season another run already holds
+    let collapsed = 0          // runs that landed on a uri another run already holds
+    let bareWelds = 0          // of those, the ones welded by a REFUSAL rather than a season collision
+    let absent = 0             // runs for which the source mints no media at all: the honest refusal
     let seriesWithAWeld = 0
     const examples: string[] = []
 
     for (const entry of series) {
-      const holders = new Map<number, Run[]>()
+      // keyed by the URI the source actually mints: '<n>' for a resolved season, BARE for a refusal,
+      // because a refusal mints nf:<showId> and links it just the same
+      const holders = new Map<string, Run[]>()
       for (const run of entry.runs) {
-        const season = arm(entry.seasons, run)
-        if (season == null) { refused++; continue }
-        assigned++
-        const held = holders.get(season)
+        const answer = arm(entry.seasons, run)
+        if (answer === NONE) { absent++; continue }   // no media minted, so nothing to weld
+        if (answer === BARE) refused++
+        else assigned++
+        const key = String(answer)
+        const held = holders.get(key)
         if (held) held.push(run)
-        else holders.set(season, [run])
+        else holders.set(key, [run])
       }
       let weldedHere = 0
-      for (const [season, held] of holders) {
+      for (const [key, held] of holders) {
         if (held.length < 2) continue
         weldedHere += held.length - 1
+        if (key === 'BARE') bareWelds += held.length - 1
         if (examples.length < 6) {
-          examples.push(`${entry.franchise} nf:${entry.netflixId}-${season} <- ${held.map(r => `${r.title.slice(0, 26)} (${r.episodes}ep)`).join('  +  ')}`)
+          const uri = key === 'BARE' ? `nf:${entry.netflixId} (SHOW LEVEL)` : `nf:${entry.netflixId}-${key}`
+          examples.push(`${entry.franchise} ${uri} <- ${held.map(r => `${r.title.slice(0, 26)} (${r.episodes}ep)`).join('  +  ')}`)
         }
       }
       if (weldedHere) { seriesWithAWeld++; collapsed += weldedHere }
     }
 
-    rows.push(`  ${name.padEnd(21)} welded ${String(collapsed).padStart(3)} runs across ${String(seriesWithAWeld).padStart(2)} series   assigned ${String(assigned).padStart(3)}   refused ${String(refused).padStart(3)}`)
+    rows.push(`  ${name.padEnd(21)} welded ${String(collapsed).padStart(3)} (${String(bareWelds).padStart(3)} by show-level refusal)   season-scoped ${String(assigned).padStart(3)}   show-level ${String(refused).padStart(3)}   no media ${String(absent).padStart(3)}`)
     if (name === 'was-nearest-first' || name === 'current') {
       rows.push(...examples.map(example => `      ${example}`))
     }

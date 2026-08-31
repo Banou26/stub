@@ -191,10 +191,36 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber
 const normalizeMovieAsEpisode = (media: GQLMedia): GQLEpisode =>
   makeMovieEpisode(media, { url: `https://www.netflix.com/watch/${media.id}`, score: SCORE })
 
-const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: number): Promise<GQLMedia | undefined> => {
+/**
+ * Exported for ./extractor.test.ts, which drives it directly; nothing else imports it.
+ *
+ * `requireSeason` is what makes a refusal actually refuse.
+ *
+ * Without it, a series whose season could not be resolved still produced a media: `seasonNumber` being
+ * undefined skips the suffix below, so the uri stays the BARE `nf:<showId>`, the episode filter stops
+ * filtering and every season's episodes are attached, and the caller then links the cluster's handles
+ * to it. Two runs of one show that both fail to resolve therefore receive the identical show-level uri
+ * and union-find welds them, permanently, which is the exact failure this source's season scoping
+ * exists to prevent.
+ *
+ * Measured over 33 multi-season Netflix series and 105 runs: refusing into the show-level id accounted
+ * for 30 of 41 welds, and declining to mint anything drops that to 11. The cost is the 56 runs that
+ * resolve to no season showing no Netflix row at all, which is the tradeoff already taken for imdb in
+ * worker/store/db.ts: a link that has to assert a false identity to exist is not worth having.
+ *
+ * Callers that do NOT attach cluster handles pass false, because a direct `nf:<id>` browse is the user
+ * naming that Netflix title and welds nothing.
+ */
+export const getMedia = async (
+  id: string,
+  ctx: ExtractorServerContext,
+  seasonNumber?: number,
+  requireSeason = false
+): Promise<GQLMedia | undefined> => {
   const [detailRes, bgImagesRes] = await Promise.all([fetchDetail(id, ctx), fetchBgImages(id, ctx)])
   const title = detailRes[0]
   if (!title) return undefined
+  if (requireSeason && seasonNumber == null && title.vtype === 'series') return undefined
 
   const media = normalizeTitle(title, bgImagesRes)
   if (seasonNumber != null) {
@@ -245,7 +271,7 @@ const resolveSeasonNumber = async (nfId: string, aggregatedUri: string, ctx: Ext
   if (!known) return undefined
 
   const seasons = await fetchEpisodes(nfId, ctx)
-  if (!Array.isArray(seasons) || seasons.length <= 1) return undefined
+  if (!Array.isArray(seasons) || !seasons.length) return undefined
 
   const named = new Set(
     (known.titles ?? [])
@@ -259,6 +285,18 @@ const resolveSeasonNumber = async (nfId: string, aggregatedUri: string, ctx: Ext
 
   const epCount = known.episodeCount ?? known.episodes?.length
   if (!epCount) return undefined
+
+  // Netflix listing ONE season is the ordinary single-cour case, and it is most of them: 14 of 20
+  // single-cour anime checked on 2026-09-01 had exactly one. pickSeasonByEpisodeCount declines a lone
+  // season by design, because a season cannot be chosen when there is nothing to choose between, so
+  // deferring to it here would refuse nearly every ordinary show. It can still be CHECKED rather than
+  // chosen: take the one season only when its length is exactly ours, which keeps the ordinary case
+  // and still declines a Netflix listing that has folded several of our runs into a single season.
+  if (seasons.length === 1) {
+    const only = seasons[0]!
+    return only.episodes.length === epCount ? only.season : undefined
+  }
+
   return pickSeasonByEpisodeCount(
     seasons.map(season => ({ seasonNumber: season.season, episodeCount: season.episodes.length })),
     epCount
@@ -290,7 +328,7 @@ const searchAndLinkMedia = async (
     if (!match) continue
     const nfId = String(match.result.nfid)
     const seasonNumber = await resolveSeasonNumber(nfId, aggregatedUri, ctx)
-    const media = await getMedia(nfId, ctx, seasonNumber)
+    const media = await getMedia(nfId, ctx, seasonNumber, true)
     if (!media) continue
     media.handles = buildHandlesFromUri(aggregatedUri, origin)
     return media
@@ -307,7 +345,8 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
     const existingSeason = dashIdx !== -1 ? Number(nfUri.id.slice(dashIdx + 1)) : undefined
     const seasonNumber = existingSeason
       ?? (isAggregatedUri(uri) ? await resolveSeasonNumber(nfId, uri, ctx) : undefined)
-    const media = await getMedia(nfId, ctx, seasonNumber)
+    // only the aggregated path attaches handles below, so only it can weld and only it must refuse
+    const media = await getMedia(nfId, ctx, seasonNumber, isAggregatedUri(uri))
     if (!media) return null
     if (isAggregatedUri(uri)) media.handles = buildHandlesFromUri(uri, origin)
     return media
