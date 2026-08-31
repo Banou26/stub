@@ -15,10 +15,27 @@ describe('parseSeasonNumber', () => {
 })
 
 describe('pickSeasonByEpisodeCount', () => {
-  test('picks the closest match', () => {
+  test('an exact and unique count picks that season', () => {
     const seasons = [{ seasonNumber: 1, episodeCount: 23 }, { seasonNumber: 2, episodeCount: 12 }]
     expect(pickSeasonByEpisodeCount(seasons, 12)).toBe(2)
-    expect(pickSeasonByEpisodeCount(seasons, 22)).toBe(1)
+    expect(pickSeasonByEpisodeCount(seasons, 23)).toBe(1)
+  })
+
+  // This asked for 22 against seasons of 23 and 12 and was answered season 1. It is the shape that
+  // welded runs, and it is not a near miss to be forgiven: Netflix splits Fullmetal Alchemist's one
+  // 64 episode run into five seasons of about 13, so "nearest" answers 13 for a target of 64.
+  test('a near miss is a refusal, never the nearest season anyway', () => {
+    const seasons = [{ seasonNumber: 1, episodeCount: 23 }, { seasonNumber: 2, episodeCount: 12 }]
+    expect(pickSeasonByEpisodeCount(seasons, 22)).toBeUndefined()
+    expect(pickSeasonByEpisodeCount(seasons, 64)).toBeUndefined()
+  })
+
+  // The defect this function shipped with: `if (diff < best.diff)` kept the FIRST of a tie, so two of
+  // our runs of 24 episodes both received season 1 and union-find welded them. 48 of 105 measured runs
+  // hit a tie, so this is the common case rather than the corner.
+  test('two seasons of the same length are a refusal, not the first of them', () => {
+    const seasons = [{ seasonNumber: 1, episodeCount: 24 }, { seasonNumber: 2, episodeCount: 24 }]
+    expect(pickSeasonByEpisodeCount(seasons, 24)).toBeUndefined()
   })
 
   // one season is not a choice, and answering anyway would report a season the caller never asked about

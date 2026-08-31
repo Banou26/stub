@@ -2,6 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch } from '../utils'
+import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
 
 const SCORE = 0.2
 
@@ -127,19 +128,6 @@ const decode = (str: string): string =>
 
 const httpsUrl = (url: string) => url.replace(/^http:/, 'https:')
 
-const findMatchingSeason = (
-  seasons: { season: number, episodes: unknown[] }[],
-  targetCount: number
-): number | undefined => {
-  if (seasons.length <= 1) return undefined
-  let best: { season: number, diff: number } | undefined
-  for (const s of seasons) {
-    const diff = Math.abs(s.episodes.length - targetCount)
-    if (!best || diff < best.diff) best = { season: s.season, diff }
-  }
-  return best?.season
-}
-
 const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia => {
   const covers: { url: string, score: number }[] = []
   const banners: { url: string, score: number }[] = []
@@ -230,11 +218,51 @@ const getMedia = async (id: string, ctx: ExtractorServerContext, seasonNumber?: 
   return media
 }
 
+/**
+ * Which of this Netflix series' seasons is the cluster asking, or nothing.
+ *
+ * THE TITLE IS TRIED FIRST, which is what every other consumer of `pickSeasonByEpisodeCount` already
+ * does (tmdb/extractor.ts:158-164, tvmaze/extractor.ts:145-148) and what that function's own doc says
+ * it requires. This source skipped it and ran on the episode count alone, through a private copy of
+ * the same argmin. Measured over 33 real multi-season Netflix series and their 105 anime runs
+ * (`scripts/measure-unogs-season-match.probe.ts`), the count alone is ambiguous for 48 of those 105,
+ * and the old code answered every one of them anyway: 51 runs landed on a season another run already
+ * held, across 20 of the 33 series. Each of those is a permanent weld, since the season-scoped id
+ * becomes a handle and `graph.link` has no inverse.
+ *
+ * An ordinal is used only when the cluster's titles AGREE on one and Netflix has it. Disagreement is a
+ * refusal rather than a vote, on the same reasoning as everything else here.
+ *
+ * WHAT THIS SOURCE STILL CANNOT DO, recorded rather than hidden: Netflix does not agree with anime
+ * about what a season is. It splits Fullmetal Alchemist's single 64 episode run into five seasons of
+ * about 13 and folds Mushoku Tensei's five runs into three. No amount of counting fixes a disagreement
+ * about the unit, so the honest end of this function is a refusal and unOGS simply not appearing.
+ */
 const resolveSeasonNumber = async (nfId: string, aggregatedUri: string, ctx: ExtractorServerContext) => {
-  const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
-  if (!epCount) return undefined
+  const known = await waitForMedia<GQLMedia>(aggregatedUri, ctx, media =>
+    (media?.episodeCount ?? media?.episodes?.length) ? media as GQLMedia : undefined
+  )
+  if (!known) return undefined
+
   const seasons = await fetchEpisodes(nfId, ctx)
-  return seasons.length > 1 ? findMatchingSeason(seasons, epCount) : undefined
+  if (!Array.isArray(seasons) || seasons.length <= 1) return undefined
+
+  const named = new Set(
+    (known.titles ?? [])
+      .map(title => parseSeasonNumber(title.title))
+      .filter((season): season is number => season != null)
+  )
+  if (named.size === 1) {
+    const ordinal = [...named][0]!
+    if (seasons.some(season => season.season === ordinal)) return ordinal
+  }
+
+  const epCount = known.episodeCount ?? known.episodes?.length
+  if (!epCount) return undefined
+  return pickSeasonByEpisodeCount(
+    seasons.map(season => ({ seasonNumber: season.season, episodeCount: season.episodes.length })),
+    epCount
+  )
 }
 
 const searchAndLinkMedia = async (

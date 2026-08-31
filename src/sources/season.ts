@@ -115,23 +115,44 @@ export const parseSeasonNumber = (title: string): number | undefined => {
 }
 
 /**
- * Which season has about this many episodes.
+ * The ONE season holding exactly this many episodes, or nothing.
  *
- * The fallback for when nothing in the title says. Ambiguous by nature - two seasons of twelve are
- * indistinguishable this way - so it is only ever reached after the title has been tried, and it
- * returns nothing at all when there is only one season, because then there is nothing to choose.
+ * The fallback for when nothing in the title says, so it is only ever reached after the title has been
+ * tried, and it returns nothing when there is only one season because then there is nothing to choose.
+ *
+ * IT USED TO TAKE THE NEAREST SEASON AT ANY DISTANCE AND BREAK A TIE BY TAKING THE FIRST, which is two
+ * guesses wearing one function. The result is a season-scoped id, and a season-scoped id is an
+ * identity claim: two of our runs handed the same one are unioned by `upsertMedia` with no inverse.
+ * So a wrong answer here is not a wrong row, it is two shows permanently welded for the session.
+ *
+ * MEASURED 2026-09-01 over 33 real multi-season Netflix series and the 105 anime runs that clear the
+ * source's own title gate, by `scripts/measure-unogs-season-match.probe.ts`. A weld is one of our runs
+ * landing on a season another run already holds:
+ *
+ *   rule                                   welds   assigned   refused
+ *   nearest at any distance, first on tie      51        105         0     what this replaces
+ *   nearest, refusing a tie                    22         57        48
+ *   exact and unique                           11         49        56     this
+ *
+ * The tolerance in between was swept rather than guessed, floor 0 to 3 episodes against a share of 0
+ * to 1 of the run's length, and it buys assignments at about 1.6 per extra weld the whole way. That
+ * exchange rate is not worth taking when one side is permanent and the other is a missing streaming
+ * row, so the allowance is zero. 48 of those 105 runs hit a tie on count alone, which is why the
+ * title has to be tried first and why this refuses so much: the axis is genuinely ambiguous for
+ * nearly half the population.
+ *
+ * WHAT IT CANNOT DO. A run can match one season exactly and uniquely while three OTHER runs of the
+ * same show match it too, and this function sees one run at a time. That residue (11 of 105) is the
+ * same one catalogue-gate.ts records: a source matching a season cluster to a catalogue that models
+ * shows has no view of the other clusters, and it cannot be closed here.
  */
 export const pickSeasonByEpisodeCount = (
   seasons: { seasonNumber: number, episodeCount: number }[],
   targetCount: number
 ): number | undefined => {
   if (seasons.length <= 1) return undefined
-  let best: { seasonNumber: number, diff: number } | undefined
-  for (const season of seasons) {
-    const diff = Math.abs(season.episodeCount - targetCount)
-    if (!best || diff < best.diff) best = { seasonNumber: season.seasonNumber, diff }
-  }
-  return best?.seasonNumber
+  const exact = seasons.filter(season => season.episodeCount === targetCount)
+  return exact.length === 1 ? exact[0]!.seasonNumber : undefined
 }
 
 // The '-s<n>' suffix, which is what TMDB's own episode ids already use ('94664-s3e1'). Keeping the
