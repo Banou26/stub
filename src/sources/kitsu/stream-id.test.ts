@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { streamContentId } from './stream-id'
+import { streamContentId, streamLinkIsIdentifying } from './stream-id'
 
 describe('streamContentId', () => {
   test('reads the id out of a link that names one', () => {
@@ -20,5 +20,34 @@ describe('streamContentId', () => {
     expect(streamContentId('https://www.crunchyroll.com/mushoku-tensei-jobless-reincarnation')).toBeUndefined()
     expect(streamContentId('https://www.crunchyroll.com/')).toBeUndefined()
     expect(streamContentId('not a url at all')).toBeUndefined()
+  })
+})
+
+// The id `streamContentId` reads is the SHOW's, because the link kitsu publishes is the show's. These
+// three urls are what /anime/<id>/streaming-links really answered on 2026-08-31, one per media:
+//
+//   kitsu:45950  Mushoku Tensei season 2         .../series/G24H1N3MP/mushoku-tensei-jobless-reincarnation
+//   kitsu:47694  Mushoku Tensei season 2 part 2  .../series/G24H1N3MP/mushoku-tensei-jobless-reincarnation
+//   kitsu:49002  Mushoku Tensei season 3         .../series/G24H1N3MP/mushoku-tensei-jobless-reincarnation
+//
+// One id, three seasons. A handle is an identity claim, so minting it on all three welds them into one
+// cluster in `upsertMedia` before any season mechanism runs, and it hands Crunchyroll a season-less id
+// whose episode list is every season at once. That is what put 24 rows on a 14 episode season page.
+describe('streamLinkIsIdentifying', () => {
+  test('a series gets NO handle, because kitsu only ever links the show', () => {
+    expect(streamLinkIsIdentifying('TV')).toBe(false)
+    expect(streamLinkIsIdentifying('ONA')).toBe(false)
+    expect(streamLinkIsIdentifying('OVA')).toBe(false)
+    expect(streamLinkIsIdentifying('special')).toBe(false)
+  })
+
+  test('a movie does, since it has no seasons to be confused between', () => {
+    expect(streamLinkIsIdentifying('movie')).toBe(true)
+  })
+
+  test('an absent subtype is a refusal, never a guess', () => {
+    expect(streamLinkIsIdentifying(undefined)).toBe(false)
+    expect(streamLinkIsIdentifying(null)).toBe(false)
+    expect(streamLinkIsIdentifying('')).toBe(false)
   })
 })

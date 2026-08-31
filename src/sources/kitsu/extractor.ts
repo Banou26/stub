@@ -6,7 +6,7 @@ import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 import { animeSeasonOf } from '../season'
 import { seasonPageNumbers, seasonQuery } from './season-paging'
-import { streamContentId } from './stream-id'
+import { streamContentId, streamLinkIsIdentifying } from './stream-id'
 
 const SCORE = 0.3
 const API = 'https://kitsu.io/api/edge'
@@ -81,8 +81,10 @@ const mappingHandles = (mappings: KitsuMapping[]): GQLMedia[] => {
   return handles
 }
 
-const streamHandles = (streams: KitsuStream[]): GQLMedia[] => {
+const streamHandles = (streams: KitsuStream[], subtype: string | null | undefined): GQLMedia[] => {
   const handles: GQLMedia[] = []
+  // a series link names the show, so its id is the show's and welds every season together. See ./stream-id.ts
+  if (!streamLinkIsIdentifying(subtype)) return handles
   for (const stream of streams) {
     const url = stream.url
     if (!url) continue
@@ -193,7 +195,7 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
   const streamList = Array.isArray(streams?.data) ? streams.data : []
   const handles = [
     ...mappingHandles(resourceMappings(resource, includedMappings(show ?? {}))),
-    ...streamHandles(streamList.map(stream => stream.attributes)),
+    ...streamHandles(streamList.map(stream => stream.attributes), resource.attributes.subtype),
   ]
   const media = normalizeMedia(resource, handles)
   media.episodes = await fetchEpisodes(id, media.uri, ctx)
