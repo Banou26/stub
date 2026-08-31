@@ -218,10 +218,24 @@ export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise
     )
     : normalizeMedia(series.id, series.title, series.description, series)
 
-  media.episodes = targetSeason
-    ? await fetchNormalizedEpisodes(resolveSeasonId(targetSeason), media.uri, ctx)
-    : (await Promise.all(seasons.map(s => fetchNormalizedEpisodes(resolveSeasonId(s), media.uri, ctx)))).flat()
-  media.episodeCount = media.episodes.length
+  // No target season is a SHOW-level media, and a show has no honest episode list here: every media in
+  // this store is one season, so `episodeNumber` is within-season and flattening several seasons into
+  // one list collides them. `store/db.ts` hangs a HAS_EPISODE edge off this uri for every one of them
+  // and `Media.episodes` groups the union by episodeNumber ALONE, so whatever else the cluster holds
+  // ends up sharing rows with a season nobody asked for.
+  //
+  // Measured on the live site 2026-08-31, before this guard: the Mushoku Tensei season 3 page listed
+  // 24 rows for a 14 episode season. Rows 1 to 10 were right, because AniZip scores 0.9 against this
+  // source's 0.5 and won them; row 11 carried AniZip's season 3 title over a season 1 description; and
+  // rows 12 to 24 were season 1 outright, since AniZip publishes no English title past episode 11.
+  //
+  // So a show-level id gets the metadata and no episodes, rather than every season's. The media itself
+  // stays, because `mediaPage` mints exactly these ids for SEARCH results and dropping it would take
+  // the search hit down with it. A single-season series is unaffected: `targetSeason` is that season.
+  if (targetSeason) {
+    media.episodes = await fetchNormalizedEpisodes(resolveSeasonId(targetSeason), media.uri, ctx)
+    media.episodeCount = media.episodes.length
+  }
   return media
 }
 
