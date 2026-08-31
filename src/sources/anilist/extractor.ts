@@ -266,14 +266,20 @@ const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, contex
   const data = await fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
   if (!data?.Media) return undefined
 
-  const startDate =
-    data.Media.startDate?.year
-      ? new Date(
-          data.Media.startDate.year,
-          (data.Media.startDate.month ?? 1) - 1,
-          data.Media.startDate.day ?? 1
-        ).toUTCString()
-      : undefined
+  // The same date `normalizeMedia` publishes, rather than a second one built here. This hand-rolled a
+  // date twice over, and both halves mattered to the one thing it feeds, `matchSeasonByDate`:
+  //
+  //   IT FABRICATED A DAY. `day ?? 1` invents the 1st whenever AniList says the day is unknown, which
+  //   is 2355 of 29722 entries, while `airedDate` reaches for the airing schedule's episode 1 in
+  //   exactly that case and finds a real timestamp. So a Crunchyroll season was being matched against
+  //   an invented date while a real one sat in the same payload, already fetched: GET_MEDIA is built
+  //   from MEDIA_FIELDS, which carries `airingSchedule`.
+  //
+  //   IT BUILT THE DATE IN LOCAL TIME. `new Date(y, m, d)` is local midnight, so `.toUTCString()` on
+  //   a machine east of UTC rolls the day back: AniList day 4 comes out as `Fri, 03 Jul 2026 15:00:00
+  //   GMT` under JST. Harmless inside a 45 day window, and wrong in a way that would not stay harmless
+  //   if anything finer ever read it. `airedDate` uses Date.UTC throughout.
+  const startDate = airedDate(data.Media.startDate, data.Media.airingSchedule, 'first')
 
   const externalLinks = data.Media.externalLinks
     ?.filter((link): link is NonNullable<typeof link> => Boolean(link))

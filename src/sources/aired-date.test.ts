@@ -66,6 +66,28 @@ test('a year-only fuzzy date is coerced rather than dropped', () => {
   expect(new Date(date!).toISOString()).toBe('1998-01-01T00:00:00.000Z')
 })
 
+// The property anilist/extractor.ts `fetchMedia` depends on, and the one its hand-rolled date got
+// wrong until 2026-08-31: a PARTIAL fuzzy date must not be completed with an invented day while a
+// real airing time is sitting in the same payload. AniList knows the day for 27367 of 29722 entries
+// and says null for the other 2355; `day ?? 1` turned every one of those into the 1st, which is the
+// shape the first-of-month guards downstream discard. Reaching the schedule keeps a real date.
+test('a month without a day takes the schedule, never the 1st of that month', () => {
+  const date = airedDate(
+    { year: 2016, month: 4, day: null },
+    schedule([{ airingAt: at('2016-04-07T00:00:00Z'), episode: 1 }]),
+    'first'
+  )
+  expect(new Date(date!).toISOString()).toBe('2016-04-07T00:00:00.000Z')
+  expect(new Date(date!).toISOString()).not.toBe('2016-04-01T00:00:00.000Z')
+})
+
+// and with no schedule to reach for there is nothing better than the coercion, which is the sentinel
+// rather than a claim about the day
+test('a month without a day and no schedule falls back to the 1st, as the sentinel', () => {
+  const date = airedDate({ year: 2016, month: 4, day: null }, { edges: [] }, 'first')
+  expect(new Date(date!).toISOString()).toBe('2016-04-01T00:00:00.000Z')
+})
+
 test('nothing at all is undefined, never a guess', () => {
   expect(airedDate(undefined, undefined, 'first')).toBeUndefined()
   expect(airedDate({ year: null, month: null, day: null }, { edges: [] }, 'first')).toBeUndefined()
