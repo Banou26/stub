@@ -324,8 +324,10 @@ const buildExtract = (entries, meta, tag) => {
     const record = {
       t: entry.title,
       ty: entry.type,
-      // A MyAnimeList CDN path with the constant prefix dropped, restored on the client. Every
-      // entry has a picture, and the prefix is 42 of its roughly 70 bytes.
+      // A MyAnimeList CDN path with the constant prefix dropped, restored on the client, where the
+      // prefix is 42 of its roughly 70 bytes. The replace is a NO-OP for the many entries whose
+      // picture manami took from somewhere else (anidb, kitsu, anisearch, ANN and five more), so
+      // those stay absolute and the client tells the two apart rather than prefixing blindly.
       p: entry.picture?.replace('https://cdn.myanimelist.net/images/anime/', '') ?? '',
     }
     if (entry.episodes) record.ep = entry.episodes

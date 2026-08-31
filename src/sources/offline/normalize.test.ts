@@ -46,6 +46,16 @@ describe('seasonMedia', () => {
     expect(seasonMedia(record())!.covers[0]?.url).toBe('https://cdn.myanimelist.net/images/anime/1234/56789.jpg')
   })
 
+  // 380 of 874 rows in the shipped bundle are this case: manami took the picture from somewhere that
+  // is not MyAnimeList, so the build's prefix strip did nothing and re-adding it here would produce
+  // `cdn.myanimelist.net/images/anime/https://media.kitsu.app/...`.
+  test('leaves a picture that is already a full url alone', () => {
+    const kitsu = 'https://media.kitsu.app/anime/50809/poster_image/small-b269a50b.jpg'
+    expect(seasonMedia(record({ p: kitsu }))!.covers[0]?.url).toBe(kitsu)
+    const ann = 'https://cdn.animenewsnetwork.com/thumbnails/max500x600/encyc/A29823-188936182.jpg'
+    expect(seasonMedia(record({ p: ann }))!.covers[0]?.url).toBe(ann)
+  })
+
   // A dump can be weeks old, so it must lose every scalar tiebreak against a live source. Raising
   // this to anilist's 0.9 would also push these titles into the six-slot cluster profile the fuzzy
   // merge compares on, which is the mechanism behind the digit-residue regression.

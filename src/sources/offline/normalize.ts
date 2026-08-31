@@ -30,6 +30,20 @@ export const SCORE = 0.2
 
 const COVER_PREFIX = 'https://cdn.myanimelist.net/images/anime/'
 
+/**
+ * The cover url for a manami record, which is NOT always a MyAnimeList one.
+ *
+ * The bundle strips `COVER_PREFIX` to save about 42 bytes a row, and that is worth doing, but manami
+ * takes each entry's picture from whichever source supplied it. Nine hosts appear in practice, so the
+ * strip is a no-op on those rows and they stay absolute. Re-adding the prefix to one of them builds
+ * `cdn.myanimelist.net/images/anime/https://media.kitsu.app/...`, which resolves nowhere.
+ *
+ * Measured 2026-09-01 against the shipped bundle: 380 of 874 season rows, 43%, carry an absolute url,
+ * and 326 of those serve a real image once asked for the url they actually name. The rest are
+ * livechart and anime-planet, which decline a hotlink; those at least now fail honestly.
+ */
+const coverUrl = (picture: string) => picture.startsWith('http') ? picture : `${COVER_PREFIX}${picture}`
+
 export type ManamiRecord = {
   t: string
   ty: string
@@ -103,7 +117,7 @@ export const seasonMedia = (record: ManamiRecord): GQLMedia | undefined => {
     categories: type === MediaType.Movie ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
     type,
     titles: [{ language: 'en', title: record.t, score: SCORE }],
-    covers: record.p ? [{ url: `${COVER_PREFIX}${record.p}`, score: SCORE }] : [],
+    covers: record.p ? [{ url: coverUrl(record.p), score: SCORE }] : [],
     episodeCount: record.ep || undefined,
     // manami scores on 1 to 10, the schema's averageScore is 0 to 100.
     averageScore: record.sc ? Math.round(record.sc * 10) : undefined,
