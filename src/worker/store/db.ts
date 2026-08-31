@@ -116,6 +116,24 @@ export async function findAggregatedEpisodesForMedia(mediaUris: string[]): Promi
   return groups
 }
 
+/**
+ * Empty the store. TESTS ONLY, and it exists for one kind of test.
+ *
+ * The store is a module singleton, so every test in a run shares it. The suites that predate this
+ * dodged that by inventing ids no other test uses (`anilist:2460`, `anilist:601`), which works right
+ * up until the fixtures carry REAL ids: `merge-fixtures.test.ts` asserts on kitsu:49002 and
+ * anilist:178789 as they really are, and the same show legitimately appears in several cases. Without
+ * a reset the second case inherits the first case's welds and passes or fails for reasons that are
+ * not in it.
+ *
+ * Not exported through ./index.ts, and never called by the app: a live reset would drop every cluster
+ * mid-session with no way to rebuild them short of re-asking every source.
+ */
+export function resetStore() {
+  graph.clear()
+  originMap.clear()
+}
+
 export async function upsertOrigins(newOrigins: Origin[]) {
   for (const origin of newOrigins) {
     const existing = originMap.get(origin.id)

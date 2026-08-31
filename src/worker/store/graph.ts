@@ -29,6 +29,8 @@ export type Graph<T> = {
   targets(key: string, label: string): ReadonlySet<string>
   cluster(start: string, label: string): T[]
   clusters(label: string, nodeLabel?: string, uris?: string[]): T[][]
+  /** Drop every node, alias, edge and component. Tests only: see `resetStore` in ./db.ts. */
+  clear(): void
 }
 
 export function createUnionFind(): UnionFind {
@@ -265,11 +267,23 @@ export function createGraph<T>(): Graph<T> {
     return result
   }
 
+  function clear(): void {
+    nodes.clear()
+    aliases.clear()
+    undirected.clear()
+    directed.clear()
+    unionFinds.clear()
+    nodeLabels.clear()
+    // the LABELS survive, because `registerLabel` runs once at module load in ./db.ts and a cleared
+    // registry would silently drop the merge functions that `set` looks up. Only their contents go.
+    for (const keys of labelIndex.values()) keys.clear()
+  }
+
   return {
     set, registerLabel, setLabel, labeled,
     get, has, alias, resolve,
     link, edge, targets,
-    cluster, clusters,
+    cluster, clusters, clear,
   }
 }
 
