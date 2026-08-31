@@ -81,20 +81,65 @@ const mappingHandles = (mappings: KitsuMapping[]): GQLMedia[] => {
   return handles
 }
 
-const streamHandles = (streams: KitsuStream[], subtype: string | null | undefined): GQLMedia[] => {
-  const handles: GQLMedia[] = []
-  // a series link names the show, so its id is the show's and welds every season together. See ./stream-id.ts
-  if (!streamLinkIsIdentifying(subtype)) return handles
+/** Every (origin, id) a streaming link names. What that id MEANS is decided by the caller below. */
+const streamPointers = (streams: KitsuStream[]) => {
+  const pointers: { origin: string, id: string, url: string }[] = []
   for (const stream of streams) {
     const url = stream.url
     if (!url) continue
     const match = STREAM_ORIGIN.find(([re]) => re.test(url))
     if (!match) continue
-    // no id in the provider's own space means no handle: a url is not an identity. See ./stream-id.ts
+    // no id in the provider's own space means no pointer: a url is not an identity. See ./stream-id.ts
     const id = streamContentId(url)
-    if (id) handles.push(makeMedia({ origin: match[1], id, url }))
+    if (id) pointers.push({ origin: match[1]!, id, url })
   }
-  return handles
+  return pointers
+}
+
+/**
+ * Kitsu's streaming links, spent two different ways depending on what the id can honestly claim.
+ *
+ * A MOVIE has no seasons to be confused between, so the id off the link identifies it exactly and is
+ * minted as a handle directly.
+ *
+ * A SERIES link names the SHOW, always: kitsu publishes the same
+ * `crunchyroll.com/series/G24H1N3MP/...` on kitsu:45950, kitsu:47694 and kitsu:49002, three different
+ * runs of Mushoku Tensei. Minting that welds all three permanently, which is the bug this file
+ * shipped. Dropping it, which is what shipped as the fix, loses a real offer. So it is neither:
+ * the show id goes back to the origin that owns it together with the date of OUR run, and whatever
+ * season-scoped media that source names is the handle. An origin that cannot answer returns nothing
+ * and we are exactly where dropping it left us, so this is a strict improvement over the fix and
+ * carries none of the risk of the bug.
+ *
+ * No start date is a refusal rather than a guess: the date is the entire basis on which the other
+ * source can tell our run from its neighbours.
+ */
+const streamHandles = async (
+  streams: KitsuStream[],
+  attr: KitsuAnime,
+  ctx: ExtractorServerContext
+): Promise<GQLMedia[]> => {
+  const pointers = streamPointers(streams)
+  if (!pointers.length) return []
+
+  if (streamLinkIsIdentifying(attr.subtype)) {
+    return pointers.map(({ origin, id, url }) => makeMedia({ origin, id, url }))
+  }
+
+  if (!attr.startDate) return []
+  const resolved = await Promise.all(
+    pointers.map(({ origin, id }) =>
+      ctx.resolveSeason(origin, {
+        showId: id,
+        startDate: attr.startDate!,
+        titles: buildTitles(attr).map(({ title }) => title),
+        episodeCount: attr.episodeCount ?? undefined,
+      })
+    )
+  )
+  return resolved
+    .filter((media): media is NonNullable<typeof media> => Boolean(media))
+    .map(media => makeMedia({ origin: media.origin, id: media.id, url: media.url ?? undefined }))
 }
 
 const includedMappings = (response: KitsuResponse<unknown>): Map<string, KitsuMapping> =>
@@ -195,7 +240,7 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
   const streamList = Array.isArray(streams?.data) ? streams.data : []
   const handles = [
     ...mappingHandles(resourceMappings(resource, includedMappings(show ?? {}))),
-    ...streamHandles(streamList.map(stream => stream.attributes), resource.attributes.subtype),
+    ...await streamHandles(streamList.map(stream => stream.attributes), resource.attributes, ctx),
   ]
   const media = normalizeMedia(resource, handles)
   media.episodes = await fetchEpisodes(id, media.uri, ctx)

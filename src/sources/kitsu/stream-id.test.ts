@@ -33,8 +33,11 @@ describe('streamContentId', () => {
 // One id, three seasons. A handle is an identity claim, so minting it on all three welds them into one
 // cluster in `upsertMedia` before any season mechanism runs, and it hands Crunchyroll a season-less id
 // whose episode list is every season at once. That is what put 24 rows on a 14 episode season page.
+//
+// False here routes the link through `ctx.resolveSeason` instead of dropping it, so the offer
+// survives as a season-scoped handle. See `streamHandles` in ./extractor.ts.
 describe('streamLinkIsIdentifying', () => {
-  test('a series gets NO handle, because kitsu only ever links the show', () => {
+  test('a series is NOT minted directly, because kitsu only ever links the show', () => {
     expect(streamLinkIsIdentifying('TV')).toBe(false)
     expect(streamLinkIsIdentifying('ONA')).toBe(false)
     expect(streamLinkIsIdentifying('OVA')).toBe(false)

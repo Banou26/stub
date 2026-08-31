@@ -16,7 +16,13 @@
 const ID_IN_PATH = /\/(?:series|title|watch|shows?)\/([^/?#]+)/
 
 /**
- * Whether this media may take an id off a streaming link at all.
+ * Whether the id off a streaming link may be minted as a handle DIRECTLY.
+ *
+ * False does not mean the link is thrown away. It means the id is the show's rather than this run's,
+ * so it cannot be an identity claim and is spent the other way instead: `streamHandles` in
+ * ./extractor.ts hands it to the origin that owns it through `ctx.resolveSeason`, with the date of
+ * our run, and takes back a season-scoped media. This predicate only decides which of those two
+ * paths a link takes.
  *
  * A kitsu streaming link names the SHOW and never the season, so the id read out of it is the show's.
  * Measured 2026-08-31, straight off /anime/<id>/streaming-links: the identical
@@ -35,8 +41,8 @@ const ID_IN_PATH = /\/(?:series|title|watch|shows?)\/([^/?#]+)/
  *
  * A MOVIE has no seasons to be confused between, so its bare provider id identifies it exactly. That
  * is the distinction justwatch/id.ts already draws with `showRequiresSeason`, and kitsu carries the
- * field to draw it: `subtype`. Anything else gets no handle, because kitsu publishes no season-scoped
- * url to build an honest id out of, and an invented one clusters with nothing.
+ * field to draw it: `subtype`. Anything else has to go and ask, because kitsu publishes no
+ * season-scoped url to build an honest id out of, and an invented one clusters with nothing.
  */
 export const streamLinkIsIdentifying = (subtype: string | null | undefined) => subtype === 'movie'
 
