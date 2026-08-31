@@ -27,27 +27,47 @@
  * answer, not just what it is.
  *
  * WHAT THIS SUITE ACTUALLY PINS, MEASURED RATHER THAN HOPED. A suite of separation cases is worth
- * exactly what it catches, so every mechanism in fuzzy-merge.ts was broken one at a time on
- * 2026-08-31 and the suite re-run:
+ * exactly what it catches, so every mechanism in fuzzy-merge.ts was broken one at a time and the
+ * suite re-run. Re-derive it with scripts and a sed; it took minutes and it changed this file twice:
  *
- *   title threshold 0.9 -> 0.3              CAUGHT
- *   start-date window 45 -> 400 days        missed
+ *   title threshold 0.9 -> 0.3              CAUGHT   (Grand Blue season 3 welds into Mushoku Tensei)
+ *   start-date window 45 -> 400 days        CAUGHT   (the two We Never Learn seasons weld)
  *   season disagreement veto removed        missed
  *   format disagreement veto removed        missed
  *   year bucketing removed                  missed
  *
- * So as seeded this file pins the TITLE AXIS and nothing else, and it should not be read as covering
- * the rest. That is a property of these shows rather than of the harness: on real payloads a trailing
- * "Part 2" or "(2021)" drags similarity to 0.68 or 0.86, below the 0.9 threshold, so the title axis
- * refuses these pairs unaided and the other four mechanisms never get to speak. Even a 4000 day
- * window welds none of them.
+ * The first version of this file caught only the title row, and would have been quoted as covering
+ * season separation. The date row was bought by ONE case, added deliberately after the sweep below
+ * found it. So read the misses as gaps, never as proof those three mechanisms are unnecessary.
  *
- * THE DATE AXIS BECOMES LOAD BEARING ONLY WHERE TWO RUNS SHARE A TITLE EXACTLY, and fuzzy-merge.ts
- * says where that happens: shared SYNONYMS, as with the two 86 records that both carry
- * "86 -不存在的战区-". The rows below carry two or three titles each, the main ones, and no synonym
- * lists, which is precisely why the hazard is absent. Pulling AniList `synonyms` and kitsu
- * `abbreviatedTitles` into these fixtures is the single highest-value thing anyone can do to this
- * file, and until that happens the missed rows above are honest gaps rather than proof of safety.
+ * WHY THE OTHER THREE DO NOT BITE, established rather than assumed:
+ *
+ *   FORMAT. Swept the manami corpus (41537 records, tag 2026-27) for a TV record and a MOVIE record
+ *   sharing a year and an identical normalised title, both carrying MyAnimeList and AniList ids.
+ *   There are ZERO. No real case exists to write, so this row cannot be closed with honest data.
+ *
+ *   SEASON and YEAR BUCKETING. Both are redundant with the start-date window on the data here, and
+ *   redundancy is why a single mutation cannot show them: Fruits Basket 2001 against 2019 is refused
+ *   by the bucket AND by eighteen years of date, so breaking either alone changes nothing. They only
+ *   become load bearing when a cluster's dates are all COERCED and `startDay` therefore discards
+ *   them, which is what a streaming row carrying `${year}-01-01` produces. Every row below is from a
+ *   metadata source with a real day, so that shape is absent. Adding a streaming-shaped cluster with
+ *   a January 1 date is the next fixture worth writing, and it should turn both rows CAUGHT.
+ *
+ * SYNONYMS ARE DELIBERATELY ABSENT, and this was checked rather than assumed after a first reading
+ * said the opposite. Stub carries MAIN titles only: anizip publishes `titles.en` and `titles.ja`
+ * (anizip/extractor.ts), kitsu publishes `titles.en`, `canonicalTitle` and `titles.ja_jp`
+ * (`buildTitles`), and anilist REQUESTS `synonyms` in its query and never puts it in the media it
+ * builds. So a fixture carrying synonym lists would test a title pool the store never sees. That also
+ * settles the "86 -不存在的战区-" weld fuzzy-merge.ts describes: it is measured on a corpus that
+ * includes synonyms, which the file itself says over-counts against what stub carries.
+ *
+ * HOW THE HARD CASES WERE FOUND, so the next batch does not have to be guessed at. Sweep the manami
+ * corpus for pairs that share a YEAR and an identical normalised MAIN title. There are 498 such
+ * groups; 10 of them are TV pairs that are also `related` to each other, which is the shape where two
+ * runs of one franchise are genuinely indistinguishable on title. We Never Learn is one of those ten
+ * and it is the case that bought the date row above. The remaining 153 unrelated same-title same-year
+ * TV pairs are a second untouched seam.
  */
 
 /** One source's row, with only the fields the merge path reads. */
@@ -145,6 +165,34 @@ const DR_STONE = {
   ],
 }
 
+/**
+ * The pair the DATE axis exists for, and the only seed here that isolates it.
+ *
+ * Found by sweeping the manami corpus (41537 records, tag 2026-27) for same-year pairs of TV records
+ * that are `related` to each other AND carry an identical normalised MAIN title. Ten pairs qualify in
+ * the whole database; this is the one with ids on every source. Both seasons ran in 2019, 182 days
+ * apart, and the only difference between their titles is a trailing "!", which `stripTitle` removes.
+ * Measured with the repo's own `titleSimilarity`:
+ *
+ *   "We Never Learn: Bokuben"          against "We Never Learn!: Bokuben"           1.0000
+ *   "Bokutachi wa Benkyou ga Dekinai"  against "Bokutachi wa Benkyou ga Dekinai!"   1.0000
+ *
+ * Neither side names a season on those titles, so the season veto cannot fire either, and the year
+ * bucket puts them in the same bucket by construction. Nothing but the 182 days is left.
+ */
+const WE_NEVER_LEARN = {
+  s1: [
+    media('anizip:14289', ['We Never Learn: Bokuben', 'ぼくたちは勉強ができない'], '2019-04-06T15:30:00Z'),
+    media('kitsu:41956', ['We Never Learn: BOKUBEN', 'Bokutachi wa Benkyou ga Dekinai', 'ぼくたちは勉強ができない'], '2019-04-07'),
+    media('anilist:103900', ['Bokutachi wa Benkyou ga Dekinai', 'We Never Learn: BOKUBEN', 'ぼくたちは勉強ができない'], '2019-04-07'),
+  ],
+  s2: [
+    media('anizip:14968', ['We Never Learn!: Bokuben', 'ぼくたちは勉強ができない!'], '2019-10-05T15:30:00Z'),
+    media('kitsu:42414', ['We Never Learn!: BOKUBEN Season 2', 'Bokutachi wa Benkyou ga Dekinai!', 'ぼくたちは勉強ができない !'], '2019-10-06'),
+    media('anilist:110229', ['Bokutachi wa Benkyou ga Dekinai!', 'We Never Learn!: BOKUBEN Season 2', 'ぼくたちは勉強ができない！'], '2019-10-06'),
+  ],
+}
+
 const FRUITS_BASKET = {
   y2001: [
     media('anizip:34', ['Fruits Basket', 'フルーツバスケット'], '2001-07-05T11:00:00Z'),
@@ -183,7 +231,8 @@ const ANIZIP_TO_ANILIST: [string, string][] = [
   ['anizip:19600', 'anilist:199111'], ['anizip:15441', 'anilist:116589'],
   ['anizip:16172', 'anilist:131586'], ['anizip:34', 'anilist:120'],
   ['anizip:14490', 'anilist:105334'], ['anizip:17053', 'anilist:131518'],
-  ['anizip:18064', 'anilist:162670'],
+  ['anizip:18064', 'anilist:162670'], ['anizip:14289', 'anilist:103900'],
+  ['anizip:14968', 'anilist:110229'],
 ]
 
 /** The subset of the real handle list that names rows this case actually carries. */
@@ -279,6 +328,20 @@ export const MERGE_CASES: MergeCase[] = [
     handles: handlesFor([...DR_STONE.p1, ...DR_STONE.p2]),
     together: [uris(DR_STONE.p1), uris(DR_STONE.p2)],
     apart: allPairsAcross([DR_STONE.p1, DR_STONE.p2]),
+  },
+  {
+    name: 'two seasons of We Never Learn in one year, held apart by the date alone',
+    why:
+      'Season 1 starts 2019-04-06 and season 2 starts 2019-10-05: one calendar year, 182 days, and ' +
+      'titles that differ only by a trailing "!" which stripTitle removes. Two of the pairs score ' +
+      'exactly 1.0000, so the title axis is not merely weak here, it actively says these are the same ' +
+      'show. Neither side names a season on those titles, so the season veto cannot fire. The start ' +
+      'date is the only mechanism left, which is what makes this the seed that fails when the window ' +
+      'is widened, and the one row of the mutation table above that reads CAUGHT for the date axis.',
+    medias: [...WE_NEVER_LEARN.s1, ...WE_NEVER_LEARN.s2],
+    handles: handlesFor([...WE_NEVER_LEARN.s1, ...WE_NEVER_LEARN.s2]),
+    together: [uris(WE_NEVER_LEARN.s1), uris(WE_NEVER_LEARN.s2)],
+    apart: allPairsAcross([WE_NEVER_LEARN.s1, WE_NEVER_LEARN.s2]),
   },
   {
     name: 'a remake eighteen years later is a different work',
