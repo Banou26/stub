@@ -16,6 +16,8 @@
 // or has a recap inserted ahead of it, all of which happen and all of which would otherwise silently
 // repoint an existing uri at different episodes.
 
+import { seasonScopedId } from '../season'
+
 /** A JustWatch node id scoped to one season. This is the only id shape a series media may carry. */
 export const jwId = (objectId: string | number, seasonObjectId: string | number) => `${objectId}-${seasonObjectId}`
 
@@ -49,5 +51,94 @@ export const providerContentId = (
   seasonNumber?: number
 ): string | undefined => {
   if (seasonNumber == null) return rawContentId
-  return mappedOrigin === 'cr' ? undefined : `${rawContentId}-${seasonNumber}`
+  if (mappedOrigin === 'cr') return undefined
+  // The appletv source scopes its own ids with seasonScopedId, which spells the suffix '-s<n>'. A bare
+  // '-<n>' here builds an id that source can never mint, so the handle clusters nothing and surfaces
+  // as a second, emptier Apple TV entry beside the real one.
+  if (mappedOrigin === 'appletv') return seasonScopedId(rawContentId, seasonNumber)
+  return `${rawContentId}-${seasonNumber}`
+}
+
+// JustWatch package shortName to stub origin. A package is a TIER, not a service, so one service can
+// hold several of them: Paramount+ sells Essential and Premium separately, Netflix lists its ad tier
+// apart from its main one, Peacock lists Premium apart from Premium Plus. Every tier of one service
+// serves the same urls, so they all map to one origin and the extra handle they mint is the same uri.
+//
+// `hbm` and `pmp` used to sit here and returned ZERO offers, because both services renamed: HBO Max is
+// `mxx` and Paramount+ split into `ppp` and `ppe`. Offers on those two platforms were therefore
+// dropped for every title, which is why the hbo and paramount sources saw nothing from JustWatch.
+// Measured 2026-09-01 over 25 anime searches: mxx 15 offers, ppp 9, ppe 9, and nfa 38 against nfx's 40.
+//
+// Resale channels are deliberately absent. "Crunchyroll Amazon Channel" (`cra`) outnumbers `cru`
+// itself, but its url is watch.amazon.com, so its id belongs to Amazon; mapping it to `cr` would mint
+// a Crunchyroll handle out of an Amazon id and assert an identity that no Crunchyroll call reproduces.
+export const PACKAGE_ORIGIN_MAP: Record<string, string> = {
+  cru: 'cr', nfx: 'nf', nfa: 'nf', dnp: 'disney', amp: 'amazon', atp: 'appletv',
+  hlu: 'hulu', mxx: 'hbo', pcp: 'peacock', pct: 'peacock',
+  ppp: 'paramount', ppe: 'paramount', fuv: 'fubo'
+}
+
+/**
+ * The provider's own id for a title, read out of the deep link the offer carries.
+ *
+ * Every branch here is measured against a real offer url rather than assumed, because a provider that
+ * restyles its site does not break this loudly: the id simply changes shape, and the handle minted
+ * from it either clusters nothing or, worse, is a path segment shared by every title on that service.
+ *
+ * Measured 2026-09-01 across 50 searches. Four of the nine mapped services had moved: Prime Video to
+ * watch.amazon.com with the id in a query param, Disney+ to /browse/entity-<uuid>, fubo to
+ * /welcome/series/<id>, and HBO Max to /video/watch/<uuid> for a series. That last one is the reason
+ * for the shape tests rather than a fixed index: `parts[1]` of an HBO series url is the literal string
+ * "watch", which handed 22 unrelated titles the identical `hbo:watch` handle. A handle is a union with
+ * no inverse, so that is 22 shows merged into one cluster, permanently, for the session.
+ */
+export const extractContentId = (url: string): string | undefined => {
+  try {
+    const parsed = new URL(url)
+    const host = parsed.hostname.replace('www.', '')
+    const parts = parsed.pathname.split('/').filter(Boolean)
+
+    if (host === 'netflix.com') return parts[1]
+    if (host === 'crunchyroll.com' && parts[0] === 'series') return parts[1]
+
+    // Prime Video offers now land on watch.amazon.com/detail?gti=<id>, where the id is not in the path
+    // at all. Falling back to the last path segment there would return the literal "detail".
+    if (host.startsWith('amazon.') || host.endsWith('.amazon.com')) {
+      return parsed.searchParams.get('gti') ?? (host.startsWith('amazon.') ? parts.at(-1) : undefined)
+    }
+
+    if (host === 'hulu.com') {
+      const last = parts.at(-1)
+      return last?.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)?.[1] ?? last
+    }
+
+    // tv.apple.com names a title twice, as a human slug and as a umc.cmc id, and only the umc id is
+    // what the appletv source itself mints. An episode url carries its SHOW's umc id in `showId`,
+    // which is the one worth having. The slug is never used: episode slugs repeat across shows.
+    if (host === 'tv.apple.com') {
+      return parsed.searchParams.get('showId') ?? parts.find(part => part.startsWith('umc.'))
+    }
+
+    // /browse/entity-<uuid> and /play/<uuid> today, /<locale>/series/<slug>/<id> before that
+    if (host === 'disneyplus.com') {
+      const entity = parts.find(part => part.startsWith('entity-'))
+      if (entity) return entity.slice('entity-'.length)
+      return parts[0] === 'play' ? parts[1] : parts[2]
+    }
+
+    // a series url names the SHOW at index 4 and continues into a season and an episode, so the last
+    // segment is an episode id; a movie url ends on the movie's own id
+    if (host === 'peacocktv.com') return parts[2] === 'tv' ? parts[4] : parts.at(-1)
+
+    if (host === 'paramountplus.com') return parts[1]
+
+    // /welcome/series/<id>/<slug> and /welcome/program/<id>
+    if (host === 'fubo.tv') return parts[0] === 'welcome' ? parts[2] : undefined
+
+    // /show/<uuid> for a title, /video/watch/<uuid> for an episode of one
+    if (host === 'play.hbomax.com' || host === 'hbomax.com') {
+      return parts[0] === 'video' ? parts[2] : parts[1]
+    }
+  } catch {}
+  return undefined
 }

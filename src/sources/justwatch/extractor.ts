@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
-import { jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
+import { PACKAGE_ORIGIN_MAP, extractContentId, jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
 import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
 import { rankByTitle, searchQueries, yearAppearsInShow } from '../catalogue-gate'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia } from '../utils'
@@ -24,34 +24,10 @@ const JW_IMAGE_BASE = 'https://images.justwatch.com'
 const COUNTRY = 'US'
 const LANGUAGE = 'en'
 
-const PACKAGE_ORIGIN_MAP: Record<string, string> = {
-  cru: 'cr', nfx: 'nf', dnp: 'disney', amp: 'amazon', atp: 'appletv',
-  hlu: 'hulu', hbm: 'hbo', pcp: 'peacock', pmp: 'paramount', fuv: 'fubo'
-}
-
 const extractRealUrl = (affiliateUrl: string): string | undefined => {
   try {
     const url = new URL(affiliateUrl)
     return url.searchParams.get('u') ?? url.searchParams.get('r') ?? undefined
-  } catch {}
-  return undefined
-}
-
-const extractContentId = (url: string): string | undefined => {
-  try {
-    const { hostname, pathname } = new URL(url)
-    const host = hostname.replace('www.', '')
-    const parts = pathname.split('/').filter(Boolean)
-    if (host === 'netflix.com') return parts[1]
-    if (host === 'crunchyroll.com' && parts[0] === 'series') return parts[1]
-    if (host.startsWith('amazon.')) return parts.at(-1)
-    if (host === 'hulu.com') {
-      const last = parts.at(-1)
-      return last?.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)?.[1] ?? last
-    }
-    if (host === 'disneyplus.com' || host === 'tv.apple.com') return parts[2]
-    if (host === 'peacocktv.com') return parts.at(-1)
-    if (host === 'paramountplus.com') return parts[1]
   } catch {}
   return undefined
 }
