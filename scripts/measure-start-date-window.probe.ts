@@ -3,8 +3,8 @@
  * the real fuzzyMergeMediaClusters rather than a model of it.
  *
  *   node scripts/measure-start-date-window.mjs
- *   ./node_modules/.bin/vitest run --config vitest.start-date.config.ts \
- *     --disableConsoleIntercept --reporter=verbose
+ *   ./node_modules/.bin/vitest run --config vitest.probe.config.ts \
+ *     scripts/measure-start-date-window.probe.ts --disableConsoleIntercept --reporter=verbose
  *
  * `--disableConsoleIntercept` is load bearing: vitest swallows console output without it, so the run
  * passes and prints nothing, which is a measurement rig reporting success while showing no

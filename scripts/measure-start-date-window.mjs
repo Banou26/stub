@@ -5,8 +5,8 @@
  * same shape as scripts/fetch-title-corpus.mjs. Run it, then the probe:
  *
  *   node scripts/measure-start-date-window.mjs
- *   ./node_modules/.bin/vitest run --config vitest.start-date.config.ts \
- *     --disableConsoleIntercept --reporter=verbose
+ *   ./node_modules/.bin/vitest run --config vitest.probe.config.ts \
+ *     scripts/measure-start-date-window.probe.ts --disableConsoleIntercept --reporter=verbose
  *
  * WHAT A CANDIDATE PAIR IS. Two DISTINCT AniList entries that share an emitted start YEAR, which is
  * the only thing fuzzyMergeMediaClusters ever compares within, and hold a title pair whose character
