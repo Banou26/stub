@@ -27,32 +27,31 @@
  * answer, not just what it is.
  *
  * WHAT THIS SUITE ACTUALLY PINS, MEASURED RATHER THAN HOPED. A suite of separation cases is worth
- * exactly what it catches, so every mechanism in fuzzy-merge.ts was broken one at a time and the
- * suite re-run. Re-derive it with scripts and a sed; it took minutes and it changed this file twice:
+ * exactly what it catches, so each mechanism in fuzzy-merge.ts was broken and the suite re-run. Do
+ * this again after adding cases; it is a sed and a minute, and it has corrected this file three times:
  *
- *   title threshold 0.9 -> 0.3              CAUGHT   (Grand Blue season 3 welds into Mushoku Tensei)
- *   start-date window 45 -> 400 days        CAUGHT   (the two We Never Learn seasons weld)
- *   season disagreement veto removed        missed
- *   format disagreement veto removed        missed
- *   year bucketing removed                  missed
+ *   title threshold 0.9 -> 0.3                       CAUGHT  2 cases
+ *   start-date window 45 -> 400 days                 CAUGHT  1 case
+ *   window 400 AND season veto removed               CAUGHT  2 cases
+ *   window 400 AND year bucketing removed            CAUGHT  1 case
+ *   trailing-number guard removed AND threshold 0.8  CAUGHT  1 case
+ *   title threshold 0.9 -> 0.8                       missed
+ *   season disagreement veto removed                 missed
+ *   format disagreement veto removed                 missed
+ *   year bucketing removed                           missed
+ *   trailing-number guard removed                    missed
+ *   season veto AND year bucketing removed           missed
  *
- * The first version of this file caught only the title row, and would have been quoted as covering
- * season separation. The date row was bought by ONE case, added deliberately after the sweep below
- * found it. So read the misses as gaps, never as proof those three mechanisms are unnecessary.
+ * READ THE SINGLE-MUTATION MISSES AS REDUNDANCY, NOT AS DEAD CODE. Every one of them is covered by
+ * the start-date window on this data, and the paired rows prove it: break the window as well and the
+ * season veto, the year bucket and the trailing-number guard each become load bearing on a real case.
+ * That is defence in depth working, and it is also why a single-mutation sweep alone would have
+ * declared four mechanisms unnecessary.
  *
- * WHY THE OTHER THREE DO NOT BITE, established rather than assumed:
- *
- *   FORMAT. Swept the manami corpus (41537 records, tag 2026-27) for a TV record and a MOVIE record
- *   sharing a year and an identical normalised title, both carrying MyAnimeList and AniList ids.
- *   There are ZERO. No real case exists to write, so this row cannot be closed with honest data.
- *
- *   SEASON and YEAR BUCKETING. Both are redundant with the start-date window on the data here, and
- *   redundancy is why a single mutation cannot show them: Fruits Basket 2001 against 2019 is refused
- *   by the bucket AND by eighteen years of date, so breaking either alone changes nothing. They only
- *   become load bearing when a cluster's dates are all COERCED and `startDay` therefore discards
- *   them, which is what a streaming row carrying `${year}-01-01` produces. Every row below is from a
- *   metadata source with a real day, so that shape is absent. Adding a streaming-shaped cluster with
- *   a January 1 date is the next fixture worth writing, and it should turn both rows CAUGHT.
+ * FORMAT IS THE ONE ROW WITH NO CASE AT ALL. Swept the manami corpus (41537 records, tag 2026-27) for
+ * a TV record and a MOVIE record sharing a year and an identical normalised title, both carrying
+ * MyAnimeList and AniList ids: there are ZERO. No honest fixture can be written for it from this
+ * data, so the row stays open rather than being filled with something invented.
  *
  * SYNONYMS ARE DELIBERATELY ABSENT, and this was checked rather than assumed after a first reading
  * said the opposite. Stub carries MAIN titles only: anizip publishes `titles.en` and `titles.ja`
@@ -193,6 +192,66 @@ const WE_NEVER_LEARN = {
   ],
 }
 
+/**
+ * Both 2023, 189 days apart, and the closest real pair to a weld the corpus sweep turned up. Three
+ * separate mechanisms refuse it, which is why it takes a PAIR of mutations to move.
+ *
+ * Two of its title pairs sit at or above the 0.9 threshold, so the title axis is no help:
+ *
+ *   "Bungou Stray Dogs 4th Season"  against "Bungou Stray Dogs 5th Season"   0.9298
+ *   "Bungou Stray Dogs 4"           against "Bungou Stray Dogs 5"           0.9018
+ *
+ * What refuses it today is the DATE, at 189 days. Widen the window and the season veto takes over,
+ * because the "Nth Season" titles do parse as 4 against 5. Measured: window 45 to 400 leaves this
+ * case green and only We Never Learn fails; window 400 WITH the season veto removed fails both.
+ *
+ * The bare "4" against "5" pair never reaches a score at all. `parseSeasonNumber` does not read a
+ * trailing number, but `differOnlyByTrailingNumber` in ./fuzzy-merge.ts skips any title pair whose
+ * stems match and whose trailing numbers differ, which is a purpose-built guard and strictly stronger
+ * than a season veto would be here. An earlier version of this comment called that a blind spot. It
+ * is the opposite, and the mistake is recorded because the reasoning that produced it (reading
+ * `parseSeasonNumber` and stopping) is the reasoning to avoid.
+ */
+const BUNGOU = {
+  s4: [
+    media('anizip:16965', ['Bungo Stray Dogs 4', '文豪ストレイドッグス (2023)'], '2023-01-04T14:00:00Z'),
+    media('kitsu:45460', ['Bungou Stray Dogs 4', 'Bungou Stray Dogs 4th Season', '文豪ストレイドッグス 4'], '2023-01-04'),
+    media('anilist:141249', ['Bungou Stray Dogs 4th Season', 'Bungo Stray Dogs 4', '文豪ストレイドッグス 第4シーズン'], '2023-01-04'),
+  ],
+  s5: [
+    media('anizip:17962', ['Bungo Stray Dogs 5', '文豪ストレイドッグス (2023) TV'], '2023-07-12T14:00:00Z'),
+    media('kitsu:47258', ['Bungou Stray Dogs 5', 'Bungou Stray Dogs 5th Season', '文豪ストレイドッグス 5'], '2023-07-12'),
+    media('anilist:163263', ['Bungou Stray Dogs 5th Season', 'Bungo Stray Dogs 5', '文豪ストレイドッグス 第5シーズン'], '2023-07-12'),
+  ],
+}
+
+/**
+ * The pair that proves the DATE VETO CAN BE STRUCTURALLY SILENT on real data, which is the premise
+ * every "missed" row in the mutation table above rests on.
+ *
+ * Season 2 premiered on 2018-12-01, a genuine first of the month, and `startDay` in ./fuzzy-merge.ts
+ * discards any first-of-month date because seven extractors mint that shape out of a bare year. So
+ * this cluster's `days` set is EMPTY, the veto needs both sides to have one, and season 1 is in the
+ * same 2018 bucket. The season veto is unavailable too: `parseSeasonNumber` reads neither
+ * "Oshiri Tantei 2" nor "おしりたんてい (第2シリーズ)".
+ *
+ * So this pair reaches the title loop with every other mechanism spent, and TWO things there refuse
+ * it independently. `differOnlyByTrailingNumber` skips "oshiri tantei" against "oshiri tantei 2"
+ * before it is scored; had it been scored it would be 0.8134, still under the 0.9 threshold. The
+ * Japanese pair scores 0.4556 and the cross pairs 0.02.
+ *
+ * Measured, and the two-mutation shape is the evidence that both are real: removing the
+ * trailing-number guard ALONE changes nothing, because 0.8134 is under the threshold anyway;
+ * removing it AND lowering the threshold to 0.8 welds this case and only this case.
+ *
+ * Only AniList carries these, which is why there is one row per cluster. A single-source cluster is a
+ * real shape, not a gap in the fixture.
+ */
+const OSHIRI = {
+  s1: [media('anilist:100790', ['Oshiri Tantei', 'おしりたんてい'], '2018-05-03')],
+  s2: [media('anilist:132694', ['Oshiri Tantei 2', 'おしりたんてい (第2シリーズ)'], '2018-12-01')],
+}
+
 const FRUITS_BASKET = {
   y2001: [
     media('anizip:34', ['Fruits Basket', 'フルーツバスケット'], '2001-07-05T11:00:00Z'),
@@ -232,7 +291,8 @@ const ANIZIP_TO_ANILIST: [string, string][] = [
   ['anizip:16172', 'anilist:131586'], ['anizip:34', 'anilist:120'],
   ['anizip:14490', 'anilist:105334'], ['anizip:17053', 'anilist:131518'],
   ['anizip:18064', 'anilist:162670'], ['anizip:14289', 'anilist:103900'],
-  ['anizip:14968', 'anilist:110229'],
+  ['anizip:14968', 'anilist:110229'], ['anizip:16965', 'anilist:141249'],
+  ['anizip:17962', 'anilist:163263'],
 ]
 
 /** The subset of the real handle list that names rows this case actually carries. */
@@ -342,6 +402,34 @@ export const MERGE_CASES: MergeCase[] = [
     handles: handlesFor([...WE_NEVER_LEARN.s1, ...WE_NEVER_LEARN.s2]),
     together: [uris(WE_NEVER_LEARN.s1), uris(WE_NEVER_LEARN.s2)],
     apart: allPairsAcross([WE_NEVER_LEARN.s1, WE_NEVER_LEARN.s2]),
+  },
+  {
+    name: 'two Bungou Stray Dogs seasons in one year, where the season veto is half blind',
+    why:
+      'Season 4 starts 2023-01-04 and season 5 starts 2023-07-12, same year, 189 days. Their ' +
+      '"Nth Season" titles score 0.9298 and their bare "Bungou Stray Dogs 4" / "5" titles score ' +
+      '0.9018, both at or above the 0.9 threshold, so the title axis says these are one show. The ' +
+      'date refuses them at 189 days; widen the window and the season veto takes over on the ' +
+      '"Nth Season" pair; the bare pair is skipped outright by differOnlyByTrailingNumber. Three ' +
+      'mechanisms deep, which is why it takes two mutations to move.',
+    medias: [...BUNGOU.s4, ...BUNGOU.s5],
+    handles: handlesFor([...BUNGOU.s4, ...BUNGOU.s5]),
+    together: [uris(BUNGOU.s4), uris(BUNGOU.s5)],
+    apart: allPairsAcross([BUNGOU.s4, BUNGOU.s5]),
+  },
+  {
+    name: 'a first-of-month premiere leaves only the title axis, and it holds',
+    why:
+      'Oshiri Tantei season 1 starts 2018-05-03 and season 2 starts 2018-12-01. Same year, so the ' +
+      'bucket compares them; season 2\'s date is a first of the month, so startDay discards it and ' +
+      'the date veto cannot fire; and parseSeasonNumber reads neither "Oshiri Tantei 2" nor ' +
+      '"第2シリーズ", so the season veto cannot fire either. That leaves the title loop, where the ' +
+      'romaji pair is SKIPPED by differOnlyByTrailingNumber before it is scored, and would be 0.8134 ' +
+      'and still under threshold if it were. This case exists to pin that the premise of the mutation ' +
+      'table is real: a cluster CAN reach the matcher with no usable day.',
+    medias: [...OSHIRI.s1, ...OSHIRI.s2],
+    together: [uris(OSHIRI.s1), uris(OSHIRI.s2)],
+    apart: allPairsAcross([OSHIRI.s1, OSHIRI.s2]),
   },
   {
     name: 'a remake eighteen years later is a different work',
