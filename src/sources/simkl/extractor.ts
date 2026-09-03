@@ -80,11 +80,36 @@ const episodesPath = (type: SimklType): string => (type === 'tv' ? '/tv/episodes
 const normalizeType = (endpoint?: string): SimklType => (endpoint === 'anime' ? 'anime' : endpoint === 'movies' ? 'movies' : 'tv')
 const categoriesForType = (type: SimklType): MediaCategory[] => (type === 'movies' ? ['MOVIE'] : type === 'anime' ? ['ANIME', 'SERIES'] : ['SERIES'])
 
+/**
+ * The handles a simkl id block is worth minting.
+ *
+ * `tmdb` is NOT among them, in either direction, and the two reasons are different.
+ *
+ * ON A TV OR ANIME RECORD it is a TMDB **tv** id, which names the SHOW. Simkl keeps a separate record
+ * per run of an anime, and puts the show's one tmdb id on every one of them: measured live, all five
+ * Mushoku Tensei runs carry `tmdb:94664`. A handle is an identity claim, so minting it says those five
+ * runs are one media and `upsertMedia` unions them before any season mechanism is consulted. Simkl's
+ * own `season` field cannot rescue it either, being null on first runs and repeating `2` across three.
+ *
+ * ON A MOVIE RECORD it is a TMDB **movie** id, and TMDB numbers movies and tv shows in SEPARATE
+ * sequences that both start at 1. Measured 2026-09-04: `themoviedb.org/movie/550` is Fight Club and
+ * `themoviedb.org/tv/550` is Till Death Us Do Part. Stub's uri is `tmdb:550` for both, so minting a
+ * movie id here would weld a film to whatever unrelated series holds that number. `tmdb/extractor.ts`
+ * is `categories = ['SERIES']` and reads `/tv/` pages only, so it could not resolve the movie id
+ * anyway: the handle would be an orphan that can still collide.
+ *
+ * `tmdb` deliberately does NOT go in `SHOW_LEVEL_ORIGINS` for this. Unlike imdb, tmdb CAN be scoped,
+ * and `tmdb/extractor.ts` mints a real `<id>-s<n>` through `seasonScopedId`. Exempting the origin
+ * would throw away those correct handles to fix a bare id minted somewhere else. The refusal belongs
+ * at the source that cannot make an honest id, which is this one.
+ *
+ * The cost is the TMDB link disappearing from a simkl-sourced media, which is the same trade `db.ts`
+ * already recorded for imdb and the smaller loss.
+ */
 const buildHandles = (ids?: SimklIds): GQLMedia[] => {
   if (!ids) return []
   const handles: GQLMedia[] = []
   if (ids.imdb) handles.push(makeMedia({ origin: 'imdb', id: ids.imdb, url: `https://www.imdb.com/title/${ids.imdb}` }))
-  if (ids.tmdb) handles.push(makeMedia({ origin: 'tmdb', id: ids.tmdb, url: `https://www.themoviedb.org/tv/${ids.tmdb}` }))
   if (ids.mal) handles.push(makeMedia({ origin: 'mal', id: ids.mal, url: `https://myanimelist.net/anime/${ids.mal}` }))
   if (ids.anilist) handles.push(makeMedia({ origin: 'anilist', id: ids.anilist, url: `https://anilist.co/anime/${ids.anilist}` }))
   if (ids.kitsu) handles.push(makeMedia({ origin: 'kitsu', id: ids.kitsu, url: `https://kitsu.io/anime/${ids.kitsu}` }))
