@@ -52,8 +52,22 @@ const fetchEpisodes = async (slug: string, mediaUri: string, ctx: ExtractorServe
 
 const getMedia = async (slug: string, ctx: ExtractorServerContext): Promise<GQLMedia> => {
   const media = makeMedia({ origin, id: slug, url: `${BASE}/shows/${slug}`, score: SCORE, categories: ['SERIES'] })
-  media.episodes = await fetchEpisodes(slug, media.uri, ctx)
-  media.episodeCount = media.episodes.length
+  // This media is SHOW level by construction: its id is the show's slug, and the fetch above asks for
+  // `season/0` at `size/100000`, which is every episode of every season. Every media in this store is
+  // one run, so `episodeNumber` is within-season, and flattening several seasons into one list collides
+  // them: `store/db.ts` hangs a HAS_EPISODE edge off this uri for each, and `Media.episodes` groups the
+  // union by episodeNumber ALONE, so the row count becomes the LONGEST season and whatever else the
+  // cluster holds shares rows with a season nobody asked for. Measured live 2026-08-31 through the same
+  // mechanism: 24 rows on a 14 episode season page. `crunchyroll/extractor.ts` carries this guard too.
+  //
+  // The media itself stays, because search mints exactly these ids. A show whose episodes are all one
+  // season is unaffected, its list being honest.
+  const episodes = await fetchEpisodes(slug, media.uri, ctx)
+  const seasons = new Set(episodes.map(episode => episode.seasonNumber ?? 0))
+  if (seasons.size <= 1) {
+    media.episodes = episodes
+    media.episodeCount = episodes.length
+  }
   return media
 }
 
