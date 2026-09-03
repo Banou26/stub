@@ -20,15 +20,41 @@ const DESCRIPTION_SCORE = 0.9
 
 const youtubeEmbedRegex = /\/embed\/([a-zA-Z0-9_-]{11})/
 
+/**
+ * The AniDB id a MyAnimeList external link carries, or undefined when it carries none.
+ *
+ * MyAnimeList publishes two url shapes and only one of them puts the id in the path:
+ *
+ *   https://anidb.net/perl-bin/animedb.pl?show=anime&aid=23   the common one, id in `aid`
+ *   https://anidb.net/anime/23                                the modern one, id in the path
+ *
+ * Both halves have to be SHAPE TESTED, and neither was. Reading `pathname.split('/')[2]` as a fallback
+ * takes index 2 of `/perl-bin/animedb.pl`, which is the literal string `animedb.pl`, so any record on
+ * the common shape whose `aid` went missing minted `anidb:animedb.pl` rather than nothing. An id that
+ * is not an id in the provider's own space clusters with nothing at best; here it is worse, because
+ * every record that produced it produced the SAME one and `upsertMedia` welds them all into one media.
+ *
+ * The numeric test is the same rule from the other end: an AniDB id is a number, so `?aid=` carrying
+ * anything else is a link we cannot read, not a link to something called that.
+ */
+export const anidbIdFromUrl = (url: string | undefined | null): string | undefined => {
+  if (!url) return undefined
+  try {
+    const { searchParams, pathname } = new URL(url)
+    const id = searchParams.get('aid') ?? /^\/anime\/([^/?#]+)/.exec(pathname)?.[1]
+    return id && /^\d+$/.test(id) ? id : undefined
+  } catch {
+    // a malformed url used to throw out of normalizeMedia, taking the whole record with it
+    return undefined
+  }
+}
+
 const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {
   const aniDBSource = data.external?.find(site => site.name === 'AniDB')
-  const aniDBId =
-    aniDBSource
-      ? (
-        new URL(aniDBSource?.url).searchParams.get('aid')
-        ?? new URL(aniDBSource?.url).pathname.split('/')[2]
-      )
-      : undefined
+  // BOTH handles gate on the ID, never on the presence of the link. The anizip one used to gate on
+  // `aniDBSource` while interpolating `aniDBId`, so a link we could not read minted the literal uri
+  // `anizip:undefined` on every record that carried one, welding them.
+  const aniDBId = anidbIdFromUrl(aniDBSource?.url)
 
   const anidbHandle =
     aniDBId
@@ -42,7 +68,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       : undefined
 
   const anizipHandle =
-    aniDBSource
+    aniDBId
       ? {
         _id: crypto.randomUUID(),
         uri: `anizip:${aniDBId}`,
