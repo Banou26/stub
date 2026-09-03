@@ -14,8 +14,6 @@ type Episode {
   mediaUri: String!
   """Every other row this episode is related to. See `MediaHandle` for why the relation is explicit."""
   handles: [EpisodeHandle!]!
-  """The inverse edge. Declared but not implemented, exactly as `Media.handleOf` is."""
-  handleOf: [EpisodeHandle!]
   score: Float
   titles: [EpisodeTitle!]!
   shortDescriptions(input: EpisodeShortDescriptionInput): [EpisodeShortDescription!]!

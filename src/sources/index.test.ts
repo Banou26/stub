@@ -30,3 +30,26 @@ test('no key is requested for a source that is not exported', async () => {
   const names = Object.keys(sources)
   for (const config of keyConfigs) expect(names, config.origin).toContain(config.origin)
 })
+
+// Dead schema surface is worse than missing surface: it reads as a promise. Two fields were removed on
+// 2026-09-05 and this pins their absence, because both are the kind of thing a future edit re-adds
+// "for symmetry" without noticing nothing implements them.
+//
+//   Media.handleOf / Episode.handleOf   declared, never resolved, never read. An inverse edge nobody
+//                                       walked, so querying it returned null and looked like no data.
+//   Media.externalLinks: String         plumbed through the store, aggregate and the wire, and set by
+//                                       NO SOURCE, so it was null on every media ever built. Its name
+//                                       also now describes what PART_OF handles actually do, which
+//                                       made it worse than merely dead.
+test('the schema declares no field that nothing implements', async () => {
+  const { readFileSync } = await import('node:fs')
+  const media = readFileSync(new URL('../worker/resolvers/media/schema.gql', import.meta.url), 'utf8')
+  const episode = readFileSync(new URL('../worker/resolvers/episode/schema.gql', import.meta.url), 'utf8')
+
+  expect(media, 'MediaHandle is the live surface; handleOf was never resolved').not.toContain('handleOf')
+  expect(episode).not.toContain('handleOf')
+  expect(media, 'no source ever set this, and PART_OF handles are what it pretended to be')
+    .not.toContain('externalLinks')
+  // the control: this file must actually be reading the schema, not an empty string
+  expect(media).toContain('enum MediaHandleRelation')
+})

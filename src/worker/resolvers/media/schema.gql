@@ -94,12 +94,6 @@ type Media {
   entirely rather than carry its link.
   """
   handles: [MediaHandle!]!
-  """
-  The inverse edge. DECLARED BUT NOT IMPLEMENTED: no resolver populates it and nothing reads it, on
-  either the app schema or a source schema. Kept in the shape of `handles` so the two do not drift if
-  it is ever wired up.
-  """
-  handleOf: [MediaHandle!]
   score: Float
   titles: [MediaTitle!]!
   type: MediaType
@@ -111,7 +105,6 @@ type Media {
   trailers: [MediaTrailer!]!
   covers: [MediaCover!]!
   banners: [MediaBanner!]!
-  externalLinks: String
   averageScore: Int
   popularity: Int
   startDate: Date

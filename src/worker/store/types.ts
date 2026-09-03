@@ -41,7 +41,6 @@ export type Media = {
   trailers: Trailer[]
   covers: Cover[]
   banners: Banner[]
-  externalLinks: string | null
   averageScore: number | null
   popularity: number | null
   startDate: string | null

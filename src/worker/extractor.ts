@@ -60,7 +60,6 @@ const normalizeToStoreMedia = (media: Media): StoreMedia => ({
   trailers: media.trailers ?? [],
   covers: media.covers ?? [],
   banners: media.banners ?? [],
-  externalLinks: media.externalLinks ?? null,
   averageScore: media.averageScore ?? null,
   popularity: media.popularity ?? null,
   startDate: media.startDate ?? null,
