@@ -84,10 +84,23 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
   if (!detail || detail.Response === 'False') return undefined
   const media = normalizeMedia(detail, buildHandles(id))
   if (!media) return undefined
+  // A SHOW with more than one season has no honest episode list here, and this media is show level by
+  // construction: its id is an IMDb id, which is the one origin `worker/store/db.ts` exempts outright
+  // because IMDb models no seasons at all. Every media in this store is one run, so `episodeNumber` is
+  // within-season, and flattening N seasons into one list collides them. `db.ts` hangs a HAS_EPISODE
+  // edge off this uri for every one, and `Media.episodes` groups the union by episodeNumber ALONE, so
+  // the row count becomes the LONGEST season and whatever else the cluster holds shares rows with a
+  // season nobody asked for. That is what put 24 rows on a 14 episode season page, measured live
+  // 2026-08-31, and `crunchyroll/extractor.ts` carries the same guard for the same reason.
+  //
+  // The media itself stays: `mediaPage` mints exactly these ids for SEARCH and dropping it would take
+  // the search hit with it. A single-season series is unaffected, its one list being honest.
   const totalSeasons = na(detail.totalSeasons)
-  if (totalSeasons) {
-    media.episodes = await fetchEpisodes(id, Number(totalSeasons), media.uri, ctx)
+  if (totalSeasons && Number(totalSeasons) === 1) {
+    media.episodes = await fetchEpisodes(id, 1, media.uri, ctx)
     media.episodeCount = media.episodes.length
+  } else if (totalSeasons) {
+    media.episodeCount = undefined
   } else if (isMovie(media)) {
     media.episodes = [makeMovieEpisode(media)]
     media.episodeCount = 1
