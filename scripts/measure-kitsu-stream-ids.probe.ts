@@ -117,10 +117,9 @@ test('the shipped carve-out welds films together, and the allowlist does not', (
   // the control: if this ever passes, the corpus has stopped reaching the providers that weld and
   // every other assertion in this file is vacuous
   expect(was.welds.length, 'control: the shipped carve-out must still be welding films').toBeGreaterThan(0)
-  // `blanket` is a COMPARISON, not a control: it mints nothing by construction, so no corpus can
-  // falsify it and asserting its zero proves nothing. It earns its place by pricing the naive repair,
-  // which is what the allowlist has to beat, and the number that matters is the one it gives up.
-  expect(was.handles - blanket.handles, 'the naive repair gives up every link a film carries').toBe(was.handles)
+  // `blanket` carries NO assertion on purpose. It mints nothing by construction, so every claim about
+  // it is true for any corpus including an empty one, and an assertion that cannot fail reads as a
+  // check while being none. It is here for the printed row, which prices the repair the allowlist beat.
 
   expect(now.welds.map(([key, ids]) => `${key} <- ${[...ids].join(' + ')}`)).toEqual([])
   expect(now.handles, 'the allowlist must not be a blanket refusal wearing a different name').toBeGreaterThan(0)

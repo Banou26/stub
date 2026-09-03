@@ -17,6 +17,8 @@
 // names one title or a container holding several. See `linkNamesOneTitle` below.
 const ID_IN_PATH = /\/(series|title|watch|shows?)\/([^/?#]+)/
 
+// Matched against the HOSTNAME, for the same reason: `/(primevideo|amazon)\./` against a whole url
+// matches the string anywhere in it, a query parameter included.
 const STREAM_ORIGIN: [RegExp, string][] = [
   [/crunchyroll\.com/, 'cr'],
   [/netflix\.com/, 'nf'],
@@ -37,10 +39,12 @@ export const streamPointers = (urls: (string | undefined | null)[]): StreamPoint
   const pointers: StreamPointer[] = []
   for (const url of urls) {
     if (!url) continue
-    const origin = STREAM_ORIGIN.find(([re]) => re.test(url))?.[1]
+    let parsed: URL
+    try { parsed = new URL(url) } catch { continue }
+    const origin = STREAM_ORIGIN.find(([re]) => re.test(parsed.hostname))?.[1]
     if (!origin) continue
     // no id in the provider's own space means no pointer: a url is not an identity
-    const parts = ID_IN_PATH.exec(url)
+    const parts = ID_IN_PATH.exec(parsed.pathname)
     if (!parts) continue
     pointers.push({ origin, id: parts[2]!, url, scope: parts[1]! })
   }

@@ -131,3 +131,26 @@ test('a film whose link names the film itself is still minted directly', async (
   expect(handles.map(handle => handle.uri)).toContain('nf:81006261')
   expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
 })
+
+// The film gate, from the side every other test in this file is blind to. The three non-film cases
+// above all carry a crunchyroll /series/ link, which the ALLOWLIST refuses on shape as well, so they
+// pass whether or not the gate exists. A netflix link is the case that separates them: `nf:title` is
+// on the allowlist, so only the gate stops it being minted here.
+//
+// It has to stop it. A netflix /title/ id on a cour record is the WHOLE show's: measured 2026-09-04
+// over 3000 kitsu records, nf:80135674 is published on all five seasons of Boku no Hero Academia, and
+// 36 more ids are shared the same way. Kitsu mints none of them today, because a cour record goes to
+// resolveSeason and Netflix registers no mediaSeason resolver, so it answers nothing.
+test('a cour record hands its netflix link back rather than minting it', async () => {
+  const resolveSeason = vi.fn(async () => undefined)
+
+  const handles = await handlesFor(context({
+    subtype: 'TV',
+    startDate: '2026-07-04',
+    resolveSeason,
+    streams: [NF_TITLE_URL],
+  }))
+
+  expect(resolveSeason).toHaveBeenCalledWith('nf', expect.objectContaining({ showId: '81006261' }))
+  expect(handles.filter(handle => handle.origin === 'nf')).toEqual([])
+})

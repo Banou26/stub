@@ -34,6 +34,13 @@ describe('streamPointers', () => {
     expect(streamPointers(['not a url at all'])).toEqual([])
   })
 
+  // the regex is unanchored, so against a raw url it would also match inside a query string. Reading
+  // the pathname is what keeps a parameter from minting an id nobody linked to.
+  test('an id sitting in a query string is not an id this link names', () => {
+    expect(streamPointers(['https://www.crunchyroll.com/?next=/series/GY5P48XEY'])).toEqual([])
+    expect(streamPointers(['https://www.crunchyroll.com/browse?from=/title/80223226'])).toEqual([])
+  })
+
   test('a provider we do not map, an empty url and a missing one are all skipped', () => {
     expect(streamPointers(['https://www.hidive.com/movies/no-game-no-life-zero'])).toEqual([])
     expect(streamPointers([undefined, null, ''])).toEqual([])
