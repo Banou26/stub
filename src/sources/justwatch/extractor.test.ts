@@ -123,3 +123,30 @@ test('a film still takes the crunchyroll handle its own offer resolves to', asyn
 
   expect(idFor(handles, 'cr')).toEqual(['GSERIES-GSEASON2'])
 })
+
+// A crunchyroll offer that is a /series/ url rather than a /watch/ one. `providerContentId` refuses it
+// outright, because `extractContentId` reads a cr id from /series/ and nothing else, so every cr id
+// reaching it names a SHOW and, on Crunchyroll, that show's films. That refusal used to be a DROP.
+//
+// It is a demotion now: the film or run is genuinely PART OF that series, so the link stays on the page
+// while the claim does not. Fifteen Dragon Ball Z films share /series/GQWH0M1GG, which is why it can
+// never be an identity.
+const CR_SERIES_OFFER = 'https://www.crunchyroll.com/series/GQWH0M1GG/dragon-ball-z-movies'
+
+test('a crunchyroll series offer is kept as PART_OF rather than dropped', async () => {
+  const filmWithSeriesOffer = {
+    ...film,
+    offers: [
+      { monetizationType: 'FLATRATE', standardWebURL: CR_SERIES_OFFER, package: { clearName: 'Crunchyroll', shortName: 'cru' } },
+    ],
+  }
+
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const { value } = await subscribe(undefined, { input: { uri: 'jw:999' } }, context(filmWithSeriesOffer)).next()
+  const edges = (value?.media?.handles ?? []) as { relation: string, node: { origin: string, id: string } }[]
+
+  const cr = edges.find(edge => edge.node.origin === 'cr')
+  expect(cr, 'the link must survive, which is the change').toBeDefined()
+  expect(cr!.node.id).toBe('GQWH0M1GG')
+  expect(cr!.relation, 'it names the whole collection, so it may never be an identity').toBe('PART_OF')
+})

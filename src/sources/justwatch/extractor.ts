@@ -1,5 +1,5 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode , MediaHandle as GQLMediaHandle } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 import { PACKAGE_ORIGIN_MAP, extractContentId, jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
@@ -263,9 +263,9 @@ const buildOffersAsHandles = async (
   offers: JWOffer[],
   meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number },
   ctx: ExtractorServerContext
-): Promise<GQLMedia[]> => {
+): Promise<GQLMediaHandle[]> => {
   const seen = new Set<string>()
-  const handles: GQLMedia[] = []
+  const handles: GQLMediaHandle[] = []
 
   for (const offer of offers) {
     if (!['FLATRATE', 'FLATRATE_AND_BUY', 'FREE', 'ADS'].includes(offer.monetizationType)) continue
@@ -280,6 +280,10 @@ const buildOffersAsHandles = async (
     const url = realUrl ?? offer.standardWebURL ?? undefined
 
     let contentId: string | undefined
+    // SAME_AS unless something below says otherwise. A crunchyroll /series/ id is the one case that
+    // becomes PART_OF: it names the show and, on Crunchyroll, its films too, so it is never an identity
+    // and always a true containment.
+    let relation: 'SAME_AS' | 'PART_OF' = 'SAME_AS'
     const rawContentId = url ? extractContentId(url) : undefined
 
     // A Crunchyroll offer is a /watch/<episodeId> url, so the id has to come back through Crunchyroll
@@ -304,17 +308,21 @@ const buildOffersAsHandles = async (
     } else if (rawContentId) {
       // a provider's series url names the SHOW, so without the season that id spans every season and clustering unions them
       contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber)
+      // `providerContentId` refuses crunchyroll outright, because `extractContentId` reads a cr id from
+      // /series/ urls and nothing else. That refusal was a DROP; it is now a demotion, which keeps the
+      // link on the page without claiming this run is the whole series.
+      if (!contentId && mappedOrigin === 'cr') {
+        contentId = rawContentId
+        relation = 'PART_OF'
+      }
     }
 
     if (!contentId) continue
 
-    handles.push(
-      makeMedia({
-        origin: mappedOrigin,
-        id: contentId,
-        url
-      })
-    )
+    handles.push({
+      node: makeMedia({ origin: mappedOrigin, id: contentId, url }),
+      relation
+    })
   }
 
   return handles
