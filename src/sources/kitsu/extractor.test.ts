@@ -46,14 +46,18 @@ const context = (
   resolveSeason,
 }) as never
 
-const handlesFor = async (ctx: never) => {
+const edgesFor = async (ctx: never) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'kitsu:49002' } }, ctx).next()
-  // handles are edges now: { node, relation }. These assertions are about WHICH ids get minted, so
-  // they read the nodes; the relation each one carries is asserted where it is the point.
-  return ((value?.media?.handles ?? []) as { node: { uri: string, origin: string, id: string } }[])
-    .map(handle => handle.node)
+  return (value?.media?.handles ?? []) as { relation: string, node: { uri: string, origin: string, id: string } }[]
 }
+
+/** the nodes, for assertions about WHICH ids get minted */
+const handlesFor = async (ctx: never) => (await edgesFor(ctx)).map(handle => handle.node)
+
+/** what this media claims to BE. The only relation that welds, so the only one these tests police. */
+const sameAsFor = async (ctx: never) =>
+  (await edgesFor(ctx)).filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node)
 
 test('a series link is handed to the owning origin as a show plus a date', async () => {
   const resolveSeason = vi.fn(async () => ({
@@ -78,24 +82,28 @@ test('a series link is handed to the owning origin as a show plus a date', async
 // The refusal path, and the one that matters most: an origin that cannot place the run answers
 // nothing, and nothing is exactly where dropping the link left us. It must never fall back to the
 // show id, which is the weld this whole mechanism exists to avoid.
-test('an origin that cannot place the run leaves no handle at all', async () => {
+test('an origin that cannot place the run asserts nothing, but keeps the link', async () => {
   const resolveSeason = vi.fn(async () => undefined)
+  const ctx = context({ subtype: 'TV', startDate: '2026-07-04', resolveSeason })
 
-  const handles = await handlesFor(context({ subtype: 'TV', startDate: '2026-07-04', resolveSeason }))
+  expect(await sameAsFor(ctx), 'the show id must never be claimed as this run').toEqual([])
 
-  expect(resolveSeason).toHaveBeenCalled()
-  expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
+  const cr = (await edgesFor(context({ subtype: 'TV', startDate: '2026-07-04', resolveSeason })))
+    .find(handle => handle.node.origin === 'cr')
+  expect(cr?.relation, 'the run IS part of that series, which is worth keeping').toBe('PART_OF')
+  expect(cr?.node.id).toBe('G24H1N3MP')
 })
 
 // No date is no basis on which the other source could tell our run from its neighbours, so the ask is
 // not worth making. Asking anyway with an empty date is how a source ends up taking "season 1".
-test('no start date means the ask is never made', async () => {
+test('no start date means the ask is never made, and the link is still carried', async () => {
   const resolveSeason = vi.fn(async () => undefined)
 
-  const handles = await handlesFor(context({ subtype: 'TV', startDate: null, resolveSeason }))
+  const edges = await edgesFor(context({ subtype: 'TV', startDate: null, resolveSeason }))
 
   expect(resolveSeason).not.toHaveBeenCalled()
-  expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
+  expect(edges.filter(handle => handle.node.origin === 'cr' && handle.relation === 'SAME_AS')).toEqual([])
+  expect(edges.find(handle => handle.node.origin === 'cr')?.relation).toBe('PART_OF')
 })
 
 // A film that belongs to a running series gets the SERIES' url from Crunchyroll: all four Demon Slayer
@@ -106,14 +114,18 @@ test('no start date means the ask is never made', async () => {
 // There is no third path for a film. resolveSeason places a run by air date, and a film has no season
 // to be placed into, so asking would match it against a TV season: a wrong merge rather than a missing
 // link. It is dropped, and the ask is never made.
-test('a film whose link names the show mints nothing, and does not ask either', async () => {
+test('a film whose link names the show claims nothing, and does not ask either', async () => {
   const resolveSeason = vi.fn(async () => undefined)
+  const ctx = context({ subtype: 'movie', startDate: '2020-10-16', resolveSeason })
 
-  const handles = await handlesFor(context({ subtype: 'movie', startDate: '2020-10-16', resolveSeason }))
-
+  const edges = await edgesFor(ctx)
   expect(resolveSeason).not.toHaveBeenCalled()
-  expect(handles.map(handle => handle.uri)).not.toContain('cr:G24H1N3MP')
-  expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
+
+  // the weld this whole mechanism exists to avoid: fifteen Dragon Ball Z films share one /series/ id
+  expect(edges.filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node.uri))
+    .not.toContain('cr:G24H1N3MP')
+  // and the film really IS part of that series, so the link is kept rather than thrown away
+  expect(edges.find(handle => handle.node.origin === 'cr')?.relation).toBe('PART_OF')
 })
 
 // Netflix gives every title its own /title/<id>, film and show alike, so a film's Netflix link does
@@ -130,9 +142,14 @@ test('a film whose link names the film itself is still minted directly', async (
   }))
 
   expect(resolveSeason).not.toHaveBeenCalled()
-  // the netflix one survives, the crunchyroll one does not, out of the same record
+  // the netflix one is an identity, the crunchyroll one is only a link, out of the same record
   expect(handles.map(handle => handle.uri)).toContain('nf:81006261')
-  expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
+  expect((await sameAsFor(context({
+    subtype: 'movie',
+    startDate: '2020-10-16',
+    resolveSeason,
+    streams: [CR_SHOW_URL, NF_TITLE_URL],
+  }))).map(handle => handle.uri)).toEqual(['nf:81006261'])
 })
 
 // The film gate, from the side every other test in this file is blind to. The three non-film cases
@@ -147,7 +164,7 @@ test('a film whose link names the film itself is still minted directly', async (
 test('a cour record hands its netflix link back rather than minting it', async () => {
   const resolveSeason = vi.fn(async () => undefined)
 
-  const handles = await handlesFor(context({
+  const handles = await sameAsFor(context({
     subtype: 'TV',
     startDate: '2026-07-04',
     resolveSeason,
@@ -155,5 +172,8 @@ test('a cour record hands its netflix link back rather than minting it', async (
   }))
 
   expect(resolveSeason).toHaveBeenCalledWith('nf', expect.objectContaining({ showId: '81006261' }))
-  expect(handles.filter(handle => handle.origin === 'nf')).toEqual([])
+  expect(
+    handles.filter(handle => handle.origin === 'nf'),
+    'nf:80135674 is all five seasons of Boku no Hero Academia; claiming it here welds them'
+  ).toEqual([])
 })

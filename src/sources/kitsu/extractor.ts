@@ -1,12 +1,12 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaHandle as GQLMediaHandle } from '../../generated/schema/types.generated'
 
 import { MediaStatus, MediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img } from '../utils'
+import { makeMedia, makeEpisode, desc, img, partOf, sameAs } from '../utils'
 import { animeSeasonOf } from '../season'
 import { seasonPageNumbers, seasonQuery } from './season-paging'
-import { mintableAsFilmHandle, streamPointers } from './stream-id'
+import { mintableAsFilmHandle, streamPointers, type StreamPointer } from './stream-id'
 
 const SCORE = 0.3
 const API = 'https://kitsu.io/api/edge'
@@ -99,30 +99,46 @@ const streamHandles = async (
   streams: KitsuStream[],
   attr: KitsuAnime,
   ctx: ExtractorServerContext
-): Promise<GQLMedia[]> => {
+): Promise<GQLMediaHandle[]> => {
   const pointers = streamPointers(streams.map(stream => stream.url))
   if (!pointers.length) return []
+
+  // A link this cannot mint as an identity is now kept as PART_OF rather than thrown away, and it is
+  // TRUE both ways round: a film published under a Crunchyroll series IS part of that series, and so
+  // is a cour whose season nobody could place. The url survives, the claim does not, and no number of
+  // these can weld two runs together.
+  const container = ({ origin, id, url }: StreamPointer) => partOf(makeMedia({ origin, id, url }))
 
   // both halves of this are load bearing and neither implies the other: the subtype says a refusal
   // here has nowhere else to go, and the pointer says whether the id names this film. See ./stream-id.ts
   if (attr.subtype === 'movie') {
-    return pointers.filter(mintableAsFilmHandle).map(({ origin, id, url }) => makeMedia({ origin, id, url }))
+    return pointers.map(pointer =>
+      mintableAsFilmHandle(pointer)
+        ? sameAs(makeMedia({ origin: pointer.origin, id: pointer.id, url: pointer.url }))
+        : container(pointer)
+    )
   }
 
-  if (!attr.startDate) return []
+  // No date is no basis on which the other source could tell our run from its neighbours, so the ask is
+  // not worth making. The links are still worth carrying.
+  if (!attr.startDate) return pointers.map(container)
+
   const resolved = await Promise.all(
-    pointers.map(({ origin, id }) =>
-      ctx.resolveSeason(origin, {
-        showId: id,
+    pointers.map(pointer =>
+      ctx.resolveSeason(pointer.origin, {
+        showId: pointer.id,
         startDate: attr.startDate!,
         titles: buildTitles(attr).map(({ title }) => title),
         episodeCount: attr.episodeCount ?? undefined,
-      })
+      }).then(media => ({ pointer, media }))
     )
   )
-  return resolved
-    .filter((media): media is NonNullable<typeof media> => Boolean(media))
-    .map(media => makeMedia({ origin: media.origin, id: media.id, url: media.url ?? undefined }))
+  // an origin that placed our run gives a season-scoped identity; one that could not still gives a link
+  return resolved.map(({ pointer, media }) =>
+    media
+      ? sameAs(makeMedia({ origin: media.origin, id: media.id, url: media.url ?? undefined }))
+      : container(pointer)
+  )
 }
 
 const includedMappings = (response: KitsuResponse<unknown>): Map<string, KitsuMapping> =>
@@ -142,7 +158,7 @@ const buildTitles = (attr: KitsuAnime) => {
   return titles
 }
 
-const normalizeMedia = (resource: KitsuResource<KitsuAnime>, handles: GQLMedia[] = []): GQLMedia => {
+const normalizeMedia = (resource: KitsuResource<KitsuAnime>, handles: (GQLMedia | GQLMediaHandle)[] = []): GQLMedia => {
   const attr = resource.attributes
   return makeMedia({
     origin,
