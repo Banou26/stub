@@ -39,19 +39,32 @@ export const showRequiresSeason = (objectType: string | undefined) => objectType
 /**
  * The id a provider handle carries, or undefined when it cannot be given one worth minting.
  *
- * Crunchyroll is the exception to the season suffix: its season-specific identity is
- * '<seriesId>-<seasonId>' (what the crunchyroll source itself mints via crunchyrollId), so appending a
- * season NUMBER would build an id no other source can ever match. An orphan handle is worse than none:
- * it clusters nothing and shows up as a second, emptier entry. The extractor's episode-resolving path
- * still produces a real season-specific crunchyroll id when the offer links to an episode.
+ * Crunchyroll is refused OUTRIGHT, and the refusal has to come before the seasonless early return.
+ *
+ * `extractContentId` reads a crunchyroll id from one url shape only, `/series/<id>`, so every id that
+ * reaches here is a SERIES id: it names a container that holds every run of the show and, on
+ * Crunchyroll, the show's FILMS too, since a film belonging to a running series is published under the
+ * series. Appending a season NUMBER cannot rescue it either, because crunchyroll's season-specific
+ * identity is '<seriesId>-<seasonId>' (what the crunchyroll source itself mints via crunchyrollId), so
+ * a numbered id is one no other source can ever match. An orphan handle is worse than none: it
+ * clusters nothing and shows up as a second, emptier entry.
+ *
+ * The refusal used to sit BELOW `if (seasonNumber == null) return rawContentId`, which made it dead
+ * for the one case that reaches here with no season: a MOVIE, since `showRequiresSeason` refuses a
+ * seasonless series before this runs. So a film whose crunchyroll offer was a /series/ url took the
+ * bare container id, which is the same weld measured on kitsu 2026-09-04, where four Demon Slayer
+ * films and fifteen Dragon Ball Z films each shared one /series/ id.
+ *
+ * The extractor's episode-resolving path is where a real crunchyroll handle still comes from, and it
+ * has its own reason to refuse a pinned season. See `buildOffersAsHandles`.
  */
 export const providerContentId = (
   mappedOrigin: string,
   rawContentId: string,
   seasonNumber?: number
 ): string | undefined => {
-  if (seasonNumber == null) return rawContentId
   if (mappedOrigin === 'cr') return undefined
+  if (seasonNumber == null) return rawContentId
   // The appletv source scopes its own ids with seasonScopedId, which spells the suffix '-s<n>'. A bare
   // '-<n>' here builds an id that source can never mint, so the handle clusters nothing and surfaces
   // as a second, emptier Apple TV entry beside the real one.

@@ -282,7 +282,20 @@ const buildOffersAsHandles = async (
     let contentId: string | undefined
     const rawContentId = url ? extractContentId(url) : undefined
 
-    if (!rawContentId && mappedOrigin === 'cr' && url) {
+    // A Crunchyroll offer is a /watch/<episodeId> url, so the id has to come back through Crunchyroll
+    // itself. That answers with the season THAT episode is in, which is one specific season of the
+    // show, and JustWatch has no season-level node: this offer belongs to the SHOW and every season
+    // media built from the node is handed the same one. So a pinned season would take an id nothing
+    // established was its own, and two runs of one show would take the SAME id and weld.
+    //
+    // Every other origin survives the same show-level offer because `providerContentId` scopes its id
+    // by the season NUMBER. Crunchyroll has no such suffix: its season identity is
+    // `<seriesId>-<seasonId>`, an opaque guid, so there is nothing to build a scoped id out of here.
+    //
+    // A movie is the case that stays, and it is the only one: `showRequiresSeason` has already refused
+    // a series with no season by the time this runs, so a null seasonNumber here means a film, whose
+    // episode resolves to its own season and identifies it.
+    if (!rawContentId && mappedOrigin === 'cr' && url && meta.seasonNumber == null) {
       const episodeId = extractCrunchyrollEpisodeId(url)
       if (episodeId) {
         const resolved = await resolveEpisodeToSeriesId(episodeId, ctx)

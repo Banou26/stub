@@ -71,11 +71,20 @@ describe('providerContentId', () => {
     expect(providerContentId('hulu', '95e491fa-cdad', 2)).toBe('95e491fa-cdad-2')
   })
 
-  test('crunchyroll gets NO handle rather than one keyed on a season number', () => {
+  // This used to end `expect(providerContentId('cr', 'G24H1N3MP')).toBe('G24H1N3MP')`, pinning the
+  // seasonless case as correct. It was not: `extractContentId` reads a crunchyroll id from `/series/`
+  // urls and nothing else, so every id arriving here names a SERIES, and a series page holds every run
+  // of the show plus, on Crunchyroll, the show's films. The refusal sat below the seasonless early
+  // return, so the one case that reaches here without a season, a MOVIE, walked straight past it and
+  // took the container id. Measured on kitsu 2026-09-04, the same id from the same urls: four Demon
+  // Slayer films share cr:GY5P48XEY and fifteen Dragon Ball Z films share cr:GQWH0M1GG.
+  test('crunchyroll gets NO handle, with or without a season number', () => {
     // the crunchyroll source mints '<seriesId>-<seasonId>' (G24H1N3MP-GRDQCGX5E), so 'G24H1N3MP-3'
     // would cluster with nothing and surface as a second, emptier entry
     expect(providerContentId('cr', 'G24H1N3MP', 3)).toBeUndefined()
-    expect(providerContentId('cr', 'G24H1N3MP')).toBe('G24H1N3MP')
+    // and the bare series id is not a fallback, it is the container
+    expect(providerContentId('cr', 'G24H1N3MP')).toBeUndefined()
+    expect(providerContentId('cr', 'GY5P48XEY')).toBeUndefined()
   })
 })
 
