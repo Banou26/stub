@@ -8,11 +8,14 @@ export const MEDIA_FRAGMENT = gql(`
     id
     url
     handles {
-      _id
-      uri
-      origin
-      id
-      url
+      relation
+      node {
+        _id
+        uri
+        origin
+        id
+        url
+      }
     }
   }
 `)

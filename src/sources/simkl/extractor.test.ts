@@ -43,7 +43,10 @@ const context = (type: 'anime' | 'movies', ids: Record<string, unknown> = IDS) =
 const handlesFor = async (type: 'anime' | 'movies', ids?: Record<string, unknown>) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'simkl:1080329' } }, context(type, ids)).next()
-  return (value?.media?.handles ?? []) as { uri: string, origin: string, id: string }[]
+  // handles are edges now: { node, relation }. These assertions are about WHICH ids get minted, so
+  // they read the nodes; the relation each one carries is asserted where it is the point.
+  return ((value?.media?.handles ?? []) as { node: { uri: string, origin: string, id: string } }[])
+    .map(handle => handle.node)
 }
 
 test('an anime run does not mint the show-level tmdb id it carries', async () => {

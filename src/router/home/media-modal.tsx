@@ -355,30 +355,39 @@ const GET_MEDIA_MODAL = gql(`
           url
         }
         handles {
-          ...EpisodeFragment
-          episodeNumber
-          titles {
-            title
-          }
-          shortDescriptions {
-            language
-            shortDescription
-          }
-          thumbnails {
-            url
+          relation
+          node {
+            ...EpisodeFragment
+            episodeNumber
+            titles {
+              title
+            }
+            shortDescriptions {
+              language
+              shortDescription
+            }
+            thumbnails {
+              url
+            }
           }
         }
       }
       handles {
-        ...MediaFragment
-        handles {
+        relation
+        node {
           ...MediaFragment
+          handles {
+            relation
+            node {
+              ...MediaFragment
+              episodes {
+                ...EpisodeFragment
+              }
+            }
+          }
           episodes {
             ...EpisodeFragment
           }
-        }
-        episodes {
-          ...EpisodeFragment
         }
       }
       episodeCount
@@ -414,7 +423,14 @@ const Episode = (
 
   const sources: WatchSource[] = (originData?.originPage?.nodes ?? [])
     .map(origin => {
-      const handles = (episode?.handles ?? []).filter(h => h.origin === origin.id)
+      // SAME_AS only. Everything below routes into PLAYBACK: `sourceUri` is handed to the watch route
+      // and resolved back to a handle to play, so a node that is merely PART_OF this episode would be
+      // asked to play a different episode. No source emits a PART_OF episode handle today; the filter
+      // is here so that the day one does, it shows up as a missing row rather than a wrong stream.
+      const handles =
+        (episode?.handles ?? [])
+          .filter(handle => handle.relation === 'SAME_AS' && handle.node.origin === origin.id)
+          .map(handle => handle.node)
       const handle = handles.at(0)
       const sourceUri = handle?.uri
       const playable = Boolean(getPlayer(origin.id) && handle?.url)
@@ -658,7 +674,16 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                       ?.originPage
                       ?.nodes
                       ?.map(origin => {
-                        const link = media?.handles.find(handle => handle.origin === origin.id)?.url
+                        // BOTH RELATIONS, deliberately, and this row is the whole point of the
+                        // refactor. It wants a url and an origin and nothing else: no sameness is
+                        // assumed and nothing is merged across it. A PART_OF handle is exactly as
+                        // good here as a SAME_AS one, which is why IMDb can finally render as a link
+                        // rather than the dead grey icon in the branch below.
+                        const link =
+                          media
+                            ?.handles
+                            .find(handle => handle.node.origin === origin.id && handle.node.url)
+                            ?.node.url
                         if (!origin.icon) return undefined
                         return (
                           link

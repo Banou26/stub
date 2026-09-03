@@ -30,11 +30,24 @@ export function removeDuplicatesByField<T extends Record<string, any>>(field: ke
   return result
 }
 
+/**
+ * The two edge constructors this module needs.
+ *
+ * Local rather than imported from ../../sources/utils: that module reaches the whole source barrel,
+ * and the store must not depend on it. The shape is three fields and duplicating it here is cheaper
+ * than the import cycle.
+ */
+const sameAsHandle = (node: GQLMedia) => ({ node, relation: 'SAME_AS' as const })
+const sameAsEpisodeHandle = (node: GQLEpisode) => ({ node, relation: 'SAME_AS' as const })
+
 const unwrapMediaCache = new WeakMap<GQLMedia, GQLMedia[]>()
 export function recursivelyUnwrapMediaHandles(media: GQLMedia): GQLMedia[] {
   if (unwrapMediaCache.has(media)) return unwrapMediaCache.get(media)!
+  // EVERY node, whatever it claims. This walk feeds `graph.set`, and a PART_OF node has to become a
+  // stored row or its url can never be rendered. The relation decides how it is LINKED, in
+  // `upsertMedia`, not whether it is stored.
   const result = media.handles
-    ? [media, ...media.handles.flatMap(recursivelyUnwrapMediaHandles)]
+    ? [media, ...media.handles.flatMap(handle => recursivelyUnwrapMediaHandles(handle.node))]
     : [media]
   if (media.handles) unwrapMediaCache.set(media, result)
   return result
@@ -120,7 +133,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     return {
       ...mediaToGQL(m),
       _id,
-      handles: [mediaToGQL(m)],
+      handles: [sameAsHandle(mediaToGQL(m))],
     }
   }
 
@@ -159,7 +172,9 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     origin: 'ag',
     url: `${locationOrigin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     score: Math.max(...medias.map(m => m.score ?? 0)),
-    handles: sorted.map(m => mediaToGQL(m)),
+    // the cluster IS the SAME_AS set, by construction: `graph.cluster` over MEDIA_SAME_AS is what
+    // produced `medias`. PART_OF handles are added by the caller, which has the store to ask.
+    handles: sorted.map(m => sameAsHandle(mediaToGQL(m))),
     episodes: [],
   })
 
@@ -182,7 +197,7 @@ export function aggregateEpisode(episodes: Episode[], locationOrigin: string): G
     return {
       ...episodeToGQL(e),
       _id: getStableClusterId([e.uri]),
-      handles: [episodeToGQL(e)],
+      handles: [sameAsEpisodeHandle(episodeToGQL(e))],
     }
   }
 
@@ -215,7 +230,7 @@ export function aggregateEpisode(episodes: Episode[], locationOrigin: string): G
     url: `${locationOrigin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     mediaUri: uri,
     score: Math.max(...episodes.map(e => e.score ?? 0)),
-    handles: sorted.map(e => episodeToGQL(e)),
+    handles: sorted.map(e => sameAsEpisodeHandle(episodeToGQL(e))),
   })
 
   return {

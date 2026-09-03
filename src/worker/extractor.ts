@@ -3,7 +3,7 @@ import type { Exchange } from 'urql'
 
 import type { Episode, Media, MediaSeasonInput, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { Uri } from 'src/utils/uri'
-import type { Media as StoreMedia, Episode as StoreEpisode, Origin as StoreOrigin } from './store/types'
+import type { Media as StoreMedia, Episode as StoreEpisode, Origin as StoreOrigin, HandleRelation } from './store/types'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -125,14 +125,18 @@ const listenForMediaChangesForContext = async function* (
 const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   const allUnwrapped = (medias as Media[]).flatMap(recursivelyUnwrapMediaHandles)
 
-  const handlePairs: { mediaUri: string; handleUri: string }[] = []
+  // The relation rides all the way to the store, because it is the store that acts on it: SAME_AS
+  // unions the cluster and PART_OF hangs a directed edge that unions nothing. Deduping on the RELATION
+  // too, not just the pair, so one media may hold both kinds for one origin without either silently
+  // winning on arrival order.
+  const handlePairs: { mediaUri: string; handleUri: string; relation: HandleRelation }[] = []
   const seen = new Set<string>()
   for (const media of allUnwrapped) {
     for (const handle of media.handles ?? []) {
-      const key = `${media.uri}\0${handle.uri}`
+      const key = `${media.uri}\0${handle.node.uri}\0${handle.relation}`
       if (!seen.has(key)) {
         seen.add(key)
-        handlePairs.push({ mediaUri: media.uri, handleUri: handle.uri })
+        handlePairs.push({ mediaUri: media.uri, handleUri: handle.node.uri, relation: handle.relation })
       }
     }
   }
@@ -147,10 +151,10 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
 })
 
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
-  const handlePairs: { episodeUri: string; handleUri: string }[] = []
+  const handlePairs: { episodeUri: string; handleUri: string; relation: HandleRelation }[] = []
   for (const episode of episodes as Episode[]) {
     for (const handle of episode.handles ?? []) {
-      handlePairs.push({ episodeUri: episode.uri, handleUri: handle.uri })
+      handlePairs.push({ episodeUri: episode.uri, handleUri: handle.node.uri, relation: handle.relation })
     }
   }
 

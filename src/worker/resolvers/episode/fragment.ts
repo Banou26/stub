@@ -9,12 +9,15 @@ export const EPISODE_FRAGMENT = gql(`
     url
     mediaUri
     handles {
-      _id
-      uri
-      origin
-      id
-      url
-      mediaUri
+      relation
+      node {
+        _id
+        uri
+        origin
+        id
+        url
+        mediaUri
+      }
     }
   }
 `)

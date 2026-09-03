@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Media, MediaTrailer, Resolvers } from '../../generated/schema/types.generated'
 import { MediaStatus, MediaType } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
-import { makeMedia, normalizePage } from '../utils'
+import { makeMedia, normalizePage, sameAs } from '../utils'
 import { MAL_TYPE, isContinuing, parseMalSeason, type MalSeasonEntry } from './season-scrape'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
@@ -116,9 +116,11 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       : undefined,
     id: data.mal_id.toString(),
     url: data.url,
+    // both are SAME_AS: AniDB models one entry per RUN for anime, and anizip is keyed on the anidb id,
+    // so neither names a container
     handles: [
-      ...anidbHandle ? [anidbHandle] : [],
-      ...anizipHandle ? [anizipHandle] : []
+      ...anidbHandle ? [sameAs(anidbHandle)] : [],
+      ...anizipHandle ? [sameAs(anizipHandle)] : []
     ],
     score: SCORE,
     averageScore: data.score,

@@ -81,7 +81,10 @@ const context = (which: typeof node | typeof film = node) => ({
 const handlesFor = async (uri: string, which?: typeof node | typeof film) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri } }, context(which)).next()
-  return (value?.media?.handles ?? []) as { uri: string, origin: string, id: string }[]
+  // handles are edges now: { node, relation }. These assertions are about WHICH ids get minted, so
+  // they read the nodes; the relation each one carries is asserted where it is the point.
+  return ((value?.media?.handles ?? []) as { node: { uri: string, origin: string, id: string } }[])
+    .map(handle => handle.node)
 }
 
 const idFor = (handles: { origin: string, id: string }[], origin: string) =>

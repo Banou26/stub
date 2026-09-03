@@ -9,6 +9,15 @@ export type MediaStatus = typeof mediaStatusEnum[number]
 export const mediaCategoryEnum = ['ANIME', 'SERIES', 'MOVIE'] as const
 export type MediaCategory = typeof mediaCategoryEnum[number]
 
+/**
+ * What a handle claims, mirroring `MediaHandleRelation` in the graphql schema.
+ *
+ * Mirrored rather than imported, like every other enum in this file, so the store does not depend on
+ * generated code. SAME_AS is the only one that unions: see `upsertMedia` in ./db.ts.
+ */
+export const handleRelationEnum = ['SAME_AS', 'PART_OF'] as const
+export type HandleRelation = typeof handleRelationEnum[number]
+
 export type Title = { language: string; title: string; score?: number | null }
 export type Description = { language: string; description: string; score?: number | null }
 export type ShortDescription = { language: string; shortDescription: string; score?: number | null }

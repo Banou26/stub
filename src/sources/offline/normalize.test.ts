@@ -38,8 +38,8 @@ describe('recordId', () => {
 describe('seasonMedia', () => {
   test('carries every catalog id as a handle, which is what merges it', () => {
     const media = seasonMedia(record({ ml: 51478, al: 142051, ku: 47450 }))!
-    expect(media.handles.map(handle => handle.origin).sort()).toEqual(['anilist', 'kitsu', 'mal'])
-    expect(media.handles.find(handle => handle.origin === 'anilist')?.id).toBe('142051')
+    expect(media.handles.map(handle => handle.node.origin).sort()).toEqual(['anilist', 'kitsu', 'mal'])
+    expect(media.handles.find(handle => handle.node.origin === 'anilist')?.node.id).toBe('142051')
   })
 
   test('restores the cover prefix the build strips', () => {

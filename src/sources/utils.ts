@@ -1,18 +1,64 @@
 import type { ExtractorServerContext } from '../worker/extractor'
-import type { Media as GQLMedia, Episode as GQLEpisode } from '../generated/schema/types.generated'
+import type { Media as GQLMedia, Episode as GQLEpisode, MediaHandle as GQLMediaHandle, EpisodeHandle as GQLEpisodeHandle } from '../generated/schema/types.generated'
 
 import initFrizbee, { Matcher } from 'frizbee'
 import initSacha, { parse as parseMediaName } from 'sacha'
 import { fromAggregatedUri, toUri } from '../utils/uri'
 import { SEASON_MARKER } from './season'
 
-export const makeMedia = ({ origin, id, ...fields }: { origin: string, id: string } & Partial<GQLMedia>): GQLMedia => ({
+/**
+ * A handle, or the media to make a SAME_AS handle out of.
+ *
+ * `makeMedia({ handles: [media] })` still means what it always meant, because SAME_AS is what all 49
+ * producer sites were already asserting. Only a producer that means something else has to say so, with
+ * `partOf(...)`. The BREAKING half of this refactor is deliberately on the reading side, where a
+ * missed site shows nothing rather than throwing.
+ */
+export type MediaHandleInput = GQLMedia | GQLMediaHandle
+export type EpisodeHandleInput = GQLEpisode | GQLEpisodeHandle
+
+const isMediaHandle = (handle: MediaHandleInput): handle is GQLMediaHandle => 'node' in handle
+const isEpisodeHandle = (handle: EpisodeHandleInput): handle is GQLEpisodeHandle => 'node' in handle
+
+/**
+ * This handle names THIS run. Unions the cluster, permanently, with no inverse. The default, and the
+ * only relation any producer asserted before 2026-09-04.
+ */
+export const sameAs = (node: GQLMedia): GQLMediaHandle => ({ node, relation: 'SAME_AS' })
+
+/**
+ * This media is one PART of what the handle names: a run of that show, a film published under that
+ * series. Carries the url without claiming to be it, and never unions.
+ *
+ * Use it wherever the honest answer used to be to drop the link: a show-level id from a source with no
+ * season concept, an IMDb id, a Crunchyroll /series/ url on a film.
+ */
+export const partOf = (node: GQLMedia): GQLMediaHandle => ({ node, relation: 'PART_OF' })
+
+/** The episode forms of the above. Episodes share `MediaHandleRelation`; see the schema for why. */
+export const episodeSameAs = (node: GQLEpisode): GQLEpisodeHandle => ({ node, relation: 'SAME_AS' })
+export const episodePartOf = (node: GQLEpisode): GQLEpisodeHandle => ({ node, relation: 'PART_OF' })
+
+/** Every node a handle list points at, whatever each one claims. For storage, never for merging. */
+export const handleNodes = (handles: GQLMediaHandle[]): GQLMedia[] => handles.map(handle => handle.node)
+
+/**
+ * Only the nodes this media claims to BE.
+ *
+ * The filter that has to be applied anywhere sameness is assumed: episode lists, title and cover
+ * merging, cluster membership. Reading a PART_OF node as though it were this media is the original bug
+ * in a new hiding place, and its episode list is every run's at once.
+ */
+export const sameAsNodes = (handles: GQLMediaHandle[]): GQLMedia[] =>
+  handles.filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node)
+
+export const makeMedia = ({ origin, id, handles, ...fields }: { origin: string, id: string, handles?: MediaHandleInput[] } & Omit<Partial<GQLMedia>, 'handles'>): GQLMedia => ({
   _id: crypto.randomUUID(),
   uri: toUri({ origin, id }),
   origin,
   id,
   url: undefined,
-  handles: [],
+  handles: (handles ?? []).map(handle => isMediaHandle(handle) ? handle : sameAs(handle)),
   categories: [],
   titles: [],
   descriptions: [],
@@ -24,14 +70,14 @@ export const makeMedia = ({ origin, id, ...fields }: { origin: string, id: strin
   ...fields
 })
 
-export const makeEpisode = ({ origin, id, mediaUri, ...fields }: { origin: string, id: string, mediaUri: string } & Partial<GQLEpisode>): GQLEpisode => ({
+export const makeEpisode = ({ origin, id, mediaUri, handles, ...fields }: { origin: string, id: string, mediaUri: string, handles?: EpisodeHandleInput[] } & Omit<Partial<GQLEpisode>, 'handles'>): GQLEpisode => ({
   _id: crypto.randomUUID(),
   uri: toUri({ origin, id }),
   origin,
   id,
   url: undefined,
   mediaUri,
-  handles: [],
+  handles: (handles ?? []).map(handle => isEpisodeHandle(handle) ? handle : episodeSameAs(handle)),
   titles: [],
   descriptions: [],
   shortDescriptions: [],
@@ -385,18 +431,42 @@ export const simplifyTitle = (title: string): string[] => {
   return queries
 }
 
-export const buildHandlesFromUri = (aggregatedUri: string, excludeOrigin: string): GQLMedia[] => {
+/**
+ * Every handle an aggregated uri names, as SAME_AS, minus the caller's own origin.
+ *
+ * SAME_AS PRESERVES TODAY'S BEHAVIOUR and is not an endorsement of it. The uri is user input: a stale
+ * bookmark re-injects whatever claims it carries, and `graph.link` has no inverse. What makes that
+ * worth keeping for now is the shared-link case, where the uri is the only evidence those siblings
+ * exist until their own sources answer.
+ *
+ * The awkward part, and the reason this wants its own measurement rather than a guess: `makeMedia`
+ * defaults `url: undefined`, so a handle rebuilt here carries NO url at all. It contributes the
+ * identity claim and nothing else, which is precisely the half that can go wrong. Demoting it to
+ * PART_OF would therefore make it contribute nothing, so the honest options are "keep asserting" or
+ * "delete the function", not a middle one.
+ */
+export const buildHandlesFromUri = (aggregatedUri: string, excludeOrigin: string): GQLMediaHandle[] => {
   const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
   if (!parsed) return []
   return parsed.handleUrisValues
     .filter(({ origin }) => origin !== excludeOrigin)
-    .map(({ origin, id }) => makeMedia({ origin, id }))
+    .map(({ origin, id }) => sameAs(makeMedia({ origin, id })))
 }
 
+/**
+ * Add the handles an aggregated uri names to a media, for origins it does not already carry.
+ *
+ * Dedupes by ORIGIN and by RELATION together. Origin alone was enough while every handle meant the
+ * same thing; it is not now. A media already carrying `partOf(imdb:tt123)` would otherwise block the
+ * uri from contributing a SAME_AS for imdb, or the reverse, depending only on which arrived first.
+ */
 export const mergeHandles = (media: GQLMedia, aggregatedUri: string) => {
   const extra = buildHandlesFromUri(aggregatedUri, media.origin)
-  const existing = new Set(media.handles.map(h => h.origin))
-  media.handles = [...media.handles, ...extra.filter(h => !existing.has(h.origin))]
+  const existing = new Set(media.handles.map(handle => `${handle.node.origin}\0${handle.relation}`))
+  media.handles = [
+    ...media.handles,
+    ...extra.filter(handle => !existing.has(`${handle.node.origin}\0${handle.relation}`))
+  ]
 }
 
 export const waitForMedia = async <T>(

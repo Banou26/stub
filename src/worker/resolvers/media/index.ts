@@ -165,7 +165,16 @@ export const resolvers = {
     _id: (parent) => parent._id,
     categories: (parent) => parent.categories ?? [],
     episodes: async (parent) => {
-      const handleUris = parent.handles?.map(h => h.uri) ?? []
+      // SAME_AS ONLY, and this filter is the single most load bearing line in the refactor that
+      // introduced it. Below, `findAggregatedEpisodesForMedia` walks HAS_EPISODE for every uri handed
+      // to it and the groups are keyed by `episodeNumber` ALONE, so a PART_OF node contributes the
+      // WHOLE SHOW's episodes into this run's list and the row count becomes the longest season. That
+      // is exactly the defect that put 24 rows on a 14 episode season page, arriving by a new road.
+      const handleUris =
+        parent.handles
+          ?.filter(handle => handle.relation === 'SAME_AS')
+          .map(handle => handle.node.uri)
+        ?? []
       if (!handleUris.length) return parent.episodes ?? []
 
       const episodeGroups = await findAggregatedEpisodesForMedia(handleUris)

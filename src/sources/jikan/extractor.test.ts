@@ -36,7 +36,10 @@ const context = (external: { name: string, url: string }[]) => ({
 const handlesFor = async (external: { name: string, url: string }[]) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'mal:1' } }, context(external)).next()
-  return (value?.media?.handles ?? []) as { uri: string, origin: string, id: string }[]
+  // handles are edges now: { node, relation }. These assertions are about WHICH ids get minted, so
+  // they read the nodes; the relation each one carries is asserted where it is the point.
+  return ((value?.media?.handles ?? []) as { node: { uri: string, origin: string, id: string } }[])
+    .map(handle => handle.node)
 }
 
 const ANIDB = (url: string) => [{ name: 'AniDB', url }]

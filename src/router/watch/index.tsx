@@ -16,6 +16,17 @@ import PluginPlayer from '../../components/plugin-player'
 import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
+/**
+ * The episode rows this episode claims to BE, unwrapped from their edges.
+ *
+ * Everything on this page routes into PLAYBACK: a uri picked here is handed to the player and to the
+ * embed. A node that is only PART_OF this episode would play a different one, so it is filtered out
+ * rather than merely unhandled. No source emits a PART_OF episode handle today; the filter is here so
+ * that the day one does it shows up as a missing row rather than a wrong stream.
+ */
+const playableHandlesOf = <T extends { relation: string, node: unknown }>(handles: T[] | undefined) =>
+  (handles ?? []).filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node as T['node'])
+
 const GET_WATCH_MEDIA = gql(`
   subscription GetWatchMedia($input: MediaInput!) {
     media(input: $input) {
@@ -36,34 +47,43 @@ const GET_WATCH_MEDIA = gql(`
           url
         }
         handles {
-          _id
-          uri
-          origin
-          id
-          url
-          embedUrl
-          mediaUri
-          episodeNumber
-          titles {
-            title
-          }
-          shortDescriptions {
-            language
-            shortDescription
+          relation
+          node {
+            _id
+            uri
+            origin
+            id
+            url
+            embedUrl
+            mediaUri
+            episodeNumber
+            titles {
+              title
+            }
+            shortDescriptions {
+              language
+              shortDescription
+            }
           }
         }
       }
       handles {
-        ...MediaFragment
-        handles {
+        relation
+        node {
           ...MediaFragment
+          handles {
+            relation
+            node {
+              ...MediaFragment
+              episodes {
+                ...EpisodeFragment
+              }
+            }
+          }
           episodes {
             ...EpisodeFragment
+            episodeNumber
           }
-        }
-        episodes {
-          ...EpisodeFragment
-          episodeNumber
         }
       }
     }
@@ -197,7 +217,7 @@ const Watch = () => {
 
   const embedUrl = useMemo(() => {
     if (!selectedSourceUri) return undefined
-    const handle = episode?.handles.find(h => h.uri === selectedSourceUri)
+    const handle = playableHandlesOf(episode?.handles).find(h => h.uri === selectedSourceUri)
     if (!handle) return undefined
     if (handle.embedUrl) return handle.embedUrl
     const { origin } = fromUri(selectedSourceUri as `${string}:${string}`)
@@ -243,7 +263,7 @@ const Watch = () => {
     const { origin } = fromUri(selectedSourceUri as `${string}:${string}`)
     const pluginUri = players[origin]
     if (!pluginUri) return undefined
-    const handle = episode?.handles.find(h => h.uri === selectedSourceUri)
+    const handle = playableHandlesOf(episode?.handles).find(h => h.uri === selectedSourceUri)
     return { pluginUri, release: { uri: selectedSourceUri, url: handle?.url ?? undefined } }
   }, [selectedSourceUri, players, episode?.handles])
 
@@ -255,7 +275,7 @@ const Watch = () => {
   const sources: WatchSource[] = useMemo(
     () =>
       (originData?.originPage?.nodes ?? []).map(origin => {
-        const handles = (episode?.handles ?? []).filter(h => h.origin === origin.id)
+        const handles = playableHandlesOf(episode?.handles).filter(h => h.origin === origin.id)
         // a source that plays its own releases makes every one of them playable IN stub, so the link
         // goes to the watch route rather than out to whatever the raw url opens (for a torrent index
         // that url is a magnet, which leaves the browser entirely)

@@ -12,9 +12,10 @@ type Episode {
   url: String
   """Uri to the media resource"""
   mediaUri: String!
-  """Links to external/other resources related to itself"""
-  handles: [Episode!]!
-  handleOf: [Episode!]
+  """Every other row this episode is related to. See `MediaHandle` for why the relation is explicit."""
+  handles: [EpisodeHandle!]!
+  """The inverse edge. Declared but not implemented, exactly as `Media.handleOf` is."""
+  handleOf: [EpisodeHandle!]
   score: Float
   titles: [EpisodeTitle!]!
   shortDescriptions(input: EpisodeShortDescriptionInput): [EpisodeShortDescription!]!
@@ -75,4 +76,15 @@ type EpisodeThumbnail {
   """Average #hex color of cover image"""
   color: String
   score: Float
+}
+
+"""
+One edge out of an episode. Shares `MediaHandleRelation` with media on purpose: the two questions are
+the same question, and a second enum with the same two values would drift.
+"""
+type EpisodeHandle {
+  """The related row. Carries its own uri, origin, id and url."""
+  node: Episode!
+  """What this edge asserts. Only SAME_AS unions clusters."""
+  relation: MediaHandleRelation!
 }

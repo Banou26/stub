@@ -36,6 +36,44 @@ enum MediaCategory {
   MOVIE
 }
 
+"""
+What a handle asserts about the media carrying it. STRUCTURAL only: identity and containment.
+
+Narrative relations between different works (prequel, sequel, adaptation, side story) are a SEPARATE
+axis and will get their own `MediaRelation` enum on their own field. They are deliberately not mixed:
+PREQUEL says nothing about whether two rows are the same media, and SAME_AS says nothing about story
+order. One enum spanning both would mean neither.
+"""
+enum MediaHandleRelation {
+  """
+  The handle names THIS run. The only relation that unions clusters, in `upsertMedia`, and the union
+  has NO INVERSE: once two media are welded they stay welded for the session.
+
+  Minting this for an id that names a SHOW is the single most expensive mistake available here. It
+  merged three Mushoku Tensei seasons, four Demon Slayer films and fifteen Dragon Ball Z films, each
+  time because one id was the only thing a source could offer and the only relation was this one.
+  """
+  SAME_AS
+  """
+  This media is one PART of what the handle names: a run of that show, a film published under that
+  series, a season of that title.
+
+  It carries the handle's url WITHOUT claiming to be it, so a show-level id is worth keeping instead
+  of being dropped. It never unions, so no number of these can weld two runs together. What it costs
+  is that nothing may read episodes, titles, covers or any other metadata across it: the thing on the
+  other end is a bigger thing, and its episode list is every run's at once.
+  """
+  PART_OF
+}
+
+"""One edge out of a media: which row, and what the edge claims about it."""
+type MediaHandle {
+  """The related row. Carries its own uri, origin, id and url."""
+  node: Media!
+  """What this edge asserts. Only SAME_AS unions clusters."""
+  relation: MediaHandleRelation!
+}
+
 type Media {
   """Stable unique identifier that persists across URI changes and source additions"""
   _id: String!
@@ -47,9 +85,21 @@ type Media {
   id: String!
   """An url to the media resource"""
   url: String
-  """Links to external/other resources related to itself"""
-  handles: [Media!]!
-  handleOf: [Media!]
+  """
+  Every other row this media is related to, and what each relation actually claims.
+
+  Was `[Media!]!`, a bare list, which forced one relation on everything: a handle either asserted
+  sameness or did not exist. That is why a source holding only a show-level id had to choose between
+  lying and staying silent, and why `worker/store/db.ts` had to special-case IMDb out of the graph
+  entirely rather than carry its link.
+  """
+  handles: [MediaHandle!]!
+  """
+  The inverse edge. DECLARED BUT NOT IMPLEMENTED: no resolver populates it and nothing reads it, on
+  either the app schema or a source schema. Kept in the shape of `handles` so the two do not drift if
+  it is ever wired up.
+  """
+  handleOf: [MediaHandle!]
   score: Float
   titles: [MediaTitle!]!
   type: MediaType
