@@ -137,6 +137,36 @@ const ARMS: Record<string, (seasons: Season[], run: Run) => Answer> = {
     return pickSeasonByEpisodeCount(seasons, run.episodes) ?? NONE
   },
 
+  // CANDIDATE, 2026-09-04. The ordinal and the count must AGREE rather than either-or. Today the
+  // title's ordinal wins outright the moment Netflix has a season with that number, and nothing checks
+  // the length: `Part 2` and `Season 2` both parse to 2, so two different runs of one show can both
+  // take Netflix season 2 and weld.
+  'ordinal-and-count': (seasons, run) => {
+    const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
+    const byCount = seasons.length === 1
+      ? (seasons[0]!.episodeCount === run.episodes ? seasons[0]!.seasonNumber : undefined)
+      : pickSeasonByEpisodeCount(seasons, run.episodes)
+    if (named != null && seasons.some(season => season.seasonNumber === named)) {
+      return byCount === named ? named : NONE
+    }
+    return byCount ?? NONE
+  },
+
+  // CANDIDATE, 2026-09-04, the softer half of the same idea: the ordinal stands unless the count
+  // actively CONTRADICTS it. Netflix genuinely disagrees with anime about what a season is, splitting
+  // one 64 episode run into five and folding five runs into three, so demanding the count confirm every
+  // ordinal may refuse matches that were right.
+  'ordinal-unless-contradicted': (seasons, run) => {
+    const named = parseSeasonNumber(run.title) ?? parseSeasonNumber(run.romaji)
+    const byCount = seasons.length === 1
+      ? (seasons[0]!.episodeCount === run.episodes ? seasons[0]!.seasonNumber : undefined)
+      : pickSeasonByEpisodeCount(seasons, run.episodes)
+    if (named != null && seasons.some(season => season.seasonNumber === named)) {
+      return byCount == null || byCount === named ? named : NONE
+    }
+    return byCount ?? NONE
+  },
+
   // CANDIDATE. The same, plus the lone-season case: pickSeasonByEpisodeCount refuses whenever Netflix
   // lists ONE season, which is most ordinary anime, so a naive refusal would drop nearly every
   // single-cour show. Accept that one season when its episode count is exactly ours, which keeps the
