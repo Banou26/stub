@@ -37,11 +37,6 @@ export const keyConfigs: KeyConfig[] = [
     getUrl: 'https://www.thetvdb.com/dashboard/account/apikey',
     help: 'Paid/subscriber v4 key. User-supported keys also need a PIN; enter it as apikey:pin (e.g. ab12cd34:5678).',
   },
-  {
-    origin: 'watchmode',
-    name: 'Watchmode',
-    label: 'Watchmode API key',
-    getUrl: 'https://api.watchmode.com/requestApiKey/',
-    help: 'Free tier: ~1,000 requests/month. Request a key on the form and paste it here.',
-  },
+  // Watchmode's entry is gone with the source: see the note at the foot of ./index.ts. Asking for a key
+  // for a source that is not exported would be asking someone to sign up for nothing.
 ]
