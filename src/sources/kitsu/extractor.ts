@@ -6,7 +6,7 @@ import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/
 import { makeMedia, makeEpisode, desc, img } from '../utils'
 import { animeSeasonOf } from '../season'
 import { seasonPageNumbers, seasonQuery } from './season-paging'
-import { streamContentId, streamLinkIsIdentifying } from './stream-id'
+import { mintableAsFilmHandle, streamPointers } from './stream-id'
 
 const SCORE = 0.3
 const API = 'https://kitsu.io/api/edge'
@@ -61,15 +61,6 @@ interface KitsuResponse<T> {
 const api = <T>(path: string, ctx: ExtractorServerContext): Promise<KitsuResponse<T> | undefined> =>
   ctx.fetch(`${API}${path}`).then(r => r.json() as Promise<KitsuResponse<T>>).catch(() => undefined)
 
-const STREAM_ORIGIN: [RegExp, string][] = [
-  [/crunchyroll\.com/, 'cr'],
-  [/netflix\.com/, 'nf'],
-  [/hulu\.com/, 'hulu'],
-  [/disneyplus\.com/, 'disney'],
-  [/(primevideo|amazon)\./, 'amazon'],
-  [/(hbomax|max)\.com/, 'hbo'],
-]
-
 const mappingHandles = (mappings: KitsuMapping[]): GQLMedia[] => {
   const handles: GQLMedia[] = []
   for (const m of mappings) {
@@ -81,35 +72,25 @@ const mappingHandles = (mappings: KitsuMapping[]): GQLMedia[] => {
   return handles
 }
 
-/** Every (origin, id) a streaming link names. What that id MEANS is decided by the caller below. */
-const streamPointers = (streams: KitsuStream[]) => {
-  const pointers: { origin: string, id: string, url: string }[] = []
-  for (const stream of streams) {
-    const url = stream.url
-    if (!url) continue
-    const match = STREAM_ORIGIN.find(([re]) => re.test(url))
-    if (!match) continue
-    // no id in the provider's own space means no pointer: a url is not an identity. See ./stream-id.ts
-    const id = streamContentId(url)
-    if (id) pointers.push({ origin: match[1]!, id, url })
-  }
-  return pointers
-}
-
 /**
- * Kitsu's streaming links, spent two different ways depending on what the id can honestly claim.
+ * Kitsu's streaming links, spent three different ways depending on what the id can honestly claim.
  *
- * A MOVIE has no seasons to be confused between, so the id off the link identifies it exactly and is
- * minted as a handle directly.
+ * MINTED DIRECTLY when the record is a film AND the link is one of the few (origin, path segment)
+ * pairs measured to carry a per-title id. Netflix is the whole of that list today: it gives every
+ * title its own `/title/<id>`, so a film's Netflix link names the film.
  *
- * A SERIES link names the SHOW, always: kitsu publishes the same
- * `crunchyroll.com/series/G24H1N3MP/...` on kitsu:45950, kitsu:47694 and kitsu:49002, three different
- * runs of Mushoku Tensei. Minting that welds all three permanently, which is the bug this file
- * shipped. Dropping it, which is what shipped as the fix, loses a real offer. So it is neither:
- * the show id goes back to the origin that owns it together with the date of OUR run, and whatever
- * season-scoped media that source names is the handle. An origin that cannot answer returns nothing
- * and we are exactly where dropping it left us, so this is a strict improvement over the fix and
- * carries none of the risk of the bug.
+ * HANDED BACK TO THE OWNING ORIGIN when the path names the show and the record is a run of it. Kitsu
+ * publishes the same `crunchyroll.com/series/G24H1N3MP/...` on kitsu:45950, kitsu:47694 and
+ * kitsu:49002, three different runs of Mushoku Tensei, so minting it welds all three permanently.
+ * Instead the show id goes to `ctx.resolveSeason` with the date of OUR run, and whatever
+ * season-scoped media that source names is the handle. An origin that cannot answer returns nothing,
+ * which is exactly where dropping the link left us, so this carries none of the risk of the weld.
+ *
+ * DROPPED when the record is a film and the link is anything else. There is no third path to take: a
+ * film has no season for the other source to place it into, so asking would match it against a TV
+ * season by air date, which is a wrong merge rather than a missing link. Crunchyroll is nearly the
+ * whole of this case: it gives a standalone film release its own /watch/ url, but points a film that
+ * belongs to a running series at the series page, which is where the welds come from.
  *
  * No start date is a refusal rather than a guess: the date is the entire basis on which the other
  * source can tell our run from its neighbours.
@@ -119,11 +100,13 @@ const streamHandles = async (
   attr: KitsuAnime,
   ctx: ExtractorServerContext
 ): Promise<GQLMedia[]> => {
-  const pointers = streamPointers(streams)
+  const pointers = streamPointers(streams.map(stream => stream.url))
   if (!pointers.length) return []
 
-  if (streamLinkIsIdentifying(attr.subtype)) {
-    return pointers.map(({ origin, id, url }) => makeMedia({ origin, id, url }))
+  // both halves of this are load bearing and neither implies the other: the subtype says a refusal
+  // here has nowhere else to go, and the pointer says whether the id names this film. See ./stream-id.ts
+  if (attr.subtype === 'movie') {
+    return pointers.filter(mintableAsFilmHandle).map(({ origin, id, url }) => makeMedia({ origin, id, url }))
   }
 
   if (!attr.startDate) return []

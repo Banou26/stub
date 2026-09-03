@@ -12,16 +12,18 @@ import { resolvers } from './extractor'
 
 const API = 'https://kitsu.io/api/edge'
 
-// the real link, verbatim, because the whole defect is what this url's path says
+// the real links, verbatim, because the whole defect is what these urls' paths say
 const CR_SHOW_URL = 'https://www.crunchyroll.com/series/G24H1N3MP/mushoku-tensei-jobless-reincarnation'
+const NF_TITLE_URL = 'https://www.netflix.com/title/81006261'
 
 const context = (
-  { subtype, startDate, resolveSeason }:
-  { subtype: string, startDate: string | null, resolveSeason: ReturnType<typeof vi.fn> }
+  { subtype, startDate, resolveSeason, streams = [CR_SHOW_URL] }:
+  { subtype: string, startDate: string | null, resolveSeason: ReturnType<typeof vi.fn>, streams?: string[] }
 ) => ({
   fetch: async (url: string) => {
     const body =
-      url.startsWith(`${API}/anime/49002/streaming-links`) ? { data: [{ id: '1', attributes: { url: CR_SHOW_URL } }] }
+      url.startsWith(`${API}/anime/49002/streaming-links`)
+        ? { data: streams.map((stream, i) => ({ id: String(i), attributes: { url: stream } })) }
       : url.startsWith(`${API}/anime/49002/episodes`) ? { data: [] }
       : url.startsWith(`${API}/anime/49002`) ? {
         data: {
@@ -93,13 +95,39 @@ test('no start date means the ask is never made', async () => {
   expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
 })
 
-// A movie has no seasons to be confused between, so its bare id is exact and goes straight in. This is
-// the carve-out, and pinning it stops the guard quietly widening to cover everything.
-test('a movie mints the link id directly, with no ask', async () => {
+// A film that belongs to a running series gets the SERIES' url from Crunchyroll: all four Demon Slayer
+// films link to /series/GY5P48XEY, and all fifteen Dragon Ball Z films to /series/GQWH0M1GG. So the
+// subtype carve-out that used to sit here minted one id for fifteen films and welded them, the same
+// defect the three Mushoku Tensei seasons had.
+//
+// There is no third path for a film. resolveSeason places a run by air date, and a film has no season
+// to be placed into, so asking would match it against a TV season: a wrong merge rather than a missing
+// link. It is dropped, and the ask is never made.
+test('a film whose link names the show mints nothing, and does not ask either', async () => {
   const resolveSeason = vi.fn(async () => undefined)
 
-  const handles = await handlesFor(context({ subtype: 'movie', startDate: '2026-07-04', resolveSeason }))
+  const handles = await handlesFor(context({ subtype: 'movie', startDate: '2020-10-16', resolveSeason }))
 
   expect(resolveSeason).not.toHaveBeenCalled()
-  expect(handles.map(handle => handle.uri)).toContain('cr:G24H1N3MP')
+  expect(handles.map(handle => handle.uri)).not.toContain('cr:G24H1N3MP')
+  expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
+})
+
+// Netflix gives every title its own /title/<id>, film and show alike, so a film's Netflix link does
+// name the film. This is why the refusal above is a filter on the url and not a blanket one on the
+// subtype: a blanket refusal would cost every one of these for nothing.
+test('a film whose link names the film itself is still minted directly', async () => {
+  const resolveSeason = vi.fn(async () => undefined)
+
+  const handles = await handlesFor(context({
+    subtype: 'movie',
+    startDate: '2020-10-16',
+    resolveSeason,
+    streams: [CR_SHOW_URL, NF_TITLE_URL],
+  }))
+
+  expect(resolveSeason).not.toHaveBeenCalled()
+  // the netflix one survives, the crunchyroll one does not, out of the same record
+  expect(handles.map(handle => handle.uri)).toContain('nf:81006261')
+  expect(handles.filter(handle => handle.origin === 'cr')).toEqual([])
 })
