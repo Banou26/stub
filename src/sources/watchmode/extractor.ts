@@ -3,6 +3,8 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
+// the same job over the same provider urls, shape tested per host and measured against a 3168 offer corpus
+import { extractContentId, providerContentId } from '../justwatch/id'
 
 const SCORE = 0.25
 
@@ -70,16 +72,34 @@ const STREAM_HOST_ORIGIN_MAP: { match: (host: string) => boolean, origin: string
 const streamOriginForHost = (host: string): string | undefined =>
   STREAM_HOST_ORIGIN_MAP.find(entry => entry.match(host))?.origin
 
-const streamContentId = (webUrl: string, fallbackId: string): string => {
-  try {
-    const parts = new URL(webUrl).pathname.split('/').filter(Boolean)
-    return parts.at(-1) ?? fallbackId
-  } catch {
-    return fallbackId
-  }
+/**
+ * The provider id a Watchmode source row names, or undefined when it names none.
+ *
+ * READ BY `justwatch/id.ts`'s `extractContentId`, which is the same job over the same provider urls,
+ * shape tested per host and measured against a 3168 offer corpus on 2026-09-01. This used to be
+ * `new URL(webUrl).pathname.split('/').filter(Boolean).at(-1)`, a positional read with no shape test,
+ * and the last segment is the id for almost none of these hosts:
+ *
+ *   watch.amazon.com/detail?gti=<id>          pathname is '/detail', so EVERY Amazon title minted
+ *                                             the literal handle `amazon:detail`
+ *   crunchyroll.com/series/<id>/<slug>        the last segment is the SLUG, shared by every run
+ *   hulu.com/series/<uuid>                    a container uuid, shared by every season
+ *
+ * `providerContentId` then applies the refusals that go with those ids. Watchmode has no season
+ * concept anywhere in this file, so it passes no season number, which is what makes the crunchyroll
+ * refusal fire: a bare `/series/` id names the show and, on Crunchyroll, its films too.
+ *
+ * THE FALLBACK IS GONE, and that is deliberate. It used to mint the WATCHMODE title id under the
+ * provider's origin whenever the url would not parse, which asserts an id from one space inside
+ * another: Netflix ids are integers too, so `nf:<watchmodeId>` can name a real and unrelated title.
+ * No readable id now means no handle.
+ */
+const streamContentId = (webUrl: string, mappedOrigin: string): string | undefined => {
+  const rawContentId = extractContentId(webUrl)
+  return rawContentId ? providerContentId(mappedOrigin, rawContentId) : undefined
 }
 
-const sourceToHandle = (source: WatchmodeSource, fallbackId: string): GQLMedia | undefined => {
+const sourceToHandle = (source: WatchmodeSource): GQLMedia | undefined => {
   const webUrl = source.web_url
   if (!webUrl) return undefined
   let host: string
@@ -90,18 +110,29 @@ const sourceToHandle = (source: WatchmodeSource, fallbackId: string): GQLMedia |
   }
   const mappedOrigin = streamOriginForHost(host)
   if (!mappedOrigin) return undefined
-  return makeMedia({ origin: mappedOrigin, id: streamContentId(webUrl, fallbackId), url: webUrl })
+  const id = streamContentId(webUrl, mappedOrigin)
+  if (!id) return undefined
+  return makeMedia({ origin: mappedOrigin, id, url: webUrl })
 }
 
+/**
+ * The catalogue ids a Watchmode record publishes that are worth minting.
+ *
+ * `tmdb` is not one of them, and it fails in both of its two forms, exactly as simkl's does. A tv id
+ * names the SHOW and this file has no season concept to scope it with. A MOVIE id is worse than
+ * unscoped: TMDB numbers movies and tv shows in separate sequences that both start at 1, measured
+ * 2026-09-04, so `themoviedb.org/movie/550` is Fight Club and `/tv/550` is Till Death Us Do Part.
+ * Stub's uri is `tmdb:550` for both, and `tmdb_type` decided the URL here while the ID stayed bare, so
+ * a film could weld to whatever unrelated series holds its number. `tmdb/extractor.ts` is
+ * `categories = ['SERIES']` and reads `/tv/` pages only, so it could not resolve a movie id anyway.
+ *
+ * `imdb` stays, and costs nothing to keep: `SHOW_LEVEL_ORIGINS` in worker/store/db.ts already declines
+ * to link it, so it is carried without being asserted.
+ */
 const idHandles = (idSource: { imdb_id?: string | null, tmdb_id?: number | null, tmdb_type?: string | null }): GQLMedia[] => {
   const handles: GQLMedia[] = []
   const imdbId = idSource.imdb_id
   if (imdbId) handles.push(makeMedia({ origin: 'imdb', id: imdbId, url: `https://www.imdb.com/title/${imdbId}` }))
-  const tmdbId = idSource.tmdb_id
-  if (tmdbId != null) {
-    const tmdbType = idSource.tmdb_type === 'movie' ? 'movie' : 'tv'
-    handles.push(makeMedia({ origin: 'tmdb', id: String(tmdbId), url: `https://www.themoviedb.org/${tmdbType}/${tmdbId}` }))
-  }
   return handles
 }
 
@@ -140,7 +171,7 @@ const normalizeDetail = (detail: WatchmodeDetail, sources: WatchmodeSource[]): G
   const id = String(wmId)
   const rating = detail.user_rating
   const sourceHandles = sources
-    .map(source => sourceToHandle(source, id))
+    .map(source => sourceToHandle(source))
     .filter((handle): handle is GQLMedia => !!handle)
   return makeMedia({
     origin,
