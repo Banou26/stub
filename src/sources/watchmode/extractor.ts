@@ -1,10 +1,11 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaHandle as GQLMediaHandle } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
 // the same job over the same provider urls, shape tested per host and measured against a 3168 offer corpus
 import { extractContentId, providerContentId } from '../justwatch/id'
+import { partOf } from '../utils'
 
 const SCORE = 0.25
 
@@ -89,6 +90,11 @@ const streamOriginForHost = (host: string): string | undefined =>
  * concept anywhere in this file, so it passes no season number, which is what makes the crunchyroll
  * refusal fire: a bare `/series/` id names the show and, on Crunchyroll, its films too.
  *
+ * EVERY ID THAT SURVIVES IS STILL SHOW LEVEL, which is why this source was unplugged on 2026-09-04 and
+ * why it is back: they are minted PART_OF now. A watchmode record IS the show, so `nf:80987039` off one
+ * names the Netflix title and not this run. As SAME_AS that welded every run of the show; as PART_OF it
+ * is just the link, which is the only thing this source was ever for.
+ *
  * THE FALLBACK IS GONE, and that is deliberate. It used to mint the WATCHMODE title id under the
  * provider's origin whenever the url would not parse, which asserts an id from one space inside
  * another: Netflix ids are integers too, so `nf:<watchmodeId>` can name a real and unrelated title.
@@ -99,7 +105,7 @@ const streamContentId = (webUrl: string, mappedOrigin: string): string | undefin
   return rawContentId ? providerContentId(mappedOrigin, rawContentId) : undefined
 }
 
-const sourceToHandle = (source: WatchmodeSource): GQLMedia | undefined => {
+const sourceToHandle = (source: WatchmodeSource): GQLMediaHandle | undefined => {
   const webUrl = source.web_url
   if (!webUrl) return undefined
   let host: string
@@ -112,7 +118,7 @@ const sourceToHandle = (source: WatchmodeSource): GQLMedia | undefined => {
   if (!mappedOrigin) return undefined
   const id = streamContentId(webUrl, mappedOrigin)
   if (!id) return undefined
-  return makeMedia({ origin: mappedOrigin, id, url: webUrl })
+  return partOf(makeMedia({ origin: mappedOrigin, id, url: webUrl }))
 }
 
 /**
@@ -126,22 +132,31 @@ const sourceToHandle = (source: WatchmodeSource): GQLMedia | undefined => {
  * a film could weld to whatever unrelated series holds its number. `tmdb/extractor.ts` is
  * `categories = ['SERIES']` and reads `/tv/` pages only, so it could not resolve a movie id anyway.
  *
- * `imdb` stays, and costs nothing to keep: `SHOW_LEVEL_ORIGINS` in worker/store/db.ts already declines
- * to link it, so it is carried without being asserted.
+ * `imdb` stays, as PART_OF: a `tt` id names the show and there is no season-level equivalent, which is
+ * the whole reason `SHOW_LEVEL_ORIGINS` exists. Saying so here rather than relying on that Set to
+ * demote it means the claim is honest at the point it is made.
  */
-const idHandles = (idSource: { imdb_id?: string | null, tmdb_id?: number | null, tmdb_type?: string | null }): GQLMedia[] => {
-  const handles: GQLMedia[] = []
+const idHandles = (idSource: { imdb_id?: string | null, tmdb_id?: number | null, tmdb_type?: string | null }): GQLMediaHandle[] => {
+  const handles: GQLMediaHandle[] = []
   const imdbId = idSource.imdb_id
-  if (imdbId) handles.push(makeMedia({ origin: 'imdb', id: imdbId, url: `https://www.imdb.com/title/${imdbId}` }))
+  if (imdbId) handles.push(partOf(makeMedia({ origin: 'imdb', id: imdbId, url: `https://www.imdb.com/title/${imdbId}` })))
+  // A TMDB TV id names the show, so PART_OF is honest for it. A MOVIE id is refused outright and
+  // PART_OF cannot rescue it: TMDB numbers films and shows in separate sequences that both start at 1,
+  // so `tmdb:550` is Fight Club as a movie and Till Death Us Do Part as a series. A PART_OF pointing at
+  // the wrong ROW is not a weaker claim, it is a wrong one.
+  const tmdbId = idSource.tmdb_id
+  if (tmdbId != null && idSource.tmdb_type !== 'movie') {
+    handles.push(partOf(makeMedia({ origin: 'tmdb', id: String(tmdbId), url: `https://www.themoviedb.org/tv/${tmdbId}` })))
+  }
   return handles
 }
 
-const dedupeHandles = (handles: GQLMedia[]): GQLMedia[] => {
+const dedupeHandles = (handles: GQLMediaHandle[]): GQLMediaHandle[] => {
   const seen = new Set<string>()
-  const out: GQLMedia[] = []
+  const out: GQLMediaHandle[] = []
   for (const handle of handles) {
-    if (seen.has(handle.uri)) continue
-    seen.add(handle.uri)
+    if (seen.has(handle.node.uri)) continue
+    seen.add(handle.node.uri)
     out.push(handle)
   }
   return out
@@ -172,7 +187,7 @@ const normalizeDetail = (detail: WatchmodeDetail, sources: WatchmodeSource[]): G
   const rating = detail.user_rating
   const sourceHandles = sources
     .map(source => sourceToHandle(source))
-    .filter((handle): handle is GQLMedia => !!handle)
+    .filter((handle): handle is GQLMediaHandle => !!handle)
   return makeMedia({
     origin,
     id,

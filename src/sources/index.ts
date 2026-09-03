@@ -21,17 +21,11 @@ export * as simkl from './simkl/extractor'
 export * as tvdb from './tvdb/extractor'
 export * as offline from './offline/extractor'
 
-// WATCHMODE IS DISABLED, 2026-09-04, and the code is kept rather than deleted because the reason is a
-// design gap rather than a defect in it.
+// Watchmode was DISABLED on 2026-09-04 and is back on 2026-09-05, unchanged in what it knows and
+// changed in what it claims. Every provider handle it mints is show level, because its record is a
+// show and it has no season concept anywhere in the file. As SAME_AS each of those welded two runs
+// together, and refusing them individually left it contributing nothing, so it was unplugged.
 //
-// Watchmode has no season concept anywhere in the file: its record is a show, its media id is a show,
-// and every provider handle it minted (nf, hulu, disney, amazon, hbo) was therefore a show-level id.
-// A handle is an identity claim, so each of those welds two runs of a show into one media, and
-// `graph.link` has no inverse. Refusing them individually leaves the source minting only `imdb`, which
-// `worker/store/db.ts` already declines to link, so it would have contributed nothing while still
-// appearing in the key settings as though it were useful.
-//
-// The missing primitive is the one `db.ts` named for IMDb: there is no way to attach a handle for its
-// LINK without asserting identity. A streaming availability source is exactly what that primitive is
-// for, so re-export this the day it exists. `src/sources/watchmode/extractor.test.ts` still runs and
-// still pins the id reading, so the source stays honest while it is unplugged.
+// It now mints them PART_OF: the url survives, the claim does not. That is what this source was always
+// for. See `MediaHandleRelation` in worker/resolvers/media/schema.gql.
+export * as watchmode from './watchmode/extractor'

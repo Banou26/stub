@@ -9,6 +9,10 @@
 // It now reads through justwatch/id.ts's `extractContentId`, which shape tests per host, and then
 // `providerContentId`, which refuses crunchyroll outright. This file also has no season concept
 // anywhere in it, which is why no season number is passed and the crunchyroll refusal fires.
+//
+// And every id that survives is minted PART_OF, because a watchmode record IS the show: `nf:80987039`
+// off one names the Netflix title, not this run. That relation is what let the source be plugged back
+// in at all, so it is asserted here rather than left implied.
 import { expect, test } from 'vitest'
 
 import { resolvers } from './extractor'
@@ -28,14 +32,23 @@ const context = (sources: { web_url: string }[], detail: Record<string, unknown>
   },
 }) as never
 
-const handlesFor = async (sources: { web_url: string }[], detail?: Record<string, unknown>) => {
+const edgesFor = async (sources: { web_url: string }[], detail?: Record<string, unknown>) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'watchmode:345' } }, context(sources, detail)).next()
-  // handles are edges now: { node, relation }. These assertions are about WHICH ids get minted, so
-  // they read the nodes; the relation each one carries is asserted where it is the point.
-  return ((value?.media?.handles ?? []) as { node: { uri: string, origin: string, id: string } }[])
-    .map(handle => handle.node)
+  return (value?.media?.handles ?? []) as { relation: string, node: { uri: string, origin: string, id: string } }[]
 }
+
+// Most assertions here are about WHICH ids get minted, so they read the nodes. The relation is asserted
+// on its own, below, because it is what let this source be plugged back in.
+const handlesFor = async (sources: { web_url: string }[], detail?: Record<string, unknown>) =>
+  (await edgesFor(sources, detail)).map(handle => handle.node)
+
+test('every handle it mints is PART_OF, never SAME_AS', async () => {
+  const edges = await edgesFor([source('https://www.netflix.com/title/80987039')])
+
+  expect(edges.length, 'control: it must mint something, or the assertion below is vacuous').toBeGreaterThan(0)
+  expect([...new Set(edges.map(edge => edge.relation))]).toEqual(['PART_OF'])
+})
 
 // The weld with the widest blast radius: one handle for every Amazon title Watchmode has ever listed.
 test('an amazon deep link yields its gti, never the literal word "detail"', async () => {
@@ -77,13 +90,20 @@ test('a url with no readable id mints nothing, never the watchmode id', async ()
   expect(handles.filter(handle => handle.origin === 'nf')).toEqual([])
 })
 
-// tmdb, both ways it fails. 550 is Fight Club as a movie and Till Death Us Do Part as a series, and
-// stub's uri is `tmdb:550` for both.
-test('no tmdb handle is minted, for a series or a film', async () => {
-  for (const tmdb_type of ['tv', 'movie']) {
-    const handles = await handlesFor([], { tmdb_type })
-    expect(handles.filter(handle => handle.origin === 'tmdb'), tmdb_type).toEqual([])
-  }
+// tmdb, and the two cases fail differently, which is why one survives as PART_OF and one does not.
+//
+// A TV id names the SHOW, so PART_OF is exactly true: this record is part of that. A MOVIE id is in a
+// DIFFERENT SEQUENCE that also starts at 1, measured 2026-09-04: themoviedb.org/movie/550 is Fight Club
+// and /tv/550 is Till Death Us Do Part. Stub's uri is `tmdb:550` for both, so a PART_OF there would
+// point at the wrong ROW, which is not a weaker claim but a wrong one.
+test('a tmdb tv id is kept as PART_OF, and a tmdb movie id is refused outright', async () => {
+  const series = await edgesFor([], { tmdb_type: 'tv' })
+  const tmdbEdge = series.find(edge => edge.node.origin === 'tmdb')
+  expect(tmdbEdge?.node.id).toBe('550')
+  expect(tmdbEdge?.relation).toBe('PART_OF')
+
+  const film = await handlesFor([], { tmdb_type: 'movie' })
+  expect(film.filter(handle => handle.origin === 'tmdb')).toEqual([])
 })
 
 // The control. imdb survives because worker/store/db.ts declines to LINK a show-level origin, so it is
