@@ -1,7 +1,7 @@
 import type { Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
 import type { Media, Episode } from './types'
 import { getRoutePath, Route } from '../../router/path'
-import { registerAggregatedId } from './db'
+import { findPartOfMedia, registerAggregatedId } from './db'
 import { isRoutableUri } from '../../utils/uri'
 
 // keep ANIME plus exactly ONE of MOVIE/SERIES (highest-scored source's format wins), so a merged media never lands in both the Movies and the Series listing
@@ -38,7 +38,24 @@ export function removeDuplicatesByField<T extends Record<string, any>>(field: ke
  * than the import cycle.
  */
 const sameAsHandle = (node: GQLMedia) => ({ node, relation: 'SAME_AS' as const })
+const partOfHandle = (node: GQLMedia) => ({ node, relation: 'PART_OF' as const })
 const sameAsEpisodeHandle = (node: GQLEpisode) => ({ node, relation: 'SAME_AS' as const })
+
+/**
+ * The uris a media claims to BE, out of its handle edges.
+ *
+ * Exported and used by `Media.episodes` rather than filtered inline there, because that resolver
+ * cannot be imported under vitest (it reaches urql, which is CommonJS) and an untestable filter on the
+ * most dangerous read in the tree is not good enough.
+ *
+ * WHY IT IS THE MOST DANGEROUS READ. `findAggregatedEpisodesForMedia` walks HAS_EPISODE for every uri
+ * handed to it and `Media.episodes` groups the union by `episodeNumber` ALONE. A PART_OF node is a
+ * SHOW, and `unogs/extractor.ts` hangs every season's episodes, each renumbered 1..n, off exactly that
+ * kind of uri. Passing one in puts every run's episodes into this run's list and the row count becomes
+ * the longest season: the 24-rows-on-a-14-episode-season defect, arriving by a new road.
+ */
+export const sameAsHandleUris = (handles: { relation: string, node: { uri: string } }[] | undefined | null): string[] =>
+  (handles ?? []).filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node.uri)
 
 const unwrapMediaCache = new WeakMap<GQLMedia, GQLMedia[]>()
 export function recursivelyUnwrapMediaHandles(media: GQLMedia): GQLMedia[] {
@@ -133,7 +150,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     return {
       ...mediaToGQL(m),
       _id,
-      handles: [sameAsHandle(mediaToGQL(m))],
+      handles: [sameAsHandle(mediaToGQL(m)), ...findPartOfMedia(medias).map(node => partOfHandle(mediaToGQL(node)))],
     }
   }
 
@@ -172,9 +189,13 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     origin: 'ag',
     url: `${locationOrigin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     score: Math.max(...medias.map(m => m.score ?? 0)),
-    // the cluster IS the SAME_AS set, by construction: `graph.cluster` over MEDIA_SAME_AS is what
-    // produced `medias`. PART_OF handles are added by the caller, which has the store to ask.
-    handles: sorted.map(m => sameAsHandle(mediaToGQL(m))),
+    // The cluster IS the SAME_AS set, by construction: `graph.cluster` over MEDIA_SAME_AS is what
+    // produced `medias`. The PART_OF rows are read here rather than by the caller, so that no caller
+    // can forget them: a missing link renders as a dead grey icon, which looks like ordinary absence.
+    handles: [
+      ...sorted.map(m => sameAsHandle(mediaToGQL(m))),
+      ...findPartOfMedia(medias).map(node => partOfHandle(mediaToGQL(node))),
+    ],
     episodes: [],
   })
 

@@ -557,7 +557,19 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     data?.media?.uri
       ? fromAggregatedUri(data.media.uri as AggregatedUri)?.handleUrisValues
       : undefined
-  const originIds = [...new Set(origins?.map(origin => origin.origin))]
+  // The aggregated uri names the SAME_AS cluster and nothing else, by construction: `aggregateMedia`
+  // builds it from the cluster members. So an origin that reaches this media only as PART_OF, which is
+  // every origin that cannot name a run, was never in this list and its row was never rendered. Its
+  // url was carried all the way to the client and dropped one line short of the screen.
+  //
+  // Unioned rather than replaced: the uri can name an origin whose handle row is not in this
+  // selection, so deriving from `handles` alone would silently remove rows that render today.
+  const originIds = [
+    ...new Set([
+      ...origins?.map(origin => origin.origin) ?? [],
+      ...media?.handles?.map(handle => handle.node.origin) ?? [],
+    ])
+  ]
   const [{ data: originData }] = useSubscription({
     query: GET_MEDIA_MODAL_ORIGINS,
     variables: { input: { ids: originIds!, filters: [OriginFilter.IsNotApiOnly] } },
@@ -679,10 +691,14 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                         // assumed and nothing is merged across it. A PART_OF handle is exactly as
                         // good here as a SAME_AS one, which is why IMDb can finally render as a link
                         // rather than the dead grey icon in the branch below.
+                        // SAME_AS FIRST, then anything. `handles` is ordered by score, which says
+                        // nothing about relation, so a plain `find` could hand the Crunchyroll icon a
+                        // PART_OF `cr:<seriesId>` while the SAME_AS `cr:<seriesId>-<seasonId>` for
+                        // this very cour sat later in the list.
+                        const forOrigin =
+                          media?.handles.filter(handle => handle.node.origin === origin.id && handle.node.url) ?? []
                         const link =
-                          media
-                            ?.handles
-                            .find(handle => handle.node.origin === origin.id && handle.node.url)
+                          (forOrigin.find(handle => handle.relation === 'SAME_AS') ?? forOrigin.at(0))
                             ?.node.url
                         if (!origin.icon) return undefined
                         return (

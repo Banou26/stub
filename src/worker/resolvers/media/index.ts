@@ -6,7 +6,7 @@ import _schema from './schema.gql?raw'
 import { proxyRequestToExtractors } from '../../extractor'
 import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaByAggregatedId } from '../../store/db'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
-import { aggregateMedia, aggregateEpisode } from '../../store/aggregate'
+import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
 import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { searchRelevance } from '../../../sources/utils'
@@ -165,16 +165,9 @@ export const resolvers = {
     _id: (parent) => parent._id,
     categories: (parent) => parent.categories ?? [],
     episodes: async (parent) => {
-      // SAME_AS ONLY, and this filter is the single most load bearing line in the refactor that
-      // introduced it. Below, `findAggregatedEpisodesForMedia` walks HAS_EPISODE for every uri handed
-      // to it and the groups are keyed by `episodeNumber` ALONE, so a PART_OF node contributes the
-      // WHOLE SHOW's episodes into this run's list and the row count becomes the longest season. That
-      // is exactly the defect that put 24 rows on a 14 episode season page, arriving by a new road.
-      const handleUris =
-        parent.handles
-          ?.filter(handle => handle.relation === 'SAME_AS')
-          .map(handle => handle.node.uri)
-        ?? []
+      // SAME_AS ONLY. See `sameAsHandleUris`, which carries the reasoning and the test: this module
+      // cannot be imported under vitest, so the rule lives where it can be pinned.
+      const handleUris = sameAsHandleUris(parent.handles)
       if (!handleUris.length) return parent.episodes ?? []
 
       const episodeGroups = await findAggregatedEpisodesForMedia(handleUris)
