@@ -24,7 +24,7 @@
  * not step on it, and the honest report says so rather than claiming a win. The assertions below are
  * written to hold either way, and the printed table is what carries the answer.
  */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 
 import { expect, test } from 'vitest'
 
@@ -38,6 +38,20 @@ type Record = {
 }
 
 const POOL = new URL('../node_modules/.cache/jikan-anidb-pool.json', import.meta.url).pathname
+
+// NOT YET RUN AGAINST A CORPUS, as of 2026-09-04. api.jikan.moe answers 504 to every COLD id while
+// serving cached ones: /anime/1/full returns 200 and /anime/200/full and /anime/399/full both time
+// out, and a run over 300 spread ids collected 0 records against 40 refusals. Only popular ids come
+// back, and a popularity sorted sample is precisely the one that cannot contain the case under test,
+// because a well known title is the one whose external links someone has already tidied. So the
+// measurement waits for the api rather than being taken from the sample it will serve.
+if (!existsSync(POOL)) {
+  throw new Error(
+    `no corpus at ${POOL}. Run: node scripts/measure-jikan-anidb-links.mjs\n` +
+    `It resumes, so an api outage costs only the ids it ate. If it reports mostly "refused by the api",\n` +
+    `jikan is still 504ing cold ids and the sample would be popularity biased: wait rather than score it.`
+  )
+}
 const { records } = JSON.parse(readFileSync(POOL, 'utf8')) as { records: Record[] }
 
 const anidbUrl = (record: Record) => record.external.find(site => site.name === 'AniDB')?.url
