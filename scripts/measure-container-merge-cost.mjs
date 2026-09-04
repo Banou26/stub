@@ -122,19 +122,27 @@ for (const ag of examples.clean) console.log(`  CLEAN   ${ag}`)
 // So: open each affected cluster and count whether a season-scoped id of the same origin arrives.
 const scoped = uri => /^cr:[^-]+-.+$/.test(uri) || /^nf:\d+-\d+$/.test(uri)
 
+// THE MATCHERS ARE SLOW AND THIS NUMBER IS THE WHOLE ANSWER. crunchyroll's `searchAndLinkMedia` calls
+// `waitForMedia(..., 30_000)` before it even starts scoring, so a page read at 11 seconds reports that
+// nothing arrived when nothing has been given time to. A first run of this file waited 11s and scored
+// 0 of 23; the run before it used a looser predicate, matched a scoped id anywhere on the page rather
+// than in the cluster under test, and scored 23 of 23. Both were artifacts.
+const SETTLE_MS = 40_000
+
 const b = await chromium.launch({ headless: true, executablePath: chrome, args: ['--mute-audio'] })
 const p2 = await b.newPage()
 await p2.goto(`${ORIGIN}/`, { waitUntil: 'domcontentloaded' })
 await p2.waitForTimeout(6000)
 
 let recovered = 0, lost = 0, controlLeak = 0
+let sawKnownScoped = false
 const lostExamples = []
 for (const ag of affectedClusters) {
   await p2.evaluate(url => {
     history.pushState({}, '', url)
     window.dispatchEvent(new PopStateEvent('popstate'))
   }, '/media/' + ag)
-  await p2.waitForTimeout(11000)
+  await p2.waitForTimeout(SETTLE_MS)
   const after = await p2.evaluate(() =>
     [...document.querySelectorAll('a[href*="/media/ag:"]')].map(a => decodeURIComponent(a.getAttribute('href')).replace('/media/', ''))
   )
@@ -153,6 +161,7 @@ for (const ag of affectedClusters) {
   // reading something other than what it thinks, and a run where the arm above scores 100% while
   // this one also does has proved only that the predicate matches everything.
   if (grown.some(m => originOf(m) === 'anilist' && scoped(m))) controlLeak++
+  if (grown.some(m => (originOf(m) === 'cr' || originOf(m) === 'nf') && scoped(m))) sawKnownScoped = true
   process.stdout.write(`  opened ${recovered + lost}/${affectedClusters.length}\r`)
 }
 await b.close()
@@ -163,9 +172,20 @@ console.log(`\n\nOpening each affected cluster, does the source's own precise pa
 `)
 for (const e of lostExamples) console.log(`  LOST  ${e}`)
 
+// THE POSITIVE CONTROL, and it is the one that matters. The run above can only be believed if it is
+// able to report a recovery at all, and a negative result is exactly the shape a broken reader
+// produces. `scripts/check-welds.mjs` has already observed `cr:G24H1N3MP-GS00374452` and
+// `nf:80987039-3` arriving on the Mushoku cluster, so if THIS check cannot see them either, the check
+// is what is wrong and the count above means nothing.
+console.log(
+  sawKnownScoped
+    ? `\n  control ok: the reader saw a known season-scoped id arrive, so a recovery is expressible`
+    : `\n  CONTROL FAILED: the reader never saw ANY season-scoped cr or nf id arrive on any cluster.` +
+      `\n  A count of 0 recovered is therefore a fact about this reader, not about the sources.`
+)
 console.log(
   controlLeak === 0
     ? `\n  control ok: 0 clusters reported a season-scoped anilist id, which is a shape anilist never mints`
     : `\n  CONTROL FAILED: ${controlLeak} clusters reported a season-scoped anilist id, so the predicate matches too much`
 )
-if (controlLeak) process.exit(2)
+if (controlLeak || !sawKnownScoped) process.exit(2)

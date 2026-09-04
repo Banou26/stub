@@ -1,32 +1,31 @@
 import type { Media, Episode, Origin, HandleRelation } from './types'
 import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
+import { scopeOfUri } from '../../sources/id-scope'
 
 const MEDIA_SAME_AS = 'media:same_as'
 
-// Origins whose id names a SHOW and has no season-level equivalent to name instead.
-//
-// A handle is an identity claim: linking it says "this media and that one are the same thing". An
-// IMDb `tt` id is the series, so every season of a show carries the same one and the claim is that
-// they are all one media - which is what merged Mushoku Tensei's three seasons even after JustWatch,
-// TMDB and TVmaze each stopped doing it, because five separate sources (tvmaze, trakt, simkl, omdb,
-// watchmode) all emit it.
-//
-// TMDB and TVmaze could be scoped because both model seasons; IMDb does not, so there is no honest
-// season id to mint and scoping would invent one that no source could independently reproduce.
-//
-// THAT WAY NOW EXISTS, so this no longer drops the handle: a SAME_AS for one of these origins is
-// DEMOTED to PART_OF, which carries its url without asserting sameness. The comment that used to end
-// here read "Until there is a way to attach a handle for its LINK without asserting identity, it is
-// not linked at all. The cost is the IMDb link disappearing from the aggregated media." That cost is
-// paid back by this line.
-//
-// It stays as a backstop rather than being deleted with the producers migrated: it is one Set lookup,
-// and it means a source that starts emitting a bare imdb id again is corrected here instead of
-// welding every season of a show.
-const SHOW_LEVEL_ORIGINS = new Set(['imdb'])
+/**
+ * Whether a uri names something that HOLDS several runs, rather than being one.
+ *
+ * A handle is an identity claim: linking it says "this media and that one are the same thing". An id
+ * that names a show makes that claim on behalf of every season at once, which is what merged Mushoku
+ * Tensei's three seasons even after JustWatch, TMDB and TVmaze each stopped doing it.
+ *
+ * THIS USED TO BE AN ORIGIN-LEVEL SET, `SHOW_LEVEL_ORIGINS = new Set(['imdb'])`. An origin is the
+ * wrong grain: `cr:G24H1N3MP` is a Crunchyroll SERIES and `cr:G24H1N3MP-GS00374452` is one season of
+ * it, and no predicate over `cr` can answer differently for the two. The source that owns the origin
+ * answers instead, in sources/id-scope.ts, and every origin nobody has surveyed answers UNKNOWN,
+ * which behaves exactly as this store did before the question was asked.
+ *
+ * The stored row is passed as evidence because one origin genuinely needs it: a bare `nf:<digits>` is
+ * one film or a whole series depending on nothing but Netflix's `vtype`, which reaches here as
+ * `categories`. `graph.get` on a uri with no row returns undefined, which is fine and expected: a
+ * union-find member need never have been `set`.
+ */
+const namesAContainer = (uri: string) =>
+  scopeOfUri(uri, graph.get(uri) as { categories?: readonly string[] } | undefined) === 'CONTAINER'
 
-const originOf = (uri: string) => uri.slice(0, uri.indexOf(':'))
 const EPISODE_SAME_AS = 'episode:same_as'
 const EPISODE_PART_OF = 'episode:part_of'
 const HAS_EPISODE = 'has_episode'
@@ -60,14 +59,19 @@ export async function upsertMedia(
   }
 
   for (const { mediaUri, handleUri, relation } of handles) {
-    // an origin that cannot name a run is demoted, never trusted, whatever the producer asked for
+    // an id that cannot name a run is demoted, never trusted, whatever the producer asked for. Both
+    // ends are asked because SAME_AS is symmetric: a run claiming to be a container welds exactly as
+    // hard as a container claiming to be a run, and the edge then points from the run to the thing
+    // holding it whichever side that turned out to be.
     const claimed = relation ?? 'SAME_AS'
-    const effective = SHOW_LEVEL_ORIGINS.has(originOf(handleUri)) ? 'PART_OF' : claimed
-    if (effective === 'SAME_AS') {
+    const handleIsContainer = namesAContainer(handleUri)
+    const mediaIsContainer = !handleIsContainer && namesAContainer(mediaUri)
+    if (claimed === 'SAME_AS' && !handleIsContainer && !mediaIsContainer) {
       if (graph.link(mediaUri, handleUri, MEDIA_SAME_AS)) changed = true
+    } else if (mediaIsContainer) {
+      if (graph.edge(handleUri, mediaUri, MEDIA_PART_OF)) changed = true
     } else {
-      graph.edge(mediaUri, handleUri, MEDIA_PART_OF)
-      changed = true
+      if (graph.edge(mediaUri, handleUri, MEDIA_PART_OF)) changed = true
     }
   }
 
@@ -84,12 +88,32 @@ export async function upsertMedia(
  * a title match.
  *
  * There is no PART_OF fallback to demote to, because there is no handle and nothing asserted a
- * containment. A pair naming a show-level origin is simply refused.
+ * containment. This path had a TITLE and guessed sameness from it; a title guess is no more evidence
+ * of containment than it was of identity, so a pair naming a container is simply refused.
+ *
+ * REFUSING IS WHAT KILLS THE MUSHOKU SEED, and the seed is on this path rather than the handle one.
+ * Searching the show puts the bare `cr:G24H1N3MP` and the bare `nf:80987039` in season 1's cluster
+ * with no media page ever opened, and both search rows are minted handle-less, so nothing but this
+ * function can have linked them (scripts/reproduce-season-weld.mjs, ARM A).
+ *
+ * The population it touches was measured on the deployed build over 16 searches and 123 clusters
+ * (scripts/measure-container-merge-cost.mjs): 23 clusters held a bare show-level id merged with
+ * another origin, and 1 of those was already carrying two disagreeing ids of one origin. The other 22
+ * are the price, and they are not all loss: a cour whose cluster holds the SHOW welds the moment a
+ * second cour of it appears, which is exactly what ARM B of the reproduction does.
+ *
+ * WHAT IS NOT ESTABLISHED, said plainly because two runs of that script disagreed about it. Each of
+ * these sources has a precise matcher of its own (crunchyroll on title AND air date inside 45 days,
+ * unogs on a resolved season number), so the identity may well arrive on the media path anyway and
+ * cost only a merged card in a search list. The first run said it always does and the second said it
+ * never does; the first matched a season-scoped id anywhere on the page instead of in the cluster
+ * under test, and the second read the page at 11 seconds when `searchAndLinkMedia` alone waits 30.
+ * The script now carries a control that must SEE a recovery before a count of none is believable.
  */
 export function linkSameMediaPairs(pairs: [string, string][]): boolean {
   let changed = false
   for (const [uriA, uriB] of pairs) {
-    if (SHOW_LEVEL_ORIGINS.has(originOf(uriA)) || SHOW_LEVEL_ORIGINS.has(originOf(uriB))) continue
+    if (namesAContainer(uriA) || namesAContainer(uriB)) continue
     if (graph.link(uriA, uriB, MEDIA_SAME_AS)) changed = true
   }
   if (changed) emit('media:changed', {})
