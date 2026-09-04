@@ -1,8 +1,17 @@
-import type { Media, Episode, Origin, HandleRelation } from './types'
+import type { Media, Episode, Origin, HandleRelation, MediaScope } from './types'
 import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
+import { fromAggregatedUri, isAggregatedUri, type AggregatedUri } from '../../utils/uri'
 
+/**
+ * Two identity spaces, one per scope. A run's SAME_AS unions in the first, a container's in the second,
+ * and nothing ever unions across them: a show-level id entering a run's cluster is what welded Mushoku
+ * Tensei season 1 to season 3 on the live site (the bare crunchyroll series id and the bare tvmaze
+ * show id were fuzzy merged into season 1's cluster on the search path, and season 3's media path then
+ * asserted sameness through one of them; `graph.link` is a union-find with no inverse).
+ */
 const MEDIA_SAME_AS = 'media:same_as'
+const CONTAINER_SAME_AS = 'container:same_as'
 
 // Origins whose id names a SHOW and has no season-level equivalent to name instead.
 //
@@ -15,11 +24,16 @@ const MEDIA_SAME_AS = 'media:same_as'
 // TMDB and TVmaze could be scoped because both model seasons; IMDb does not, so there is no honest
 // season id to mint and scoping would invent one that no source could independently reproduce.
 //
-// THAT WAY NOW EXISTS, so this no longer drops the handle: a SAME_AS for one of these origins is
-// DEMOTED to PART_OF, which carries its url without asserting sameness. The comment that used to end
-// here read "Until there is a way to attach a handle for its LINK without asserting identity, it is
-// not linked at all. The cost is the IMDb link disappearing from the aggregated media." That cost is
-// paid back by this line.
+// THAT WAY NOW EXISTS, so this no longer drops the handle. It first read as a DEMOTION: a SAME_AS for
+// one of these origins was rewritten to PART_OF, which carries its url without asserting sameness.
+// The comment that used to end here read "Until there is a way to attach a handle for its LINK
+// without asserting identity, it is not linked at all. The cost is the IMDb link disappearing from
+// the aggregated media." That cost is paid back by this line.
+//
+// Now it reads as a SCOPE: a uri of one of these origins is a CONTAINER, whatever row it arrived in,
+// and `upsertMedia` derives the relation from the two scopes exactly as it does for a row a source
+// stamped CONTAINER itself. Same outcome for a run's claim (an edge, never a union), and a claim from
+// another container unions in the container space instead of being thrown away.
 //
 // It stays as a backstop rather than being deleted with the producers migrated: it is one Set lookup,
 // and it means a source that starts emitting a bare imdb id again is corrected here instead of
@@ -47,24 +61,105 @@ const originMap = new Map<string, Origin>()
 graph.registerLabel('media', { merge: lastWriteLongestArray })
 graph.registerLabel('episode', { merge: lastWriteLongestArray })
 
+// The backstop first, then the stored row, then RUN, which is the default the schema gives an absent
+// `scope`. A uri with NO row never reaches a union or an edge: `upsertMedia` holds its claims until a
+// row lands, so the default here only ever reads a stored row that said nothing.
+const scopeOf = (uri: string): MediaScope =>
+  SHOW_LEVEL_ORIGINS.has(originOf(uri)) ? 'CONTAINER' : (graph.get(uri) as Media | undefined)?.scope ?? 'RUN'
+
+const sameAsLabelFor = (scope: MediaScope) => scope === 'CONTAINER' ? CONTAINER_SAME_AS : MEDIA_SAME_AS
+const isRun = (media: Media) => media.scope !== 'CONTAINER'
+const compareStrings = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0
+const keyOf = (cluster: Media[]) => cluster.map(media => media.uri).sort()[0] ?? ''
+
+// The fields that NAME a row rather than describe it. A row carrying nothing else is a placeholder
+// rebuilt from a uri (`buildHandlesFromUri` in sources/utils.ts mints one per sibling of an aggregated
+// uri), and a uri says nothing about what it names: the row would contribute no field to a merge and
+// its scope is `makeMedia`'s default. So it is not stored, and a claim naming it waits for a row that
+// is. A CONTAINER stamp counts as a description, since it is a source's own reading of the id.
+const IDENTITY_FIELDS = new Set(['uri', 'origin', 'id', 'scope'])
+const isPlaceholder = (media: Media) =>
+  media.scope !== 'CONTAINER'
+  && Object.entries(media).every(([field, value]) =>
+    IDENTITY_FIELDS.has(field) || value == null || (Array.isArray(value) && value.length === 0))
+
+type Claim = { mediaUri: string; handleUri: string; relation?: HandleRelation }
+const claimKey = ({ mediaUri, handleUri, relation }: Claim) => `${mediaUri}\0${handleUri}\0${relation ?? 'SAME_AS'}`
+
+/**
+ * Claims naming a uri no row describes yet, keyed by that uri and deduped on the claim.
+ *
+ * The relation is derived from BOTH scopes, and a uri with no row has none. It used to read as RUN,
+ * which let a run union with a show whose own row was still in flight: a media page reloaded cold
+ * fans out to every source at once, each answers with the aggregated uri's siblings rebuilt as bare
+ * SAME_AS nodes, and whichever landed first decided. A RUN row for `cr:G24H1N3MP` minted by justwatch
+ * milliseconds before crunchyroll said CONTAINER was a RUN x RUN union, the CONTAINER that followed
+ * flipped the scope and not the union, and the same graph then answered differently depending on
+ * which member it was entered through. A claim now waits for the row and is applied when it lands.
+ */
+const pendingClaims = new Map<string, Map<string, Claim>>()
+
+const defer = (uri: string, claim: Claim) => {
+  let waiting = pendingClaims.get(uri)
+  if (!waiting) pendingClaims.set(uri, waiting = new Map())
+  waiting.set(claimKey(claim), claim)
+}
+
 export async function upsertMedia(
   newMedias: Media[],
-  handles: { mediaUri: string; handleUri: string; relation?: HandleRelation }[]
+  handles: Claim[]
 ) {
   let changed = false
+  const landed: string[] = []
 
   for (const media of newMedias) {
+    if (isPlaceholder(media)) continue
     const isNew = !graph.has(media.uri)
-    graph.set(media.uri, media, { addLabels: ['media'] })
-    if (isNew) changed = true
+    // Scope is STICKY toward CONTAINER: once any row for this uri said CONTAINER, a later row that says
+    // RUN or says nothing does not flip it back. The failure with no inverse is a wrong SAME_AS, and
+    // the failure of a wrong CONTAINER is a missing SAME_AS, which a later slice can recover. The
+    // merge function alone would let an incoming RUN overwrite it (scalars are last-write-wins).
+    const scope: MediaScope = scopeOf(media.uri) === 'CONTAINER' ? 'CONTAINER' : media.scope ?? 'RUN'
+    graph.set(media.uri, { ...media, scope }, { addLabels: ['media'] })
+    if (isNew) {
+      changed = true
+      landed.push(media.uri)
+    }
   }
 
-  for (const { mediaUri, handleUri, relation } of handles) {
-    // an origin that cannot name a run is demoted, never trusted, whatever the producer asked for
+  const claims = [...handles]
+  for (const uri of landed) {
+    const waiting = pendingClaims.get(uri)
+    if (!waiting) continue
+    pendingClaims.delete(uri)
+    claims.push(...waiting.values())
+  }
+
+  // The rows loop above runs first, so every handle node that describes itself has a stored row when
+  // the pairs are read (worker/extractor.ts unwraps every handle node into the rows list). The
+  // relation is DERIVED from the two scopes and the claim:
+  //
+  //     RUN x RUN                claimed SAME_AS unions in the run space, PART_OF is an edge
+  //     RUN x CONTAINER          an edge media -> handle, whatever was claimed
+  //     CONTAINER x RUN          an edge handle -> media: the edge always runs from run to container
+  //     CONTAINER x CONTAINER    claimed SAME_AS unions in the container space, PART_OF is an edge
+  //
+  // Guesses go on edges, which are deletable; only asserted sameness within one scope goes on a union.
+  for (const claim of claims) {
+    const { mediaUri, handleUri, relation } = claim
+    const undescribed = [mediaUri, handleUri].filter(uri => !graph.has(uri))
+    if (undescribed.length) {
+      for (const uri of undescribed) defer(uri, claim)
+      continue
+    }
     const claimed = relation ?? 'SAME_AS'
-    const effective = SHOW_LEVEL_ORIGINS.has(originOf(handleUri)) ? 'PART_OF' : claimed
-    if (effective === 'SAME_AS') {
-      if (graph.link(mediaUri, handleUri, MEDIA_SAME_AS)) changed = true
+    const mediaScope = scopeOf(mediaUri)
+    const handleScope = scopeOf(handleUri)
+    if (mediaScope !== handleScope) {
+      const [run, container] = mediaScope === 'RUN' ? [mediaUri, handleUri] : [handleUri, mediaUri]
+      if (graph.edge(run, container, MEDIA_PART_OF)) changed = true
+    } else if (claimed === 'SAME_AS') {
+      if (graph.link(mediaUri, handleUri, sameAsLabelFor(mediaScope))) changed = true
     } else if (graph.edge(mediaUri, handleUri, MEDIA_PART_OF)) {
       changed = true
     }
@@ -83,13 +178,45 @@ export async function upsertMedia(
  * a title match.
  *
  * There is no PART_OF fallback to demote to, because there is no handle and nothing asserted a
- * containment. A pair naming a show-level origin is simply refused.
+ * containment. A pair with a CONTAINER on either side is simply refused, which subsumes the
+ * show-level backstop: those origins read as CONTAINER.
  */
 export function linkSameMediaPairs(pairs: [string, string][]): boolean {
   let changed = false
   for (const [uriA, uriB] of pairs) {
-    if (SHOW_LEVEL_ORIGINS.has(originOf(uriA)) || SHOW_LEVEL_ORIGINS.has(originOf(uriB))) continue
+    if (scopeOf(uriA) === 'CONTAINER' || scopeOf(uriB) === 'CONTAINER') continue
     if (graph.link(uriA, uriB, MEDIA_SAME_AS)) changed = true
+  }
+  if (changed) emit('media:changed', {})
+  return changed
+}
+
+/**
+ * Union two containers that no handle connects, in the CONTAINER space only. The mirror of
+ * `linkSameMediaPairs`: a pair with a RUN on either side is refused, because a run is never the same
+ * thing as a show. Emits `media:changed` when a union was new and says whether one was.
+ */
+export function linkSameContainerPairs(pairs: [string, string][]): boolean {
+  let changed = false
+  for (const [uriA, uriB] of pairs) {
+    if (scopeOf(uriA) !== 'CONTAINER' || scopeOf(uriB) !== 'CONTAINER') continue
+    if (graph.link(uriA, uriB, CONTAINER_SAME_AS)) changed = true
+  }
+  if (changed) emit('media:changed', {})
+  return changed
+}
+
+/**
+ * Hang a run under a container that no handle connects, which is what a fuzzy title match between a
+ * run and a show decides. An edge, never a union, and only when the scopes are RUN then CONTAINER in
+ * that order: anything else is refused rather than flipped, since a caller that got the order wrong
+ * may have the scopes wrong too. Emits `media:changed` when an edge was new and says whether one was.
+ */
+export function linkPartOfPairs(pairs: [string, string][]): boolean {
+  let changed = false
+  for (const [runUri, containerUri] of pairs) {
+    if (scopeOf(runUri) !== 'RUN' || scopeOf(containerUri) !== 'CONTAINER') continue
+    if (graph.edge(runUri, containerUri, MEDIA_PART_OF)) changed = true
   }
   if (changed) emit('media:changed', {})
   return changed
@@ -98,28 +225,101 @@ export function linkSameMediaPairs(pairs: [string, string][]): boolean {
 export async function findAggregatedMedia(uri: string): Promise<Media[]> {
   const resolved = graph.resolve(uri)
   if (!graph.has(resolved)) return []
-  return graph.cluster(resolved, MEDIA_SAME_AS) as Media[]
+  // a container row clusters in the container space, so its own SAME_AS siblings are what comes back
+  return graph.cluster(resolved, sameAsLabelFor(scopeOf(resolved))) as Media[]
 }
 
 /**
  * Every row a cluster points at but does not claim to be, deduped by uri.
  *
  * Read from the DIRECTED PART_OF edges of every cluster member, because the aggregated media is the
- * cluster and any of its members may hold one. A node with no stored row is skipped: `graph.edge`
- * accepts a uri that was never `set`, exactly as `graph.link` does.
+ * cluster and any of its members may hold one. Each target is expanded to its whole cluster in ITS
+ * OWN space, so a run that is part of a show links to every id that show has: the fuzzy pass writes
+ * ONE edge, to the cluster key, and the other catalogues of an already unioned show were only ever
+ * reachable while they were welded in. A node with no stored row is skipped: `graph.edge` accepts a
+ * uri that was never `set`, exactly as `graph.link` does.
  */
 export function findPartOfMedia(cluster: Media[]): Media[] {
   const seen = new Set<string>()
   const out: Media[] = []
   for (const member of cluster) {
     for (const targetUri of graph.targets(member.uri, MEDIA_PART_OF)) {
-      if (seen.has(targetUri)) continue
-      seen.add(targetUri)
-      const node = graph.get(targetUri) as Media | undefined
-      if (node) out.push(node)
+      for (const node of graph.cluster(targetUri, sameAsLabelFor(scopeOf(targetUri))) as Media[]) {
+        if (seen.has(node.uri)) continue
+        seen.add(node.uri)
+        out.push(node)
+      }
     }
   }
   return out
+}
+
+/**
+ * Every run cluster hanging off a container cluster, read backwards along the PART_OF edges, each
+ * cluster once. Only a RUN row counts as a source: a container pointing at another container is a
+ * PART_OF claimed between two shows, never a run of one.
+ */
+export function findRunsOfContainer(cluster: Media[]): Media[][] {
+  const seen = new Set<string>()
+  const runs: Media[][] = []
+  for (const member of cluster) {
+    for (const runUri of graph.sources(member.uri, MEDIA_PART_OF)) {
+      if (!graph.has(runUri) || scopeOf(runUri) !== 'RUN') continue
+      const run = graph.cluster(runUri, MEDIA_SAME_AS) as Media[]
+      const key = keyOf(run)
+      if (seen.has(key)) continue
+      seen.add(key)
+      runs.push(run)
+    }
+  }
+  return runs
+}
+
+const startOf = (cluster: Media[]) =>
+  Math.min(...cluster.map(media => {
+    const time = media.startDate ? Date.parse(media.startDate) : NaN
+    return Number.isNaN(time) ? Infinity : time
+  }))
+
+/**
+ * The cluster a page shows for the one a uri resolved to.
+ *
+ * A run is shown as it is. A show whose runs are in the store is shown as its FIRST run, by start
+ * date and then by uri: that is the page the weld used to produce, season 1's episodes and offers
+ * under the show's ids, and a show page with no episode and no offer is what splitting the spaces
+ * cost until this. The run's PART_OF handles still carry every id of the show. A show with no run
+ * attached is shown as itself, which is today's card for a live-action catalogue.
+ */
+export function preferAttachedRun(cluster: Media[]): Media[] {
+  if (cluster.some(isRun)) return cluster
+  const runs = findRunsOfContainer(cluster)
+  if (!runs.length) return cluster
+  return runs.sort((a, b) => startOf(a) - startOf(b) || compareStrings(keyOf(a), keyOf(b)))[0]!
+}
+
+/**
+ * The cluster a media page shows for the uri it was asked for.
+ *
+ * The uri itself first (an alias resolves there too), then, for an aggregated uri, its handles one by
+ * one: a bookmark carries ids that may have clustered differently since. A handle naming a RUN wins
+ * over one naming a show whichever comes first in the uri, because a uri that mixes the two came off
+ * a run's page. What is found is then shown as `preferAttachedRun` says.
+ */
+export async function findMediaForPage(uri: string): Promise<Media[]> {
+  let cluster = await findAggregatedMedia(uri)
+  if (!cluster.length && isAggregatedUri(uri)) {
+    const parsed = fromAggregatedUri(uri as AggregatedUri)
+    for (const handleUri of parsed?.handleUris ?? []) {
+      const found = await findAggregatedMedia(handleUri)
+      if (!found.length) continue
+      if (found.some(isRun)) {
+        cluster = found
+        break
+      }
+      if (!cluster.length) cluster = found
+    }
+  }
+  return preferAttachedRun(cluster)
 }
 
 export function registerAggregatedId(id: string, uri: string) {
@@ -130,8 +330,38 @@ export async function findMediaByAggregatedId(aggregatedId: string): Promise<Med
   return findAggregatedMedia(aggregatedId)
 }
 
+/**
+ * Every cluster the store holds, runs first and then containers, each row in exactly one of them.
+ *
+ * A run cluster is a run-space component with at least one non-CONTAINER member. A container cluster
+ * is a container-space component, cut down to its CONTAINER members that no run cluster already
+ * lists: a legacy mixed cluster from before scope existed keeps its container member on the run side
+ * rather than showing the row twice. A cluster emptied by that cut is dropped.
+ */
 export async function findAllAggregatedMedia(uris?: string[]): Promise<Media[][]> {
-  return graph.clusters(MEDIA_SAME_AS, uris ? undefined : 'media', uris) as Media[][]
+  const nodeLabel = uris ? undefined : 'media'
+  const runs = (graph.clusters(MEDIA_SAME_AS, nodeLabel, uris) as Media[][])
+    .filter(cluster => cluster.some(isRun))
+  const listed = new Set(runs.flatMap(cluster => cluster.map(media => media.uri)))
+  const containers = (graph.clusters(CONTAINER_SAME_AS, nodeLabel, uris) as Media[][])
+    .map(cluster => cluster.filter(media => !isRun(media) && !listed.has(media.uri)))
+    .filter(cluster => cluster.length > 0)
+  return [...runs, ...containers]
+}
+
+/**
+ * The clusters a listing shows. A listing shows RUNS, and a show whose run is on the page is already
+ * represented by that run's card: a container-only cluster is dropped when any of its members is a
+ * PART_OF target of any member of a run cluster IN THE SAME LIST. A show with no run on the page still
+ * gets a card, which is today's behaviour for live-action catalogues. Run clusters always survive.
+ */
+export function hideAttachedContainers(clusters: Media[][]): Media[][] {
+  const attached = new Set<string>()
+  for (const cluster of clusters) {
+    if (!cluster.some(isRun)) continue
+    for (const container of findPartOfMedia(cluster)) attached.add(container.uri)
+  }
+  return clusters.filter(cluster => cluster.some(isRun) || !cluster.some(media => attached.has(media.uri)))
 }
 
 export async function upsertEpisodes(
@@ -192,6 +422,7 @@ export async function findAggregatedEpisodesForMedia(mediaUris: string[]): Promi
 export function resetStore() {
   graph.clear()
   originMap.clear()
+  pendingClaims.clear()
 }
 
 export async function upsertOrigins(newOrigins: Origin[]) {

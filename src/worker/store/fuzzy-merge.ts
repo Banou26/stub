@@ -1,8 +1,8 @@
-import type { Media, MediaType } from './types'
+import type { Media, MediaScope, MediaType } from './types'
 
 import { stripTitle, titleSimilarity } from '../../sources/utils'
 import { isOnlySeasonLabel, parseSeasonNumber } from '../../sources/season'
-import { findAggregatedMedia, linkSameMediaPairs } from './db'
+import { findAggregatedMedia, linkPartOfPairs, linkSameContainerPairs, linkSameMediaPairs } from './db'
 
 const SIMILARITY_THRESHOLD = 0.9
 // Bounds the wasm work, and it is the square that matters: sameShow compares every kept title of one
@@ -83,6 +83,14 @@ type Format = 'MOVIE' | 'SERIES'
 type ClusterProfile = {
   cluster: Media[]
   key: string
+  scope: MediaScope
+  // The member a link is made THROUGH: the lowest uri whose scope is the profile's. `key` is the
+  // lowest uri overall, and in a mixed cluster (a row unioned as a run and flipped CONTAINER since,
+  // which is sticky) that can be the container member. The store answers a container uri in the
+  // container space, so re-reading such a cluster by its key found a singleton show instead of the
+  // run cluster, and `linkSameMediaPairs` refuses a container on either side: two runs that agreed on
+  // title and year could never union. `key` stays as it is for the cache and the ordering.
+  linkUri: string
   titles: string[]
   years: Set<number>
   days: Set<number>
@@ -257,6 +265,13 @@ const selectTitles = (cluster: Media[]): string[] => {
 /** Everything the pass reads off a cluster. Nothing here may depend on the order of `cluster`. */
 export const profileCluster = (cluster: Media[]): ClusterProfile => {
   const key = cluster.map(media => media.uri).sort()[0]!
+  // a cluster is a container only when every member is: a legacy mixed cluster still names a run
+  const scope: MediaScope = cluster.every(media => media.scope === 'CONTAINER') ? 'CONTAINER' : 'RUN'
+  const linkUri =
+    cluster
+      .filter(media => (media.scope === 'CONTAINER' ? 'CONTAINER' : 'RUN') === scope)
+      .map(media => media.uri)
+      .sort()[0] ?? key
   const titles = selectTitles(cluster)
   const years =
     new Set(
@@ -301,6 +316,8 @@ export const profileCluster = (cluster: Media[]): ClusterProfile => {
   return {
     cluster,
     key,
+    scope,
+    linkUri,
     titles,
     years,
     days,
@@ -582,14 +599,14 @@ export const fuzzyMergeMediaClusters = async (clusters: Media[][]): Promise<bool
         const key = pairKey(a, b)
         if (visited.has(key)) continue
         visited.add(key)
-        // The link names the two components by their `key`, the lowest uri each holds, and names them
-        // in a fixed order. Taking cluster[0] instead named them by union-find component order, and the
-        // ARGUMENT order is what graph.link hands to union(), which keeps the first argument's root on
-        // a rank tie (two fresh singletons, the common case) and appends the absorbed members after it.
-        // So arrival order chose the link direction, the link direction fixed the merged component's
-        // order, and that order chose which title the next pass sliced off: the loop this pass both
-        // consumed and fed.
-        if (await decide(a, b)) links.push(a.key < b.key ? [a.key, b.key] : [b.key, a.key])
+        // The link names the two components by their `linkUri`, the lowest uri each holds in its own
+        // scope, and names them in a fixed order. Taking cluster[0] instead named them by union-find
+        // component order, and the ARGUMENT order is what graph.link hands to union(), which keeps the
+        // first argument's root on a rank tie (two fresh singletons, the common case) and appends the
+        // absorbed members after it. So arrival order chose the link direction, the link direction
+        // fixed the merged component's order, and that order chose which title the next pass sliced
+        // off: the loop this pass both consumed and fed.
+        if (await decide(a, b)) links.push(a.linkUri < b.linkUri ? [a.linkUri, b.linkUri] : [b.linkUri, a.linkUri])
       }
     }
   }
@@ -619,7 +636,17 @@ export const fuzzyMergeMediaClusters = async (clusters: Media[][]): Promise<bool
     // already one component, so both profiles are the same component and there is nothing to link
     if (a.key === b.key) continue
     if (!await decide(a, b)) continue
-    if (linkSameMediaPairs([[uriA, uriB]])) changed = true
+    // The verdict is the same whatever the scopes are; what it is allowed to DO is not. Two runs or two
+    // containers union in their own space. A title match between a run and a show is a guess at
+    // containment, so it rides an edge, never a union: the edge can be deleted, a union cannot.
+    if (a.scope !== b.scope) {
+      const [run, container] = a.scope === 'RUN' ? [a.linkUri, b.linkUri] : [b.linkUri, a.linkUri]
+      if (linkPartOfPairs([[run, container]])) changed = true
+    } else if (a.scope === 'CONTAINER') {
+      if (linkSameContainerPairs([[uriA, uriB]])) changed = true
+    } else if (linkSameMediaPairs([[uriA, uriB]])) {
+      changed = true
+    }
   }
 
   return changed

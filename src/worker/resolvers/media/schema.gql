@@ -66,6 +66,19 @@ enum MediaHandleRelation {
   PART_OF
 }
 
+"""
+Which kind of thing a row names, and so which identity space its SAME_AS claims union in.
+
+Sameness is only ever asserted within one scope. A claim that crosses scopes is read as PART_OF,
+whatever the producer asked for: a run is part of its show, never the same thing as it.
+"""
+enum MediaScope {
+  """One broadcast run: a cour, a film. The unit this store aggregates and the unit a card shows."""
+  RUN
+  """A show, a series, a franchise page: something several runs are part of."""
+  CONTAINER
+}
+
 """One edge out of a media: which row, and what the edge claims about it."""
 type MediaHandle {
   """The related row. Carries its own uri, origin, id and url."""
@@ -94,6 +107,8 @@ type Media {
   entirely rather than carry its link.
   """
   handles: [MediaHandle!]!
+  """Which identity space this row lives in. An absent value reads as RUN."""
+  scope: MediaScope
   score: Float
   titles: [MediaTitle!]!
   type: MediaType

@@ -3,7 +3,7 @@ import type { Exchange } from 'urql'
 
 import type { Episode, Media, MediaSeasonInput, Origin, Resolvers } from '../generated/schema/types.generated'
 import type { Uri } from 'src/utils/uri'
-import type { Media as StoreMedia, Episode as StoreEpisode, Origin as StoreOrigin, HandleRelation } from './store/types'
+import type { Episode as StoreEpisode, Origin as StoreOrigin, HandleRelation } from './store/types'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -23,6 +23,7 @@ import { fetch, fetchWithBackoff } from './fetch'
 import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils/uri'
 import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
 import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
+import { normalizeToStoreMedia } from './store/normalize'
 import { listenMultipleIterator } from './store/events'
 import { readPluginSources } from './plugin-sources'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
@@ -45,29 +46,6 @@ export type ExtractorUserContext = {
 
 let userKeys: Record<string, string> = {}
 export const setUserKeys = (keys: Record<string, string>) => { userKeys = keys ?? {} }
-
-const normalizeToStoreMedia = (media: Media): StoreMedia => ({
-  uri: media.uri as Uri,
-  origin: media.origin,
-  id: media.id,
-  url: media.url ?? null,
-  score: media.score ?? null,
-  type: (media.type as StoreMedia['type']) ?? null,
-  categories: media.categories ?? [],
-  status: (media.status as StoreMedia['status']) ?? null,
-  titles: media.titles ?? [],
-  descriptions: media.descriptions ?? [],
-  shortDescriptions: media.shortDescriptions ?? [],
-  trailers: media.trailers ?? [],
-  covers: media.covers ?? [],
-  banners: media.banners ?? [],
-  averageScore: media.averageScore ?? null,
-  popularity: media.popularity ?? null,
-  startDate: media.startDate ?? null,
-  endDate: media.endDate ?? null,
-  isAdult: media.isAdult ?? null,
-  episodeCount: media.episodeCount ?? null,
-})
 
 const normalizeToStoreEpisode = (episode: Episode): StoreEpisode => ({
   uri: episode.uri as Uri,

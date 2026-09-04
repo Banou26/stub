@@ -4,37 +4,19 @@ import type { Media, MediaPage, MediaPageResolvers, Resolvers, SubscriptionResol
 // @ts-expect-error
 import _schema from './schema.gql?raw'
 import { proxyRequestToExtractors } from '../../extractor'
-import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaByAggregatedId } from '../../store/db'
+import { findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, hideAttachedContainers } from '../../store/db'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
 import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { searchRelevance } from '../../../sources/utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
-import { isAggregatedUri, isUri, fromAggregatedUri, originsOfUri, type AggregatedUri } from '../../../utils/uri'
+import { isAggregatedUri, isUri, originsOfUri } from '../../../utils/uri'
 
 export const schema = _schema as string
 
 // Drop search results whose title doesn't actually match the query - sources do loose, sometimes semantic, server-side matching (e.g. Apple returns "WondLa" for "frieren").
 const SEARCH_RELEVANCE_THRESHOLD = 0.7
-
-const findAggregatedMediaForUri = async (uri: string) => {
-  let cluster = await findAggregatedMedia(uri)
-  if (cluster.length) return cluster
-
-  cluster = await findMediaByAggregatedId(uri)
-  if (cluster.length) return cluster
-
-  if (isAggregatedUri(uri)) {
-    const parsed = fromAggregatedUri(uri as AggregatedUri)
-    for (const handleUri of parsed?.handleUris ?? []) {
-      cluster = await findAggregatedMedia(handleUri)
-      if (cluster.length) return cluster
-    }
-  }
-
-  return []
-}
 
 export const resolvers = {
   Query: {},
@@ -74,7 +56,10 @@ export const resolvers = {
         }
 
         const read = async () => {
-          const cluster = await findAggregatedMediaForUri(requestedUri)
+          // A show whose run is in the store is shown as that run: see `preferAttachedRun` in
+          // store/db.ts, where the choice lives so it can be pinned (this module reaches urql and
+          // cannot load under vitest).
+          const cluster = await findMediaForPage(requestedUri)
           if (!cluster.length) return undefined
           const media = aggregateMedia(cluster, location.origin)
           askUnasked(media.uri)
@@ -117,6 +102,7 @@ export const resolvers = {
           if (await fuzzyMergeMediaClusters(clusters)) {
             clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
           }
+          clusters = hideAttachedContainers(clusters)
           let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
 
           const categories = args.input.categories

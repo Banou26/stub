@@ -32,8 +32,12 @@ export const sameAs = (node: GQLMedia): GQLMediaHandle => ({ node, relation: 'SA
  *
  * Use it wherever the honest answer used to be to drop the link: a show-level id from a source with no
  * season concept, an IMDb id, a Crunchyroll /series/ url on a film.
+ *
+ * THIS IS THE SCOPE STAMP. A PART_OF target is by definition a container of this run, so the node goes
+ * out as a copy scoped CONTAINER whatever it said, and the store then keeps it out of every run's
+ * identity space for good (scope is sticky toward CONTAINER there). The input is left untouched.
  */
-export const partOf = (node: GQLMedia): GQLMediaHandle => ({ node, relation: 'PART_OF' })
+export const partOf = (node: GQLMedia): GQLMediaHandle => ({ node: { ...node, scope: 'CONTAINER' }, relation: 'PART_OF' })
 
 /** The episode forms of the above. Episodes share `MediaHandleRelation`; see the schema for why. */
 export const episodeSameAs = (node: GQLEpisode): GQLEpisodeHandle => ({ node, relation: 'SAME_AS' })
@@ -58,6 +62,7 @@ export const makeMedia = ({ origin, id, handles, ...fields }: { origin: string, 
   origin,
   id,
   url: undefined,
+  scope: 'RUN',
   handles: (handles ?? []).map(handle => isMediaHandle(handle) ? handle : sameAs(handle)),
   categories: [],
   titles: [],
@@ -444,6 +449,13 @@ export const simplifyTitle = (title: string): string[] => {
  * identity claim and nothing else, which is precisely the half that can go wrong. Demoting it to
  * PART_OF would therefore make it contribute nothing, so the honest options are "keep asserting" or
  * "delete the function", not a middle one.
+ *
+ * A rebuilt sibling is a BARE node, and carries no scope of the caller's. The caller has read nothing
+ * about those ids, so a stamp here was a claim about rows it never saw, written onto them: a CONTAINER
+ * caller flipped every run sibling to CONTAINER for good (scope is sticky that way in the store) and
+ * welded them in the container space, and a RUN caller minted a RUN row for a show whose own row was
+ * still in flight and unioned with it. The store holds a claim naming a bare node until the node's
+ * own source describes it, so the uri contributes the claim and nothing else, in every direction.
  */
 export const buildHandlesFromUri = (aggregatedUri: string, excludeOrigin: string): GQLMediaHandle[] => {
   const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])

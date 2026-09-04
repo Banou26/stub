@@ -121,10 +121,15 @@ function mediaToGQL(media: Media): GQLMedia {
     endDate: media.endDate,
     isAdult: media.isAdult,
     episodeCount: media.episodeCount,
+    scope: media.scope,
     episodes: [],
     handles: [],
   }
 }
+
+// a cluster is a container only when nothing in it names a run: a legacy mixed cluster is a run
+const scopeOfCluster = (medias: Media[]): Media['scope'] =>
+  medias.every(media => media.scope === 'CONTAINER') ? 'CONTAINER' : 'RUN'
 
 function episodeToGQL(episode: Episode): GQLEpisode {
   return {
@@ -177,6 +182,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     return {
       ...mediaToGQL(m),
       _id,
+      scope: scopeOfCluster(medias),
       handles: [sameAsHandle(mediaToGQL(m)), ...findPartOfMedia(medias).map(node => partOfHandle(mediaToGQL(node)))],
     }
   }
@@ -215,6 +221,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
     origin: 'ag',
     url: `${locationOrigin}/${getRoutePath(Route.MEDIA, { uri }).replace(/^\//, '')}`,
     score: Math.max(...medias.map(m => m.score ?? 0)),
+    scope: scopeOfCluster(medias),
     // The cluster IS the SAME_AS set, by construction: `graph.cluster` over MEDIA_SAME_AS is what
     // produced `medias`. The PART_OF rows are read here rather than by the caller, so that no caller
     // can forget them: a missing link renders as a dead grey icon, which looks like ordinary absence.

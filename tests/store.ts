@@ -10,8 +10,8 @@ export const test = async () => {
 
   await upsertMedia(
     [
-      { uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null },
-      { uri: 'mal:1', origin: 'mal', id: '1', url: null, score: 0.5, type: null, categories: [], status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: null, startDate: null, endDate: null, isAdult: null, episodeCount: null },
+      { uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null, scope: 'RUN' },
+      { uri: 'mal:1', origin: 'mal', id: '1', url: null, score: 0.5, type: null, categories: [], status: null, titles: [{ language: 'en', title: 'Test Show' }], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: null, startDate: null, endDate: null, isAdult: null, episodeCount: null, scope: 'RUN' },
     ],
     [{ mediaUri: 'anilist:1', handleUri: 'mal:1' }]
   )
@@ -23,7 +23,7 @@ export const test = async () => {
   expect(allMedia.length).to.equal(1)
 
   await upsertMedia(
-    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
+    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: 1000, startDate: null, endDate: null, isAdult: null, episodeCount: null, scope: 'RUN' }],
     []
   )
 
@@ -33,7 +33,7 @@ export const test = async () => {
   expect(anilist.titles[0]!.title).to.equal('Test Show')
 
   await upsertMedia(
-    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: 2000, startDate: null, endDate: null, isAdult: null, episodeCount: null }],
+    [{ uri: 'anilist:1', origin: 'anilist', id: '1', url: null, score: 0.9, type: null, categories: [], status: null, titles: [], descriptions: [], shortDescriptions: [], trailers: [], covers: [], banners: [], averageScore: null, popularity: 2000, startDate: null, endDate: null, isAdult: null, episodeCount: null, scope: 'RUN' }],
     []
   )
   const updated2 = await findAggregatedMedia('anilist:1')

@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { upsertMedia, findAggregatedMedia } from './db'
+import { upsertMedia, findAggregatedMedia, findAllAggregatedMedia, findPartOfMedia } from './db'
 import { fuzzyMergeMediaClusters, profileCluster } from './fuzzy-merge'
 
 const SPRING_2026 = '2026-04-03T15:00:00Z'
@@ -349,4 +349,68 @@ test('a verdict is applied only if the two components still agree when it lands'
 
   const cluster = await findAggregatedMedia('cr:GRQ8VE29Y-s1')
   expect(cluster.map(m => m.uri).sort()).toEqual(['cr:GRQ8VE29Y-s1'])
+})
+
+// A title match between a run and a show is a guess at CONTAINMENT, and the pass used to spend it as a
+// union: crunchyroll's bare series id and tvmaze's bare show id both matched season 1's title and both
+// entered its cluster, which is the door season 3 then walked through. A verdict is a verdict whatever
+// the scopes are; what it is allowed to do depends on them.
+const scoped = (m: any, scope: 'RUN' | 'CONTAINER') => ({ ...m, scope })
+
+test('a run and a container that agree on title and year hang on an edge, never a union', async () => {
+  const run = [scoped(media('anilist:7000', [['Mushoku Tensei', 0.8]], SPRING_2026), 'RUN')]
+  const show = [scoped(media('tvmaze:7001', [['Mushoku Tensei', 0.3]], SPRING_2026), 'CONTAINER')]
+
+  await upsertMedia([...run, ...show], [])
+  await fuzzyMergeMediaClusters([run, show])
+
+  const cluster = await findAggregatedMedia('anilist:7000')
+  expect(cluster.map(m => m.uri), 'the run cluster is unchanged').toEqual(['anilist:7000'])
+  expect(findPartOfMedia(cluster).map(m => m.uri), 'the match survives as containment').toEqual(['tvmaze:7001'])
+  expect((await findAggregatedMedia('tvmaze:7001')).map(m => m.uri)).toEqual(['tvmaze:7001'])
+})
+
+test('two containers that agree on title and year union in the container space', async () => {
+  const crunchyroll = [scoped(media('cr:7100', [['Mushoku Tensei', 0.5]], SPRING_2026), 'CONTAINER')]
+  const tvmaze = [scoped(media('tvmaze:7101', [['Mushoku Tensei', 0.3]], SPRING_2026), 'CONTAINER')]
+
+  await upsertMedia([...crunchyroll, ...tvmaze], [])
+  await fuzzyMergeMediaClusters([crunchyroll, tvmaze])
+
+  expect((await findAggregatedMedia('cr:7100')).map(m => m.uri).sort()).toEqual(['cr:7100', 'tvmaze:7101'])
+  const listed = await findAllAggregatedMedia(['cr:7100', 'tvmaze:7101'])
+  expect(listed.map(cluster => cluster.map(m => m.uri).sort()), 'one container cluster').toEqual([['cr:7100', 'tvmaze:7101']])
+})
+
+// A row unioned as a run and flipped CONTAINER since (the flip is sticky) leaves a MIXED cluster, and
+// when the container member is its lowest uri it was also its key. The store answers a container uri
+// in the container space, so re-reading the cluster by that key found a singleton show, and the
+// link that followed was an edge from the other run to it: two runs that agreed on title and year
+// could never union. The link goes through the lowest RUN member instead.
+test('a mixed cluster keyed by its container member still unions with a run', async () => {
+  await upsertMedia(
+    [scoped(media('cr:7300', [['Mushoku Tensei', 0.5]], SPRING_2026), 'RUN'), scoped(media('kitsu:7301', [['Mushoku Tensei', 0.3]], SPRING_2026), 'RUN')],
+    [{ mediaUri: 'kitsu:7301', handleUri: 'cr:7300' }]
+  )
+  await upsertMedia([scoped(media('cr:7300', [['Mushoku Tensei', 0.5]], SPRING_2026), 'CONTAINER')], [])
+  const mixed = await findAggregatedMedia('kitsu:7301')
+  expect(mixed.map(m => `${m.uri}=${m.scope}`).sort(), 'the setup: one mixed cluster keyed by the container').toEqual(['cr:7300=CONTAINER', 'kitsu:7301=RUN'])
+
+  const mal = [scoped(media('mal:7302', [['Mushoku Tensei', 0.9]], SPRING_2026), 'RUN')]
+  await upsertMedia(mal, [])
+  await fuzzyMergeMediaClusters([mixed, mal])
+
+  expect((await findAggregatedMedia('mal:7302')).map(m => m.uri).sort(), 'two runs that agree on title and year union')
+    .toEqual(['cr:7300', 'kitsu:7301', 'mal:7302'])
+})
+
+// the control, or the two above are indistinguishable from a pass that links nothing
+test('control: two runs that agree on title and year still union', async () => {
+  const anilist = [scoped(media('anilist:7200', [['Mushoku Tensei', 0.8]], SPRING_2026), 'RUN')]
+  const kitsu = [scoped(media('kitsu:7201', [['Mushoku Tensei', 0.3]], SPRING_2026), 'RUN')]
+
+  await upsertMedia([...anilist, ...kitsu], [])
+  await fuzzyMergeMediaClusters([anilist, kitsu])
+
+  expect((await findAggregatedMedia('anilist:7200')).map(m => m.uri).sort()).toEqual(['anilist:7200', 'kitsu:7201'])
 })

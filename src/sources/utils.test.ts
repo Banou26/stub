@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { pickTitleMatch, searchScore, searchRelevance, simplifyTitle, stripTitle, titleSimilarity } from './utils'
+import { buildHandlesFromUri, makeMedia, mergeHandles, partOf, pickTitleMatch, searchScore, searchRelevance, simplifyTitle, stripTitle, titleSimilarity } from './utils'
 
 // The home and search pages filter on searchRelevance at 0.7, so a query that normalizes to nothing
 // returns an empty page and a query that normalizes to one letter returns nearly the whole catalogue.
@@ -116,5 +116,49 @@ describe('pickTitleMatch', () => {
   test('nothing at all is a valid answer', async () => {
     expect(await pickTitleMatch('Frieren', [], series)).toBeUndefined()
     expect(await pickTitleMatch('Frieren', [hit('Breaking Bad')], series)).toBeUndefined()
+  })
+})
+
+// Sources stamp scope on the rows they mint, and the store derives every relation from it. A run is
+// the default; a PART_OF target is by definition a container of this run, so `partOf` IS the stamp.
+describe('scope stamps', () => {
+  test('makeMedia defaults scope to RUN, and a caller can say otherwise', () => {
+    expect(makeMedia({ origin: 'anilist', id: '108465' }).scope).toBe('RUN')
+    expect(makeMedia({ origin: 'cr', id: 'G24H1N3MP', scope: 'CONTAINER' }).scope).toBe('CONTAINER')
+  })
+
+  test('partOf stamps CONTAINER on a copy and leaves the original untouched', () => {
+    const show = makeMedia({ origin: 'cr', id: 'G24H1N3MP', url: 'https://www.crunchyroll.com/series/G24H1N3MP' })
+    const handle = partOf(show)
+
+    expect(handle.relation).toBe('PART_OF')
+    expect(handle.node.scope).toBe('CONTAINER')
+    expect(handle.node.url, 'everything else rides along').toBe(show.url)
+    expect(handle.node, 'a copy, so the input is not rewritten under its owner').not.toBe(show)
+    expect(show.scope).toBe('RUN')
+  })
+
+  // The uri is user input, and a sibling rebuilt from it is a BARE node: no url, no title, no scope
+  // beyond makeMedia's default. The caller's own scope is never stamped on it, because the caller has
+  // read nothing about those ids: a CONTAINER caller stamping its run siblings CONTAINER flipped them
+  // for good (scope is sticky that way in the store) and welded them in the container space.
+  test('buildHandlesFromUri rebuilds bare SAME_AS siblings and stamps no scope of its own', () => {
+    const handles = buildHandlesFromUri('ag:(anilist:108465,cr:G24H1N3MP,tvmaze:52279)', 'cr')
+
+    expect(handles.map(handle => handle.node.uri).sort()).toEqual(['anilist:108465', 'tvmaze:52279'])
+    expect(handles.map(handle => handle.relation)).toEqual(['SAME_AS', 'SAME_AS'])
+    for (const { node } of handles) {
+      expect(node.scope, `${node.uri} carries no scope claim`).not.toBe('CONTAINER')
+      expect(node.url, `${node.uri} is bare`).toBeUndefined()
+      expect(node.titles).toEqual([])
+    }
+  })
+
+  test('mergeHandles from a container does not stamp CONTAINER on the siblings it adds', () => {
+    const show = makeMedia({ origin: 'tvmaze', id: '52279', scope: 'CONTAINER' })
+    mergeHandles(show, 'ag:(anilist:108465,kitsu:42323,tvmaze:52279)')
+
+    expect(show.handles.map(handle => handle.node.uri).sort()).toEqual(['anilist:108465', 'kitsu:42323'])
+    expect(show.handles.map(handle => handle.node.scope), 'the siblings are not the container\'s to scope').not.toContain('CONTAINER')
   })
 })

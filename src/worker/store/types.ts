@@ -18,6 +18,16 @@ export type MediaCategory = typeof mediaCategoryEnum[number]
 export const handleRelationEnum = ['SAME_AS', 'PART_OF'] as const
 export type HandleRelation = typeof handleRelationEnum[number]
 
+/**
+ * Which identity space a row lives in, mirroring `MediaScope` in the graphql schema.
+ *
+ * A RUN is one broadcast run, the unit this store aggregates. A CONTAINER is a show, a series, a
+ * franchise page: something several runs are part of. Sameness unions only within one scope; a claim
+ * across scopes is derived as PART_OF. See `upsertMedia` in ./db.ts.
+ */
+export const mediaScopeEnum = ['RUN', 'CONTAINER'] as const
+export type MediaScope = typeof mediaScopeEnum[number]
+
 export type Title = { language: string; title: string; score?: number | null }
 export type Description = { language: string; description: string; score?: number | null }
 export type ShortDescription = { language: string; shortDescription: string; score?: number | null }
@@ -47,6 +57,7 @@ export type Media = {
   endDate: string | null
   isAdult: boolean | null
   episodeCount: number | null
+  scope: MediaScope
 }
 
 export type Episode = {

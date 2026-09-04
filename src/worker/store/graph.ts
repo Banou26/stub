@@ -27,6 +27,8 @@ export type Graph<T> = {
   link(a: string, b: string, label: string): boolean
   edge(from: string, to: string, label: string): boolean
   targets(key: string, label: string): ReadonlySet<string>
+  /** Every node with an edge INTO `key` under `label`: the reverse of `targets`. */
+  sources(key: string, label: string): ReadonlySet<string>
   cluster(start: string, label: string): T[]
   clusters(label: string, nodeLabel?: string, uris?: string[]): T[][]
   /** Drop every node, alias, edge and component. Tests only: see `resetStore` in ./db.ts. */
@@ -106,6 +108,7 @@ export function createGraph<T>(): Graph<T> {
 
   const undirected = new Map<string, Map<string, Set<string>>>()
   const directed = new Map<string, Map<string, Set<string>>>()
+  const reversed = new Map<string, Map<string, Set<string>>>()
 
   const unionFinds = new Map<string, UnionFind>()
 
@@ -219,11 +222,18 @@ export function createGraph<T>(): Graph<T> {
     const isNew = !adj.get(from)?.has(to)
     if (!adj.has(from)) adj.set(from, new Set())
     adj.get(from)!.add(to)
+    const back = adjFor(reversed, label)
+    if (!back.has(to)) back.set(to, new Set())
+    back.get(to)!.add(from)
     return isNew
   }
 
   function targets(key: string, label: string): ReadonlySet<string> {
     return directed.get(label)?.get(key) ?? emptySet
+  }
+
+  function sources(key: string, label: string): ReadonlySet<string> {
+    return reversed.get(label)?.get(key) ?? emptySet
   }
 
   function cluster(start: string, label: string): T[] {
@@ -278,6 +288,7 @@ export function createGraph<T>(): Graph<T> {
     aliases.clear()
     undirected.clear()
     directed.clear()
+    reversed.clear()
     unionFinds.clear()
     nodeLabels.clear()
     // the LABELS survive, because `registerLabel` runs once at module load in ./db.ts and a cleared
@@ -288,7 +299,7 @@ export function createGraph<T>(): Graph<T> {
   return {
     set, registerLabel, setLabel, labeled,
     get, has, alias, resolve,
-    link, edge, targets,
+    link, edge, targets, sources,
     cluster, clusters, clear,
   }
 }
