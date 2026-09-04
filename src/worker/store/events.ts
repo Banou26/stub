@@ -13,7 +13,10 @@ export function emit<K extends keyof StoreEventMap>(
   eventBus.dispatchEvent(new CustomEvent(type, { detail }))
 }
 
-function listen<K extends keyof StoreEventMap>(
+/** Subscribe to one store event, returning the unsubscribe. Exported so a test can COUNT emissions:
+ *  `media:changed` re-runs the fuzzy merge and every subscribed page, so an upsert that reports a
+ *  change it did not make is not free. */
+export function listen<K extends keyof StoreEventMap>(
   type: K,
   callback: (detail: StoreEventMap[K]) => void
 ): () => void {

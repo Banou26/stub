@@ -25,7 +25,7 @@ export type Graph<T> = {
   alias(alias: string, key: string): void
   resolve(key: string): string
   link(a: string, b: string, label: string): boolean
-  edge(from: string, to: string, label: string): void
+  edge(from: string, to: string, label: string): boolean
   targets(key: string, label: string): ReadonlySet<string>
   cluster(start: string, label: string): T[]
   clusters(label: string, nodeLabel?: string, uris?: string[]): T[][]
@@ -210,10 +210,16 @@ export function createGraph<T>(): Graph<T> {
     return isNew
   }
 
-  function edge(from: string, to: string, label: string): void {
+  // Returns whether the edge is NEW, the same contract `link` above has. A caller that re-asserts an
+  // edge it already made needs to know nothing changed: `upsertMedia` used to set `changed = true` on
+  // every PART_OF whatever the state, so a source re-minting the same handle emitted `media:changed`
+  // forever and every listener re-read the store for a graph that had not moved.
+  function edge(from: string, to: string, label: string): boolean {
     const adj = adjFor(directed, label)
+    const isNew = !adj.get(from)?.has(to)
     if (!adj.has(from)) adj.set(from, new Set())
     adj.get(from)!.add(to)
+    return isNew
   }
 
   function targets(key: string, label: string): ReadonlySet<string> {
