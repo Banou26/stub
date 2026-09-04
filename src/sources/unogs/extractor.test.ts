@@ -10,7 +10,7 @@
 import { expect, test } from 'vitest'
 
 import type { ExtractorServerContext } from '../../worker/extractor'
-import { getMedia } from './extractor'
+import { getMedia, searchNodes } from './extractor'
 
 const UNOGS = 'https://unogs.com/api'
 
@@ -109,4 +109,42 @@ test('the show-level media still carries the show year', async () => {
 
   expect(show?.uri).toBe('nf:70000006')
   expect(show?.startDate, 'the only media the show year is true of').toBe('2021-01-01')
+})
+
+// A bare `nf:<netflixid>` is the whole Netflix TITLE. For a film that is exact, and for a series it
+// names every season at once, which is the id that welds them. The search endpoint returns no season
+// information, so there is nothing to scope a series with and the honest answer is to not offer it.
+//
+// Measured on the deployed site before this: searching "Mushoku Tensei" put `nf:80987039` inside season
+// 1's cluster with no media page ever opened (scripts/reproduce-season-weld.mjs, ARM A). justwatch has
+// refused seasonless series from its own search for the same reason since `showRequiresSeason`.
+test('a search returns films and refuses series, which have no season here to be scoped by', async () => {
+  const results = [
+    { nfid: 70000010, title: 'A Show', vtype: 'series', synopsis: '', img: '', year: 2021 },
+    { nfid: 70000011, title: 'A Film', vtype: 'movie', synopsis: '', img: '', year: 2021 },
+  ]
+  const table = {
+    'https://unogs.com/api/user': { token: { access_token: 'test-token' } },
+    [`${UNOGS}/search?limit=50&offset=0&query=anything&countrylist=&country_andorunique=&start_year=&end_year=&start_rating=&end_rating=&genrelist=&type=&audio=&subtitle=&audiosubtitle_andor=&person=&personid=&filterby=&orderby=`]: { results },
+  }
+
+  const nodes = await searchNodes('anything', ctxFor(table))
+
+  expect(nodes.map(node => node.uri), 'the series id names every season of it at once').toEqual(['nf:70000011'])
+})
+
+// The control: a run where the film is dropped too has stopped the source contributing at all rather
+// than stopping it lying, and nothing above would tell those apart.
+test('a search of nothing but films still returns all of them', async () => {
+  const results = [
+    { nfid: 70000012, title: 'Film One', vtype: 'movie', synopsis: '', img: '', year: 2016 },
+    { nfid: 70000013, title: 'Film Two', vtype: 'movie', synopsis: '', img: '', year: 2018 },
+  ]
+  const table = {
+    'https://unogs.com/api/user': { token: { access_token: 'test-token' } },
+    [`${UNOGS}/search?limit=50&offset=0&query=films&countrylist=&country_andorunique=&start_year=&end_year=&start_rating=&end_rating=&genrelist=&type=&audio=&subtitle=&audiosubtitle_andor=&person=&personid=&filterby=&orderby=`]: { results },
+  }
+
+  const nodes = await searchNodes('films', ctxFor(table))
+  expect(nodes.map(node => node.uri)).toEqual(['nf:70000012', 'nf:70000013'])
 })

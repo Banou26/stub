@@ -211,6 +211,28 @@ const normalizeMovieAsEpisode = (media: GQLMedia): GQLEpisode =>
  * Callers that do NOT attach cluster handles pass false, because a direct `nf:<id>` browse is the user
  * naming that Netflix title and welds nothing.
  */
+/**
+ * What a search may offer: FILMS ONLY, for the same reason justwatch's `showRequiresSeason` refuses a
+ * seasonless series.
+ *
+ * A bare `nf:<netflixid>` is the whole Netflix TITLE. For a film that is exact, since a film has no
+ * seasons to be confused between. For a series it names every season at once, and this endpoint returns
+ * no season information, so there is nothing here to scope it with.
+ *
+ * An unscoped series id does real damage rather than being merely vague. Measured on the deployed site:
+ * searching Mushoku Tensei put the bare `nf:80987039` inside season 1's cluster, with no media page ever
+ * opened, claiming the whole show IS that one cour (scripts/reproduce-season-weld.mjs, ARM A). The media
+ * path is untouched and still resolves a season, minting `nf:80987039-3`.
+ *
+ * `vtype` is OPTIONAL on the search payload where the detail payload requires it, so anything that is
+ * not exactly 'movie' is read as a series and refused. That is the safe direction, and it is the same
+ * ternary `normalizeSearchResult` already uses to assign `categories`.
+ */
+export const searchNodes = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
+  const { results = [] } = await searchApi(query, ctx)
+  return results.filter(result => result.vtype === 'movie').map(normalizeSearchResult)
+}
+
 export const getMedia = async (
   id: string,
   ctx: ExtractorServerContext,
@@ -388,8 +410,7 @@ export const resolvers: Resolvers = {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
       subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
         if (!search) return yield { mediaPage: { nodes: [] } }
-        const { results = [] } = await searchApi(search, ctx)
-        yield { mediaPage: { nodes: results.map(normalizeSearchResult) } }
+        yield { mediaPage: { nodes: await searchNodes(search, ctx) } }
       }
     }
   },
