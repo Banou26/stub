@@ -20,6 +20,8 @@ export * as trakt from './trakt/extractor'
 export * as simkl from './simkl/extractor'
 export * as tvdb from './tvdb/extractor'
 export * as offline from './offline/extractor'
+// answers nothing on purpose: it exists so an `imdb:` handle has an origin to render against
+export * as imdb from './imdb/extractor'
 
 // Watchmode was DISABLED on 2026-09-04 and is back on 2026-09-05, unchanged in what it knows and
 // changed in what it claims. Every provider handle it mints is show level, because its record is a

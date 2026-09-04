@@ -19,9 +19,9 @@ test('every other source is still exported', () => {
   for (const name of [
     'jikan', 'anilist', 'anizip', 'crunchyroll', 'unogs', 'justwatch', 'appletv', 'paramount',
     'disney', 'amazon', 'hulu', 'peacock', 'hbo', 'fubo', 'tmdb', 'tvmaze', 'kitsu', 'omdb',
-    'trakt', 'simkl', 'tvdb', 'offline', 'watchmode',
+    'trakt', 'simkl', 'tvdb', 'offline', 'watchmode', 'imdb',
   ]) expect(names, name).toContain(name)
-  expect(names).toHaveLength(23)
+  expect(names).toHaveLength(24)
 })
 
 // A key prompt for a source that does not run asks someone to sign up for nothing.
@@ -52,4 +52,24 @@ test('the schema declares no field that nothing implements', async () => {
     .not.toContain('externalLinks')
   // the control: this file must actually be reading the schema, not an empty string
   expect(media).toContain('enum MediaHandleRelation')
+})
+
+// IMDb exists ONLY so an `imdb:tt...` handle has an origin to be rendered against. Five sources mint
+// one and the handle reaches the client correctly, but the UI builds its rows from `originPage`, which
+// lists registered origins: with none declaring `origin = 'imdb'` there was no name, no icon and no
+// row, so the link was carried the whole way and dropped one line short of the screen.
+test('imdb is a registered origin that answers nothing', async () => {
+  const imdb = (sources as Record<string, any>).imdb
+
+  expect(imdb.origin).toBe('imdb')
+  expect(imdb.name).toBe('IMDb')
+  // without both of these the row cannot render: `IsNotApiOnly` filters the list, and a row with no
+  // icon is skipped outright by the media modal
+  expect(imdb.isApiOnly).toBe(false)
+  expect(imdb.icon).toBeTruthy()
+
+  // and it must stay inert. An IMDb id names a SHOW and IMDb models no seasons, so anything it could
+  // answer is the defect `SHOW_LEVEL_ORIGINS` exists to prevent.
+  const { value } = await imdb.resolvers.Subscription.media.subscribe(undefined, { input: { uri: 'imdb:tt13303712' } }, {} as never).next()
+  expect(value).toEqual({ media: null })
 })
