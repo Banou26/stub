@@ -226,6 +226,22 @@ export const getMedia = async (
   if (seasonNumber != null) {
     media.id = `${media.id}-${seasonNumber}`
     media.uri = toUri({ origin, id: media.id })
+    // A SEASON-scoped media may never carry the SHOW's year, and only the id used to be rewritten here.
+    //
+    // `normalizeTitle` stamps `${title.year}-01-01`, which is Netflix's year for the whole TITLE, so
+    // every season of a show carried its FIRST season's year. That is not merely inaccurate: it welds
+    // seasons together by a route that looks nothing like a date problem. `profileCluster` derives its
+    // `years` set from every member's startDate and `fuzzyMergeMediaClusters` buckets by year, so a
+    // season 3 media carrying 2021 is compared against the 2021 clusters, where a shared title is
+    // enough. Measured on production 2026-09-05: `nf:80987039-3` carried 2021 and put Mushoku Tensei
+    // season 3 in season 1's bucket.
+    //
+    // Nothing is asserted instead of guessing, because unOGS gives no season premiere to use:
+    // `UnogsEpisode` carries epid, seasnum, synopsis, title and img, and no air date at all. An absent
+    // date costs this source a year bucket; a wrong one costs a permanent weld, and `graph.link` has no
+    // inverse. `tvmaze/extractor.ts`, `appletv/extractor.ts` and `tmdb/extractor.ts` each fixed exactly
+    // this in their own file; this one was missed.
+    media.startDate = undefined
   }
 
   if (title.vtype === 'series') {

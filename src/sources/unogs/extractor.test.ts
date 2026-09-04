@@ -84,3 +84,29 @@ test('without requireSeason the show-level media is still returned, for a direct
   const media = await getMedia('70000004', ctxFor(table), undefined, false)
   expect(media?.uri).toBe('nf:70000004')
 })
+
+// A SEASON-scoped media may never carry the SHOW's year. `normalizeTitle` stamps `${title.year}-01-01`,
+// Netflix's year for the whole title, and until 2026-09-05 the season rewrite touched only the id.
+//
+// The damage is not inaccuracy, it is a WELD by a route that looks nothing like a date problem:
+// `profileCluster` builds its `years` set from every member's startDate and `fuzzyMergeMediaClusters`
+// buckets by year, so every season of a show landed in season 1's bucket, where a shared title is
+// enough. Measured on production: `nf:80987039-3` carried 2021 and put Mushoku Tensei season 3 into
+// season 1's bucket. tvmaze, appletv and tmdb each fixed this in their own file; this one was missed.
+test('a season-scoped media asserts no start date, rather than the show year', async () => {
+  const table = routes('70000005', 'series', [{ season: 1, episodes: 12 }, { season: 3, episodes: 14 }])
+  const season = await getMedia('70000005', ctxFor(table), 3, true)
+
+  expect(season?.uri).toBe('nf:70000005-3')
+  expect(season?.startDate, "the show's year here buckets this run with season 1").toBeUndefined()
+})
+
+// The control: an unscoped browse still carries the show year, which is the only media it is true of.
+// A run where both go quiet has removed the date everywhere rather than only where it lies.
+test('the show-level media still carries the show year', async () => {
+  const table = routes('70000006', 'series', [{ season: 1, episodes: 12 }, { season: 3, episodes: 14 }])
+  const show = await getMedia('70000006', ctxFor(table), undefined, false)
+
+  expect(show?.uri).toBe('nf:70000006')
+  expect(show?.startDate, 'the only media the show year is true of').toBe('2021-01-01')
+})
