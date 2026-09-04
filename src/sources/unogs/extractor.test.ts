@@ -10,7 +10,7 @@
 import { expect, test } from 'vitest'
 
 import type { ExtractorServerContext } from '../../worker/extractor'
-import { getMedia, searchNodes } from './extractor'
+import { getMedia, linkNetflix, searchNodes } from './extractor'
 
 const UNOGS = 'https://unogs.com/api'
 
@@ -184,4 +184,69 @@ test('a film is a RUN under its bare id', async () => {
   }
   const nodes = await searchNodes('film', ctxFor(search))
   expect(nodes.map(node => [node.uri, node.scope])).toEqual([['nf:70000023', 'RUN']])
+})
+
+// The count-only pick welded Mushoku Tensei on the live site after every other route was closed
+// (2026-09-05): Netflix lists the title as seasons of 24, 25 and 11 episodes, anime season 1 has 11
+// and a title naming no season, so the count picked Netflix season 3 for it, and season 3's own page
+// took the same id by its ordinal. A count is a number, not an identity.
+const MUSHOKU: Season[] = [{ season: 1, episodes: 24 }, { season: 2, episodes: 25 }, { season: 3, episodes: 11 }]
+const AG = 'ag:(anilist:108465,kitsu:42323)'
+
+const knowing = (table: Record<string, unknown>, titles: string[], episodeCount: number): ExtractorServerContext => ({
+  ...ctxFor(table),
+  findAggregatedMedia: async () => ({ titles: titles.map(title => ({ language: 'en', title })), episodeCount }),
+  listenForMediaChanges: async function* () {},
+} as unknown as ExtractorServerContext)
+
+test('a run naming no season is not matched to a Netflix season by episode count alone', async () => {
+  const ctx = knowing(routes('80987039', 'series', MUSHOKU), ['Mushoku Tensei: Jobless Reincarnation'], 11)
+  const media = await linkNetflix('80987039', AG, ctx, 'series')
+  expect(media?.uri, 'the whole title, never the season that happens to share a number').toBe('nf:80987039')
+  expect(media?.scope).toBe('CONTAINER')
+  expect(media?.episodes, 'a container carries no episode list').toEqual([])
+  expect(media?.episodeCount).toBeUndefined()
+})
+
+test('a Netflix season holding more episodes than the run is a fold of several runs, so the title is the link', async () => {
+  const ctx = knowing(routes('80987039', 'series', MUSHOKU), ['Mushoku Tensei: Jobless Reincarnation Season 2'], 13)
+  const media = await linkNetflix('80987039', AG, ctx, 'series')
+  expect(media?.uri, 'Netflix season 2 is 25 episodes, both halves of anime season 2 at once').toBe('nf:80987039')
+  expect(media?.scope).toBe('CONTAINER')
+})
+
+test('control: titles agreeing on an ordinal Netflix has, no larger than the run, name that season', async () => {
+  const ctx = knowing(routes('80987039', 'series', MUSHOKU), ['Mushoku Tensei: Jobless Reincarnation Season 3'], 14)
+  const media = await linkNetflix('80987039', AG, ctx, 'series')
+  expect(media?.uri).toBe('nf:80987039-3')
+  expect(media?.scope).toBe('RUN')
+  expect(media?.episodeCount, 'only that season, still airing on Netflix').toBe(11)
+})
+
+test('control: a first season keeps its precise link when Netflix season 1 holds exactly its episodes', async () => {
+  const ctx = knowing(routes('80987039', 'series', MUSHOKU), ['Some Show'], 24)
+  const media = await linkNetflix('80987039', AG, ctx, 'series')
+  expect(media?.uri).toBe('nf:80987039-1')
+  expect(media?.scope).toBe('RUN')
+})
+
+test('titles that disagree on the season are a refusal to guess, and the title is the link', async () => {
+  const ctx = knowing(routes('80987039', 'series', MUSHOKU), ['Some Show Season 2', 'Some Show Part 3'], 13)
+  const media = await linkNetflix('80987039', AG, ctx, 'series')
+  expect(media?.uri).toBe('nf:80987039')
+  expect(media?.scope).toBe('CONTAINER')
+})
+
+test('a lone Netflix season of another length is the title, rather than nothing', async () => {
+  const ctx = knowing(routes('70000011', 'series', [{ season: 1, episodes: 24 }]), ['Some Show'], 12)
+  const media = await linkNetflix('70000011', AG, ctx, 'series')
+  expect(media?.uri, 'the link survives as a container where it used to vanish').toBe('nf:70000011')
+  expect(media?.scope).toBe('CONTAINER')
+})
+
+test('control: a film is itself, having no season to be confused between', async () => {
+  const ctx = knowing(routes('70000012', 'movie', []), ['A Film'], 1)
+  const media = await linkNetflix('70000012', AG, ctx, 'movie')
+  expect(media?.uri).toBe('nf:70000012')
+  expect(media?.scope).toBe('RUN')
 })
