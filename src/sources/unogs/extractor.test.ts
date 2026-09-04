@@ -148,3 +148,40 @@ test('a search of nothing but films still returns all of them', async () => {
   const nodes = await searchNodes('films', ctxFor(table))
   expect(nodes.map(node => node.uri)).toEqual(['nf:70000012', 'nf:70000013'])
 })
+
+// A bare `nf:<netflixid>` on a series names every season at once, so it lives in the CONTAINER
+// identity space: the store reads a run's sameness claim against it as PART_OF and never unions. The
+// season rewrite is the only thing that turns that id into a run, and it has to say so, because scope
+// is sticky toward CONTAINER in the store and a season row that inherited the show's scope would keep
+// every anilist id it carries out of the run space for good.
+test('a bare series id is scoped CONTAINER', async () => {
+  const table = routes('70000020', 'series', [{ season: 1, episodes: 12 }, { season: 2, episodes: 13 }])
+  const show = await getMedia('70000020', ctxFor(table), undefined, false)
+
+  expect(show?.uri).toBe('nf:70000020')
+  expect(show?.scope, 'the whole title, which several runs are part of').toBe('CONTAINER')
+})
+
+test('a season-scoped id is a RUN, whatever the title it came from', async () => {
+  const table = routes('70000021', 'series', [{ season: 1, episodes: 12 }, { season: 2, episodes: 13 }])
+  const season = await getMedia('70000021', ctxFor(table), 2, true)
+
+  expect(season?.uri).toBe('nf:70000021-2')
+  expect(season?.scope, 'one season of the title is one run').toBe('RUN')
+})
+
+// The controls: a film is exact under its bare id on both paths that mint one.
+test('a film is a RUN under its bare id', async () => {
+  const table = routes('70000022', 'movie', [])
+  const film = await getMedia('70000022', ctxFor(table), undefined, true)
+  expect(film?.uri).toBe('nf:70000022')
+  expect(film?.scope).toBe('RUN')
+
+  const results = [{ nfid: 70000023, title: 'A Film', vtype: 'movie', synopsis: '', img: '', year: 2021 }]
+  const search = {
+    'https://unogs.com/api/user': { token: { access_token: 'test-token' } },
+    [`${UNOGS}/search?limit=50&offset=0&query=film&countrylist=&country_andorunique=&start_year=&end_year=&start_rating=&end_rating=&genrelist=&type=&audio=&subtitle=&audiosubtitle_andor=&person=&personid=&filterby=&orderby=`]: { results },
+  }
+  const nodes = await searchNodes('film', ctxFor(search))
+  expect(nodes.map(node => [node.uri, node.scope])).toEqual([['nf:70000023', 'RUN']])
+})

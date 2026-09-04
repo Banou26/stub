@@ -49,7 +49,7 @@ const context = (
 const edgesFor = async (ctx: never) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'kitsu:49002' } }, ctx).next()
-  return (value?.media?.handles ?? []) as { relation: string, node: { uri: string, origin: string, id: string } }[]
+  return (value?.media?.handles ?? []) as { relation: string, node: { uri: string, origin: string, id: string, scope?: string } }[]
 }
 
 /** the nodes, for assertions about WHICH ids get minted */
@@ -77,6 +77,8 @@ test('a series link is handed to the owning origin as a show plus a date', async
   // the SEASON-scoped id it named, never the show id it was handed
   expect(handles.map(handle => handle.uri)).toContain('cr:G24H1N3MP-GS00374452')
   expect(handles.map(handle => handle.uri)).not.toContain('cr:G24H1N3MP')
+  // and a season is a run, so it goes into the run identity space where the store can union it
+  expect(handles.find(handle => handle.uri === 'cr:G24H1N3MP-GS00374452')?.scope).toBe('RUN')
 })
 
 // The refusal path, and the one that matters most: an origin that cannot place the run answers
@@ -92,6 +94,9 @@ test('an origin that cannot place the run asserts nothing, but keeps the link', 
     .find(handle => handle.node.origin === 'cr')
   expect(cr?.relation, 'the run IS part of that series, which is worth keeping').toBe('PART_OF')
   expect(cr?.node.id).toBe('G24H1N3MP')
+  // the series id is stamped into the CONTAINER space by `partOf`, so even a later source claiming
+  // sameness with `cr:G24H1N3MP` is read as PART_OF by the store rather than welding this run to it
+  expect(cr?.node.scope, 'a /series/ id is every season at once').toBe('CONTAINER')
 })
 
 // No date is no basis on which the other source could tell our run from its neighbours, so the ask is

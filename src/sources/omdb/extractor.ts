@@ -1,5 +1,5 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
@@ -36,16 +36,20 @@ interface OmdbDetail extends OmdbResult {
 interface OmdbEpisodeEntry { Title?: string, Episode?: string, imdbID?: string }
 interface OmdbSeason { Episodes?: OmdbEpisodeEntry[] }
 
-const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: string, Type?: string }, handles: GQLMedia[] = []): GQLMedia | undefined => {
+// The row is keyed by an IMDb id and IMDb models no seasons, so a series row names the whole show
+// and is CONTAINER, as is the imdb handle minted beside it. A movie's id names the film: RUN.
+const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: string, Type?: string }): GQLMedia | undefined => {
   const id = result.imdbID
   if (!id) return undefined
   const rating = na(result.imdbRating)
   const year = na(result.Year)?.match(/\d{4}/)?.[0]
+  const scope: MediaScope = result.Type === 'movie' ? 'RUN' : 'CONTAINER'
   return makeMedia({
     origin,
     id,
     url: `https://www.imdb.com/title/${id}`,
-    handles,
+    scope,
+    handles: [makeMedia({ origin: 'imdb', id, url: `https://www.imdb.com/title/${id}`, scope })],
     categories: result.Type === 'movie' ? ['MOVIE'] : ['SERIES'],
     score: SCORE,
     titles: result.Title ? [{ language: 'en', title: result.Title, score: SCORE }] : [],
@@ -55,8 +59,6 @@ const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: strin
     startDate: year ? `${year}-01-01` : undefined,
   })
 }
-
-const buildHandles = (id: string): GQLMedia[] => [makeMedia({ origin: 'imdb', id, url: `https://www.imdb.com/title/${id}` })]
 
 const normalizeEpisode = (episode: OmdbEpisodeEntry, season: number, mediaId: string, mediaUri: string): GQLEpisode =>
   makeEpisode({
@@ -82,7 +84,7 @@ const fetchEpisodes = async (id: string, totalSeasons: number, mediaUri: string,
 const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
   const detail = await api<OmdbDetail>(`i=${id}&plot=full`, ctx)
   if (!detail || detail.Response === 'False') return undefined
-  const media = normalizeMedia(detail, buildHandles(id))
+  const media = normalizeMedia(detail)
   if (!media) return undefined
   // A SHOW with more than one season has no honest episode list here, and this media is show level by
   // construction: its id is an IMDb id, which is the one origin `worker/store/db.ts` exempts outright
@@ -111,7 +113,7 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
 const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
   const res = await api<{ Search?: OmdbResult[] }>(`s=${encodeURIComponent(query)}`, ctx)
   return (res?.Search ?? [])
-    .map(result => result.imdbID ? normalizeMedia(result, buildHandles(result.imdbID)) : undefined)
+    .map(normalizeMedia)
     .filter((media): media is GQLMedia => !!media)
 }
 

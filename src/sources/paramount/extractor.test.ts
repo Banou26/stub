@@ -62,3 +62,12 @@ test('a show whose episodes are all one season keeps them', async () => {
   expect(media.episodes).toHaveLength(3)
   expect(media.episodeCount).toBe(3)
 })
+
+// The slug is the show's, so the row lives in the CONTAINER identity space: a run that claims to be it
+// is read by the store as PART_OF and unions nothing. This source mints no run at all, so the RUN
+// control for the same stamp is unogs', whose film and season ids sit next to its bare series id.
+test('the show slug is scoped CONTAINER', async () => {
+  const media = await mediaFor([episode(1, 1), episode(2, 1)]) as { scope?: string }
+
+  expect(media.scope, 'paramount:<slug> is the whole show').toBe('CONTAINER')
+})

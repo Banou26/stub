@@ -96,12 +96,13 @@ const parseSeason = (html: string): TmdbEpisode[] => {
 // three seasons of Mushoku Tensei even after JustWatch stopped doing the same thing.
 //
 // '-s<n>' is the suffix TMDB's own episode ids already use ('94664-s3e1'), so the two stay one id
-// space. A show-level id is still minted for SEARCH results, where there is no cluster to corrupt and
-// TMDB genuinely is describing the show; it no longer collides with the season-scoped ones.
+// space. The bare show id is still minted for SEARCH results, and for a show page with no season to
+// pick, scoped CONTAINER so the store keeps it out of every run's identity space.
 const normalizeMedia = (m: TmdbMedia, seasonNumber?: number): GQLMedia =>
   makeMedia({
     origin,
     id: seasonNumber == null ? m.id : seasonScopedId(m.id, seasonNumber),
+    scope: seasonNumber == null ? 'CONTAINER' : 'RUN',
     url: `${BASE}/tv/${m.id}`,
     categories: ['SERIES'],
     score: SCORE,

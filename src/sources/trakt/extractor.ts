@@ -73,10 +73,14 @@ const api = <T>(path: string, ctx: ExtractorServerContext): Promise<T | undefine
 
 const mediaId = (ids?: TraktIds): string | undefined => ids?.slug ?? (ids?.trakt !== undefined ? String(ids.trakt) : undefined)
 
+// Everything this source mints is CONTAINER: it reads /shows/ and /search/show only, so a row is
+// trakt's show slug and the imdb and tmdb ids on it are the show's, identical for every season. The
+// bare tmdb tv id is the one to watch, since tmdb is not in the store's show-level backstop and
+// `tmdb/extractor.ts` mints real `<id>-s<n>` runs that a bare id must never be unioned with.
 const buildHandles = (ids?: TraktIds): GQLMedia[] => {
   const handles: GQLMedia[] = []
-  if (ids?.imdb) handles.push(makeMedia({ origin: 'imdb', id: ids.imdb, url: `https://www.imdb.com/title/${ids.imdb}` }))
-  if (ids?.tmdb !== undefined) handles.push(makeMedia({ origin: 'tmdb', id: String(ids.tmdb), url: `https://www.themoviedb.org/tv/${ids.tmdb}` }))
+  if (ids?.imdb) handles.push(makeMedia({ origin: 'imdb', id: ids.imdb, url: `https://www.imdb.com/title/${ids.imdb}`, scope: 'CONTAINER' }))
+  if (ids?.tmdb !== undefined) handles.push(makeMedia({ origin: 'tmdb', id: String(ids.tmdb), url: `https://www.themoviedb.org/tv/${ids.tmdb}`, scope: 'CONTAINER' }))
   return handles
 }
 
@@ -88,6 +92,7 @@ const normalizeMedia = (show: TraktShow): GQLMedia | undefined => {
     origin,
     id,
     url: `https://trakt.tv/shows/${id}`,
+    scope: 'CONTAINER',
     handles: buildHandles(show.ids),
     categories: ['SERIES'],
     score: SCORE,

@@ -1,11 +1,12 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaHandle as GQLMediaHandle } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaHandle as GQLMediaHandle, MediaScope } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
 // the same job over the same provider urls, shape tested per host and measured against a 3168 offer corpus
 import { extractContentId, providerContentId } from '../justwatch/id'
-import { partOf } from '../utils'
+import { mintableAsFilmHandle, streamPointers } from '../kitsu/stream-id'
+import { partOf, sameAs } from '../utils'
 
 const SCORE = 0.25
 
@@ -90,10 +91,11 @@ const streamOriginForHost = (host: string): string | undefined =>
  * concept anywhere in this file, so it passes no season number, which is what makes the crunchyroll
  * refusal fire: a bare `/series/` id names the show and, on Crunchyroll, its films too.
  *
- * EVERY ID THAT SURVIVES IS STILL SHOW LEVEL, which is why this source was unplugged on 2026-09-04 and
- * why it is back: they are minted PART_OF now. A watchmode record IS the show, so `nf:80987039` off one
- * names the Netflix title and not this run. As SAME_AS that welded every run of the show; as PART_OF it
- * is just the link, which is the only thing this source was ever for.
+ * EVERY ID THAT SURVIVES OFF A SERIES IS STILL SHOW LEVEL, which is why this source was unplugged on
+ * 2026-09-04 and why it is back: they are minted PART_OF now. A watchmode series record IS the show, so
+ * `nf:80987039` off one names the Netflix title and not this run. As SAME_AS that welded every run of
+ * the show; as PART_OF it is just the link, which is the only thing this source was ever for. A FILM's
+ * per-title id is the exception, see `sourceToHandle`.
  *
  * THE FALLBACK IS GONE, and that is deliberate. It used to mint the WATCHMODE title id under the
  * provider's origin whenever the url would not parse, which asserts an id from one space inside
@@ -105,7 +107,15 @@ const streamContentId = (webUrl: string, mappedOrigin: string): string | undefin
   return rawContentId ? providerContentId(mappedOrigin, rawContentId) : undefined
 }
 
-const sourceToHandle = (source: WatchmodeSource): GQLMediaHandle | undefined => {
+/**
+ * A film's per-title id names the film itself, and `partOf` is the CONTAINER stamp: minted that way,
+ * `nf:70000022` off a film arrived stamped CONTAINER, the flip is sticky in the store, and a film that
+ * unogs and justwatch mint under that exact id as its own run lost its Netflix identity for every
+ * later claimant in the session. So a film mints SAME_AS, and only for the ids kitsu's allowlist
+ * measured as per-title (a Netflix /title/ or /watch/, see kitsu/stream-id.ts), read through the same
+ * pointer so the two readers cannot disagree on the id. A series id names the show, as before.
+ */
+const sourceToHandle = (source: WatchmodeSource, film: boolean): GQLMediaHandle | undefined => {
   const webUrl = source.web_url
   if (!webUrl) return undefined
   let host: string
@@ -118,7 +128,10 @@ const sourceToHandle = (source: WatchmodeSource): GQLMediaHandle | undefined => 
   if (!mappedOrigin) return undefined
   const id = streamContentId(webUrl, mappedOrigin)
   if (!id) return undefined
-  return partOf(makeMedia({ origin: mappedOrigin, id, url: webUrl }))
+  const node = makeMedia({ origin: mappedOrigin, id, url: webUrl })
+  const pointer = streamPointers([webUrl])[0]
+  if (film && pointer?.origin === mappedOrigin && pointer.id === id && mintableAsFilmHandle(pointer)) return sameAs(node)
+  return partOf(node)
 }
 
 /**
@@ -165,6 +178,11 @@ const dedupeHandles = (handles: GQLMediaHandle[]): GQLMediaHandle[] => {
 const categoriesForType = (type: string | undefined): ('MOVIE' | 'SERIES')[] =>
   type && (type.includes('movie') || type.includes('short_film')) ? ['MOVIE'] : ['SERIES']
 
+// Watchmode has no season concept, so a series record is the whole show: one id for every run of it.
+// That is a CONTAINER, and only a film, which is its own single run, is a RUN.
+const scopeForType = (type: string | undefined): MediaScope =>
+  categoriesForType(type)[0] === 'MOVIE' ? 'RUN' : 'CONTAINER'
+
 const normalizeSearchResult = (result: WatchmodeSearchResult): GQLMedia | undefined => {
   const wmId = result.id
   if (wmId == null) return undefined
@@ -175,6 +193,7 @@ const normalizeSearchResult = (result: WatchmodeSearchResult): GQLMedia | undefi
     url: `https://www.watchmode.com/title/${id}/`,
     handles: idHandles(result),
     score: SCORE,
+    scope: scopeForType(result.type),
     categories: categoriesForType(result.type),
     titles: result.name ? [{ language: 'en', title: result.name, score: SCORE }] : [],
   })
@@ -185,8 +204,9 @@ const normalizeDetail = (detail: WatchmodeDetail, sources: WatchmodeSource[]): G
   if (wmId == null) return undefined
   const id = String(wmId)
   const rating = detail.user_rating
+  const film = categoriesForType(detail.type)[0] === 'MOVIE'
   const sourceHandles = sources
-    .map(source => sourceToHandle(source))
+    .map(source => sourceToHandle(source, film))
     .filter((handle): handle is GQLMediaHandle => !!handle)
   return makeMedia({
     origin,
@@ -194,6 +214,7 @@ const normalizeDetail = (detail: WatchmodeDetail, sources: WatchmodeSource[]): G
     url: `https://www.watchmode.com/title/${id}/`,
     handles: dedupeHandles([...idHandles(detail), ...sourceHandles]),
     score: SCORE,
+    scope: scopeForType(detail.type),
     categories: categoriesForType(detail.type),
     titles: detail.title ? [{ language: 'en', title: detail.title, score: SCORE }] : [],
     ...desc(detail.plot_overview ?? undefined, SCORE),

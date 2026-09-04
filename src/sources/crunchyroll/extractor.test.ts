@@ -162,3 +162,81 @@ test('a date that names only a year or a month is refused before the window', as
   expect(await askSeason({ showId: 'G24H1N3MP', startDate: '2026-01-01T00:00:00Z' }, MUSHOKU)).toBeNull()
   expect(await askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-01T00:00:00Z' }, MUSHOKU)).toBeNull()
 })
+
+// SCOPE. A media in this store is one run, and a bare Crunchyroll series id is the same for every
+// season, so it names the show and not any run. Handed to the store as a RUN it entered a run's
+// SAME_AS cluster and welded seasons together (Mushoku Tensei season 1 to season 3 on the live site,
+// through exactly cr:G24H1N3MP). The source stamps CONTAINER on it from its own grammar: no season
+// segment, no run.
+test('a show-level id is scoped CONTAINER', async () => {
+  const media = await getMedia('G24H1N3MP', context(MUSHOKU))
+
+  expect(media?.uri).toBe('cr:G24H1N3MP')
+  expect(media?.scope).toBe('CONTAINER')
+})
+
+// The controls. A stamp that said CONTAINER on everything would pass the test above and take every
+// run out of its own identity space, so both run shapes have to read RUN: the season-scoped id, and
+// the single-season series asked by its bare id, which resolves to its one season and so is a run.
+test('a season-scoped id is scoped RUN', async () => {
+  const media = await getMedia('G24H1N3MP-GS00374452', context(MUSHOKU))
+
+  expect(media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+  expect(media?.scope).toBe('RUN')
+})
+
+test('a single-season series asked by its bare id resolves to its one run and is scoped RUN', async () => {
+  const media = await getMedia('SOLO', context(series('SOLO', [{ id: 'GSONLY', seasonNumber: 1, episodes: 3 }])))
+
+  expect(media?.uri).toBe('cr:SOLO-GSONLY')
+  expect(media?.scope).toBe('RUN')
+})
+
+const SEARCH = (query: string, items: { id: string, title: string }[]) => ({
+  [`https://www.crunchyroll.com/content/v2/discover/search?q=${encodeURIComponent(query)}&n=50&type=series&locale=en-US`]: {
+    data: [{
+      type: 'series',
+      items: items.map(item => ({
+        id: item.id,
+        title: item.title,
+        slug_title: item.title.toLowerCase().replace(/\s+/g, '-'),
+        description: 'A show.',
+        images: {},
+        series_metadata: { episode_count: 61, series_launch_year: 2021 }
+      }))
+    }]
+  }
+})
+
+// Search answers series, and a series row is minted under the bare id, so every search hit is a
+// container. This is the other site that mints bare ids, and the one whose rows reach the store's
+// fuzzy merge first.
+test('search rows are minted under the bare series id and scoped CONTAINER', async () => {
+  const subscribe = (resolvers.Subscription as any).mediaPage.subscribe
+  const routes = SEARCH('mushoku', [{ id: 'G24H1N3MP', title: 'Mushoku Tensei' }, { id: 'GRDV0019R', title: 'Jujutsu Kaisen' }])
+  const { value } = await subscribe(undefined, { input: { search: 'mushoku' } }, context(routes)).next()
+  const nodes = value.mediaPage.nodes as { uri: string, scope?: string | null }[]
+
+  expect(nodes.map(node => node.uri)).toEqual(['cr:G24H1N3MP', 'cr:GRDV0019R'])
+  expect(nodes.map(node => node.scope)).toEqual(['CONTAINER', 'CONTAINER'])
+})
+
+// The search-and-link path always resolves a season-scoped id, so the media it returns is a run, and
+// the handles it builds from the aggregated uri are bare SAME_AS claims carrying no container scope:
+// a SAME_AS between two RUN rows is what unions the cluster, once the store has both rows.
+test('the handles built on the search path carry the run scope of the media they attach to', async () => {
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const known = { titles: [{ language: 'en', title: 'Mushoku Tensei', score: 1 }], startDate: '2026-07-04T00:00:00Z' }
+  const ctx = Object.assign(
+    context({ ...MUSHOKU, ...SEARCH('Mushoku Tensei', [{ id: 'G24H1N3MP', title: 'Mushoku Tensei' }]) }),
+    { findAggregatedMedia: async () => known, listenForMediaChanges: async function* () {} }
+  )
+  const { value } = await subscribe(undefined, { input: { uri: 'ag:(anilist:108465,kitsu:42323)' } }, ctx).next()
+  const media = value.media
+
+  expect(media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+  expect(media?.scope).toBe('RUN')
+  expect(media?.handles.map((handle: { node: { uri: string }, relation: string }) => [handle.node.uri, handle.relation]))
+    .toEqual([['anilist:108465', 'SAME_AS'], ['kitsu:42323', 'SAME_AS']])
+  expect(media?.handles.map((handle: { node: { scope?: string | null } }) => handle.node.scope)).toEqual(['RUN', 'RUN'])
+})

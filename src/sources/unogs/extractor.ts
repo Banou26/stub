@@ -1,5 +1,5 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch } from '../utils'
 import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
@@ -128,6 +128,10 @@ const decode = (str: string): string =>
 
 const httpsUrl = (url: string) => url.replace(/^http:/, 'https:')
 
+// A bare `nf:<netflixid>` is the whole Netflix TITLE: exact for a film, every season at once for a
+// series. Only the season rewrite in `getMedia` turns a series id into a run.
+const titleScope = (vtype: string | undefined): MediaScope => vtype === 'movie' ? 'RUN' : 'CONTAINER'
+
 const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia => {
   const covers: { url: string, score: number }[] = []
   const banners: { url: string, score: number }[] = []
@@ -147,6 +151,7 @@ const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia =
     id: String(title.netflixid),
     url: `https://www.netflix.com/title/${title.netflixid}`,
     score: SCORE,
+    scope: titleScope(title.vtype),
     categories: title.vtype === 'movie' ? ['MOVIE'] : ['SERIES'],
     titles: [{ language: 'en', title: decode(title.title), score: SCORE }],
     ...desc(title.synopsis ? decode(title.synopsis) : undefined, SCORE),
@@ -162,6 +167,7 @@ const normalizeSearchResult = (result: UnogsSearchResult): GQLMedia =>
     id: String(result.nfid),
     url: `https://www.netflix.com/title/${result.nfid}`,
     score: SCORE,
+    scope: titleScope(result.vtype),
     categories: result.vtype === 'movie' ? ['MOVIE'] : ['SERIES'],
     titles: [{ language: 'en', title: decode(result.title), score: SCORE }],
     ...desc(result.synopsis ? decode(result.synopsis) : undefined, SCORE),
@@ -248,6 +254,7 @@ export const getMedia = async (
   if (seasonNumber != null) {
     media.id = `${media.id}-${seasonNumber}`
     media.uri = toUri({ origin, id: media.id })
+    media.scope = 'RUN'
     // A SEASON-scoped media may never carry the SHOW's year, and only the id used to be rewritten here.
     //
     // `normalizeTitle` stamps `${title.year}-01-01`, which is Netflix's year for the whole TITLE, so

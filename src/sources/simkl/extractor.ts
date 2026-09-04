@@ -1,5 +1,5 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaCategory, MediaScope } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
@@ -80,6 +80,16 @@ const episodesPath = (type: SimklType): string => (type === 'tv' ? '/tv/episodes
 const normalizeType = (endpoint?: string): SimklType => (endpoint === 'anime' ? 'anime' : endpoint === 'movies' ? 'movies' : 'tv')
 const categoriesForType = (type: SimklType): MediaCategory[] => (type === 'movies' ? ['MOVIE'] : type === 'anime' ? ['ANIME', 'SERIES'] : ['SERIES'])
 
+// A tv record is one show with every season under it (its episodes carry a season field), so it is a
+// CONTAINER. An anime record is one run, the reason this source is worth reading: Mushoku Tensei is
+// five records here, each with its own mal, anilist and kitsu id. A movie is a run.
+const scopeForType = (type: SimklType): MediaScope => (type === 'tv' ? 'CONTAINER' : 'RUN')
+
+// The imdb id on a tv or anime record is the SHOW's, identical across every run (all five Mushoku
+// Tensei records carry tt13303712), so it is CONTAINER unless the record is a film, whose imdb id
+// names the film itself. mal, anilist and kitsu number per run and stay RUN.
+const imdbScopeForType = (type: SimklType): MediaScope => (type === 'movies' ? 'RUN' : 'CONTAINER')
+
 /**
  * The handles a simkl id block is worth minting.
  *
@@ -106,10 +116,10 @@ const categoriesForType = (type: SimklType): MediaCategory[] => (type === 'movie
  * The cost is the TMDB link disappearing from a simkl-sourced media, which is the same trade `db.ts`
  * already recorded for imdb and the smaller loss.
  */
-const buildHandles = (ids?: SimklIds): GQLMedia[] => {
+const buildHandles = (ids: SimklIds | undefined, type: SimklType): GQLMedia[] => {
   if (!ids) return []
   const handles: GQLMedia[] = []
-  if (ids.imdb) handles.push(makeMedia({ origin: 'imdb', id: ids.imdb, url: `https://www.imdb.com/title/${ids.imdb}` }))
+  if (ids.imdb) handles.push(makeMedia({ origin: 'imdb', id: ids.imdb, url: `https://www.imdb.com/title/${ids.imdb}`, scope: imdbScopeForType(type) }))
   if (ids.mal) handles.push(makeMedia({ origin: 'mal', id: ids.mal, url: `https://myanimelist.net/anime/${ids.mal}` }))
   if (ids.anilist) handles.push(makeMedia({ origin: 'anilist', id: ids.anilist, url: `https://anilist.co/anime/${ids.anilist}` }))
   if (ids.kitsu) handles.push(makeMedia({ origin: 'kitsu', id: ids.kitsu, url: `https://kitsu.io/anime/${ids.kitsu}` }))
@@ -136,7 +146,8 @@ const normalizeSearch = (entry: SimklSearchEntry): GQLMedia | undefined => {
     origin,
     id: String(id),
     url: `https://simkl.com/${type}/${id}`,
-    handles: buildHandles(entry.ids),
+    scope: scopeForType(type),
+    handles: buildHandles(entry.ids, type),
     categories: categoriesForType(type),
     score: SCORE,
     titles: buildTitles(entry.title),
@@ -151,7 +162,8 @@ const normalizeDetail = (detail: SimklDetail, id: string, type: SimklType): GQLM
     origin,
     id,
     url: `https://simkl.com/${type}/${id}`,
-    handles: buildHandles(detail.ids),
+    scope: scopeForType(type),
+    handles: buildHandles(detail.ids, type),
     categories: categoriesForType(type),
     score: SCORE,
     titles: buildTitles(detail.title, detail.en_title),

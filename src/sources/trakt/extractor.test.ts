@@ -6,7 +6,8 @@
 // 2026-08-31 through the same mechanism: 24 rows on a 14 episode season page.
 import { expect, test } from 'vitest'
 
-import { resolvers } from './extractor'
+import { resolvers, origin } from './extractor'
+import { makeMedia } from '../utils'
 
 const BASE = 'https://api.trakt.tv'
 
@@ -37,7 +38,7 @@ const mediaFor = async (seasons: ReturnType<typeof season>[]) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'trakt:breaking-bad' } }, context(seasons, misses)).next()
   expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
-  const media = value?.media as { uri?: string, episodes?: unknown[], episodeCount?: number } | null
+  const media = value?.media as { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: unknown[], episodeCount?: number } | null
   // a null media satisfies every `episodes ?? []` assertion below, so it is ruled out here once
   expect(media, 'the media itself must exist; only its episode list is ever refused').not.toBeNull()
   return media!
@@ -63,4 +64,32 @@ test('a show whose episodes are all one season keeps them', async () => {
 
   expect(media.episodes).toHaveLength(7)
   expect(media.episodeCount).toBe(7)
+})
+
+// `trakt:<slug>` names the show, and the imdb and tmdb ids on it are the show's too: the same three
+// ids come back for every season of Breaking Bad. None of them may enter a run's identity space, so
+// the row and both bare handles go out scoped CONTAINER. The tmdb one matters most, because tmdb is not
+// in the store's show-level backstop and a bare tmdb tv id has welded seasons on the live site.
+test('the show row and its bare imdb and tmdb handles are scoped CONTAINER', async () => {
+  const media = await mediaFor([season(1, 7), season(2, 13)])
+
+  expect(media.scope).toBe('CONTAINER')
+  const handles = media.handles.map(handle => handle.node)
+  expect(handles.map(handle => handle.uri).sort()).toEqual(['imdb:tt0903747', 'tmdb:1396'])
+  for (const handle of handles) expect(handle.scope, handle.uri).toBe('CONTAINER')
+})
+
+// Scope comes from the id's grammar, never from the episode list: a show with one season so far is
+// still the show, and its next season will carry the same three ids.
+test('a one-season show is still scoped CONTAINER', async () => {
+  const media = await mediaFor([season(1, 7)])
+
+  expect(media.scope).toBe('CONTAINER')
+  for (const handle of media.handles) expect(handle.node.scope, handle.node.uri).toBe('CONTAINER')
+})
+
+// Trakt mints no run at all (it reads /shows/ only), so the RUN control is the helper's default: the
+// stamp above is this source's, and the assertion would fail without it.
+test('the helper defaults to RUN, so CONTAINER is this source saying so', () => {
+  expect(makeMedia({ origin, id: 'breaking-bad' }).scope).toBe('RUN')
 })

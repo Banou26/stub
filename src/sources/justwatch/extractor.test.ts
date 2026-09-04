@@ -150,3 +150,44 @@ test('a crunchyroll series offer is kept as PART_OF rather than dropped', async 
   expect(cr!.node.id).toBe('GQWH0M1GG')
   expect(cr!.relation, 'it names the whole collection, so it may never be an identity').toBe('PART_OF')
 })
+
+// The scope stamp. Every handle this source mints is a RUN except the one above: a bare /series/ id
+// names the show, so the node has to leave here scoped CONTAINER, which is what keeps it out of every
+// run's identity space in the store. Both halves are read off the edge so a stamp that lands on the
+// wrong node, or on none, fails here rather than as a weld on the live site.
+const scopedEdgesFor = async (uri: string, which: typeof node | typeof film) => {
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const { value } = await subscribe(undefined, { input: { uri } }, context(which)).next()
+  return {
+    media: value?.media as { scope: string } | undefined,
+    edges: (value?.media?.handles ?? []) as { relation: string, node: { origin: string, id: string, scope: string } }[],
+  }
+}
+
+test('a crunchyroll series offer leaves as a CONTAINER, and everything season scoped stays a RUN', async () => {
+  const filmWithSeriesOffer = {
+    ...film,
+    offers: [
+      { monetizationType: 'FLATRATE', standardWebURL: CR_SERIES_OFFER, package: { clearName: 'Crunchyroll', shortName: 'cru' } },
+    ],
+  }
+  const { media, edges } = await scopedEdgesFor('jw:999', filmWithSeriesOffer)
+  const series = edges.find(edge => edge.node.origin === 'cr')
+  expect(series?.node.id).toBe('GQWH0M1GG')
+  expect(series?.node.scope, 'a /series/ id is one id for every run of the show').toBe('CONTAINER')
+  expect(media?.scope, 'the film itself is one run').toBe('RUN')
+
+  // controls: a film's own resolved crunchyroll season and a season-suffixed netflix id both name one
+  // run, and a run that came out CONTAINER would silently lose every SAME_AS it should have taken
+  const { edges: filmEdges } = await scopedEdgesFor('jw:999', film)
+  const resolved = filmEdges.find(edge => edge.node.origin === 'cr')
+  expect(resolved?.node.id).toBe('GSERIES-GSEASON2')
+  expect(resolved?.node.scope).toBe('RUN')
+  expect(resolved?.relation).toBe('SAME_AS')
+
+  const { media: seasonTwo, edges: seasonEdges } = await scopedEdgesFor('jw:12345-111', node)
+  expect(seasonTwo?.scope).toBe('RUN')
+  const netflix = seasonEdges.find(edge => edge.node.origin === 'nf')
+  expect(netflix?.node.id).toBe('80123456-2')
+  expect(netflix?.node.scope).toBe('RUN')
+})

@@ -137,10 +137,17 @@ export const crunchyrollId = (seriesId: string, seasonId?: string, episodeId?: s
 
 const bestImage = (images?: { source: string }[][]) => images?.at(-1)?.at(-1)?.source
 
+// An id with no season segment is the bare series id, which Crunchyroll shares across every season,
+// so it names the SHOW. It enters the store as a CONTAINER and never a run's identity space: the
+// bare cr:G24H1N3MP fuzzy merged into Mushoku Tensei season 1's cluster on the search path is what
+// welded season 1 to season 3 on the live site. Anything carrying a season segment is one run.
+const scopeOf = (id: string, series: CrSeries) => id === series.id ? 'CONTAINER' as const : 'RUN' as const
+
 const normalizeMedia = (id: string, title: string, description: string, series: CrSeries, episodeCount?: number): GQLMedia =>
   makeMedia({
     origin,
     id,
+    scope: scopeOf(id, series),
     url: `https://www.crunchyroll.com/series/${series.id}/${series.slug_title}`,
     score: SCORE,
     categories: ['ANIME', 'SERIES'],

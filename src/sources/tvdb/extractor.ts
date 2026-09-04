@@ -29,13 +29,16 @@ const handleUrl = (handleOrigin: string, id: string): string | undefined =>
   : handleOrigin === 'tmdb' ? `https://www.themoviedb.org/tv/${id}`
   : undefined
 
+// Everything this source mints is CONTAINER: it reads /series/ and searches type=series only, so a
+// row is a series id and the remote ids on it are the series' imdb and tmdb tv ids, identical for
+// every season. A bare tmdb tv id must never be unioned with the `<id>-s<n>` runs tmdb itself mints.
 const buildHandles = (remoteIds?: { id?: string, sourceName?: string }[]): GQLMedia[] => {
   const handles: GQLMedia[] = []
   for (const remote of remoteIds ?? []) {
     const id = remote.id
     const handleOrigin = remote.sourceName ? HANDLE_ORIGINS[remote.sourceName.toLowerCase()] : undefined
     const url = id && handleOrigin ? handleUrl(handleOrigin, id) : undefined
-    if (id && handleOrigin && url) handles.push(makeMedia({ origin: handleOrigin, id, url }))
+    if (id && handleOrigin && url) handles.push(makeMedia({ origin: handleOrigin, id, url, scope: 'CONTAINER' }))
   }
   return handles
 }
@@ -90,6 +93,7 @@ const normalizeSearch = (result: SearchResult): GQLMedia | undefined => {
     origin,
     id,
     url: `https://www.thetvdb.com/series/${id}`,
+    scope: 'CONTAINER',
     handles: buildHandles(result.remote_ids),
     categories: ['SERIES'],
     score: SCORE,
@@ -107,6 +111,7 @@ const normalizeSeries = (series: SeriesExtended): GQLMedia | undefined => {
     origin,
     id,
     url: `https://www.thetvdb.com/series/${id}`,
+    scope: 'CONTAINER',
     handles: buildHandles(series.remoteIds),
     categories: ['SERIES'],
     score: SCORE,

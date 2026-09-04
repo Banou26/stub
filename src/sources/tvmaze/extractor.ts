@@ -56,15 +56,18 @@ interface TvmazeEpisode {
   image?: TvmazeImage | null
 }
 
+// The imdb id is the SHOW's, one for every season, so it is a CONTAINER whichever row carries it.
 const buildHandles = (show: TvmazeShow): GQLMedia[] => {
   const imdb = show.externals?.imdb
-  return imdb ? [makeMedia({ origin: 'imdb', id: imdb, url: `https://www.imdb.com/title/${imdb}` })] : []
+  return imdb ? [makeMedia({ origin: 'imdb', id: imdb, url: `https://www.imdb.com/title/${imdb}`, scope: 'CONTAINER' })] : []
 }
 
 // TVmaze describes a SHOW while a stub media is one season, so a season-scoped media cannot carry the
 // bare show id: every season would hand back the same one and clustering union-finds them into a
-// single media. Same defect TMDB and JustWatch had, same '-s<n>' fix. A show-level id is still minted
-// for SEARCH, where there is no cluster to corrupt and TVmaze genuinely is describing the show.
+// single media. Same defect TMDB and JustWatch had, same '-s<n>' fix. The bare show id is still minted
+// for SEARCH, and for a show with no season to pick, scoped CONTAINER so the store keeps it out of
+// every run's identity space: the live site fuzzy merged 'tvmaze:52279' into Mushoku Tensei season 1
+// and season 3 then asserted sameness through it.
 const normalizeMedia = (
   show: TvmazeShow,
   seasonNumber?: number,
@@ -74,6 +77,7 @@ const normalizeMedia = (
   makeMedia({
     origin,
     id: seasonNumber == null ? String(show.id) : seasonScopedId(show.id, seasonNumber),
+    scope: seasonNumber == null ? 'CONTAINER' : 'RUN',
     url: show.url ?? `https://www.tvmaze.com/shows/${show.id}`,
     handles,
     categories: ['SERIES'],

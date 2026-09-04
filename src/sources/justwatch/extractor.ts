@@ -6,7 +6,7 @@ import { PACKAGE_ORIGIN_MAP, extractContentId, jwId, providerContentId, showRequ
 import { policyFor, UNKNOWN_POLICY, type RequestPolicy } from '../../worker/request-context'
 import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
 import { rankByTitle, searchQueries, yearAppearsInShow } from '../catalogue-gate'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia, partOf, sameAs } from '../utils'
 
 const SCORE = 0.2
 
@@ -326,10 +326,11 @@ const buildOffersAsHandles = async (
 
     if (!contentId) continue
 
-    handles.push({
-      node: makeMedia({ origin: mappedOrigin, id: contentId, url }),
-      relation
-    })
+    // `partOf` is also the CONTAINER stamp: the bare /series/ id above names a show, and this is what
+    // keeps it out of every run's identity space. Everything else here is season scoped, or a film's
+    // own resolved season, so it stays a RUN.
+    const node = makeMedia({ origin: mappedOrigin, id: contentId, url })
+    handles.push(relation === 'PART_OF' ? partOf(node) : sameAs(node))
   }
 
   return handles

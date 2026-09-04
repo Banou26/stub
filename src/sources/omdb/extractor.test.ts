@@ -11,6 +11,8 @@ import { expect, test } from 'vitest'
 
 import { resolvers } from './extractor'
 
+type Row = { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: unknown[], episodeCount?: number }
+
 const seasonEpisodes = (n: number) => ({ Episodes: Array.from({ length: n }, (_, i) => ({ Title: `E${i + 1}`, Episode: String(i + 1), imdbID: `tt-s-e${i + 1}` })) })
 
 // `api` swallows a thrown fixture miss with `.catch(() => undefined)`, so a wrong route would report
@@ -21,6 +23,12 @@ const context = (totalSeasons: string | undefined, type: string, misses: string[
   fetch: async (url: string) => {
     if (url.includes('i=tt0903747&plot=full')) {
       return { json: async () => ({ imdbID: 'tt0903747', Title: 'Breaking Bad', Type: type, Year: '2008', totalSeasons, Response: 'True' }) }
+    }
+    if (url.includes('&s=')) {
+      return { json: async () => ({ Search: [
+        { imdbID: 'tt0903747', Title: 'Breaking Bad', Type: 'series', Year: '2008' },
+        { imdbID: 'tt0137523', Title: 'Fight Club', Type: 'movie', Year: '1999' },
+      ] }) }
     }
     const season = url.match(/Season=(\d+)/)?.[1]
     if (season) return { json: async () => seasonEpisodes(Number(season) === 1 ? 7 : 13) }
@@ -34,7 +42,7 @@ const mediaFor = async (totalSeasons: string | undefined, type = 'series') => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'omdb:tt0903747' } }, context(totalSeasons, type, misses)).next()
   expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
-  const media = value?.media as { uri?: string, episodes?: unknown[], episodeCount?: number } | null
+  const media = value?.media as Row | null
   // a null media satisfies every `episodes ?? []` assertion below, so it is ruled out here once
   expect(media, 'the media itself must exist; only its episode list is ever refused').not.toBeNull()
   return media!
@@ -70,4 +78,45 @@ test('a movie is unaffected and still gets its single synthetic episode', async 
 
   expect(media.episodes).toHaveLength(1)
   expect(media.episodeCount).toBe(1)
+})
+
+// Scope. The row is keyed by an IMDb id, and IMDb models no seasons, so a series row is the show and
+// its imdb handle is the show's id: both CONTAINER. A movie's imdb id names the film: both RUN.
+test('a series row and its imdb handle are scoped CONTAINER', async () => {
+  const media = await mediaFor('5')
+
+  expect(media.scope).toBe('CONTAINER')
+  expect(media.handles.map(handle => handle.node.uri)).toEqual(['imdb:tt0903747'])
+  expect(media.handles[0]!.node.scope).toBe('CONTAINER')
+})
+
+// Scope comes from what the id names, never from the season count: one season so far is still the show.
+test('a single-season series is still scoped CONTAINER', async () => {
+  const media = await mediaFor('1')
+
+  expect(media.scope).toBe('CONTAINER')
+  expect(media.handles[0]!.node.scope).toBe('CONTAINER')
+})
+
+test('a movie row and its imdb handle are scoped RUN', async () => {
+  const media = await mediaFor(undefined, 'movie')
+
+  expect(media.scope).toBe('RUN')
+  expect(media.handles.map(handle => handle.node.uri)).toEqual(['imdb:tt0903747'])
+  expect(media.handles[0]!.node.scope).toBe('RUN')
+})
+
+// The search path reads Type off each hit and mints through the same normalizer.
+test('search rows follow their Type', async () => {
+  const misses: string[] = []
+  const subscribe = (resolvers.Subscription as any).mediaPage.subscribe
+  const { value } = await subscribe(undefined, { input: { search: 'x' } }, context(undefined, 'series', misses)).next()
+  expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
+  const rows = value?.mediaPage?.nodes as Row[]
+  const byId = Object.fromEntries(rows.map(row => [row.uri, row]))
+
+  expect(byId['omdb:tt0903747']!.scope).toBe('CONTAINER')
+  expect(byId['omdb:tt0903747']!.handles[0]!.node.scope).toBe('CONTAINER')
+  expect(byId['omdb:tt0137523']!.scope).toBe('RUN')
+  expect(byId['omdb:tt0137523']!.handles[0]!.node.scope).toBe('RUN')
 })

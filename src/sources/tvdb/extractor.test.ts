@@ -6,9 +6,15 @@
 // asked for. Measured live 2026-08-31 through the same mechanism: 24 rows on a 14 episode season page.
 import { expect, test } from 'vitest'
 
-import { resolvers } from './extractor'
+import { resolvers, origin } from './extractor'
+import { makeMedia } from '../utils'
 
 const BASE = 'https://api4.thetvdb.com/v4'
+
+// the two remote ids buildHandles maps, spelled the way HANDLE_ORIGINS reads them
+const REMOTE_IDS = [{ id: 'tt0944947', sourceName: 'IMDB' }, { id: '1399', sourceName: 'TheMovieDB' }]
+
+type Row = { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: unknown[], episodeCount?: number }
 
 const episode = (seasonNumber: number, number: number) => ({
   id: seasonNumber * 1000 + number,
@@ -28,7 +34,10 @@ const context = (episodes: ReturnType<typeof episode>[], misses: string[]) => ({
       return { ok: true, status: 200, json: async () => ({ data: { token: 'test-token' } }) }
     }
     if (url.startsWith(`${BASE}/series/121361/extended`)) {
-      return { ok: true, status: 200, json: async () => ({ data: { id: 121361, name: 'Game of Thrones', firstAired: '2011-04-17' } }) }
+      return { ok: true, status: 200, json: async () => ({ data: { id: 121361, name: 'Game of Thrones', firstAired: '2011-04-17', remoteIds: REMOTE_IDS } }) }
+    }
+    if (url.startsWith(`${BASE}/search?query=`)) {
+      return { ok: true, status: 200, json: async () => ({ data: [{ tvdb_id: '121361', name: 'Game of Thrones', remote_ids: REMOTE_IDS }] }) }
     }
     if (url.startsWith(`${BASE}/series/121361/episodes/default`)) {
       return { ok: true, status: 200, json: async () => ({ data: { episodes }, links: {} }) }
@@ -43,7 +52,7 @@ const mediaFor = async (episodes: ReturnType<typeof episode>[]) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'tvdb:121361' } }, context(episodes, misses)).next()
   expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
-  const media = value?.media as { uri?: string, episodes?: unknown[], episodeCount?: number } | null
+  const media = value?.media as Row | null
   // a null media satisfies every `episodes ?? []` assertion below, so it is ruled out here once
   expect(media, 'the media itself must exist; only its episode list is ever refused').not.toBeNull()
   return media!
@@ -72,4 +81,42 @@ test('a series whose episodes are all one season keeps them', async () => {
 
   expect(media.episodes).toHaveLength(3)
   expect(media.episodeCount).toBe(3)
+})
+
+// `tvdb:<seriesId>` names the whole series and the imdb and tmdb ids on it are the series' too, so
+// none of them may enter a run's identity space: the row and both bare handles go out CONTAINER.
+test('the series row and its bare imdb and tmdb handles are scoped CONTAINER', async () => {
+  const media = await mediaFor([episode(1, 1), episode(2, 1)])
+
+  expect(media.scope).toBe('CONTAINER')
+  const handles = media.handles.map(handle => handle.node)
+  expect(handles.map(handle => handle.uri).sort()).toEqual(['imdb:tt0944947', 'tmdb:1399'])
+  for (const handle of handles) expect(handle.scope, handle.uri).toBe('CONTAINER')
+})
+
+// Scope comes from the id's grammar, never from the episode list: one season so far is still the series.
+test('a one-season series is still scoped CONTAINER', async () => {
+  const media = await mediaFor([episode(1, 1), episode(1, 2)])
+
+  expect(media.scope).toBe('CONTAINER')
+})
+
+// Search mints through its own normalizer, so it gets its own assertion.
+test('a search hit is scoped CONTAINER with its handles', async () => {
+  const misses: string[] = []
+  const subscribe = (resolvers.Subscription as any).mediaPage.subscribe
+  const { value } = await subscribe(undefined, { input: { search: 'game of thrones' } }, context([], misses)).next()
+  expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
+  const rows = value?.mediaPage?.nodes as Row[]
+
+  expect(rows.map(row => row.uri)).toEqual(['tvdb:121361'])
+  expect(rows[0]!.scope).toBe('CONTAINER')
+  expect(rows[0]!.handles.map(handle => handle.node.uri).sort()).toEqual(['imdb:tt0944947', 'tmdb:1399'])
+  for (const handle of rows[0]!.handles) expect(handle.node.scope, handle.node.uri).toBe('CONTAINER')
+})
+
+// TVDB mints no run at all (it reads /series/ only), so the RUN control is the helper's default: the
+// stamp above is this source's, and the assertion would fail without it.
+test('the helper defaults to RUN, so CONTAINER is this source saying so', () => {
+  expect(makeMedia({ origin, id: '121361' }).scope).toBe('RUN')
 })

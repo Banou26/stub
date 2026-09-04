@@ -51,8 +51,9 @@ const fetchEpisodes = async (slug: string, mediaUri: string, ctx: ExtractorServe
 }
 
 const getMedia = async (slug: string, ctx: ExtractorServerContext): Promise<GQLMedia> => {
-  const media = makeMedia({ origin, id: slug, url: `${BASE}/shows/${slug}`, score: SCORE, categories: ['SERIES'] })
-  // This media is SHOW level by construction: its id is the show's slug, and the fetch above asks for
+  const media = makeMedia({ origin, id: slug, url: `${BASE}/shows/${slug}`, score: SCORE, scope: 'CONTAINER', categories: ['SERIES'] })
+  // This media is SHOW level by construction, which is what the CONTAINER scope says: its id is the
+  // show's slug, so no run may claim sameness with it. The fetch above asks for
   // `season/0` at `size/100000`, which is every episode of every season. Every media in this store is
   // one run, so `episodeNumber` is within-season, and flattening several seasons into one list collides
   // them: `store/db.ts` hangs a HAS_EPISODE edge off this uri for each, and `Media.episodes` groups the
