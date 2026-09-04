@@ -81,6 +81,10 @@ const unwrapMediaCache = new WeakMap<GQLMedia, GQLMedia[]>()
  *
  * The copy is what enforces it. Returning the node untouched would leave `handles` populated for the
  * pair loop in worker/extractor.ts to read, so the subtree has to be cut here rather than there.
+ *
+ * KEPT DELIBERATELY, and weighed against letting a container contribute its handles after all. Nothing
+ * in the tree mints a PART_OF node carrying any, so the choice was only ever about which way the
+ * default fails, and unrelated media being read as SAME_AS is the failure with no inverse.
  */
 export function recursivelyUnwrapMediaHandles(media: GQLMedia): GQLMedia[] {
   if (unwrapMediaCache.has(media)) return unwrapMediaCache.get(media)!
