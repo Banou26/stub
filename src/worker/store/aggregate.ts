@@ -58,13 +58,37 @@ export const sameAsHandleUris = (handles: { relation: string, node: { uri: strin
   (handles ?? []).filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node.uri)
 
 const unwrapMediaCache = new WeakMap<GQLMedia, GQLMedia[]>()
+
+/**
+ * Flatten a media and everything hanging off it into the rows the store should hold.
+ *
+ * EVERY node becomes a row, whatever it claims: this walk feeds `graph.set`, and a PART_OF node has to
+ * be stored or its url can never be rendered. The relation decides how a node is LINKED, in
+ * `upsertMedia`, not whether it is stored.
+ *
+ * THE WALK STOPS AT A PART_OF NODE, and that is the load bearing part. A PART_OF node is a CONTAINER,
+ * usually a show, and its own handles are claims about the CONTAINER rather than about the run that
+ * pointed at it. Carrying them through means two different runs, each hanging PART_OF off the same
+ * show, each contribute a SAME_AS pair rooted at that show:
+ *
+ *     season 1 -PART_OF-> cr:SERIES -SAME_AS-> kitsu:42323
+ *     season 3 -PART_OF-> cr:SERIES -SAME_AS-> kitsu:49002
+ *
+ * and `cr:SERIES` is one uri, so the union-find puts kitsu:42323 and kitsu:49002 in one cluster. Two
+ * seasons welded, with no inverse, by a relation whose entire purpose is not to weld. The container's
+ * row still arrives, so its url renders; only its claims are dropped, because nothing can reach them
+ * anyway: `findPartOfMedia` returns the direct targets of a cluster and never walks their handles.
+ *
+ * The copy is what enforces it. Returning the node untouched would leave `handles` populated for the
+ * pair loop in worker/extractor.ts to read, so the subtree has to be cut here rather than there.
+ */
 export function recursivelyUnwrapMediaHandles(media: GQLMedia): GQLMedia[] {
   if (unwrapMediaCache.has(media)) return unwrapMediaCache.get(media)!
-  // EVERY node, whatever it claims. This walk feeds `graph.set`, and a PART_OF node has to become a
-  // stored row or its url can never be rendered. The relation decides how it is LINKED, in
-  // `upsertMedia`, not whether it is stored.
   const result = media.handles
-    ? [media, ...media.handles.flatMap(handle => recursivelyUnwrapMediaHandles(handle.node))]
+    ? [media, ...media.handles.flatMap(handle =>
+      handle.relation === 'PART_OF'
+        ? [{ ...handle.node, handles: [] }]
+        : recursivelyUnwrapMediaHandles(handle.node))]
     : [media]
   if (media.handles) unwrapMediaCache.set(media, result)
   return result
