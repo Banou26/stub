@@ -1,17 +1,28 @@
 /**
- * Whether a film's page still carries a Crunchyroll link that names the SERIES, run against a deployed
- * origin. Not a test: it drives the live site, so it lives here and is run by hand.
+ * Whether a film still CARRIES its provider links, run against a deployed origin. Not a test: it drives
+ * the live site, so it lives here and is run by hand.
  *
  *   node scripts/check-film-weld.mjs https://anime.fkn.app
  *
- * WHAT IT LOOKS AT, and why not the url. `streamHandles` runs in kitsu's `getMedia`, so a film's
- * crunchyroll handle is minted when its page is opened, and the source row it produces renders the
- * link verbatim in the html. The route keeps the uri that was asked for, so watching the address bar
- * proves nothing: an earlier version of this file did exactly that and reported no weld against the
- * UNFIXED build, which is a check that cannot produce a positive.
+ * THE CONTRACT THIS CHECKS INVERTED ON 2026-09-05, and the file is worth reading for that alone.
  *
- * THE CONTROL IS THE SECOND FILM. Koe no Katachi's link is netflix.com/title/80223226, which names the
- * film itself and must survive. A run where both films go quiet has lost the page, not fixed the bug.
+ * It used to assert `crunchyroll.com/series/GQWH0M1GG` was ABSENT from a Dragon Ball Z film's page.
+ * That was right for one day: the id names a collection of fifteen films, and while a handle could only
+ * ever mean "is the same as", the only honest thing to do with it was drop it, so the link disappeared.
+ *
+ * A handle is now an EDGE carrying a relation, so the same link is kept as PART_OF: the film IS part of
+ * that series, the url renders, and nothing is claimed. So the marker must be PRESENT, and this file
+ * asserting its absence would have read as a regression when it is the opposite.
+ *
+ * WHAT THIS FILE CAN AND CANNOT SEE. It reads the rendered html of one page, so it can only answer
+ * "is the link there". It CANNOT tell a PART_OF edge from a SAME_AS weld, because both put the same url
+ * on the page. That half needs the cluster, which is a different observable:
+ *
+ *   node scripts/check-welds.mjs      reads `ag:(...)` hrefs, which ARE the cluster, and is proven to
+ *                                    produce positives (it found the Mushoku S1+S3 weld on 2026-09-05)
+ *
+ * Splitting them is deliberate. One check that half-answers two questions is how the address-bar
+ * version of this file came to report "no weld" against a build that welded.
  *
  * Headless and muted on purpose: it reads the DOM and nothing else, so it has no business taking a
  * window or making a sound on the owner's machine.
@@ -27,7 +38,8 @@ const CASES = [
     uri: 'kitsu:794',
     name: 'Dragon Ball Z Movie 01, one of fifteen films on one /series/ page',
     marker: 'crunchyroll.com/series/GQWH0M1GG',
-    want: 'gone',
+    // kept as PART_OF: the film is part of that collection, and saying so costs nothing
+    want: 'kept',
   },
   {
     uri: 'kitsu:10028',
@@ -57,5 +69,10 @@ for (const { uri, name, marker, want } of CASES) {
 }
 
 console.log(`\n${bad === 0 ? 'both cases as wanted' : `${bad} case(s) wrong`}`)
+console.log(
+  'NOTE: every case here wants the link KEPT, so this run cannot tell a PART_OF edge from a SAME_AS' +
+  '\nweld: both put the same url on the page. It answers "did the links survive" and nothing else.' +
+  '\nFor the weld itself: node scripts/check-welds.mjs'
+)
 await browser.close()
 process.exit(bad ? 1 : 0)
