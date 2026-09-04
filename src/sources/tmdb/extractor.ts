@@ -194,7 +194,8 @@ const getMedia = async (uri: string, id: string, pinned: number | undefined, ctx
 
 const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
   const html = await fetchHtml(`/search/tv?query=${encodeURIComponent(query)}&language=en-US`, ctx)
-  return html ? parseSearch(html).map(normalizeMedia) : []
+  // spelled out so map's index never lands in seasonNumber: it minted the first row as '<id>-s0'
+  return html ? parseSearch(html).map(m => normalizeMedia(m)) : []
 }
 
 export const resolvers: Resolvers = {
