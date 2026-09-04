@@ -9,7 +9,7 @@
 import { beforeEach, expect, test } from 'vitest'
 
 import { aggregateMedia, sameAsHandleUris } from './aggregate'
-import { findAggregatedMedia, resetStore, upsertMedia } from './db'
+import { findAggregatedMedia, linkSameMediaPairs, resetStore, upsertMedia } from './db'
 
 const media = (uri: string, url?: string) => ({
   uri,
@@ -125,4 +125,34 @@ test('the episode read takes SAME_AS uris only, never a PART_OF show', () => {
   expect(sameAsHandleUris(handles), 'a show-level uri here is every run\'s episodes at once')
     .not.toContain('nf:80987039')
   expect(sameAsHandleUris(undefined)).toEqual([])
+})
+
+// THE HOLE THE REFACTOR LEFT, found 2026-09-05 by tracing a live weld rather than by reading.
+//
+// Every guard the handle refactor added lives inside `upsertMedia`'s loop. `linkSameMediaPairs` is a
+// SECOND way into the same union-find, called only by `fuzzyMergeMediaClusters`, and it was a raw
+// `graph.link`: no relation, no demotion, no check. So an origin that no source is allowed to mint as
+// SAME_AS could still be welded to a cour by a title match, and `SHOW_LEVEL_ORIGINS` protected nothing
+// on that path.
+//
+// There is no PART_OF fallback here, because there is no handle: nothing asserted a containment, a
+// title simply looked similar. The pair is refused.
+test('a fuzzy title merge cannot weld a show-level origin either', async () => {
+  await upsertMedia([media('anilist:178789'), media('imdb:tt13303712', IMDB_URL)], [])
+
+  // what fuzzy-merge does when it decides two clusters are one, with no handle between them
+  const changed = linkSameMediaPairs([['anilist:178789', 'imdb:tt13303712']])
+
+  expect(changed, 'the pair must be refused outright').toBe(false)
+  expect((await findAggregatedMedia('anilist:178789')).map(m => m.uri)).toEqual(['anilist:178789'])
+})
+
+// The control: the same call must still work for two origins that CAN name a run, or the refusal has
+// been widened into a ban on fuzzy merging at all.
+test('a fuzzy title merge still unions two per-run origins', async () => {
+  await upsertMedia([media('anilist:178789'), media('kitsu:49002')], [])
+
+  expect(linkSameMediaPairs([['anilist:178789', 'kitsu:49002']])).toBe(true)
+  expect((await findAggregatedMedia('anilist:178789')).map(m => m.uri).sort())
+    .toEqual(['anilist:178789', 'kitsu:49002'])
 })

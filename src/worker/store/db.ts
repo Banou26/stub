@@ -74,9 +74,22 @@ export async function upsertMedia(
   if (changed) emit('media:changed', {})
 }
 
+/**
+ * Union two media that no handle connects, which is what a fuzzy title merge decides.
+ *
+ * IT GOES THROUGH THE SAME REFUSAL `upsertMedia` DOES, and did not until 2026-09-05. Every guard the
+ * handle refactor added lives in `upsertMedia`'s loop, so this path, whose only caller is
+ * `fuzzyMergeMediaClusters`, was a raw `graph.link` with no relation, no demotion and no check: a
+ * show-level origin that could never be minted as SAME_AS by any source could still be welded here by
+ * a title match.
+ *
+ * There is no PART_OF fallback to demote to, because there is no handle and nothing asserted a
+ * containment. A pair naming a show-level origin is simply refused.
+ */
 export function linkSameMediaPairs(pairs: [string, string][]): boolean {
   let changed = false
   for (const [uriA, uriB] of pairs) {
+    if (SHOW_LEVEL_ORIGINS.has(originOf(uriA)) || SHOW_LEVEL_ORIGINS.has(originOf(uriB))) continue
     if (graph.link(uriA, uriB, MEDIA_SAME_AS)) changed = true
   }
   if (changed) emit('media:changed', {})
