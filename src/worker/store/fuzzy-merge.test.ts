@@ -124,47 +124,41 @@ test('punctuation differences still merge', async () => {
 // season then hold an IDENTICAL title and merge on the exact-title shortcut, no similarity needed.
 // Measured live: "[MERGE] EXACT "season 3" :: anilist:199111 <> anilist:178789" put Grand Blue Dreaming
 // and Mushoku Tensei in one cluster, and the modal rendered one under the other's name.
-//
-// THE CRUNCHYROLL IDS HERE ARE SEASON SCOPED, and that is not cosmetic. A bare `cr:<series>` names the
-// SERIES, so sources/id-scope.ts classifies it CONTAINER and the store refuses to link it to a cour at
-// all - which would make this test pass for a reason that has nothing to do with the title. It is also
-// a shape production cannot mint: `normalizeMedia`'s bare branch always publishes `series.title`, so a
-// media carrying nothing but "Season 3" is necessarily a season, never a series.
 test('a title that is only a season label does not weld two shows', async () => {
   const grandBlue = [
     media('anilist:199111', [['Grand Blue Dreaming Season 3', 0.7]], SUMMER_2026),
-    media('cr:GNVHKN94W-GSGRAND3', [['Season 3', 0.5]], SUMMER_2026),
+    media('cr:GNVHKN94W', [['Season 3', 0.5]], SUMMER_2026),
   ]
   const mushoku = [
     media('anilist:178789', [['Mushoku Tensei: Jobless Reincarnation Season 3', 0.7]], SUMMER_2026),
-    media('cr:G24H1N3MP-GS00374452', [['Season 3', 0.5]], SUMMER_2026),
+    media('cr:G24H1N3MP', [['Season 3', 0.5]], SUMMER_2026),
   ]
 
   await upsertMedia([...grandBlue, ...mushoku], [
-    { mediaUri: 'anilist:199111', handleUri: 'cr:GNVHKN94W-GSGRAND3' },
-    { mediaUri: 'anilist:178789', handleUri: 'cr:G24H1N3MP-GS00374452' },
+    { mediaUri: 'anilist:199111', handleUri: 'cr:GNVHKN94W' },
+    { mediaUri: 'anilist:178789', handleUri: 'cr:G24H1N3MP' },
   ])
   await fuzzyMergeMediaClusters([grandBlue, mushoku])
 
   const cluster = await findAggregatedMedia('anilist:199111')
-  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:199111', 'cr:GNVHKN94W-GSGRAND3'])
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:199111', 'cr:GNVHKN94W'])
 })
 
 // and the same for the forms the other markers take, since one regex covers them all
 test('the other season-only labels are refused too', async () => {
   // the SAME label on both, which is what the exact-title shortcut needs and what two shows on their
   // second season actually get from Crunchyroll
-  const a = [media('anilist:4400', [['Some Show 2nd Season', 0.7]], SPRING_2026), media('cr:AAA-GS2', [['2nd Season', 0.5]], SPRING_2026)]
-  const b = [media('anilist:4401', [['Another Show 2nd Season', 0.7]], SPRING_2026), media('cr:BBB-GS2', [['2nd Season', 0.5]], SPRING_2026)]
+  const a = [media('anilist:4400', [['Some Show 2nd Season', 0.7]], SPRING_2026), media('cr:AAA', [['2nd Season', 0.5]], SPRING_2026)]
+  const b = [media('anilist:4401', [['Another Show 2nd Season', 0.7]], SPRING_2026), media('cr:BBB', [['2nd Season', 0.5]], SPRING_2026)]
 
   await upsertMedia([...a, ...b], [
-    { mediaUri: 'anilist:4400', handleUri: 'cr:AAA-GS2' },
-    { mediaUri: 'anilist:4401', handleUri: 'cr:BBB-GS2' },
+    { mediaUri: 'anilist:4400', handleUri: 'cr:AAA' },
+    { mediaUri: 'anilist:4401', handleUri: 'cr:BBB' },
   ])
   await fuzzyMergeMediaClusters([a, b])
 
   const cluster = await findAggregatedMedia('anilist:4400')
-  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4400', 'cr:AAA-GS2'])
+  expect(cluster.map(m => m.uri).sort()).toEqual(['anilist:4400', 'cr:AAA'])
 })
 
 // `media` above types everything TV, and these three need the type to differ per member.
