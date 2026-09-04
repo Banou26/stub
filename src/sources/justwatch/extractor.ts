@@ -3,6 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode , MediaHandle 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 import { PACKAGE_ORIGIN_MAP, extractContentId, jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
+import { policyFor, UNKNOWN_POLICY, type RequestPolicy } from '../../worker/request-context'
 import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
 import { rankByTitle, searchQueries, yearAppearsInShow } from '../catalogue-gate'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia } from '../utils'
@@ -262,7 +263,8 @@ const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
   meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number },
-  ctx: ExtractorServerContext
+  ctx: ExtractorServerContext,
+  policy: RequestPolicy = UNKNOWN_POLICY
 ): Promise<GQLMediaHandle[]> => {
   const seen = new Set<string>()
   const handles: GQLMediaHandle[] = []
@@ -299,7 +301,12 @@ const buildOffersAsHandles = async (
     // A movie is the case that stays, and it is the only one: `showRequiresSeason` has already refused
     // a series with no season by the time this runs, so a null seasonNumber here means a film, whose
     // episode resolves to its own season and identifies it.
-    if (!rawContentId && mappedOrigin === 'cr' && url && meta.seasonNumber == null) {
+    // THE ONE CROSS-SOURCE CALL ON THIS PATH, and the reason the request context exists. Turning a
+    // /watch/<episodeId> url into a series id costs a Crunchyroll token plus a CMS request, PER FILM
+    // RESULT, and `mediaPage` runs this for every hit in a search. Nothing on a results page reads
+    // that id: it identifies the run, which is a detail-view question. So on a listing the offer keeps
+    // its url and loses only the identity claim, and the detail view spends the request as before.
+    if (!rawContentId && mappedOrigin === 'cr' && url && meta.seasonNumber == null && policy.crossSource) {
       const episodeId = extractCrunchyrollEpisodeId(url)
       if (episodeId) {
         const resolved = await resolveEpisodeToSeriesId(episodeId, ctx)
@@ -331,7 +338,8 @@ const buildOffersAsHandles = async (
 const normalizeMedia = async (
   node: JWSearchNode,
   opts: { seasons?: JWSeason[], seasonNumber?: number },
-  ctx: ExtractorServerContext
+  ctx: ExtractorServerContext,
+  policy: RequestPolicy = UNKNOWN_POLICY
 ): Promise<GQLMedia | null> => {
   // refusing to build the media is the point: the bare node id is shared by every season of the show and merges them
   if (opts.seasonNumber == null && showRequiresSeason(node.objectType)) return null
@@ -371,7 +379,8 @@ const normalizeMedia = async (
           posterUrl: resolveImageUrl(node.content.posterUrl),
           seasonNumber: opts.seasonNumber
         },
-        ctx
+        ctx,
+        policy
       ),
     episodes,
     // the search query carries totalEpisodeCount but not the episodes themselves, so an expanded
@@ -576,12 +585,14 @@ export const resolvers: Resolvers = {
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
-      subscribe: async function* (_, { input: { search } }, ctx: ExtractorServerContext) {
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        const { search } = input
         if (!search) return yield { mediaPage: { nodes: [] } }
+        const policy = policyFor(input)
         const searchRes = await searchTitles(search, ctx)
         // the search query does not fetch seasons, so normalizeMedia declines every series result and only movies come through
         const nodes = await Promise.all(
-          (searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeMedia(e.node, {}, ctx))
+          (searchRes.data?.popularTitles?.edges ?? []).map(e => normalizeMedia(e.node, {}, ctx, policy))
         )
         yield { mediaPage: { nodes: nodes.filter((media): media is GQLMedia => media !== null) } }
       }

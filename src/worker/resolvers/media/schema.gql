@@ -180,8 +180,33 @@ type MediaBanner {
   score: Float
 }
 
+"""
+What the app asked for at the TOP of the call, so a source can tell a detail view from a listing.
+
+THE WORKER WRITES THIS. Every field is regenerated from the worker's own registry at each source's
+boundary before the arguments are coerced, so a value supplied by a caller is replaced rather than
+trusted, and only `token` is ever read off the wire. Nullable because the app's own documents send
+none: they are validated by the app-level server before the fan-out that stamps them runs.
+"""
+input RequestContext {
+  """Identifies THIS hop to the worker. The only field read back off the wire."""
+  token: ID!
+  """Stable for the whole call tree, so a source may memoize per root rather than per hop."""
+  rootId: ID!
+  operation: RootOperation!
+  """The origins already on the stack, nearest last. A source seeing itself here is in a cycle."""
+  chain: [String!]!
+}
+
+enum RootOperation {
+  MEDIA
+  MEDIA_PAGE
+  MEDIA_SEASON
+}
+
 input MediaInput {
   uri: ID
+  context: RequestContext
 }
 
 enum MediaSort {
@@ -190,6 +215,7 @@ enum MediaSort {
 }
 
 input MediaPageInput {
+  context: RequestContext
   """Filter by media IDs"""
   nodes: [MediaInput!]
   """Filter by search terms"""
@@ -266,6 +292,7 @@ input MediaSeasonInput {
   titles: [String!]
   """The caller's episode count, as a tiebreak when two of the source's runs premiere close together."""
   episodeCount: Int
+  context: RequestContext
 }
 
 extend type Subscription {

@@ -25,6 +25,7 @@ import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from 
 import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
 import { listenMultipleIterator } from './store/events'
 import { readPluginSources } from './plugin-sources'
+import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
 
 export type ExtractorServerContext = YogaInitialContext & {
   fetch: typeof fetch
@@ -319,6 +320,11 @@ const firstMediaSeason = (
 const resolveSeasonFrom = (caller: string) =>
   async (origin: string, input: MediaSeasonInput): Promise<Media | undefined> => {
     if (!origin || !input?.showId || !input?.startDate) return undefined
+    // one hop deeper, carrying the caller's origin, so the answering source can see the chain it is
+    // part of. A caller that passed no context of its own descends from nothing and the callee reads
+    // a miss, which is counted rather than guessed at.
+    const parent = readContext(input)
+    if (parent) input = { ...input, context: descend(parent, caller) }
     if (!SAFE_SHOW_ID.test(input.showId)) {
       console.warn(`resolveSeason: '${caller}' asked ${origin} for a showId that is not an id, declined`)
       return undefined
@@ -687,6 +693,8 @@ type Fanout = {
   /** the same array the caller holds and unsubscribes, so late joiners are torn down with the rest */
   subscriptions: FanoutSubscription[]
   joined: Map<ExtractorEntry, FanoutSubscription>
+  /** stamped onto every joiner, including one that registers mid-flight, so no source is left unstamped */
+  root: RequestContext
 }
 
 // every in-flight fan-out, so a source that registers mid-subscription can still join it
@@ -697,7 +705,7 @@ const joinFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
   if (fanout.joined.has(extractor)) return
   let subscription: FanoutSubscription
   try {
-    subscription = extractor.client.subscription(fanout.query, fanout.variables).subscribe((result) => {
+    subscription = extractor.client.subscription(fanout.query, stamp(fanout.variables ?? {}, fanout.root)).subscribe((result) => {
       if (!fanout.extractUris) return
       try {
         for (const uri of fanout.extractUris(result) ?? []) {
@@ -724,7 +732,12 @@ const leaveFanout = (fanout: Fanout, extractor: ExtractorEntry) => {
   Promise.resolve(subscription.unsubscribe()).catch(() => {})
 }
 
-export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUris?: (result: any) => string[]) => {
+export const proxyRequestToExtractors = (
+  ctx: ExtractorServerContext,
+  operation: RootOperation,
+  extractUris?: (result: any) => string[]
+) => {
+  const root = openRoot(operation)
   const fanout: Fanout = {
     query: ctx.params.query!,
     variables: ctx.params.variables,
@@ -732,6 +745,7 @@ export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUri
     extractUris,
     subscriptions: [],
     joined: new Map(),
+    root,
   }
   for (const extractor of extractors) joinFanout(fanout, extractor)
   fanouts.add(fanout)
@@ -754,7 +768,7 @@ export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUri
       if (!originIds.includes(extractor.extractor.origin)) continue
       try {
         fanout.subscriptions.push(
-          extractor.client.subscription(fanout.query, variables).subscribe(() => {})
+          extractor.client.subscription(fanout.query, stamp(variables ?? {}, fanout.root)).subscribe(() => {})
         )
       } catch (error) {
         console.error(new Error(`Extractor ${extractor.name} failed to re-join the fan-out`, { cause: error }))
@@ -768,6 +782,6 @@ export const proxyRequestToExtractors = (ctx: ExtractorServerContext, extractUri
     askOrigins,
     // stop accepting late joiners; the caller still unsubscribes what it holds
     /** stop accepting late joiners; the caller still unsubscribes what it holds */
-    close: () => { fanouts.delete(fanout) },
+    close: () => { fanouts.delete(fanout); closeRoot(root.rootId) },
   }
 }

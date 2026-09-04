@@ -45,7 +45,7 @@ export const resolvers = {
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         const requestedUri = args.input.uri
         if (!requestedUri || !(isUri(requestedUri) || isAggregatedUri(requestedUri))) return
-        const { subscriptions, close, askOrigins } = proxyRequestToExtractors(ctx)
+        const { subscriptions, close, askOrigins } = proxyRequestToExtractors(ctx, 'MEDIA')
         const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
         /**
@@ -101,6 +101,7 @@ export const resolvers = {
         const { subscriptions, insertedUris, close } =
           proxyRequestToExtractors(
             ctx,
+            'MEDIA_PAGE',
             (result: { data: { mediaPage: MediaPage } }) =>
               result
                 ?.data
