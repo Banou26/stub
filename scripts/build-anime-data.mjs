@@ -54,8 +54,9 @@
 // repo's. Attribution is per artifact and lists every contributor to THAT file: anime-seasons is
 // manami alone, anime-index is arm and manami together. Each one repeats its credits in a header
 // comment AND in a `sources` field, because ODbL section 4.2(b) wants the notice inside the
-// database as well as in the documentation. data/README.md is the attribution of record and
-// data/LICENSE-manami.txt is the full ODbL text.
+// database as well as in the documentation. The `sources` field below IS the attribution of record:
+// it travels inside every artifact and names the license, its URI and the upstream url. ODbL 4.3
+// accepts that URI in place of a vendored copy of the text.
 
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs'
 import { brotliCompressSync, constants, zstdDecompressSync } from 'node:zlib'
@@ -100,7 +101,8 @@ const MANAMI = {
   url: `https://github.com/${REPO}`,
   license: 'ODbL-1.0',
   licenseUrl: 'https://opendatacommons.org/licenses/odbl/1-0/',
-  notice: 'Full terms in data/LICENSE-manami.txt.',
+  // ODbL 4.3 takes the license URI in place of a copy, which is why no license file is vendored
+  notice: 'Full terms at https://opendatacommons.org/licenses/odbl/1-0/.',
 }
 
 const ARM = {
@@ -605,7 +607,7 @@ const emit = (name, payload, provenance, sources) => {
 // Derived from:
 ${credits}
 //
-// Attribution of record is data/README.md. ${provenance}
+// Attribution of record is the sources field inside this file. ${provenance}
 //
 // Reached only through a dynamic import, so these bytes are a separate content-hashed chunk and are
 // absent from the initial bundle. Parsed from a string because JSON.parse is the faster path here.

@@ -34,7 +34,7 @@ import { loadSeedEpisodes, loadSeedIndex, seedMedia, seedRunFor, seedSeasonPage 
 // that supplies the seasonal listings, which is the visible half. It is NOT the attribution: this
 // source merges TWO upstreams with different licenses, manami under ODbL and @kawaiioverflow/arm
 // under MIT, and one string cannot credit both. Both are named in the header of every generated
-// artifact and in data/README.md, which is the attribution of record.
+// artifact, in its `sources` field, which is the attribution of record.
 export const originUrl = 'https://github.com/manami-project/anime-offline-database'
 export const categories = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const name = 'Offline database'
