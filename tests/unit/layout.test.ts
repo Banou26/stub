@@ -20,7 +20,7 @@ const unit = walk(join(root, 'tests/unit'))
 // The controls come first: a walk that found nothing would satisfy every emptiness assertion below.
 test('the walk can see files at all', () => {
   expect(src.filter(f => f.endsWith('.ts')).length).toBeGreaterThan(0)
-  expect(unit.filter(f => f.endsWith('.test.ts')).length).toBeGreaterThanOrEqual(66)
+  expect(unit.filter(f => f.endsWith('.test.ts')).length).toBeGreaterThanOrEqual(67)
 })
 
 test('no test file is left under src/', () => {

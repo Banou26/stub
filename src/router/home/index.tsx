@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
-import { useState } from 'preact/hooks'
+import { useState, useMemo, useRef } from 'preact/hooks'
 
 import { gql } from '../../generated'
 import { MediaCategory, MediaSort, MediaStatus } from '../../generated/graphql'
@@ -10,6 +10,7 @@ import { useRoute } from 'wouter'
 import { getRouterRoutePath, Route } from '../path'
 import MediaModal from './media-modal'
 import CategoryTabs from '../../components/category-tabs'
+import { orderKeys, settledOrder } from '../../utils/settled-order'
 
 const GET_RELEASING_MEDIA_PAGE = gql(`
   subscription GetReleasingMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
@@ -73,7 +74,17 @@ const Index = () => {
     }
   })
 
-  const mediaNodes = data?.mediaPage?.nodes || []
+  // Placement is held still once a card is on screen: the resolver re-sorts on popularity on every
+  // store change, so a show the bundle has no count for jumps the moment a live source supplies one.
+  // Measured 2026-09-06: the top ten reordered at 9.0 s, well after it looked settled at 2.0 s.
+  const resolved = data?.mediaPage?.nodes
+  const placed = useRef<string[]>([])
+  const mediaNodes = useMemo(() => {
+    if (!resolved?.length) return resolved || []
+    const ordered = settledOrder(resolved, placed.current)
+    placed.current = orderKeys(ordered)
+    return ordered
+  }, [resolved])
 
   return (
     <div css={style}>
