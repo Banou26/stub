@@ -62,7 +62,7 @@ import { brotliCompressSync, constants, zstdDecompressSync } from 'node:zlib'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
-import { orderSeasonBucket } from '../src/sources/offline/season-order.ts'
+import { orderSeasonBucket } from './season-order.mjs'
 
 const require = createRequire(import.meta.url)
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')

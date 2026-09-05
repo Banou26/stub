@@ -1,5 +1,12 @@
-// Pure and import-free ON PURPOSE: scripts/build-anime-data.mjs loads this, and it runs BEFORE
-// codegen, so anything reaching src/generated (as ./normalize.ts does) cannot be imported there.
+// Plain JavaScript and import-free ON PURPOSE, for two reasons that each broke a build.
+//
+// It cannot reach src/generated, because ./build-anime-data.mjs loads it and runs BEFORE codegen,
+// which is what src/sources/offline/normalize.ts imports. And it cannot be TypeScript: a .mjs
+// importing a .ts needs Node's type stripping, which arrived in 22.18, and the deploy runner's Node
+// is older. The Cloudflare build failed on `ERR_UNKNOWN_FILE_EXTENSION ".ts"` for two commits before
+// this file was JS (2026-09-05, 6bf3bb1 and 44ad1a9, reproduced locally with
+// `node --no-experimental-strip-types`).
+
 /**
  * A season's records in the order the home page should paint them.
  *
@@ -13,6 +20,10 @@
  * alphabet; the top of that list is a rating with few votes behind it, which is why this is a
  * fallback ordering and not a popularity. The unrated tail keeps its arrival order, so the bundle
  * stays byte-deterministic for a given dump.
+ *
+ * @template {{ sc?: number }} T
+ * @param {readonly T[]} records
+ * @returns {T[]}
  */
-export const orderSeasonBucket = <T extends { sc?: number }>(records: readonly T[]): T[] =>
+export const orderSeasonBucket = records =>
   [...records].sort((a, b) => (b.sc ?? -1) - (a.sc ?? -1))

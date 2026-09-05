@@ -10,7 +10,7 @@
 // strictly better than the alphabet: a rated show is one somebody watched.
 import { expect, test } from 'vitest'
 
-import { orderSeasonBucket } from '../../../../src/sources/offline/season-order'
+import { orderSeasonBucket } from '../../../../scripts/season-order.mjs'
 
 const record = (t: string, sc?: number) => ({ t, ty: 'TV', p: '', ...(sc === undefined ? {} : { sc }) })
 
