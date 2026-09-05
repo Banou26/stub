@@ -13,7 +13,7 @@ import { gql } from '../../generated'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import PluginPlayer from '../../components/plugin-player'
-import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris } from '../../utils/uri'
+import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
 /**
@@ -170,7 +170,14 @@ const style = css`
 `
 
 const Watch = () => {
-  const params = useParams<RouteParams['WATCH']>()
+  const rawParams = useParams<RouteParams['WATCH']>()
+  // wouter hands the segments through undecoded, and an encoded uri is a page that never subscribes
+  const params = {
+    ...rawParams,
+    mediaUri: decodeRouteUri(rawParams.mediaUri),
+    episodeUri: decodeRouteUri(rawParams.episodeUri),
+    sourceUri: decodeRouteUri(rawParams.sourceUri),
+  }
   const [, navigate] = useLocation()
 
   const [{ data }] = useSubscription({

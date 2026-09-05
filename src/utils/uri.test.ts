@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { extractAggregatedUriOrigin, isRoutableUri, originsOfUri } from './uri'
+import { decodeRouteUri, extractAggregatedUriOrigin, isRoutableUri, originsOfUri } from './uri'
 
 describe('originsOfUri', () => {
   test('lists the origins an aggregated uri lets a source recognise itself by', () => {
@@ -94,5 +94,32 @@ describe('extractAggregatedUriOrigin', () => {
   test('a plain uri of that origin still resolves to itself', () => {
     expect(extractAggregatedUriOrigin('cr:G24H1N3MP-GS00374452', 'cr')?.id).toBe('G24H1N3MP-GS00374452')
     expect(extractAggregatedUriOrigin('kitsu:49002', 'cr')).toBeUndefined()
+  })
+})
+
+// A percent-encoded media path is a legal encoding of a valid URL, the server answers 200 and the shell
+// renders, and the page then sat empty forever because the route segment reached the validators
+// encoded. Measured 2026-09-05, after three probe scripts built their paths with encodeURIComponent
+// and reported pages that were never subscribed.
+describe('decodeRouteUri', () => {
+  const AG = 'ag:(anilist:108465,kitsu:42323,mal:39535)'
+
+  test('an encoded aggregated uri decodes to the uri', () => {
+    expect(decodeRouteUri(encodeURIComponent(AG))).toBe(AG)
+  })
+
+  test('an encoded plain uri decodes to the uri', () => {
+    expect(decodeRouteUri(encodeURIComponent('anilist:108465'))).toBe('anilist:108465')
+  })
+
+  test('a raw uri passes unchanged', () => {
+    expect(decodeRouteUri(AG)).toBe(AG)
+    expect(decodeRouteUri('anilist:108465')).toBe('anilist:108465')
+  })
+
+  test('a segment that decodes to nothing a validator accepts comes back as it was, and a bad escape never throws', () => {
+    expect(decodeRouteUri('not-a-uri')).toBe('not-a-uri')
+    expect(decodeRouteUri('%E0%A4%A')).toBe('%E0%A4%A')
+    expect(decodeRouteUri(undefined)).toBeUndefined()
   })
 })

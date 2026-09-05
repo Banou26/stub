@@ -19,7 +19,7 @@ import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
 import Collapsible from '../../components/collapsible'
 import { gql } from '../../generated'
-import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris } from '../../utils/uri'
+import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
@@ -527,7 +527,9 @@ const Episode = (
 }
 
 const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
-  const params = useParams<RouteParams['MEDIA']>()
+  const rawParams = useParams<RouteParams['MEDIA']>()
+  // wouter hands the segment through undecoded, and an encoded uri is a page that never subscribes
+  const params = { ...rawParams, uri: decodeRouteUri(rawParams.uri) }
   const [, navigate] = useLocation()
   const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
 

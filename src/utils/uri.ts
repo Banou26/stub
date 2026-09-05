@@ -104,6 +104,27 @@ export const isAggregatedUri = (uri: string): uri is AggregatedUri => {
   return !uris || isUris(uris)
 }
 
+/**
+ * A uri as it arrives in a ROUTE PARAMETER, percent-decoded once when that is what makes it a uri.
+ *
+ * wouter hands a path segment through undecoded, and `isUri` and `isAggregatedUri` both refuse
+ * `ag%3A(...)`, so a link built with `encodeURIComponent`, or normalised by a share sheet or a chat
+ * client, rendered the page's shell and then sat empty forever: the media subscription returned before
+ * asking a single source, with no error anywhere (measured 2026-09-05, where it cost a session of
+ * measurement against pages that were never subscribed). A segment that is already a uri, or that
+ * decodes to nothing a uri validator accepts, comes back unchanged, so it reaches the same refusal it
+ * always did.
+ */
+export const decodeRouteUri = <T extends string | undefined>(raw: T): T => {
+  if (!raw || isUri(raw) || isAggregatedUri(raw)) return raw
+  try {
+    const decoded = decodeURIComponent(raw)
+    return isUri(decoded) || isAggregatedUri(decoded) ? decoded as T : raw
+  } catch {
+    return raw
+  }
+}
+
 export const toAggregatedUri = <T extends Uri[] | Uris>(uris: T, episode?: string) =>
   `ag:(${toAggregatedId(uris)})${episode ? `-${episode}` : ''}` as AggregatedUri
 

@@ -12,7 +12,7 @@ import { listenMultipleIterator, debouncedListenIterator } from '../../store/eve
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { searchRelevance } from '../../../sources/utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
-import { isAggregatedUri, isUri, originsOfUri } from '../../../utils/uri'
+import { decodeRouteUri, isAggregatedUri, isUri, originsOfUri } from '../../../utils/uri'
 
 export const schema = _schema as string
 
@@ -29,8 +29,12 @@ export const resolvers = {
     media: {
       resolve: (parent: Media) => parent,
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
-        const requestedUri = args.input.uri
-        if (!requestedUri || !(isUri(requestedUri) || isAggregatedUri(requestedUri))) return
+        const requestedUri = decodeRouteUri(args.input.uri ?? undefined)
+        if (!requestedUri || !(isUri(requestedUri) || isAggregatedUri(requestedUri))) {
+          // a refused page and a slow one are indistinguishable from outside the worker without this
+          console.warn(`media: refused '${args.input.uri}', which names no uri`)
+          return
+        }
         const { subscriptions, close, askOrigins, root } = proxyRequestToExtractors(ctx, 'MEDIA')
         const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
