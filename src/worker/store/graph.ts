@@ -25,6 +25,15 @@ export type Graph<T> = {
   alias(alias: string, key: string): void
   resolve(key: string): string
   link(a: string, b: string, label: string): boolean
+  /**
+   * Write the undirected adjacency of `label` without unioning anything, and say whether the pair is
+   * new. What `link` does minus the union-find half: an adjacency records WHO said what about which
+   * pair, where a union-find records only the component and can never be asked what it would hold
+   * with one node removed.
+   */
+  connect(a: string, b: string, label: string): boolean
+  /** Every node `link`ed or `connect`ed to `key` under `label`. */
+  neighbours(key: string, label: string): ReadonlySet<string>
   /** The union-find root of `key` under `label`, or `key` itself when nothing was ever linked to it there. */
   root(key: string, label: string): string
   /**
@@ -253,13 +262,22 @@ export function createGraph<T>(): Graph<T> {
     if (idA && idB) aliases.set(kept === idA ? idB : idA, survivor)
   }
 
-  function link(a: string, b: string, label: string): boolean {
+  function connect(a: string, b: string, label: string): boolean {
     const adj = adjFor(undirected, label)
     const isNew = !adj.get(a)?.has(b)
     if (!adj.has(a)) adj.set(a, new Set())
     if (!adj.has(b)) adj.set(b, new Set())
     adj.get(a)!.add(b)
     adj.get(b)!.add(a)
+    return isNew
+  }
+
+  function neighbours(key: string, label: string): ReadonlySet<string> {
+    return undirected.get(label)?.get(key) ?? emptySet
+  }
+
+  function link(a: string, b: string, label: string): boolean {
+    const isNew = connect(a, b, label)
     const uf = ufFor(label)
     const rootA = uf.find(a)
     const rootB = uf.find(b)
@@ -359,7 +377,7 @@ export function createGraph<T>(): Graph<T> {
   return {
     set, registerLabel, setLabel, labeled,
     get, has, alias, resolve,
-    link, root, componentId, edge, targets, sources,
+    link, connect, neighbours, root, componentId, edge, targets, sources,
     cluster, clusters, clear,
   }
 }

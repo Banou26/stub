@@ -7,7 +7,8 @@ import { expose } from 'osra'
 
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
-import { setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
+import { extractors, setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
+import { exportStore } from './store/export'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -48,6 +49,16 @@ export const osraResolvers = {
     }
   },
   unregisterRemoteSource: (pluginUri: string) => unregisterRemoteExtractor(pluginUri),
+  // the plugin origins are derived HERE rather than taken from the caller, so a caller cannot decline
+  // to exclude them: a plugin's rows are that user's, never the product's.
+  exportStore: (options?: { excludeOrigins?: string[], uris?: string[] }) =>
+    exportStore({
+      ...options,
+      excludeOrigins: [
+        ...(options?.excludeOrigins ?? []),
+        ...extractors.filter(entry => entry.pluginUri).map(entry => entry.extractor.origin),
+      ],
+    }),
   remotePicker: (origin: string) => remotePicker(origin),
   remotePlayer: (origin: string) => remotePlayer(origin),
   selectRemoteRelease: (origin: string, uris: string[]) => selectRemoteRelease(origin, uris)

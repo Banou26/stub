@@ -8,6 +8,7 @@
     "sourceMap": true,
     "noEmit": true,
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "strictNullChecks": true,

@@ -45,8 +45,28 @@ const EPISODE_SAME_AS = 'episode:same_as'
 const EPISODE_PART_OF = 'episode:part_of'
 const HAS_EPISODE = 'has_episode'
 
+/** The media -> episode edge label, for ./export.ts. */
+export const HAS_EPISODE_LABEL = HAS_EPISODE
+
 /** The identity space labels, for the one reader outside this file that needs them: the cluster id in ./aggregate.ts. */
 export const IDENTITY_LABELS = { RUN: MEDIA_SAME_AS, CONTAINER: CONTAINER_SAME_AS, EPISODE: EPISODE_SAME_AS } as const
+
+/**
+ * A second, adjacency-only record of every pair a SOURCE claimed through a handle, written by
+ * `upsertMedia` and by nothing else. `./export.ts` is its only reader.
+ *
+ * Two properties the identity labels above cannot supply, and the export needs both. `graph.link`
+ * carries the same label whether the pair came from a handle or from `linkSameMediaPairs`, so a
+ * cluster cannot say which of its unions a source actually asserted; and a union-find cannot answer
+ * "what would this component be with that node removed", which is exactly what excluding a plugin or
+ * the offline origin asks. An adjacency answers both, and unions nothing, so nothing downstream of
+ * the store sees these labels at all.
+ */
+export const ASSERTED_LABELS = {
+  RUN: 'asserted:media_same_as',
+  CONTAINER: 'asserted:container_same_as',
+  PART_OF: 'asserted:media_part_of',
+} as const
 
 /**
  * PART_OF rides a DIRECTED edge, which unions nothing.
@@ -148,6 +168,11 @@ export async function upsertMedia(
   //     CONTAINER x CONTAINER    claimed SAME_AS unions in the container space, PART_OF is an edge
   //
   // Guesses go on edges, which are deletable; only asserted sameness within one scope goes on a union.
+  //
+  // Each applied claim is also recorded in ASSERTED_LABELS, and those writes' return values are
+  // DISCARDED: `changed` stays driven by the real labels alone. Feeding it an asserted write would put
+  // every listener back in the re-read loop tests/unit/worker/store/edge-idempotence.test.ts exists to
+  // stop, since the two records can go new at different times.
   for (const claim of claims) {
     const { mediaUri, handleUri, relation } = claim
     const undescribed = [mediaUri, handleUri].filter(uri => !graph.has(uri))
@@ -160,11 +185,14 @@ export async function upsertMedia(
     const handleScope = scopeOf(handleUri)
     if (mediaScope !== handleScope) {
       const [run, container] = mediaScope === 'RUN' ? [mediaUri, handleUri] : [handleUri, mediaUri]
+      graph.edge(run, container, ASSERTED_LABELS.PART_OF)
       if (graph.edge(run, container, MEDIA_PART_OF)) changed = true
     } else if (claimed === 'SAME_AS') {
+      graph.connect(mediaUri, handleUri, mediaScope === 'CONTAINER' ? ASSERTED_LABELS.CONTAINER : ASSERTED_LABELS.RUN)
       if (graph.link(mediaUri, handleUri, sameAsLabelFor(mediaScope))) changed = true
-    } else if (graph.edge(mediaUri, handleUri, MEDIA_PART_OF)) {
-      changed = true
+    } else {
+      graph.edge(mediaUri, handleUri, ASSERTED_LABELS.PART_OF)
+      if (graph.edge(mediaUri, handleUri, MEDIA_PART_OF)) changed = true
     }
   }
 
@@ -246,10 +274,17 @@ export async function findAggregatedMedia(uri: string): Promise<Media[]> {
  */
 export function findPartOfMedia(cluster: Media[]): Media[] {
   const seen = new Set<string>()
+  const inCluster = new Set(cluster.map(member => member.uri))
   const out: Media[] = []
   for (const member of cluster) {
     for (const targetUri of graph.targets(member.uri, MEDIA_PART_OF)) {
-      for (const node of graph.cluster(targetUri, sameAsLabelFor(scopeOf(targetUri))) as Media[]) {
+      const nodes = graph.cluster(targetUri, sameAsLabelFor(scopeOf(targetUri))) as Media[]
+      // A run is not part of itself. The two claims disagree (one source called the target a container
+      // of this run, another called it the same run and unioned it in), and the union is the stronger
+      // statement, so the edge is left to the reader that wants edges rather than rendered as a show
+      // this run belongs to.
+      if (nodes.some(node => inCluster.has(node.uri))) continue
+      for (const node of nodes) {
         if (seen.has(node.uri)) continue
         seen.add(node.uri)
         out.push(node)

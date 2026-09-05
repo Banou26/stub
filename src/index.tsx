@@ -7,6 +7,7 @@ import './plugins.ts'
 import client from './urql'
 import Router from './router'
 import './plugin-url.ts'
+import './store-export.ts'
 import { pushKeys } from './utils/keys'
 
 pushKeys()
