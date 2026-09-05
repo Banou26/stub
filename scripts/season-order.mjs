@@ -15,15 +15,19 @@
  * paint was the alphabet: "Kimi o Aisuru Ki wa Nai", "Adventure Time: Side Quests", "Aware!
  * Meisaku-kun" (measured on the shipped bundle, SUMMER 2026, 2026-09-05).
  *
- * manami carries NO popularity count, so its 1 to 10 rating is the only honest thing to rank by, and
- * only 37 of those 219 records carry one. A rated show is one somebody watched, which beats the
- * alphabet; the top of that list is a rating with few votes behind it, which is why this is a
- * fallback ordering and not a popularity. The unrated tail keeps its arrival order, so the bundle
- * stays byte-deterministic for a given dump.
+ * MEMBER COUNTS FIRST (`pop`), which is MyAnimeList's popularity, fetched at build time from jikan's
+ * seasonal endpoint. That is the order the owner asked for and the one the live listing settles into,
+ * because jikan publishes the same number at score 0.9 and wins the aggregate.
  *
- * @template {{ sc?: number }} T
+ * The 1 to 10 RATING (`sc`) only breaks ties among records the count does not cover, and is the whole
+ * order when the fetch failed. It is a poor proxy on its own: 37 of 219 SUMMER 2026 records carry one
+ * and its top is three shows tied at a perfect 10 from a handful of votes, which is what the home
+ * page painted before the counts arrived. The tail with neither keeps its arrival order, so the
+ * bundle stays byte-deterministic for a given dump.
+ *
+ * @template {{ sc?: number, pop?: number }} T
  * @param {readonly T[]} records
  * @returns {T[]}
  */
 export const orderSeasonBucket = records =>
-  [...records].sort((a, b) => (b.sc ?? -1) - (a.sc ?? -1))
+  [...records].sort((a, b) => (b.pop ?? -1) - (a.pop ?? -1) || (b.sc ?? -1) - (a.sc ?? -1))

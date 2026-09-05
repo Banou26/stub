@@ -53,6 +53,8 @@ export type ManamiRecord = {
   al?: number
   ku?: number
   sc?: number
+  /** MyAnimeList's member count for the current season, attached at build time; see scripts/season-order.mjs */
+  pop?: number
 }
 
 /** `2026-SUMMER`, the key the generated bundle is keyed on. `animeSeasonOf` answers in lower case. */
@@ -98,11 +100,17 @@ const handles = (record: ManamiRecord): GQLMedia[] => {
  * twice with no way for the store to know. For SUMMER 2026 that is 79 of 219 records, and the ones
  * lost are overwhelmingly the obscure shorts and promos the other sources do not carry either.
  *
- * Deliberately absent: `status`, `startDate`, `endDate` and `popularity`. manami has no popularity
- * count at all, and its `status` is a snapshot taken when the dump was cut which decays immediately
+ * Deliberately absent: `status`, `startDate` and `endDate`. Its `status` is a snapshot taken when the
+ * dump was cut which decays immediately
  * (the 2026-07-04 dump calls 192 of its 219 SUMMER 2026 entries UPCOMING, and every one was airing
- * six weeks later). A null popularity is safe everywhere in the store and simply sorts these to the
- * end of the row when they do not merge, which is a useful tell that the merge did not happen.
+ * six weeks later).
+ *
+ * `popularity` IS published now, and manami still has none: it is MyAnimeList's member count, fetched
+ * per season at build time (scripts/build-anime-data.mjs). Without it the listing, which sorts on
+ * popularity, swept every bundled row to the tail and painted whatever order the bundle happened to
+ * ship in. It is safe at this score because jikan publishes the same count at 0.9 and wins the
+ * aggregate, so the value is restated rather than contradicted. A row the fetch did not cover carries
+ * none, which sorts it behind the covered ones.
  */
 export const seasonMedia = (record: ManamiRecord): GQLMedia | undefined => {
   const id = recordId(record)
@@ -119,6 +127,7 @@ export const seasonMedia = (record: ManamiRecord): GQLMedia | undefined => {
     titles: [{ language: 'en', title: record.t, score: SCORE }],
     covers: record.p ? [{ url: coverUrl(record.p), score: SCORE }] : [],
     episodeCount: record.ep || undefined,
+    popularity: record.pop || undefined,
     // manami scores on 1 to 10, the schema's averageScore is 0 to 100.
     averageScore: record.sc ? Math.round(record.sc * 10) : undefined,
   })

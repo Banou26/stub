@@ -63,6 +63,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 import { orderSeasonBucket } from './season-order.mjs'
+import { get as httpsGet } from 'node:https'
 
 const require = createRequire(import.meta.url)
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -125,6 +126,12 @@ const CATALOGS = [
   { key: 'anidb', host: 'anidb.net' },
 ]
 
+const JIKAN = 'https://api.jikan.moe/v4'
+// 3 requests a second is jikan's limit; 6 pages covers a season of 149 with room to spare
+const JIKAN_MAX_PAGES = 10
+const JIKAN_PAUSE_MS = 700
+const JIKAN_TIMEOUT_MS = 15_000
+const JIKAN_ATTEMPTS = 5
 const log = (...args) => console.log('[anime-data]', ...args)
 const warn = (...args) => console.warn('[anime-data] WARNING:', ...args)
 
@@ -305,7 +312,95 @@ const catalogIds = entry => Object.fromEntries(CATALOGS.map(({ key, host }) => [
  * It also lands the extract in nearly the shape the build wants, so the cache path exercises the
  * same code as the fresh path rather than a second one that could rot untested.
  */
-const buildExtract = (entries, meta, tag) => {
+/**
+ * MyAnimeList member counts for the season the clock is in, keyed by mal id, or an empty map.
+ *
+ * This is the popularity the home page is meant to sort on, and it is the ONLY place it exists at
+ * build time: manami ships no popularity, and its 1 to 10 rating is a different thing that puts three
+ * shows tied at a perfect 10 from a handful of votes above Mushoku Tensei. jikan hands the counts over
+ * in bulk, 149 entries in 6 pages, and its order matched the settled live listing exactly when this
+ * was measured (2026-09-06: 254638 Mushoku Tensei III, 233645 Youjo Senki II, 161220 Super no Ura de
+ * Yani Suu Futari, 111075 Bleach).
+ *
+ * NEVER FATAL. jikan rate limits at 3 a second and can be down, and a season's ordering is not worth
+ * failing a deploy over: any failure returns what was collected so far, the bucket then falls back to
+ * the rating order, and the line it logs says which happened. The pause keeps the whole walk inside
+ * one rate limit window.
+ */
+/**
+ * A JSON GET over `node:https`, NOT over `fetch`, and the difference is measured rather than stylistic.
+ *
+ * Interleaved from this machine on 2026-09-06, three times each in one loop: curl answered 200 and
+ * `fetch` answered 504 every time, with jikan's own body ("Jikan failed to connect to MyAnimeList"),
+ * so the error text reads like an outage and is not one. Headers, user agent, HTTP version and
+ * `ipv4first` made no difference; `node:https` answered 200 on the first try. Whatever undici's client
+ * does differently, this endpoint refuses it, so the one call that needs it uses the older client.
+ */
+const getJson = (url, page) =>
+  new Promise((resolve, reject) => {
+    const request = httpsGet(url, { headers: { accept: 'application/json' } }, response => {
+      if (response.statusCode !== 200) {
+        response.resume()
+        reject(new Error(`jikan answered ${response.statusCode} on page ${page}`))
+        return
+      }
+      let body = ''
+      response.setEncoding('utf8')
+      response.on('data', chunk => { body += chunk })
+      response.on('end', () => {
+        try { resolve(JSON.parse(body)) } catch (error) { reject(error) }
+      })
+    })
+    request.setTimeout(JIKAN_TIMEOUT_MS, () => request.destroy(new Error(`jikan timed out on page ${page}`)))
+    request.on('error', reject)
+  })
+
+/**
+ * One page of jikan's seasonal list, retried on a transient failure.
+ *
+ * Measured 2026-09-06: a build run got `504` on page 1 and three curls a second apart all answered
+ * 200, so a single refusal is not an outage and must not cost the season its ordering. The last
+ * failure is rethrown for `seasonPopularity` to log and degrade on.
+ */
+const jikanPage = async page => {
+  let last
+  for (let attempt = 1; attempt <= JIKAN_ATTEMPTS; attempt++) {
+    try {
+      return await getJson(`${JIKAN}/seasons/now?limit=25&page=${page}`, page)
+    } catch (error) {
+      last = error
+      if (attempt < JIKAN_ATTEMPTS) await new Promise(resolve => setTimeout(resolve, JIKAN_PAUSE_MS * attempt))
+    }
+  }
+  throw last
+}
+
+const seasonPopularity = async () => {
+  const counts = new Map()
+  const missed = []
+  // a refused page SKIPS rather than ending the walk: the pages are independent, and losing page 2
+  // used to cost pages 3 to 6 as well (measured, 23 counts of 219 instead of the season)
+  for (let page = 1; page <= JIKAN_MAX_PAGES; page++) {
+    let body
+    try {
+      body = await jikanPage(page)
+    } catch (error) {
+      missed.push(`${page} (${error.message})`)
+      await new Promise(resolve => setTimeout(resolve, JIKAN_PAUSE_MS))
+      continue
+    }
+    for (const entry of body?.data ?? []) {
+      if (entry?.mal_id && typeof entry.members === 'number') counts.set(entry.mal_id, entry.members)
+    }
+    if (!body?.pagination?.has_next_page) break
+    await new Promise(resolve => setTimeout(resolve, JIKAN_PAUSE_MS))
+  }
+  if (!counts.size) log(`myanimelist member counts unavailable${missed.length ? ` (page ${missed[0]})` : ''}; the season falls back to its rating order`)
+  else log(`myanimelist member counts: ${counts.size} of the current season${missed.length ? `, ${missed.length} page(s) refused` : ''}`)
+  return counts
+}
+
+const buildExtract = (entries, meta, tag, popularity = new Map()) => {
   const cut = new Date(`${meta.lastUpdate}T00:00:00Z`)
   const anchor = { year: cut.getUTCFullYear(), season: SEASON_ORDER[Math.floor(cut.getUTCMonth() / 3)] }
   const from = seasonIndex(anchor) - SEASONS_BACK
@@ -336,6 +431,9 @@ const buildExtract = (entries, meta, tag) => {
     if (ids.anilist) record.al = ids.anilist
     if (ids.kitsu) record.ku = ids.kitsu
     if (entry.score?.arithmeticMean) record.sc = Math.round(entry.score.arithmeticMean * 100) / 100
+    // MyAnimeList's member count: the popularity the listing sorts on, current season only
+    const members = ids.mal ? popularity.get(ids.mal) : undefined
+    if (members) record.pop = members
     ;(seasons[`${season.year}-${season.season}`] ??= []).push(record)
   }
 
@@ -366,7 +464,7 @@ const refreshExtract = async () => {
   // API still records the dated tag rather than the rolling pointer that served it. Falls back to
   // whatever named the release if upstream ever changes that url's shape.
   const tag = /refs\/tags\/([^/]+)\//.exec(meta.$schema ?? '')?.[1] ?? release.tag
-  const extract = buildExtract(entries, meta, tag)
+  const extract = buildExtract(entries, meta, tag, await seasonPopularity())
 
   mkdirSync(dirname(CACHE), { recursive: true })
   writeFileSync(CACHE, JSON.stringify(extract))

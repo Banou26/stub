@@ -114,3 +114,17 @@ describe('seasonPage', () => {
     expect(seasonPage([])).toEqual([])
   })
 })
+
+// The bundle's ORDER only decides the cold paint while every row lacks a popularity, because the
+// listing sorts on it with a stable sort. Publishing the member count makes the order explicit: a
+// bundled row keeps its place once live rows with popularity arrive, instead of being swept to the
+// tail. Safe at the offline score of 0.2 because jikan publishes the same MyAnimeList count at 0.9
+// and wins the aggregate, so the value can only ever be restated, never contradicted.
+test('a seasonal row publishes the member count the build attached', () => {
+  expect(seasonMedia({ t: 'Mushoku Tensei III', ty: 'TV', p: '', ml: 59193, pop: 254638 })?.popularity)
+    .toBe(254638)
+})
+
+test('a row the count did not cover publishes none, rather than a zero that outranks nothing', () => {
+  expect(seasonMedia({ t: 'Obscure Short', ty: 'TV', p: '', ml: 1 })?.popularity).toBeUndefined()
+})
