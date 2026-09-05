@@ -14,6 +14,7 @@ import {
   type CatalogRow,
   type IndexBundle,
 } from './index-lookup'
+import { loadSeedEpisodes, loadSeedIndex, seedMedia, seedRunFor, seedSeasonPage } from './seed-source'
 
 // No icon, deliberately, and anizip is the precedent: it is the other source that exists to link
 // records rather than to be visited, and it ships none either. A badge would imply the show lives on
@@ -50,20 +51,27 @@ export const color = '#2b6cb0'
 type SeasonBundle = { tag: string, updated: string, seasons: Record<string, ManamiRecord[]> }
 
 /**
- * The one source in stub that answers without touching the network.
+ * TWO HALVES, and only one of them touches the network.
  *
- * Everything else reaches an upstream API or scrapes a page, so all of it fails together the moment
- * those are unreachable. That is not hypothetical: on 2026-08-16 the homepage rendered "Current
- * season" with zero media because AniList answered 403 and Jikan 504 at the same time, with the
- * user's connection perfectly healthy.
+ * The BUNDLED half is the two generated modules below, compiled into the app and answered from
+ * memory. It is the source that survives every other source failing at once, which is not
+ * hypothetical: on 2026-08-16 the homepage rendered "Current season" with zero media because AniList
+ * answered 403 and Jikan 504 at the same time, with the user's connection perfectly healthy. It is
+ * still what every resolver here yields FIRST.
  *
- * READ THE NAME CAREFULLY. "offline" describes the DATA, which is an offline database in the sense
- * its upstream uses the word, bundled at build time rather than queried. It does NOT mean stub works
- * offline. stub has no service worker and no Cache Storage (grepped, with a control), so these
- * bundles arrive over the same network as every other chunk and are just as unavailable to a
- * disconnected user. What this survives is an UPSTREAM outage, which is the failure that actually
- * happened. If stub ever does gain a worker, this source becomes the offline catalogue for real,
- * but that is a separate piece of work and nothing here should be read as having done it.
+ * The SEEDED half is ./seed-source.ts, a release asset walked from the live sources on a schedule and
+ * fetched at runtime through the relay. It is a network request and it can fail. Every one of its
+ * failure paths resolves to undefined and leaves the bundled answer exactly as it was: a timeout, a
+ * 404 before the first publish, a body that is not gzip, a payload the gate refuses. Nothing here may
+ * be written so that a bad seed makes the page worse than no seed.
+ *
+ * READ THE NAME CAREFULLY. "offline" describes the bundled DATA, an offline database in the sense its
+ * upstream uses the word, compiled in rather than queried. It does NOT mean stub works offline. stub
+ * has no service worker and no Cache Storage (grepped, with a control), so those bundles arrive over
+ * the same network as every other chunk and are just as unavailable to a disconnected user, and the
+ * seed asset is a plain fetch on top. What this survives is an UPSTREAM outage, which is the failure
+ * that actually happened. If stub ever does gain a worker, this source becomes the offline catalogue
+ * for real, but that is a separate piece of work and nothing here should be read as having done it.
  *
  * TWO bundles, loaded independently, because they are wanted at different moments. The homepage
  * needs seasons and never the index; opening one show needs the index and never the seasons. Split
@@ -204,25 +212,45 @@ const getMedia = async (uri: string): Promise<GQLMedia | null> => {
   return null
 }
 
+// Both resolvers yield the BUNDLED answer first and the seeded one second, and the order is the
+// point: the seed exists to make a cold page fast, so it must never delay the first paint. Every
+// early return below leaves the bundled yield standing.
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
-      // Always yield exactly once. A subscription generator that completes without yielding makes
+      // Always yield at least once. A subscription generator that completes without yielding makes
       // yoga answer 204 No Content, which is not the same thing as "this source knows nothing".
-      subscribe: async function* (_, { input: { uri } }, __: ExtractorServerContext) {
+      subscribe: async function* (_, { input: { uri } }, ctx: ExtractorServerContext) {
         if (!uri) return yield { media: null }
         yield { media: await getMedia(uri) }
+
+        const index = await loadSeedIndex(ctx.fetch)
+        if (!index) return
+        const run = seedRunFor(index, urisOf(uri))
+        if (!run) return
+        // asked for only once a seeded run is actually named, so browsing the season row never
+        // fetches the episode file
+        const episodes = await loadSeedEpisodes(ctx.fetch, index)
+        yield { media: seedMedia(run, episodes?.episodes[run.key]) }
       }
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
-      subscribe: async function* (_, { input: { status } }, __: ExtractorServerContext) {
+      subscribe: async function* (_, { input: { status } }, ctx: ExtractorServerContext) {
         // Search is deliberately unanswered. The seasonal bundle holds only a window of recent
         // seasons, so it would return a handful of hits for a query the live sources answer
         // properly, and every hit carries no synopsis. A partial catalogue is worse than none in a
         // ranked result set.
         if (status !== 'RELEASING') return yield { mediaPage: { nodes: [] } }
         yield { mediaPage: { nodes: await getSeasonNow() } }
+
+        const index = await loadSeedIndex(ctx.fetch)
+        if (!index) return
+        // The current season only. There is no route, no MediaPageInput field and no UI for a next
+        // season row, and RELEASING means airing, so listing unaired runs would be wrong rather than
+        // early. The next season's runs are carried so a media ask naming one resolves instantly.
+        const nodes = seedSeasonPage(index, seasonKey(animeSeasonOf()))
+        if (nodes.length) yield { mediaPage: { nodes } }
       }
     }
   }
