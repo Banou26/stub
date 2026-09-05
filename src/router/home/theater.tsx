@@ -2,7 +2,7 @@ import type { GetReleasingMediaPageSubscription } from '../../generated/graphql'
 
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
-import { useCallback, useMemo, useState } from 'preact/compat'
+import { useCallback, useMemo, useRef, useState } from 'preact/compat'
 import { LucidePause, LucidePlay } from 'lucide-react'
 import { useRoute } from 'wouter'
 
@@ -10,7 +10,7 @@ import YoutubeMinimalPlayer from '../../components/yt-minimal-player'
 import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
 import { gql } from '../../generated'
-import { pickTheaterIndex, theaterCandidates } from '../../utils/theater'
+import { holdTheaterPick, theaterCandidates, theaterKey } from '../../utils/theater'
 import { getRouterRoutePath, Route } from '../path'
 
 const style = css`
@@ -159,17 +159,18 @@ const GET_THEATHER_MEDIA = gql(`
 
 const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const [matchMediaRoute] = useRoute(getRouterRoutePath(Route.MEDIA))
-  const [bannedMediaIndexes, setBannedMediaIndexes] = useState<number[]>([])
+  const [bannedMedia, setBannedMedia] = useState<string[]>([])
   // selected on the fields the hero renders rather than on a source-confidence score, see ../../utils/theater
   const candidates = useMemo(() => theaterCandidates(mediaNodes), [mediaNodes])
-  const mediaIndex = useMemo(
-    () => pickTheaterIndex(candidates.length, bannedMediaIndexes),
-    [candidates.length, bannedMediaIndexes]
-  )
-  const selectedMedia = useMemo(
-    () => mediaIndex === undefined ? undefined : candidates.at(mediaIndex),
-    [candidates, mediaIndex]
-  )
+  // The pick is HELD by key, not re-rolled per render: it used to be a random INDEX memoized on the
+  // candidate COUNT, so every source that answered grew the count and chose a different show, and the
+  // hero flipped through several in the first second. See `holdTheaterPick`.
+  const held = useRef<string | undefined>(undefined)
+  const selectedMedia = useMemo(() => {
+    const chosen = holdTheaterPick(candidates, held.current, bannedMedia)
+    held.current = chosen ? theaterKey(chosen) : undefined
+    return chosen
+  }, [candidates, bannedMedia])
   const [{ data }] = useSubscription({
     query: GET_THEATHER_MEDIA,
     variables: {
@@ -195,9 +196,10 @@ const HomeHeader = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
 
   const onTrailerError = useCallback(() => {
     // nothing was selected, so there is no choice to ban and re-picking would loop on the same miss
-    if (mediaIndex === undefined) return
-    setBannedMediaIndexes(banned => banned.includes(mediaIndex) ? banned : [...banned, mediaIndex])
-  }, [mediaIndex])
+    const key = selectedMedia && theaterKey(selectedMedia)
+    if (!key) return
+    setBannedMedia(banned => banned.includes(key) ? banned : [...banned, key])
+  }, [selectedMedia])
 
   return (
     <div css={style} className='theater'>

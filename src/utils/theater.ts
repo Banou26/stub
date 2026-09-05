@@ -4,10 +4,15 @@
 
 /** Only the parts of a media the hero reads. Deliberately structural, so any source can satisfy it. */
 export type TheaterCandidate = {
+  _id?: string | null
+  uri?: string | null
   titles?: readonly unknown[] | null
   shortDescriptions?: readonly unknown[] | null
   trailers?: readonly unknown[] | null
 }
+
+/** How the hero remembers WHICH show it is showing. An index cannot: the listing reorders under it. */
+export const theaterKey = (media: TheaterCandidate): string => media._id ?? media.uri ?? ''
 
 /**
  * The media the hero can render, best first.
@@ -53,4 +58,31 @@ export const pickTheaterIndex = (
   const allowed = Array.from({ length: limit }, (_, index) => index).filter(index => !banned.includes(index))
   if (!allowed.length) return undefined
   return allowed[Math.min(allowed.length - 1, Math.max(0, pick(allowed.length)))]
+}
+
+/**
+ * The show the hero should be showing: the one it is already showing, for as long as that is possible.
+ *
+ * The hero used to pick by INDEX, memoized on the candidate COUNT, with `Math.random`. The count grows
+ * as sources answer (22 from the bundle, then more), so every growth re-rolled a new random index, and
+ * an index also repoints at a different show whenever the listing reorders under it. The owner saw the
+ * result: "the theater switches between 5 different anime in like 1s, and it ALWAYS happens".
+ *
+ * So the pick is remembered by KEY and only re-made when it has to be: the show left the candidates,
+ * or its trailer failed and it was banned. Banning is by key too, since an index bans whichever show
+ * happens to sit there next.
+ *
+ * `pick` is injected so a test does not depend on Math.random.
+ */
+export const holdTheaterPick = <T extends TheaterCandidate>(
+  candidates: readonly T[],
+  current: string | undefined,
+  banned: readonly string[] = [],
+  pick: (limit: number) => number = limit => Math.floor(Math.random() * limit)
+): T | undefined => {
+  const pool = candidates.slice(0, THEATER_POOL_SIZE).filter(media => !banned.includes(theaterKey(media)))
+  const held = current && pool.find(media => theaterKey(media) === current)
+  if (held) return held
+  if (!pool.length) return undefined
+  return pool[Math.min(pool.length - 1, Math.max(0, pick(pool.length)))]
 }
