@@ -1,15 +1,21 @@
-import type { RouteParams } from '../path'
+import type { SearchFilters } from './params'
 
 import { css } from '@emotion/react'
 import { useSubscription } from 'urql'
-import { useParams } from 'wouter'
-import { useEffect, useState } from 'preact/hooks'
+import { useLocation, useSearch } from 'wouter'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { Search as SearchIcon, X } from 'lucide-react'
 
 import { gql } from '../../generated'
-import { MediaCategory } from '../../generated/graphql'
+import { MediaSort } from '../../generated/graphql'
 import { getRoutePath, Route } from '../path'
+import {
+  CATEGORY_OPTIONS, FORMAT_OPTIONS, KNOWN_GENRES, SEASON_OPTIONS, STATUS_OPTIONS,
+  YEAR_MIN, hasSearchFilters, isKnownGenre, namesAQuery, parseSearchFilters, searchHeading, searchPath,
+  yearMax,
+} from './params'
 import MediaTitle from '../../components/media-title'
-import CategoryTabs from '../../components/category-tabs'
+import FilterSelect, { FilterField } from '../../components/filter-select'
 
 const SEARCH_MEDIA_PAGE = gql(`
   subscription SearchMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
@@ -43,6 +49,8 @@ const SEARCH_MEDIA_PAGE = gql(`
           thumbnail
         }
         popularity
+        genres
+        tags
       }
     }
   }
@@ -55,13 +63,81 @@ const style = css`
   .heading {
     font-size: 2.4rem;
     font-weight: 600;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     color: rgba(255, 255, 255, 0.85);
   }
 
-  .tabs {
-    margin-bottom: 2.5rem;
+  /* one track per control, wrapping to as many rows as the viewport needs */
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.4rem 1.6rem;
+    margin-bottom: 1.6rem;
   }
+
+  .text-field {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    height: 4.2rem;
+    padding: 0 1.2rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.4);
+    transition: border-color 0.15s;
+  }
+
+  .text-field:focus-within { border-color: rgba(255, 255, 255, 0.5); }
+
+  .text-field input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #fff;
+    font-size: 1.5rem;
+    font-family: inherit;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+    min-height: 3rem;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem 0.4rem 1.1rem;
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.4rem;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .chip:hover { border-color: rgba(255, 255, 255, 0.4); color: #fff; }
+
+  .chip-clear {
+    padding: 0.4rem 1.1rem;
+    border-radius: 2rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.4rem;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .chip-clear:hover { color: #fff; }
 
   .grid {
     display: grid;
@@ -82,6 +158,10 @@ const style = css`
       font-size: 2rem;
     }
 
+    .filters {
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    }
+
     .grid {
       grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
       gap: 1.2rem;
@@ -89,18 +169,67 @@ const style = css`
   }
 `
 
-const Search = () => {
-  const params = useParams<RouteParams['SEARCH']>()
-  const query = params.query ? decodeURIComponent(params.query) : ''
-  const [category, setCategory] = useState<MediaCategory | null>(null)
+// Newest first, built once: the list is ~115 entries and rebuilding it per render would rebuild it on
+// every keystroke in the picker's own filter box.
+const YEAR_OPTIONS = (() => {
+  const options: { value: string, label: string }[] = []
+  for (let year = yearMax(); year >= YEAR_MIN; year--) options.push({ value: String(year), label: String(year) })
+  return options
+})()
 
-  const [{ data }] = useSubscription({
+/**
+ * The variables for a filter set.
+ *
+ * `sorts` is sent only when there is no free text. The resolver applies `sorts` AFTER its relevance
+ * pass, so asking for a popularity sort alongside a search would throw the relevance ranking away and
+ * answer the most popular media that matched at all.
+ */
+const variablesFor = (filters: SearchFilters) => ({
+  ...filters.query ? { search: filters.query } : { sorts: [MediaSort.Popularity] },
+  ...filters.category ? { categories: [filters.category] } : {},
+  ...filters.status ? { status: filters.status } : {},
+  ...filters.season ? { season: filters.season } : {},
+  ...filters.year ? { seasonYear: filters.year } : {},
+  ...filters.formats.length ? { formats: filters.formats } : {},
+  ...filters.genres.length ? { genres: filters.genres } : {},
+  ...filters.tags.length ? { tags: filters.tags } : {},
+})
+
+const Search = () => {
+  const search = useSearch()
+  const [, navigate] = useLocation()
+  const filters = useMemo(() => parseSearchFilters(search), [search])
+  const filtered = hasSearchFilters(filters)
+  const asked = namesAQuery(filters)
+
+  // The url is the state, so a control writes to it and re-renders from it. `replace` keeps the back
+  // button pointing at wherever the user came from rather than at every intermediate filter set.
+  const setFilters = (next: Partial<SearchFilters>) => navigate(searchPath({ ...filters, ...next }), { replace: true })
+
+  // The text field is uncontrolled between keystrokes: typing writes the url on a debounce, and the url
+  // writes the field back only when it changed from somewhere else (the header's box, a chip, a link).
+  const [term, setTerm] = useState(filters.query)
+  const termRef = useRef<HTMLInputElement>(null)
+  // Never while the user is typing in it. The header's box carries its own 350 ms timer in a ref that
+  // survives a focus change, so a keystroke there can land while this field has focus and would
+  // otherwise overwrite a half-typed word mid-flight. The header guards its own field the same way.
+  useEffect(() => {
+    if (document.activeElement === termRef.current) return
+    setTerm(current => current.trim() === filters.query ? current : filters.query)
+  }, [filters.query])
+  // `search` is a dependency, not just `term`: without it a pending keystroke would fire 350 ms later
+  // holding the filter set from BEFORE a control was touched, and write it back over the new one.
+  useEffect(() => {
+    if (term.trim() === filters.query) return
+    const timer = setTimeout(() => setFilters({ query: term }), 350)
+    return () => clearTimeout(timer)
+  }, [term, search])
+
+  const input = useMemo(() => variablesFor(filters), [filters])
+  const [{ data, operation }] = useSubscription({
     query: SEARCH_MEDIA_PAGE,
-    variables: {
-      input: { search: query, ...(category ? { categories: [category] } : {}) },
-      shortDescriptionInput: { count: 1 },
-    },
-    pause: !query,
+    variables: { input, shortDescriptionInput: { count: 1 } },
+    pause: !asked,
   })
 
   const [graceElapsed, setGraceElapsed] = useState(false)
@@ -108,20 +237,152 @@ const Search = () => {
     setGraceElapsed(false)
     const timer = setTimeout(() => setGraceElapsed(true), 5_000)
     return () => clearTimeout(timer)
-  }, [query, category])
+  }, [search])
 
-  const nodes = data?.mediaPage?.nodes ?? []
+  // Only the rows this filter set actually asked for.
+  //
+  // urql preserves the previous result across a change of variables, deliberately, and a paused
+  // subscription keeps its last one too. Both leave the page holding cards that belong to the filters
+  // the reader just left, under a heading and a chip row that now describe different ones, for as long
+  // as the new query takes to answer. `operation` is urql's own record of which request the current
+  // state is for, so comparing it to the request we would make now is the exact test.
+  const answered = operation?.variables?.input
+  const fresh = asked && answered !== undefined && JSON.stringify(answered) === JSON.stringify(input)
+  const nodes = fresh ? data?.mediaPage?.nodes ?? [] : []
+
+  /**
+   * The two label vocabularies the picker offers, and which url key each one writes to.
+   *
+   * Genres start from AniList's fixed list, because the control has to be usable before anything is
+   * loaded. They cannot END there: jikan's genres also carry its themes and demographics, so
+   * "Isekai" and "Shounen" arrive on media as GENRES. Offering those only as tags would write
+   * `tag=Isekai`, and the store matches tags against AniList's tag vocabulary, where the label is
+   * not, so the filter would return nothing at all.
+   *
+   * Tags are a pure facet: there are hundreds, they change, and the honest offer is the ones the
+   * current results carry. Both keep whatever the url already names, so a picked label never vanishes
+   * from its own picker while the page reloads under it.
+   */
+  const { genreOptions, tagOptions, genreKeys } = useMemo(() => {
+    const genres = new Map<string, string>(KNOWN_GENRES.map(genre => [genre.toLowerCase(), genre]))
+    const tags = new Map<string, string>()
+    for (const genre of filters.genres) genres.set(genre.toLowerCase(), genre)
+    for (const tag of filters.tags) tags.set(tag.toLowerCase(), tag)
+    for (const node of nodes) {
+      for (const genre of node.genres ?? []) if (!genres.has(genre.toLowerCase())) genres.set(genre.toLowerCase(), genre)
+      for (const tag of node.tags ?? []) if (!genres.has(tag.toLowerCase()) && !tags.has(tag.toLowerCase())) tags.set(tag.toLowerCase(), tag)
+    }
+    const byLabel = (a: string, b: string) => a.localeCompare(b)
+    return {
+      genreKeys: new Set(genres.keys()),
+      genreOptions: [...genres.values()].sort(byLabel).map(genre => ({ value: genre, label: genre })),
+      tagOptions: [...tags.values()].sort(byLabel).map(tag => ({ value: tag, label: tag })),
+    }
+  }, [nodes, filters.genres, filters.tags])
+
+  const labels = [...filters.genres, ...filters.tags]
+  // A label the page has seen as a genre goes to `genre=`, whatever this build's fixed list says. The
+  // pure `isKnownGenre` is the fallback for a label typed into an empty page, where nothing is loaded
+  // to have seen it.
+  const isGenre = (label: string) => genreKeys.has(label.toLowerCase()) || isKnownGenre(label)
+  const setLabels = (next: string[]) => setFilters({
+    genres: next.filter(isGenre),
+    tags: next.filter(label => !isGenre(label)),
+  })
+
+  const chips: { key: string, label: string, clear: Partial<SearchFilters> }[] = [
+    ...filters.year ? [{ key: 'year', label: String(filters.year), clear: { year: null } }] : [],
+    ...filters.season ? [{ key: 'season', label: SEASON_OPTIONS.find(option => option.value === filters.season)!.label, clear: { season: null } }] : [],
+    ...filters.status ? [{ key: 'status', label: STATUS_OPTIONS.find(option => option.value === filters.status)!.label, clear: { status: null } }] : [],
+    ...filters.category ? [{ key: 'category', label: CATEGORY_OPTIONS.find(option => option.value === filters.category)!.label, clear: { category: null } }] : [],
+    ...filters.formats.map(format => ({
+      key: `format:${format}`,
+      label: FORMAT_OPTIONS.find(option => option.value === format)!.label,
+      clear: { formats: filters.formats.filter(entry => entry !== format) },
+    })),
+    ...filters.genres.map(genre => ({ key: `genre:${genre}`, label: genre, clear: { genres: filters.genres.filter(entry => entry !== genre) } })),
+    ...filters.tags.map(tag => ({ key: `tag:${tag}`, label: tag, clear: { tags: filters.tags.filter(entry => entry !== tag) } })),
+  ]
 
   return (
     <div css={style}>
-      <div className="heading">
-        {query ? `Results for “${query}”` : 'Search'}
+      <div className="heading">{searchHeading(filters)}</div>
+
+      <div className="filters">
+        <FilterField label="Search">
+          <div className="text-field">
+            <SearchIcon size={17}/>
+            <input
+              ref={termRef}
+              type="text"
+              value={term}
+              placeholder="Any title"
+              aria-label="Search by title"
+              onInput={event => setTerm(event.currentTarget.value)}
+            />
+          </div>
+        </FilterField>
+        <FilterSelect
+          label="Genres & Tags"
+          options={[...genreOptions, ...tagOptions]}
+          selected={labels}
+          onChange={setLabels}
+          multiple
+          searchable
+          allowCustom
+        />
+        <FilterSelect
+          label="Year"
+          options={YEAR_OPTIONS}
+          selected={filters.year ? [String(filters.year)] : []}
+          onChange={picked => setFilters({ year: picked.length ? Number(picked[0]) : null })}
+          searchable
+        />
+        <FilterSelect
+          label="Season"
+          options={SEASON_OPTIONS}
+          selected={filters.season ? [filters.season] : []}
+          onChange={picked => setFilters({ season: (picked[0] as SearchFilters['season']) ?? null })}
+        />
+        <FilterSelect
+          label="Format"
+          options={FORMAT_OPTIONS}
+          selected={filters.formats}
+          onChange={picked => setFilters({ formats: picked as SearchFilters['formats'] })}
+          multiple
+        />
+        <FilterSelect
+          label="Airing Status"
+          options={STATUS_OPTIONS}
+          selected={filters.status ? [filters.status] : []}
+          onChange={picked => setFilters({ status: (picked[0] as SearchFilters['status']) ?? null })}
+        />
+        <FilterSelect
+          label="Category"
+          options={CATEGORY_OPTIONS}
+          selected={filters.category ? [filters.category] : []}
+          onChange={picked => setFilters({ category: (picked[0] as SearchFilters['category']) ?? null })}
+        />
       </div>
-      {query && (
-        <div className="tabs">
-          <CategoryTabs value={category} onChange={setCategory} />
-        </div>
-      )}
+
+      <div className="chips">
+        {chips.map(chip => (
+          <button key={chip.key} type="button" className="chip" aria-label={`Remove ${chip.label}`} onClick={() => setFilters(chip.clear)}>
+            {chip.label}
+            <X size={14}/>
+          </button>
+        ))}
+        {chips.length > 1 && (
+          <button
+            type="button"
+            className="chip-clear"
+            onClick={() => setFilters({ category: null, status: null, season: null, year: null, formats: [], genres: [], tags: [] })}
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+
       {
         nodes.length
           ? (
@@ -136,9 +397,13 @@ const Search = () => {
               ))}
             </div>
           )
-          : query
-            ? <div className="status">{graceElapsed ? 'No results found.' : 'Searching…'}</div>
-            : <div className="status">Type to search across every source.</div>
+          : asked
+            ? <div className="status">{graceElapsed ? 'No results found.' : 'Searching\u2026'}</div>
+            : filtered
+              // a category on its own is a refinement with nothing to refine: no source reads it, so
+              // nothing was asked and "no results" would blame a filter for a request never made
+              ? <div className="status">Add a title, a season, a year, a format or a genre to browse.</div>
+              : <div className="status">Search by title, or pick a filter to browse.</div>
       }
     </div>
   )

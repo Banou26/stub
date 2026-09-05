@@ -12,6 +12,7 @@
 import { expect, test, vi } from 'vitest'
 
 import { anidbIdFromUrl, resolvers } from '../../../../src/sources/jikan/extractor'
+import { mediaSeasonNow } from '../../../../src/sources/season'
 
 const API = 'https://api.jikan.moe/v4'
 
@@ -106,4 +107,159 @@ test('anidbIdFromUrl reads the id, or refuses', () => {
   expect(anidbIdFromUrl(undefined)).toBeUndefined()
   expect(anidbIdFromUrl(null)).toBeUndefined()
   expect(anidbIdFromUrl('')).toBeUndefined()
+})
+
+// The rest of this file drives the same two resolvers against a routed `ctx.fetch`, which records
+// every url it was asked for. Which url is asked is half of what a season page is: a season the
+// source cannot answer must ask for nothing rather than ask for /seasons/now.
+
+const MAL_ENTITY = (...names: string[]) =>
+  names.map((name, index) => ({ mal_id: index + 1, type: 'anime', name, url: `${API}/genre/${index + 1}` }))
+
+const ANIME = (fields: Record<string, unknown>) => ({
+  mal_id: 1,
+  url: 'https://myanimelist.net/anime/1',
+  title: 'Cowboy Bebop',
+  type: 'TV',
+  images: { jpg: {}, webp: {} },
+  ...fields,
+})
+
+const routed = (route: (url: string) => unknown) => {
+  const urls: string[] = []
+  return {
+    urls,
+    ctx: {
+      fetch: async (url: string) => {
+        urls.push(url)
+        const answer = route(url)
+        if (answer instanceof Error) throw answer
+        return answer
+      },
+    } as never,
+  }
+}
+
+const json = (body: unknown, ok = true) => ({ ok, status: ok ? 200 : 504, json: async () => body })
+
+const mediaFor = async (fields: Record<string, unknown>) => {
+  const { ctx } = routed(url => {
+    if (!url.startsWith(`${API}/anime/1/full`)) throw new Error(`fixture has no route for ${url}`)
+    return json({ data: ANIME(fields) })
+  })
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const { value } = await subscribe(undefined, { input: { uri: 'mal:1' } }, ctx).next()
+  return value?.media as { genres: string[], tags: string[], season: string | null, seasonYear: number | null }
+}
+
+const pageFor = async (input: Record<string, unknown>, ctx: never) => {
+  const subscribe = (resolvers.Subscription as any).mediaPage.subscribe
+  const { value } = await subscribe(undefined, { input }, ctx).next()
+  return (value?.mediaPage?.nodes ?? []) as { uri: string, season: string | null, seasonYear: number | null }[]
+}
+
+test('genres merge MAL\'s three vocabularies in order, deduplicated, and never explicit_genres', async () => {
+  const media = await mediaFor({
+    genres: MAL_ENTITY('Action', 'Comedy'),
+    explicit_genres: MAL_ENTITY('Hentai'),
+    themes: MAL_ENTITY('Isekai', 'action'),
+    demographics: MAL_ENTITY('Shounen'),
+  })
+
+  expect(media.genres).toEqual(['Action', 'Comedy', 'Isekai', 'Shounen'])
+  // jikan carries the highest score of any source, so a rating leaking in here wins the cluster
+  expect(media.genres).not.toContain('Hentai')
+  expect(media.tags).toEqual([])
+})
+
+test('a record with none of the three lists carries no genres rather than failing', async () => {
+  expect((await mediaFor({})).genres).toEqual([])
+})
+
+test('season and seasonYear round-trip, and a season MAL spells otherwise is null', async () => {
+  const winter = await mediaFor({ season: 'winter', year: 2024 })
+  expect(winter.season).toBe('WINTER')
+  expect(winter.seasonYear).toBe(2024)
+
+  // null rather than a guess: the store takes jikan's scalars over every other source's
+  const unknown = await mediaFor({ season: 'monsoon', year: 2024 })
+  expect(unknown.season).toBeNull()
+  expect(unknown.seasonYear).toBe(2024)
+})
+
+// `&` ends a query parameter, so an unescaped term silently searched for its own first word.
+test('a search term is percent-encoded into the query', async () => {
+  const { ctx, urls } = routed(() => json({ data: [] }))
+
+  await pageFor({ search: 'fate & zero' }, ctx)
+
+  expect(urls).toEqual([`${API}/anime?q=fate%20%26%20zero`])
+})
+
+test('a named season asks for that season and never for /seasons/now', async () => {
+  const { ctx, urls } = routed(() => json({ data: [], pagination: { last_visible_page: 1 } }))
+
+  const nodes = await pageFor({ season: 'WINTER', seasonYear: 2024, status: 'RELEASING' }, ctx)
+
+  expect(urls[0]).toContain('/seasons/2024/winter')
+  expect(urls.some(url => url.includes('/seasons/now'))).toBe(false)
+  expect(nodes).toEqual([])
+})
+
+test('the season the clock is in reuses /seasons/now, which carries the MAL fallback', async () => {
+  const { season, year } = mediaSeasonNow()
+  const { ctx, urls } = routed(() => json({ data: [ANIME({ season: season.toLowerCase(), year })], pagination: { last_visible_page: 1 } }))
+
+  const nodes = await pageFor({ season, seasonYear: year }, ctx)
+
+  expect(urls[0]).toContain('/seasons/now')
+  expect(nodes.map(node => node.season)).toEqual([season])
+})
+
+test('a season the api refuses is an empty page, not a throw and not another season', async () => {
+  for (const answer of [
+    () => new Error('Jikan failed to connect to MyAnimeList'),
+    () => json({ status: 504, message: 'gateway' }, false),
+    // a body that reads like a season behind a status that says it is not one: the route is
+    // unverified from here, so the status is the only thing that can refuse it
+    () => json({ data: [ANIME({})], pagination: { last_visible_page: 1 } }, false),
+    () => json({ status: 'ok', results: [] }),
+  ]) {
+    const { ctx, urls } = routed(answer)
+
+    await expect(pageFor({ season: 'SPRING', seasonYear: 2019 }, ctx)).resolves.toEqual([])
+    expect(urls.some(url => url.includes('/seasons/now'))).toBe(false)
+    expect(urls.some(url => url.includes('myanimelist.net'))).toBe(false)
+  }
+})
+
+// Half a season is not a season: without the year this would have to guess one.
+test('a season with no year, or a year with no season, asks for nothing at all', async () => {
+  for (const input of [{ season: 'WINTER' }, { seasonYear: 2024 }]) {
+    const { ctx, urls } = routed(() => json({ data: [ANIME({})], pagination: { last_visible_page: 1 } }))
+
+    await expect(pageFor({ ...input, status: 'RELEASING' }, ctx)).resolves.toEqual([])
+    expect(urls, JSON.stringify(input)).toEqual([])
+  }
+})
+
+// The scraped page is one season, the one running, and carries no label saying so. Unstamped, every
+// row it returns fails the store's season filter, which empties the page the fallback exists for.
+test('the MAL scrape stamps the season it is a page of', async () => {
+  const card =
+    '<div class="js-anime-category-producer js-anime-type-1">'
+    + '<a href="https://myanimelist.net/anime/12345/Some_Show" class="link-title">Some Show</a>'
+    + '</div>'
+  const { ctx } = routed(url =>
+    url.includes('myanimelist.net')
+      ? { ok: true, text: async () => card }
+      : json({ status: 504, message: 'gateway' })
+  )
+
+  const nodes = await pageFor({ status: 'RELEASING' }, ctx)
+  const { season, year } = mediaSeasonNow()
+
+  expect(nodes.map(node => node.uri)).toEqual(['mal:12345'])
+  expect(nodes[0]!.season).toBe(season)
+  expect(nodes[0]!.seasonYear).toBe(year)
 })

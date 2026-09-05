@@ -1,6 +1,23 @@
 
 enum MediaType {
   TV
+  """
+  A televised run of very short episodes. Its own member rather than a TV with a small `episodeCount`,
+  because AniList publishes the distinction and a viewer filtering for shorts is asking for exactly it.
+
+  ONLY ANILIST EVER EMITS IT, and AniList loses `type` to jikan, which scores 0.9 against 0.8 and
+  spells the same show TV. So a short jikan also carries profiles as TV in the aggregate and answers a
+  TV filter rather than a TV_SHORT one. That is a known subset, not a bug to work around here: making
+  it exact means changing which source wins `type`, and that precedence is what keeps a stale dump from
+  overwriting a live catalogue (store/aggregate.ts:203, sources/offline/normalize.ts:19-31).
+
+  INVISIBLE TO THE MERGE, and that takes real code rather than an omission. `mergeType` in
+  store/fuzzy-merge.ts folds it back to TV before a cluster is profiled, because every gate in that
+  file was calibrated on a corpus where AniList's shorts arrived spelled TV. Reading the new member
+  there would move two profiles at once on a cluster AniList alone types, and an empty work-kind set
+  disables the companion-content veto outright.
+  """
+  TV_SHORT
   MOVIE
   ANIME
   """Special episodes that have been included in DVD/Blu-ray releases, picture dramas, pilots, etc"""
@@ -26,6 +43,20 @@ enum MediaStatus {
   CANCELLED
   """Is currently paused from releasing and will resume at a later date"""
   HIATUS
+}
+
+"""
+The broadcast season a run aired in.
+
+Named by the SOURCE, never derived from `startDate` here. Seven extractors coerce a bare year into
+January 1 and two answer YYYY-MM-01 for a month-only date (see `namesADay` in sources/season.ts), so
+deriving a season from a start date would file every year-only row under WINTER.
+"""
+enum MediaSeason {
+  WINTER
+  SPRING
+  SUMMER
+  FALL
 }
 
 """Broad content category. A media can belong to several (e.g. an anime film is ANIME + MOVIE)."""
@@ -126,6 +157,32 @@ type Media {
   endDate: Date
   isAdult: Boolean
   episodeCount: Int
+  """The broadcast season this run aired in, as the source named it."""
+  season: MediaSeason
+  """
+  The calendar year `season` belongs to.
+
+  Separate from `startDate` because it survives a coerced date: a source that only knows the year
+  still files the run under the right season when another source names one, and a January premiere
+  stays in the WINTER of its own year rather than the FALL of the year before.
+  """
+  seasonYear: Int
+  """
+  Broad content descriptors, deduplicated across the cluster, richest source first.
+
+  Free-form strings rather than an enum because no two catalogues agree on a fixed set, and an enum
+  would have to drop every value it had not anticipated. Supplied by AniList and jikan; the bundled
+  offline catalogue publishes none, so a genre filter cannot be answered during an upstream outage.
+  """
+  genres: [String!]!
+  """
+  Finer-grained descriptors than `genres`, from AniList's own tag vocabulary.
+
+  Kept apart from genres rather than merged into one list because AniList publishes them separately
+  and its own browse UI groups them separately, so a merged list could not reproduce either. Tags
+  AniList marks as a spoiler are dropped at the source and never reach here.
+  """
+  tags: [String!]!
   episodes: [Episode!]!
 }
 
@@ -239,6 +296,22 @@ input MediaPageInput {
   status: MediaStatus
   """Filter by category (anime / series / movie); media matching ANY of these are kept."""
   categories: [MediaCategory!]
+  """Filter by format; media whose `type` is ANY of these are kept. A media with no type is dropped."""
+  formats: [MediaType!]
+  """
+  Filter by broadcast season. Pair it with `seasonYear` to name one season rather than every WINTER.
+
+  A source that can answer a season directly is asked for THIS one instead of the clock's; a source
+  that cannot answers nothing rather than answering the current season, which would look like a
+  result set and be the wrong year.
+  """
+  season: MediaSeason
+  """Filter by the year of `season`."""
+  seasonYear: Int
+  """Filter by genre; media carrying ALL of these are kept, compared case-insensitively."""
+  genres: [String!]
+  """Filter by tag; media carrying ALL of these are kept, compared case-insensitively."""
+  tags: [String!]
 
   sorts: [MediaSort!]
 

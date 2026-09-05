@@ -6,6 +6,7 @@ import _schema from './schema.gql?raw'
 import { implementsSimilarMedia, proxyRequestToExtractors, similarOutcomeFrom } from '../../extractor'
 import { resolveSimilarRuns } from '../../similar-consumer'
 import { findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, hideAttachedContainers } from '../../store/db'
+import { applyMediaFilters } from '../../store/filter'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
 import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
@@ -108,6 +109,20 @@ export const resolvers = {
 
         const getPage = async () => {
           const uris = [...insertedUris]
+          // THE WHOLE-STORE FALLBACK IS LOAD BEARING, and it does not look it.
+          //
+          // `insertedUris` is empty until a source answers, so this is the first yield's only content.
+          // Refusing it and answering [] instead is the obvious way to keep a filtered page from
+          // opening on the previous page's results, and it BREAKS the page outright: this generator
+          // only re-runs on `media:changed`, and a second subscription over a warm store changes
+          // nothing, because `graph.set` is idempotent (tests/unit/worker/store/edge-idempotence.test.ts).
+          // So no event ever fires and the page stays empty. Measured 2026-09-06 on the search page:
+          // picking a format on a loaded season sat at 0 cards for 60 seconds, where the same url
+          // opened cold answered 24.
+          //
+          // What keeps the fallback honest is `applyMediaFilters` below, which runs on it like any
+          // other page: a stale row from an earlier query only survives if it genuinely matches the
+          // season, format, genres and tags now being asked for.
           let clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
           if (await fuzzyMergeMediaClusters(clusters)) {
             clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
@@ -115,10 +130,11 @@ export const resolvers = {
           clusters = hideAttachedContainers(clusters)
           let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
 
-          const categories = args.input.categories
-          if (categories && categories.length) {
-            aggregated = aggregated.filter(media => media.categories.some(category => categories.includes(category)))
-          }
+          // Everything decidable from the aggregated row, in one pinned place. It runs AFTER
+          // `hideAttachedContainers` above: dropping a run cluster before that leaves its container
+          // behind as an orphan card, because a container is only hidden when a run cluster in the
+          // same list points at it.
+          aggregated = applyMediaFilters(aggregated, args.input)
 
           const search = args.input.search
           if (search) {

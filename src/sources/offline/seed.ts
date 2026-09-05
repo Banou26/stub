@@ -55,7 +55,7 @@ export const SEED_THUMBNAILS_PER_EPISODE = 1
 export const SEED_URLS_PER_EPISODE = 2
 
 // mirrors of src/worker/store/types.ts, pinned equal by tests/unit/sources/offline/seed.test.ts
-export const SEED_MEDIA_TYPES = ['TV', 'MOVIE', 'ANIME', 'SPECIAL', 'OVA', 'ONA', 'LIVE_ACTION'] as const
+export const SEED_MEDIA_TYPES = ['TV', 'TV_SHORT', 'MOVIE', 'ANIME', 'SPECIAL', 'OVA', 'ONA', 'LIVE_ACTION'] as const
 export const SEED_MEDIA_CATEGORIES = ['ANIME', 'SERIES', 'MOVIE'] as const
 export const SEED_SCOPES = ['RUN', 'CONTAINER'] as const
 

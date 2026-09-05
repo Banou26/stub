@@ -9,6 +9,7 @@ import type { Media as GQLMedia } from '../../generated/schema/types.generated'
 import { MediaType } from '../../generated/graphql'
 import { makeMedia } from '../utils'
 import { malLargeImage } from '../mal-image'
+import { MEDIA_SEASONS, type MediaSeasonName } from '../season'
 
 export const origin = 'offline'
 
@@ -63,11 +64,28 @@ export type ManamiRecord = {
   tr?: string
   /** that trailer's thumbnail */
   th?: string
+  // No genres and no tags: the measurement that keeps them out of the bundle is in `seasonMedia`.
 }
 
 /** `2026-SUMMER`, the key the generated bundle is keyed on. `animeSeasonOf` answers in lower case. */
 export const seasonKey = ({ season, year }: { season: string, year: number }) =>
   `${year}-${season.toUpperCase()}`
+
+const SEASON_KEY = /^(\d{4})-([A-Z]+)$/
+
+/**
+ * The inverse of `seasonKey`: the season and year a bundle key names, or nothing when it names none.
+ *
+ * TOTAL on purpose. The keys reach here off a generated module and, through the page resolver, off a
+ * caller's input, so a string neither of those promises has to leave a row without a season rather
+ * than take a page down. `MEDIA_SEASONS` is the validator so the four names stay spelled in one
+ * place, which is the whole reason sources/season.ts exists.
+ */
+export const parseSeasonKey = (key: string): { season: MediaSeasonName, year: number } | undefined => {
+  const match = SEASON_KEY.exec(key)
+  const season = MEDIA_SEASONS.find(candidate => candidate === match?.[2])
+  return match && season ? { season, year: Number(match[1]) } : undefined
+}
 
 const TYPES: Record<string, MediaType> = {
   TV: MediaType.Tv,
@@ -119,17 +137,33 @@ const handles = (record: ManamiRecord): GQLMedia[] => {
  * ship in. It is safe at this score because jikan publishes the same count at 0.9 and wins the
  * aggregate, so the value is restated rather than contradicted. A row the fetch did not cover carries
  * none, which sorts it behind the covered ones.
+ *
+ * `season` and `seasonYear` come from the BUCKET KEY, which is the only place the bundle states them:
+ * the records themselves carry no season, so a caller that has lost the key gets null for both rather
+ * than a guess. Deriving them from a start date is refused schema-wide for the reason `MediaSeason`
+ * records, and this source publishes no date to derive from anyway.
+ *
+ * `genres` and `tags` are absent for a different reason again, a size one rather than a staleness
+ * one. manami does carry tags (mean 10.2 a record, 981 distinct strings over the 874 window records),
+ * and adding them verbatim takes the generated payload from 121,935 to 247,301 raw bytes and 29,628
+ * to 48,538 brotli bytes, a 64% increase over the wire, for a field anilist and jikan both answer
+ * live. Interning them into a string table saves 75 KB raw and only 1.7 KB brotli, so it does not
+ * change the answer. `makeMedia` leaves both as [], and the store's filter is strict, so a genre or
+ * tag filter drops these rows instead of reading a claim they cannot back.
  */
-export const seasonMedia = (record: ManamiRecord): GQLMedia | undefined => {
+export const seasonMedia = (record: ManamiRecord, key?: string): GQLMedia | undefined => {
   const id = recordId(record)
   if (!id) return undefined
 
   const type = TYPES[record.ty]
+  const season = key ? parseSeasonKey(key) : undefined
   return makeMedia({
     origin,
     id,
     handles: handles(record),
     score: SCORE,
+    season: season?.season ?? null,
+    seasonYear: season?.year ?? null,
     categories: type === MediaType.Movie ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
     type,
     titles: [{ language: 'en', title: record.t, score: SCORE }],
@@ -160,5 +194,6 @@ export const seasonMedia = (record: ManamiRecord): GQLMedia | undefined => {
   })
 }
 
-export const seasonPage = (records: readonly ManamiRecord[]): GQLMedia[] =>
-  records.map(seasonMedia).filter((media): media is GQLMedia => Boolean(media))
+/** One bucket as rows. `key` is the bucket's own, and is what stamps each row's season. */
+export const seasonPage = (records: readonly ManamiRecord[], key?: string): GQLMedia[] =>
+  records.map(record => seasonMedia(record, key)).filter((media): media is GQLMedia => Boolean(media))

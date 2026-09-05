@@ -12,6 +12,8 @@ import {
   useTransitionStyles
 } from '@floating-ui/react'
 
+import { Link } from 'wouter'
+
 import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
 import Draggable from '../../components/draggable'
@@ -160,7 +162,7 @@ const CellComponent = (
   )
 }
 
-export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
+export const MediaSection = ({ title, titleTo, mediaNodes }: { title: string, titleTo?: string, mediaNodes: GetReleasingMediaPageSubscription['mediaPage']['nodes'] }) => {
   const [visibleStartIndex, setVisibleStartIndex] = useState(0)
   const [visibleEndIndex, setVisibleEndIndex] = useState(0)
 
@@ -190,7 +192,13 @@ export const MediaSection = ({ title, mediaNodes }: { title: string, mediaNodes:
 
   return (
     <div css={style}>
-      <span className='title'>{title}</span>
+      {
+        // A <Link> renders an <a class="title">, still a direct child, so the `& > .title` rule above
+        // keeps styling it and outranks the global `a` colour on specificity.
+        titleTo
+          ? <Link to={titleTo} className='title'>{title}</Link>
+          : <span className='title'>{title}</span>
+      }
       <div className='list-container'>
         <Draggable isDragging={isDragging} setIsDragging={setIsDragging}>
           <Grid

@@ -414,3 +414,25 @@ test('control: two runs that agree on title and year still union', async () => {
 
   expect((await findAggregatedMedia('anilist:7200')).map(m => m.uri).sort()).toEqual(['anilist:7200', 'kitsu:7201'])
 })
+
+// TV_SHORT was added to MediaType for the search page's format filter, and AniList stopped collapsing
+// it into TV. Every gate in fuzzy-merge.ts was calibrated on a corpus where those rows arrived spelled
+// TV, so the new member must be invisible here: `mergeType` folds it back. Read straight off
+// profileCluster, because the veto it feeds only misfires on clusters that no other source has typed,
+// which is exactly the case a merge fixture would not happen to contain.
+test('a short profiles for the merge exactly as the TV it used to be spelled', () => {
+  const row = (type: string) => [{
+    uri: 'anilist:1', origin: 'anilist', id: '1', type,
+    categories: ['ANIME', 'SERIES'], startDate: SPRING_2026,
+    titles: [{ language: 'ja', title: 'Aru Short', score: 0.7 }],
+  }] as any
+
+  const short = profileCluster(row('TV_SHORT'))
+  const tv = profileCluster(row('TV'))
+
+  expect([...short.types]).toEqual([...tv.types])
+  expect([...short.formats]).toEqual([...tv.formats])
+  // an empty work-kind set is the failure that matters: `differentWork` only vetoes when BOTH sides
+  // name one, so a short profiling as nothing would stop refusing anything
+  expect(short.types.size).toBe(1)
+})

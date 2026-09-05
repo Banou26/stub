@@ -28,6 +28,32 @@ export const animeSeasonOf = (date = new Date()): { season: AnimeSeason, year: n
   year: date.getFullYear()
 })
 
+/**
+ * The same four seasons in the spelling the graphql schema uses.
+ *
+ * Two spellings exist because two vocabularies do: the catalogues this file was written for name a
+ * season in lower case, and every enum in the schema is upper. Rather than let a third appear, both
+ * live here with the two functions below as the ONLY bridge, so a consumer converts instead of
+ * re-deriving. `mediaSeasonEnum` in worker/store/types.ts mirrors this list, the same way that file
+ * mirrors every other schema enum.
+ */
+export const MEDIA_SEASONS = ['WINTER', 'SPRING', 'SUMMER', 'FALL'] as const
+export type MediaSeasonName = (typeof MEDIA_SEASONS)[number]
+
+/** A lower-case season name as the schema spells it. */
+export const upperSeason = (season: AnimeSeason): MediaSeasonName =>
+  season.toUpperCase() as MediaSeasonName
+
+/** A schema season name as this file's catalogues spell it, or nothing when it names no season. */
+export const lowerSeason = (season: string): AnimeSeason | undefined =>
+  ANIME_SEASONS.find(candidate => candidate === season.toLowerCase())
+
+/** The season the clock is in, in the schema's spelling. */
+export const mediaSeasonNow = (date = new Date()): { season: MediaSeasonName, year: number } => {
+  const { season, year } = animeSeasonOf(date)
+  return { season: upperSeason(season), year }
+}
+
 const CJK_DIGITS: Record<string, number> = { 〇: 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 }
 
 // 十 is a multiplier, not a digit: 十二 is 12, 二十 is 20, 二十一 is 21.

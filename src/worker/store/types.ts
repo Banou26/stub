@@ -1,7 +1,17 @@
 import type { Uri } from '../../utils/uri'
 
-export const mediaTypeEnum = ['TV', 'MOVIE', 'ANIME', 'SPECIAL', 'OVA', 'ONA', 'LIVE_ACTION'] as const
+export const mediaTypeEnum = ['TV', 'TV_SHORT', 'MOVIE', 'ANIME', 'SPECIAL', 'OVA', 'ONA', 'LIVE_ACTION'] as const
 export type MediaType = typeof mediaTypeEnum[number]
+
+/**
+ * The four broadcast seasons, mirroring `MediaSeason` in the graphql schema.
+ *
+ * UPPER CASE, like every enum here and unlike `ANIME_SEASONS` in sources/season.ts, which is lower
+ * case because it names the same four seasons for a different consumer. `upperSeason` and
+ * `lowerSeason` in that file are the only bridge between the two spellings; do not add a third.
+ */
+export const mediaSeasonEnum = ['WINTER', 'SPRING', 'SUMMER', 'FALL'] as const
+export type MediaSeason = typeof mediaSeasonEnum[number]
 
 export const mediaStatusEnum = ['FINISHED', 'RELEASING', 'NOT_YET_RELEASED', 'CANCELLED', 'HIATUS'] as const
 export type MediaStatus = typeof mediaStatusEnum[number]
@@ -57,6 +67,10 @@ export type Media = {
   endDate: string | null
   isAdult: boolean | null
   episodeCount: number | null
+  season: MediaSeason | null
+  seasonYear: number | null
+  genres: string[]
+  tags: string[]
   scope: MediaScope
 }
 

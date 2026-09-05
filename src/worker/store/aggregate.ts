@@ -18,6 +18,51 @@ function byScore<T extends { score?: number | null }>(arr: T[]): T[] {
   return [...arr].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
 }
 
+/**
+ * Genre and tag labels from every member of a cluster, in arrival order, one spelling each.
+ *
+ * The reduce feeds this the highest-scored source's labels first, so the spelling KEPT is that
+ * source's: AniList's "Sci-Fi" survives and a lower-scored "sci-fi" folds into it. Case-insensitive
+ * because the catalogues genuinely disagree on case and a user filtering for one would otherwise see
+ * the same genre listed twice.
+ *
+ * `removeDuplicatesByField` cannot do this: it keys on a property of an object, and these are bare
+ * strings.
+ */
+/**
+ * The broadcast season a cluster aired in, taken from ONE member.
+ *
+ * Every other scalar here is won field by field, and this pair cannot be: `SUMMER` and `2026` only
+ * mean anything together. Merged separately, a cluster whose members disagree can end up carrying a
+ * season no source ever claimed, and `store/filter.ts` matches on both, so the media would answer a
+ * season page that nothing put it in. Taking the year from whoever named the season keeps the pair a
+ * quotation rather than a composite.
+ *
+ * A cluster nobody gave a season to still gets a year, because a year alone cannot be mixed with
+ * anything: jikan publishes one for a film that has no season at all.
+ *
+ * `medias` must be sorted by score, descending, which is what `sorted` above is.
+ */
+const seasonOf = (medias: Media[]): { season: Media['season'], seasonYear: number | null } => {
+  const named = medias.find(media => media.season)
+  return {
+    season: named?.season ?? null,
+    seasonYear: (named ? named.seasonYear : medias.find(media => media.seasonYear !== null)?.seasonYear) ?? null,
+  }
+}
+
+const dedupeLabels = (labels: string[] | undefined): string[] => {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const label of labels ?? []) {
+    const key = label.toLowerCase()
+    if (!label || seen.has(key)) continue
+    seen.add(key)
+    out.push(label)
+  }
+  return out
+}
+
 export function removeDuplicatesByField<T extends Record<string, any>>(field: keyof T, array: T[]): T[] {
   const seen = new Set<string | number>()
   const result: T[] = []
@@ -128,6 +173,10 @@ function mediaToGQL(media: Media): GQLMedia {
     endDate: media.endDate,
     isAdult: media.isAdult,
     episodeCount: media.episodeCount,
+    season: media.season,
+    seasonYear: media.seasonYear,
+    genres: media.genres ?? [],
+    tags: media.tags ?? [],
     scope: media.scope,
     episodes: [],
     handles: [],
@@ -209,6 +258,8 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
       isAdult: acc.isAdult ?? gql.isAdult,
       episodeCount: acc.episodeCount ?? gql.episodeCount,
       categories: [...(acc.categories ?? []), ...(gql.categories ?? [])],
+      genres: [...(acc.genres ?? []), ...(gql.genres ?? [])],
+      tags: [...(acc.tags ?? []), ...(gql.tags ?? [])],
       titles: [...(acc.titles ?? []), ...(media.titles ?? [])],
       descriptions: [...(acc.descriptions ?? []), ...(media.descriptions ?? [])],
       shortDescriptions: [...(acc.shortDescriptions ?? []), ...(media.shortDescriptions ?? [])],
@@ -237,6 +288,9 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
   return {
     ...merged as GQLMedia,
     categories: reconcileCategories(merged.categories ?? []),
+    ...seasonOf(sorted),
+    genres: dedupeLabels(merged.genres),
+    tags: dedupeLabels(merged.tags),
     titles: removeDuplicatesByField('title', byScore(merged.titles ?? [])),
     descriptions: byScore(merged.descriptions ?? []),
     shortDescriptions: byScore(merged.shortDescriptions ?? []),

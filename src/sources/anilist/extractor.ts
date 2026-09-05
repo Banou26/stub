@@ -1,10 +1,11 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import { airedDate } from '../aired-date'
-import type { Resolvers, Media as GQLMedia, RequestContext } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, MediaPageInput, RequestContext } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
+import { Maybe, Media, MediaExternalLink, MediaStatus, MediaTag, Page } from './types'
 import { makeMedia, normalizePage } from '../utils'
+import { MEDIA_SEASONS, MediaSeasonName } from '../season'
 import { createAnilistFrontendSession } from './frontend'
 
 export const icon = 'https://anilist.co/img/icons/favicon-32x32.png'
@@ -38,10 +39,14 @@ const MEDIA_FIELDS = `
   season
   seasonYear
   status
-  season
   format
   type
   genres
+  tags {
+    name
+    isMediaSpoiler
+    isGeneralSpoiler
+  }
   synonyms
   duration
   popularity
@@ -84,31 +89,24 @@ const MEDIA_FIELDS = `
   }
 `
 
-const SEARCH_QUERY = `
-  query (
-    $season: MediaSeason
-    $year: Int
-    $page: Int
-  ) {
-    Page(page: $page) {
-      pageInfo {
-        lastPage
-        hasNextPage
-        total
-      }
-      media(
-        season: $season
-        seasonYear: $year
-      ) {
-        ${MEDIA_FIELDS.split('\n').join('\n      ')}
-      }
-    }
-  }
-`
-
-const SEARCH_MEDIA_QUERY = `
+/**
+ * The one browse, covering search and every filter a `mediaPage` input can name.
+ *
+ * Every argument is optional, so an unnamed filter is an absent variable rather than a second query.
+ *
+ * `type: ANIME` is fixed rather than a variable: the season query this replaces omitted it, and a
+ * Page with no type argument answers manga formats too.
+ */
+const BROWSE_QUERY = `
   query (
     $search: String
+    $season: MediaSeason
+    $seasonYear: Int
+    $format_in: [MediaFormat]
+    $status: MediaStatus
+    $genre_in: [String]
+    $tag_in: [String]
+    $sort: [MediaSort]
     $page: Int
   ) {
     Page(page: $page) {
@@ -118,9 +116,15 @@ const SEARCH_MEDIA_QUERY = `
         total
       }
       media(
-        search: $search
         type: ANIME
-        sort: SEARCH_MATCH
+        search: $search
+        season: $season
+        seasonYear: $seasonYear
+        format_in: $format_in
+        status: $status
+        genre_in: $genre_in
+        tag_in: $tag_in
+        sort: $sort
       ) {
         ${MEDIA_FIELDS.split('\n').join('\n      ')}
       }
@@ -259,24 +263,6 @@ const fetchAnilist = async <T>(request: { query: string, variables: any }, conte
   return frontend.query<T>(request)
 }
 
-const mediaSeasons = [MediaSeason.Winter, MediaSeason.Spring, MediaSeason.Summer, MediaSeason.Fall]
-
-const getMediaSeason = (date = new Date()): MediaSeason => {
-  const month = date.getMonth()
-
-  return (
-    month >= 0 && month <= 2 ? MediaSeason.Winter
-    : month >= 3 && month <= 5 ? MediaSeason.Spring
-    : month >= 6 && month <= 8 ? MediaSeason.Summer
-    : month >= 9 && month <= 11 ? MediaSeason.Fall
-    : undefined as never
-  )
-}
-
-const getPreviousMediaSeason = (date = new Date()) =>
-  mediaSeasons[mediaSeasons.indexOf(getMediaSeason(date)) - 1]
-  ?? MediaSeason.Fall
-
 const fetchMedia = async (
   { id, idMal }: { id?: number, idMal?: number },
   context: ExtractorServerContext,
@@ -317,36 +303,51 @@ const fetchMedia = async (
   return normalizeMedia(data.Media, handles)
 }
 
-const fetchMediaSeason = (
-  { season, year, page = 1 }:
-  { season: MediaSeason, year: number, page?: number },
-  context: ExtractorServerContext
-) =>
-  fetchAnilist<{ Page: Page }>({ query: SEARCH_QUERY, variables: { season, year, page } }, context)
+const fetchBrowsePage = (variables: BrowseVariables, page: number, context: ExtractorServerContext) =>
+  fetchAnilist<{ Page: Page }>({ query: BROWSE_QUERY, variables: { ...variables, page } }, context)
 
-const getFullMediaSeason = async ({ season, year }: { season: MediaSeason, year: number }, context: ExtractorServerContext) => {
-  const data = await fetchMediaSeason({ season, year, page: 1 }, context)
+/**
+ * One browse, paged.
+ *
+ * THE PAGE COUNT IS A BUDGET, not a style choice: AniList answers 30 requests a minute on a shared
+ * relay ip (measured in scripts/measure-start-date-window.mjs), and a single listing that spent more
+ * of it would starve every other call in the same minute. So a filtered browse takes 3 pages, which
+ * `sort` makes the 150 most popular rather than an arbitrary slice, and a search takes 1, since its
+ * own ranking already puts the answer on the first page.
+ */
+const browse = async (variables: BrowseVariables, context: ExtractorServerContext) => {
+  const data = await fetchBrowsePage(variables, 1, context)
   const lastPage = data?.Page?.pageInfo?.lastPage
 
   return normalizePage(
     [
       ...data?.Page?.media ?? [],
-      ...lastPage
+      ...!variables.search && lastPage
         ? (await Promise.all(
           new Array(Math.min(2, lastPage - 1))
             .fill(undefined)
-            .map((_, i) => fetchMediaSeason({ season, year, page: i + 2 }, context).then(data => data?.Page?.media ?? []))
+            .map((_, i) => fetchBrowsePage(variables, i + 2, context).then(data => data?.Page?.media ?? []))
         )).flat()
         : []
     ],
     media => normalizeMedia(media as Media),
-    'AniList season'
+    'AniList browse'
   )
 }
 
 const externalLinkHasSiteId =
   (externalLink: Maybe<MediaExternalLink>): externalLink is MediaExternalLink & { siteId: number } =>
     Boolean(externalLink?.siteId)
+
+// A tag names a theme, and AniList flags the ones that name a twist instead. Those are dropped: the
+// tags reach a listing, where a row is read before the show is watched.
+const isPublicTag = (tag: Maybe<MediaTag>): tag is MediaTag =>
+  Boolean(tag?.name) && !tag?.isMediaSpoiler && !tag?.isGeneralSpoiler
+
+// AniList spells the four seasons exactly as the schema does, so this is a guard rather than a
+// mapping: an upstream value the schema has no member for is dropped instead of reaching the store.
+const knownSeason = (season: Maybe<string> | undefined): MediaSeasonName | undefined =>
+  MEDIA_SEASONS.find(name => name === season)
 
 const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
   const malHandle =
@@ -370,8 +371,13 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
     id: media.id.toString(),
     url: media.siteUrl,
     categories: media.format === 'MOVIE' ? ['ANIME', 'MOVIE'] : ['ANIME', 'SERIES'],
+    genres: (media.genres ?? []).filter((genre): genre is string => Boolean(genre)),
+    tags: (media.tags ?? []).filter(isPublicTag).map(tag => tag.name),
+    season: knownSeason(media.season),
+    seasonYear: media.seasonYear,
     type:
-      media.format === 'TV' || media.format === 'TV_SHORT' ? GQLMediaType.Tv
+      media.format === 'TV' ? GQLMediaType.Tv
+      : media.format === 'TV_SHORT' ? GQLMediaType.TvShort
       : media.format === 'MOVIE' ? GQLMediaType.Movie
       : media.format === 'SPECIAL' ? GQLMediaType.Special
       : media.format === 'OVA' ? GQLMediaType.Ova
@@ -405,6 +411,8 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       media.status === MediaStatus.NotYetReleased ? GQLMediaStatus.NotYetReleased
       : media.status === MediaStatus.Releasing ? GQLMediaStatus.Releasing
       : media.status === MediaStatus.Finished ? GQLMediaStatus.Finished
+      : media.status === MediaStatus.Cancelled ? GQLMediaStatus.Cancelled
+      : media.status === MediaStatus.Hiatus ? GQLMediaStatus.Hiatus
       : undefined,
     startDate,
     endDate,
@@ -422,17 +430,68 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
   })
 }
 
+// stub's MediaType is AniList's MediaFormat plus two members it has no format for: ANIME names a
+// category and LIVE_ACTION names a catalogue this one does not carry. Sending either is an invalid
+// enum value, which fails the WHOLE document, so they are dropped rather than passed on.
+const ANILIST_FORMATS = ['TV', 'TV_SHORT', 'MOVIE', 'SPECIAL', 'OVA', 'ONA'] as const
+type AnilistFormat = (typeof ANILIST_FORMATS)[number]
 
-// todo: implement overlapping week between season since some anime may start while some other ends
-export const getAnimeSeasonNow = (context: ExtractorServerContext) => {
-  const season = getMediaSeason()
-  const seasonYear = new Date().getFullYear()
-  return getFullMediaSeason({ season: season, year: seasonYear }, context)
+/** The arguments BROWSE_QUERY declares, spelled as AniList spells them. */
+type BrowseVariables = {
+  search?: string
+  season?: MediaSeasonName
+  seasonYear?: number
+  format_in?: AnilistFormat[]
+  status?: string
+  genre_in?: string[]
+  tag_in?: string[]
+  sort?: string[]
 }
 
-const searchMedia = async (search: string, context: ExtractorServerContext) => {
-  const data = await fetchAnilist<{ Page: Page }>({ query: SEARCH_MEDIA_QUERY, variables: { search, page: 1 } }, context)
-  return normalizePage(data?.Page?.media ?? [], media => normalizeMedia(media as Media), 'AniList search')
+/**
+ * The browse a `mediaPage` input asks for, or nothing when it names none this source can answer.
+ *
+ * Answering nothing is the honest reply to an unfiltered page: AniList is asked for a listing, never
+ * for the catalogue.
+ */
+const browseVariables = (
+  input: Pick<MediaPageInput, 'search' | 'status' | 'season' | 'seasonYear' | 'formats' | 'genres' | 'tags'>
+): BrowseVariables | undefined => {
+  const search = input.search || undefined
+  const namesABrowse =
+    Boolean(input.status)
+    || Boolean(search)
+    || Boolean(input.season)
+    || Boolean(input.seasonYear)
+    || Boolean(input.formats?.length)
+    || Boolean(input.genres?.length)
+    || Boolean(input.tags?.length)
+  if (!namesABrowse) return undefined
+
+  // A RELEASING page used to mean "the current season" here, because the home page said RELEASING and
+  // meant exactly that, so this substituted the clock's season and dropped the status. The home page
+  // now names its season (router/home/index.tsx), which leaves nothing that wants the substitution and
+  // one caller that is ruined by it: picking Airing on the search page asked AniList which shows are
+  // in this season rather than which are releasing, so no long-running show could ever match, and the
+  // page came back byte for byte identical to an unfiltered season.
+  const formats = (input.formats ?? []).filter((format): format is AnilistFormat => (ANILIST_FORMATS as readonly string[]).includes(format))
+
+  return {
+    search,
+    season: input.season ?? undefined,
+    seasonYear: input.seasonYear ?? undefined,
+    // an empty list is not a filter: every format the caller named is one AniList has no name for
+    format_in: formats.length ? formats : undefined,
+    status: input.status ?? undefined,
+    genre_in: input.genres?.length ? input.genres : undefined,
+    tag_in: input.tags?.length ? input.tags : undefined,
+    // A season browse must say POPULARITY_DESC: AniList orders by id otherwise, which makes the three
+    // page window an arbitrary slice of a ~400 title season rather than its most popular 150.
+    // SEARCH_MATCH is carried across because the old search query held it as a literal, not because a
+    // search is broken without it: measured on anilist.co/graphql, an unsorted search still answers
+    // sensibly. Saying it keeps the ranking a property of this file rather than of a server default.
+    sort: search ? ['SEARCH_MATCH'] : ['POPULARITY_DESC']
+  }
 }
 
 export const resolvers: Resolvers = {
@@ -449,19 +508,12 @@ export const resolvers: Resolvers = {
       }
     },
     mediaPage: {
-      subscribe: async function*(_, { input: { search, status } }, ctx: ExtractorServerContext) {
-        if (status === 'RELEASING') {
-          return yield {
-            mediaPage: {
-              nodes: await getAnimeSeasonNow(ctx)
-            }
-          }
-        }
-        if (search) {
-          return yield {
-            mediaPage: {
-              nodes: await searchMedia(search, ctx)
-            }
+      subscribe: async function*(_, { input }, ctx: ExtractorServerContext) {
+        const variables = browseVariables(input)
+        if (!variables) return
+        yield {
+          mediaPage: {
+            nodes: await browse(variables, ctx)
           }
         }
       }

@@ -1,6 +1,9 @@
-// Kitsu's season pagination, split out with NO imports so it can be tested: an extractor pulls in
-// the source barrel and, through it, a CommonJS `require('react')` that cannot load outside a
-// browser. Same reason ./stream-id.ts is its own module.
+// Kitsu's season pagination, split out with no RUNTIME imports so it can be tested: an extractor
+// pulls in the source barrel and, through it, a CommonJS `require('react')` that cannot load outside
+// a browser. Same reason ./stream-id.ts is its own module. The one import below is a type, erased at
+// build, and ../season imports nothing either.
+
+import type { AnimeSeason } from '../season'
 
 /**
  * Kitsu caps a page at 20 and says so: `page[size]=40` answers 400 "size exceeds maximum page size
@@ -39,9 +42,13 @@ export const SEASON_PAGES = 8
  * pairs violate descending userCount. It is asked for anyway so that a partial result skews toward
  * titles someone wants, but the real ordering is stub's own, applied over the merged page.
  * `createdAt` rides along only to make the window deterministic between requests.
+ *
+ * The season is the LOWER CASE spelling (`AnimeSeason`), which is the one every measurement above was
+ * taken with. A caller holding the schema's upper case spelling converts with `lowerSeason` rather
+ * than passing it through, and the type is what stops it.
  */
 export const seasonQuery = (
-  { season, year, page }: { season: string, year: number, page: number }
+  { season, year, page }: { season: AnimeSeason, year: number, page: number }
 ) =>
   `/anime?filter%5Bseason%5D=${season}&filter%5BseasonYear%5D=${year}`
   + `&page%5Bsize%5D=${SEASON_PAGE_SIZE}&page%5Bnumber%5D=${page}`

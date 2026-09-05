@@ -107,21 +107,26 @@ const loadIndex = (): Promise<CatalogIndex> =>
     }))
 
 /**
- * The current season, read from the bundle rather than requested.
+ * One season's rows, read from the bundle rather than requested, and NOTHING when it holds no such
+ * bucket.
  *
- * Keyed on the season the CLOCK is in, matched against `animeSeason` in the data, and deliberately
- * not on manami's own `status`, which is a snapshot from the dump's cut date and decays within
- * weeks of being written.
+ * The window is six buckets anchored on the dump's cut date (anchor quarter minus 1, plus 4), so a
+ * season outside it is not late data, it is data this build will never have: there is no history
+ * behind the anchor. Answering a different season instead would be worse than answering nothing. The
+ * store's filter is strict on season so those rows are dropped anyway, the upstream call is wasted,
+ * and on any axis that filter cannot see the wrong season leaks onto the page.
+ *
+ * Deliberately not keyed on manami's own `status`, which is a snapshot from the cut date and decays
+ * within weeks of being written.
  */
-const getSeasonNow = async (): Promise<GQLMedia[]> => {
+const bundledSeason = async (key: string): Promise<GQLMedia[]> => {
   const data = await loadSeasons()
-  const key = seasonKey(animeSeasonOf())
   const records = data.seasons[key]
   if (!records) {
-    console.warn(`offline: no bundled data for ${key}, the dump (${data.tag}) predates it. Rebuild to refresh.`)
+    console.warn(`offline: no bundled data for ${key}; the dump (${data.tag}) holds ${Object.keys(data.seasons).join(', ') || 'nothing'}`)
     return []
   }
-  return seasonPage(records)
+  return seasonPage(records, key)
 }
 
 /** Every (origin, id) pair named by a uri, whether it is a single uri or an aggregated one. */
@@ -167,11 +172,16 @@ const handleCarrier = (row: CatalogRow): GQLMedia | undefined => {
   return makeMedia({ origin, id, handles, score: SCORE })
 }
 
-/** The seasonal record for an id, which carries a title and a cover the index row does not. */
+/**
+ * The seasonal record for an id, which carries a title and a cover the index row does not.
+ *
+ * Walked as entries rather than values because the bucket key is the only statement of the record's
+ * season anywhere in the bundle, and iterating the values throws it away.
+ */
 const seasonalById = async (id: string): Promise<GQLMedia | undefined> => {
   const data = await loadSeasons()
-  for (const records of Object.values(data.seasons)) {
-    const media = seasonPage(records).find(candidate => candidate.id === id)
+  for (const [key, records] of Object.entries(data.seasons)) {
+    const media = seasonPage(records, key).find(candidate => candidate.id === id)
     if (media) return media
   }
   return undefined
@@ -236,20 +246,34 @@ export const resolvers: Resolvers = {
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
-      subscribe: async function* (_, { input: { status } }, ctx: ExtractorServerContext) {
+      subscribe: async function* (_, { input: { status, season, seasonYear } }, ctx: ExtractorServerContext) {
+        // BOTH halves or no key: a season with no year names four buckets of the window and a year
+        // with no season names six, and picking one of them would be the substitution this refuses.
+        const asked = season && seasonYear ? seasonKey({ season, year: seasonYear }) : undefined
+
         // Search is deliberately unanswered. The seasonal bundle holds only a window of recent
         // seasons, so it would return a handful of hits for a query the live sources answer
         // properly, and every hit carries no synopsis. A partial catalogue is worse than none in a
         // ranked result set.
-        if (status !== 'RELEASING') return yield { mediaPage: { nodes: [] } }
-        yield { mediaPage: { nodes: await getSeasonNow() } }
+        //
+        // A named season is answered whatever the status, because a bucket is a listing of a season
+        // and not of a moment, and manami's status is the field this source refuses to publish. A
+        // season named that no key can be built for answers nothing, never the clock's.
+        //
+        // BOTH halves of the pair gate this, not just `season`. A year alone with status RELEASING
+        // used to fall through to the clock: asking for 2024 answered the 2026 bucket, which the
+        // store's filter then dropped, so the substitution was invisible rather than absent.
+        if (!asked && (season || seasonYear || status !== 'RELEASING')) return yield { mediaPage: { nodes: [] } }
+
+        const key = asked ?? seasonKey(animeSeasonOf())
+        yield { mediaPage: { nodes: await bundledSeason(key) } }
 
         const index = await loadSeedIndex(ctx.fetch)
         if (!index) return
-        // The current season only. There is no route, no MediaPageInput field and no UI for a next
-        // season row, and RELEASING means airing, so listing unaired runs would be wrong rather than
-        // early. The next season's runs are carried so a media ask naming one resolves instantly.
-        const nodes = seedSeasonPage(index, seasonKey(animeSeasonOf()))
+        // The seed carries exactly the current and the next season, so any other key answers empty
+        // here and leaves the bundled yield standing. The next season's runs are carried so a media
+        // ask naming one resolves instantly.
+        const nodes = seedSeasonPage(index, key)
         if (nodes.length) yield { mediaPage: { nodes } }
       }
     }

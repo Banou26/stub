@@ -5,6 +5,7 @@ import { fromUri, isUri } from '../../utils/uri'
 import { makeMedia, normalizePage, sameAs } from '../utils'
 import { MAL_TYPE, isContinuing, parseMalSeason, type MalSeasonEntry } from './season-scrape'
 import { malLargeImage } from '../mal-image'
+import { lowerSeason, mediaSeasonNow, upperSeason, type AnimeSeason } from '../season'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -48,6 +49,21 @@ export const anidbIdFromUrl = (url: string | undefined | null): string | undefin
     // a malformed url used to throw out of normalizeMedia, taking the whole record with it
     return undefined
   }
+}
+
+// MAL splits one axis over three lists (Action, Isekai, Shounen), and stub carries one, so they are
+// concatenated in that order: broadest first, since the aggregate keeps the order it is given.
+// `explicit_genres` stays out: it names the adult categories, which is a rating and not a descriptor.
+const mediaGenres = (data: Partial<Pick<AnimeData, 'genres' | 'themes' | 'demographics'>>): string[] => {
+  const seen = new Set<string>()
+  const genres: string[] = []
+  for (const entry of [...data.genres ?? [], ...data.themes ?? [], ...data.demographics ?? []]) {
+    const name = entry?.name
+    if (!name || seen.has(name.toLowerCase())) continue
+    seen.add(name.toLowerCase())
+    genres.push(name)
+  }
+  return genres
 }
 
 const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData, 'external'> | AnimeData>>(data: T, context: ExtractorServerContext) => {
@@ -102,7 +118,9 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       thumbnail: data.trailer.images.image_url
     }]
     : []
-  
+
+  const seasonName = data.season ? lowerSeason(data.season) : undefined
+
   return {
     _id: crypto.randomUUID(),
     uri: `${origin}:${data.mal_id}`,
@@ -147,11 +165,18 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
     episodes: [],
     episodeCount: data.episodes,
     popularity: data.members,
+    genres: mediaGenres(data),
+    // MAL has no tag vocabulary of its own, so tags stay AniList's to supply.
+    tags: [],
     status:
       data.status === 'Not yet aired' ? MediaStatus.NotYetReleased
       : data.status === 'Currently Airing' ? MediaStatus.Releasing
       : data.status === 'Finished Airing' ? MediaStatus.Finished
       : undefined,
+    // A season MAL spells in a way this tree does not know becomes null rather than reaching the
+    // store, where jikan's 0.9 would win it for the whole cluster.
+    season: seasonName ? upperSeason(seasonName) : null,
+    seasonYear: data.year ?? null,
     startDate: data.aired?.from ?? null,
     endDate: data.aired?.to ?? null,
     trailers
@@ -160,7 +185,8 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
 
 const fetchSearchAnime = ({ search }: { search: string }, context: ExtractorServerContext) =>
   context
-    .fetch(`https://api.jikan.moe/v4/anime?q=${search}`)
+    // the search box takes arbitrary text, and an unescaped `&` or `#` there ends the query parameter
+    .fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(search)}`)
     .then(response => response.json() as Promise<AnimeSearchResponse>)
     .catch(error => {
       console.error('Jikan search failed', error)
@@ -192,8 +218,45 @@ const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeS
       return {} as AnimeSearchResponse
     })
 
+/**
+ * One page of a named season.
+ *
+ * The route is `GET /v4/seasons/{year}/{season}` with the season lower case, which is what the v4
+ * docs describe. UNVERIFIED FROM HERE: api.jikan.moe answered 504 for every path while this was
+ * written, invented ones included, so a probe could not tell a live route from a typo. Everything
+ * that reads it therefore treats a non-200 or a body with no `data` as an empty season, never as an
+ * error, so a wrong route costs this source's rows and nothing else.
+ */
+const getSeason = (
+  { season, year }: { season: AnimeSeason, year: number },
+  page: number,
+  context: ExtractorServerContext
+): Promise<AnimeSearchResponse> =>
+  context
+    .fetch(`https://api.jikan.moe/v4/seasons/${year}/${season}?page=${page}&sfw=true`)
+    .then(response => response.ok ? response.json() as Promise<AnimeSearchResponse> : {} as AnimeSearchResponse)
+    .catch(error => {
+      console.error(`Jikan ${season} ${year} page ${page} failed`, error)
+      return {} as AnimeSearchResponse
+    })
+
+// Two more pages after the first, which is the cap the season row has always carried.
+const extraSeasonPages = (
+  pagination: Pagination | undefined,
+  getPage: (page: number) => Promise<AnimeSearchResponse>
+) =>
+  Promise.all(
+    new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
+      .fill(undefined)
+      .map((_, i) => getPage(i + 2).then(({ data }) => data ?? []))
+  )
+
 const normalizeScrapedMedia = (entry: MalSeasonEntry): Media => {
   const kind = MAL_TYPE[entry.typeId as keyof typeof MAL_TYPE]
+  // The page carries no season label per card because the page IS one season, the one running now,
+  // so the clock is the only thing that can name it. Without the stamp every scraped row fails a
+  // season filter, which is the whole of what this fallback exists to fill.
+  const { season, year } = mediaSeasonNow()
   return makeMedia({
     origin,
     id: entry.id,
@@ -220,6 +283,8 @@ const normalizeScrapedMedia = (entry: MalSeasonEntry): Media => {
     popularity: entry.members,
     averageScore: entry.score,
     startDate: entry.startDate,
+    season,
+    seasonYear: year,
   })
 }
 
@@ -263,15 +328,24 @@ const getFullSeasonNow = async (context: ExtractorServerContext) => {
   // The API answers a 504 with a JSON error envelope, so `.json()` resolves and only the missing
   // `data` says anything went wrong. Falling through here is what keeps the season on the page.
   if (!data?.length) return scrapeSeasonNow(context)
-  const extraPages = await Promise.all(
-    new Array(Math.max(0, Math.min(2, (pagination?.last_visible_page ?? 1) - 1)))
-      .fill(undefined)
-      .map((_, i) => getSeasonNow(i + 2, context).then(({ data }) => data ?? []))
-  )
+  const extraPages = await extraSeasonPages(pagination, page => getSeasonNow(page, context))
   return normalizePage(
     [...data, ...extraPages.flat()],
     mediaData => normalizeMedia(mediaData, context),
     'Jikan season'
+  )
+}
+
+// No scrape fallback here: myanimelist.net/anime/season is whichever season is running, so it can
+// only ever stand in for the current one.
+const getFullSeason = async ({ season, year }: { season: AnimeSeason, year: number }, context: ExtractorServerContext) => {
+  const { data, pagination } = await getSeason({ season, year }, 1, context)
+  if (!data?.length) return []
+  const extraPages = await extraSeasonPages(pagination, page => getSeason({ season, year }, page, context))
+  return normalizePage(
+    [...data, ...extraPages.flat()],
+    mediaData => normalizeMedia(mediaData, context),
+    `Jikan ${season} ${year}`
   )
 }
 
@@ -290,8 +364,29 @@ export const resolvers: Resolvers = {
       }
     },
     mediaPage: {
-      subscribe: async function*(_, { input: { search, status } }, ctx: ExtractorServerContext) {
-        if (status === 'RELEASING') {
+      subscribe: async function*(_, { input: { search, status, season, seasonYear } }, ctx: ExtractorServerContext) {
+        // A named season answers whatever the status says, since a season is a listing and not a
+        // moment. Half of one (a season with no year, or a year with no season) names nothing this
+        // API can be asked for, and answering the current season instead would read as a result set
+        // while being the wrong year.
+        const seasonName = season ? lowerSeason(season) : undefined
+        if (seasonName && seasonYear) {
+          const now = mediaSeasonNow()
+          return yield {
+            mediaPage: {
+              nodes:
+                season === now.season && seasonYear === now.year ? await getFullSeasonNow(ctx)
+                : await getFullSeason({ season: seasonName, year: seasonYear }, ctx)
+            }
+          }
+        }
+        // Half a pair names no season this API can be asked for, so it is not answered AS a season,
+        // and the current season is not offered in its place. It must not end the resolver either:
+        // the search page can carry a term alongside a lone Season or Year, and ending here left
+        // that term unanswered by this source.
+        if (season || seasonYear) {
+          if (!search) return yield { mediaPage: { nodes: [] } }
+        } else if (status === 'RELEASING') {
           return yield {
             mediaPage: {
               nodes: await getFullSeasonNow(ctx)

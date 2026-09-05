@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { animeSeasonOf, parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from '../../../src/sources/season'
+import { ANIME_SEASONS, MEDIA_SEASONS, animeSeasonOf, lowerSeason, mediaSeasonNow, parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId, upperSeason } from '../../../src/sources/season'
 
 describe('parseSeasonNumber', () => {
   test('reads the forms a title actually uses', () => {
@@ -146,5 +146,54 @@ describe('animeSeasonOf', () => {
       Array.from({ length: 12 }, (_, month) => animeSeasonOf(on(2026, month + 1, 15)).season)
     )
     expect(seasons).toEqual(new Set(['winter', 'spring', 'summer', 'fall']))
+  })
+})
+
+// Two spellings of four seasons, one for the catalogues and one for the schema enum, with these two
+// functions as the only bridge. A third spelling, or a bridge that quietly drops one name, files a
+// season's whole catalogue under the wrong season or under none.
+describe('the lower-case and schema spellings', () => {
+  test('every season round-trips in both directions', () => {
+    expect(ANIME_SEASONS.map(upperSeason)).toEqual([...MEDIA_SEASONS])
+    for (const season of ANIME_SEASONS) expect(lowerSeason(upperSeason(season))).toBe(season)
+    for (const season of MEDIA_SEASONS) expect(upperSeason(lowerSeason(season)!)).toBe(season)
+  })
+
+  test('lowerSeason reads either case', () => {
+    expect(lowerSeason('SUMMER')).toBe('summer')
+    expect(lowerSeason('summer')).toBe('summer')
+    expect(lowerSeason('Summer')).toBe('summer')
+  })
+
+  // It converts what a caller claims is a season, so a string it cannot place has to come back as
+  // nothing rather than as a season: the value goes on to pick which catalogue page is fetched.
+  test('lowerSeason refuses a string that names no season', () => {
+    expect(lowerSeason('AUTUMN')).toBeUndefined()
+    expect(lowerSeason('SUMMER 2026')).toBeUndefined()
+    expect(lowerSeason('')).toBeUndefined()
+  })
+})
+
+describe('mediaSeasonNow', () => {
+  // Local-time constructors for the same reason animeSeasonOf's tests use them: getMonth() is local.
+  const on = (year: number, month1: number, day: number) => new Date(year, month1 - 1, day)
+
+  // The clock reaches the schema through two paths (this, and animeSeasonOf plus upperSeason), and a
+  // disagreement between them puts two different catalogues on one page.
+  test('names the same season animeSeasonOf does, in each of the four quarters', () => {
+    const quarters = [
+      [on(2026, 2, 14), 'WINTER'],
+      [on(2026, 5, 14), 'SPRING'],
+      [on(2026, 8, 14), 'SUMMER'],
+      [on(2026, 11, 14), 'FALL'],
+    ] as const
+    for (const [date, expected] of quarters) {
+      expect(mediaSeasonNow(date)).toEqual({ season: expected, year: 2026 })
+      expect(mediaSeasonNow(date).season).toBe(upperSeason(animeSeasonOf(date).season))
+    }
+  })
+
+  test('the year comes from the date it was handed', () => {
+    expect(mediaSeasonNow(on(2025, 12, 31))).toEqual({ season: 'FALL', year: 2025 })
   })
 })

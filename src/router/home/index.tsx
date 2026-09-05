@@ -3,7 +3,7 @@ import { useSubscription } from 'urql'
 import { useState, useMemo, useRef } from 'preact/hooks'
 
 import { gql } from '../../generated'
-import { MediaCategory, MediaSort, MediaStatus } from '../../generated/graphql'
+import { MediaCategory, MediaSort } from '../../generated/graphql'
 import HomeTheater from './theater'
 import MediaSection from './media-section'
 import { useRoute } from 'wouter'
@@ -11,6 +11,8 @@ import { getRouterRoutePath, Route } from '../path'
 import MediaModal from './media-modal'
 import CategoryTabs from '../../components/category-tabs'
 import { orderKeys, settledOrder } from '../../utils/settled-order'
+import { searchPath, seasonValue } from '../search/params'
+import { mediaSeasonNow } from '../../sources/season'
 
 const GET_RELEASING_MEDIA_PAGE = gql(`
   subscription GetReleasingMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
@@ -57,6 +59,13 @@ const style = css`
   }
 `
 
+// The heading links into the search page with this season prefilled, so the row and the page it opens
+// describe the same window. Read at module load rather than per render: a tab open across a quarter
+// boundary would relabel the link under the user, and the listing itself does not move either.
+const now = mediaSeasonNow()
+const CURRENT_SEASON = { season: seasonValue(now.season)!, year: now.year }
+const CURRENT_SEASON_SEARCH = searchPath(CURRENT_SEASON)
+
 const Index = () => {
   const [matchMediaRoute] = useRoute(getRouterRoutePath(Route.MEDIA))
   const [category, setCategory] = useState<MediaCategory | null>(null)
@@ -64,7 +73,14 @@ const Index = () => {
     query: GET_RELEASING_MEDIA_PAGE,
     variables: {
       input: {
-        status: MediaStatus.Releasing,
+        // THE SEASON, NAMED. This asked `status: RELEASING` until the search page arrived, and every
+        // seasonal source read that as "the season the clock is in" rather than as a status, which is
+        // what the row has always meant and what its heading says. Saying so directly frees `status`
+        // to be a real filter the store can enforce, and it costs nothing here: with the pair set,
+        // AniList, jikan, kitsu and the bundled catalogue each answer the same season they answered
+        // for RELEASING, and a season listing keeps the runs that have not aired yet.
+        season: CURRENT_SEASON.season,
+        seasonYear: CURRENT_SEASON.year,
         sorts: [MediaSort.Popularity],
         ...(category ? { categories: [category] } : {})
       },
@@ -92,7 +108,11 @@ const Index = () => {
       <div className="category-bar">
         <CategoryTabs value={category} onChange={setCategory} />
       </div>
-      <MediaSection title="Current season" mediaNodes={mediaNodes} />
+      <MediaSection
+        title="Current season"
+        titleTo={CURRENT_SEASON_SEARCH}
+        mediaNodes={mediaNodes}
+      />
       {matchMediaRoute && <MediaModal mediaNodes={mediaNodes} />}
     </div>
   )

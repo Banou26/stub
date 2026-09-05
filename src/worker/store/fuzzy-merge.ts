@@ -58,6 +58,22 @@ const MS_PER_DAY = 86_400_000
 const WORK_KINDS = new Set<MediaType>(['TV', 'MOVIE', 'SPECIAL', 'OVA', 'ONA'])
 
 /**
+ * The type a media presents to the MERGE, which spells a short as the TV it used to be.
+ *
+ * `TV_SHORT` was added so a viewer can filter for shorts, and AniList is the only source that emits
+ * it. Every gate in this file was calibrated against a corpus where those same rows arrived spelled
+ * `TV`, so reading the new member here would silently move two profiles at once on any cluster AniList
+ * alone types: `formats` would lose its SERIES, and `types` would lose its TV. An EMPTY `types` set is
+ * the dangerous half, because the companion-content veto below only fires when both sides name a work
+ * kind, so a short would stop vetoing anything.
+ *
+ * Adding TV_SHORT to `WORK_KINDS` instead would be worse: a cluster AniList types TV_SHORT and one
+ * jikan types TV would then share no work kind and veto each other, refusing a merge that is correct.
+ * Folding it back keeps every profile byte-identical to before the member existed.
+ */
+const mergeType = (type: MediaType | null): MediaType | null => type === 'TV_SHORT' ? 'TV' : type
+
+/**
  * The trailing phrases that name companion content rather than a work, measured one at a time rather
  * than guessed. Each was swept alone against the pair set the companion check below is decided on,
  * and the ten kept are exactly the ones that refused at least one wrong weld there:
@@ -288,20 +304,21 @@ export const profileCluster = (cluster: Media[]): ClusterProfile => {
   const formats =
     new Set(
       cluster
-        .flatMap(media =>
+        .flatMap(media => {
+          const type = mergeType(media.type)
           // one-off specials straddle the movie/series boundary - keep them format-neutral
-          media.type === 'SPECIAL' || media.type === 'OVA' || media.type === 'ONA' ? []
-          : [
-            ...media.categories ?? [],
-            ...media.type === 'MOVIE' ? ['MOVIE' as const] : media.type === 'TV' ? ['SERIES' as const] : [],
-          ]
-        )
+          return type === 'SPECIAL' || type === 'OVA' || type === 'ONA' ? []
+            : [
+              ...media.categories ?? [],
+              ...type === 'MOVIE' ? ['MOVIE' as const] : type === 'TV' ? ['SERIES' as const] : [],
+            ]
+        })
         .filter((category): category is Format => category === 'MOVIE' || category === 'SERIES')
     )
   const types =
     new Set(
       cluster
-        .map(media => media.type)
+        .map(media => mergeType(media.type))
         .filter((type): type is MediaType => type !== null && WORK_KINDS.has(type))
     )
   // read off the RAW titles, because normalizeTitle folds `Season 4` and `Season 40` closer together

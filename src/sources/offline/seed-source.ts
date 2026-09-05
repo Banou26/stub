@@ -14,7 +14,7 @@ import type { SeedEpisode, SeedEpisodes, SeedHandle, SeedIndex, SeedRun } from '
 import { makeEpisode, makeMedia, sameAs } from '../utils'
 import { SEED_EPISODES_ASSET, SEED_INDEX_ASSET, seedAssetUrl } from './seed'
 import { isSeedEpisodes, isSeedIndex } from './seed-gate'
-import { SCORE, origin } from './normalize'
+import { SCORE, origin, parseSeasonKey } from './normalize'
 
 type Fetch = ExtractorServerContext['fetch']
 
@@ -190,12 +190,19 @@ const seedEpisodeRow = (run: SeedRun, episode: SeedEpisode): GQLEpisode =>
  * half adds: several live sources score exactly this SCORE, `aggregateMedia` breaks a tie by arrival
  * order, and the seed exists to arrive first. A seeded `startDate` also opens justwatch's evidence
  * gate, which refuses to link a search hit without one.
+ *
+ * `season` needs no new field in the asset and no gate change: `run.season` is already the key the
+ * walk listed the run under, so this restates a live listing's own answer rather than deriving one
+ * from a date. A run that arrived as a side effect carries null there and so carries none here.
  */
-export const seedMedia = (run: SeedRun, episodes?: readonly SeedEpisode[]): GQLMedia =>
-  makeMedia({
+export const seedMedia = (run: SeedRun, episodes?: readonly SeedEpisode[]): GQLMedia => {
+  const season = run.season ? parseSeasonKey(run.season) : undefined
+  return makeMedia({
     origin,
     id: run.key,
     score: SCORE,
+    season: season?.season ?? null,
+    seasonYear: season?.year ?? null,
     handles: [
       ...run.identity.map(handle => sameAs(handleNode(handle))),
       ...run.containers.map(containerHandle),
@@ -211,8 +218,9 @@ export const seedMedia = (run: SeedRun, episodes?: readonly SeedEpisode[]): GQLM
     isAdult: run.isAdult,
     episodes: (episodes ?? []).map(episode => seedEpisodeRow(run, episode)),
   })
+}
 
-/** The current season's runs as listing rows: metadata and handles, deliberately no episodes. */
+/** One season's runs as listing rows: metadata and handles, deliberately no episodes. */
 export const seedSeasonPage = (index: SeedIndex, seasonKey: string): GQLMedia[] => {
   const byKey = new Map(index.runs.map(run => [run.key, run]))
   return (index.seasons[seasonKey] ?? [])

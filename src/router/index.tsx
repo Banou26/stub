@@ -1,8 +1,11 @@
+import type { RouteParams } from './path'
+
 import { css } from '@emotion/react'
-import { Router, Switch, Route as WRoute } from 'wouter'
+import { Redirect, Router, Switch, Route as WRoute, useParams } from 'wouter'
 import { useEffect } from 'preact/hooks'
 
 import { getRouterRoutePath, Route } from './path'
+import { searchPath } from './search/params'
 import { pluginHref } from '../plugin-url'
 import Header from '../components/header'
 import Footer from '../components/footer'
@@ -13,6 +16,25 @@ import Legal from './legal'
 import Privacy from './privacy'
 import Settings from './settings'
 import Watch from './watch'
+
+// wouter has already run the path through decodeURI by the time it reaches useParams, so a term the
+// old build encoded can arrive here as a bare `%`, and `decodeURIComponent` throws URIError on that.
+// Nothing in this tree is an error boundary, so an old bookmark would render a blank app.
+const decodeTerm = (query: string | undefined): string => {
+  if (!query) return ''
+  try { return decodeURIComponent(query) } catch { return query }
+}
+
+/**
+ * `/search/<term>`, the search route until the filters moved into the query string.
+ *
+ * Kept because links to it exist outside the app, and because the header itself pointed there until
+ * this change, so a tab left open on an older bundle still lands somewhere.
+ */
+const LegacySearch = () => {
+  const { query } = useParams<RouteParams['SEARCH_LEGACY']>()
+  return <Redirect to={searchPath({ query: decodeTerm(query) })} replace/>
+}
 
 const LoginCallback = () => {
   useEffect(() => { globalThis.close() }, [])
@@ -43,6 +65,7 @@ const RouterRoot = () => (
           <WRoute path={getRouterRoutePath(Route.HOME)} component={Home}/>
           <WRoute path={getRouterRoutePath(Route.MEDIA)} component={Home}/>
           <WRoute path={getRouterRoutePath(Route.SEARCH)} component={Search}/>
+          <WRoute path={getRouterRoutePath(Route.SEARCH_LEGACY)} component={LegacySearch}/>
           <WRoute path={getRouterRoutePath(Route.LEGAL)} component={Legal}/>
           <WRoute path={getRouterRoutePath(Route.PRIVACY)} component={Privacy}/>
           <WRoute path={getRouterRoutePath(Route.SETTINGS)} component={Settings}/>

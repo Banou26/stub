@@ -13,7 +13,7 @@
 // That is AniList's own decision rather than anything about our egress or our fingerprint, so no
 // header work reaches it and there is nothing to get past. anilist.co itself keeps serving normally,
 // and its Vue app talks to a SAME-ORIGIN `https://anilist.co/graphql` carrying the identical schema:
-// stub's own SEARCH_QUERY runs against it verbatim and comes back with all 24 fields populated,
+// stub's own browse query runs against it verbatim and comes back with all 24 fields populated,
 // externalLinks and airingSchedule included.
 //
 // That endpoint refuses anything without a CSRF pair:

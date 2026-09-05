@@ -1,11 +1,10 @@
-import type { RouteParams } from '../router/path'
-
 import { css } from '@emotion/react'
 import { Search, Settings } from 'lucide-react'
-import { Link, useLocation, useRoute } from 'wouter'
+import { Link, useLocation, useRoute, useSearch } from 'wouter'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
 import { getRouterRoutePath, getRoutePath, Route } from '../router/path'
+import { parseSearchFilters, searchPath } from '../router/search/params'
 import AccountWidget from './account-widget'
 
 const style = css`
@@ -153,10 +152,18 @@ const style = css`
 
 export const Header = () => {
   const [, navigate] = useLocation()
-  const [, searchParams] = useRoute<RouteParams['SEARCH']>(getRouterRoutePath(Route.SEARCH))
   const [onLoginCallback] = useRoute(getRouterRoutePath(Route.LOGIN_CALLBACK))
   const [onWatch] = useRoute(getRouterRoutePath(Route.WATCH))
-  const routeQuery = searchParams?.query ? decodeURIComponent(searchParams.query) : ''
+  // The filters live in the query string, so both halves of the box read it: the value shown, and the
+  // filter set a keystroke must carry forward. Rebuilding a bare `/search?q=...` here would wipe the
+  // year, season, format and genres a user had set, on a 350 ms debounce, from the first keypress.
+  const search = useSearch()
+  const filters = parseSearchFilters(search)
+  const routeQuery = filters.query
+  // The debounced navigation fires from a closure minted at the keystroke. Read the filters through a
+  // ref instead, so a control touched during the 350 ms window is carried forward rather than undone.
+  const latestFilters = useRef(filters)
+  latestFilters.current = filters
   const [query, setQuery] = useState(routeQuery)
   const inputRef = useRef<HTMLInputElement>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -168,7 +175,7 @@ export const Header = () => {
   const runSearch = (value: string, replace: boolean) => {
     const trimmed = value.trim()
     if (!trimmed) return
-    navigate(getRoutePath(Route.SEARCH, { query: trimmed }), { replace })
+    navigate(searchPath({ ...latestFilters.current, query: trimmed }), { replace })
   }
 
   // /login/callback is an OAuth redirect target that calls close() on mount, not a page anyone reads.

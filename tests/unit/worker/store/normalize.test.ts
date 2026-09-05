@@ -6,7 +6,7 @@ import { aggregateMedia } from '../../../../src/worker/store/aggregate'
 import { resetStore } from '../../../../src/worker/store/db'
 import { normalizeToStoreMedia } from '../../../../src/worker/store/normalize'
 
-const gql = (uri: string, scope?: 'RUN' | 'CONTAINER' | null) => ({
+const gql = (uri: string, scope?: 'RUN' | 'CONTAINER' | null, fields: Record<string, unknown> = {}) => ({
   _id: uri,
   uri,
   origin: uri.slice(0, uri.indexOf(':')),
@@ -21,6 +21,7 @@ const gql = (uri: string, scope?: 'RUN' | 'CONTAINER' | null) => ({
   banners: [],
   episodes: [],
   ...scope === undefined ? {} : { scope },
+  ...fields,
 }) as any
 
 const row = (uri: string, scope: 'RUN' | 'CONTAINER') => ({ ...normalizeToStoreMedia(gql(uri)), scope })
@@ -35,6 +36,28 @@ test('normalizeToStoreMedia carries CONTAINER through', () => {
 test('normalizeToStoreMedia defaults an absent scope to RUN', () => {
   expect(normalizeToStoreMedia(gql('anilist:108465')).scope).toBe('RUN')
   expect(normalizeToStoreMedia(gql('anilist:108465', null)).scope).toBe('RUN')
+})
+
+test('normalizeToStoreMedia carries season, seasonYear, genres and tags through', () => {
+  const stored = normalizeToStoreMedia(gql('anilist:108465', 'RUN', {
+    season: 'SUMMER', seasonYear: 2026, genres: ['Sci-Fi', 'Action'], tags: ['Time Skip'],
+  }))
+  expect(stored.season).toBe('SUMMER')
+  expect(stored.seasonYear).toBe(2026)
+  expect(stored.genres).toEqual(['Sci-Fi', 'Action'])
+  expect(stored.tags).toEqual(['Time Skip'])
+})
+
+// null and undefined read the same through `??`, so nothing downstream notices the difference until a
+// row crosses a boundary that drops undefined keys. The store's row type promises null, and the
+// promise is only kept here.
+test('an absent browse field lands as null or as an empty array, never undefined', () => {
+  const stored = normalizeToStoreMedia(gql('anilist:108465'))
+  expect(stored.season).toBeNull()
+  expect(stored.seasonYear).toBeNull()
+  expect(stored.genres).toEqual([])
+  expect(stored.tags).toEqual([])
+  expect(Object.keys(stored)).toEqual(expect.arrayContaining(['season', 'seasonYear', 'genres', 'tags']))
 })
 
 test('aggregateMedia reports CONTAINER over a container singleton', () => {

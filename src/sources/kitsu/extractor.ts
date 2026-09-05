@@ -4,7 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaHandle a
 import { MediaStatus, MediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img, partOf, sameAs } from '../utils'
-import { animeSeasonOf } from '../season'
+import { animeSeasonOf, lowerSeason, upperSeason, type AnimeSeason } from '../season'
 import { seasonPageNumbers, seasonQuery } from './season-paging'
 import { mintableAsFilmHandle, streamPointers, type StreamPointer } from './stream-id'
 
@@ -123,6 +123,9 @@ const buildTitles = (attr: KitsuAnime) => {
   return titles
 }
 
+// GENRES ARE LEFT OUT ON PURPOSE, not forgotten. Kitsu publishes them as `categories`, a separate
+// JSON:API relationship, so every request in this file would have to carry `include=mappings,categories`
+// and grow its response, to buy a field AniList and jikan already answer for the same titles.
 const normalizeMedia = (resource: KitsuResource<KitsuAnime>, handles: (GQLMedia | GQLMediaHandle)[] = []): GQLMedia => {
   const attr = resource.attributes
   return makeMedia({
@@ -220,14 +223,20 @@ const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQ
 }
 
 const seasonPage = async (
-  { season, year, page }: { season: string, year: number, page: number },
+  { season, year, page }: { season: AnimeSeason, year: number, page: number },
   ctx: ExtractorServerContext
 ): Promise<GQLMedia[]> => {
   try {
     const res = await api<KitsuAnime>(seasonQuery({ season, year, page }), ctx)
     const list = Array.isArray(res?.data) ? res.data : []
     const map = includedMappings(res ?? {})
-    return list.map(resource => normalizeMedia(resource, mappingHandles(resourceMappings(resource, map))))
+    // Kitsu's anime attributes carry no season, but the REQUEST filtered on one, so every row that
+    // came back is in it. Stamped here and nowhere else: nothing on the search path establishes one.
+    return list.map(resource => ({
+      ...normalizeMedia(resource, mappingHandles(resourceMappings(resource, map))),
+      season: upperSeason(season),
+      seasonYear: year,
+    }))
   } catch (error) {
     console.error(`Kitsu season page ${page} failed`, error)
     return []
@@ -235,7 +244,8 @@ const seasonPage = async (
 }
 
 /**
- * The current season, which is what the homepage asks every source for.
+ * One season's listing. Defaults to the clock's season, which is what the homepage asks every source
+ * for; a caller naming a season gets that one instead.
  *
  * Kitsu earns this because one keyless request carries the season AND `include=mappings`, whose
  * myanimelist and anilist ids are what let the union-find store merge these records with every
@@ -250,8 +260,10 @@ const seasonPage = async (
  * dropped entirely on a keyless request. So this is a solid SFW slice of the season, not the whole
  * of it, which is an argument for more sources rather than against this one.
  */
-const getSeasonNow = async (ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
-  const { season, year } = animeSeasonOf()
+const getSeason = async (
+  ctx: ExtractorServerContext,
+  { season, year }: { season: AnimeSeason, year: number } = animeSeasonOf()
+): Promise<GQLMedia[]> => {
   const pages = await Promise.all(
     seasonPageNumbers().map(page => seasonPage({ season, year, page }, ctx))
   )
@@ -262,6 +274,19 @@ const getSeasonNow = async (ctx: ExtractorServerContext): Promise<GQLMedia[]> =>
   const byUri = new Map<string, GQLMedia>()
   for (const media of pages.flat()) if (!byUri.has(media.uri)) byUri.set(media.uri, media)
   return [...byUri.values()]
+}
+
+/**
+ * The season an input names, in Kitsu's spelling, or nothing when it does not name one outright.
+ *
+ * Both halves are required: `filter[season]` on its own names every WINTER there has ever been, and
+ * `seasonQuery` builds the pair or nothing.
+ */
+const askedSeason = (
+  { season, seasonYear }: { season?: string | null, seasonYear?: number | null }
+): { season: AnimeSeason, year: number } | undefined => {
+  const spelling = season ? lowerSeason(season) : undefined
+  return spelling && seasonYear ? { season: spelling, year: seasonYear } : undefined
 }
 
 export const resolvers: Resolvers = {
@@ -275,8 +300,15 @@ export const resolvers: Resolvers = {
     },
     mediaPage: {
       resolve: (parent: { mediaPage: { nodes: GQLMedia[] } }) => parent.mediaPage,
-      subscribe: async function* (_, { input: { search, status } }, ctx: ExtractorServerContext) {
-        if (status === 'RELEASING') return yield { mediaPage: { nodes: await getSeasonNow(ctx) } }
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        const { search, status, season, seasonYear } = input
+        const asked = askedSeason(input)
+        if (asked) return yield { mediaPage: { nodes: await getSeason(ctx, asked) } }
+        // Naming EITHER half of the pair is load bearing: an input that names a season or a year the
+        // pair cannot be completed from is answered by the search below or by nothing, never by the
+        // clock's season. Answering the wrong season costs a walk of 8 upstream requests, and leaks
+        // on every axis the store's filter cannot see.
+        if (status === 'RELEASING' && !season && !seasonYear) return yield { mediaPage: { nodes: await getSeason(ctx) } }
         if (!search) return yield { mediaPage: { nodes: [] } }
         yield { mediaPage: { nodes: await searchApi(search, ctx) } }
       }

@@ -4,6 +4,7 @@ export enum Route {
   MEDIA = 'MEDIA',
   MEDIA_EPISODE = 'MEDIA_EPISODE',
   SEARCH = 'SEARCH',
+  SEARCH_LEGACY = 'SEARCH_LEGACY',
   LEGAL = 'LEGAL',
   PRIVACY = 'PRIVACY',
   SETTINGS = 'SETTINGS',
@@ -15,7 +16,12 @@ const ROUTES = {
   [Route.HOME]: () => '/',
   [Route.MEDIA]: ({ uri }: { uri: string }) => `/media/${uri}`,
   [Route.MEDIA_EPISODE]: ({ uri, mediaUri }: { uri: string, mediaUri: string }) => `/media/${uri}/${mediaUri}`,
-  [Route.SEARCH]: ({ query }: { query: string }) => `/search/${encodeURIComponent(query)}`,
+  // The filters ride in the QUERY STRING, so the href is built by `searchPath` in ./search/params.ts,
+  // which knows the param names. This module stays dependency-free because the WORKER imports it
+  // (store/aggregate.ts builds a media's canonical url with it), so it cannot reach the generated
+  // enums that validate those params.
+  [Route.SEARCH]: () => '/search',
+  [Route.SEARCH_LEGACY]: ({ query }: { query: string }) => `/search/${encodeURIComponent(query)}`,
   [Route.LEGAL]: () => '/legal',
   [Route.PRIVACY]: () => '/privacy',
   [Route.SETTINGS]: () => '/settings',
@@ -32,7 +38,8 @@ const RouterRoutes = {
   [Route.HOME]: '/',
   [Route.MEDIA]: '/media/:uri',
   [Route.MEDIA_EPISODE]: '/media/:uri/:mediaUri',
-  [Route.SEARCH]: '/search/:query',
+  [Route.SEARCH]: '/search',
+  [Route.SEARCH_LEGACY]: '/search/:query',
   [Route.LEGAL]: '/legal',
   [Route.PRIVACY]: '/privacy',
   [Route.SETTINGS]: '/settings',

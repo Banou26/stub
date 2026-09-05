@@ -32,6 +32,10 @@ const row = (uri: string, { titles, ...fields }: Omit<Partial<Media>, 'titles'> 
   endDate: null,
   isAdult: null,
   episodeCount: null,
+  season: null,
+  seasonYear: null,
+  genres: [],
+  tags: [],
   scope: 'RUN',
   ...fields,
   titles: (titles ?? [uri]).map(title =>

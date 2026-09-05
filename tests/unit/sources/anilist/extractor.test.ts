@@ -61,7 +61,10 @@ const context = (similarMedia: (...args: unknown[]) => Promise<unknown>) => {
 }
 
 const roots: string[] = []
-afterEach(() => { for (const rootId of roots.splice(0)) closeRoot(rootId) })
+afterEach(() => {
+  for (const rootId of roots.splice(0)) closeRoot(rootId)
+  vi.useRealTimers()
+})
 
 const openMedia = async (ctx: never) => {
   const root = openRoot('MEDIA')
@@ -111,4 +114,178 @@ test('a refusal leaves the media with its other handles', async () => {
   expect(similarMedia).toHaveBeenCalledTimes(1)
   expect(media.uri).toBe('anilist:178789')
   expect(handleUris(media)).toEqual(['mal:59193'])
+})
+
+// The browse path, driven through the real `mediaPage` subscription. Every request body is kept, so a
+// test reads the exact variables the resolver built rather than a helper's idea of them: the argument
+// NAMES are AniList's (`format_in`, `genre_in`), and a wrong one costs the whole document.
+const browseContext = (pageInfo: { lastPage?: number }, media: unknown[] = []) => {
+  const requests: { query: string, variables: Record<string, unknown> }[] = []
+  const fetch = async (url: string, init?: { body?: string }) => {
+    if (url !== ANILIST) throw new Error(`fixture has no route for ${url}`)
+    requests.push(JSON.parse(init?.body ?? '{}'))
+    return { status: 200, json: async () => ({ data: { Page: { pageInfo, media } } }) }
+  }
+  return { ctx: { fetch } as never, requests }
+}
+
+const openMediaPage = (ctx: never, input: Record<string, unknown>) =>
+  (resolvers.Subscription as any).mediaPage.subscribe(undefined, { input }, ctx).next()
+
+const browsedNodes = async (media: unknown[], input: Record<string, unknown> = { season: 'SUMMER', seasonYear: 2026 }) => {
+  const { ctx } = browseContext({ lastPage: 1 }, media)
+  const { value } = await openMediaPage(ctx, input)
+  return value.mediaPage.nodes
+}
+
+// One AniList row carrying the four fields the browse filters read. Two of its tags are flagged, one
+// per flag, and one genre is empty: both are what the normalizer has to drop.
+const PAGE_MEDIA = {
+  id: 1,
+  title: { romaji: 'A show' },
+  format: 'TV',
+  type: 'ANIME',
+  status: 'FINISHED',
+  season: 'SUMMER',
+  seasonYear: 2026,
+  genres: ['Action', 'Adventure', null, ''],
+  tags: [
+    { name: 'Isekai', isMediaSpoiler: false, isGeneralSpoiler: false },
+    { name: 'Dead Protagonist', isMediaSpoiler: true, isGeneralSpoiler: false },
+    { name: 'Time Loop', isMediaSpoiler: false, isGeneralSpoiler: true },
+  ],
+  startDate: { year: null, month: null, day: null },
+  endDate: { year: null, month: null, day: null },
+  externalLinks: [],
+  airingSchedule: { edges: [] },
+  coverImage: {},
+  siteUrl: 'https://anilist.co/anime/1',
+}
+
+test('a filtered browse carries anilist own argument names, and drops the formats it has no name for', async () => {
+  const { ctx, requests } = browseContext({ lastPage: 1 })
+
+  await openMediaPage(ctx, {
+    season: 'SUMMER',
+    seasonYear: 2026,
+    status: 'FINISHED',
+    formats: ['TV', 'ANIME', 'MOVIE', 'LIVE_ACTION', 'TV_SHORT'],
+    genres: ['Action'],
+    tags: ['Isekai'],
+  })
+
+  expect(requests).toHaveLength(1)
+  expect(requests[0]!.variables).toEqual({
+    season: 'SUMMER',
+    seasonYear: 2026,
+    status: 'FINISHED',
+    format_in: ['TV', 'MOVIE', 'TV_SHORT'],
+    genre_in: ['Action'],
+    tag_in: ['Isekai'],
+    sort: ['POPULARITY_DESC'],
+    page: 1,
+  })
+  expect(requests[0]!.query, 'a Page with no type argument answers manga formats too').toContain('type: ANIME')
+})
+
+test('a browse naming only formats anilist has no name for sends no format_in at all', async () => {
+  const { ctx, requests } = browseContext({ lastPage: 1 })
+
+  await openMediaPage(ctx, { formats: ['ANIME', 'LIVE_ACTION'] })
+
+  expect(requests).toHaveLength(1)
+  expect('format_in' in requests[0]!.variables, 'an empty list would filter everything out upstream').toBe(false)
+})
+
+test('genres, non spoiler tags, season and seasonYear survive normalization', async () => {
+  const [node] = await browsedNodes([PAGE_MEDIA])
+
+  expect(node.genres).toEqual(['Action', 'Adventure'])
+  expect(node.tags).toEqual(['Isekai'])
+  expect(node.tags, 'a tag flagged for this media names a twist').not.toContain('Dead Protagonist')
+  expect(node.tags, 'and so does one flagged in general').not.toContain('Time Loop')
+  expect(node.season).toBe('SUMMER')
+  expect(node.seasonYear).toBe(2026)
+})
+
+test('a season the schema has no member for never reaches the store', async () => {
+  const [node] = await browsedNodes([{ ...PAGE_MEDIA, season: 'AUTUMN' }])
+
+  expect(node.season).toBeUndefined()
+})
+
+test('a tv short is emitted as TV_SHORT and still reads as a series', async () => {
+  const [node] = await browsedNodes([{ ...PAGE_MEDIA, format: 'TV_SHORT' }])
+
+  expect(node.type).toBe('TV_SHORT')
+  expect(node.categories).toEqual(['ANIME', 'SERIES'])
+})
+
+test('cancelled and hiatus map through, so a filter naming either can match', async () => {
+  const nodes = await browsedNodes([
+    { ...PAGE_MEDIA, id: 1, status: 'CANCELLED' },
+    { ...PAGE_MEDIA, id: 2, status: 'HIATUS' },
+  ])
+
+  expect(nodes.map((node: { status?: string }) => node.status)).toEqual(['CANCELLED', 'HIATUS'])
+})
+
+// Two clocks, deliberately in different seasons: one alone would pass on a clock that was never
+// faked at all, for the three months the real date happens to agree with it.
+// RELEASING used to be substituted here with the season the clock was in, because the home page said
+// RELEASING and meant that. It names its season now, so the substitution had exactly one caller left,
+// the search page's Airing control, where it was the whole bug: asking which shows are IN this season
+// instead of which are releasing returned a page identical to an unfiltered season, and no
+// long-running show could ever match.
+test('a releasing browse asks for the status, not for the season the clock is in', async () => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date('2026-02-10T12:00:00Z'))
+  const { ctx, requests } = browseContext({ lastPage: 12 })
+
+  await openMediaPage(ctx, { status: 'RELEASING' })
+
+  expect(requests[0]!.variables.status).toBe('RELEASING')
+  expect('season' in requests[0]!.variables).toBe(false)
+  expect('seasonYear' in requests[0]!.variables).toBe(false)
+  // no free text, so it still walks the three pages a listing gets
+  expect(requests.map(request => request.variables.page)).toEqual([1, 2, 3])
+})
+
+// The home page's own ask, which is what the substitution used to serve. It names the pair outright,
+// so the season reaches AniList as a season and no status rides along to narrow it: a season listing
+// carries the runs that have not aired yet.
+test('a named season is asked for as a season, with no status attached', async () => {
+  const { ctx, requests } = browseContext({ lastPage: 12 })
+
+  await openMediaPage(ctx, { season: 'SUMMER', seasonYear: 2026 })
+
+  expect(requests[0]!.variables.season).toBe('SUMMER')
+  expect(requests[0]!.variables.seasonYear).toBe(2026)
+  expect('status' in requests[0]!.variables).toBe(false)
+  expect(requests.map(request => request.variables.page)).toEqual([1, 2, 3])
+})
+
+test('a search asks for exactly one page, ranked by SEARCH_MATCH, and names no season', async () => {
+  const { ctx, requests } = browseContext({ lastPage: 12 })
+
+  await openMediaPage(ctx, { search: 'mushoku tensei' })
+
+  expect(requests, 'a search is one request whatever the last page says').toHaveLength(1)
+  expect(requests[0]!.variables.search).toBe('mushoku tensei')
+  // the old search query carried `sort: SEARCH_MATCH` as a literal inside the document; folding the
+  // two queries into one moved it into the variables, where it is easy to drop. Without it AniList
+  // orders by id, and the one page a search fetches may not hold the title that was asked for.
+  expect(requests[0]!.variables.sort).toEqual(['SEARCH_MATCH'])
+  expect('season' in requests[0]!.variables).toBe(false)
+})
+
+test('an input naming nothing this source can browse yields nothing and asks nothing', async () => {
+  const { ctx, requests } = browseContext({ lastPage: 12 })
+
+  for (const input of [{}, { formats: [] }, { genres: [] }, { tags: [] }, { after: 3 }]) {
+    const { done, value } = await openMediaPage(ctx, input)
+    expect(done, `${JSON.stringify(input)} names no filter`).toBe(true)
+    expect(value).toBeUndefined()
+  }
+  expect(requests).toEqual([])
 })
