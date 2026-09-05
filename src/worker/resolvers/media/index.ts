@@ -3,7 +3,7 @@ import type { Media, MediaPage, MediaPageResolvers, Resolvers, SubscriptionResol
 
 // @ts-expect-error
 import _schema from './schema.gql?raw'
-import { implementsSimilarMedia, proxyRequestToExtractors, similarMediaFrom } from '../../extractor'
+import { implementsSimilarMedia, proxyRequestToExtractors, similarOutcomeFrom } from '../../extractor'
 import { resolveSimilarRuns } from '../../similar-consumer'
 import { findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, hideAttachedContainers } from '../../store/db'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
@@ -20,7 +20,7 @@ export const schema = _schema as string
 const SEARCH_RELEVANCE_THRESHOLD = 0.7
 
 // the app's own asks of `similarMedia`, budgeted under one caller like any source's
-const askSimilar = similarMediaFrom('app')
+const askSimilar = similarOutcomeFrom('app')
 
 export const resolvers = {
   Query: {},

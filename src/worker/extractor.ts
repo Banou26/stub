@@ -26,7 +26,8 @@ import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate
 import { normalizeToStoreMedia } from './store/normalize'
 import { listenMultipleIterator } from './store/events'
 import { readPluginSources } from './plugin-sources'
-import { hasEvidence, isRunAnswerFrom, similarAskKey } from '../sources/similar'
+import { describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
+import { SIMILAR_MEDIA_DOCUMENT } from './similar-document'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -184,22 +185,8 @@ export type ExtractorDefinition = {
  * `nf:80987039-3`. What establishes sameness is decided in `sources/similar.ts`, once, and every
  * answering source goes through it.
  *
- * THE SELECTION IS DELIBERATELY MINIMAL. The store does not read it: `useOnResolve` below fires on
- * the RESOLVER'S RETURN VALUE, not on the selection set, so the full media is inserted whatever is
- * asked for here. The caller only ever needs enough to build a handle, plus the scope, which is what
- * the answer is checked against.
+ * THE SELECTION is `SIMILAR_MEDIA_DOCUMENT` in ./similar-document.ts, with what it selects and why.
  */
-const SIMILAR_MEDIA_DOCUMENT = `
-  subscription SimilarMedia($input: SimilarMediaInput!) {
-    similarMedia(input: $input) {
-      uri
-      origin
-      id
-      url
-      scope
-    }
-  }
-`
 
 // A source may walk every season of a show to answer, which is one request per season on top of the
 // seasons call, so this is generous. It is a backstop against a source that never yields, not a
@@ -252,40 +239,44 @@ const MAX_SIMILAR_MEDIA_PER_CALLER = 8
  */
 const SAFE_SHOW_ID = /^[A-Za-z0-9._~-]{1,128}$/
 
-const similarAsksInFlight = new Map<string, Promise<Media | undefined>>()
+const similarAsksInFlight = new Map<string, Promise<SimilarOutcome<Media>>>()
 const asksByCaller = new Map<string, number>()
+
+/** How one subscription to a source's `similarMedia` ended, before the answer is judged. */
+type Delivered = { kind: 'media', media: Media } | { kind: 'null' } | { kind: 'error' } | { kind: 'timeout' }
 
 const firstSimilarMedia = (
   extractor: ReturnType<typeof makeExtractor>,
   input: SimilarMediaInput
-): Promise<Media | undefined> =>
+): Promise<Delivered> =>
   new Promise(resolve => {
     let settled = false
     let subscription: { unsubscribe: () => void } | undefined
-    const finish = (media: Media | undefined) => {
+    const finish = (delivered: Delivered) => {
       if (settled) return
       settled = true
       clearTimeout(timer)
       // the callback can fire before `subscribe` has returned, so unsubscribing is deferred a tick
       queueMicrotask(() => { try { subscription?.unsubscribe() } catch { /* already gone */ } })
-      resolve(media)
+      resolve(delivered)
     }
-    const timer = setTimeout(() => finish(undefined), SIMILAR_MEDIA_TIMEOUT_MS)
+    const timer = setTimeout(() => finish({ kind: 'timeout' }), SIMILAR_MEDIA_TIMEOUT_MS)
     try {
       subscription =
         extractor.client
           .subscription(SIMILAR_MEDIA_DOCUMENT, { input })
           .subscribe(result => {
-            if (result.error) return finish(undefined)
+            if (result.error) return finish({ kind: 'error' })
             // any DELIVERED payload settles this, including an explicit null. A source that cannot
             // answer yields null once and ends, and waiting out the timeout for that would turn the
             // ordinary refusal into the slowest path in the system.
             if (!result.data) return
-            finish((result.data as { similarMedia?: Media | null }).similarMedia ?? undefined)
+            const media = (result.data as { similarMedia?: Media | null }).similarMedia
+            finish(media ? { kind: 'media', media } : { kind: 'null' })
           })
     } catch (error) {
       console.error(new Error(`Extractor ${extractor.name} failed to answer similarMedia`, { cause: error }))
-      finish(undefined)
+      finish({ kind: 'error' })
     }
   })
 
@@ -300,19 +291,28 @@ export const implementsSimilarMedia = (origin: string): boolean =>
     && Boolean((entry.extractor.resolvers.Subscription as { similarMedia?: unknown } | undefined)?.similarMedia))
 
 /**
- * The ask, bound to the origin doing the asking so a budget can be attributed to it. Refuses (with
- * undefined, never an error) an origin that does not implement the field, an input with no usable
- * evidence, a showId that is not an id, and an answer that is not a RUN of the asked origin.
+ * The ask, bound to the origin doing the asking so a budget can be attributed to it, answering with
+ * an outcome and never an error: `declined` never reached the source (no evidence, a showId that is
+ * not an id, an origin that does not implement the field, a ceiling, a timeout, an error) and may be
+ * retried; `refused` did reach it (null, or an answer that is not a RUN of the asked origin) and is
+ * final for that evidence; `answered` carries the run.
  *
  * THE DEDUPE KEY IS THE QUESTION, NORMALISED, by `similarAskKey` in sources/similar.ts: the day, the
  * count, the ordinals the titles agree on, whether any names a part, and the real episode titles.
  * Two asks agreeing on all of it are one question and share one answer; two differing only in their
  * episode titles are two runs of one year (the only evidence Rule 2 has to tell them apart) and a
  * join there would hand the second run the first run's season.
+ *
+ * Every branch says what it did on one `similarMedia: ` line, for EVERY caller: the funnel is the one
+ * place that sees them all, and scripts/check-similar-media.mjs reads these lines off the deployed
+ * worker's console.
  */
-export const similarMediaFrom = (caller: string) =>
-  async (origin: string, input: SimilarMediaInput): Promise<Media | undefined> => {
-    if (!origin || !input?.showId || !hasEvidence(input)) return undefined
+export const similarOutcomeFrom = (caller: string) =>
+  async (origin: string, input: SimilarMediaInput): Promise<SimilarOutcome<Media>> => {
+    if (!origin || !input?.showId || !hasEvidence(input)) {
+      console.warn(`similarMedia: declined ${printableToken(origin)} ${printableToken(input?.showId)} to '${caller}' (no-evidence)`)
+      return { outcome: 'declined', reason: 'no-evidence' }
+    }
     // one hop deeper, carrying the caller's origin, so the answering source can see the chain it is
     // part of. A caller that passed no context of its own descends from nothing and the callee reads
     // a miss, which is counted rather than guessed at.
@@ -320,13 +320,14 @@ export const similarMediaFrom = (caller: string) =>
     if (parent) input = { ...input, context: descend(parent, caller) }
     const { showId } = input
     if (!SAFE_SHOW_ID.test(showId)) {
-      console.warn(`similarMedia: '${caller}' asked ${origin} for a showId that is not an id, declined`)
-      return undefined
+      console.warn(`similarMedia: declined ${origin} ${printableToken(showId)} to '${caller}' (bad-show-id)`)
+      return { outcome: 'declined', reason: 'bad-show-id' }
     }
-    if (!implementsSimilarMedia(origin)) return undefined
-
-    const extractor = extractors.find(candidate => candidate.extractor.origin === origin)
-    if (!extractor) return undefined
+    const extractor = implementsSimilarMedia(origin) ? extractors.find(candidate => candidate.extractor.origin === origin) : undefined
+    if (!extractor) {
+      console.warn(`similarMedia: declined ${origin} ${showId} to '${caller}' (not-implemented)`)
+      return { outcome: 'declined', reason: 'not-implemented' }
+    }
 
     /**
      * A repeat of a question already in flight JOINS it rather than being refused.
@@ -344,27 +345,42 @@ export const similarMediaFrom = (caller: string) =>
     const key = similarAskKey(origin, showId, input)
     const inFlight = similarAsksInFlight.get(key)
     if (inFlight) {
-      console.warn(`similarMedia repeat: ${origin} ${showId} (${input.startDate ?? 'no date'}, ${input.episodeCount ?? '-'} episodes) is already in flight with the same evidence, '${caller}' joins it. A repeat that is really a cycle unwinds on the ${SIMILAR_MEDIA_TIMEOUT_MS}ms timeout.`)
+      // the joined ask's own answered or refused line fires once, for the caller that made it
+      console.warn(`similarMedia: joined ${origin} ${showId} by '${caller}' (in flight with the same evidence)`)
       return inFlight
     }
 
     const byCaller = asksByCaller.get(caller) ?? 0
     if (byCaller >= MAX_SIMILAR_MEDIA_PER_CALLER || similarAsksInFlight.size >= MAX_CONCURRENT_SIMILAR_MEDIA) {
-      console.warn(`similarMedia ceiling: '${caller}' holds ${byCaller} of ${similarAsksInFlight.size} asks in flight, declining ${origin} ${showId}`)
-      return undefined
+      console.warn(`similarMedia: declined ${origin} ${showId} to '${caller}' (ceiling ${byCaller}/${MAX_SIMILAR_MEDIA_PER_CALLER} by caller, ${similarAsksInFlight.size}/${MAX_CONCURRENT_SIMILAR_MEDIA} global)`)
+      return { outcome: 'declined', reason: 'ceiling' }
     }
 
     asksByCaller.set(caller, byCaller + 1)
+    console.warn(`similarMedia: asked ${origin} ${showId} by '${caller}' with ${describeEvidence(input)}`)
     const ask =
       firstSimilarMedia(extractor, input)
-        .then(media => {
-          // the show itself, a container, or another origin's row is not an answer: claiming any of
-          // them as SAME_AS of the caller's run is the weld the caller asked in order to avoid
-          if (media && !isRunAnswerFrom(origin, showId, media)) {
-            console.warn(`similarMedia: ${origin} answered '${caller}' about ${showId} with ${media.uri} (scope ${media.scope ?? 'RUN'}), which is not a run of that show, declined`)
-            return undefined
+        .then((delivered): SimilarOutcome<Media> => {
+          if (delivered.kind === 'media') {
+            // the show itself, a container, or another origin's row is not an answer: claiming any of
+            // them as SAME_AS of the caller's run is the weld the caller asked in order to avoid
+            if (!isRunAnswerFrom(origin, showId, delivered.media)) {
+              console.warn(`similarMedia: refused ${origin} ${showId} to '${caller}' (not-a-run ${delivered.media.uri} scope ${delivered.media.scope ?? 'RUN'})`)
+              return { outcome: 'refused', reason: 'not-a-run' }
+            }
+            console.warn(`similarMedia: answered ${delivered.media.uri} to '${caller}' for ${origin} ${showId}`)
+            return { outcome: 'answered', media: delivered.media }
           }
-          return media
+          if (delivered.kind === 'null') {
+            console.warn(`similarMedia: refused ${origin} ${showId} to '${caller}' (null)`)
+            return { outcome: 'refused', reason: 'null' }
+          }
+          if (delivered.kind === 'timeout') {
+            console.warn(`similarMedia: declined ${origin} ${showId} to '${caller}' (timeout ${SIMILAR_MEDIA_TIMEOUT_MS}ms)`)
+            return { outcome: 'declined', reason: 'timeout' }
+          }
+          console.warn(`similarMedia: declined ${origin} ${showId} to '${caller}' (error)`)
+          return { outcome: 'declined', reason: 'error' }
         })
         .finally(() => {
           similarAsksInFlight.delete(key)
@@ -375,6 +391,18 @@ export const similarMediaFrom = (caller: string) =>
     similarAsksInFlight.set(key, ask)
     return ask
   }
+
+/**
+ * The same ask as `similarOutcomeFrom`, answering the run or undefined: the contract `ctx.similarMedia`
+ * and a plugin's delegate keep, where a source has no use for why it got nothing.
+ */
+export const similarMediaFrom = (caller: string) => {
+  const ask = similarOutcomeFrom(caller)
+  return async (origin: string, input: SimilarMediaInput): Promise<Media | undefined> => {
+    const result = await ask(origin, input)
+    return result.outcome === 'answered' ? result.media : undefined
+  }
+}
 
 const makeExtractor = (extractor: ExtractorDefinition) => {
   const originData = normalizeOrigin({ ...extractor, id: extractor.origin, url: extractor.originUrl, icon: extractor.icon ?? null, color: extractor.color ?? null })

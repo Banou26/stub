@@ -1,6 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaInput } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
+import { SEASON_DATE_WINDOW } from '../catalogue-gate'
 import { isOnlySeasonLabel } from '../season'
 import { pickSimilarSeason, type SeasonCandidate } from '../similar'
 import {
@@ -61,7 +62,10 @@ const api = async <T>(url: string, ctx: ExtractorServerContext): Promise<T> => {
     }).then(r => r.json() as T)
   )
   _inflight.set(url, promise)
-  promise.finally(() => _inflight.delete(url))
+  // `.finally` mints a second promise that rejects when this one does, and nobody awaits it: a failed
+  // request surfaced as an unhandled rejection on top of the one the caller got (2026-09-05)
+  const forget = () => { _inflight.delete(url) }
+  promise.then(forget, forget)
   return promise
 }
 
@@ -97,17 +101,28 @@ interface CrEpisode {
 
 const CMS = 'https://www.crunchyroll.com/content/v2/cms'
 
+// Crunchyroll's error body (`{ __class__: 'error', code: 'rate_limited' }` on a 429) carries no `data`.
+// Read as an empty list it was an ANSWER about the show: three such bodies described three seasons of
+// zero episodes, the walk refused, the cache served that for ten minutes and the consumer recorded the
+// refusal for the session (2026-09-05). An empty `data` is still a real answer: an unknown series, a
+// seasonless one, a season with nothing listed.
+const dataOf = <T>(res: { data?: T[] } | undefined, url: string): T[] => {
+  const data = res?.data
+  if (!Array.isArray(data)) throw new Error(`Crunchyroll answered ${url} with no data: ${JSON.stringify(res)?.slice(0, 200)}`)
+  return data
+}
+
+const fetchList = <T>(url: string, ctx: ExtractorServerContext) =>
+  api<{ data?: T[] }>(url, ctx).then(res => ({ data: dataOf(res, url) }))
+
 const fetchSeries = (id: string, ctx: ExtractorServerContext) =>
-  api<{ data?: CrSeries[] }>(`${CMS}/series/${id}?preferred_audio_language=ja-JP&locale=en-US`, ctx)
-    .then(res => ({ data: res?.data ?? [] }))
+  fetchList<CrSeries>(`${CMS}/series/${id}?preferred_audio_language=ja-JP&locale=en-US`, ctx)
 
 const fetchSeasons = (id: string, ctx: ExtractorServerContext) =>
-  api<{ data?: CrSeason[] }>(`${CMS}/series/${id}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`, ctx)
-    .then(res => ({ data: res?.data ?? [] }))
+  fetchList<CrSeason>(`${CMS}/series/${id}/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`, ctx)
 
 const fetchEpisodes = (seasonId: string, ctx: ExtractorServerContext) =>
-  api<{ data?: CrEpisode[] }>(`${CMS}/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`, ctx)
-    .then(res => ({ data: res?.data ?? [] }))
+  fetchList<CrEpisode>(`${CMS}/seasons/${seasonId}/episodes?preferred_audio_language=ja-JP&locale=en-US`, ctx)
 
 const searchSeries = (query: string, ctx: ExtractorServerContext) =>
   api<{ data?: { type: string, items: CrSeries[] }[] }>(
@@ -248,16 +263,14 @@ export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise
 }
 
 type CrSeasonCandidate = SeasonCandidate<{ resolvedId: string }>
+type SeasonWalk = { seasons: CrSeason[], candidates: CrSeasonCandidate[] }
 
 /**
  * Every japanese-audio season of a series described the way `pickSimilarSeason` reads one, at the
  * cost of one episodes request per season. The premiere is the first episode's air date, the count is
  * the distinct numbered episodes (specials carry no number and are not part of the run's length).
  */
-const seasonCandidates = async (
-  seriesId: string,
-  ctx: ExtractorServerContext
-): Promise<{ seasons: CrSeason[], candidates: CrSeasonCandidate[] }> => {
+const walkSeasonCandidates = async (seriesId: string, ctx: ExtractorServerContext): Promise<SeasonWalk> => {
   const { data: seasons } = await fetchSeasons(seriesId, ctx)
   if (!seasons.length) return { seasons, candidates: [] }
 
@@ -280,6 +293,32 @@ const seasonCandidates = async (
   return { seasons, candidates }
 }
 
+/**
+ * How long one series' season walk is reused. What can move inside a session is a currently airing
+ * season publishing an episode (its count and title list grow by one, its premiere and number do
+ * not), roughly weekly; region and entitlement changes are not reachable mid-session. Ten minutes
+ * bounds a stale count to the same exposure as reading it ten minutes before the episode published.
+ */
+const SEASON_CANDIDATES_TTL_MS = 10 * 60 * 1000
+const _seasonCandidates = new Map<string, { at: number, promise: Promise<SeasonWalk> }>()
+
+// Keyed by series id alone: the token and the fetch are module-wide already. Unlike `_inflight`, which
+// collapses concurrent identical requests and forgets them on settle, this keeps the settled walk, so
+// the search path and `similarMedia` share one walk per show and two pages of one show pay for one.
+const seasonCandidates = (seriesId: string, ctx: ExtractorServerContext): Promise<SeasonWalk> => {
+  const cached = _seasonCandidates.get(seriesId)
+  if (cached && Date.now() - cached.at < SEASON_CANDIDATES_TTL_MS) return cached.promise
+  const promise = walkSeasonCandidates(seriesId, ctx)
+  _seasonCandidates.set(seriesId, { at: Date.now(), promise })
+  // a failed walk is not an answer about the show: drop it so the next ask walks again. A rate limited
+  // payload is a failure by `dataOf`, so it lands here and not in the ten minute cache
+  promise.catch(() => { if (_seasonCandidates.get(seriesId)?.promise === promise) _seasonCandidates.delete(seriesId) })
+  return promise
+}
+
+/** TESTS ONLY: forget every cached season walk. A module singleton, so a test counting requests otherwise reads the test before it. */
+export const resetCrunchyrollCaches = () => { _seasonCandidates.clear() }
+
 const seasonAirDates = async (seriesId: string, ctx: ExtractorServerContext) => {
   const { seasons, candidates } = await seasonCandidates(seriesId, ctx)
   const dates = candidates.map(({ season, premiere }) => ({
@@ -300,38 +339,6 @@ const closestSeason = (
     if (!best || diff < best.diff) best = { id: resolvedId, diff }
   }
   return best
-}
-
-/**
- * The season of `seriesId` that aired nearest `startDate`, or nothing.
- *
- * THE WINDOW IS APPLIED HERE, and it did not used to be. Until 2026-08-31 this returned
- * `closestSeason`'s nearest hit at ANY distance and took a lone season without looking at the date at
- * all, on the reasoning that the caller had already asserted identity for the SHOW. That reasoning
- * covers the show and never covered the run, which is the distinction this whole file turns on: a
- * caller certain that a series is Mushoku Tensei is saying nothing about WHICH of its runs is ours.
- * Nearest-at-any-distance is how a 2021 cour gets attached to a 2026 media, and the lone-season
- * shortcut is the same guess with the sample size hidden.
- *
- * So both paths now have to agree with the date, inside the same SEASON_DATE_WINDOW the search path
- * below already applies and that catalogue-gate.ts and fuzzy-merge.ts independently settled on. What
- * this costs is real and worth naming: a show AniList splits into two cours while Crunchyroll keeps
- * one season now falls outside the window for the second cour and gets no Crunchyroll row. That is
- * the correct refusal rather than an unfortunate one, because that single Crunchyroll season carries
- * BOTH cours' episodes, so attaching it to either one was always going to list the wrong episodes.
- */
-export const matchSeasonByDate = async (
-  seriesId: string, startDate: string, ctx: ExtractorServerContext
-): Promise<string | undefined> => {
-  const targetDate = new Date(startDate)
-  if (isNaN(targetDate.getTime())) return undefined
-
-  const { seasons, dates } = await seasonAirDates(seriesId, ctx)
-  if (!seasons.length) return undefined
-
-  const best = closestSeason(dates, targetDate)
-  if (!best || best.diff > SEASON_DATE_WINDOW) return undefined
-  return crunchyrollId(seriesId, best.id)
 }
 
 /**
@@ -362,7 +369,6 @@ export const matchSeasonByDate = async (
  * about to watch, and it is not recoverable without a reload.
  */
 const CONFIDENT_TITLE_THRESHOLD = 0.9
-const SEASON_DATE_WINDOW = 45 * 24 * 60 * 60 * 1000
 // a franchise can be split across several catalogue entries, so the runners-up are date-checked too,
 // but the list is capped: each one costs a seasons call plus an episodes call per season
 const MAX_SERIES_CANDIDATES = 3
@@ -438,6 +444,7 @@ const seasonForShow = async (input: SimilarMediaInput, ctx: ExtractorServerConte
   if (!candidates.length) return undefined
   const verdict = pickSimilarSeason(input, candidates)
   if (!verdict) return undefined
+  console.warn(`similarMedia: cr picked ${verdict.season.resolvedId} by ${verdict.rule} for ${input.showId}`)
   return await getMedia(crunchyrollId(input.showId, verdict.season.resolvedId), ctx)
 }
 

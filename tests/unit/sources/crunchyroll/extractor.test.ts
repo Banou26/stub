@@ -5,11 +5,11 @@
 // 10 correct, row 11 an AniZip season 3 title over a season 1 description, rows 12 to 24 season 1).
 //
 // The bare handle reached that cluster from Kitsu, which publishes the show's Crunchyroll link on
-// every season record. That half is pinned in ../kitsu/stream-id.test.ts. This file pins the other
+// every season record. That half is pinned in tests/unit/sources/kitsu/stream-id.test.ts. This file pins the other
 // half: even handed a show-level id, this source must not hand back a show's worth of episodes.
-import { expect, test } from 'vitest'
+import { beforeEach, expect, test, vi } from 'vitest'
 
-import { getMedia, resolvers } from '../../../../src/sources/crunchyroll/extractor'
+import { getMedia, resetCrunchyrollCaches, resolvers } from '../../../../src/sources/crunchyroll/extractor'
 
 const CMS = 'https://www.crunchyroll.com/content/v2/cms'
 
@@ -64,6 +64,24 @@ const context = (routes: Record<string, unknown>) => ({
   }
 }) as never
 
+// The same table, counting how many times each url is asked for, so a test can say what a request
+// path COSTS and not only what it answers.
+const counting = (routes: Record<string, unknown>) => {
+  const calls = new Map<string, number>()
+  const inner = context(routes) as { fetch: (url: string) => Promise<unknown> }
+  const ctx = {
+    fetch: async (url: string) => {
+      calls.set(url, (calls.get(url) ?? 0) + 1)
+      return inner.fetch(url)
+    }
+  } as never
+  return { ctx, calls }
+}
+
+// The season walk is a module-level cache keyed by series id, so without this a test would read the
+// walk the test before it made and a count of requests would be a count of test order.
+beforeEach(() => resetCrunchyrollCaches())
+
 // The real premiere dates, so the date axis has something honest to choose between. Season 2 and
 // season 2 part 2 are the pair that matters: both are "season 2" by ordinal, 273 days apart.
 const MUSHOKU = series('G24H1N3MP', [
@@ -105,9 +123,9 @@ test('a single-season series keeps its episodes when asked by the bare series id
 // yoga answer 204 and the caller waits out its timeout instead of reading the refusal.
 type Ask = { showId: string, startDate?: string, titles?: string[], episodeCount?: number, episodeTitles?: string[] }
 
-const askSeason = async (input: Ask, routes: Record<string, unknown>) => {
+const askSeason = async (input: Ask, routes: Record<string, unknown>, ctx: unknown = context(routes)) => {
   const subscribe = (resolvers.Subscription as any).similarMedia.subscribe
-  const { value } = await subscribe(undefined, { input }, context(routes)).next()
+  const { value } = await subscribe(undefined, { input }, ctx).next()
   return value?.similarMedia ?? null
 }
 
@@ -366,4 +384,108 @@ test('the handles built on the search path carry the run scope of the media they
   expect(media?.handles.map((handle: { node: { uri: string }, relation: string }) => [handle.node.uri, handle.relation]))
     .toEqual([['anilist:108465', 'SAME_AS'], ['kitsu:42323', 'SAME_AS']])
   expect(media?.handles.map((handle: { node: { scope?: string | null } }) => handle.node.scope)).toEqual(['RUN', 'RUN'])
+})
+
+// COST. The walk is every japanese-audio season of a series at one episodes request each, and it used
+// to run once per ask: two pages of one show walked it twice, and the consumer's re-asks on new
+// evidence would multiply that. One walk per series per session, reused inside a TTL.
+const SEASON1_EPISODES = `${CMS}/seasons/GSSEASON1/episodes?preferred_audio_language=ja-JP&locale=en-US`
+
+// GSSEASON1 is a season neither ask below wins, so only the walk ever reads it: its count is the walk's.
+test('two asks about one show walk its seasons once', async () => {
+  const { ctx, calls } = counting(MUSHOKU)
+
+  const cour3 = await askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }, MUSHOKU, ctx)
+  const cour1 = await askSeason({ showId: 'G24H1N3MP', startDate: '2023-07-09T00:00:00Z' }, MUSHOKU, ctx)
+
+  expect(cour3?.uri).toBe('cr:G24H1N3MP-GS00374452')
+  expect(cour1?.uri, 'the control: the cache still answers each ask its own season').toBe('cr:G24H1N3MP-GSSEASON2')
+  expect(calls.get(SEASON1_EPISODES)).toBe(1)
+})
+
+// A different series is a different walk: the cache is per show, never per module.
+test('a different show still walks its own seasons', async () => {
+  const { ctx, calls } = counting({ ...MUSHOKU, ...TWO_IN_2026 })
+
+  await askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }, MUSHOKU, ctx)
+  const other = await askSeason({ showId: 'GTWO2026', startDate: '2026-10-05T00:00:00Z' }, TWO_IN_2026, ctx)
+
+  expect(other?.uri).toBe('cr:GTWO2026-GT4')
+  expect(calls.get(SEASON1_EPISODES)).toBe(1)
+  expect(calls.get(`${CMS}/seasons/GT1/episodes?preferred_audio_language=ja-JP&locale=en-US`)).toBe(1)
+})
+
+test('the walk is reused for ten minutes and not longer', async () => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  try {
+    const start = Date.parse('2026-09-05T00:00:00Z')
+    vi.setSystemTime(new Date(start))
+    const { ctx, calls } = counting(MUSHOKU)
+    const ask = () => askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }, MUSHOKU, ctx)
+
+    await ask()
+    vi.setSystemTime(new Date(start + 9 * 60 * 1000))
+    await ask()
+    expect(calls.get(SEASON1_EPISODES), 'nine minutes in, the walk is still the first one').toBe(1)
+
+    vi.setSystemTime(new Date(start + 11 * 60 * 1000))
+    await ask()
+    expect(calls.get(SEASON1_EPISODES), 'eleven minutes in, the walk is made again').toBe(2)
+  } finally {
+    vi.useRealTimers()
+  }
+})
+
+// A walk that threw is not an answer about the show, so it must not be served to the next ask; and a
+// request that fails must fail the caller once, never as a second, unhandled rejection beside it.
+test('a failed walk is not remembered', async () => {
+  const ask = { showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }
+  await expect(askSeason(ask, {}, context({}))).rejects.toThrow('fixture has no route')
+
+  const media = await askSeason(ask, MUSHOKU)
+  expect(media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})
+
+// OBSERVABILITY. The rule is not on the wire (the answer is a store row, and a rule is not a fact about
+// the row), so the answering side says which rule picked, and a live log reads ask, rule, answer, claim.
+test('a pick says which rule picked it', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  try {
+    await askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }, MUSHOKU)
+    const lines = () => warn.mock.calls.map(call => String(call[0])).filter(text => text.startsWith('similarMedia:'))
+    expect(lines()).toEqual(['similarMedia: cr picked GS00374452 by date for G24H1N3MP'])
+
+    expect(await askSeason({ showId: 'G24H1N3MP' }, MUSHOKU)).toBeNull()
+    expect(lines(), 'a refusal picks nothing and says nothing').toHaveLength(1)
+  } finally {
+    warn.mockRestore()
+  }
+})
+
+// Crunchyroll's rate limit is a JSON body with no `data` (`{ __class__: 'error', code: 'rate_limited' }`).
+// Read as an empty list it was an answer: a walk over three such bodies described three seasons of zero
+// episodes, refused, and was served to every ask for ten minutes while upstream had long recovered
+// (2026-09-05). An error body is an error, so the walk rejects and the cache forgets it.
+const RATE_LIMITED = { __class__: 'error', code: 'rate_limited' }
+const degradedOnce = (routes: Record<string, unknown>, urls: string[]) => {
+  const pending = new Set(urls)
+  const inner = context(routes) as { fetch: (url: string) => Promise<unknown> }
+  return {
+    fetch: async (url: string) => pending.delete(url) ? { status: 429, json: async () => RATE_LIMITED } : inner.fetch(url)
+  } as never
+}
+const EPISODES_URLS = ['GSSEASON1', 'GSSEASON2', 'GS00374452'].map(id => `${CMS}/seasons/${id}/episodes?preferred_audio_language=ja-JP&locale=en-US`)
+const SEASONS_URL = `${CMS}/series/G24H1N3MP/seasons?force_locale=&preferred_audio_language=ja-JP&locale=en-US`
+
+test('a rate limited walk is an error, not an answer the cache keeps', async () => {
+  const ask = { showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }
+
+  const episodes = degradedOnce(MUSHOKU, EPISODES_URLS)
+  await expect(askSeason(ask, MUSHOKU, episodes), 'three seasons of zero episodes is not a refusal').rejects.toThrow(/answered .* with no data/)
+  expect((await askSeason(ask, MUSHOKU, episodes))?.uri, 'upstream healthy again, inside the TTL: the walk is made again').toBe('cr:G24H1N3MP-GS00374452')
+
+  resetCrunchyrollCaches()
+  const seasons = degradedOnce(MUSHOKU, [SEASONS_URL])
+  await expect(askSeason(ask, MUSHOKU, seasons), 'no seasons at all is not a refusal either').rejects.toThrow(/answered .* with no data/)
+  expect((await askSeason(ask, MUSHOKU, seasons))?.uri).toBe('cr:G24H1N3MP-GS00374452')
 })

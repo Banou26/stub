@@ -6,13 +6,17 @@
 import { expect, test } from 'vitest'
 
 import {
+  answerNamesOurShow,
   bestRunStartDate,
+  describeEvidence,
   hasEvidence,
   isRunAnswerFrom,
   namesAPart,
   pickSimilarSeason,
   similarAskKey,
+  SHOW_TITLE_THRESHOLD,
   type SeasonCandidate,
+  printableToken,
 } from '../../../src/sources/similar'
 
 const episodeTitles = (season: number, count: number) =>
@@ -222,4 +226,45 @@ test('the ask key splits on the real episode titles and on nothing spelled diffe
   expect(similarAskKey('cr', 'X', { startDate: '2026-07-04T15:00:00Z', titles: ['Show Season 2'] }))
     .toBe(similarAskKey('cr', 'X', { startDate: 'Sat, 04 Jul 2026 00:00:00 GMT', titles: ['Show 2nd Season'] }))
   expect(similarAskKey('cr', 'X', base)).not.toBe(similarAskKey('cr', 'Y', base))
+})
+
+// The which-show post-check the consumer runs on an answer. The show id came off a PART_OF edge whose
+// container the fuzzy title pass may have unioned wrongly on a listing, so a season that fits by
+// ordinal, count or year can be a run of another show; the titles are the one thing that says which.
+test('the which-show check passes the show\'s own row and refuses another show\'s', async () => {
+  const run = ['Mushoku Tensei: Jobless Reincarnation Season 3', 'Mushoku Tensei III: Isekai Ittara Honki Dasu', '無職転生 Ⅲ ～異世界行ったら本気だす～']
+
+  expect((await answerNamesOurShow(run, ['Mushoku Tensei: Jobless Reincarnation'])).ok, 'crunchyroll titles its season 3 row with the show').toBe(true)
+
+  const wrongShow = await answerNamesOurShow(run, ['Grand Blue Dreaming'])
+  expect(wrongShow.ok, 'the row a wrong container union would produce').toBe(false)
+  expect(wrongShow.score).toBeLessThan(SHOW_TITLE_THRESHOLD)
+
+  const spinOff = await answerNamesOurShow(run, ['Mushoku Tensei: Jobless Reincarnation Gaiden'])
+  expect(spinOff.ok, 'the binding wrong pair, 0.8135').toBe(false)
+  expect(spinOff.score).toBeLessThan(SHOW_TITLE_THRESHOLD)
+
+  expect(await answerNamesOurShow(run, []), 'an answer with no titles cannot be checked').toEqual({ ok: false, score: 0 })
+  expect(await answerNamesOurShow([], ['Mushoku Tensei: Jobless Reincarnation']), 'nor can a run with none').toEqual({ ok: false, score: 0 })
+})
+
+test('describeEvidence prints what the rules read', () => {
+  expect(describeEvidence({ startDate: '2026-07-04', titles: ['Show Season 3', 'Show'], episodeCount: 14, episodeTitles: ['A', 'B', 'Episode 3'] }))
+    .toBe('{day:2026-07-04, count:14, ordinals:3, parts:no, titles:2, episodeTitles:3}')
+  expect(describeEvidence({})).toBe('{day:-, count:-, ordinals:-, parts:no, titles:0, episodeTitles:0}')
+  // 'Part 2' is read as ordinal 2 by parseSeasonNumber AND flagged as a part, which is exactly what
+  // makes Rule 3 refuse it; the line shows both so the reader sees why the ordinal went unused
+  expect(describeEvidence({ startDate: 'Sat, 04 Jul 2026 15:00:00 GMT', titles: ['Show Part 2'] }))
+    .toBe('{day:2026-07-04, count:-, ordinals:2, parts:yes, titles:1, episodeTitles:0}')
+})
+
+// The two funnel lines printed BEFORE the show id is checked read a plugin's string, and a newline in it
+// would break the one-line shape scripts/check-similar-media.mjs parses. A valid id prints unchanged.
+test('a caller-supplied id prints as one log token', () => {
+  expect(printableToken('G24H1N3MP')).toBe('G24H1N3MP')
+  expect(printableToken('umc.cmc.1srk2goyh2q2zdxcx605w8vtx')).toBe('umc.cmc.1srk2goyh2q2zdxcx605w8vtx')
+  expect(printableToken('a b\nc\u00e9')).toBe('a_b_c_')
+  expect(printableToken('x'.repeat(200))).toHaveLength(128)
+  expect(printableToken('')).toBe('-')
+  expect(printableToken(undefined)).toBe('-')
 })

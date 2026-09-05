@@ -1,10 +1,9 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import { airedDate } from '../aired-date'
-import type { Resolvers, Media as GQLMedia } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, RequestContext } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaSeason, MediaStatus, Page } from './types'
-import { matchSeasonByDate, getMedia as getCrunchyrollMedia } from '../crunchyroll/extractor'
 import { makeMedia, normalizePage } from '../utils'
 import { createAnilistFrontendSession } from './frontend'
 
@@ -154,22 +153,38 @@ const GET_MEDIA = `
  */
 const SCORE = 0.8
 
+/** What this source knows about the run it is describing, handed to the origin it asks. */
+type RunEvidence = { startDate?: string, titles: string[], episodeCount?: number }
+
+// The show id comes off AniList's own externalLinks, a first-party mapping and not a fuzzy union, so
+// WHICH SHOW is settled here and the answering source settles which season. Until 2026-09-05 this
+// called crunchyroll's `closestSeason` directly and took the nearest season inside 45 days; Rule 1 of
+// `pickSimilarSeason` refuses when two seasons sit inside the window (two cours released together), so
+// this path loses that hit and gains the fold and year vetoes it never had.
 const siteMappings = [
   {
     siteId: 5,
     mapper: async (
       externalLink: MediaExternalLink,
-      startDate: string | undefined,
+      evidence: RunEvidence,
+      requestContext: RequestContext | null | undefined,
       context: ExtractorServerContext
     ): Promise<GQLMedia | undefined> => {
       const match = externalLink.url?.match(/https:\/\/www\.crunchyroll\.com\/series\/(\w+)/)
       const crunchyrollSeriesId = match?.[1]
-      if (!crunchyrollSeriesId || !startDate) return undefined
-
-      const compositeId = await matchSeasonByDate(crunchyrollSeriesId, startDate, context)
-      if (!compositeId) return undefined
-      const crMedia = await getCrunchyrollMedia(compositeId, context)
-      return crMedia
+      if (!crunchyrollSeriesId) return undefined
+      const answer = await context.similarMedia('cr', {
+        showId: crunchyrollSeriesId,
+        startDate: evidence.startDate,
+        titles: evidence.titles,
+        episodeCount: evidence.episodeCount,
+        context: requestContext ?? undefined
+      })
+      // attached by IDENTITY alone. The funnel's answer is the selection in worker/similar-document.ts,
+      // a partial view of crunchyroll's row, and a handle node is written to the store as a row: its
+      // titles, one field each, replaced crunchyroll's own of equal length, language and score gone
+      // (2026-09-05). Crunchyroll's insertion is the row; this handle only names it.
+      return answer && makeMedia({ origin: answer.origin, id: answer.id, url: answer.url, scope: answer.scope })
     }
   }
 ]
@@ -262,24 +277,24 @@ const getPreviousMediaSeason = (date = new Date()) =>
   mediaSeasons[mediaSeasons.indexOf(getMediaSeason(date)) - 1]
   ?? MediaSeason.Fall
 
-const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, context: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+const fetchMedia = async (
+  { id, idMal }: { id?: number, idMal?: number },
+  context: ExtractorServerContext,
+  requestContext?: RequestContext | null
+): Promise<GQLMedia | undefined> => {
   const data = await fetchAnilist<{ Media: Media }>({ query: GET_MEDIA, variables: { id, idMal, type: 'ANIME' } }, context)
   if (!data?.Media) return undefined
 
-  // The same date `normalizeMedia` publishes, rather than a second one built here. This hand-rolled a
-  // date twice over, and both halves mattered to the one thing it feeds, `matchSeasonByDate`:
-  //
-  //   IT FABRICATED A DAY. `day ?? 1` invents the 1st whenever AniList says the day is unknown, which
-  //   is 2355 of 29722 entries, while `airedDate` reaches for the airing schedule's episode 1 in
-  //   exactly that case and finds a real timestamp. So a Crunchyroll season was being matched against
-  //   an invented date while a real one sat in the same payload, already fetched: GET_MEDIA is built
-  //   from MEDIA_FIELDS, which carries `airingSchedule`.
-  //
-  //   IT BUILT THE DATE IN LOCAL TIME. `new Date(y, m, d)` is local midnight, so `.toUTCString()` on
-  //   a machine east of UTC rolls the day back: AniList day 4 comes out as `Fri, 03 Jul 2026 15:00:00
-  //   GMT` under JST. Harmless inside a 45 day window, and wrong in a way that would not stay harmless
-  //   if anything finer ever read it. `airedDate` uses Date.UTC throughout.
-  const startDate = airedDate(data.Media.startDate, data.Media.airingSchedule, 'first')
+  // The same date `normalizeMedia` publishes, rather than a second one built here. A date hand-rolled
+  // here fabricated a day (`day ?? 1` invents the 1st for the 2355 of 29722 entries whose day AniList
+  // does not know, while `airedDate` finds the airing schedule's episode 1 timestamp in exactly that
+  // case) and built it in local time (`new Date(y, m, d)` rolls day 4 back to `Fri, 03 Jul 2026
+  // 15:00:00 GMT` under JST; `airedDate` uses Date.UTC throughout).
+  const evidence: RunEvidence = {
+    startDate: airedDate(data.Media.startDate, data.Media.airingSchedule, 'first'),
+    titles: [data.Media.title?.english, data.Media.title?.romaji, data.Media.title?.native].filter((title): title is string => Boolean(title)),
+    episodeCount: data.Media.episodes ?? undefined
+  }
 
   const externalLinks = data.Media.externalLinks
     ?.filter((link): link is NonNullable<typeof link> => Boolean(link))
@@ -291,7 +306,7 @@ const fetchMedia = async ({ id, idMal }: { id?: number, idMal?: number }, contex
       const mapper = siteMappings.find(m => m.siteId === externalLink.siteId)
       if (!mapper) return undefined
       try {
-        return await mapper.mapper(externalLink, startDate, context)
+        return await mapper.mapper(externalLink, evidence, requestContext, context)
       } catch (error) {
         console.error(`anilist mapper for siteId ${externalLink.siteId} failed:`, error)
         return undefined
@@ -423,11 +438,11 @@ const searchMedia = async (search: string, context: ExtractorServerContext) => {
 export const resolvers: Resolvers = {
   Subscription: {
     media: {
-      subscribe: async function*(_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
+      subscribe: async function*(_, { input: { uri: _uri, context } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
         const uri = extractAggregatedUriOrigin(_uri, origin)
         if (!uri) return yield { media: null }
-        const media = await fetchMedia({ id: Number(uri.id) }, ctx)
+        const media = await fetchMedia({ id: Number(uri.id) }, ctx, context)
         yield {
           media
         }

@@ -19,7 +19,10 @@
  *   (b) a LINK whose hostname is anilist.co or kitsu.io exists, proving the header rendered its
  *       SAME_AS members at all.
  *   (c) the search returned a cluster to open.
- * A missing provider link with all three controls green is a real failure (exit 1), and the LINKS list
+ *   (d) the opened media's own aggregated uri was read off exactly one distinct episode link. Zero
+ *       means the modal rendered no episode row so the uri could not be read; two or more means the
+ *       rows disagree, which the check cannot interpret.
+ * A missing provider link with all four controls green is a real failure (exit 1), and the LINKS list
  * is printed so the providers that did render can be read.
  *
  * ONE PAGE LOAD, client-side navigation exactly as reproduce-season-weld.mjs does: the store lives in
@@ -94,8 +97,18 @@ await go('/media/' + target)
 const links = await page.evaluate(() =>
   [...document.querySelectorAll('.modal > .content > .header > .origins > a.origin')].map(a => a.href)
 )
-const cluster = [...new Set((await clustersOnPage()).flatMap(membersOf))]
+// the opened media's own uri: every episode row links /watch/<aggregated media uri>/<episode uri>,
+// and nothing else on the page carries it (the /media/ag: cards behind the modal are the home listing)
+const openedUris = [...new Set(await page.evaluate(() =>
+  [...document.querySelectorAll('.modal .episodes a.episode-link[href^="/watch/"]')]
+    .map(a => { const raw = a.getAttribute('href').slice('/watch/'.length).split('/')[0]; try { return decodeURIComponent(raw) } catch { return raw } })
+))]
 await browser.close()
+if (openedUris.length !== 1) {
+  console.log(`\nCONTROL (d) FAILED: ${openedUris.length} distinct media uris in the episode links (${openedUris.join(' | ') || 'none'}), so the opened run could not be read`)
+  process.exit(2)
+}
+const cluster = membersOf(openedUris[0])
 
 const hosts = links.map(hostOf)
 const controlImdb = hosts.some(host => endsWith(host, 'imdb.com'))
@@ -106,6 +119,7 @@ console.log(`CLUSTER (${cluster.length} members): ${cluster.join(', ')}`)
 console.log(`\ncontrol (a) imdb link rendered through PART_OF: ${controlImdb ? 'ok' : 'FAILED'}`)
 console.log(`control (b) a SAME_AS member (anilist or kitsu) rendered: ${controlRun ? 'ok' : 'FAILED'}`)
 console.log('control (c) search returned a cluster: ok')
+console.log(`control (d) the opened run's uri read off its episode links: ok (${openedUris[0]})`)
 if (!controlImdb || !controlRun) {
   console.log('\nCONTROL FAILED: the header did not render the path this check reads, so the result means nothing')
   process.exit(2)

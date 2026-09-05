@@ -11,11 +11,11 @@
 // that, and it came off a PART_OF edge whose container cluster the fuzzy title pass may have unioned
 // on a listing. A wrong container union upstream is trusted here, so a pick is only as right as it.
 //
-// Imports only the pure season helpers, `stripTitle` and the shared 45 day window, so it loads under
-// vitest and inside every extractor alike.
+// Imports only the pure season helpers, `stripTitle`, `bestTitleScore` and the shared 45 day window,
+// so it loads under vitest and inside every extractor alike.
 import { SEASON_DATE_WINDOW } from './catalogue-gate'
 import { namesADay, parseSeasonNumber } from './season'
-import { stripTitle } from './utils'
+import { bestTitleScore, stripTitle } from './utils'
 
 /** What a caller knows about ITS run. Every field optional; `hasEvidence` says whether any is usable. */
 export type RunEvidence = {
@@ -39,6 +39,22 @@ export type SeasonCandidate<T> = {
 
 export type SimilarRule = 'date' | 'episode-titles' | 'ordinal' | 'year' | 'first'
 export type SimilarVerdict<T> = { season: T, rule: SimilarRule }
+
+/** The part of an answer every caller of `similarMedia` reads: enough to build a handle and to check it. */
+export type SimilarAnswerMedia = {
+  uri: string
+  origin: string
+  id: string
+  scope?: string | null
+  titles?: readonly { title: string }[] | null
+}
+export type SimilarDeclineReason = 'not-implemented' | 'bad-show-id' | 'no-evidence' | 'ceiling' | 'timeout' | 'error'
+export type SimilarRefusalReason = 'null' | 'not-a-run'
+/** What one ask came to. `declined` never reached the source and may be retried; `refused` did and is final for that evidence. */
+export type SimilarOutcome<M extends SimilarAnswerMedia = SimilarAnswerMedia> =
+  | { outcome: 'answered', media: M }
+  | { outcome: 'refused', reason: SimilarRefusalReason }
+  | { outcome: 'declined', reason: SimilarDeclineReason }
 
 /**
  * The share of a candidate season's real episode titles our run must carry to be that season.
@@ -248,6 +264,55 @@ export const pickSimilarSeason = <T>(
 
 const compareNumbers = (a: number, b: number) => a - b
 
+/** The UTC day a start date names, `-` for none: the only precision the rules read a date at. */
+const dayOf = (startDate: string | number | null | undefined): string => {
+  const time = parseTime(startDate)
+  return time === undefined ? '-' : new Date(time).toISOString().slice(0, 10)
+}
+
+/**
+ * `{day:2026-07-04, count:14, ordinals:3, parts:no, titles:5, episodeTitles:12}`: the evidence as the
+ * rules read it, for a log line. The day is the one `similarAskKey` reads, `-` when there is none; the
+ * two lengths are of the raw lists, so the reader sees what was sent.
+ */
+export const describeEvidence = (evidence: RunEvidence): string => {
+  const titles = evidence.titles ?? []
+  const ordinals = [...seasonOrdinals(titles)].sort(compareNumbers)
+  return `{day:${dayOf(evidence.startDate)}, count:${evidence.episodeCount ?? '-'}, ordinals:${ordinals.length ? ordinals.join(',') : '-'}, parts:${titles.some(namesAPart) ? 'yes' : 'no'}, titles:${titles.length}, episodeTitles:${(evidence.episodeTitles ?? []).length}}`
+}
+
+/**
+ * A caller-supplied string as ONE log token: anything outside printable ASCII becomes `_`, capped at
+ * 128 characters, `-` for nothing. A valid show id (`SAFE_SHOW_ID` in worker/extractor.ts) prints
+ * unchanged; the two funnel lines printed BEFORE that check read a plugin's string, and a newline in
+ * it would break the one-line shape scripts/check-similar-media.mjs parses.
+ */
+export const printableToken = (value: string | null | undefined): string =>
+  (value ?? '').replace(/[^\x21-\x7e]/g, '_').slice(0, 128) || '-'
+
+/**
+ * The score at which an answer's title names OUR show. The value crunchyroll's search gate measured
+ * (title-gate.test.ts): correct pairs 1.000, the nearest wrong pair 0.8135, a spin-off.
+ */
+export const SHOW_TITLE_THRESHOLD = 0.9
+
+/**
+ * Whether an answer is a run of the show the caller asked about, read off titles alone: the best pair
+ * over our titles and theirs with season markers stripped. Decides WHICH SHOW, never which season.
+ * Either side empty is a refusal, not a pass: an answer that cannot be checked is not verified.
+ */
+export const answerNamesOurShow = async (
+  runTitles: readonly string[],
+  answerTitles: readonly string[]
+): Promise<{ ok: boolean, score: number }> => {
+  const ours = runTitles.filter(title => title.trim())
+  const theirs = answerTitles.filter(title => title.trim())
+  if (!ours.length || !theirs.length) return { ok: false, score: 0 }
+  const scores = await Promise.all(theirs.map(title => bestTitleScore(ours, title)))
+  const score = Math.max(...scores)
+  return { ok: score >= SHOW_TITLE_THRESHOLD, score }
+}
+
 /**
  * The question an ask puts, normalised, so two asks share one in-flight answer exactly when the rules
  * above would read them alike: the show, the day (kitsu's `YYYY-MM-DD`, anilist's `toUTCString` and a
@@ -258,8 +323,7 @@ const compareNumbers = (a: number, b: number) => a - b
  * with the right evidence in hand.
  */
 export const similarAskKey = (origin: string, showId: string, evidence: RunEvidence): string => {
-  const time = parseTime(evidence.startDate)
-  const day = time === undefined ? '-' : new Date(time).toISOString().slice(0, 10)
+  const day = dayOf(evidence.startDate)
   const titles = evidence.titles ?? []
   const ordinals = [...seasonOrdinals(titles)].sort(compareNumbers).join(',')
   const parts = titles.some(namesAPart) ? 'p' : ''
