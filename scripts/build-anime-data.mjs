@@ -62,6 +62,7 @@ import { brotliCompressSync, constants, zstdDecompressSync } from 'node:zlib'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
+import { orderSeasonBucket } from '../src/sources/offline/season-order.ts'
 
 const require = createRequire(import.meta.url)
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -337,6 +338,10 @@ const buildExtract = (entries, meta, tag) => {
     if (entry.score?.arithmeticMean) record.sc = Math.round(entry.score.arithmeticMean * 100) / 100
     ;(seasons[`${season.year}-${season.season}`] ??= []).push(record)
   }
+
+  // the bundle's order IS the first paint: the listing sorts on popularity, every bundled row has
+  // none, and a stable sort therefore shows manami's alphabetical dump order. See `orderSeasonBucket`.
+  for (const key of Object.keys(seasons)) seasons[key] = orderSeasonBucket(seasons[key])
 
   return { sources: [MANAMI], tag, updated: meta.lastUpdate, anchor: `${anchor.year}-${anchor.season}`, rows, seasons }
 }
