@@ -151,7 +151,21 @@ const resolveSeasonId = (season: CrSeason): string =>
 export const crunchyrollId = (seriesId: string, seasonId?: string, episodeId?: string) =>
   [seriesId, seasonId && stripLocale(seasonId), episodeId].filter(Boolean).join('-')
 
-const bestImage = (images?: { source: string }[][]) => images?.at(-1)?.at(-1)?.source
+// Crunchyroll's API hands image `source` urls on www.crunchyroll.com/imgsrv/display/<kind>/<WxH>/<key>,
+// and that host answers a geo-blocked location (Japan, measured 2026-09-05) with a 301 to its
+// "currently unavailable" page, which a browser refuses to embed as an image: every episode thumbnail
+// of a season blank. The same key on the CDN host behind Cloudflare's image resizer answered 200 for
+// every asset checked. The display url's width becomes the resize width.
+const WWW_IMAGE = /^https?:\/\/www\.crunchyroll\.com\/imgsrv\/display\/[^/]+\/(\d+)x\d+\/(.+)$/
+export const cdnImageUrl = (url: string): string => {
+  const match = url.match(WWW_IMAGE)
+  return match ? `https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=${match[1]}/${match[2]}` : url
+}
+
+const bestImage = (images?: { source: string }[][]) => {
+  const source = images?.at(-1)?.at(-1)?.source
+  return source ? cdnImageUrl(source) : source
+}
 
 // An id with no season segment is the bare series id, which Crunchyroll shares across every season,
 // so it names the SHOW. It enters the store as a CONTAINER and never a run's identity space: the

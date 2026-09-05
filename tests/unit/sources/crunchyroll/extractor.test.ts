@@ -9,7 +9,7 @@
 // half: even handed a show-level id, this source must not hand back a show's worth of episodes.
 import { beforeEach, expect, test, vi } from 'vitest'
 
-import { getMedia, resetCrunchyrollCaches, resolvers } from '../../../../src/sources/crunchyroll/extractor'
+import { getMedia, resetCrunchyrollCaches, resolvers, cdnImageUrl } from '../../../../src/sources/crunchyroll/extractor'
 
 const CMS = 'https://www.crunchyroll.com/content/v2/cms'
 
@@ -488,4 +488,21 @@ test('a rate limited walk is an error, not an answer the cache keeps', async () 
   const seasons = degradedOnce(MUSHOKU, [SEASONS_URL])
   await expect(askSeason(ask, MUSHOKU, seasons), 'no seasons at all is not a refusal either').rejects.toThrow(/answered .* with no data/)
   expect((await askSeason(ask, MUSHOKU, seasons))?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})
+
+// Crunchyroll's API hands image urls on www.crunchyroll.com/imgsrv/display/<kind>/<WxH>/<key>, and that
+// host answers a geo-blocked location with a 301 to its "currently unavailable" page, which a browser
+// refuses to embed as an image: measured from Japan 2026-09-05, every episode thumbnail of a season
+// blank while the same keys on imgsrv.crunchyroll.com behind Cloudflare's resizer answered 200.
+test('an image url on the geo-gated site is served from the CDN host instead', async () => {
+  const routes = series('IMG', [{ id: 'GSIMG', seasonNumber: 1, episodes: 1 }]) as any
+  routes[`${CMS}/seasons/GSIMG/episodes?preferred_audio_language=ja-JP&locale=en-US`].data[0].images = {
+    thumbnail: [[{ source: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1920x1080/catalog/crunchyroll/38d60ec2b92fa401a1f04ab9b84caa6f.png' }]]
+  }
+  const media = await getMedia('IMG-GSIMG', context(routes))
+  expect(media?.episodes?.[0]?.thumbnails?.[0]?.url)
+    .toBe('https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1920/catalog/crunchyroll/38d60ec2b92fa401a1f04ab9b84caa6f.png')
+  expect(cdnImageUrl('https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1920/catalog/crunchyroll/x.png'), 'already the CDN form')
+    .toBe('https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1920/catalog/crunchyroll/x.png')
+  expect(cdnImageUrl('https://s4.anilist.co/file/x.jpg'), 'another host is left alone').toBe('https://s4.anilist.co/file/x.jpg')
 })
