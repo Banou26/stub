@@ -63,7 +63,12 @@ export const malformedRecordDoesNotBlankTheSeason = async () => {
   }
   const [yielded, errors] = await captureErrors(() => mediaPage({ status: 'RELEASING' }, ctxYielding(body)))
   const titles = yielded[0].mediaPage.nodes.map((node: any) => node.titles?.[0]?.title).sort()
-  expect(titles).to.deep.equal(['Good One', 'Good Two'])
+  // The malformed record SURVIVES, and that is the fix rather than a regression: `new URL(...)` used
+  // to run unguarded inside normalizeMedia, so one bad link threw and took its whole record away.
+  // It now costs that one handle, which tests/unit/sources/jikan/extractor.test.ts pins as "a
+  // malformed link costs one handle, not the record". This file kept asserting the old behaviour and
+  // was the only red check in the suite from 2026-09-03 to 2026-09-06.
+  expect(titles).to.deep.equal(['Bad AniDB Url', 'Good One', 'Good Two'])
   expect(errors).to.contain('Jikan season')
 }
 
