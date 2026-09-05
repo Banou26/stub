@@ -81,3 +81,61 @@ export const readPluginSources = (
 
   return { sources, rejected }
 }
+
+type PluginEdge = { node: unknown, relation: string }
+
+const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
+
+// a bare row names a media by uri, or by origin and id; the uri is derived when only the pair is there
+const asRow = (value: unknown): Record<string, unknown> | undefined => {
+  if (!isObject(value)) return undefined
+  if (typeof value.uri === 'string') return value
+  if (typeof value.origin === 'string' && typeof value.id === 'string') return { ...value, uri: `${value.origin}:${value.id}` }
+  return undefined
+}
+
+const readHandle = (handle: unknown, depth: number): PluginEdge | undefined => {
+  if (isObject(handle) && 'node' in handle) {
+    if (!isObject(handle.node)) return undefined
+    return { ...handle, node: readPluginHandles(handle.node, depth), relation: typeof handle.relation === 'string' ? handle.relation : 'SAME_AS' }
+  }
+  const row = asRow(handle)
+  return row ? { node: readPluginHandles(row, depth), relation: 'SAME_AS' } : undefined
+}
+
+const readHandles = (handles: unknown, depth: number): PluginEdge[] =>
+  Array.isArray(handles) && depth > 0
+    ? handles.map(handle => readHandle(handle, depth - 1)).filter((edge): edge is PluginEdge => edge !== undefined)
+    : []
+
+/**
+ * A plugin's media with its handles in the shape the store reads.
+ *
+ * `stub-source@1` plugins were written against `handles: [Media!]!`, a bare list of the rows a media is
+ * the same as, and every one of them still sends it: the nyaa package restates the cluster's handles as
+ * bare rows. The schema made a handle an edge, `{ node, relation }`, on 2026-09-04 and the worker read
+ * `handle.node` from then on, so a bare row was an edge with no node, the unwrap dereferenced it, and
+ * the shared insert batch rejected for every extractor in it, first-party sources included
+ * (2026-09-05, on the deployed site). A bare row reads as the SAME_AS it always meant; an edge passes
+ * through with its node read the same way; anything that is neither is dropped. Episodes' handles are
+ * read alike. The depth cap bounds a self-referencing payload.
+ */
+export const readPluginHandles = <T>(media: T, depth = 4): T => {
+  if (!isObject(media)) return media
+  const episodes = Array.isArray(media.episodes)
+    ? media.episodes.map(episode => isObject(episode) ? { ...episode, handles: readHandles(episode.handles, 1) } : episode)
+    : media.episodes
+  return { ...media, handles: readHandles(media.handles, depth), episodes } as T
+}
+
+/** One plugin payload (`media`, `similarMedia`, or `mediaPage`) with every media it carries read by `readPluginHandles`. */
+export const readPluginPayload = (field: 'media' | 'mediaPage' | 'similarMedia', payload: any): any => {
+  if (!isObject(payload)) return payload
+  if (field === 'mediaPage') {
+    const nodes = (payload.mediaPage as { nodes?: unknown } | undefined)?.nodes
+    return Array.isArray(nodes)
+      ? { ...payload, mediaPage: { ...(payload.mediaPage as object), nodes: nodes.map(node => readPluginHandles(node)) } }
+      : payload
+  }
+  return payload[field] ? { ...payload, [field]: readPluginHandles(payload[field]) } : payload
+}

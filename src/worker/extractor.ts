@@ -25,7 +25,7 @@ import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from 
 import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate'
 import { normalizeToStoreMedia } from './store/normalize'
 import { listenMultipleIterator } from './store/events'
-import { readPluginSources } from './plugin-sources'
+import { readPluginPayload, readPluginSources } from './plugin-sources'
 import { describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
 import { SIMILAR_MEDIA_DOCUMENT } from './similar-document'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
@@ -113,6 +113,8 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   const seen = new Set<string>()
   for (const media of allUnwrapped) {
     for (const handle of media.handles ?? []) {
+      // a handle naming no node claims nothing; the row it sits on still lands
+      if (!handle?.node) continue
       const key = `${media.uri}\0${handle.node.uri}\0${handle.relation}`
       if (!seen.has(key)) {
         seen.add(key)
@@ -134,6 +136,7 @@ const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
   const handlePairs: { episodeUri: string; handleUri: string; relation: HandleRelation }[] = []
   for (const episode of episodes as Episode[]) {
     for (const handle of episode.handles ?? []) {
+      if (!handle?.node) continue
       handlePairs.push({ episodeUri: episode.uri, handleUri: handle.node.uri, relation: handle.relation })
     }
   }
@@ -608,7 +611,8 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
        * why it is written down here next to the code rather than in a commit message.
        */
       for await (const payload of await subscribe(undefined, args, { similarMedia: similarMediaFrom(origin) })) {
-        yield enforcePluginOrigin(origin, field, payload)
+        // a plugin written against `handles: [Media!]!` sends bare rows where the store reads edges
+        yield enforcePluginOrigin(origin, field, readPluginPayload(field, payload))
       }
     }
   })

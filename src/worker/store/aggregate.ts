@@ -89,10 +89,17 @@ const unwrapMediaCache = new WeakMap<GQLMedia, GQLMedia[]>()
 export function recursivelyUnwrapMediaHandles(media: GQLMedia): GQLMedia[] {
   if (unwrapMediaCache.has(media)) return unwrapMediaCache.get(media)!
   const result = media.handles
-    ? [media, ...media.handles.flatMap(handle =>
-      handle.relation === 'PART_OF'
+    ? [media, ...media.handles.flatMap(handle => {
+      // a handle naming no node (a plugin's bare row that slipped past the boundary) claims nothing,
+      // and one of them must not fail the batch every extractor's rows share
+      if (!handle?.node) {
+        console.warn(`a handle of ${media.uri} names no node and was skipped`)
+        return []
+      }
+      return handle.relation === 'PART_OF'
         ? [{ ...handle.node, handles: [] }]
-        : recursivelyUnwrapMediaHandles(handle.node))]
+        : recursivelyUnwrapMediaHandles(handle.node)
+    })]
     : [media]
   if (media.handles) unwrapMediaCache.set(media, result)
   return result

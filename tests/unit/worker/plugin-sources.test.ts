@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { readPluginSources } from '../../../src/worker/plugin-sources'
+import { readPluginPayload, readPluginSources } from '../../../src/worker/plugin-sources'
 
 const source = (origin: string, name?: string) => ({
   origin,
@@ -79,5 +79,41 @@ describe('readPluginSources', () => {
     expect(readPluginSources(source('bare'), 'u').sources[0]!.meta.name).toBe('bare')
     const long = readPluginSources({ ...source('x'), name: 'n'.repeat(200) }, 'u')
     expect(long.sources[0]!.meta.name.length).toBe(64)
+  })
+})
+
+// `stub-source@1` plugins were written against `handles: [Media!]!`, a bare list of the rows a media
+// is the same as, and every one of them still sends it: the nyaa package restates the cluster's
+// handles as bare rows. The schema made a handle an edge, `{ node, relation }`, on 2026-09-04 and the
+// worker read `handle.node` from then on, so a plugin row's handles were edges with no node.
+describe('readPluginPayload', () => {
+  const row = (uri: string, extra: Record<string, unknown> = {}) => ({
+    uri, origin: uri.slice(0, uri.indexOf(':')), id: uri.slice(uri.indexOf(':') + 1), handles: [], episodes: [], ...extra,
+  })
+
+  test('a bare row in handles reads as the SAME_AS edge it always meant', () => {
+    const out = readPluginPayload('media', { media: row('nyaa:1', { handles: [row('anilist:2'), row('mal:3')] }) })
+    expect(out.media.handles.map((h: any) => [h.relation, h.node.uri])).toEqual([['SAME_AS', 'anilist:2'], ['SAME_AS', 'mal:3']])
+  })
+
+  test('an edge passes through untouched, and a bare row inside its node is converted too', () => {
+    const inner = row('anilist:2', { handles: [row('kitsu:4')] })
+    const out = readPluginPayload('media', { media: row('nyaa:1', { handles: [{ node: inner, relation: 'PART_OF' }] }) })
+    expect(out.media.handles[0].relation).toBe('PART_OF')
+    expect(out.media.handles[0].node.handles).toEqual([{ node: expect.objectContaining({ uri: 'kitsu:4' }), relation: 'SAME_AS' }])
+  })
+
+  test('a row with only origin and id gains its uri, and anything that is neither row nor edge is dropped', () => {
+    const out = readPluginPayload('media', { media: row('nyaa:1', { handles: [{ origin: 'anilist', id: '2' }, null, 'junk', { relation: 'SAME_AS' }] }) })
+    expect(out.media.handles).toEqual([{ node: expect.objectContaining({ uri: 'anilist:2', origin: 'anilist', id: '2' }), relation: 'SAME_AS' }])
+  })
+
+  test('episode handles and every mediaPage node are read the same way, and a null media passes through', () => {
+    const page = readPluginPayload('mediaPage', { mediaPage: { nodes: [row('nyaa:1', { handles: [row('anilist:2')] }), row('nyaa:5')] } })
+    expect(page.mediaPage.nodes[0].handles[0]).toEqual({ node: expect.objectContaining({ uri: 'anilist:2' }), relation: 'SAME_AS' })
+    expect(page.mediaPage.nodes[1].handles).toEqual([])
+    const media = readPluginPayload('similarMedia', { similarMedia: row('nyaa:1', { episodes: [{ uri: 'nyaa:1-1', origin: 'nyaa', id: '1-1', mediaUri: 'nyaa:1', handles: [{ uri: 'anilist:2-1', origin: 'anilist', id: '2-1' }] }] }) })
+    expect(media.similarMedia.episodes[0].handles).toEqual([{ node: expect.objectContaining({ uri: 'anilist:2-1' }), relation: 'SAME_AS' }])
+    expect(readPluginPayload('media', { media: null })).toEqual({ media: null })
   })
 })
