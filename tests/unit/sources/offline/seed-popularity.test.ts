@@ -7,7 +7,8 @@
 // An earlier review had it removed along with status, startDate and endDate, because a seeded field
 // at the offline score of 0.2 beats a live source scoring 0.2 on arrival order. Popularity is not in
 // that class: the 0.2 sources (justwatch, appletv, paramount, unogs) supply NO popularity at all, and
-// every source that does supply one outranks 0.2 (anilist 0.8, kitsu 0.3). The seeded value is also
+// every source that does supply one outranks 0.2 (jikan 0.9, which is MyAnimeList's member count and
+// what the listing order actually comes from; anilist 0.8; kitsu 0.3). The seeded value is also
 // harvested from those same sources, so winning a tie would restate their own number.
 import { expect, test } from 'vitest'
 

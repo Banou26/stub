@@ -89,8 +89,15 @@ export type SeedLink = { origin: string, url: string }
  * stable sort, so a seed without it paints in bundle order, which is manami's rating: three shows
  * tied at a perfect 10 from a handful of votes ahead of Mushoku Tensei (measured, and screenshotted
  * by the owner, 2026-09-05). It is not in the class above: the 0.2 sources supply no popularity at
- * all, every source that does outranks 0.2 (anilist 0.8, kitsu 0.3), and the seeded number is
- * harvested from those same sources, so winning a tie would restate their own value.
+ * all, every source that does outranks 0.2, and the seeded number is harvested from those same
+ * sources, so winning a tie would restate their own value.
+ *
+ * WHOSE popularity, since it decides the order the user sees: `aggregateMedia` takes the first
+ * non-null from the members sorted by source score, so the winner is jikan at 0.9, which publishes
+ * MyAnimeList's member COUNT (`data.members`). anilist's own number sits below it at 0.8 and kitsu's
+ * `userCount` at 0.3. All three are counts, so higher is more popular and the listing's descending
+ * sort reads them the right way round; MyAnimeList's other popularity figure, the RANK, would need
+ * inverting and is not what any source publishes here.
  */
 export type SeedRun = {
   /** `mal-59193`, from `runKeyOf` over the identity uris */
