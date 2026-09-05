@@ -19,6 +19,16 @@ export const SEED_MIN_MEDIAN_IDENTITY = 4
 export const SEED_MAX_INDEX_BYTES = 2_000_000
 export const SEED_MAX_EPISODES_BYTES = 6_000_000
 export const SEED_MAX_REPORTED_FAILURES = 50
+/**
+ * How much of a walk may be welded before the seed is refused outright.
+ *
+ * The first real walk (2026-09-05, 358 runs) carried exactly ONE, `mal-63736` holding two Netflix
+ * ids, which is the open collision between the ids unogs mints and the ones justwatch reads. A
+ * welded run must never be published, and refusing the other 357 for it would mean one bad show
+ * blocks every daily publish until somebody notices. So a weld drops its run and the SHARE is what
+ * fails: 1 in 359 is the measured floor of the app, 2 percent is a spike that says something broke.
+ */
+export const SEED_MAX_WELD_SHARE = 0.02
 
 const OFFLINE = 'offline'
 
@@ -382,13 +392,42 @@ export const checkSeedCounts = (
 }
 
 /**
+ * The welded runs removed, and their keys. A weld is two runs of one show fused into one cluster, so
+ * publishing it hands every reader an identity with no inverse; the run goes, its episodes go with
+ * it, and its place in the season buckets goes too. `gateSeed` still refuses any weld left behind, so
+ * skipping this call cannot publish one by accident.
+ */
+export const dropWeldedRuns = (
+  index: SeedIndex,
+  episodes: SeedEpisodes
+): { index: SeedIndex, episodes: SeedEpisodes, dropped: string[] } => {
+  const dropped = [...new Set(findSeedWelds(index).map(weld => weld.key))]
+  if (!dropped.length) return { index, episodes, dropped }
+  const gone = new Set(dropped)
+  return {
+    dropped,
+    index: {
+      ...index,
+      runs: index.runs.filter(run => !gone.has(run.key)),
+      seasons: Object.fromEntries(
+        Object.entries(index.seasons).map(([season, keys]) => [season, keys.filter(key => !gone.has(key))])
+      ),
+    },
+    episodes: {
+      ...episodes,
+      episodes: Object.fromEntries(Object.entries(episodes.episodes).filter(([key]) => !gone.has(key))),
+    },
+  }
+}
+
+/**
  * The one call the exporter makes before writing anything: schema first, and welds and counts only on
  * a shape that parsed, so a garbage payload cannot be reported as a clean seed with odd numbers.
  */
 export const gateSeed = (
   index: unknown,
   episodes: unknown,
-  options: { currentSeasonKey: string }
+  options: { currentSeasonKey: string, weldedDropped?: number }
 ): { ok: boolean, failures: string[], stats: SeedStats | null } => {
   const schema = checkSeedSchema(index)
   if (schema.length) return { ok: false, failures: schema, stats: null }
@@ -397,8 +436,15 @@ export const gateSeed = (
   const episodeSchema = checkSeedEpisodesSchema(episodes, parsed)
   if (episodeSchema.length) return { ok: false, failures: episodeSchema, stats: null }
 
+  // still a refusal, not a warning: `dropWeldedRuns` is the caller's job and this is what catches a
+  // caller that forgot, rather than publishing the weld it was meant to remove
   const welds = findSeedWelds(parsed).map(weld => `weld ${weld.key} ${weld.origin}: ${weld.ids.join(' + ')}`)
+  const dropped = options.weldedDropped ?? 0
+  const weldShare = dropped / Math.max(1, parsed.runs.length + dropped)
+  const spike = dropped && weldShare > SEED_MAX_WELD_SHARE
+    ? [`welded runs dropped ${dropped} of ${parsed.runs.length + dropped}, share ${weldShare}, expected at most ${SEED_MAX_WELD_SHARE}`]
+    : []
   const { failures: counts, stats } = checkSeedCounts(parsed, episodes as SeedEpisodes, options)
-  const failures = capped([...welds, ...counts])
+  const failures = capped([...welds, ...spike, ...counts])
   return { ok: failures.length === 0, failures, stats }
 }

@@ -5,7 +5,7 @@ import { describe, expect, test } from 'vitest'
 
 import {
   SEED_MAX_INDEX_BYTES, SEED_MIN_CURRENT_SEASON_RUNS, SEED_MIN_MEDIAN_IDENTITY, SEED_MIN_RUNS, SEED_MIN_STREAMING_SHARE,
-  checkSeedCounts, checkSeedEpisodesSchema, checkSeedSchema, extendsId, findSeedWelds, gateSeed, isSeedIndex,
+  checkSeedCounts, checkSeedEpisodesSchema, checkSeedSchema, dropWeldedRuns, extendsId, findSeedWelds, gateSeed, isSeedIndex,
 } from '../../../../src/sources/offline/seed-gate'
 import type { SeedEpisode, SeedEpisodes, SeedHandle, SeedIndex, SeedRun } from '../../../../src/sources/offline/seed'
 
@@ -312,5 +312,47 @@ describe('gateSeed', () => {
     const result = gateSeed(index, episodes, { currentSeasonKey: SEASON })
     expect(result.ok).toBe(false)
     expect(result.failures.some(f => f.includes('commit'))).toBe(true)
+  })
+})
+
+// The first real walk (2026-09-05, 358 runs) carried ONE welded run, `mal-63736` holding two Netflix
+// ids, and the gate refused the whole seed for it. Refusing to publish that run is right; refusing
+// the other 357 means one bad show blocks every daily publish until somebody notices. So a weld drops
+// its run and is counted, the way `buildSeed` already drops a row the gate would refuse, and the gate
+// fails on the SHARE instead: a spike means the app broke and the seed must not ship.
+describe('welded runs are dropped, and a spike still refuses the seed', () => {
+  const welded = () => {
+    const index = validIndex()
+    index.runs[0] = run('mal-1', ['mal:1', 'nf:80081846', 'nf:80091938'], SEASON)
+    return index
+  }
+
+  test('a welded run leaves the seed with its episodes, and the rest survive', () => {
+    const index = welded()
+    const dropped = dropWeldedRuns(index, validEpisodes(index))
+
+    expect(dropped.dropped).toEqual(['mal-1'])
+    expect(dropped.index.runs.map(entry => entry.key)).toEqual(['mal-2', 'anilist-13'])
+    expect(Object.keys(dropped.episodes.episodes), 'the dropped run takes its episodes with it').toEqual(['mal-2'])
+    expect(dropped.index.seasons[SEASON], 'and its place in the season bucket').toEqual(['mal-2'])
+    expect(findSeedWelds(dropped.index), 'nothing welded is left to publish').toEqual([])
+  })
+
+  test('one weld in a full walk publishes, and a spike does not', () => {
+    const index = manyRuns(358, 358)
+    const episodes = validEpisodes(index)
+
+    const one = gateSeed(index, episodes, { currentSeasonKey: SEASON, weldedDropped: 1 })
+    const spike = gateSeed(index, episodes, { currentSeasonKey: SEASON, weldedDropped: 40 })
+
+    expect(one.failures.filter(line => line.includes('welded')), '1 of 359 is the walk that was measured').toEqual([])
+    expect(spike.failures.filter(line => line.includes('welded')), '40 of 398 is something breaking').toHaveLength(1)
+  })
+
+  test('a weld the caller failed to drop still refuses the seed', () => {
+    const index = welded()
+
+    expect(gateSeed(index, validEpisodes(index), { currentSeasonKey: SEASON }).failures.some(line => line.startsWith('weld ')))
+      .toBe(true)
   })
 })

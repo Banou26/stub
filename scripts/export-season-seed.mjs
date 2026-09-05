@@ -63,7 +63,7 @@ import {
   compareSeasonKeys, nextSeason, runKeyOf, seasonKeyOf,
 } from '../src/sources/offline/seed.ts'
 import { buildSeed } from '../src/sources/offline/seed-build.ts'
-import { gateSeed } from '../src/sources/offline/seed-gate.ts'
+import { dropWeldedRuns, gateSeed } from '../src/sources/offline/seed-gate.ts'
 import { animeSeasonOf } from '../src/sources/season.ts'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -88,20 +88,24 @@ const RUNS_PER_LOAD = Math.max(1, Number(flag('runs-per-load', 1)))
 const HOOK_TIMEOUT_MS = 15_000
 const FOOTER_TIMEOUT_MS = 15_000
 const SETTLE_POLL_MS = 400
-const SETTLE_QUIET_MS = 1_200
+const SETTLE_QUIET_MS = 3_000
 /**
- * A settle is not accepted before this, and the reason is the one source that answers with NO
- * network at all.
+ * A settle is not accepted before this, and the numbers come from a walk that got it wrong.
  *
- * Measured 2026-09-05, four runs, from the moment the hook attaches: at ~0.9 s the offline bundle's
- * three handles are stored and, with the `offline` origin excluded, they are THREE SINGLETONS; at
- * ~1.4 s a live source asserts the bridge and they become one cluster; cr, jw and anizip then arrive
- * through 3.0 s. So the store holds still for well over the quiet window while the first real ask is
- * still in flight, and a run settled in that gap ships with an identity of one. Without this floor
- * that is exactly what happened to 10 of 20 walked runs.
+ * The first real walk (2026-09-05, 273 runs against the deployed site) settled at a MEDIAN of
+ * 5264 ms with ZERO runs capped: the floor plus one poll, every time. Sources answer in bursts with
+ * gaps longer than a short quiet window, so the walk read the first gap as a settled store and shipped
+ * a median identity of ONE and a streaming share of 0.042. The gate refused it, which is the gate
+ * working; the walk was what was broken.
+ *
+ * Three measurements from the same day set these: scripts/reproduce-season-weld.mjs waits 11000 ms a
+ * page and reproduces reliably, scripts/check-similar-media.mjs saw crunchyroll answer between 3.0 s
+ * and 9.4 s after navigation, and a 25 s probe of the home page read 231 clusters where this walk's
+ * 5.3 s read 197. The cap matches the similarMedia consumer's own 30 s timeout, which is the longest
+ * any single ask can legitimately take.
  */
-const SETTLE_FLOOR_MS = 5_000
-const SETTLE_CAP_MS = 12_000
+const SETTLE_FLOOR_MS = 12_000
+const SETTLE_CAP_MS = 30_000
 const PACE_MS = 3_000
 const MIN_HOME_CLUSTERS = 20
 
@@ -494,12 +498,18 @@ const main = async () => {
     if (keys.size > 1) walked.split += keys.size - 1
   }
 
-  const indexJson = JSON.stringify(index)
-  const episodesJson = JSON.stringify(episodes)
+  // BEFORE serializing, or the bytes written are the ones the drop was meant to remove. A welded run
+  // never publishes, and one of them never blocks the other 357: the gate fails on the SHARE, and
+  // still refuses any weld this call missed.
+  const cut = dropWeldedRuns(index, episodes)
+  if (cut.dropped.length) log(`dropped ${cut.dropped.length} welded run(s): ${cut.dropped.slice(0, 10).join(', ')}`)
+
+  const indexJson = JSON.stringify(cut.index)
+  const episodesJson = JSON.stringify(cut.episodes)
   const indexGz = gzipSync(Buffer.from(indexJson), { level: 9 })
   const episodesGz = gzipSync(Buffer.from(episodesJson), { level: 9 })
 
-  const gate = gateSeed(index, episodes, { currentSeasonKey })
+  const gate = gateSeed(cut.index, cut.episodes, { currentSeasonKey, weldedDropped: cut.dropped.length })
 
   const manifest = {
     version: SEED_VERSION,
@@ -523,6 +533,7 @@ const main = async () => {
     droppedUrls: report.droppedUrls,
     droppedEpisodes: report.droppedEpisodes,
     scopeConflicts: report.scopeConflicts,
+    weldedDropped: cut.dropped,
     cappedEpisodeRuns: report.cappedEpisodeRuns,
     bytes: {
       index: Buffer.byteLength(indexJson),

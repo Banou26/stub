@@ -44,3 +44,21 @@ test('every page the exporter opens carries the export hook and the no-seed flag
   expect(navigations, 'control: the walk has to navigate somewhere').not.toHaveLength(0)
   for (const line of navigations) expect(line.trim(), line.trim()).toMatch(/WALK_QUERY|\$\{path\}/)
 })
+
+// The first real walk against the deployed site (2026-09-05, 273 runs, commit f96e66b) settled at a
+// MEDIAN of 5264 ms with ZERO runs capped, which is the floor plus one poll: every page satisfied the
+// quiet window in the first gap between two sources answering. It exported a median identity of ONE
+// and a streaming share of 0.042, and the gate refused it on both. Three independent measurements
+// from the same day say enrichment needs far longer: scripts/reproduce-season-weld.mjs waits 11000 ms
+// a page and reproduces reliably, scripts/check-similar-media.mjs saw crunchyroll answer between
+// 3.0 s and 9.4 s after navigation and needed a 15 s header window, and a 25 s probe of the home page
+// read 231 clusters where this walk's 5.3 s read 197. So the floor is the number that decides whether
+// a seed is worth publishing at all, and it is pinned here against the walk that measured it.
+const settleConstant = (name: string) => Number(new RegExp(`const ${name} = ([\\d_]+)`).exec(exporter)?.[1]?.replace(/_/g, ''))
+
+test('the settle window is wide enough for the enrichment the walk measured', () => {
+  expect(settleConstant('SETTLE_FLOOR_MS'), 'a page enriched for 11 s in the weld script').toBeGreaterThanOrEqual(11_000)
+  expect(settleConstant('SETTLE_CAP_MS'), 'the similarMedia consumer alone may take its 30 s timeout').toBeGreaterThanOrEqual(30_000)
+  expect(settleConstant('SETTLE_QUIET_MS'), 'a gap between two sources answering is not a settled store').toBeGreaterThanOrEqual(3_000)
+  expect(settleConstant('SETTLE_CAP_MS')).toBeGreaterThan(settleConstant('SETTLE_FLOOR_MS'))
+})
