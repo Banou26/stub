@@ -1,10 +1,11 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaInput } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, buildHandlesFromUri, waitForMedia } from '../utils'
-import { parseSeasonNumber, seasonScopedId, splitSeasonScopedId } from '../season'
-import { closestSeasonByAirDate, pickGatedCandidate, searchQueries, SEASON_DATE_WINDOW } from '../catalogue-gate'
+import { seasonScopedId, splitSeasonScopedId } from '../season'
+import { pickGatedCandidate, searchQueries } from '../catalogue-gate'
+import { pickSimilarSeason, type SeasonCandidate } from '../similar'
 
 const SCORE = 0.2
 
@@ -78,8 +79,9 @@ interface AppleEpisodesResponse { data?: { episodes?: AppleEpisode[] } }
  * the mediaUri with our uris as handles, that id reaches `graph.link` as an identity claim spanning
  * all of them. Same defect TMDB, TVmaze and JustWatch had, same '-s<n>' fix.
  *
- * A show-level id is still minted for SEARCH, where there is no cluster to corrupt and Apple TV
- * genuinely is describing the show, which is the same fork tvmaze/extractor.ts draws.
+ * A show-level id is still minted for SEARCH, and for a show whose season the media path could not
+ * place, scoped CONTAINER both times: Apple TV genuinely is describing the show there, which is the
+ * same fork tvmaze/extractor.ts draws.
  *
  * A MOVIE takes the bare id and keeps it, exactly as JustWatch's `showRequiresSeason` allows: it has
  * no seasons to be confused between, and its own release date IS the work's date.
@@ -194,34 +196,45 @@ const fetchContent = async (id: string, ctx: ExtractorServerContext): Promise<Ap
 }
 
 /**
+ * A show's seasons as `pickSimilarSeason` reads them: a number and a premiere, and NOTHING else on
+ * purpose. 27.280% of the episodes Apple answers for a season belong to another season (see
+ * `fetchEpisodes`), so a count or a title list off that endpoint is not evidence, and a candidate
+ * carrying none can only be picked by a day inside the window: a year needs a count on the season to
+ * show it is not a fold, so here it only ever vetoes.
+ */
+const seasonCandidates = (data: AppleContentData): SeasonCandidate<AppleSeason>[] =>
+  Object.values(data.seasons ?? {})
+    .filter(season => season.seasonNumber != null)
+    .map(season => ({ season, seasonNumber: season.seasonNumber, premiere: season.releaseDate }))
+
+/**
  * Which season this uri names, or nothing.
  *
- * The probe stays SYNCHRONOUS: waitForMedia keeps the first result it finds truthy, and a promise is
- * always truthy, so an async one would succeed instantly with a value that resolves to nothing.
- *
- * The date is asked before nothing at all, and it is asked as a WINDOW rather than as a year, because
- * a two-cour show split across a year boundary answers the year question wrongly and the distance
- * question correctly.
+ * A pinned season is honoured as before. Otherwise the aggregated media is asked for what it knows
+ * about its run and the shared picker decides; there is no lone-season shortcut, since one season
+ * listed is not one season aired. The probe stays SYNCHRONOUS: waitForMedia keeps the first result
+ * it finds truthy, and a promise is always truthy.
  */
 const pickSeason = async (
   uri: string,
-  seasons: AppleSeason[],
+  candidates: SeasonCandidate<AppleSeason>[],
   pinned: number | undefined,
   ctx: ExtractorServerContext
 ): Promise<AppleSeason | undefined> => {
-  if (pinned != null) return seasons.find(season => season.seasonNumber === pinned)
-  if (seasons.length === 1) return seasons[0]
-  if (!seasons.length) return undefined
-  return waitForMedia(uri, ctx, (media: any) => {
-    const title = getFirstTitle(media)
-    const parsed = title ? parseSeasonNumber(title) : undefined
-    const named = parsed != null ? seasons.find(season => season.seasonNumber === parsed) : undefined
-    if (named) return named
-    const nearest = closestSeasonByAirDate(media?.startDate, seasons, season => season.releaseDate)
-    return nearest && nearest.diff <= SEASON_DATE_WINDOW ? nearest.season : undefined
-  })
+  if (pinned != null) return candidates.find(({ season }) => season.seasonNumber === pinned)?.season
+  if (!candidates.length) return undefined
+  return waitForMedia(uri, ctx, (media: any) => pickSimilarSeason({
+    titles: (media?.titles ?? []).map((title: { title: string }) => title.title),
+    startDate: media?.startDate,
+    episodeCount: media?.episodeCount ?? media?.episodes?.length,
+  }, candidates)?.season)
 }
 
+/**
+ * The media for a show or a film. A film is one run under its bare id. A show with a season named is
+ * that season's run; with none it is the SHOW, scoped CONTAINER with no episodes, the same shape
+ * tvmaze and unogs answer, so a link to it survives as a container edge rather than vanishing.
+ */
 const buildMedia = async (
   data: AppleContentData,
   season: AppleSeason | undefined,
@@ -235,12 +248,23 @@ const buildMedia = async (
     media.episodeCount = 1
     return media
   }
-  // a series whose season cannot be determined has no identity here: see normalizeMedia
-  if (season?.seasonNumber == null) return undefined
+  if (season?.seasonNumber == null) return normalizeMedia(content)
   const media = normalizeMedia(content, season)
   media.episodes = await fetchEpisodes(content.id, data.seasons, media.uri, ctx, season.seasonNumber)
   media.episodeCount = media.episodes.length
   return media
+}
+
+/**
+ * The one season of `showId` the caller's evidence establishes, as a run, or nothing. Apple offers
+ * only dates (see `seasonCandidates`), so a caller with a year-only date, or with titles and a count
+ * alone, is refused here however good its evidence would be elsewhere: only a day places a run.
+ */
+const seasonForShow = async (input: SimilarMediaInput, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  const data = await fetchContent(input.showId, ctx)
+  if (!data?.content || data.content.type === 'Movie') return undefined
+  const verdict = pickSimilarSeason(input, seasonCandidates(data))
+  return verdict ? buildMedia(data, verdict.season, ctx) : undefined
 }
 
 const getMedia = async (
@@ -252,7 +276,7 @@ const getMedia = async (
   const data = await fetchContent(id, ctx)
   if (!data?.content) return undefined
   // a movie carries no seasons, so this answers nothing for one and buildMedia keeps its bare id
-  const season = await pickSeason(uri, Object.values(data.seasons ?? {}), pinned, ctx)
+  const season = await pickSeason(uri, seasonCandidates(data), pinned, ctx)
   return buildMedia(data, season, ctx)
 }
 
@@ -372,6 +396,14 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
 
 export const resolvers: Resolvers = {
   Subscription: {
+    similarMedia: {
+      // always yield once: a generator that completes without yielding makes yoga respond 204 and the
+      // caller waits out its timeout instead of reading the refusal
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        if (!input?.showId) return yield { similarMedia: null }
+        yield { similarMedia: await seasonForShow(input, ctx) ?? null }
+      }
+    },
     media: {
       subscribe: async function* (_, { input: { uri } }, ctx: ExtractorServerContext) {
         if (!uri || !(isUri(uri) || isAggregatedUri(uri))) return yield { media: null }

@@ -27,7 +27,7 @@
 // variable, which is what stops two roots sharing one context.
 
 /** What the app was asked for, which is the fact no source can derive from anything it holds. */
-export const rootOperationEnum = ['MEDIA', 'MEDIA_PAGE', 'MEDIA_SEASON'] as const
+export const rootOperationEnum = ['MEDIA', 'MEDIA_PAGE', 'SIMILAR_MEDIA'] as const
 export type RootOperation = typeof rootOperationEnum[number]
 
 /**
@@ -59,7 +59,7 @@ export type RequestPolicy = {
 const POLICY: Record<RootOperation, RequestPolicy> = {
   MEDIA: { crossSource: true },
   MEDIA_PAGE: { crossSource: false },
-  MEDIA_SEASON: { crossSource: true },
+  SIMILAR_MEDIA: { crossSource: true },
 }
 
 /**

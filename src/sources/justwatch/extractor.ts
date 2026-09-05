@@ -1,10 +1,11 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode , MediaHandle as GQLMediaHandle } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode , MediaHandle as GQLMediaHandle, SimilarMediaInput } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { resolveEpisodeToSeriesId, crunchyrollId } from '../crunchyroll/extractor'
 import { PACKAGE_ORIGIN_MAP, extractContentId, jwId, providerContentId, showRequiresSeason, splitJwId } from './id'
 import { policyFor, UNKNOWN_POLICY, type RequestPolicy } from '../../worker/request-context'
-import { parseSeasonNumber, pickSeasonByEpisodeCount } from '../season'
+import { isOnlySeasonLabel, parseSeasonNumber } from '../season'
+import { hasEvidence, pickSimilarSeason, type SeasonCandidate } from '../similar'
 import { rankByTitle, searchQueries, yearAppearsInShow } from '../catalogue-gate'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia, partOf, sameAs } from '../utils'
 
@@ -225,6 +226,8 @@ interface JWSeason {
   objectId: number
   totalEpisodeCount: number
   content: {
+    /** JustWatch's own title for the season, which NODE_QUERY asks for; often the bare label "Season 3" */
+    title?: string | null
     seasonNumber: number
     isReleased: boolean
     /**
@@ -253,12 +256,21 @@ interface JWNodeResponse { data: { node: JWShowNode } }
 const resolveImageUrl = (url: string | null | undefined) =>
   url ? (url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`) : undefined
 
-// shared with tmdb, which has the same show-vs-season problem: see ../season.ts
-const findMatchingSeason = (seasons: JWSeason[], targetCount: number): number | undefined =>
-  pickSeasonByEpisodeCount(
-    seasons.map(season => ({ seasonNumber: season.content.seasonNumber, episodeCount: season.totalEpisodeCount })),
-    targetCount
-  )
+/**
+ * JustWatch's seasons as the shared picker reads them: a count, a year and the episode titles the node
+ * carries. A year is all JustWatch knows about a date, so the picker's date rule never applies here
+ * and its year rule plus the year veto carry that axis, the one ../catalogue-gate.ts calibrated for
+ * this source. A `totalEpisodeCount` of 0 is a season JustWatch has not listed yet, offered as no count
+ * rather than as a season shorter than every run.
+ */
+const jwCandidates = (seasons: JWSeason[]): SeasonCandidate<JWSeason>[] =>
+  seasons.map(season => ({
+    season,
+    seasonNumber: season.content.seasonNumber,
+    episodeCount: season.totalEpisodeCount || undefined,
+    year: season.content.originalReleaseYear,
+    episodeTitles: (season.episodes ?? []).map(episode => episode.content.title)
+  }))
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
@@ -282,9 +294,8 @@ const buildOffersAsHandles = async (
     const url = realUrl ?? offer.standardWebURL ?? undefined
 
     let contentId: string | undefined
-    // SAME_AS unless something below says otherwise. A crunchyroll /series/ id is the one case that
-    // becomes PART_OF: it names the show and, on Crunchyroll, its films too, so it is never an identity
-    // and always a true containment.
+    // SAME_AS only for an id that names exactly this media: a film's own id, or the season a film's
+    // Crunchyroll episode resolves to. Everything read off a SHOW is PART_OF.
     let relation: 'SAME_AS' | 'PART_OF' = 'SAME_AS'
     const rawContentId = url ? extractContentId(url) : undefined
 
@@ -293,10 +304,6 @@ const buildOffersAsHandles = async (
     // show, and JustWatch has no season-level node: this offer belongs to the SHOW and every season
     // media built from the node is handed the same one. So a pinned season would take an id nothing
     // established was its own, and two runs of one show would take the SAME id and weld.
-    //
-    // Every other origin survives the same show-level offer because `providerContentId` scopes its id
-    // by the season NUMBER. Crunchyroll has no such suffix: its season identity is
-    // `<seriesId>-<seasonId>`, an opaque guid, so there is nothing to build a scoped id out of here.
     //
     // A movie is the case that stays, and it is the only one: `showRequiresSeason` has already refused
     // a series with no season by the time this runs, so a null seasonNumber here means a film, whose
@@ -313,12 +320,17 @@ const buildOffersAsHandles = async (
         if (resolved) contentId = crunchyrollId(resolved.seriesId, resolved.seasonId)
       }
     } else if (rawContentId) {
-      // a provider's series url names the SHOW, so without the season that id spans every season and clustering unions them
-      contentId = providerContentId(mappedOrigin, rawContentId, meta.seasonNumber)
-      // `providerContentId` refuses crunchyroll outright, because `extractContentId` reads a cr id from
-      // /series/ urls and nothing else. That refusal was a DROP; it is now a demotion, which keeps the
-      // link on the page without claiming this run is the whole series.
-      if (!contentId && mappedOrigin === 'cr') {
+      contentId = providerContentId(mappedOrigin, rawContentId)
+      if (contentId) {
+        // A show-level offer is the provider's TITLE, and this run is one part of it. The season suffix
+        // that used to scope it (`nf:80123-2`) wrote JustWatch's numbering into a space where unogs and
+        // the appletv source write the provider's own, and the two collide (see ./id.ts). The precise
+        // run is `similarMedia`'s to name, asked of the provider's source on the run's page.
+        if (meta.seasonNumber != null) relation = 'PART_OF'
+      } else if (mappedOrigin === 'cr') {
+        // `providerContentId` refuses crunchyroll outright, because `extractContentId` reads a cr id
+        // from /series/ urls and nothing else. That refusal was a DROP; it is a demotion, which keeps
+        // the link on the page without claiming this run is the whole series.
         contentId = rawContentId
         relation = 'PART_OF'
       }
@@ -326,9 +338,8 @@ const buildOffersAsHandles = async (
 
     if (!contentId) continue
 
-    // `partOf` is also the CONTAINER stamp: the bare /series/ id above names a show, and this is what
-    // keeps it out of every run's identity space. Everything else here is season scoped, or a film's
-    // own resolved season, so it stays a RUN.
+    // `partOf` is also the CONTAINER stamp, which is what keeps a show-level id out of every run's
+    // identity space. A film's own id, or the season its episode resolved to, stays a RUN.
     const node = makeMedia({ origin: mappedOrigin, id: contentId, url })
     handles.push(relation === 'PART_OF' ? partOf(node) : sameAs(node))
   }
@@ -351,9 +362,10 @@ const normalizeMedia = async (
   const { shortDescription } = node.content
   const seasonYear = season?.content?.originalReleaseYear ?? node.content.originalReleaseYear
 
-  const title = opts.seasonNumber != null && !node.content.title.match(/season\s+\d+/i)
-    ? `${node.content.title} Season ${opts.seasonNumber}`
-    : node.content.title
+  // the season's own title when JustWatch gives it one naming more than a position, else the show's.
+  // "<show> Season <n>" used to be synthesized here, and its ordinal is the number this source no
+  // longer trusts as an identity
+  const title = season?.content.title && !isOnlySeasonLabel(season.content.title) ? season.content.title : node.content.title
 
   const filteredSeasons = opts.seasonNumber != null
     ? (opts.seasons ?? []).filter(s => s.content.seasonNumber === opts.seasonNumber)
@@ -365,24 +377,40 @@ const normalizeMedia = async (
       .map(ep => normalizeEpisode(ep, toUri({ origin, id })))
   )
 
+  const handles = await buildOffersAsHandles(
+    node.offers ?? [],
+    {
+      shortDescription,
+      title,
+      posterUrl: resolveImageUrl(node.content.posterUrl),
+      seasonNumber: opts.seasonNumber
+    },
+    ctx,
+    policy
+  )
+  // The show node itself, as the CONTAINER every season of it is part of. The worker asks
+  // `similarMedia` of container origins only, so this is what makes JustWatch askable, and it lets
+  // the container space union `jw:<objectId>` with `cr:<series>` and `tvmaze:<show>` on a title, so a
+  // run PART_OF any one of them reaches JustWatch's offers. The same shape tvmaze, tmdb and
+  // crunchyroll already mint for a show.
+  if (opts.seasonNumber != null) {
+    handles.push(partOf(makeMedia({
+      origin,
+      id: String(node.objectId),
+      url: `https://www.justwatch.com${node.content.fullPath}`,
+      categories: [node.objectType === 'MOVIE' ? 'MOVIE' : 'SERIES'],
+      titles: [{ language: 'en', title: node.content.title, score: SCORE }],
+      startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
+    })))
+  }
+
   const media = makeMedia({
     origin,
     id,
     categories: [node.objectType === 'MOVIE' ? 'MOVIE' : 'SERIES'],
     url: `https://www.justwatch.com${node.content.fullPath}`,
     score: SCORE,
-    handles:
-      await buildOffersAsHandles(
-        node.offers ?? [],
-        {
-          shortDescription,
-          title,
-          posterUrl: resolveImageUrl(node.content.posterUrl),
-          seasonNumber: opts.seasonNumber
-        },
-        ctx,
-        policy
-      ),
+    handles,
     episodes,
     // the search query carries totalEpisodeCount but not the episodes themselves, so an expanded
     // season still reports how long it is - which is also what season matching elsewhere keys on
@@ -420,15 +448,37 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
     runtime: ep.content.runtime ?? undefined
   })
 
+// Which of the node's seasons the aggregated media is, through the shared picker, re-asked as the
+// cluster's evidence lands. The lone-season shortcut, the bare title ordinal and the unique count that
+// used to sit here were each a guess minting a precise uri; a lone season now passes the picker like
+// any other, and a cluster the picker refuses gets no season, which `normalizeMedia` turns into no media.
 const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: ExtractorServerContext) => {
   if (!node.seasons?.length) return undefined
-  if (node.seasons.length === 1) return node.seasons[0]!.content.seasonNumber
+  const candidates = jwCandidates(node.seasons)
   return waitForMedia(uri, ctx, m => {
-    const title = getFirstTitle(m)
-    if (title) { const n = parseSeasonNumber(title); if (n) return n }
-    const epCount = m?.episodeCount ?? m?.episodes?.length
-    return epCount ? findMatchingSeason(node.seasons, epCount) : undefined
+    const evidence = {
+      titles: (m?.titles ?? []).map((title: { title: string }) => title.title),
+      episodeCount: m?.episodeCount ?? m?.episodes?.length,
+      startDate: m?.startDate
+    }
+    return hasEvidence(evidence) ? pickSimilarSeason(evidence, candidates)?.season.content.seasonNumber : undefined
   })
+}
+
+/**
+ * The one season of node `showId` that the caller's evidence establishes as its run, as the
+ * season-scoped media this source already builds, or undefined. A film has no seasons to pick between,
+ * and a refusal by the picker is undefined too, never the show.
+ */
+const similarSeason = async (input: SimilarMediaInput, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  if (!input?.showId) return undefined
+  const detailRes = await getNodeDetails(`ts${input.showId}`, ctx)
+  const node = detailRes.data?.node
+  if (!node?.seasons?.length || !showRequiresSeason(node.objectType)) return undefined
+  const verdict = pickSimilarSeason(input, jwCandidates(node.seasons))
+  if (!verdict) return undefined
+  const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber: verdict.season.content.seasonNumber }, ctx, policyFor(input))
+  return media ?? undefined
 }
 
 /**
@@ -527,23 +577,14 @@ const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerCon
       if (!node?.content?.title) continue
       if (!datedLikeThisMedia(startDate, node)) continue
 
-      let seasonNumber: number | undefined
-      if (node.seasons?.length === 1) seasonNumber = node.seasons[0]!.content.seasonNumber
-      else if (node.seasons?.length > 1) {
-        seasonNumber = parseSeasonNumber(primary)
-        // the year the date axis just agreed on names the season directly whenever exactly one season
-        // carries it, which is a better answer than counting episodes: two seasons of twelve are
-        // indistinguishable that way, and ../season.ts says so about its own fallback
-        if (!seasonNumber) {
-          const startYear = new Date(startDate).getUTCFullYear()
-          const dated = node.seasons.filter(season => season.content?.originalReleaseYear === startYear)
-          if (dated.length === 1) seasonNumber = dated[0]!.content.seasonNumber
-        }
-        if (!seasonNumber) {
-          const epCount = await waitForMedia(aggregatedUri, ctx, m => m?.episodeCount ?? m?.episodes?.length)
-          if (epCount) seasonNumber = findMatchingSeason(node.seasons, epCount)
-        }
-      }
+      // the season is the shared picker's to name, on the cluster's titles, count and date as they
+      // stand; a show with no season the evidence establishes is refused by `normalizeMedia` below
+      const seasonNumber = node.seasons?.length
+        ? pickSimilarSeason(
+            { titles: knownTitles, episodeCount: known.episodeCount ?? known.episodes?.length, startDate },
+            jwCandidates(node.seasons)
+          )?.season.content.seasonNumber
+        : undefined
 
       const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
       if (!media) continue
@@ -578,6 +619,13 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
 
 export const resolvers: Resolvers = {
   Subscription: {
+    similarMedia: {
+      // always yield once: a generator that completes without yielding makes yoga respond 204 and the
+      // caller waits out its timeout instead of reading the refusal
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        yield { similarMedia: await similarSeason(input, ctx) ?? null }
+      }
+    },
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }

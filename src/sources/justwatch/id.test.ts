@@ -53,22 +53,29 @@ describe('showRequiresSeason', () => {
 })
 
 describe('providerContentId', () => {
-  test('a provider series id is scoped to the season, since the url names the show', () => {
-    // hulu.com/series/<uuid> is the same uuid for season 2 and season 3
-    expect(providerContentId('hulu', '95e491fa-cdad', 2)).toBe('95e491fa-cdad-2')
-    expect(providerContentId('hulu', '95e491fa-cdad', 3)).toBe('95e491fa-cdad-3')
-    expect(providerContentId('nf', '80987039', 3)).toBe('80987039-3')
-  })
-
-  test('with no season the id is left bare, which now only happens for a movie', () => {
+  // The id used to take a season suffix here, `95e491fa-cdad-2` and `80987039-3` and `<umc>-s2`, which
+  // wrote JUSTWATCH'S season number into the provider's id space. unogs and the appletv source mint the
+  // same shapes with the provider's own numbering, and Netflix folds two anime cours into one season, so
+  // its season 2 and JustWatch's season 2 named different runs under one uri. The season is the
+  // answering source's to name, through `similarMedia`; what this reads off a show-level url is the
+  // provider's TITLE, and the extractor hangs the run under it as PART_OF.
+  test('a provider series id is the bare title whatever the season, because the season is the answering source\'s to name', () => {
+    // hulu.com/series/<uuid> is the same uuid for season 2 and season 3, and so is the id now
     expect(providerContentId('hulu', '95e491fa-cdad')).toBe('95e491fa-cdad')
+    expect(providerContentId('nf', '80987039')).toBe('80987039')
+    expect(providerContentId('nf', '80987039'), 'no numbering of anyone\'s survives in the id').not.toMatch(/-s?\d+$/)
   })
 
-  test('appletv is scoped the way the appletv source spells it, with an s', () => {
-    // seasonScopedId builds '<id>-s<n>'. A bare '<id>-<n>' here is an id that source can never mint,
-    // so the handle would cluster nothing and show up as a second, emptier Apple TV entry.
-    expect(providerContentId('appletv', 'umc.cmc.2vru12c9n7324q0tdk324i0f', 2)).toBe('umc.cmc.2vru12c9n7324q0tdk324i0f-s2')
-    expect(providerContentId('hulu', '95e491fa-cdad', 2)).toBe('95e491fa-cdad-2')
+  // This used to spell JustWatch's ordinal the way the appletv source spells Apple's (`<umc>-s2`), so
+  // the two numberings met in one id space. The umc id alone is the show, which is what the appletv
+  // source itself mints for one, and the season is that source's to name.
+  test('appletv is the bare umc id, the show the appletv source itself mints', () => {
+    expect(providerContentId('appletv', 'umc.cmc.2vru12c9n7324q0tdk324i0f')).toBe('umc.cmc.2vru12c9n7324q0tdk324i0f')
+  })
+
+  test('a film id is bare, and exact', () => {
+    expect(providerContentId('hulu', '95e491fa-cdad')).toBe('95e491fa-cdad')
+    expect(providerContentId('nf', '81744420')).toBe('81744420')
   })
 
   // This used to end `expect(providerContentId('cr', 'G24H1N3MP')).toBe('G24H1N3MP')`, pinning the
@@ -78,11 +85,9 @@ describe('providerContentId', () => {
   // return, so the one case that reaches here without a season, a MOVIE, walked straight past it and
   // took the container id. Measured on kitsu 2026-09-04, the same id from the same urls: four Demon
   // Slayer films share cr:GY5P48XEY and fifteen Dragon Ball Z films share cr:GQWH0M1GG.
-  test('crunchyroll gets NO handle, with or without a season number', () => {
-    // the crunchyroll source mints '<seriesId>-<seasonId>' (G24H1N3MP-GRDQCGX5E), so 'G24H1N3MP-3'
-    // would cluster with nothing and surface as a second, emptier entry
-    expect(providerContentId('cr', 'G24H1N3MP', 3)).toBeUndefined()
-    // and the bare series id is not a fallback, it is the container
+  test('crunchyroll gets NO handle', () => {
+    // the crunchyroll source mints '<seriesId>-<seasonId>' (G24H1N3MP-GRDQCGX5E), so a bare series id
+    // would cluster with nothing, and it is not a fallback either: it is the container
     expect(providerContentId('cr', 'G24H1N3MP')).toBeUndefined()
     expect(providerContentId('cr', 'GY5P48XEY')).toBeUndefined()
   })

@@ -91,8 +91,8 @@ const ONE_TITLE_IDS = new Set(['nf:title', 'nf:watch'])
  * The SUBTYPE half. `/title/<id>` names one title only when the record IS one title. On a cour record
  * Netflix's id is the whole show's: measured 2026-09-04 over 3000 kitsu records, 37 Netflix title ids
  * are shared by two or more runs, `nf:80135674` carrying all five seasons of Boku no Hero Academia and
- * `nf:80179831` five runs of JoJo. Kitsu mints none of those today, because a non-film goes to
- * `ctx.resolveSeason` instead and Netflix answers nothing, and dropping the gate would create all 37.
+ * `nf:80179831` five runs of JoJo. Kitsu mints none of those today, because a non-film goes out as
+ * PART_OF and the worker asks Netflix on the run's page, and dropping the gate would create all 37.
  *
  * The SHAPE half, which the first version of this predicate missed. "A movie has no seasons to be
  * confused between" is true and beside the point, because the link is not to the movie. Crunchyroll

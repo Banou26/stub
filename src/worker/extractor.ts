@@ -1,7 +1,7 @@
 import type { YogaInitialContext } from 'graphql-yoga'
 import type { Exchange } from 'urql'
 
-import type { Episode, Media, MediaSeasonInput, Origin, Resolvers } from '../generated/schema/types.generated'
+import type { Episode, Media, Origin, Resolvers, SimilarMediaInput } from '../generated/schema/types.generated'
 import type { Uri } from 'src/utils/uri'
 import type { Episode as StoreEpisode, Origin as StoreOrigin, HandleRelation } from './store/types'
 
@@ -26,6 +26,7 @@ import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate
 import { normalizeToStoreMedia } from './store/normalize'
 import { listenMultipleIterator } from './store/events'
 import { readPluginSources } from './plugin-sources'
+import { hasEvidence, isRunAnswerFrom, similarAskKey } from '../sources/similar'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -34,10 +35,10 @@ export type ExtractorServerContext = YogaInitialContext & {
   findAggregatedMedia: (uri: string) => Promise<Media | undefined>
   listenForMediaChanges: (params: { uri: string }, options?: { abortSignal?: AbortSignal }) => AsyncGenerator<Media | undefined>
   /**
-   * Ask ONE other origin to name the run of a show that started nearest a date. See `resolveSeason`
-   * below for what it costs and what it refuses.
+   * Ask ONE other origin which of its runs of a show is ours, by evidence about our run. See
+   * `similarMediaFrom` below for what it costs and what it refuses.
    */
-  resolveSeason: (origin: string, input: MediaSeasonInput) => Promise<Media | undefined>
+  similarMedia: (origin: string, input: SimilarMediaInput) => Promise<Media | undefined>
 }
 
 export type ExtractorUserContext = {
@@ -167,31 +168,35 @@ export type ExtractorDefinition = {
 }
 
 /**
- * One origin, one show id, one date, and the answer is that origin's own run or nothing.
+ * One origin, one show id, and evidence about OUR run; the answer is that origin's own run or nothing.
  *
  * WHY THIS EXISTS. Stub models a broadcast run; every catalogue models a show. A source holding a
  * show-level link (Kitsu publishes Crunchyroll's `/series/<id>/` url on EVERY season record) has
  * something true about the show and nothing it may honestly mint as a handle, because a handle is an
  * identity claim and `graph.link` is a union-find union with no inverse. Dropping the link loses a
  * real offer; minting it welds every season of the show. This is the third option: hand the show id
- * back to the origin that owns it, say when our run started, and take the season-scoped media it
- * names, which IS an honest identity and links like any other.
+ * back to the origin that owns it, say what we know about our run, and take the run it names, which
+ * IS an honest identity and links like any other.
  *
- * The two sources that needed this already do it, by importing Crunchyroll's internals directly
- * (anilist/extractor.ts and justwatch/extractor.ts both `import ... from '../crunchyroll/extractor'`).
- * So this replaces ad-hoc coupling with one declared capability rather than adding coupling.
+ * WHY EVIDENCE AND NOT A SEASON NUMBER. Season numbers do not agree across platforms: Netflix folds
+ * two cours into one season, JustWatch numbers by its own list, anime metadata says "Season 2 Part 2".
+ * An id minted by ordinal is a guess wearing a precise uri, and on 2026-09-05 two such guesses met in
+ * `nf:80987039-3`. What establishes sameness is decided in `sources/similar.ts`, once, and every
+ * answering source goes through it.
  *
  * THE SELECTION IS DELIBERATELY MINIMAL. The store does not read it: `useOnResolve` below fires on
  * the RESOLVER'S RETURN VALUE, not on the selection set, so the full media is inserted whatever is
- * asked for here. The caller only ever needs enough to build a handle.
+ * asked for here. The caller only ever needs enough to build a handle, plus the scope, which is what
+ * the answer is checked against.
  */
-const MEDIA_SEASON_DOCUMENT = `
-  subscription MediaSeason($input: MediaSeasonInput!) {
-    mediaSeason(input: $input) {
+const SIMILAR_MEDIA_DOCUMENT = `
+  subscription SimilarMedia($input: SimilarMediaInput!) {
+    similarMedia(input: $input) {
       uri
       origin
       id
       url
+      scope
     }
   }
 `
@@ -199,11 +204,11 @@ const MEDIA_SEASON_DOCUMENT = `
 // A source may walk every season of a show to answer, which is one request per season on top of the
 // seasons call, so this is generous. It is a backstop against a source that never yields, not a
 // latency budget: the common answers, a hit and a refusal, both arrive on the first payload.
-const RESOLVE_SEASON_TIMEOUT_MS = 30_000
+const SIMILAR_MEDIA_TIMEOUT_MS = 30_000
 
 /**
- * Cycles are ALLOWED here, by decision: a source may call `resolveSeason` from inside its own
- * `mediaSeason` resolver, and nothing removes that capability. What is bounded is the part that
+ * Cycles are ALLOWED here, by decision: a source may call `similarMedia` from inside its own
+ * `similarMedia` resolver, and nothing removes that capability. What is bounded is the part that
  * cannot make progress anyway.
  *
  * A repeat of a question already being answered is the only cycle this can see for certain, and
@@ -217,18 +222,18 @@ const RESOLVE_SEASON_TIMEOUT_MS = 30_000
  * cannot keep straight across awaits (no AsyncLocalStorage). Worth revisiting if a real cycle ever
  * shows up in the warnings.
  */
-const MAX_CONCURRENT_RESOLVE_SEASON = 32
+const MAX_CONCURRENT_SIMILAR_MEDIA = 32
 
 /**
  * And a per-caller share, because the ceiling above is global and a third-party source can spend it.
  *
- * A plugin may register a `mediaSeason` resolver that simply never yields, and a slot is then held
- * for the full RESOLVE_SEASON_TIMEOUT_MS. Enough of those pin the global ceiling, and the next
- * FIRST-PARTY ask is refused: kitsu drops its Crunchyroll offer and the page looks exactly like a
- * source that had no answer. A per-caller share cannot stop a plugin wasting its own budget, which is
- * fine, and does stop it spending anybody else's.
+ * A plugin may register a `similarMedia` resolver that simply never yields, and a slot is then held
+ * for the full SIMILAR_MEDIA_TIMEOUT_MS. Enough of those pin the global ceiling, and the next
+ * FIRST-PARTY ask is refused: the page looks exactly like a source that had no answer. A per-caller
+ * share cannot stop a plugin wasting its own budget, which is fine, and does stop it spending
+ * anybody else's.
  */
-const MAX_RESOLVE_SEASON_PER_CALLER = 8
+const MAX_SIMILAR_MEDIA_PER_CALLER = 8
 
 /**
  * What a showId may look like, checked ONCE here rather than in each of the 23 sources.
@@ -247,12 +252,12 @@ const MAX_RESOLVE_SEASON_PER_CALLER = 8
  */
 const SAFE_SHOW_ID = /^[A-Za-z0-9._~-]{1,128}$/
 
-const seasonAsksInFlight = new Map<string, Promise<Media | undefined>>()
+const similarAsksInFlight = new Map<string, Promise<Media | undefined>>()
 const asksByCaller = new Map<string, number>()
 
-const firstMediaSeason = (
+const firstSimilarMedia = (
   extractor: ReturnType<typeof makeExtractor>,
-  input: MediaSeasonInput
+  input: SimilarMediaInput
 ): Promise<Media | undefined> =>
   new Promise(resolve => {
     let settled = false
@@ -265,51 +270,60 @@ const firstMediaSeason = (
       queueMicrotask(() => { try { subscription?.unsubscribe() } catch { /* already gone */ } })
       resolve(media)
     }
-    const timer = setTimeout(() => finish(undefined), RESOLVE_SEASON_TIMEOUT_MS)
+    const timer = setTimeout(() => finish(undefined), SIMILAR_MEDIA_TIMEOUT_MS)
     try {
       subscription =
         extractor.client
-          .subscription(MEDIA_SEASON_DOCUMENT, { input })
+          .subscription(SIMILAR_MEDIA_DOCUMENT, { input })
           .subscribe(result => {
             if (result.error) return finish(undefined)
             // any DELIVERED payload settles this, including an explicit null. A source that cannot
             // answer yields null once and ends, and waiting out the timeout for that would turn the
             // ordinary refusal into the slowest path in the system.
             if (!result.data) return
-            finish((result.data as { mediaSeason?: Media | null }).mediaSeason ?? undefined)
+            finish((result.data as { similarMedia?: Media | null }).similarMedia ?? undefined)
           })
     } catch (error) {
-      console.error(new Error(`Extractor ${extractor.name} failed to answer mediaSeason`, { cause: error }))
+      console.error(new Error(`Extractor ${extractor.name} failed to answer similarMedia`, { cause: error }))
       finish(undefined)
     }
   })
 
 /**
- * The ask, bound to the origin doing the asking so a budget can be attributed to it.
- *
- * THE DEDUPE KEY IS NORMALISED TO A DAY, and that is not a rounding convenience. The same question
- * about the same run arrives spelled at least three ways: kitsu passes its own `YYYY-MM-DD`, anilist
- * builds `new Date(...).toUTCString()` and would arrive as `Sun, 09 Jul 2023 00:00:00 GMT`, and a
- * crunchyroll show-level media carries `${year}-01-01`. Keyed raw, two callers asking the identical
- * question would not match, so the cycle guard would not fire in precisely the case it exists for. A
- * day is the right granularity because the whole design turns on a 45 day window and 91 day cour
- * spacing: two asks a few hours apart are the same question.
+ * Whether a source answers `similarMedia` at all. Read off the DEFINITION's resolvers, never the
+ * merged schema, so the yield-null default in `makeExtractor` counts as "not implemented" and a
+ * caller can skip the subscription round trip that would only ever answer null.
  */
-const resolveSeasonFrom = (caller: string) =>
-  async (origin: string, input: MediaSeasonInput): Promise<Media | undefined> => {
-    if (!origin || !input?.showId || !input?.startDate) return undefined
+export const implementsSimilarMedia = (origin: string): boolean =>
+  extractors.some(entry =>
+    entry.extractor.origin === origin
+    && Boolean((entry.extractor.resolvers.Subscription as { similarMedia?: unknown } | undefined)?.similarMedia))
+
+/**
+ * The ask, bound to the origin doing the asking so a budget can be attributed to it. Refuses (with
+ * undefined, never an error) an origin that does not implement the field, an input with no usable
+ * evidence, a showId that is not an id, and an answer that is not a RUN of the asked origin.
+ *
+ * THE DEDUPE KEY IS THE QUESTION, NORMALISED, by `similarAskKey` in sources/similar.ts: the day, the
+ * count, the ordinals the titles agree on, whether any names a part, and the real episode titles.
+ * Two asks agreeing on all of it are one question and share one answer; two differing only in their
+ * episode titles are two runs of one year (the only evidence Rule 2 has to tell them apart) and a
+ * join there would hand the second run the first run's season.
+ */
+export const similarMediaFrom = (caller: string) =>
+  async (origin: string, input: SimilarMediaInput): Promise<Media | undefined> => {
+    if (!origin || !input?.showId || !hasEvidence(input)) return undefined
     // one hop deeper, carrying the caller's origin, so the answering source can see the chain it is
     // part of. A caller that passed no context of its own descends from nothing and the callee reads
     // a miss, which is counted rather than guessed at.
     const parent = readContext(input)
     if (parent) input = { ...input, context: descend(parent, caller) }
-    if (!SAFE_SHOW_ID.test(input.showId)) {
-      console.warn(`resolveSeason: '${caller}' asked ${origin} for a showId that is not an id, declined`)
+    const { showId } = input
+    if (!SAFE_SHOW_ID.test(showId)) {
+      console.warn(`similarMedia: '${caller}' asked ${origin} for a showId that is not an id, declined`)
       return undefined
     }
-
-    const day = new Date(input.startDate)
-    if (Number.isNaN(day.getTime())) return undefined
+    if (!implementsSimilarMedia(origin)) return undefined
 
     const extractor = extractors.find(candidate => candidate.extractor.origin === origin)
     if (!extractor) return undefined
@@ -323,31 +337,42 @@ const resolveSeasonFrom = (caller: string) =>
      * promise gives both the right answer and costs one upstream walk instead of two.
      *
      * A genuine cycle joins its own ancestor, which cannot settle until the ancestor does. That is a
-     * stall rather than a deadlock: the ancestor's `firstMediaSeason` timer settles it at
-     * RESOLVE_SEASON_TIMEOUT_MS and the whole chain unwinds with undefined. Bounded, warned about,
+     * stall rather than a deadlock: the ancestor's `firstSimilarMedia` timer settles it at
+     * SIMILAR_MEDIA_TIMEOUT_MS and the whole chain unwinds with undefined. Bounded, warned about,
      * and not prevented, which is the shape asked for.
      */
-    const key = `${origin}\u0000${input.showId}\u0000${day.toISOString().slice(0, 10)}`
-    const inFlight = seasonAsksInFlight.get(key)
+    const key = similarAskKey(origin, showId, input)
+    const inFlight = similarAsksInFlight.get(key)
     if (inFlight) {
-      console.warn(`resolveSeason repeat: ${origin} ${input.showId} at ${input.startDate} is already in flight, '${caller}' joins it. A repeat that is really a cycle unwinds on the ${RESOLVE_SEASON_TIMEOUT_MS}ms timeout.`)
+      console.warn(`similarMedia repeat: ${origin} ${showId} (${input.startDate ?? 'no date'}, ${input.episodeCount ?? '-'} episodes) is already in flight with the same evidence, '${caller}' joins it. A repeat that is really a cycle unwinds on the ${SIMILAR_MEDIA_TIMEOUT_MS}ms timeout.`)
       return inFlight
     }
 
     const byCaller = asksByCaller.get(caller) ?? 0
-    if (byCaller >= MAX_RESOLVE_SEASON_PER_CALLER || seasonAsksInFlight.size >= MAX_CONCURRENT_RESOLVE_SEASON) {
-      console.warn(`resolveSeason ceiling: '${caller}' holds ${byCaller} of ${seasonAsksInFlight.size} asks in flight, declining ${origin} ${input.showId}`)
+    if (byCaller >= MAX_SIMILAR_MEDIA_PER_CALLER || similarAsksInFlight.size >= MAX_CONCURRENT_SIMILAR_MEDIA) {
+      console.warn(`similarMedia ceiling: '${caller}' holds ${byCaller} of ${similarAsksInFlight.size} asks in flight, declining ${origin} ${showId}`)
       return undefined
     }
 
     asksByCaller.set(caller, byCaller + 1)
-    const ask = firstMediaSeason(extractor, input).finally(() => {
-      seasonAsksInFlight.delete(key)
-      const left = (asksByCaller.get(caller) ?? 1) - 1
-      if (left > 0) asksByCaller.set(caller, left)
-      else asksByCaller.delete(caller)
-    })
-    seasonAsksInFlight.set(key, ask)
+    const ask =
+      firstSimilarMedia(extractor, input)
+        .then(media => {
+          // the show itself, a container, or another origin's row is not an answer: claiming any of
+          // them as SAME_AS of the caller's run is the weld the caller asked in order to avoid
+          if (media && !isRunAnswerFrom(origin, showId, media)) {
+            console.warn(`similarMedia: ${origin} answered '${caller}' about ${showId} with ${media.uri} (scope ${media.scope ?? 'RUN'}), which is not a run of that show, declined`)
+            return undefined
+          }
+          return media
+        })
+        .finally(() => {
+          similarAsksInFlight.delete(key)
+          const left = (asksByCaller.get(caller) ?? 1) - 1
+          if (left > 0) asksByCaller.set(caller, left)
+          else asksByCaller.delete(caller)
+        })
+    similarAsksInFlight.set(key, ask)
     return ask
   }
 
@@ -393,11 +418,11 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
               },
               media: { subscribe: async function* (_parent) { yield { media: null } } },
               mediaPage: { subscribe: async function* (_parent) { yield { mediaPage: { nodes: [] } } } },
-              // most sources cannot answer show-plus-date, and the default has to YIELD that rather
+              // most sources cannot answer show-plus-evidence, and the default has to YIELD that rather
               // than end: a subscription generator that completes without yielding makes yoga respond
               // 204 No Content, which the caller would sit on until its timeout instead of reading a
               // refusal off the first payload
-              mediaSeason: { subscribe: async function* (_parent) { yield { mediaSeason: null } } }
+              similarMedia: { subscribe: async function* (_parent) { yield { similarMedia: null } } }
             }
           } satisfies Resolvers,
           extractor.resolvers
@@ -471,7 +496,7 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
           key: (origin: string) => userKeys[origin],
           findAggregatedMedia: (uri: string) => findAggregatedMediaForContext(uri),
           listenForMediaChanges: listenForMediaChangesForContext,
-          resolveSeason: resolveSeasonFrom(extractor.origin)
+          similarMedia: similarMediaFrom(extractor.origin)
         }
       )
   })
@@ -490,7 +515,7 @@ export const extractors = Object.values(extractorDefinitions).map(makeExtractor)
 // data fields materialize locally, resolver functions stay remote and execute inside the plugin's own sandbox frame
 
 /** Everything a plugin source is handed. One function, and see `delegate` below for why only this one. */
-type RemotePluginContext = { resolveSeason: ExtractorServerContext['resolveSeason'] }
+type RemotePluginContext = { similarMedia: ExtractorServerContext['similarMedia'] }
 type RemotePluginSubscribe = (parent: undefined, args: unknown, ctx: RemotePluginContext) => Promise<AsyncIterable<any>>
 /** One connection may carry several sources, so a package can ship a whole family of them. */
 type RemotePluginPayload = RemotePluginSource & { sources?: unknown }
@@ -506,19 +531,19 @@ type RemotePluginSource = {
     Subscription?: {
       media?: { subscribe?: RemotePluginSubscribe }
       mediaPage?: { subscribe?: RemotePluginSubscribe }
-      mediaSeason?: { subscribe?: RemotePluginSubscribe }
+      similarMedia?: { subscribe?: RemotePluginSubscribe }
     }
   }
 }
 
 // nested handles stay untouched: cross-origin handles are how clustering works (accepted residual, bounded by the aggregation score threshold)
-type PluginField = 'media' | 'mediaPage' | 'mediaSeason'
+type PluginField = 'media' | 'mediaPage' | 'similarMedia'
 
 const enforcePluginOrigin = (origin: string, field: PluginField, payload: any): any => {
-  // mediaSeason answers with one media, exactly as `media` does, so it is held to the same rule: a
+  // similarMedia answers with one media, exactly as `media` does, so it is held to the same rule: a
   // plugin may only ever name ITS OWN run. Without this a plugin asked about its own show could
   // answer with someone else's uri and have it linked as an identity.
-  if (field === 'media' || field === 'mediaSeason') {
+  if (field === 'media' || field === 'similarMedia') {
     if (payload?.[field] && payload[field].origin !== origin) {
       console.warn(`Plugin source '${origin}' yielded media from origin '${payload[field].origin}', dropped`)
       return { [field]: null }
@@ -545,16 +570,16 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
        * The ctx a plugin sees is EXACTLY one function and never the real one. Stub's privileged
        * context, the proxy fetch, the user's API keys and the store reads, still does not cross to
        * third-party code; what crosses is the ability to ask a first-party source "which run of this
-       * show started nearest this date", which is the same question the app asks on the plugin's
-       * behalf anyway.
+       * show is the one this evidence describes", which is the same question the app asks on the
+       * plugin's behalf anyway.
        *
        * Deliberate, and worth knowing rather than assuming: a plugin CAN now cause a key-gated source
-       * to spend the user's key on a request it did not initiate. The surface is narrow, three scalars
-       * that every implementation looks up rather than interpolates into a url, and the answer it gets
-       * back is a media the app was going to fetch anyway. It is not nothing, which is why it is
-       * written down here next to the code rather than in a commit message.
+       * to spend the user's key on a request it did not initiate. The surface is narrow, scalars and
+       * strings that every implementation compares rather than interpolates into a url, and the
+       * answer it gets back is a media the app was going to fetch anyway. It is not nothing, which is
+       * why it is written down here next to the code rather than in a commit message.
        */
-      for await (const payload of await subscribe(undefined, args, { resolveSeason: resolveSeasonFrom(origin) })) {
+      for await (const payload of await subscribe(undefined, args, { similarMedia: similarMediaFrom(origin) })) {
         yield enforcePluginOrigin(origin, field, payload)
       }
     }
@@ -565,7 +590,7 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
     Subscription: {
       ...(subscription?.media?.subscribe ? { media: delegate('media') } : {}),
       ...(subscription?.mediaPage?.subscribe ? { mediaPage: delegate('mediaPage') } : {}),
-      ...(subscription?.mediaSeason?.subscribe ? { mediaSeason: delegate('mediaSeason') } : {}),
+      ...(subscription?.similarMedia?.subscribe ? { similarMedia: delegate('similarMedia') } : {}),
     }
   } as Resolvers
 }
@@ -758,6 +783,8 @@ export const proxyRequestToExtractors = (
     subscriptions: fanout.subscriptions,
     insertedUris: fanout.insertedUris,
     askOrigins,
+    /** the root context of this fan-out, for a consumer that asks other origins on the page's behalf */
+    root,
     // stop accepting late joiners; the caller still unsubscribes what it holds
     /** stop accepting late joiners; the caller still unsubscribes what it holds */
     close: () => { fanouts.delete(fanout); closeRoot(root.rootId) },

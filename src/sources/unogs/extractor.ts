@@ -1,8 +1,8 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope, SimilarMediaInput } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch } from '../utils'
-import { parseSeasonNumber } from '../season'
+import { pickSimilarSeason, type SeasonCandidate } from '../similar'
 
 const SCORE = 0.2
 
@@ -102,6 +102,8 @@ interface UnogsEpisode {
   img: string
 }
 
+type NetflixSeason = { season: number, episodes: UnogsEpisode[] }
+
 const UNOGS = 'https://unogs.com/api'
 
 const fetchDetail = (id: string, ctx: ExtractorServerContext) =>
@@ -111,7 +113,7 @@ const fetchBgImages = (id: string, ctx: ExtractorServerContext) =>
   api<UnogsBgImages>(`${UNOGS}/title/bgimages?netflixid=${id}`, ctx)
 
 const fetchEpisodes = (id: string, ctx: ExtractorServerContext) =>
-  api<{ season: number, episodes: UnogsEpisode[] }[]>(`${UNOGS}/title/episodes?netflixid=${id}`, ctx)
+  api<NetflixSeason[]>(`${UNOGS}/title/episodes?netflixid=${id}`, ctx)
 
 const searchApi = (query: string, ctx: ExtractorServerContext) =>
   api<{ results: UnogsSearchResult[] }>(
@@ -249,8 +251,19 @@ export const getMedia = async (
   const title = detailRes[0]
   if (!title) return undefined
   if (requireSeason && seasonNumber == null && title.vtype === 'series') return undefined
+  const seasons = title.vtype === 'series' ? await fetchEpisodes(id, ctx) : undefined
+  return assembleMedia(title, bgImagesRes, seasons, seasonNumber)
+}
 
-  const media = normalizeTitle(title, bgImagesRes)
+// The media out of payloads already in hand, so `similarSeason` can reuse the detail and episode
+// responses it has just read for the pick instead of fetching them a second time.
+const assembleMedia = (
+  title: UnogsTitle,
+  bgImages: UnogsBgImages | undefined,
+  seasons: NetflixSeason[] | undefined,
+  seasonNumber?: number
+): GQLMedia => {
+  const media = normalizeTitle(title, bgImages)
   if (seasonNumber != null) {
     media.id = `${media.id}-${seasonNumber}`
     media.uri = toUri({ origin, id: media.id })
@@ -274,9 +287,8 @@ export const getMedia = async (
   }
 
   if (title.vtype === 'series') {
-    const seasonsRes = await fetchEpisodes(id, ctx)
-    if (!Array.isArray(seasonsRes)) return media
-    const filtered = seasonNumber != null ? seasonsRes.filter(s => s.season === seasonNumber) : seasonsRes
+    if (!Array.isArray(seasons)) return media
+    const filtered = seasonNumber != null ? seasons.filter(s => s.season === seasonNumber) : seasons
     media.episodes = filtered.flatMap(season =>
       season.episodes.map((ep, i) => normalizeEpisode(ep, media.uri, i + 1))
     )
@@ -290,29 +302,33 @@ export const getMedia = async (
 }
 
 /**
+ * Netflix's seasons as the shared picker reads them.
+ *
+ * unOGS gives no air date at any level (`UnogsEpisode` is epid, seasnum, synopsis, title, img), so the
+ * axes are the count, the episode titles and, on the FIRST season only, the title's year: Netflix's
+ * `year` is the whole title's, which is its first season's, and offered on any other season it would
+ * veto the very run that season holds.
+ */
+const netflixCandidates = (seasons: NetflixSeason[], titleYear?: number | string | null): SeasonCandidate<NetflixSeason>[] =>
+  [...seasons].sort((a, b) => a.season - b.season).map((season, index) => ({
+    season,
+    seasonNumber: season.season,
+    episodeCount: season.episodes.length,
+    episodeTitles: season.episodes.map(episode => decode(episode.title ?? '')),
+    year: index === 0 ? Number(titleYear) || undefined : undefined
+  }))
+
+/**
  * Which of this Netflix series' seasons is the cluster asking, or the whole TITLE when nothing settles it.
  *
- * THE TITLE IS TRIED FIRST, which is what every other consumer of `pickSeasonByEpisodeCount` already
- * does (tmdb/extractor.ts:158-164, tvmaze/extractor.ts:145-148) and what that function's own doc says
- * it requires. This source skipped it and ran on the episode count alone, through a private copy of
- * the same argmin. Measured over 33 real multi-season Netflix series and their 105 anime runs
- * (`scripts/measure-unogs-season-match.probe.ts`), the count alone is ambiguous for 48 of those 105,
- * and the old code answered every one of them anyway: 51 runs landed on a season another run already
- * held, across 20 of the 33 series. Each of those is a permanent weld, since the season-scoped id
- * becomes a handle and `graph.link` has no inverse.
- *
- * A UNIQUE COUNT MATCH IS STILL A GUESS, and it is the one that welded Mushoku Tensei on the live site
- * after every other route was closed (2026-09-05, `scripts/reproduce-season-weld.mjs`, five of five
- * runs). Netflix lists that title as three seasons of 24, 25 and 11 episodes. Anime season 1 has 11
- * episodes and a title naming no season, so the count picked Netflix season 3 for it, while season 3's
- * own page took the same `nf:80987039-3` by its title's ordinal. One id, two runs, no inverse. So:
- *
- *   - titles agreeing on an ordinal Netflix has name that season, UNLESS Netflix's season holds MORE
- *     episodes than the run, which means Netflix folded several runs into it (its season 2 is 25
- *     episodes over anime's 13 and 12) and the season is a CONTAINER of ours, not the same thing;
- *   - titles naming no season may be a first season, and only Netflix's FIRST season is tried, by an
- *     exact count. Any other count match is a coincidence about a number, not an identity;
- *   - titles that disagree are a refusal to guess.
+ * The rules are `pickSimilarSeason` in ../similar.ts, shared with every source that answers
+ * `similarMedia`. What this file measured on its way there, over 33 real multi-season Netflix series
+ * and their 105 anime runs (`scripts/measure-unogs-season-match.probe.ts`): the episode count alone is
+ * ambiguous for 48 of the 105, and answering anyway landed 51 runs on a season another run already
+ * held. A UNIQUE count is still a guess: Netflix lists Mushoku Tensei as 24, 25 and 11 episodes, anime
+ * season 1 has 11 and a title naming no season, so the count picked Netflix season 3 for it while
+ * season 3's own page took the same `nf:80987039-3` by its ordinal (2026-09-05, five of five runs of
+ * `scripts/reproduce-season-weld.mjs`). One id, two runs, and `graph.link` has no inverse.
  *
  * What is not a season is the TITLE: the bare `nf:<id>` scoped CONTAINER, which the store hangs the
  * run under as PART_OF. The Netflix link survives on the page and asserts nothing.
@@ -320,11 +336,16 @@ export const getMedia = async (
  * WHAT THIS SOURCE STILL CANNOT DO, recorded rather than hidden: Netflix does not agree with anime
  * about what a season is. It splits Fullmetal Alchemist's single 64 episode run into five seasons of
  * about 13 and folds Mushoku Tensei's five runs into three. No amount of counting fixes a disagreement
- * about the unit; the fold check above only ever detects the direction it can see.
+ * about the unit; the fold veto only ever detects the direction it can see.
  */
 type NetflixMatch = { kind: 'season', season: number } | { kind: 'title' }
 
-const matchNetflixSeason = async (nfId: string, aggregatedUri: string, ctx: ExtractorServerContext): Promise<NetflixMatch | undefined> => {
+const matchNetflixSeason = async (
+  nfId: string,
+  aggregatedUri: string,
+  ctx: ExtractorServerContext,
+  titleYear?: number | string | null
+): Promise<NetflixMatch | undefined> => {
   const known = await waitForMedia<GQLMedia>(aggregatedUri, ctx, media =>
     (media?.episodeCount ?? media?.episodes?.length) ? media as GQLMedia : undefined
   )
@@ -333,27 +354,31 @@ const matchNetflixSeason = async (nfId: string, aggregatedUri: string, ctx: Extr
   const seasons = await fetchEpisodes(nfId, ctx)
   if (!Array.isArray(seasons) || !seasons.length) return undefined
 
-  const epCount = known.episodeCount ?? known.episodes?.length
-  if (!epCount) return undefined
-
-  const named = new Set(
-    (known.titles ?? [])
-      .map(title => parseSeasonNumber(title.title))
-      .filter((season): season is number => season != null)
+  const verdict = pickSimilarSeason(
+    {
+      titles: (known.titles ?? []).map(title => title.title),
+      episodeCount: known.episodeCount ?? known.episodes?.length,
+      startDate: known.startDate
+    },
+    netflixCandidates(seasons, titleYear)
   )
-  if (named.size > 1) return { kind: 'title' }
-  if (named.size === 1) {
-    const ordinal = [...named][0]!
-    const season = seasons.find(candidate => candidate.season === ordinal)
-    if (season) return season.episodes.length > epCount ? { kind: 'title' } : { kind: 'season', season: ordinal }
-  }
+  return verdict ? { kind: 'season', season: verdict.season.season } : { kind: 'title' }
+}
 
-  // Netflix listing ONE season is the ordinary single-cour case, and it is most of them: 14 of 20
-  // single-cour anime checked on 2026-09-01 had exactly one. It is taken only when its length is
-  // exactly ours, which keeps the ordinary case and still declines a listing that folded several of
-  // our runs into a single season. With no ordinal only the FIRST season can be ours, on the same test.
-  const first = [...seasons].sort((a, b) => a.season - b.season)[0]!
-  return first.episodes.length === epCount ? { kind: 'season', season: first.season } : { kind: 'title' }
+/**
+ * The one Netflix season of `showId` that the caller's evidence establishes as its run, built as a
+ * season-scoped RUN carrying no handles, or undefined. A film is not a container and has nothing to
+ * pick; a refusal by the picker is undefined too, never the title.
+ */
+const similarSeason = async (input: SimilarMediaInput, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  if (!input?.showId) return undefined
+  const detail = (await fetchDetail(input.showId, ctx))?.[0]
+  if (detail?.vtype !== 'series') return undefined
+  const seasons = await fetchEpisodes(input.showId, ctx)
+  if (!Array.isArray(seasons) || !seasons.length) return undefined
+  const verdict = pickSimilarSeason(input, netflixCandidates(seasons, detail.year))
+  if (!verdict) return undefined
+  return assembleMedia(detail, await fetchBgImages(input.showId, ctx), seasons, verdict.season.season)
 }
 
 /**
@@ -362,16 +387,19 @@ const matchNetflixSeason = async (nfId: string, aggregatedUri: string, ctx: Extr
  * Exported for ./extractor.test.ts. A film is itself, since it has no seasons to be confused between.
  * The container carries no episode list: every media in this store is one run, and a show's episodes
  * flattened across seasons collide on episodeNumber (crunchyroll/extractor.ts records the measurement).
+ * `vtype` and `year` are the search payload's when the caller has it, which saves the detail request.
  */
 export const linkNetflix = async (
   nfId: string,
   aggregatedUri: string,
   ctx: ExtractorServerContext,
-  vtype?: string
+  vtype?: string,
+  year?: number | string | null
 ): Promise<GQLMedia | undefined> => {
-  const kind = vtype ?? (await fetchDetail(nfId, ctx))[0]?.vtype
+  const detail = vtype === undefined ? (await fetchDetail(nfId, ctx))[0] : undefined
+  const kind = vtype ?? detail?.vtype
   if (kind !== 'series') return getMedia(nfId, ctx, undefined, true)
-  const match = await matchNetflixSeason(nfId, aggregatedUri, ctx)
+  const match = await matchNetflixSeason(nfId, aggregatedUri, ctx, year ?? detail?.year)
   if (!match) return undefined
   if (match.kind === 'season') return getMedia(nfId, ctx, match.season, true)
   const title = await getMedia(nfId, ctx, undefined, false)
@@ -405,7 +433,7 @@ const searchAndLinkMedia = async (
     )
     if (!match) continue
     const nfId = String(match.result.nfid)
-    const media = await linkNetflix(nfId, aggregatedUri, ctx, match.result.vtype)
+    const media = await linkNetflix(nfId, aggregatedUri, ctx, match.result.vtype, match.result.year)
     if (!media) continue
     media.handles = buildHandlesFromUri(aggregatedUri, origin)
     return media
@@ -439,6 +467,13 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
 
 export const resolvers: Resolvers = {
   Subscription: {
+    similarMedia: {
+      // always yield once: a generator that completes without yielding makes yoga respond 204 and the
+      // caller waits out its timeout instead of reading the refusal
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        yield { similarMedia: await similarSeason(input, ctx) ?? null }
+      }
+    },
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }

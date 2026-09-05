@@ -216,7 +216,7 @@ input RequestContext {
 enum RootOperation {
   MEDIA
   MEDIA_PAGE
-  MEDIA_SEASON
+  SIMILAR_MEDIA
 }
 
 input MediaInput {
@@ -279,34 +279,39 @@ type MediaPage {
 }
 
 """
-The run to look for, named by the SHOW it belongs to and by WHEN it started.
+The run a caller is looking for, described by EVIDENCE about its own run and never by a season number.
 
-Stub models a broadcast run, one cour, while every catalogue models a show with seasons hanging off
-it. So a source holding a show-level link has something true about the show and nothing it may
-honestly claim about this run: minting `<show>` as a handle asserts that every season of that show is
-this media, and `graph.link` is a union-find union with no inverse. This input is the other way to
-spend that link. Hand the show id to the origin that owns it, say when our run started, and let that
-source name its own run.
+Stub models a broadcast run; every catalogue models a show with seasons hanging off it, and no two
+catalogues number those seasons the same way. Netflix folds two cours into one season (its season 2 of
+Mushoku Tensei is 25 episodes over anime's 13 and 12), JustWatch numbers by its own list, anime metadata
+says "Season 2 Part 2". Two numberings in one id space collide: on 2026-09-05 anime season 1 (11
+episodes, no ordinal in its title) took `nf:80987039-3` by episode count while season 3 took the same id
+by its ordinal, and `graph.link` has no inverse. So a caller holding a show-level id says what it knows
+about ITS run and the owning origin answers with the one run of that show the evidence establishes, or
+with null.
 
-THE DATE IS THE KEY, AND AN ORDINAL WOULD NOT BE. Two runs routinely share one season number:
-Mushoku Tensei reaches this store as kitsu:45950 "Season 2" and kitsu:47694 "II Part 2", 12 episodes
-each, premiering 2023-07-09 and 2024-04-07. No ordinal separates those; 273 days does. Consecutive
-cours sit about 91 days apart, which is why three independent places in this repo settled on the same
-45 day window (crunchyroll SEASON_DATE_WINDOW, catalogue-gate SEASON_DATE_WINDOW, fuzzy-merge
-START_DATE_WINDOW_DAYS).
+What counts as established is decided in ONE place, `sources/similar.ts`, and every answering source
+goes through it: a season premiere within 45 days of a day-precise start, episode titles covering most
+of a season, an ordinal every title agrees on with an episode count the season does not exceed, the
+one season dated our year holding no more than our count, or the first season holding our episodes. A
+season holding MORE episodes than the run is a fold of several runs and is never the answer, and a
+season whose length is unknown cannot be shown not to be one. Anything ambiguous is null.
+
+The rules decide WHICH season of the show and never WHICH show: `showId` settles that, and it came off
+a PART_OF edge whose container cluster a listing's fuzzy title pass may have unioned, so an answer is
+only as right as that union.
 """
-input MediaSeasonInput {
-  """The show's id in the ANSWERING origin's own space, e.g. a Crunchyroll series id."""
+input SimilarMediaInput {
+  """The show's id in the ANSWERING origin's own space: a Crunchyroll series id, a Netflix title id, a JustWatch node objectId."""
   showId: ID!
-  """
-  When our run started. A source that publishes no per-season date of its own cannot answer this and
-  must return null rather than its show, which is the whole failure this input exists to avoid.
-  """
-  startDate: Date!
-  """Every title the caller's cluster knows, for sources that gate on the franchise before spending a request."""
+  """When our run started. A date naming a DAY is matched within 45 days; a bare year (`YYYY-01-01`) vetoes a season dated another year and, with an episode count on both sides, names the one season dated ours."""
+  startDate: Date
+  """Every title the caller knows for its run. Read for the season ordinals they agree on, never for the franchise: the show id already settles that."""
   titles: [String!]
-  """The caller's episode count, as a tiebreak when two of the source's runs premiere close together."""
+  """How many episodes our run has. A season holding more is a fold of several runs and is refused."""
   episodeCount: Int
+  """The titles of our run's episodes, when the caller has them. A season most of whose episode titles we carry is ours; one sharing none is not, whatever its number."""
+  episodeTitles: [String!]
   context: RequestContext
 }
 
@@ -314,11 +319,12 @@ extend type Subscription {
   media(input: MediaInput!): Media
   mediaPage(input: MediaPageInput!): MediaPage!
   """
-  The one run of `showId` that started nearest `startDate`, or null.
+  The one run of `showId` that is the caller's run by the evidence given, or null.
 
-  Null is the expected answer and never an error: no such show, no per-season dates, or nothing inside
-  the window. A source answering with its SHOW here would recreate exactly the weld the caller avoided
-  by asking.
+  The answer is a RUN at the answering origin and carries no handle naming another run: the CALLER
+  decides what to claim about it. Null is the expected answer and never an error: no such show, no
+  evidence that settles it, or evidence fitting two seasons. Answering with the SHOW here, or with a
+  season the evidence merely fails to contradict, recreates the weld the caller asked in order to avoid.
   """
-  mediaSeason(input: MediaSeasonInput!): Media
+  similarMedia(input: SimilarMediaInput!): Media
 }

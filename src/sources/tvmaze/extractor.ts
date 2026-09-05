@@ -1,9 +1,10 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaInput } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img, getFirstTitle, waitForMedia } from '../utils'
-import { parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from '../season'
+import { makeMedia, makeEpisode, desc, img, waitForMedia } from '../utils'
+import { seasonScopedId, splitSeasonScopedId } from '../season'
+import { pickSimilarSeason, type SeasonCandidate } from '../similar'
 
 const SCORE = 0.3
 const API = 'https://api.tvmaze.com'
@@ -126,40 +127,63 @@ const seasonPremiere = (episodes: TvmazeEpisode[], seasonNumber?: number): strin
   return earliest
 }
 
-/** Season sizes, straight off the embedded episode list - no extra request to count them. */
-const seasonsOf = (episodes: TvmazeEpisode[]) => {
+/**
+ * Every season of a show as `pickSimilarSeason` reads one, straight off the embedded episode list with
+ * no extra request: its number, its size, its earliest airdate and its episode titles.
+ */
+const seasonCandidates = (episodes: TvmazeEpisode[]): SeasonCandidate<{ seasonNumber: number }>[] => {
   const counts = new Map<number, number>()
   for (const episode of episodes) {
     if (episode.season == null) continue
     counts.set(episode.season, (counts.get(episode.season) ?? 0) + 1)
   }
-  return [...counts].map(([seasonNumber, episodeCount]) => ({ seasonNumber, episodeCount }))
+  return [...counts].map(([seasonNumber, episodeCount]) => ({
+    season: { seasonNumber },
+    seasonNumber,
+    episodeCount,
+    premiere: seasonPremiere(episodes, seasonNumber),
+    episodeTitles: episodes.filter(episode => episode.season === seasonNumber).map(episode => episode.name ?? ''),
+  }))
+}
+
+/** One season's run, or with no season the SHOW as a container carrying every episode, as before. */
+const runMedia = (show: TvmazeShow, all: TvmazeEpisode[], seasonNumber: number | undefined): GQLMedia => {
+  const media = normalizeMedia(show, seasonNumber, buildHandles(show), seasonPremiere(all, seasonNumber))
+  const episodes = seasonNumber == null ? all : all.filter(episode => episode.season === seasonNumber)
+  media.episodes = episodes.map(episode => normalizeEpisode(episode, media.uri))
+  media.episodeCount = media.episodes.length
+  return media
 }
 
 const getMedia = async (uri: string, id: string, pinned: number | undefined, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
   const show = await api<TvmazeShow>(`/shows/${id}?embed=episodes`, ctx)
   if (!show) return undefined
   const all = show._embedded?.episodes ?? []
-  const seasons = seasonsOf(all)
+  const candidates = seasonCandidates(all)
 
   // The probe stays SYNCHRONOUS: waitForMedia keeps the first result it finds truthy, and a promise
   // is always truthy, so an async one would succeed instantly with a value that resolves to nothing.
-  const seasonNumber = pinned ?? (seasons.length === 1 ? seasons[0]!.seasonNumber : await waitForMedia(uri, ctx, (media: any) => {
-    const title = getFirstTitle(media)
-    const parsed = title ? parseSeasonNumber(title) : undefined
-    if (parsed != null) return parsed
-    const count = media?.episodeCount ?? media?.episodes?.length
-    return count ? pickSeasonByEpisodeCount(seasons, count) : undefined
-  }))
+  // No lone-season shortcut: a lone season shorter than our run passes the picker on its own, and a
+  // lone season LONGER than it is a fold the shortcut used to hand over.
+  const seasonNumber = pinned ?? (candidates.length ? await waitForMedia(uri, ctx, (media: any) => pickSimilarSeason({
+    titles: (media?.titles ?? []).map((title: { title: string }) => title.title),
+    startDate: media?.startDate,
+    episodeCount: media?.episodeCount ?? media?.episodes?.length,
+  }, candidates)?.season.seasonNumber) : undefined)
 
   // a series whose season cannot be determined has no identity here: see normalizeMedia
-  if (seasonNumber == null && seasons.length > 1) return undefined
+  if (seasonNumber == null && candidates.length > 1) return undefined
 
-  const media = normalizeMedia(show, seasonNumber, buildHandles(show), seasonPremiere(all, seasonNumber))
-  const episodes = seasonNumber == null ? all : all.filter(episode => episode.season === seasonNumber)
-  media.episodes = episodes.map(episode => normalizeEpisode(episode, media.uri))
-  media.episodeCount = media.episodes.length
-  return media
+  return runMedia(show, all, seasonNumber)
+}
+
+/** The one season of `showId` the caller's evidence establishes, as a run, or nothing. */
+const seasonForShow = async (input: SimilarMediaInput, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  const show = await api<TvmazeShow>(`/shows/${input.showId}?embed=episodes`, ctx)
+  if (!show) return undefined
+  const all = show._embedded?.episodes ?? []
+  const verdict = pickSimilarSeason(input, seasonCandidates(all))
+  return verdict ? runMedia(show, all, verdict.season.seasonNumber) : undefined
 }
 
 const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQLMedia[]> => {
@@ -169,6 +193,14 @@ const searchApi = async (query: string, ctx: ExtractorServerContext): Promise<GQ
 
 export const resolvers: Resolvers = {
   Subscription: {
+    similarMedia: {
+      // always yield once: a generator that completes without yielding makes yoga respond 204 and the
+      // caller waits out its timeout instead of reading the refusal
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        if (!input?.showId) return yield { similarMedia: null }
+        yield { similarMedia: await seasonForShow(input, ctx) ?? null }
+      }
+    },
     media: {
       subscribe: async function* (_, { input: { uri } }, ctx: ExtractorServerContext) {
         if (!uri || !(isUri(uri) || isAggregatedUri(uri))) return yield { media: null }

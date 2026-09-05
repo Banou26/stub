@@ -16,8 +16,6 @@
 // or has a recap inserted ahead of it, all of which happen and all of which would otherwise silently
 // repoint an existing uri at different episodes.
 
-import { seasonScopedId } from '../season'
-
 /** A JustWatch node id scoped to one season. This is the only id shape a series media may carry. */
 export const jwId = (objectId: string | number, seasonObjectId: string | number) => `${objectId}-${seasonObjectId}`
 
@@ -39,38 +37,27 @@ export const showRequiresSeason = (objectType: string | undefined) => objectType
 /**
  * The id a provider handle carries, or undefined when it cannot be given one worth minting.
  *
- * Crunchyroll is refused OUTRIGHT, and the refusal has to come before the seasonless early return.
+ * The id is the provider's TITLE, whatever season the offer was read on. Until 2026-09-05 a season
+ * suffix wrote JUSTWATCH'S season number into the provider's id space (`nf:80123-2`,
+ * `appletv:<umc>-s2`), where unogs and the appletv source mint the same shapes with the PROVIDER'S
+ * numbering, and the two numberings do not agree: Netflix folds two anime cours into one season, so
+ * its season 2 and JustWatch's season 2 name different runs under one uri, and `graph.link` has no
+ * inverse. A show-level offer is therefore a container (`buildOffersAsHandles` hangs the run under it
+ * as PART_OF), and the precise run comes from `similarMedia`, asked of the provider's own source on
+ * the run's page with evidence about the run. A film's bare id is exact and stays an identity.
  *
- * `extractContentId` reads a crunchyroll id from one url shape only, `/series/<id>`, so every id that
- * reaches here is a SERIES id: it names a container that holds every run of the show and, on
- * Crunchyroll, the show's FILMS too, since a film belonging to a running series is published under the
- * series. Appending a season NUMBER cannot rescue it either, because crunchyroll's season-specific
- * identity is '<seriesId>-<seasonId>' (what the crunchyroll source itself mints via crunchyrollId), so
- * a numbered id is one no other source can ever match. An orphan handle is worse than none: it
- * clusters nothing and shows up as a second, emptier entry.
- *
- * The refusal used to sit BELOW `if (seasonNumber == null) return rawContentId`, which made it dead
- * for the one case that reaches here with no season: a MOVIE, since `showRequiresSeason` refuses a
- * seasonless series before this runs. So a film whose crunchyroll offer was a /series/ url took the
- * bare container id, which is the same weld measured on kitsu 2026-09-04, where four Demon Slayer
- * films and fifteen Dragon Ball Z films each shared one /series/ id.
+ * Crunchyroll is refused OUTRIGHT. `extractContentId` reads a crunchyroll id from one url shape only,
+ * `/series/<id>`, so every id that reaches here is a SERIES id: it names a container that holds every
+ * run of the show and, on Crunchyroll, the show's FILMS too, since a film belonging to a running series
+ * is published under the series. The extractor demotes that id to PART_OF itself; a film whose offer
+ * was a /series/ url used to take the bare container id, the same weld measured on kitsu 2026-09-04,
+ * where four Demon Slayer films and fifteen Dragon Ball Z films each shared one /series/ id.
  *
  * The extractor's episode-resolving path is where a real crunchyroll handle still comes from, and it
  * has its own reason to refuse a pinned season. See `buildOffersAsHandles`.
  */
-export const providerContentId = (
-  mappedOrigin: string,
-  rawContentId: string,
-  seasonNumber?: number
-): string | undefined => {
-  if (mappedOrigin === 'cr') return undefined
-  if (seasonNumber == null) return rawContentId
-  // The appletv source scopes its own ids with seasonScopedId, which spells the suffix '-s<n>'. A bare
-  // '-<n>' here builds an id that source can never mint, so the handle clusters nothing and surfaces
-  // as a second, emptier Apple TV entry beside the real one.
-  if (mappedOrigin === 'appletv') return seasonScopedId(rawContentId, seasonNumber)
-  return `${rawContentId}-${seasonNumber}`
-}
+export const providerContentId = (mappedOrigin: string, rawContentId: string): string | undefined =>
+  mappedOrigin === 'cr' ? undefined : rawContentId
 
 // JustWatch package shortName to stub origin. A package is a TIER, not a service, so one service can
 // hold several of them: Paramount+ sells Essential and Premium separately, Netflix lists its ad tier

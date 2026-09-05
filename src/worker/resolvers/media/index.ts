@@ -3,7 +3,8 @@ import type { Media, MediaPage, MediaPageResolvers, Resolvers, SubscriptionResol
 
 // @ts-expect-error
 import _schema from './schema.gql?raw'
-import { proxyRequestToExtractors } from '../../extractor'
+import { implementsSimilarMedia, proxyRequestToExtractors, similarMediaFrom } from '../../extractor'
+import { resolveSimilarRuns } from '../../similar-consumer'
 import { findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, hideAttachedContainers } from '../../store/db'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
@@ -18,6 +19,9 @@ export const schema = _schema as string
 // Drop search results whose title doesn't actually match the query - sources do loose, sometimes semantic, server-side matching (e.g. Apple returns "WondLa" for "frieren").
 const SEARCH_RELEVANCE_THRESHOLD = 0.7
 
+// the app's own asks of `similarMedia`, budgeted under one caller like any source's
+const askSimilar = similarMediaFrom('app')
+
 export const resolvers = {
   Query: {},
   Mutation: {},
@@ -27,7 +31,7 @@ export const resolvers = {
       subscribe: async function* (_parent, args, ctx: ExtractorServerContext) {
         const requestedUri = args.input.uri
         if (!requestedUri || !(isUri(requestedUri) || isAggregatedUri(requestedUri))) return
-        const { subscriptions, close, askOrigins } = proxyRequestToExtractors(ctx, 'MEDIA')
+        const { subscriptions, close, askOrigins, root } = proxyRequestToExtractors(ctx, 'MEDIA')
         const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
         /**
@@ -63,6 +67,8 @@ export const resolvers = {
           if (!cluster.length) return undefined
           const media = aggregateMedia(cluster, location.origin)
           askUnasked(media.uri)
+          // a MEDIA root by construction: only this resolver runs it, so a listing never asks
+          void resolveSimilarRuns(cluster, root, { ask: askSimilar, implemented: implementsSimilarMedia })
           return media
         }
 

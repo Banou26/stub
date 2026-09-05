@@ -73,40 +73,25 @@ const mappingHandles = (mappings: KitsuMapping[]): GQLMedia[] => {
 }
 
 /**
- * Kitsu's streaming links, spent three different ways depending on what the id can honestly claim.
+ * Kitsu's streaming links, spent two ways depending on what the id can honestly claim.
  *
  * MINTED DIRECTLY when the record is a film AND the link is one of the few (origin, path segment)
  * pairs measured to carry a per-title id. Netflix is the whole of that list today: it gives every
  * title its own `/title/<id>`, so a film's Netflix link names the film.
  *
- * HANDED BACK TO THE OWNING ORIGIN when the path names the show and the record is a run of it. Kitsu
- * publishes the same `crunchyroll.com/series/G24H1N3MP/...` on kitsu:45950, kitsu:47694 and
- * kitsu:49002, three different runs of Mushoku Tensei, so minting it welds all three permanently.
- * Instead the show id goes to `ctx.resolveSeason` with the date of OUR run, and whatever
- * season-scoped media that source names is the handle. An origin that cannot answer returns nothing,
- * which is exactly where dropping the link left us, so this carries none of the risk of the weld.
+ * CARRIED AS PART_OF for everything else, because the show id is true as containment and false as
+ * identity. Kitsu publishes the same `crunchyroll.com/series/G24H1N3MP/...` on kitsu:45950,
+ * kitsu:47694 and kitsu:49002, three different runs of Mushoku Tensei, so minting it welds all three
+ * permanently; a film published under a series page is part of that series too. The precise run is
+ * not asked for here: the WORKER asks the owning origin on the run's page, once per run and container,
+ * with the whole cluster's evidence (the best day-precise date, every title, the highest-scored count,
+ * the episode titles), which is more than this record knows at handle time and is spent on no listing.
  *
- * DROPPED when the record is a film and the link is anything else. There is no third path to take: a
- * film has no season for the other source to place it into, so asking would match it against a TV
- * season by air date, which is a wrong merge rather than a missing link. Crunchyroll is nearly the
- * whole of this case: it gives a standalone film release its own /watch/ url, but points a film that
- * belongs to a running series at the series page, which is where the welds come from.
- *
- * No start date is a refusal rather than a guess: the date is the entire basis on which the other
- * source can tell our run from its neighbours.
+ * DROPPED never. An id this source cannot read is not a pointer at all (see `streamPointers`), and
+ * every pointer is at least a link to the show the run is part of.
  */
-const streamHandles = async (
-  streams: KitsuStream[],
-  attr: KitsuAnime,
-  ctx: ExtractorServerContext
-): Promise<GQLMediaHandle[]> => {
+const streamHandles = (streams: KitsuStream[], attr: KitsuAnime): GQLMediaHandle[] => {
   const pointers = streamPointers(streams.map(stream => stream.url))
-  if (!pointers.length) return []
-
-  // A link this cannot mint as an identity is now kept as PART_OF rather than thrown away, and it is
-  // TRUE both ways round: a film published under a Crunchyroll series IS part of that series, and so
-  // is a cour whose season nobody could place. The url survives, the claim does not, and no number of
-  // these can weld two runs together.
   const container = ({ origin, id, url }: StreamPointer) => partOf(makeMedia({ origin, id, url }))
 
   // both halves of this are load bearing and neither implies the other: the subtype says a refusal
@@ -118,27 +103,7 @@ const streamHandles = async (
         : container(pointer)
     )
   }
-
-  // No date is no basis on which the other source could tell our run from its neighbours, so the ask is
-  // not worth making. The links are still worth carrying.
-  if (!attr.startDate) return pointers.map(container)
-
-  const resolved = await Promise.all(
-    pointers.map(pointer =>
-      ctx.resolveSeason(pointer.origin, {
-        showId: pointer.id,
-        startDate: attr.startDate!,
-        titles: buildTitles(attr).map(({ title }) => title),
-        episodeCount: attr.episodeCount ?? undefined,
-      }).then(media => ({ pointer, media }))
-    )
-  )
-  // an origin that placed our run gives a season-scoped identity; one that could not still gives a link
-  return resolved.map(({ pointer, media }) =>
-    media
-      ? sameAs(makeMedia({ origin: media.origin, id: media.id, url: media.url ?? undefined }))
-      : container(pointer)
-  )
+  return pointers.map(container)
 }
 
 const includedMappings = (response: KitsuResponse<unknown>): Map<string, KitsuMapping> =>
@@ -239,7 +204,7 @@ const getMedia = async (id: string, ctx: ExtractorServerContext): Promise<GQLMed
   const streamList = Array.isArray(streams?.data) ? streams.data : []
   const handles = [
     ...mappingHandles(resourceMappings(resource, includedMappings(show ?? {}))),
-    ...await streamHandles(streamList.map(stream => stream.attributes), resource.attributes, ctx),
+    ...streamHandles(streamList.map(stream => stream.attributes), resource.attributes),
   ]
   const media = normalizeMedia(resource, handles)
   media.episodes = await fetchEpisodes(id, media.uri, ctx)

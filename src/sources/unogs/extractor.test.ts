@@ -10,7 +10,8 @@
 import { expect, test } from 'vitest'
 
 import type { ExtractorServerContext } from '../../worker/extractor'
-import { getMedia, linkNetflix, searchNodes } from './extractor'
+import type { Media as GQLMedia } from '../../generated/schema/types.generated'
+import { getMedia, linkNetflix, resolvers, searchNodes } from './extractor'
 
 const UNOGS = 'https://unogs.com/api'
 
@@ -193,9 +194,9 @@ test('a film is a RUN under its bare id', async () => {
 const MUSHOKU: Season[] = [{ season: 1, episodes: 24 }, { season: 2, episodes: 25 }, { season: 3, episodes: 11 }]
 const AG = 'ag:(anilist:108465,kitsu:42323)'
 
-const knowing = (table: Record<string, unknown>, titles: string[], episodeCount: number): ExtractorServerContext => ({
+const knowing = (table: Record<string, unknown>, titles: string[], episodeCount: number, startDate?: string): ExtractorServerContext => ({
   ...ctxFor(table),
-  findAggregatedMedia: async () => ({ titles: titles.map(title => ({ language: 'en', title })), episodeCount }),
+  findAggregatedMedia: async () => ({ titles: titles.map(title => ({ language: 'en', title })), episodeCount, startDate }),
   listenForMediaChanges: async function* () {},
 } as unknown as ExtractorServerContext)
 
@@ -249,4 +250,77 @@ test('control: a film is itself, having no season to be confused between', async
   const media = await linkNetflix('70000012', AG, ctx, 'movie')
   expect(media?.uri).toBe('nf:70000012')
   expect(media?.scope).toBe('RUN')
+})
+
+// The media path reads the cluster's start date as evidence, and Netflix's title year is offered on
+// its FIRST season only (it is the whole title's year, which is the first season's). A run dated
+// another year that happens to hold exactly as many episodes as Netflix season 1 is a sequel with no
+// ordinal in its title, and the year is the only thing that tells it from the first season.
+test('the media path vetoes a first season dated another year, and keeps one dated ours', async () => {
+  const later = knowing(routes('80987039', 'series', MUSHOKU), ['Some Show'], 24, '2024-01-01')
+  const sequel = await linkNetflix('80987039', AG, later)
+  expect(sequel?.uri, 'Netflix season 1 is a 2021 season, this run is 2024').toBe('nf:80987039')
+  expect(sequel?.scope).toBe('CONTAINER')
+
+  const same = knowing(routes('80987039', 'series', MUSHOKU), ['Some Show'], 24, '2021-07-04')
+  const first = await linkNetflix('80987039', AG, same)
+  expect(first?.uri, 'the control: a 2021 run of 24 is Netflix season 1').toBe('nf:80987039-1')
+})
+
+// `similarMedia`: another origin's run page describing ITS run, asking which Netflix season is the
+// same run. The rules are shared (../similar.ts); what this file owns is the candidates it builds from
+// the episodes payload and the refusal being null rather than the title.
+const askSimilar = async (ctx: ExtractorServerContext, input: Record<string, unknown>) => {
+  const subscribe = (resolvers.Subscription as any).similarMedia.subscribe
+  const yields: { similarMedia: GQLMedia | null }[] = []
+  for await (const value of subscribe(undefined, { input }, ctx)) yields.push(value)
+  return { yields, answer: yields[0]?.similarMedia ?? null }
+}
+
+test('similarMedia answers the season the evidence establishes, as a RUN with no handles', async () => {
+  const ctx = ctxFor(routes('80987039', 'series', MUSHOKU))
+  const { answer } = await askSimilar(ctx, {
+    showId: '80987039', titles: ['Mushoku Tensei: Jobless Reincarnation Season 3'], episodeCount: 14
+  })
+  expect(answer?.uri).toBe('nf:80987039-3')
+  expect(answer?.scope).toBe('RUN')
+  expect(answer?.handles, 'the caller decides what to claim about the answer').toEqual([])
+  expect(answer?.episodeCount, 'only that season').toBe(11)
+})
+
+test('similarMedia refuses a fold and a coincidence', async () => {
+  const ctx = ctxFor(routes('80987039', 'series', MUSHOKU))
+  const fold = await askSimilar(ctx, {
+    showId: '80987039', titles: ['Mushoku Tensei: Jobless Reincarnation Season 2'], episodeCount: 13
+  })
+  expect(fold.answer, 'Netflix season 2 is 25 episodes, both halves of anime season 2 at once').toBeNull()
+
+  const coincidence = await askSimilar(ctx, {
+    showId: '80987039', titles: ['Mushoku Tensei: Jobless Reincarnation'], episodeCount: 11
+  })
+  expect(coincidence.answer, 'the one season holding 11 is not the run that holds 11').toBeNull()
+})
+
+// The same coincidence, with the evidence that does settle it: the episode titles. Netflix carries a
+// title per episode and no date, so this is the axis that places a run whose own title names no season.
+test('similarMedia matches by episode titles when the titles say no season', async () => {
+  const ctx = ctxFor(routes('80987039', 'series', MUSHOKU))
+  const { answer } = await askSimilar(ctx, {
+    showId: '80987039',
+    titles: ['Mushoku Tensei: Jobless Reincarnation'],
+    episodeCount: 11,
+    episodeTitles: Array.from({ length: 11 }, (_, index) => `S3E${index + 1}`)
+  })
+  expect(answer?.uri, 'eleven of season 3\'s eleven titles, where the count alone was refused above').toBe('nf:80987039-3')
+})
+
+test('similarMedia is null for a film title and for an unknown title, and yields exactly once', async () => {
+  const film = await askSimilar(ctxFor(routes('70000012', 'movie', [])), { showId: '70000012', titles: ['A Film'], episodeCount: 1 })
+  expect(film.yields, 'a film is not a container, so there is nothing to pick').toEqual([{ similarMedia: null }])
+
+  const unknown = await askSimilar(
+    ctxFor({ ...routes('70000099', 'series', []), [`${UNOGS}/title/detail?netflixid=70000099`]: [] }),
+    { showId: '70000099', titles: ['Nothing'], episodeCount: 12 }
+  )
+  expect(unknown.yields).toEqual([{ similarMedia: null }])
 })

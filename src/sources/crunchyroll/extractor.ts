@@ -1,7 +1,8 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
-import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
+import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaInput } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { isOnlySeasonLabel, namesADay } from '../season'
+import { isOnlySeasonLabel } from '../season'
+import { pickSimilarSeason, type SeasonCandidate } from '../similar'
 import {
   makeMedia, makeEpisode, desc, img,
   bestTitleScore, buildHandlesFromUri, getFirstTitle, simplifyTitle, waitForMedia
@@ -246,20 +247,45 @@ export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise
   return media
 }
 
-const seasonAirDates = async (seriesId: string, ctx: ExtractorServerContext) => {
+type CrSeasonCandidate = SeasonCandidate<{ resolvedId: string }>
+
+/**
+ * Every japanese-audio season of a series described the way `pickSimilarSeason` reads one, at the
+ * cost of one episodes request per season. The premiere is the first episode's air date, the count is
+ * the distinct numbered episodes (specials carry no number and are not part of the run's length).
+ */
+const seasonCandidates = async (
+  seriesId: string,
+  ctx: ExtractorServerContext
+): Promise<{ seasons: CrSeason[], candidates: CrSeasonCandidate[] }> => {
   const { data: seasons } = await fetchSeasons(seriesId, ctx)
-  if (!seasons.length) return { seasons, dates: [] }
+  if (!seasons.length) return { seasons, candidates: [] }
 
   const jaSeasons = seasons.filter(s => s.audio_locale === 'ja-JP')
-  const candidates = jaSeasons.length > 0 ? jaSeasons : seasons
+  const chosen = jaSeasons.length > 0 ? jaSeasons : seasons
 
-  const dates = await Promise.all(
-    candidates.map(async season => {
+  const candidates = await Promise.all(
+    chosen.map(async (season): Promise<CrSeasonCandidate> => {
       const resolvedId = resolveSeasonId(season)
       const { data } = await fetchEpisodes(resolvedId, ctx)
-      return { resolvedId, airDate: data[0]?.episode_air_date ? new Date(data[0].episode_air_date) : undefined }
+      return {
+        season: { resolvedId },
+        seasonNumber: data[0]?.season_number,
+        episodeCount: new Set(data.filter(ep => ep.episode_number != null).map(ep => ep.episode_number)).size,
+        premiere: data[0]?.episode_air_date || undefined,
+        episodeTitles: data.map(ep => ep.title),
+      }
     })
   )
+  return { seasons, candidates }
+}
+
+const seasonAirDates = async (seriesId: string, ctx: ExtractorServerContext) => {
+  const { seasons, candidates } = await seasonCandidates(seriesId, ctx)
+  const dates = candidates.map(({ season, premiere }) => ({
+    resolvedId: season.resolvedId,
+    airDate: premiere ? new Date(premiere) : undefined
+  }))
   return { seasons, dates }
 }
 
@@ -394,41 +420,35 @@ const searchAndLinkMedia = async (
 }
 
 /**
- * The run of a show that started nearest a date, for a caller holding nothing but the show.
+ * The one run of a show that the caller's evidence establishes, for a caller holding the show.
  *
- * The show id already names the franchise, so this answers on the DATE alone and ignores `titles` and
- * `episodeCount`: those exist for sources whose show id is a search hit rather than a link, where the
- * franchise still has to be established. Here the caller has a `crunchyroll.com/series/<id>` url off
- * its own record, and the only open question is which of that series' seasons is ours.
+ * The show id already names the franchise (the caller has a `crunchyroll.com/series/<id>` url off its
+ * own record), so the only open question is which of that series' seasons is ours, and every rule that
+ * answers it lives in `pickSimilarSeason`: a premiere inside the window of a day-precise date, the
+ * episode titles, an ordinal the titles agree on with a count the season does not exceed, the one
+ * season dated our year holding no more than our count, the first season holding our episodes. A
+ * year-only date is no longer thrown out here: the date rule ignores it itself and the later rules
+ * can still read the year.
  *
- * Everything `matchSeasonByDate` refuses, this refuses: an unparseable date, a series with no seasons,
- * a series whose seasons publish no air date, or nothing inside SEASON_DATE_WINDOW. Null is the
- * expected answer for most shows and is never an error. Answering with the SERIES would put back
- * exactly the show-level handle the caller came here to avoid minting.
- *
- * And one refusal of its own, because an open endpoint takes dates from callers that a hardcoded
- * caller never was. Several sources template a bare year into `YYYY-01-01` and several more answer
- * `YYYY-MM-01` when the day is unknown, so a date that names no day is thrown out before it reaches a
- * 45 day window it cannot possibly be measured against. See `namesADay`.
+ * Null is the expected answer for most shows and is never an error. Answering with the SERIES would
+ * put back exactly the show-level handle the caller came here to avoid minting.
  */
-const seasonForShow = async (
-  input: { showId: string, startDate: string },
-  ctx: ExtractorServerContext
-): Promise<GQLMedia | undefined> => {
-  if (!namesADay(input.startDate)) return undefined
-  const composite = await matchSeasonByDate(input.showId, input.startDate, ctx)
-  if (!composite) return undefined
-  return await getMedia(composite, ctx)
+const seasonForShow = async (input: SimilarMediaInput, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  const { candidates } = await seasonCandidates(input.showId, ctx)
+  if (!candidates.length) return undefined
+  const verdict = pickSimilarSeason(input, candidates)
+  if (!verdict) return undefined
+  return await getMedia(crunchyrollId(input.showId, verdict.season.resolvedId), ctx)
 }
 
 export const resolvers: Resolvers = {
   Subscription: {
-    mediaSeason: {
+    similarMedia: {
       // always yield once: a generator that completes without yielding makes yoga respond 204 and the
       // caller waits out its timeout instead of reading the refusal
       subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
-        if (!input?.showId || !input?.startDate) return yield { mediaSeason: null }
-        yield { mediaSeason: await seasonForShow(input, ctx) ?? null }
+        if (!input?.showId) return yield { similarMedia: null }
+        yield { similarMedia: await seasonForShow(input, ctx) ?? null }
       }
     },
     media: {

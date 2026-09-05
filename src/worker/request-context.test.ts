@@ -24,11 +24,14 @@ beforeEach(() => { resetContextMisses(); resetRegistry() })
 test('a listing refuses cross-source work and a detail view spends it', () => {
   const listing = openRoot('MEDIA_PAGE')
   const detail = openRoot('MEDIA')
+  const similar = openRoot('SIMILAR_MEDIA')
 
   expect(policyFor({ context: listing }).crossSource, 'a search result page reads none of it').toBe(false)
   expect(policyFor({ context: detail }).crossSource, 'a detail view is what the id is for').toBe(true)
+  expect(policyFor({ context: similar }).crossSource, 'an answering source may walk its seasons').toBe(true)
   closeRoot(listing.rootId)
   closeRoot(detail.rootId)
+  closeRoot(similar.rootId)
 })
 
 // THE INERT CONTROL. An absent context has to behave exactly as the code did before this module

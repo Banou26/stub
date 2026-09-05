@@ -4,9 +4,10 @@
 // kitsu:45950 (season 2), kitsu:47694 (season 2 part 2) and kitsu:49002 (season 3).
 //
 // Minting `cr:G24H1N3MP` off that welds all three permanently. Dropping it loses a real offer. This
-// file pins the third path: the show id goes back to Crunchyroll through `ctx.resolveSeason` with the
-// date of OUR run, and the season-scoped media that comes back is the handle.
-import { expect, test, vi } from 'vitest'
+// file pins the third path: the show goes out as PART_OF, a container edge the store never unions on,
+// and the WORKER asks the owning origin for the precise run on the run's own page, with the whole
+// cluster's evidence (worker/similar-consumer.ts). Nothing here asks, and nothing here claims.
+import { expect, test } from 'vitest'
 
 import { resolvers } from './extractor'
 
@@ -17,8 +18,8 @@ const CR_SHOW_URL = 'https://www.crunchyroll.com/series/G24H1N3MP/mushoku-tensei
 const NF_TITLE_URL = 'https://www.netflix.com/title/81006261'
 
 const context = (
-  { subtype, startDate, resolveSeason, streams = [CR_SHOW_URL] }:
-  { subtype: string, startDate: string | null, resolveSeason: ReturnType<typeof vi.fn>, streams?: string[] }
+  { subtype, startDate, streams = [CR_SHOW_URL] }:
+  { subtype: string, startDate: string | null, streams?: string[] }
 ) => ({
   fetch: async (url: string) => {
     const body =
@@ -43,13 +44,14 @@ const context = (
     if (!body) throw new Error(`fixture has no route for ${url}`)
     return { json: async () => body }
   },
-  resolveSeason,
 }) as never
+
+type Edge = { relation: string, node: { uri: string, origin: string, id: string, scope?: string } }
 
 const edgesFor = async (ctx: never) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'kitsu:49002' } }, ctx).next()
-  return (value?.media?.handles ?? []) as { relation: string, node: { uri: string, origin: string, id: string, scope?: string } }[]
+  return (value?.media?.handles ?? []) as Edge[]
 }
 
 /** the nodes, for assertions about WHICH ids get minted */
@@ -59,72 +61,39 @@ const handlesFor = async (ctx: never) => (await edgesFor(ctx)).map(handle => han
 const sameAsFor = async (ctx: never) =>
   (await edgesFor(ctx)).filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node)
 
-test('a series link is handed to the owning origin as a show plus a date', async () => {
-  const resolveSeason = vi.fn(async () => ({
-    uri: 'cr:G24H1N3MP-GS00374452',
-    origin: 'cr',
-    id: 'G24H1N3MP-GS00374452',
-    url: 'https://www.crunchyroll.com/series/G24H1N3MP/mushoku-tensei-jobless-reincarnation',
-  }))
+const expectContainerOnly = (edges: Edge[], origin: string, id: string) => {
+  const edge = edges.find(handle => handle.node.origin === origin)
+  expect(edge?.relation, 'the run IS part of that show, which is worth keeping').toBe('PART_OF')
+  expect(edge?.node.id, 'the show id as published, never a season minted from it').toBe(id)
+  // the show id is stamped into the CONTAINER space by `partOf`, so even a later source claiming
+  // sameness with it is read as PART_OF by the store rather than welding this run to it
+  expect(edge?.node.scope, 'a show id is every season at once').toBe('CONTAINER')
+  expect(edges.filter(handle => handle.relation === 'SAME_AS'), 'the show id must never be claimed as this run').toEqual([])
+}
 
-  const handles = await handlesFor(context({ subtype: 'TV', startDate: '2026-07-04', resolveSeason }))
+test('a series link is carried as PART_OF its show; the worker asks the owning origin on the run\'s page', async () => {
+  const edges = await edgesFor(context({ subtype: 'TV', startDate: '2026-07-04' }))
 
-  expect(resolveSeason).toHaveBeenCalledWith('cr', expect.objectContaining({
-    showId: 'G24H1N3MP',
-    startDate: '2026-07-04',
-    episodeCount: 14,
-  }))
-  // the SEASON-scoped id it named, never the show id it was handed
-  expect(handles.map(handle => handle.uri)).toContain('cr:G24H1N3MP-GS00374452')
-  expect(handles.map(handle => handle.uri)).not.toContain('cr:G24H1N3MP')
-  // and a season is a run, so it goes into the run identity space where the store can union it
-  expect(handles.find(handle => handle.uri === 'cr:G24H1N3MP-GS00374452')?.scope).toBe('RUN')
+  expectContainerOnly(edges, 'cr', 'G24H1N3MP')
+  expect(edges.map(handle => handle.node.uri)).not.toContain('cr:G24H1N3MP-GS00374452')
 })
 
-// The refusal path, and the one that matters most: an origin that cannot place the run answers
-// nothing, and nothing is exactly where dropping the link left us. It must never fall back to the
-// show id, which is the weld this whole mechanism exists to avoid.
-test('an origin that cannot place the run asserts nothing, but keeps the link', async () => {
-  const resolveSeason = vi.fn(async () => undefined)
-  const ctx = context({ subtype: 'TV', startDate: '2026-07-04', resolveSeason })
-
-  expect(await sameAsFor(ctx), 'the show id must never be claimed as this run').toEqual([])
-
-  const cr = (await edgesFor(context({ subtype: 'TV', startDate: '2026-07-04', resolveSeason })))
-    .find(handle => handle.node.origin === 'cr')
-  expect(cr?.relation, 'the run IS part of that series, which is worth keeping').toBe('PART_OF')
-  expect(cr?.node.id).toBe('G24H1N3MP')
-  // the series id is stamped into the CONTAINER space by `partOf`, so even a later source claiming
-  // sameness with `cr:G24H1N3MP` is read as PART_OF by the store rather than welding this run to it
-  expect(cr?.node.scope, 'a /series/ id is every season at once').toBe('CONTAINER')
-})
-
-// No date is no basis on which the other source could tell our run from its neighbours, so the ask is
-// not worth making. Asking anyway with an empty date is how a source ends up taking "season 1".
-test('no start date means the ask is never made, and the link is still carried', async () => {
-  const resolveSeason = vi.fn(async () => undefined)
-
-  const edges = await edgesFor(context({ subtype: 'TV', startDate: null, resolveSeason }))
-
-  expect(resolveSeason).not.toHaveBeenCalled()
-  expect(edges.filter(handle => handle.node.origin === 'cr' && handle.relation === 'SAME_AS')).toEqual([])
-  expect(edges.find(handle => handle.node.origin === 'cr')?.relation).toBe('PART_OF')
+// The date used to decide whether this source asked the owning origin itself. The ask has moved to
+// the worker, which asks with the cluster's best date rather than this record's, so the record's date
+// changes nothing about what goes out: a container, with or without one.
+test('with or without a start date the pointer is a container', async () => {
+  for (const startDate of ['2026-07-04', null]) {
+    expectContainerOnly(await edgesFor(context({ subtype: 'TV', startDate })), 'cr', 'G24H1N3MP')
+  }
 })
 
 // A film that belongs to a running series gets the SERIES' url from Crunchyroll: all four Demon Slayer
 // films link to /series/GY5P48XEY, and all fifteen Dragon Ball Z films to /series/GQWH0M1GG. So the
 // subtype carve-out that used to sit here minted one id for fifteen films and welded them, the same
-// defect the three Mushoku Tensei seasons had.
-//
-// There is no third path for a film. resolveSeason places a run by air date, and a film has no season
-// to be placed into, so asking would match it against a TV season: a wrong merge rather than a missing
-// link. It is dropped, and the ask is never made.
-test('a film whose link names the show claims nothing, and does not ask either', async () => {
-  const resolveSeason = vi.fn(async () => undefined)
-  const ctx = context({ subtype: 'movie', startDate: '2020-10-16', resolveSeason })
-
-  const edges = await edgesFor(ctx)
-  expect(resolveSeason).not.toHaveBeenCalled()
+// defect the three Mushoku Tensei seasons had. A film has no season for the other source to place it
+// into either, so the link is carried as containment and never asked about.
+test('a film whose link names the show claims nothing', async () => {
+  const edges = await edgesFor(context({ subtype: 'movie', startDate: '2020-10-16' }))
 
   // the weld this whole mechanism exists to avoid: fifteen Dragon Ball Z films share one /series/ id
   expect(edges.filter(handle => handle.relation === 'SAME_AS').map(handle => handle.node.uri))
@@ -137,48 +106,25 @@ test('a film whose link names the show claims nothing, and does not ask either',
 // name the film. This is why the refusal above is a filter on the url and not a blanket one on the
 // subtype: a blanket refusal would cost every one of these for nothing.
 test('a film whose link names the film itself is still minted directly', async () => {
-  const resolveSeason = vi.fn(async () => undefined)
+  const ctx = () => context({ subtype: 'movie', startDate: '2020-10-16', streams: [CR_SHOW_URL, NF_TITLE_URL] })
 
-  const handles = await handlesFor(context({
-    subtype: 'movie',
-    startDate: '2020-10-16',
-    resolveSeason,
-    streams: [CR_SHOW_URL, NF_TITLE_URL],
-  }))
-
-  expect(resolveSeason).not.toHaveBeenCalled()
   // the netflix one is an identity, the crunchyroll one is only a link, out of the same record
-  expect(handles.map(handle => handle.uri)).toContain('nf:81006261')
-  expect((await sameAsFor(context({
-    subtype: 'movie',
-    startDate: '2020-10-16',
-    resolveSeason,
-    streams: [CR_SHOW_URL, NF_TITLE_URL],
-  }))).map(handle => handle.uri)).toEqual(['nf:81006261'])
+  expect((await handlesFor(ctx())).map(handle => handle.uri)).toContain('nf:81006261')
+  expect((await sameAsFor(ctx())).map(handle => handle.uri)).toEqual(['nf:81006261'])
 })
 
-// The film gate, from the side every other test in this file is blind to. The three non-film cases
-// above all carry a crunchyroll /series/ link, which the ALLOWLIST refuses on shape as well, so they
-// pass whether or not the gate exists. A netflix link is the case that separates them: `nf:title` is
-// on the allowlist, so only the gate stops it being minted here.
+// The film gate, from the side every other test in this file is blind to. The non-film cases above
+// all carry a crunchyroll /series/ link, which the ALLOWLIST refuses on shape as well, so they pass
+// whether or not the gate exists. A netflix link is the case that separates them: `nf:title` is on
+// the allowlist, so only the gate stops it being minted here.
 //
 // It has to stop it. A netflix /title/ id on a cour record is the WHOLE show's: measured 2026-09-04
 // over 3000 kitsu records, nf:80135674 is published on all five seasons of Boku no Hero Academia, and
-// 36 more ids are shared the same way. Kitsu mints none of them today, because a cour record goes to
-// resolveSeason and Netflix registers no mediaSeason resolver, so it answers nothing.
-test('a cour record hands its netflix link back rather than minting it', async () => {
-  const resolveSeason = vi.fn(async () => undefined)
+// 36 more ids are shared the same way. It goes out as the title, a container, and Netflix's own
+// source is asked for the season by the worker.
+test('a cour record carries its netflix title as a container rather than minting it', async () => {
+  const edges = await edgesFor(context({ subtype: 'TV', startDate: '2026-07-04', streams: [NF_TITLE_URL] }))
 
-  const handles = await sameAsFor(context({
-    subtype: 'TV',
-    startDate: '2026-07-04',
-    resolveSeason,
-    streams: [NF_TITLE_URL],
-  }))
-
-  expect(resolveSeason).toHaveBeenCalledWith('nf', expect.objectContaining({ showId: '81006261' }))
-  expect(
-    handles.filter(handle => handle.origin === 'nf'),
-    'nf:80135674 is all five seasons of Boku no Hero Academia; claiming it here welds them'
-  ).toEqual([])
+  expectContainerOnly(edges, 'nf', '81006261')
+  expect(edges.map(handle => handle.node.uri)).toEqual(['nf:81006261'])
 })

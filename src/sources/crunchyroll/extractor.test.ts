@@ -99,14 +99,16 @@ test('a single-season series keeps its episodes when asked by the bare series id
   expect(media?.episodes ?? []).toHaveLength(3)
 })
 
-// `mediaSeason` is how a source holding nothing but a SHOW link gets a run out of this source without
+// `similarMedia` is how a source holding nothing but a SHOW link gets a run out of this source without
 // minting a show-level handle. Driven through the real resolver rather than through `seasonForShow`,
 // because the yield-once shape is part of the contract: a generator that ends without yielding makes
 // yoga answer 204 and the caller waits out its timeout instead of reading the refusal.
-const askSeason = async (input: { showId: string, startDate: string }, routes: Record<string, unknown>) => {
-  const subscribe = (resolvers.Subscription as any).mediaSeason.subscribe
+type Ask = { showId: string, startDate?: string, titles?: string[], episodeCount?: number, episodeTitles?: string[] }
+
+const askSeason = async (input: Ask, routes: Record<string, unknown>) => {
+  const subscribe = (resolvers.Subscription as any).similarMedia.subscribe
   const { value } = await subscribe(undefined, { input }, context(routes)).next()
-  return value?.mediaSeason ?? null
+  return value?.similarMedia ?? null
 }
 
 test('a show plus a date resolves to that one run', async () => {
@@ -127,13 +129,13 @@ test('the date, not the ordinal, is what picks between two runs sharing a season
   expect(cour1?.uri).not.toBe(cour3?.uri)
 })
 
-test('an unparseable date is a refusal, never a nearest-of-anything', async () => {
+test('an unparseable date with nothing else is a refusal, never a nearest-of-anything', async () => {
   expect(await askSeason({ showId: 'G24H1N3MP', startDate: 'not a date' }, MUSHOKU)).toBeNull()
 })
 
 // Crunchyroll answers an unknown or seasonless series with an empty `data`, which is a refusal here
 // and not an error. A source that THROWS instead is also a refusal, but one handled a layer up:
-// `firstMediaSeason` in worker/extractor.ts settles undefined on `result.error`.
+// `firstSimilarMedia` in worker/extractor.ts settles undefined on `result.error`.
 test('a show with no seasons is a refusal', async () => {
   const routes = { ...MUSHOKU, ...series('SEASONLESS', []) }
 
@@ -155,12 +157,137 @@ test('a date inside the window still resolves, so the refusal above is the windo
   expect(media?.uri).toBe('cr:G24H1N3MP-GS00374452')
 })
 
+// A day-precise date that nothing else contradicts is still not enough when TWO seasons sit inside
+// its window: two parts released together are two runs, and the date cannot say which is ours.
+test('two seasons inside one window is an ambiguity, and a refusal', async () => {
+  const routes = series('GPAIR', [
+    { id: 'GP1', seasonNumber: 1, episodes: 12, airDate: '2024-04-05T00:00:00Z' },
+    { id: 'GP2', seasonNumber: 2, episodes: 12, airDate: '2024-04-15T00:00:00Z' },
+  ])
+
+  expect(await askSeason({ showId: 'GPAIR', startDate: '2024-04-08T00:00:00Z' }, routes)).toBeNull()
+})
+
+// Season 3 and a season 4 in the same year, so a year alone cannot tell them apart and the later
+// rules have to do the work the date rule cannot.
+const TWO_IN_2026 = series('GTWO2026', [
+  { id: 'GT1', seasonNumber: 1, episodes: 23, airDate: '2021-01-11T00:00:00Z' },
+  { id: 'GT2', seasonNumber: 2, episodes: 24, airDate: '2023-07-09T00:00:00Z' },
+  { id: 'GT3', seasonNumber: 3, episodes: 14, airDate: '2026-07-04T00:00:00Z' },
+  { id: 'GT4', seasonNumber: 4, episodes: 12, airDate: '2026-10-05T00:00:00Z' },
+])
+
 // Seven extractors template a bare year as `YYYY-01-01` and two more answer `YYYY-MM-01` when only
-// the month is known. Against a 45 day window that is a year pretending to be a day, so it is thrown
-// out before the window ever sees it.
-test('a date that names only a year or a month is refused before the window', async () => {
-  expect(await askSeason({ showId: 'G24H1N3MP', startDate: '2026-01-01T00:00:00Z' }, MUSHOKU)).toBeNull()
-  expect(await askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-01T00:00:00Z' }, MUSHOKU)).toBeNull()
+// the month is known. Against a 45 day window that is a year pretending to be a day, so the window
+// never sees it: `2026-07-01` is three days from season 3's premiere and is NOT matched as a date.
+// What a year-only date can still do is name the one season dated that year when our count shows that
+// season is not a fold, and no more: no count, or two seasons in the year, is a refusal, whatever the
+// distance to either.
+test('a year-only date never reaches the window: it names the one season of its year, or nothing', async () => {
+  const one = await askSeason({ showId: 'G24H1N3MP', startDate: '2026-01-01T00:00:00Z', episodeCount: 14 }, MUSHOKU)
+  expect(one?.uri, '2026 holds season 3 alone, so the year names it').toBe('cr:G24H1N3MP-GS00374452')
+  expect(await askSeason({ showId: 'G24H1N3MP', startDate: '2026-01-01T00:00:00Z' }, MUSHOKU), 'a year with no count checks nothing').toBeNull()
+
+  expect(await askSeason({ showId: 'GTWO2026', startDate: '2026-01-01T00:00:00Z', episodeCount: 14 }, TWO_IN_2026)).toBeNull()
+  expect(
+    await askSeason({ showId: 'GTWO2026', startDate: '2026-07-01T00:00:00Z', episodeCount: 14 }, TWO_IN_2026),
+    'three days from a premiere, and still not a date: a first-of-month names a month'
+  ).toBeNull()
+})
+
+// An announced season, or one this region cannot list, answers an EMPTY episodes payload. Offered as a
+// season of 0 episodes it fit under every run's count, and two runs two years apart both took it
+// (2026-09-05). A season with nothing listed has no length, and a lone season with no length is not
+// a season still listing: it is nothing to match.
+test('a season with no episodes listed is never the answer', async () => {
+  const routes = series('GEMPTY', [{ id: 'GE1', seasonNumber: 1, episodes: 0 }])
+
+  expect(await askSeason({ showId: 'GEMPTY', titles: ['Show'], episodeCount: 12, startDate: '2024-04-07T00:00:00Z' }, routes)).toBeNull()
+  expect(await askSeason({ showId: 'GEMPTY', titles: ['Another Run Of It'], episodeCount: 24, startDate: '2022-10-02T00:00:00Z' }, routes)).toBeNull()
+
+  const listed = series('GLISTED', [{ id: 'GL1', seasonNumber: 1, episodes: 5 }])
+  expect(
+    (await askSeason({ showId: 'GLISTED', titles: ['Show'], episodeCount: 12 }, listed))?.uri,
+    'the control: a lone season with SOME episodes is a season still listing'
+  ).toBe('cr:GLISTED-GL1')
+})
+
+// The ordinal, read off the caller's titles, matched against the season_number Crunchyroll stamps on
+// every episode, and admitted only with a count the season does not exceed.
+test('a year-only date falls back to the ordinal and count', async () => {
+  const input = { startDate: '2026-01-01T00:00:00Z', titles: ['Mushoku Tensei Season 3'], episodeCount: 14 }
+
+  expect((await askSeason({ showId: 'G24H1N3MP', ...input }, MUSHOKU))?.uri).toBe('cr:G24H1N3MP-GS00374452')
+  // the year holds two seasons here, so only the ordinal can have picked
+  expect((await askSeason({ showId: 'GTWO2026', ...input }, TWO_IN_2026))?.uri).toBe('cr:GTWO2026-GT3')
+})
+
+// Netflix's season 2 of this show is 25 episodes over anime's 13 and 12; here Crunchyroll's season 2
+// holds 24 against a caller's 12. A season holding MORE episodes than the run holds other runs too,
+// and the year (2023, season 2 alone) would otherwise have named it.
+test('a fold is refused', async () => {
+  expect(await askSeason(
+    { showId: 'G24H1N3MP', startDate: '2023-01-01T00:00:00Z', titles: ['Mushoku Tensei Season 2'], episodeCount: 12 },
+    MUSHOKU
+  )).toBeNull()
+})
+
+test('titles that disagree about the season refuse outright', async () => {
+  expect(await askSeason(
+    { showId: 'G24H1N3MP', titles: ['Mushoku Tensei Season 2', 'Mushoku Tensei Part 3'], episodeCount: 24 },
+    MUSHOKU
+  )).toBeNull()
+})
+
+// The coincidence that welded season 1 to Netflix's season 3 on the live site: an 11 episode run and
+// an 11 episode third season. Only the FIRST season is ever tried on a count with no ordinal, and
+// with several seasons only an exact count is accepted.
+test('a count with no ordinal is tried against the first season only', async () => {
+  const first = await askSeason({ showId: 'G24H1N3MP', titles: ['Mushoku Tensei'], episodeCount: 23 }, MUSHOKU)
+  expect(first?.uri).toBe('cr:G24H1N3MP-GSSEASON1')
+
+  expect(
+    await askSeason({ showId: 'G24H1N3MP', titles: ['Mushoku Tensei'], episodeCount: 14 }, MUSHOKU),
+    'season 3 holds exactly 14, and it is never reached by count'
+  ).toBeNull()
+})
+
+const season3Titles = Array.from({ length: 14 }, (_, index) => `S3E${index + 1}`)
+
+// The count alone refuses this run (23 !== 14 on the first season), and the titles carry no ordinal.
+// Fourteen episode titles that are season 3's are what establish it.
+test('episode titles pick the season when nothing else does', async () => {
+  expect(await askSeason({ showId: 'G24H1N3MP', episodeCount: 14 }, MUSHOKU), 'the control').toBeNull()
+
+  const media = await askSeason({ showId: 'G24H1N3MP', episodeCount: 14, episodeTitles: season3Titles }, MUSHOKU)
+  expect(media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})
+
+// Decisive the other way too: three real episode titles that no season carries say this is not any
+// of these seasons, whatever the ordinal says.
+test('episode titles sharing none with any season refuse a season the ordinal would have taken', async () => {
+  expect(await askSeason(
+    { showId: 'G24H1N3MP', titles: ['Mushoku Tensei Season 3'], episodeCount: 14, episodeTitles: ['Alpha', 'Beta', 'Gamma'] },
+    MUSHOKU
+  )).toBeNull()
+})
+
+// The contract on the answer: a RUN at this origin carrying no handle naming another run. The CALLER
+// decides what to claim about it; a handle here would claim on its behalf.
+test('the answer is a RUN with no handles', async () => {
+  const media = await askSeason({ showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }, MUSHOKU)
+
+  expect(media?.scope).toBe('RUN')
+  expect(media?.handles).toEqual([])
+})
+
+test('similarMedia yields exactly once, on an answer and on a refusal', async () => {
+  const subscribe = (resolvers.Subscription as any).similarMedia.subscribe
+  for (const input of [{ showId: 'G24H1N3MP', startDate: '2026-07-04T00:00:00Z' }, { showId: 'G24H1N3MP' }]) {
+    const iterator = subscribe(undefined, { input }, context(MUSHOKU))
+    expect((await iterator.next()).done).toBe(false)
+    expect((await iterator.next()).done).toBe(true)
+  }
 })
 
 // SCOPE. A media in this store is one run, and a bare Crunchyroll series id is the same for every
