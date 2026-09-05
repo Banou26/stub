@@ -4,6 +4,7 @@ import { MediaStatus, MediaType } from '../../generated/graphql'
 import { fromUri, isUri } from '../../utils/uri'
 import { makeMedia, normalizePage, sameAs } from '../utils'
 import { MAL_TYPE, isContinuing, parseMalSeason, type MalSeasonEntry } from './season-scrape'
+import { malLargeImage } from '../mal-image'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -139,7 +140,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
     ],
     covers: [{
       language: 'en',
-      url: data.images.webp.large_image_url,
+      url: malLargeImage(data.images.webp.large_image_url),
       score: SCORE
     }],
     banners: [],

@@ -1,7 +1,9 @@
-// The MAL seasonal page, parsed out of its HTML. Split out with NO imports so it can be tested: an
-// extractor pulls in the source barrel and, through it, a CommonJS `require('react')` that cannot
-// load outside a browser. Same reason ../season.ts and ../kitsu/season-paging.ts are their own
-// modules.
+import { malLargeImage } from '../mal-image'
+
+// The MAL seasonal page, parsed out of its HTML. Split out so it can be tested: an extractor pulls in
+// the source barrel and, through it, a CommonJS `require('react')` that cannot load outside a
+// browser. Same reason ../season.ts and ../kitsu/season-paging.ts are their own modules. Its one
+// import is ../mal-image.ts, which imports nothing itself, so the reason above still holds.
 //
 // This exists because Jikan, the API this source normally uses, is unreachable from the FKN proxy's
 // egress: every endpoint answers 504 "Jikan failed to connect to MyAnimeList" from both regions
@@ -129,7 +131,9 @@ export const parseMalSeason = (html: string): MalSeasonEntry[] => {
         id,
         title,
         englishTitle: text(one(block, /class="h3_anime_subtitle">([^<]*)</)),
-        cover,
+        // the page's thumbnail is 225x318 and the large spelling is 425x600; jikan outranks every
+        // other source, so the small one replaced a better cover after the page had already drawn it
+        cover: malLargeImage(cover),
         synopsis: text(one(block, /class="preline">([\s\S]*?)<\/p>/)),
         // js-score carries `N/A` for an unrated title, which must not become NaN
         score: num(one(block, /class="js-score">([\d.]+)</)),

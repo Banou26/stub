@@ -8,6 +8,7 @@ import type { Media as GQLMedia } from '../../generated/schema/types.generated'
 
 import { MediaType } from '../../generated/graphql'
 import { makeMedia } from '../utils'
+import { malLargeImage } from '../mal-image'
 
 export const origin = 'offline'
 
@@ -42,7 +43,8 @@ const COVER_PREFIX = 'https://cdn.myanimelist.net/images/anime/'
  * and 326 of those serve a real image once asked for the url they actually name. The rest are
  * livechart and anime-planet, which decline a hotlink; those at least now fail honestly.
  */
-const coverUrl = (picture: string) => picture.startsWith('http') ? picture : `${COVER_PREFIX}${picture}`
+const coverUrl = (picture: string) =>
+  malLargeImage(picture.startsWith('http') ? picture : `${COVER_PREFIX}${picture}`)
 
 export type ManamiRecord = {
   t: string

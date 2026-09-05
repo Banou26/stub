@@ -42,8 +42,10 @@ describe('seasonMedia', () => {
     expect(media.handles.find(handle => handle.node.origin === 'anilist')?.node.id).toBe('142051')
   })
 
-  test('restores the cover prefix the build strips', () => {
-    expect(seasonMedia(record())!.covers[0]?.url).toBe('https://cdn.myanimelist.net/images/anime/1234/56789.jpg')
+  // and asks for the LARGE spelling while it is there: the plain one manami stores is 225x318 and the
+  // `l` one is 425x600, measured across six bundle images 2026-09-06
+  test('restores the cover prefix the build strips, at the large size', () => {
+    expect(seasonMedia(record())!.covers[0]?.url).toBe('https://cdn.myanimelist.net/images/anime/1234/56789l.jpg')
   })
 
   // 380 of 874 rows in the shipped bundle are this case: manami took the picture from somewhere that
