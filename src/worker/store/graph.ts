@@ -25,6 +25,15 @@ export type Graph<T> = {
   alias(alias: string, key: string): void
   resolve(key: string): string
   link(a: string, b: string, label: string): boolean
+  /** The union-find root of `key` under `label`, or `key` itself when nothing was ever linked to it there. */
+  root(key: string, label: string): string
+  /**
+   * A stable id for the component `key` belongs to under `label`: minted once per component, carried
+   * across unions (the survivor keeps its id; when both sides had one the larger component's wins,
+   * ties to the lexicographically smaller root, and the other id becomes an alias of the survivor),
+   * and dropped by `clear`. Every id is aliased to its component so `resolve(id)` finds the cluster.
+   */
+  componentId(key: string, label: string): string
   edge(from: string, to: string, label: string): boolean
   targets(key: string, label: string): ReadonlySet<string>
   /** Every node with an edge INTO `key` under `label`: the reverse of `targets`. */
@@ -111,6 +120,12 @@ export function createGraph<T>(): Graph<T> {
   const reversed = new Map<string, Map<string, Set<string>>>()
 
   const unionFinds = new Map<string, UnionFind>()
+
+  // `${label}\u0000${root}` -> uuid. The alias table only ever receives these uuids as keys, never a
+  // uri: `has` and `get` fall through aliases, so a uri alias would make `upsertMedia`'s novelty test
+  // and its pendingClaims gate report a row that was never stored.
+  const componentIds = new Map<string, string>()
+  const componentKey = (label: string, root: string) => `${label}\u0000${root}`
 
   const nodeLabels = new Map<string, Set<string>>()
   const labelIndex = new Map<string, Set<string>>()
@@ -202,6 +217,42 @@ export function createGraph<T>(): Graph<T> {
 
   function resolve(key: string): string { return aliases.get(key) ?? key }
 
+  function root(key: string, label: string): string {
+    const uf = unionFinds.get(label)
+    return uf?.has(key) ? uf.find(key) : key
+  }
+
+  function componentId(key: string, label: string): string {
+    const componentRoot = root(key, label)
+    const slot = componentKey(label, componentRoot)
+    let id = componentIds.get(slot)
+    if (!id) {
+      id = crypto.randomUUID()
+      componentIds.set(slot, id)
+      aliases.set(id, componentRoot)
+    }
+    return id
+  }
+
+  // Which id survives a union is decided here by SIZE and then by the smaller root, never by the
+  // union-find's own choice of root: that one follows rank and argument order, so an id that followed
+  // it would change with the order two sources happen to land in.
+  function carryComponentId(label: string, rootA: string, sizeA: number, rootB: string, sizeB: number, survivor: string): void {
+    const keyA = componentKey(label, rootA)
+    const keyB = componentKey(label, rootB)
+    const idA = componentIds.get(keyA)
+    const idB = componentIds.get(keyB)
+    componentIds.delete(keyA)
+    componentIds.delete(keyB)
+    if (!idA && !idB) return
+    const kept = idA && idB
+      ? (sizeA > sizeB || (sizeA === sizeB && rootA < rootB) ? idA : idB)
+      : (idA ?? idB)!
+    componentIds.set(componentKey(label, survivor), kept)
+    aliases.set(kept, survivor)
+    if (idA && idB) aliases.set(kept === idA ? idB : idA, survivor)
+  }
+
   function link(a: string, b: string, label: string): boolean {
     const adj = adjFor(undirected, label)
     const isNew = !adj.get(a)?.has(b)
@@ -209,7 +260,15 @@ export function createGraph<T>(): Graph<T> {
     if (!adj.has(b)) adj.set(b, new Set())
     adj.get(a)!.add(b)
     adj.get(b)!.add(a)
-    ufFor(label).union(a, b)
+    const uf = ufFor(label)
+    const rootA = uf.find(a)
+    const rootB = uf.find(b)
+    if (rootA !== rootB) {
+      const sizeA = uf.component(rootA).size
+      const sizeB = uf.component(rootB).size
+      uf.union(a, b)
+      carryComponentId(label, rootA, sizeA, rootB, sizeB, uf.find(a))
+    }
     return isNew
   }
 
@@ -290,6 +349,7 @@ export function createGraph<T>(): Graph<T> {
     directed.clear()
     reversed.clear()
     unionFinds.clear()
+    componentIds.clear()
     nodeLabels.clear()
     // the LABELS survive, because `registerLabel` runs once at module load in ./db.ts and a cleared
     // registry would silently drop the merge functions that `set` looks up. Only their contents go.
@@ -299,7 +359,7 @@ export function createGraph<T>(): Graph<T> {
   return {
     set, registerLabel, setLabel, labeled,
     get, has, alias, resolve,
-    link, edge, targets, sources,
+    link, root, componentId, edge, targets, sources,
     cluster, clusters, clear,
   }
 }

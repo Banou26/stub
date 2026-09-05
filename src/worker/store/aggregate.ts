@@ -1,7 +1,7 @@
 import type { Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
 import type { Media, Episode } from './types'
 import { getRoutePath, Route } from '../../router/path'
-import { findPartOfMedia, registerAggregatedId } from './db'
+import { findPartOfMedia, graph, IDENTITY_LABELS } from './db'
 import { isRoutableUri } from '../../utils/uri'
 
 // keep ANIME plus exactly ONE of MOVIE/SERIES (highest-scored source's format wins), so a merged media never lands in both the Movies and the Series listing
@@ -154,14 +154,11 @@ function episodeToGQL(episode: Episode): GQLEpisode {
   }
 }
 
-// keyed by the smallest uri, which is stable across cluster growth
-const clusterIdCache = new Map<string, string>()
-
-function getStableClusterId(uris: string[]): string {
-  const key = [...uris].sort()[0]!
-  if (!clusterIdCache.has(key)) clusterIdCache.set(key, crypto.randomUUID())
-  return clusterIdCache.get(key)!
-}
+// Keyed on the union-find ROOT of the cluster's identity space, never on a member: the smallest uri
+// moved whenever a member sorting before it landed, and the container cut in `findAllAggregatedMedia`
+// handed the same cluster a second id. Any member maps to the same root.
+const clusterId = (uris: string[], space: keyof typeof IDENTITY_LABELS) =>
+  graph.componentId(uris[0]!, IDENTITY_LABELS[space])
 
 function buildAggregatedIdentity(uris: string[]): { uri: string; id: string } {
   // one handle carrying a ',' or a '/' would split the list or the route path, and the media's whole watch page becomes unreachable
@@ -177,8 +174,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
   if (medias.length === 0) throw new Error('Cannot aggregate empty cluster')
   if (medias.length === 1) {
     const m = medias[0]!
-    const _id = getStableClusterId([m.uri])
-    registerAggregatedId(_id, m.uri)
+    const _id = clusterId([m.uri], scopeOfCluster(medias))
     return {
       ...mediaToGQL(m),
       _id,
@@ -189,8 +185,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
 
   const sorted = [...medias].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
   const { uri, id } = buildAggregatedIdentity(medias.map(m => m.uri))
-  const _id = getStableClusterId(medias.map(m => m.uri))
-  registerAggregatedId(_id, medias[0]!.uri)
+  const _id = clusterId(medias.map(m => m.uri), scopeOfCluster(medias))
 
   const merged = sorted.reduce<Partial<GQLMedia>>((acc, media) => {
     const gql = mediaToGQL(media)
@@ -250,14 +245,14 @@ export function aggregateEpisode(episodes: Episode[], locationOrigin: string): G
     const e = episodes[0]!
     return {
       ...episodeToGQL(e),
-      _id: getStableClusterId([e.uri]),
+      _id: clusterId([e.uri], 'EPISODE'),
       handles: [sameAsEpisodeHandle(episodeToGQL(e))],
     }
   }
 
   const sorted = [...episodes].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
   const { uri, id } = buildAggregatedIdentity(episodes.map(e => e.uri))
-  const _id = getStableClusterId(episodes.map(e => e.uri))
+  const _id = clusterId(episodes.map(e => e.uri), 'EPISODE')
 
   const merged = sorted.reduce<Partial<GQLEpisode>>((acc, episode) => {
     const gql = episodeToGQL(episode)

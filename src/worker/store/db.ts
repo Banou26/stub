@@ -45,6 +45,9 @@ const EPISODE_SAME_AS = 'episode:same_as'
 const EPISODE_PART_OF = 'episode:part_of'
 const HAS_EPISODE = 'has_episode'
 
+/** The identity space labels, for the one reader outside this file that needs them: the cluster id in ./aggregate.ts. */
+export const IDENTITY_LABELS = { RUN: MEDIA_SAME_AS, CONTAINER: CONTAINER_SAME_AS, EPISODE: EPISODE_SAME_AS } as const
+
 /**
  * PART_OF rides a DIRECTED edge, which unions nothing.
  *
@@ -224,7 +227,9 @@ export function linkPartOfPairs(pairs: [string, string][]): boolean {
 
 export async function findAggregatedMedia(uri: string): Promise<Media[]> {
   const resolved = graph.resolve(uri)
-  if (!graph.has(resolved)) return []
+  // the alias table carries EPISODE cluster ids too (`componentId` aliases every id it mints), and an
+  // episode node is never a media whatever a caller typed the id as
+  if (!graph.labeled('media').has(resolved)) return []
   // a container row clusters in the container space, so its own SAME_AS siblings are what comes back
   return graph.cluster(resolved, sameAsLabelFor(scopeOf(resolved))) as Media[]
 }
@@ -320,14 +325,6 @@ export async function findMediaForPage(uri: string): Promise<Media[]> {
     }
   }
   return preferAttachedRun(cluster)
-}
-
-export function registerAggregatedId(id: string, uri: string) {
-  graph.alias(id, uri)
-}
-
-export async function findMediaByAggregatedId(aggregatedId: string): Promise<Media[]> {
-  return findAggregatedMedia(aggregatedId)
 }
 
 /**
