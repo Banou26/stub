@@ -268,11 +268,14 @@ describe('counts', () => {
   })
 
   test('the current season below its floor fails even when the total passes', () => {
-    const index = manyRuns(300, 120)
-    index.seasons = { [SEASON]: index.runs.slice(0, 119).map(r => r.key), '2026-FALL': index.runs.slice(119).map(r => r.key) }
-    for (const r of index.runs.slice(119)) r.season = '2026-FALL'
+    // the walk takes the current season only, so a run in another bucket means the bundle placed it
+    // there; the total can still clear its floor while the season the home page paints does not
+    const under = SEED_MIN_CURRENT_SEASON_RUNS - 1
+    const index = manyRuns(SEED_MIN_RUNS + 20, SEED_MIN_RUNS + 20)
+    index.seasons = { [SEASON]: index.runs.slice(0, under).map(r => r.key), '2026-FALL': index.runs.slice(under).map(r => r.key) }
+    for (const r of index.runs.slice(under)) r.season = '2026-FALL'
     const { failures, stats } = checkSeedCounts(index, validEpisodes(index), options)
-    expect(stats.perSeason).toEqual({ [SEASON]: 119, '2026-FALL': 181 })
+    expect(stats.perSeason).toEqual({ [SEASON]: under, '2026-FALL': SEED_MIN_RUNS + 20 - under })
     expect(failures.some(f => f.includes(SEASON) && f.includes(String(SEED_MIN_CURRENT_SEASON_RUNS)))).toBe(true)
   })
 

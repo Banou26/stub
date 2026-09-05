@@ -60,9 +60,9 @@ import { fileURLToPath } from 'node:url'
 // sets for exactly this.
 import {
   SEED_EPISODES_ASSET, SEED_INDEX_ASSET, SEED_MANIFEST_ASSET, SEED_VERSION,
-  compareSeasonKeys, nextSeason, runKeyOf, seasonKeyOf,
+  compareSeasonKeys, runKeyOf, seasonKeyOf,
 } from '../src/sources/offline/seed.ts'
-import { buildSeed } from '../src/sources/offline/seed-build.ts'
+import { buildSeed, rankByPopularity } from '../src/sources/offline/seed-build.ts'
 import { dropWeldedRuns, gateSeed } from '../src/sources/offline/seed-gate.ts'
 import { animeSeasonOf } from '../src/sources/season.ts'
 
@@ -82,6 +82,15 @@ const ORIGIN = String(flag('origin', 'http://localhost:4599')).replace(/\/+$/, '
 const TABS = Math.max(1, Number(flag('tabs', 4)))
 const MAX_MINUTES = Number(flag('max-minutes', 45))
 const LIMIT = flag('limit', undefined) === undefined ? Infinity : Number(flag('limit'))
+/**
+ * How many of the season's runs the walk opens, most popular first.
+ *
+ * The owner's scope: the top 50 to 100 of a season is where a precise identity and an episode list are
+ * worth a page load; everything below it stays on the bundle. The first three walks took all 306 runs
+ * the manami buckets named, which is the proxy load that made this the wrong shape, and the tail is
+ * also what failed the gate: an unpopular run carries no streaming id and a thin identity.
+ */
+const TOP = Math.max(1, Number(flag('top', 100)))
 const OUT_DIR = resolve(ROOT, String(flag('out', 'dist-seed')))
 const RUNS_PER_LOAD = Math.max(1, Number(flag('runs-per-load', 1)))
 
@@ -277,28 +286,6 @@ const seasonsByUri = raw => {
 }
 
 /** The manami buckets for the current and the next season, read from the generated bundle. */
-const bucketItems = async (currentKey, nextKey) => {
-  const bundle = (await import('../src/generated/anime-seasons.ts')).default
-  const items = []
-  for (const key of [currentKey, nextKey]) {
-    const records = bundle.seasons?.[key]
-    if (!records) {
-      log(`WARNING: the bundle (${bundle.tag}) carries no ${key}; run npm run data:build`)
-      continue
-    }
-    for (const record of records) {
-      const candidates = []
-      if (record.ml) candidates.push(`mal:${record.ml}`)
-      if (record.al) candidates.push(`anilist:${record.al}`)
-      if (record.ku) candidates.push(`kitsu:${record.ku}`)
-      // A record with no catalogue id has no identity to borrow, exactly as `seasonMedia` skips it.
-      const runKey = runKeyOf(candidates)
-      if (!runKey) continue
-      items.push({ candidates: [`offline:${runKey}`, ...candidates], season: key })
-    }
-  }
-  return items
-}
 
 /* --------------------------------------------------------------------------------------------- */
 /* the walk                                                                                        */
@@ -319,8 +306,7 @@ const main = async () => {
   const startedAt = Date.now()
   const deadline = startedAt + MAX_MINUTES * 60_000
   const currentSeasonKey = seasonKeyOf(animeSeasonOf())
-  const nextSeasonKey = seasonKeyOf(nextSeason(animeSeasonOf()))
-  log(`origin ${ORIGIN}, tabs ${TABS}, seasons ${currentSeasonKey} and ${nextSeasonKey}`)
+  log(`origin ${ORIGIN}, tabs ${TABS}, season ${currentSeasonKey}, top ${TOP} by popularity`)
 
   const browser = await chromium.launch({
     headless: true,
@@ -378,23 +364,21 @@ const main = async () => {
     await homeContext.close()
 
     /* the work list: the manami buckets, plus whatever the live listing knows that they predate */
-    const listingItems = homeClusters.map(cluster => ({
+    // the listing IS the season, and it is the only place a real popularity exists: manami ships none.
+    // The next season is deliberately not walked; it has no popularity yet and the bundle covers it.
+    const listingItems = rankByPopularity(homeClusters, TOP).map(cluster => ({
       candidates: cluster.members.map(member => member.uri),
       season: currentSeasonKey,
     }))
-    const raw = [...(await bucketItems(currentSeasonKey, nextSeasonKey)), ...listingItems]
-    seasonByUri = seasonsByUri(raw)
-    items = mergeItems(raw)
-    log(`work list: ${items.length} runs (${listingItems.length} from the listing)`)
-    // `--limit` takes an evenly spaced sample rather than a prefix, and that is deliberate. The list
-    // is sorted by navigation uri for determinism, so its head is entirely `anilist:` items: the runs
-    // the manami bundle does NOT carry. A prefix would therefore never walk an `offline:` navigation
-    // uri, which is the path the uncapped run mostly takes, so a capped run would measure a
-    // population the real one does not have. The stride is fixed, so a re-run walks the same subset.
+    seasonByUri = seasonsByUri(listingItems)
+    items = mergeItems(listingItems)
+    log(`work list: ${items.length} runs, the season's most popular ${TOP} of ${homeClusters.length} listed`)
+    // `--limit` cuts further for a smoke run, evenly spaced so it samples the ranked list rather than
+    // its head alone
     if (Number.isFinite(LIMIT) && items.length > LIMIT) {
       const stride = items.length / LIMIT
       items = Array.from({ length: LIMIT }, (_, at) => items[Math.floor(at * stride)])
-      log(`--limit ${LIMIT}: walking ${items.length} evenly spaced across the list`)
+      log(`--limit ${LIMIT}: walking ${items.length} evenly spaced across the ranked list`)
     }
 
     /* the walk itself: one goto per run, TABS independent stores, paced */

@@ -12,8 +12,12 @@ import {
   SEED_URLS_PER_EPISODE, SEED_VERSION, keyUri,
 } from './seed.ts'
 
-export const SEED_MIN_RUNS = 250
-export const SEED_MIN_CURRENT_SEASON_RUNS = 120
+// The walk is the season's most popular `--top` (100 by default), not its whole 306, so these are
+// floors on a deliberately small set: enough that a broken walk still refuses, low enough that a
+// short season or a capped smoke run publishes. The first three walks used 250 and 120 against an
+// uncapped list.
+export const SEED_MIN_RUNS = 40
+export const SEED_MIN_CURRENT_SEASON_RUNS = 30
 export const SEED_MIN_STREAMING_SHARE = 0.25
 export const SEED_MIN_MEDIAN_IDENTITY = 4
 export const SEED_MAX_INDEX_BYTES = 2_000_000

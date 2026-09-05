@@ -18,7 +18,7 @@ name: Season seed
 
 on:
   schedule:
-    - cron: '17 4 * * *'
+    - cron: '17 4 15 1,4,7,10 *'
   workflow_dispatch:
 
 permissions:
@@ -102,7 +102,7 @@ jobs:
         run: |
           set -eo pipefail
           mkdir -p dist-seed
-          node scripts/export-season-seed.mjs --origin "$SEED_ORIGIN" --tabs 4 --max-minutes 60 2>&1 | tee dist-seed/export.log
+          node scripts/export-season-seed.mjs --origin "$SEED_ORIGIN" --tabs 4 --top 100 --max-minutes 30 2>&1 | tee dist-seed/export.log
 
       # Printed on EVERY run and independent of the gate. Zero cr, nf and jw ids across hundreds of
       # runs is not an error anywhere in the walk: every run simply comes back small, with no
