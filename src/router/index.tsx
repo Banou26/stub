@@ -5,7 +5,7 @@ import { Redirect, Router, Switch, Route as WRoute, useParams } from 'wouter'
 import { useEffect } from 'preact/hooks'
 
 import { getRouterRoutePath, Route } from './path'
-import { searchPath } from './search/params'
+import { legacySearchTerm, searchPath } from './search/params'
 import { pluginHref } from '../plugin-url'
 import Header from '../components/header'
 import Footer from '../components/footer'
@@ -17,14 +17,6 @@ import Privacy from './privacy'
 import Settings from './settings'
 import Watch from './watch'
 
-// wouter has already run the path through decodeURI by the time it reaches useParams, so a term the
-// old build encoded can arrive here as a bare `%`, and `decodeURIComponent` throws URIError on that.
-// Nothing in this tree is an error boundary, so an old bookmark would render a blank app.
-const decodeTerm = (query: string | undefined): string => {
-  if (!query) return ''
-  try { return decodeURIComponent(query) } catch { return query }
-}
-
 /**
  * `/search/<term>`, the search route until the filters moved into the query string.
  *
@@ -33,7 +25,7 @@ const decodeTerm = (query: string | undefined): string => {
  */
 const LegacySearch = () => {
   const { query } = useParams<RouteParams['SEARCH_LEGACY']>()
-  return <Redirect to={searchPath({ query: decodeTerm(query) })} replace/>
+  return <Redirect to={searchPath({ query: legacySearchTerm(query) })} replace/>
 }
 
 const LoginCallback = () => {

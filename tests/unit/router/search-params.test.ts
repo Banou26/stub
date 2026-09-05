@@ -3,8 +3,8 @@ import { describe, expect, test } from 'vitest'
 import { MediaCategory, MediaSeason, MediaStatus, MediaType } from '../../../src/generated/graphql'
 import {
   EMPTY_SEARCH_FILTERS, KNOWN_GENRES, YEAR_MIN,
-  hasSearchFilters, isKnownGenre, namesAQuery, parseSearchFilters, searchFiltersQuery, searchHeading,
-  searchPath, seasonValue, yearMax,
+  hasSearchFilters, isKnownGenre, legacySearchTerm, namesAQuery, parseSearchFilters, searchFiltersQuery,
+  searchHeading, searchPath, seasonValue, yearMax,
 } from '../../../src/router/search/params'
 import type { SearchFilters } from '../../../src/router/search/params'
 import { writePluginUris } from '../../../src/utils/plugin-links'
@@ -193,5 +193,21 @@ describe('searchHeading', () => {
 
   test('free text wins, because it is what the reader typed', () => {
     expect(of({ query: 'frieren', season: MediaSeason.Summer, year: 2026 })).toBe('Results for \u201Cfrieren\u201D')
+  })
+})
+
+describe('legacySearchTerm', () => {
+  test('an ordinary term decodes', () => {
+    expect(legacySearchTerm('mushoku%20tensei')).toBe('mushoku tensei')
+    expect(legacySearchTerm(undefined)).toBe('')
+  })
+
+  test('a term wouter already decoded does not crash the app', () => {
+    // /search/100%25 reaches useParams as '100%', and decodeURIComponent throws URIError on that. The
+    // router has no error boundary, so an old bookmark rendered a blank page rather than a search.
+    for (const raw of ['100%', '%', 'a%zz', '%E0%A4%A']) {
+      expect(() => legacySearchTerm(raw), raw).not.toThrow()
+      expect(legacySearchTerm(raw), raw).toBe(raw)
+    }
   })
 })

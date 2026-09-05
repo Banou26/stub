@@ -90,6 +90,16 @@ describe('which season the walk asks for', () => {
     expect(search.urls.join(' ')).toContain('filter%5Btext%5D=mushoku%20tensei')
   })
 
+  // The mirror of the above. A year alone used to reach the clock branch and spend the whole 8 request
+  // walk on the wrong season, whose rows the store's filter then dropped, so the cost was invisible.
+  test('a year named with no season is never answered with the clock season either', async () => {
+    const { urls, ctx } = rig()
+    const nodes = await pageNodes({ status: 'RELEASING', seasonYear: 2019 }, ctx)
+
+    expect(seasonUrls(urls), 'no walk at all, not a walk of the wrong season').toEqual([])
+    expect(nodes).toEqual([])
+  })
+
   // The paging spelling is season-paging.test.ts' subject; what is pinned here is that the named-season
   // path reaches it, over the whole walk, rather than growing a second url builder.
   test('the named-season walk pages by number and size, once per page', async () => {

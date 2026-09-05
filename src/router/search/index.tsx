@@ -226,7 +226,7 @@ const Search = () => {
   }, [term, search])
 
   const input = useMemo(() => variablesFor(filters), [filters])
-  const [{ data, operation }] = useSubscription({
+  const [{ data }] = useSubscription({
     query: SEARCH_MEDIA_PAGE,
     variables: { input, shortDescriptionInput: { count: 1 } },
     pause: !asked,
@@ -242,13 +242,28 @@ const Search = () => {
   // Only the rows this filter set actually asked for.
   //
   // urql preserves the previous result across a change of variables, deliberately, and a paused
-  // subscription keeps its last one too. Both leave the page holding cards that belong to the filters
-  // the reader just left, under a heading and a chip row that now describe different ones, for as long
-  // as the new query takes to answer. `operation` is urql's own record of which request the current
-  // state is for, so comparing it to the request we would make now is the exact test.
-  const answered = operation?.variables?.input
-  const fresh = asked && answered !== undefined && JSON.stringify(answered) === JSON.stringify(input)
-  const nodes = fresh ? data?.mediaPage?.nodes ?? [] : []
+  // subscription keeps its last one too, so the page can hold the cards of the filters the reader just
+  // left under a heading and a chip row describing different ones.
+  //
+  // MEASURED, because it was first reported as lasting tens of seconds and does not: instrumenting the
+  // render showed the old page surviving exactly THREE renders after a season pick, holding its 215
+  // nodes while the url already read WINTER, before urql emits the new subscription's first result.
+  // So this is a brief flash of the wrong season, not a stuck page. It is guarded because the guard is
+  // free, and NOT covered by scripts/check-search-filters.mjs, which cannot sample a window that
+  // short: a check there passed identically with the guard deleted, which makes it decoration.
+  //
+  // `result.operation` is NOT the test it looks like. It becomes the new operation the moment the
+  // subscription restarts, while `data` is still the old page, so comparing it passes in exactly the
+  // window the cards are stale. What identifies the data is the input that was current when `data`
+  // last CHANGED, which is what these refs hold. `input` is memoized on the filters, so identity is
+  // the comparison.
+  const shownData = useRef(data)
+  const shownInput = useRef(input)
+  if (data !== shownData.current) {
+    shownData.current = data
+    shownInput.current = input
+  }
+  const nodes = asked && shownInput.current === input ? data?.mediaPage?.nodes ?? [] : []
 
   /**
    * The two label vocabularies the picker offers, and which url key each one writes to.

@@ -217,6 +217,20 @@ export const searchFiltersQuery = (filters: Partial<SearchFilters>): string => {
 }
 
 /**
+ * A search term out of the OLD `/search/<term>` path segment.
+ *
+ * wouter has already run the path through `decodeURI` by the time it reaches `useParams`, so a term
+ * the previous build encoded can arrive as a bare `%`, and `decodeURIComponent` throws `URIError` on
+ * that. Nothing in the router tree is an error boundary, so an old bookmark rendered a blank app. It
+ * lives here rather than beside the route because router/index.tsx reaches preact and cannot be
+ * imported under vitest, and a redirect that can crash the app is not something to leave unpinned.
+ */
+export const legacySearchTerm = (query: string | undefined): string => {
+  if (!query) return ''
+  try { return decodeURIComponent(query) } catch { return query }
+}
+
+/**
  * The href for a filter set.
  *
  * Lives here rather than in ../path.ts on purpose: that module is imported by the WORKER (through

@@ -180,6 +180,19 @@ test('a season named with no year answers nothing rather than the clock season',
   expect(yielded[0]!.mediaPage.nodes).toEqual([])
 })
 
+// The other half of the pair, and it went unpinned when the season half was written. A year alone
+// with status RELEASING fell straight through to the clock: asking for 2019 answered the 2026 bucket,
+// 147 rows every one stamped SUMMER 2026. `filter.ts` is strict on seasonYear so none of them reached
+// the page, which is exactly why nothing caught it: the substitution was invisible rather than absent,
+// and the rows still went into the store to be offered to the fuzzy merge.
+test('a year named with no season answers nothing rather than the clock season', async () => {
+  for (const input of [{ status: 'RELEASING', seasonYear: 2019 }, { status: 'RELEASING', seasonYear: 2026 }]) {
+    const yielded = await pagesFor(input)
+    expect(yielded).toHaveLength(1)
+    expect(yielded[0]!.mediaPage.nodes, JSON.stringify(input)).toEqual([])
+  }
+})
+
 test('status RELEASING with no season named still answers the clock season', async () => {
   const { seasons } = await bundle()
   const current = seasonPage(seasons[CURRENT_SEASON] ?? [], CURRENT_SEASON)

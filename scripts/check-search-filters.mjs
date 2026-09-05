@@ -131,6 +131,19 @@ const run = async () => {
     .catch(() => bad('the format is gone', page.url()))
   check(params(page).get('season') === linked?.get('season'), 'and the season is not', page.url())
 
+  console.log('\nthe page field is not overwritten under the reader')
+  // The header's box holds its own 350 ms timer in a ref that survives a focus change, so a keystroke
+  // there can land while the page's own field has focus.
+  await page.goto(`${ORIGIN}/search?season=SUMMER&year=2026`, { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2_000)
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill('one')
+  const own = page.getByRole('textbox', { name: 'Search by title', exact: true })
+  await own.click()
+  await own.fill('slowly typed')
+  await page.waitForTimeout(2_000)
+  const held = await own.inputValue()
+  check(held === 'slowly typed', 'what the reader typed is still there', JSON.stringify(held))
+
   console.log('\nthe old /search/<term> address still lands somewhere')
   await page.goto(`${ORIGIN}/search/mushoku`, { waitUntil: 'domcontentloaded' })
   await page.waitForURL(/\/search\?/, { timeout: 10_000 }).catch(() => {})
