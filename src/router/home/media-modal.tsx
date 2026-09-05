@@ -20,6 +20,7 @@ import TextEllipsis from '../../components/text-ellipsis'
 import Collapsible from '../../components/collapsible'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
+import { nextThumbnail } from '../../utils/thumbnails'
 import { getRoutePath, Route } from '../path'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
@@ -409,7 +410,9 @@ const Episode = (
   { episode, index, mediaUri, isMovie }:
   { episode: NonNullable<GetMediaModalSubscription['media']>['episodes'][number], index: number, mediaUri: string, isMovie?: boolean }
 ) => {
-  const [thumbnailBroken, setThumbnailBroken] = useState(false)
+  // one thumbnail per source, score first; a host that refuses this viewer must not blank the row
+  const [failedThumbnails, setFailedThumbnails] = useState<ReadonlySet<string>>(() => new Set())
+  const thumbnail = nextThumbnail(episode.thumbnails, failedThumbnails)
   const origins =
     episode.uri
       ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
@@ -472,8 +475,8 @@ const Episode = (
       }
       {isMovie ? undefined : <div className="number">{episode.episodeNumber}</div>}
       {
-        episode.thumbnails?.at(0)?.url && !thumbnailBroken
-          ? <img className="thumbnail" src={episode.thumbnails.at(0)?.url} onError={() => setThumbnailBroken(true)}></img>
+        thumbnail
+          ? <img className="thumbnail" src={thumbnail} onError={() => setFailedThumbnails(prev => new Set(prev).add(thumbnail))}></img>
           : <div className="thumbnail"></div>
       }
       {
