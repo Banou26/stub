@@ -128,3 +128,32 @@ test('a seasonal row publishes the member count the build attached', () => {
 test('a row the count did not cover publishes none, rather than a zero that outranks nothing', () => {
   expect(seasonMedia({ t: 'Obscure Short', ty: 'TV', p: '', ml: 1 })?.popularity).toBeUndefined()
 })
+
+// The homepage hero renders nothing until a live source answers, because `theaterCandidates` keeps
+// only media carrying BOTH titles and shortDescriptions, and manami has no synopsis of any kind. A
+// trailer is preferred rather than required, so a synopsis alone is what makes the hero paint cold.
+// Both come from the same jikan seasonal call the member counts already use.
+test('a seasonal row publishes the synopsis the hero selects on', () => {
+  const media = seasonMedia({ t: 'Mushoku Tensei III', ty: 'TV', p: '', ml: 59193, sy: 'Third season of Mushoku Tensei.' })
+
+  expect(media?.shortDescriptions?.[0]?.shortDescription).toBe('Third season of Mushoku Tensei.')
+  expect(media?.shortDescriptions?.[0]?.language, 'the hero reads the first entry, so it needs a shape').toBe('en')
+})
+
+test('a seasonal row publishes a youtube trailer when the build found one', () => {
+  const media = seasonMedia({ t: 'Show', ty: 'TV', p: '', ml: 1, sy: 'A show.', tr: 'ODxfIvSgWuo' })
+
+  expect(media?.trailers?.[0]).toMatchObject({
+    uri: 'yt:ODxfIvSgWuo',
+    origin: 'yt',
+    id: 'ODxfIvSgWuo',
+    url: 'https://www.youtube.com/watch?v=ODxfIvSgWuo',
+  })
+})
+
+test('a row with neither publishes neither, so the hero simply does not pick it', () => {
+  const media = seasonMedia({ t: 'Obscure', ty: 'TV', p: '', ml: 2 })
+
+  expect(media?.shortDescriptions).toEqual([])
+  expect(media?.trailers).toEqual([])
+})

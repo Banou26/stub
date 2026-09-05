@@ -55,6 +55,12 @@ export type ManamiRecord = {
   sc?: number
   /** MyAnimeList's member count for the current season, attached at build time; see scripts/season-order.mjs */
   pop?: number
+  /** MyAnimeList's synopsis, current season only: what the homepage hero selects on */
+  sy?: string
+  /** a youtube id for the hero's trailer, current season only */
+  tr?: string
+  /** that trailer's thumbnail */
+  th?: string
 }
 
 /** `2026-SUMMER`, the key the generated bundle is keyed on. `animeSeasonOf` answers in lower case. */
@@ -128,6 +134,25 @@ export const seasonMedia = (record: ManamiRecord): GQLMedia | undefined => {
     covers: record.p ? [{ url: coverUrl(record.p), score: SCORE }] : [],
     episodeCount: record.ep || undefined,
     popularity: record.pop || undefined,
+    // The hero keeps only media carrying titles AND shortDescriptions (utils/theater.ts), and manami
+    // has no synopsis, so the homepage rendered an empty hero until a live source answered. Both this
+    // and the trailer ride the same build-time jikan call as the member counts, current season only.
+    ...record.sy
+      ? {
+        descriptions: [{ language: 'en', description: record.sy, score: SCORE }],
+        shortDescriptions: [{ language: 'en', shortDescription: record.sy, score: SCORE }],
+      }
+      : {},
+    trailers: record.tr
+      ? [{
+        uri: `yt:${record.tr}`,
+        origin: 'yt',
+        id: record.tr,
+        url: `https://www.youtube.com/watch?v=${record.tr}`,
+        language: 'en',
+        ...record.th ? { thumbnail: record.th } : {},
+      }]
+      : [],
     // manami scores on 1 to 10, the schema's averageScore is 0 to 100.
     averageScore: record.sc ? Math.round(record.sc * 10) : undefined,
   })

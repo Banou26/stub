@@ -313,7 +313,8 @@ const catalogIds = entry => Object.fromEntries(CATALOGS.map(({ key, host }) => [
  * same code as the fresh path rather than a second one that could rot untested.
  */
 /**
- * MyAnimeList member counts for the season the clock is in, keyed by mal id, or an empty map.
+ * What jikan knows about the season the clock is in, keyed by mal id, or an empty map: the member
+ * count the listing sorts on, plus the synopsis and trailer the homepage hero selects on.
  *
  * This is the popularity the home page is meant to sort on, and it is the ONLY place it exists at
  * build time: manami ships no popularity, and its 1 to 10 rating is a different thing that puts three
@@ -390,13 +391,23 @@ const seasonPopularity = async () => {
       continue
     }
     for (const entry of body?.data ?? []) {
-      if (entry?.mal_id && typeof entry.members === 'number') counts.set(entry.mal_id, entry.members)
+      if (!entry?.mal_id) continue
+      // the youtube id the hero's trailer needs: `youtube_id` is usually null on this endpoint while
+      // `embed_url` carries the id, which is the same pair sources/jikan/extractor.ts already reads
+      const youtube = entry.trailer?.youtube_id
+        ?? entry.trailer?.embed_url?.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/)?.[1]
+      counts.set(entry.mal_id, {
+        members: typeof entry.members === 'number' ? entry.members : undefined,
+        synopsis: typeof entry.synopsis === 'string' && entry.synopsis ? entry.synopsis : undefined,
+        youtube: youtube || undefined,
+        thumbnail: entry.trailer?.images?.image_url || undefined,
+      })
     }
     if (!body?.pagination?.has_next_page) break
     await new Promise(resolve => setTimeout(resolve, JIKAN_PAUSE_MS))
   }
-  if (!counts.size) log(`myanimelist member counts unavailable${missed.length ? ` (page ${missed[0]})` : ''}; the season falls back to its rating order`)
-  else log(`myanimelist member counts: ${counts.size} of the current season${missed.length ? `, ${missed.length} page(s) refused` : ''}`)
+  if (!counts.size) log(`myanimelist season data unavailable${missed.length ? ` (page ${missed[0]})` : ''}; the season falls back to its rating order and the hero waits for a live source`)
+  else log(`myanimelist season data: ${counts.size} entries, ${[...counts.values()].filter(entry => entry.synopsis).length} with a synopsis, ${[...counts.values()].filter(entry => entry.youtube).length} with a trailer${missed.length ? `, ${missed.length} page(s) refused` : ''}`)
   return counts
 }
 
@@ -431,9 +442,12 @@ const buildExtract = (entries, meta, tag, popularity = new Map()) => {
     if (ids.anilist) record.al = ids.anilist
     if (ids.kitsu) record.ku = ids.kitsu
     if (entry.score?.arithmeticMean) record.sc = Math.round(entry.score.arithmeticMean * 100) / 100
-    // MyAnimeList's member count: the popularity the listing sorts on, current season only
-    const members = ids.mal ? popularity.get(ids.mal) : undefined
-    if (members) record.pop = members
+    // the current season's jikan data: the count the listing sorts on, and what the hero renders
+    const live = ids.mal ? popularity.get(ids.mal) : undefined
+    if (live?.members) record.pop = live.members
+    if (live?.synopsis) record.sy = live.synopsis
+    if (live?.youtube) record.tr = live.youtube
+    if (live?.thumbnail) record.th = live.thumbnail
     ;(seasons[`${season.year}-${season.season}`] ??= []).push(record)
   }
 
