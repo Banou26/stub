@@ -73,7 +73,7 @@ export const streamPointers = (urls: (string | undefined | null)[]): StreamPoint
  *             checked live 2026-09-04, kitsu:44544 renders `cr:GMTE00199304`, the film's real series
  *             id, which reaches the page from a source that reads the link correctly.
  *   hulu:*    no kitsu film in the corpus carries a hulu link at all, and `hulu.com/series/<uuid>` is
- *             the same uuid for two seasons, pinned in `justwatch/id.test.ts`.
+ *             the same uuid for two seasons, pinned in `tests/unit/sources/justwatch/id.test.ts`.
  *   hbo:*     inverts the convention. `play.hbomax.com/show/<uuid>` was 17 of 17 FILMS with 17
  *             distinct ids, six separate Batman films among them, while /video/watch/<uuid> was 28 of
  *             28 SHOWS. Nothing to act on: kitsu links no hbomax url in 3000 records.

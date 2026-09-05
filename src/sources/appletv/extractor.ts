@@ -94,7 +94,7 @@ const normalizeMedia = (content: AppleItem, season?: AppleSeason): GQLMedia => {
   // seasons together: profileCluster derives its `years` set from every member's startDate and
   // fuzzyMergeMediaClusters buckets by year, so a season 3 media stamped with the show's date drops
   // the whole cluster into season 1's bucket where a shared title is enough. That is the bug just
-  // fixed in tvmaze and tmdb, and worker/store/season-separation.test.ts pins it.
+  // fixed in tvmaze and tmdb, and tests/unit/worker/store/season-separation.test.ts pins it.
   const releaseDate = scoped ? season!.releaseDate : content.releaseDate
   // The bare id of a Show is the id every season of it shares, so a row minted from it is the show,
   // and the store keeps a CONTAINER out of every run's identity space. A film and a season-scoped row

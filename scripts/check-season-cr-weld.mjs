@@ -15,7 +15,7 @@
  * WHAT THIS CHECK HAS NOT MANAGED TO DO, as of 2026-09-04: reach the JustWatch crunchyroll path at all
  * on the deployed site. The pre-fix build rendered 2 cr handles over 82 clusters and no shared one, and
  * opening two `jw:<node>-<season>` uris directly rendered no crunchyroll url on either. So the weld
- * this file looks for is pinned by src/sources/justwatch/extractor.test.ts, which reproduces it
+ * this file looks for is pinned by tests/unit/sources/justwatch/extractor.test.ts, which reproduces it
  * exactly, and is UNMEASURED in production. Do not read a clean run here as evidence of the fix.
  *
  * Headless and muted on purpose: it reads the DOM and nothing else, so it has no business taking a

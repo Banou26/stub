@@ -14,8 +14,11 @@ const detectChromePath = (): string | undefined => {
 }
 
 export default defineConfig({
-  // Scoped to tests/, or playwright also collects the vitest specs under src/worker and dies trying to run describe() from the wrong runner
+  // Both suites live under tests/, so the split is by suffix: .spec.ts is the browser rig, .test.ts
+  // is vitest. testMatch is what enforces it; without it playwright collects tests/unit and dies
+  // trying to run describe() from the wrong runner.
   testDir: './tests',
+  testMatch: '**/*.spec.ts',
   use: {
     launchOptions: {
       executablePath: detectChromePath(),

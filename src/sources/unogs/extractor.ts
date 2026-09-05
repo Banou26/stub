@@ -200,7 +200,7 @@ const normalizeMovieAsEpisode = (media: GQLMedia): GQLEpisode =>
   makeMovieEpisode(media, { url: `https://www.netflix.com/watch/${media.id}`, score: SCORE })
 
 /**
- * Exported for ./extractor.test.ts, which drives it directly; nothing else imports it.
+ * Exported for tests/unit/sources/unogs/extractor.test.ts, which drives it directly; nothing else imports it.
  *
  * `requireSeason` is what makes a refusal actually refuse.
  *
@@ -384,7 +384,7 @@ const similarSeason = async (input: SimilarMediaInput, ctx: ExtractorServerConte
 /**
  * The Netflix media a cluster may link to: its season as a RUN, or the whole title as a CONTAINER.
  *
- * Exported for ./extractor.test.ts. A film is itself, since it has no seasons to be confused between.
+ * Exported for tests/unit/sources/unogs/extractor.test.ts. A film is itself, since it has no seasons to be confused between.
  * The container carries no episode list: every media in this store is one run, and a show's episodes
  * flattened across seasons collide on episodeNumber (crunchyroll/extractor.ts records the measurement).
  * `vtype` and `year` are the search payload's when the caller has it, which saves the detail request.
