@@ -45,13 +45,15 @@ import { execFileSync } from 'node:child_process'
 const args = process.argv.slice(2)
 const expectAt = args.indexOf('--expect')
 const EXPECT = expectAt >= 0 ? args[expectAt + 1] : undefined
-const positional = args.filter((arg, index) => arg !== '--expect' && index !== expectAt + 1)
+// without --expect, expectAt is -1 and `index !== expectAt + 1` would drop the first positional argument
+const positional = args.filter((arg, index) => arg !== '--expect' && !(expectAt >= 0 && index === expectAt + 1))
 const ORIGIN = positional[0] ?? 'https://anime.fkn.app'
 const URI = positional[1] ?? 'ag:(anilist:178789,kitsu:49002,mal:59193,offline:mal-59193)'
 const chrome = process.env.CHROME_PATH ?? execFileSync('which', ['google-chrome-stable'], { encoding: 'utf-8' }).trim()
 
 const POLL_MS = 1000
 const DEADLINE_MS = 60_000
+const HEADER_SETTLE_MS = 15_000
 
 // the hosts of PACKAGE_ORIGIN_MAP (src/sources/justwatch/id.ts), keyed the way a rendered url reads;
 // a copy of check-part-of-links.mjs's table, the two scripts are separate files by design
@@ -159,11 +161,22 @@ try {
       }
 
       // the media header's origin row; the Episode rows use the same class names one level deeper,
-      // which the child combinators exclude
-      const links = await page.evaluate(() =>
+      // which the child combinators exclude. A claimed row lands as a union and the header re-renders
+      // a beat later, so the header is given up to HEADER_SETTLE_MS to show an asked origin before it
+      // is judged: read in the same tick as the terminal line it rendered hulu alone and failed a page
+      // whose crunchyroll link arrived a second later (2026-09-05)
+      const readHeader = () => page.evaluate(() =>
         [...document.querySelectorAll('.modal > .content > .header > .origins > a.origin')].map(a => a.href)
       )
-      const headerOrigins = new Set(links.map(hostOf).map(originOfHost).filter(Boolean))
+      const settleUntil = Date.now() + HEADER_SETTLE_MS
+      let links = await readHeader()
+      let headerOrigins = new Set(links.map(hostOf).map(originOfHost).filter(Boolean))
+      while (Date.now() < settleUntil && ![...parsed.asked.values()].some(ask => headerOrigins.has(ask.origin))) {
+        await page.waitForTimeout(500)
+        parsed = parse(lines)
+        links = await readHeader()
+        headerOrigins = new Set(links.map(hostOf).map(originOfHost).filter(Boolean))
+      }
 
       const similarLines = lines.filter(line => isLine(line.text))
       for (const line of similarLines) {
