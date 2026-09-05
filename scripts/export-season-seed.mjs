@@ -154,7 +154,12 @@ const installRoutes = context =>
 const exportFrom = (page, uris) =>
   page.evaluate(
     list => typeof window.__stubExportStore === 'function'
-      ? window.__stubExportStore(list ? { excludeOrigins: ['offline'], uris: list } : { excludeOrigins: ['offline'] })
+      // offline PASSES THROUGH rather than being excluded: the bundled row is the hub whose handles
+      // bridge mal, anilist and kitsu, so cutting it left singletons and a median identity of 2
+      // (measured 2026-09-05). `?seed=off` is what stops a walk reading its own last publish.
+      ? window.__stubExportStore(list
+        ? { excludeOrigins: [], passThroughOrigins: ['offline'], uris: list }
+        : { excludeOrigins: [], passThroughOrigins: ['offline'] })
       : undefined,
     uris ?? null
   ).catch(() => undefined)

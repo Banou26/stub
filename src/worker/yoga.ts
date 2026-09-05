@@ -51,9 +51,10 @@ export const osraResolvers = {
   unregisterRemoteSource: (pluginUri: string) => unregisterRemoteExtractor(pluginUri),
   // the plugin origins are derived HERE rather than taken from the caller, so a caller cannot decline
   // to exclude them: a plugin's rows are that user's, never the product's.
-  exportStore: (options?: { excludeOrigins?: string[], uris?: string[] }) =>
+  exportStore: (options?: { excludeOrigins?: string[], passThroughOrigins?: string[], uris?: string[] }) =>
     exportStore({
       ...options,
+      passThroughOrigins: options?.passThroughOrigins ?? [],
       excludeOrigins: [
         ...(options?.excludeOrigins ?? []),
         ...extractors.filter(entry => entry.pluginUri).map(entry => entry.extractor.origin),

@@ -116,3 +116,52 @@ test('a claim that waited for its row is recorded as asserted when it lands', as
   await insert(described('jw:ts9'))
   expect(await clustersOf(), 'the replayed claim counts').toEqual([['anilist:1', 'kitsu:2'], ['jw:ts9', 'mal:3']])
 })
+
+// Measured on the deployed site, 2026-09-05: `offline:mal-59193` exported as a five member cluster
+// including offline, and as NOTHING with the offline origin excluded, on four runs out of four. The
+// bundled offline row is the HUB that carries the SAME_AS handles bridging mal, anilist and kitsu;
+// the three catalogues do not each assert one another, so cutting the hub leaves singletons and the
+// walk shipped a median identity of 2 where the store held 4 or 5.
+//
+// Two different refusals were being spelled one way. A PLUGIN is untrusted, so its bridge must not
+// create identity: do not walk through it. The bundled offline row is first-party and deterministic,
+// and the seed it must not read back is already refused by `?seed=off`: walk through it, publish none
+// of it.
+test('a pass-through origin bridges its cluster and is not exported, while an excluded one still splits', async () => {
+  await insert(
+    // a real bundled row, titles and all: a bare one is a placeholder the store never stores, so it
+    // would carry no bridge to test
+    makeMedia({
+      origin: 'offline', id: 'mal-1',
+      titles: [{ language: 'en', title: 'Bundled Show', score: 0.2 }],
+      handles: [handleNode('mal:1'), handleNode('anilist:2'), handleNode('kitsu:3')],
+    }),
+    described('mal:1'), described('anilist:2'), described('kitsu:3'),
+    makeMedia({ origin: 'anilist', id: '2', handles: [handleNode('cr:G1-S1')] }),
+    described('cr:G1-S1'),
+  )
+
+  const bridged = await exportStore({ excludeOrigins: [], passThroughOrigins: ['offline'] })
+  const cut = await exportStore({ excludeOrigins: ['offline'] })
+
+  expect(bridged.clusters.map(memberUris), 'the hub bridges, and publishes nothing of itself')
+    .toEqual([['anilist:2', 'cr:G1-S1', 'kitsu:3', 'mal:1']])
+  expect(cut.clusters.map(memberUris).sort(), 'an untrusted origin still splits what only it asserted')
+    .toEqual([['anilist:2', 'cr:G1-S1'], ['kitsu:3'], ['mal:1']])
+})
+
+test('a run asked for by its pass-through uri still comes back', async () => {
+  await insert(
+    makeMedia({
+      origin: 'offline', id: 'mal-9',
+      titles: [{ language: 'en', title: 'Bundled Nine', score: 0.2 }],
+      handles: [handleNode('mal:9'), handleNode('anilist:9')],
+    }),
+    described('mal:9'), described('anilist:9'),
+  )
+
+  const found = await exportStore({ excludeOrigins: [], passThroughOrigins: ['offline'], uris: ['offline:mal-9'] })
+
+  expect(found.clusters.map(memberUris), 'the walk keys on offline uris, so asking by one must answer')
+    .toEqual([['anilist:9', 'mal:9']])
+})
