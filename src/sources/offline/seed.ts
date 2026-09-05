@@ -78,13 +78,19 @@ export type SeedLink = { origin: string, url: string }
 /**
  * One run's identity and its STATIC metadata.
  *
- * Deliberately absent, and it is the same list ./normalize.ts withholds from the bundle plus the
- * reason that list is not optional here: `status`, `startDate`, `endDate` and `popularity`. Every
- * seeded field is minted at the offline SCORE of 0.2, and justwatch, appletv, paramount and unogs
- * score exactly 0.2 too, so at a tie the seed wins on arrival order and the seed exists to arrive
- * first. A seeded `startDate` also OPENS justwatch's evidence gate (it refuses to link without a
- * date), so a walk up to a day old would supply both axes of a permanent SAME_AS before any live
- * source has answered.
+ * Deliberately absent: `status`, `startDate` and `endDate`, the same fields ./normalize.ts withholds
+ * from the bundle. Every seeded field is minted at the offline SCORE of 0.2, and justwatch, appletv,
+ * paramount and unogs score exactly 0.2 too, so at a tie the seed wins on arrival order and the seed
+ * exists to arrive first. A seeded `startDate` also OPENS justwatch's evidence gate (it refuses to
+ * link without a date), so a walk up to a day old would supply both axes of a permanent SAME_AS
+ * before any live source has answered.
+ *
+ * `popularity` IS carried, and it is the reason the seed exists. The home listing sorts on it with a
+ * stable sort, so a seed without it paints in bundle order, which is manami's rating: three shows
+ * tied at a perfect 10 from a handful of votes ahead of Mushoku Tensei (measured, and screenshotted
+ * by the owner, 2026-09-05). It is not in the class above: the 0.2 sources supply no popularity at
+ * all, every source that does outranks 0.2 (anilist 0.8, kitsu 0.3), and the seeded number is
+ * harvested from those same sources, so winning a tie would restate their own value.
  */
 export type SeedRun = {
   /** `mal-59193`, from `runKeyOf` over the identity uris */
@@ -104,6 +110,8 @@ export type SeedRun = {
   categories: MediaCategory[]
   episodeCount: number | null
   averageScore: number | null
+  /** what the LIVE listing reported, which is the only real popularity in the store: manami has none */
+  popularity: number | null
   isAdult: boolean | null
 }
 

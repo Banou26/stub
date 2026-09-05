@@ -21,6 +21,7 @@ const handle = (uri: string, scope: SeedHandle['scope'] = 'RUN'): SeedHandle => 
 const run = (key: string, identityUris: string[], season: string | null, overrides: Partial<SeedRun> = {}): SeedRun => ({
   key,
   season,
+  popularity: null,
   identity: identityUris.sort().map(uri => handle(uri)),
   containers: [handle('cr:SERIES', 'CONTAINER')],
   titles: [{ language: 'en', title: `Show ${key}` }],

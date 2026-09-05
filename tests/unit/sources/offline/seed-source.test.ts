@@ -50,6 +50,7 @@ const handle = (uri: string, scope: 'RUN' | 'CONTAINER' = 'RUN'): SeedHandle => 
 const seedRun = (overrides: Partial<SeedRun> = {}): SeedRun => ({
   key: RUN_KEY,
   season: CURRENT_SEASON,
+  popularity: null,
   identity: [handle(ANILIST_URI), handle(MAL_URI)],
   containers: [],
   titles: [{ language: 'en', title: 'Seeded title' }],

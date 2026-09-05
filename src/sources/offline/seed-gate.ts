@@ -183,6 +183,7 @@ const checkRun = (value: unknown, position: number, seen: SeenUris, failures: st
   }
   if (!isNumberOrNull(run.episodeCount)) failures.push(`${where}: episodeCount is neither a number nor null`)
   if (!isNumberOrNull(run.averageScore)) failures.push(`${where}: averageScore is neither a number nor null`)
+  if (!isNumberOrNull(run.popularity)) failures.push(`${where}: popularity is neither a number nor null`)
   if (run.isAdult !== null && typeof run.isAdult !== 'boolean') failures.push(`${where}: isAdult is neither a boolean nor null`)
   if (run.season !== null && !(isText(run.season) && SEED_SEASON_KEY.test(run.season))) {
     failures.push(`${where}: season ${JSON.stringify(run.season)} is not a season key`)

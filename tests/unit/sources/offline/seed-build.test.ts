@@ -167,16 +167,19 @@ describe('metadata', () => {
     expect(run.averageScore).toBeNull()
   })
 
-  // The four the bundle withholds, and the seed with it: at the offline score they would beat a live
-  // source that scores the same 0.2 on arrival order, and a seeded startDate opens justwatch's gate.
-  test('status, startDate, endDate and popularity are not published at all', () => {
+  // Three the bundle withholds and the seed with it: at the offline score they would beat a live
+  // source scoring the same 0.2 on arrival order, and a seeded startDate opens justwatch's gate.
+  // POPULARITY is published, and is the reason the seed exists: the listing sorts on it, so a seed
+  // without it paints in bundle order. No 0.2 source supplies one, so there is no tie to steal.
+  test('status, startDate and endDate are not published, and popularity is', () => {
     const { index } = buildSeed([snapshot(cluster([
       row('anilist:1', { score: 0.9, status: 'RELEASING', startDate: '2026-07-04', endDate: '2026-09-20', popularity: 5000 }),
     ]))], meta())
     expect(Object.keys(index.runs[0]!).sort()).toEqual([
       'averageScore', 'banners', 'categories', 'containers', 'covers', 'episodeCount', 'identity',
-      'isAdult', 'key', 'season', 'titles', 'type',
+      'isAdult', 'key', 'popularity', 'season', 'titles', 'type',
     ])
+    expect(index.runs[0]!.popularity, 'taken from the live row that reported it').toBe(5000)
   })
 
   test('categories are ANIME plus the highest-scored format only', () => {

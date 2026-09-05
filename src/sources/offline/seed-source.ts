@@ -207,6 +207,7 @@ export const seedMedia = (run: SeedRun, episodes?: readonly SeedEpisode[]): GQLM
     categories: run.categories,
     episodeCount: run.episodeCount,
     averageScore: run.averageScore,
+    popularity: run.popularity,
     isAdult: run.isAdult,
     episodes: (episodes ?? []).map(episode => seedEpisodeRow(run, episode)),
   })
