@@ -6,7 +6,7 @@
 // Driven through the real `media` subscription so the request context travels the way the consumer
 // stamps it: `similarMediaFrom` reads a real hop off `input.context` and descends it with 'anilist' on
 // the chain, instead of counting a context miss.
-import { afterEach, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import { closeRoot, openRoot } from '../../../../src/worker/request-context'
 import { resolvers } from '../../../../src/sources/anilist/extractor'
@@ -288,4 +288,53 @@ test('an input naming nothing this source can browse yields nothing and asks not
     expect(value).toBeUndefined()
   }
   expect(requests).toEqual([])
+})
+
+// Three fields the search page's card and list modes lead with, all of them already inside the query
+// AniList was answering, all of them dropped on the floor by the normalizer until 2026-09-06.
+describe('what the card and list modes read', () => {
+  const AIRING = {
+    ...PAGE_MEDIA,
+    status: 'RELEASING',
+    averageScore: 84,
+    coverImage: { extraLarge: 'https://img.test/cover.jpg', color: '#e4a15d' },
+    airingSchedule: {
+      edges: [
+        { node: { airingAt: Date.parse('2026-09-13T15:30:00Z') / 1000, episode: 12 } },
+        { node: { airingAt: Date.parse('2026-08-30T15:30:00Z') / 1000, episode: 10 } },
+        { node: { airingAt: Date.parse('2026-09-06T15:30:00Z') / 1000, episode: 11 } },
+      ],
+    },
+  }
+
+  afterEach(() => { vi.useRealTimers() })
+
+  test('the next airing is the soonest episode still ahead, never the first in the list', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-09-06T12:00:00Z'))
+
+    const [node] = await browsedNodes([AIRING])
+
+    expect(node.nextAiringEpisode).toEqual({
+      episodeNumber: 11,
+      airingAt: new Date('2026-09-06T15:30:00Z').toUTCString(),
+    })
+  })
+
+  test('a run with nothing left scheduled carries no next airing', async () => {
+    const [node] = await browsedNodes([PAGE_MEDIA])
+    expect(node.nextAiringEpisode).toBeUndefined()
+  })
+
+  // AniList is the ONLY source that publishes a cover colour, and the card and row tint every chip
+  // with it, so losing it here is losing it everywhere.
+  test('the cover carries anilist own average colour', async () => {
+    const [node] = await browsedNodes([AIRING])
+    expect(node.covers[0].color).toBe('#e4a15d')
+  })
+
+  test('averageScore stays the percentage anilist publishes', async () => {
+    const [node] = await browsedNodes([AIRING])
+    expect(node.averageScore).toBe(84)
+  })
 })

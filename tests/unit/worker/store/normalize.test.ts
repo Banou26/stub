@@ -77,3 +77,11 @@ test('aggregateMedia over a cluster reads every member', () => {
   expect(aggregateMedia([row('anilist:108465', 'RUN'), row('cr:G24H1N3MP', 'CONTAINER')], 'https://x').scope).toBe('RUN')
   expect(aggregateMedia([row('cr:G24H1N3MP', 'CONTAINER'), row('tvmaze:52279', 'CONTAINER')], 'https://x').scope).toBe('CONTAINER')
 })
+
+// The third of the three edits a new field needs. The other two are pinned in aggregate-fields.test.ts;
+// this is the one that decides whether the field ever reaches the store at all.
+test('normalizeToStoreMedia carries the next airing through, and spells absence as null', () => {
+  const airing = { episodeNumber: 11, airingAt: 'Sun, 06 Sep 2026 15:30:00 GMT' }
+  expect(normalizeToStoreMedia(gql('anilist:1', 'RUN', { nextAiringEpisode: airing })).nextAiringEpisode).toEqual(airing)
+  expect(normalizeToStoreMedia(gql('anilist:1', 'RUN')).nextAiringEpisode).toBeNull()
+})

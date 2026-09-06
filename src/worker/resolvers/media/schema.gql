@@ -157,6 +157,14 @@ type Media {
   endDate: Date
   isAdult: Boolean
   episodeCount: Int
+  """
+  The soonest episode a source has scheduled that has not aired yet, or null.
+
+  Derived from AniList's airing schedule, which was already fetched for `startDate`, so it costs no
+  request. Null means "nobody scheduled anything ahead of now", which covers a finished run and a
+  source that publishes no schedule alike: it is not a promise that the run has ended.
+  """
+  nextAiringEpisode: MediaAiringEpisode
   """The broadcast season this run aired in, as the source named it."""
   season: MediaSeason
   """
@@ -230,6 +238,13 @@ type MediaTrailer {
   url: String
   language: String
   thumbnail: String
+}
+
+type MediaAiringEpisode {
+  """Which episode of the run this is, as the source numbers it."""
+  episodeNumber: Int!
+  """When it airs."""
+  airingAt: Date!
 }
 
 type MediaCover {

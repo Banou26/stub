@@ -102,3 +102,23 @@ test('genres and tags dedupe case-insensitively, keeping the highest-scored spel
   expect(aggregated.genres).toEqual(['Sci-Fi', 'Comedy'])
   expect(aggregated.tags).toEqual(['Time Skip'])
 })
+
+// The three-edit rule this file opens with, applied to the field the search page's card and list modes
+// lead with. Only AniList publishes a schedule, and it is NOT the highest-scored source in a cluster
+// jikan also answered, so a field won by the top source alone would lose it on exactly the media that
+// have one.
+test('the next airing is carried through, from whichever source has one', () => {
+  const airing = { episodeNumber: 11, airingAt: 'Sun, 06 Sep 2026 15:30:00 GMT' }
+
+  const alone = aggregateMedia([row('anilist:1', { nextAiringEpisode: airing })], 'https://x')
+  expect(alone.nextAiringEpisode).toEqual(airing)
+
+  const jikan = row('mal:1', { score: 0.9, nextAiringEpisode: null })
+  const anilist = row('anilist:1', { score: 0.8, nextAiringEpisode: airing })
+  expect(aggregateMedia([jikan, anilist], 'https://x').nextAiringEpisode).toEqual(airing)
+})
+
+test('a cluster nobody scheduled anything for carries none', () => {
+  const aggregated = aggregateMedia([row('mal:1', { score: 0.9 }), row('anilist:1', { score: 0.8 })], 'https://x')
+  expect(aggregated.nextAiringEpisode ?? null).toBeNull()
+})

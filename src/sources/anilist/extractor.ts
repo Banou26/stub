@@ -1,5 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import { airedDate } from '../aired-date'
+import { nextAiringEpisode } from '../next-airing'
+import { percentScore } from '../average-score'
 import type { Resolvers, Media as GQLMedia, MediaPageInput, RequestContext } from '../../generated/schema/types.generated'
 import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
@@ -393,7 +395,8 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ...malHandle ? [malHandle] : []
     ],
     score: SCORE,
-    averageScore: media.averageScore,
+    averageScore: percentScore(media.averageScore, 100),
+    nextAiringEpisode: nextAiringEpisode(media.airingSchedule),
     descriptions:
       media.description
         ? [{ language: 'en', description: media.description, score: SCORE }]
@@ -408,7 +411,9 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ...media.title?.native ? [{ language: 'jp', title: media.title.native, score: SCORE }] : []
     ],
     covers: [
-      ...media.coverImage?.extraLarge ? [{ language: 'jp', url: media.coverImage.extraLarge, score: SCORE }] : []
+      ...media.coverImage?.extraLarge
+        ? [{ language: 'jp', url: media.coverImage.extraLarge, color: media.coverImage.color ?? undefined, score: SCORE }]
+        : []
     ],
     episodeCount: media.episodes,
     popularity: media.popularity,

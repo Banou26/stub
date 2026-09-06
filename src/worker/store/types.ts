@@ -41,6 +41,9 @@ export type MediaScope = typeof mediaScopeEnum[number]
 export type Title = { language: string; title: string; score?: number | null }
 export type Description = { language: string; description: string; score?: number | null }
 export type ShortDescription = { language: string; shortDescription: string; score?: number | null }
+/** An episode a source has scheduled and that has not aired yet. */
+export type AiringEpisode = { episodeNumber: number; airingAt: string }
+
 export type Cover = { language?: string | null; url: string; height?: number | null; width?: number | null; color?: string | null; score?: number | null }
 export type Banner = { language?: string | null; url: string; height?: number | null; width?: number | null; color?: string | null; score?: number | null }
 export type Trailer = { uri: string; origin: string; id: string; url?: string | null; language?: string | null; thumbnail?: string | null; score?: number | null }
@@ -67,6 +70,7 @@ export type Media = {
   endDate: string | null
   isAdult: boolean | null
   episodeCount: number | null
+  nextAiringEpisode: AiringEpisode | null
   season: MediaSeason | null
   seasonYear: number | null
   genres: string[]
