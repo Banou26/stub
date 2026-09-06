@@ -9,6 +9,10 @@
 //
 //   STUB_ORIGIN=http://localhost:4560 node scripts/check-party-plugin-playback.mjs
 //
+// READ THE LAST LINE, NOT THE EXIT CODE, when running this under xvfb-run: that wrapper exits 1
+// whatever happened (measured on this machine, see agent conventions/lessons/verification.md), so a
+// run that printed `all good` still reports failure to anything gating on the status.
+//
 // Both contexts ACCEPT the source the link offers before anything else: a `?plugin=` url only opens
 // an "Add this source?" prompt, so a run that ignores it has no plugin and no player.
 //
@@ -43,7 +47,9 @@ const until = async (read, want, timeout = 60_000, every = 500) => {
   const started = Date.now()
   let last
   while (Date.now() - started < timeout) {
-    last = await read().catch(() => undefined)
+    // Wrapped rather than called bare: a `read` that answers synchronously (reading a url, say) has
+    // no `.catch`, and this threw the moment a run first got far enough to use one.
+    last = await Promise.resolve().then(read).catch(() => undefined)
     if (want(last)) return last
     await new Promise(resolve => setTimeout(resolve, every))
   }
@@ -75,11 +81,17 @@ const widget = page => page.getByRole('button', { name: /Watch together|Hosting|
  */
 const addTheSource = async page => {
   const add = page.getByRole('button', { name: 'Add source', exact: true })
+  // WAITED FOR, not counted on arrival. The prompt is rendered after the page decides the link offers
+  // a source, which is a moment after the navigation resolves: a version of this that asked for the
+  // count straight away always saw zero, returned "no prompt", never clicked, and left every run with
+  // no plugin, no player and a `RIG BLIND` verdict about playback that had nothing to do with
+  // playback (2026-09-07).
+  await add.waitFor({ timeout: 30_000 }).catch(() => {})
   if (!await add.count()) return false
   await add.click()
   // gone means FKN took it; still there means it failed and the dialog says so
   await until(() => add.count(), count => count === 0, 60_000)
-  return true
+  return !(await add.count())
 }
 
 const run = async () => {
@@ -112,18 +124,46 @@ const run = async () => {
   await host.keyboard.press('Escape')
 
   await host.goto(`${ORIGIN}${WATCH}?plugin=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
-  await addTheSource(host)
+  check(await addTheSource(host), 'the host accepted the source the link offers')
   const hostVideo = await until(() => videoOf(host), video => video && video.ready >= 2, 180_000, 1_000)
   check(Boolean(hostVideo), 'the host’s embed has a video with data', JSON.stringify(hostVideo))
-  if (!hostVideo) { console.log('\nRIG BLIND: the host never got a player, so nothing can be synced'); await browser.close(); process.exit(2) }
+  if (!hostVideo) {
+    // Say WHY, because "no player" has several causes that want different responses and the run knows
+    // which one it hit. The chain itself is fine: driving this same release by hand on 2026-09-07 took
+    // about a minute of downloading before a video element had data, and then played through
+    // (agent projects/stub.md). So a bare "blind" here has sent somebody looking for a code fault that
+    // was not there, twice.
+    console.log('\nRIG BLIND: the host never got a player, so nothing can be synced')
+    console.log(`  frames: ${JSON.stringify(host.frames().map(frame => frame.url().slice(0, 70)))}`)
+    const embed = embedOf(host)
+    if (!embed) console.log('  no ripple embed frame at all: the source package never mounted, so look at the plugin, not at playback')
+    else {
+      const said = await embed.evaluate(() => document.body.innerText.replace(/\s+/g, ' ').slice(0, 200)).catch(error => `unreadable: ${error}`)
+      console.log(`  the embed says: ${said}`)
+      console.log('  "Downloading" with peers means the swarm is fine and this run simply did not wait long enough')
+      console.log('  no peers, or stuck at metadata, means the swarm and not the code')
+    }
+    await browser.close()
+    process.exit(2)
+  }
   const hostPlaying = await until(() => videoOf(host), video => video && !video.paused && video.time > 1, 60_000, 1_000)
   check(Boolean(hostPlaying), 'and it is playing', JSON.stringify(hostPlaying))
 
   console.log('\nthe guest joins and lands on the same release')
+  // THE GUEST INSTALLS THE SOURCE FIRST, which is not a detail of the rig but a fact about the
+  // product: a party invite is `/party#<invite>` and carries no `?plugin=`, so a follower is never
+  // offered the host's source. A follower who does not already have it gets the watch page and no
+  // player at all. This check is about playback SYNC, so it puts the guest in the position of
+  // somebody who already had the source, and the gap itself is recorded in agent projects/stub.md.
+  await guest.goto(`${ORIGIN}${WATCH}?plugin=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
+  check(await addTheSource(guest), 'the guest has the source before it joins')
   await guest.goto(link, { waitUntil: 'domcontentloaded' })
   const landed = await until(() => new URL(guest.url()).pathname, path => path.startsWith('/watch/'), 60_000)
   check(landed === WATCH, 'the guest is on the host’s watch page', landed)
-  await addTheSource(guest)
+  // No second prompt: the source was accepted before the join, and FKN remembers it for this
+  // context. One appearing here would mean the first acceptance did not take.
+  const promptAgain = guest.getByRole('button', { name: 'Add source', exact: true })
+  check((await promptAgain.count()) === 0, 'and needs no second prompt after joining')
   const guestVideo = await until(() => videoOf(guest), video => video && video.ready >= 2, 180_000, 1_000)
   check(Boolean(guestVideo), 'the guest’s embed has a video with data', JSON.stringify(guestVideo))
   if (!guestVideo) { console.log('\nRIG BLIND: the guest never got a player'); await browser.close(); process.exit(2) }
