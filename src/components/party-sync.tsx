@@ -108,6 +108,14 @@ const PartySync = () => {
       for (const event of TAKEOVER_EVENTS) document.removeEventListener(event, takeOver)
     }
 
+    // A host at the very top needs no chasing: the top of a page is the top whatever loads next, so one
+    // placement settles it. Without this the loop below spins for its whole budget on the common case
+    // of a host who has not scrolled, and on a page with nothing to scroll it never sees room appear.
+    if (y === 0) {
+      scrollTo(0)
+      return release
+    }
+
     const place = () => {
       // Waiting on the page to STOP GROWING, not on the fraction to match. The fraction matches
       // immediately and always, because the line above just set it: a first attempt at this stopped
