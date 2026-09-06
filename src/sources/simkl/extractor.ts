@@ -3,6 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaCategory
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
+import { percentScore } from '../average-score'
 
 const SCORE = 0.3
 const API = 'https://api.simkl.com'
@@ -152,7 +153,7 @@ const normalizeSearch = (entry: SimklSearchEntry): GQLMedia | undefined => {
     score: SCORE,
     titles: buildTitles(entry.title),
     covers: img(poster(entry.poster), SCORE),
-    averageScore: rating(entry.ratings),
+    averageScore: percentScore(rating(entry.ratings), 10),
   })
 }
 
@@ -171,7 +172,7 @@ const normalizeDetail = (detail: SimklDetail, id: string, type: SimklType): GQLM
     covers: img(poster(detail.poster), SCORE),
     banners: img(fanart(detail.fanart), SCORE),
     startDate: detail.first_aired || undefined,
-    averageScore: rating(detail.ratings),
+    averageScore: percentScore(rating(detail.ratings), 10),
   })
 }
 

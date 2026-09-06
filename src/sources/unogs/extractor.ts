@@ -3,6 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope, S
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch } from '../utils'
 import { pickSimilarSeason, type SeasonCandidate } from '../similar'
+import { percentScore } from '../average-score'
 
 const SCORE = 0.2
 
@@ -159,7 +160,7 @@ const normalizeTitle = (title: UnogsTitle, bgImages?: UnogsBgImages): GQLMedia =
     ...desc(title.synopsis ? decode(title.synopsis) : undefined, SCORE),
     covers, banners,
     startDate: title.year ? `${title.year}-01-01` : undefined,
-    averageScore: title.imdbrating ?? undefined
+    averageScore: percentScore(title.imdbrating, 10)
   })
 }
 

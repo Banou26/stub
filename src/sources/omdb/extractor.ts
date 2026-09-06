@@ -3,6 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope } 
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img } from '../utils'
+import { percentScore } from '../average-score'
 
 const SCORE = 0.3
 
@@ -55,7 +56,7 @@ const normalizeMedia = (result: OmdbResult & { Plot?: string, imdbRating?: strin
     titles: result.Title ? [{ language: 'en', title: result.Title, score: SCORE }] : [],
     ...desc(na(result.Plot), SCORE),
     covers: img(na(result.Poster), SCORE),
-    averageScore: rating ? Number(rating) : undefined,
+    averageScore: percentScore(rating, 10),
     startDate: year ? `${year}-01-01` : undefined,
   })
 }

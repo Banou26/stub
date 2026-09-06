@@ -119,7 +119,9 @@ const normalizeSeries = (series: SeriesExtended): GQLMedia | undefined => {
     ...desc(series.overview, SCORE),
     covers: img(resolveImage(series.image), SCORE),
     startDate: series.firstAired || undefined,
-    averageScore: series.score != null ? series.score : undefined,
+    // NO averageScore. TheTVDB's `score` is its popularity ranking, a figure in the thousands or
+    // millions, not a rating, and `Media.averageScore` is a 0 to 100 percentage. It was emitted
+    // here unconverted, so any cluster this source won the field on carried a nonsense number.
   })
 }
 

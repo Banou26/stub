@@ -4,6 +4,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, desc, img, getFirstTitle, waitForMedia } from '../utils'
 import { parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from '../season'
+import { percentScore } from '../average-score'
 
 // TMDB (themoviedb.org) - the public API needs a licensed key, so instead we read TMDB's own server-rendered frontend pages through the FKN proxy, whose curl-impersonate gets past their WAF, same approach as the CR/NF sources.
 
@@ -110,7 +111,7 @@ const normalizeMedia = (m: TmdbMedia, seasonNumber?: number): GQLMedia =>
     ...desc(m.overview, SCORE),
     covers: img(m.poster, SCORE),
     banners: img(m.banner, SCORE),
-    averageScore: m.score,
+    averageScore: percentScore(m.score, 10),
     // Only the SHOW-level media may carry the show's year. A season-scoped one must not: TMDB's search
     // page yields one year for the whole series, so stamping it on season 3 puts season 1's year into
     // that cluster's `years` set, and fuzzyMergeMediaClusters buckets by year, so the two seasons meet

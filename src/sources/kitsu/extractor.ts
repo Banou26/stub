@@ -7,6 +7,7 @@ import { makeMedia, makeEpisode, desc, img, partOf, sameAs } from '../utils'
 import { animeSeasonOf, lowerSeason, upperSeason, type AnimeSeason } from '../season'
 import { seasonPageNumbers, seasonQuery } from './season-paging'
 import { mintableAsFilmHandle, streamPointers, type StreamPointer } from './stream-id'
+import { percentScore } from '../average-score'
 
 const SCORE = 0.3
 const API = 'https://kitsu.io/api/edge'
@@ -166,7 +167,7 @@ const normalizeMedia = (resource: KitsuResource<KitsuAnime>, handles: (GQLMedia 
           language: 'en'
         }]
         : [],
-    averageScore: attr.averageRating ? Number(attr.averageRating) : undefined,
+    averageScore: percentScore(attr.averageRating, 100),
   })
 }
 

@@ -149,13 +149,13 @@ const mediaFor = async (fields: Record<string, unknown>) => {
   })
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'mal:1' } }, ctx).next()
-  return value?.media as { genres: string[], tags: string[], season: string | null, seasonYear: number | null }
+  return value?.media as { genres: string[], tags: string[], season: string | null, seasonYear: number | null, averageScore: number | null }
 }
 
 const pageFor = async (input: Record<string, unknown>, ctx: never) => {
   const subscribe = (resolvers.Subscription as any).mediaPage.subscribe
   const { value } = await subscribe(undefined, { input }, ctx).next()
-  return (value?.mediaPage?.nodes ?? []) as { uri: string, season: string | null, seasonYear: number | null }[]
+  return (value?.mediaPage?.nodes ?? []) as { uri: string, season: string | null, seasonYear: number | null, averageScore: number | null }[]
 }
 
 test('genres merge MAL\'s three vocabularies in order, deduplicated, and never explicit_genres', async () => {
@@ -262,4 +262,32 @@ test('the MAL scrape stamps the season it is a page of', async () => {
   expect(nodes.map(node => node.uri)).toEqual(['mal:12345'])
   expect(nodes[0]!.season).toBe(season)
   expect(nodes[0]!.seasonYear).toBe(year)
+})
+
+// MAL rates out of ten and `Media.averageScore` is a 0 to 100 percentage. This source scores 0.9 and
+// AniList 0.8, so wherever both answered the cluster took MAL's number: a 8.34 show read as 8%.
+// Nothing displayed the field until the search page's card and list modes did.
+test('a MAL rating out of ten arrives as a percentage, from the API', async () => {
+  expect((await mediaFor({ score: 8.34 })).averageScore).toBe(83)
+})
+
+test('and from the season scrape, which is the path an API outage leaves', async () => {
+  const card =
+    '<div class="js-anime-category-producer js-anime-type-1">'
+    + '<a href="https://myanimelist.net/anime/12345/Some_Show" class="link-title">Some Show</a>'
+    + '<span class="js-score">6.71</span>'
+    + '</div>'
+  const { ctx } = routed(url =>
+    url.includes('myanimelist.net')
+      ? { ok: true, text: async () => card }
+      : json({ status: 504, message: 'gateway' })
+  )
+
+  const nodes = await pageFor({ status: 'RELEASING' }, ctx)
+
+  expect(nodes[0]!.averageScore).toBe(67)
+})
+
+test('an unrated title carries no score at all, rather than a zero nobody gave it', async () => {
+  expect((await mediaFor({ score: null })).averageScore).toBeUndefined()
 })

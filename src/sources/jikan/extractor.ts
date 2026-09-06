@@ -6,6 +6,7 @@ import { makeMedia, normalizePage, sameAs } from '../utils'
 import { MAL_TYPE, isContinuing, parseMalSeason, type MalSeasonEntry } from './season-scrape'
 import { malLargeImage } from '../mal-image'
 import { lowerSeason, mediaSeasonNow, upperSeason, type AnimeSeason } from '../season'
+import { percentScore } from '../average-score'
 
 export const icon = 'https://cdn.myanimelist.net/images/favicon.ico'
 export const originUrl = 'https://myanimelist.net'
@@ -147,7 +148,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
       ...anizipHandle ? [sameAs(anizipHandle)] : []
     ],
     score: SCORE,
-    averageScore: data.score,
+    averageScore: percentScore(data.score, 10),
     descriptions:
       data.synopsis
         ? [{ language: 'en', description: data.synopsis, score: DESCRIPTION_SCORE }]
@@ -294,7 +295,7 @@ const normalizeScrapedMedia = (entry: MalSeasonEntry): Media => {
     episodeCount: entry.episodes,
     // members, the same figure the API returns as `members`, so both paths sort the same way
     popularity: entry.members,
-    averageScore: entry.score,
+    averageScore: percentScore(entry.score, 10),
     startDate: entry.startDate,
     season,
     seasonYear: year,
