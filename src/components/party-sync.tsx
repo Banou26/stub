@@ -64,6 +64,8 @@ const PartySync = () => {
     if (pendingScroll.current === undefined) return
     const y = pendingScroll.current
     pendingScroll.current = undefined
+    // Jumped, not glided: the page has only just rendered and the guest is being placed where the
+    // party already is. Gliding there would crawl the whole way down a page nobody has seen yet.
     const frame = requestAnimationFrame(() => scrollTo(y))
     return () => cancelAnimationFrame(frame)
   }, [path])
@@ -82,7 +84,9 @@ const PartySync = () => {
       pendingScroll.current = y
       navigate(to)
     } else {
-      scrollTo(y)
+      // already on the right page, so this is a catch up rather than an arrival: worth gliding, and
+      // scroll.ts jumps instead on its own if the party turns out to be a long way off
+      scrollTo(y, { smooth: true })
     }
   }
 
@@ -95,7 +99,9 @@ const PartySync = () => {
         return
       case 'scroll':
         // the host's scroll is for the host's page; a guest elsewhere has nothing of its own to move
-        if (party.hostPath() === path) scrollTo(message.y)
+        // Glided, because this is the one that repeats: the host's position lands twice a second while
+        // they scroll, and jumping to each in turn reads as a stutter rather than as following someone.
+        if (party.hostPath() === path) scrollTo(message.y, { smooth: true })
         return
       case 'state':
         if (!synced.current || replayed) land(message.path, message.y)
