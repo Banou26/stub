@@ -26,6 +26,10 @@ position: relative;
 --card-gutter: 100px;
 & > .title {
   position: relative;
+  /* The section is a flex COLUMN, which blockifies this <a> and stretches it across the viewport,
+     so the heading's box (and its hover and focus ring) ran the full width of the screen for a few
+     words of text. Cross-axis start keeps the box the size of the words in it. */
+  align-self: flex-start;
   margin-left: 10rem;
   font-size: 4rem;
   font-weight: bold;

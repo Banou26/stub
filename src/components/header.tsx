@@ -15,7 +15,10 @@ const style = css`
   top: var(--fkn-inset-top, 0px);
   left: 0;
   right: 0;
-  z-index: 100;
+  /* Above the media modal (1000) on purpose: a follower whose host opened a modal still has to be
+     able to reach the party pill and stop following. Below the fullscreen source players
+     (9999999), which are meant to cover everything. */
+  z-index: 1100;
   /* three tracks rather than a flex row: the search field stays centred on the VIEWPORT whatever the
      wordmark and the action cluster happen to measure, which auto margins on a flex item cannot promise */
   display: grid;

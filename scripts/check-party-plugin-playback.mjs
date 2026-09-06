@@ -9,6 +9,9 @@
 //
 //   STUB_ORIGIN=http://localhost:4560 node scripts/check-party-plugin-playback.mjs
 //
+// Both contexts ACCEPT the source the link offers before anything else: a `?plugin=` url only opens
+// an "Add this source?" prompt, so a run that ignores it has no plugin and no player.
+//
 // The plugin and ripple are the deployed ones (stub.plugins.banou.dev, torrent.fkn.app), because the
 // plugin hardcodes ripple's embed origin and the package loader fetches over HTTPS. So this runs after
 // those two ship, against whichever stub is named. Run it from INSIDE the repo.
@@ -62,6 +65,23 @@ const videoOf = async page => {
 
 const widget = page => page.getByRole('button', { name: /Watch together|Hosting|Following|Joining|Party/ })
 
+/**
+ * Accept the source this link offers, which is what makes the plugin exist at all.
+ *
+ * A `?plugin=` url does not install anything: it OFFERS an invite, and stub renders "Add this
+ * source?" over the page until somebody answers. A run that skipped it got a watch page with no
+ * plugin, no player and nothing to sync, which reads exactly like a broken chain (2026-09-07).
+ * Tolerant of the prompt being absent, since a context that already accepted will not see it.
+ */
+const addTheSource = async page => {
+  const add = page.getByRole('button', { name: 'Add source', exact: true })
+  if (!await add.count()) return false
+  await add.click()
+  // gone means FKN took it; still there means it failed and the dialog says so
+  await until(() => add.count(), count => count === 0, 60_000)
+  return true
+}
+
 const run = async () => {
   const browser = await chromium.launch({
     headless: false,
@@ -92,6 +112,7 @@ const run = async () => {
   await host.keyboard.press('Escape')
 
   await host.goto(`${ORIGIN}${WATCH}?plugin=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
+  await addTheSource(host)
   const hostVideo = await until(() => videoOf(host), video => video && video.ready >= 2, 180_000, 1_000)
   check(Boolean(hostVideo), 'the host’s embed has a video with data', JSON.stringify(hostVideo))
   if (!hostVideo) { console.log('\nRIG BLIND: the host never got a player, so nothing can be synced'); await browser.close(); process.exit(2) }
@@ -102,6 +123,7 @@ const run = async () => {
   await guest.goto(link, { waitUntil: 'domcontentloaded' })
   const landed = await until(() => new URL(guest.url()).pathname, path => path.startsWith('/watch/'), 60_000)
   check(landed === WATCH, 'the guest is on the host’s watch page', landed)
+  await addTheSource(guest)
   const guestVideo = await until(() => videoOf(guest), video => video && video.ready >= 2, 180_000, 1_000)
   check(Boolean(guestVideo), 'the guest’s embed has a video with data', JSON.stringify(guestVideo))
   if (!guestVideo) { console.log('\nRIG BLIND: the guest never got a player'); await browser.close(); process.exit(2) }
