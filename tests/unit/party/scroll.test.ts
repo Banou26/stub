@@ -3,7 +3,7 @@
 // the top. These drive a document where the page and a marked container disagree.
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
-import { MAX_SMOOTH_SCREENS, scrollFraction, scrollTo } from '../../../src/party/scroll'
+import { MAX_SMOOTH_SCREENS, scrollFraction, scrollRoom, scrollTo } from '../../../src/party/scroll'
 
 type Scroll = { top: number, behavior?: ScrollBehavior }
 type Box = { scrollTop: number, scrollHeight: number, clientHeight: number, scrolls: Scroll[], scrollTo: (options: Scroll) => void }
@@ -221,5 +221,29 @@ describe('when asking about motion is what fails', () => {
     vi.stubGlobal('window', { ...window, matchMedia: () => undefined })
     expect(() => scrollTo(0.25, { smooth: true })).not.toThrow()
     expect(modal.scrolls.at(-1)?.behavior).toBe('smooth')
+  })
+})
+
+// A page that has just rendered has no height yet, so every fraction maps to the top. Somebody
+// placing a follower on a fresh page has to tell that apart from a host who is genuinely at the top.
+describe('scrollRoom', () => {
+  test('is zero on a page with nothing to scroll', () => {
+    world({ pageHeight: 900, viewport: 1_000 })
+    expect(scrollRoom()).toBe(0)
+  })
+
+  test('is the page below the fold once there is one', () => {
+    world({ pageHeight: 4_000, viewport: 1_000 })
+    expect(scrollRoom()).toBe(3_000)
+  })
+
+  test('is the marked container\'s when there is one', () => {
+    world({ marked: [box({ scrollHeight: 2_600, clientHeight: 800 })], pageHeight: 40_000, viewport: 1_000 })
+    expect(scrollRoom()).toBe(1_800)
+  })
+
+  test('never goes negative, whatever the box reports', () => {
+    world({ pageHeight: 200, viewport: 1_000 })
+    expect(scrollRoom()).toBe(0)
   })
 })

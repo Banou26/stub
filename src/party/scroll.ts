@@ -26,6 +26,19 @@ export const scroller = (): Element | undefined => {
 
 const fraction = (position: number, room: number) => room > 0 ? Math.min(1, Math.max(0, position / room)) : 0
 
+/**
+ * How far the current box can scroll, in pixels. Zero means there is nowhere to go.
+ *
+ * A page that has just rendered usually reads zero, because its content has not arrived: every
+ * fraction maps to the top until it does. Somebody placing a follower on a fresh page needs to know
+ * the difference between "the host is at the top" and "there is no page yet".
+ */
+export const scrollRoom = (): number => {
+  const element = scroller()
+  if (element) return Math.max(0, element.scrollHeight - element.clientHeight)
+  return Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+}
+
 export const scrollFraction = () => {
   const element = scroller()
   if (element) return fraction(element.scrollTop, element.scrollHeight - element.clientHeight)
