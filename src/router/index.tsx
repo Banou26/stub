@@ -16,6 +16,8 @@ import Legal from './legal'
 import Privacy from './privacy'
 import Settings from './settings'
 import Watch from './watch'
+import Party from './party'
+import PartySync from '../components/party-sync'
 
 /**
  * `/search/<term>`, the search route until the filters moved into the query string.
@@ -62,12 +64,14 @@ const RouterRoot = () => (
           <WRoute path={getRouterRoutePath(Route.PRIVACY)} component={Privacy}/>
           <WRoute path={getRouterRoutePath(Route.SETTINGS)} component={Settings}/>
           <WRoute path={getRouterRoutePath(Route.WATCH)} component={Watch}/>
+          <WRoute path={getRouterRoutePath(Route.PARTY)} component={Party}/>
           <WRoute path={getRouterRoutePath(Route.LOGIN_CALLBACK)} component={LoginCallback}/>
           <WRoute component={() => <div css={notFoundStyle}>404 No page found</div>}/>
         </Switch>
       </div>
       <Footer/>
       <PluginPrompt/>
+      <PartySync/>
     </div>
   </Router>
 )

@@ -2,7 +2,7 @@ import type { RouteParams } from '../path'
 import type { WatchSource } from '../../components/source-selector'
 
 import { css } from '@emotion/react'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { useSubscription } from 'urql'
 import { useLocation, useParams } from 'wouter'
 
@@ -13,6 +13,7 @@ import { gql } from '../../generated'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import PluginPlayer from '../../components/plugin-player'
+import PartyPlayback from '../../components/party-playback'
 import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
@@ -179,6 +180,7 @@ const Watch = () => {
     sourceUri: decodeRouteUri(rawParams.sourceUri),
   }
   const [, navigate] = useLocation()
+  const embedFrame = useRef<HTMLIFrameElement>(null)
 
   const [{ data }] = useSubscription({
     query: GET_WATCH_MEDIA,
@@ -333,6 +335,7 @@ const Watch = () => {
           : embedUrl
           ? (
             <iframe
+              ref={embedFrame}
               src={embedUrl}
               referrerPolicy="no-referrer"
               allow="encrypted-media; autoplay; fullscreen;"
@@ -346,6 +349,8 @@ const Watch = () => {
             />
           )
           : undefined}
+        {/* a plugin's player is the package's own document, and stub has no handle on what plays in it */}
+        <PartyPlayback iframe={embedFrame} src={pluginPlayer && declined !== selectedSourceUri ? undefined : embedUrl}/>
 
         <div className="watch-info">
           <div className="episode-info">

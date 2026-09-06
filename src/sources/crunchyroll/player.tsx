@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 
 import CrunchyrollVideoJSPlayer from './cr-videojs-player'
 import { discoverCrunchyrollTracks, selectCrunchyrollTrack } from './cr-native-controls'
+import { usePlaybackBridge } from '../../party/bridge'
 
 const CRUNCHYROLL_DOMAINS = [
   'crunchyroll.com',
@@ -250,6 +251,7 @@ const CrunchyrollPlayer = ({ url }: PlayerProps) => {
   const [loggingIn, setLoggingIn] = useState(false)
   const [error, setError] = useState<string>()
   const [remoteVideo, setRemoteVideo] = useState<RemoteVideoElement | null>(null)
+  usePlaybackBridge(remoteVideo)
   const [reloadKey, setReloadKey] = useState(0)
   const [attachKey, setAttachKey] = useState(0)
   const [popupOpen, setPopupOpen] = useState(false)

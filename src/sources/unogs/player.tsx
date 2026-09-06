@@ -7,6 +7,7 @@ import { attachFrame, isExtensionExposed } from '@fkn/lib'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import NetflixVideoJSPlayer from './nf-videojs-player'
+import { usePlaybackBridge } from '../../party/bridge'
 
 const NETFLIX_DOMAINS = [
   'netflix.com',
@@ -166,6 +167,7 @@ const NetflixPlayer = ({ url }: PlayerProps) => {
   const [loggedOut, setLoggedOut] = useState(false)
   const [error, setError] = useState<string>()
   const [remoteVideo, setRemoteVideo] = useState<RemoteVideoElement | null>(null)
+  usePlaybackBridge(remoteVideo)
   const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {

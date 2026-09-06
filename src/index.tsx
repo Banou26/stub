@@ -6,6 +6,7 @@ import './worker.ts'
 import './plugins.ts'
 import client from './urql'
 import Router from './router'
+import { party } from './party'
 import './plugin-url.ts'
 import './store-export.ts'
 import { pushKeys } from './utils/keys'
@@ -73,6 +74,9 @@ const style = css`
     display: none !important;
   }
 `
+
+// inside the api's 20 s hold a reload keeps the seat, and the host's at that
+void party.resume()
 
 const root = document.createElement('div')
 root.id = 'stub-root'

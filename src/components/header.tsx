@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { getRouterRoutePath, getRoutePath, Route } from '../router/path'
 import { parseSearchFilters, searchPath } from '../router/search/params'
 import AccountWidget from './account-widget'
+import PartyWidget from './party-widget'
 
 const style = css`
   position: fixed;
@@ -211,6 +212,7 @@ export const Header = () => {
         />
       </form>
       <div className="actions">
+        <PartyWidget/>
         <Link to={getRoutePath(Route.SETTINGS)} className="icon-button" aria-label="Settings" title="Settings">
           <Settings size={20}/>
         </Link>
