@@ -1,4 +1,7 @@
 import type { Resolvers } from './generated/schema/types.generated'
+import type { PlaybackState } from './party/protocol'
+
+export type { PlaybackState }
 
 // Subscription.media, mediaPage and similarMedia subscribe generators are served; the ctx a plugin sees carries exactly one function, `similarMedia`
 
@@ -28,6 +31,18 @@ export type StubSource = {
    * exist.
    */
   play?: (release: { uri: string, url?: string }) => Promise<boolean>
+  /**
+   * Hear what the player `play` put up is doing: every play, pause, seek and rate change, and a
+   * heartbeat every few seconds while it plays. One listener; the next call replaces it.
+   *
+   * Optional and ADDITIVE to stub-source@1, so it needs no new contract tag: a package without it
+   * plays exactly as before and is simply not synced. Stub reads it for watch together, where a host's
+   * player is what every follower's player is made to match. `at` is the PLAYER's clock, whatever
+   * document that player lives in, passed through untouched; stub trusts it only within a bound.
+   */
+  onPlayback?: (listener: (state: PlaybackState) => void) => Promise<void>
+  /** Make the player match `state`. Nothing playing is nothing to do, not an error. */
+  applyPlayback?: (state: PlaybackState) => Promise<void>
 }
 
 /**

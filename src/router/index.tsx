@@ -18,6 +18,8 @@ import Settings from './settings'
 import Watch from './watch'
 import Party from './party'
 import PartySync from '../components/party-sync'
+import PartyCursor from '../components/party-cursor'
+import PartyChat from '../components/party-chat'
 
 /**
  * `/search/<term>`, the search route until the filters moved into the query string.
@@ -72,6 +74,8 @@ const RouterRoot = () => (
       <Footer/>
       <PluginPrompt/>
       <PartySync/>
+      <PartyCursor/>
+      <PartyChat/>
     </div>
   </Router>
 )

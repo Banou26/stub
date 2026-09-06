@@ -1,7 +1,8 @@
 import type { rooms } from '@fkn/lib'
 import type { PartyMessage, PlaybackState } from './protocol'
 
-import { decodePartyMessage, encodePartyMessage } from './protocol'
+import { decodePartyMessage, encodePartyMessage, isHostOnly } from './protocol'
+import { advance } from './playback'
 
 // The party's state machine, over a room it is handed rather than one it imports: @fkn/lib cannot
 // load under vitest, and the machine is where the bugs would live (who may speak, who is ignored,
@@ -19,12 +20,21 @@ export type PartyEndReason = rooms.RoomEnd['reason'] | 'host-left'
 export type PartyState =
   | { status: 'idle' }
   | { status: 'joining', invite: string }
-  | { status: 'active', role: PartyRole, invite: string, members: number }
+  | { status: 'active', role: PartyRole, invite: string, members: number, self: string, owner: string }
   | { status: 'ended', reason: PartyEndReason }
   | { status: 'failed', code: rooms.RoomsErrorCode | 'unknown' }
 
+/** Who is in the party, as the party page lists them. */
+export type PartyMember = { id: string, name?: string, host: boolean, self: boolean }
+
+/** One line of the room's chat. `seq` is the api's, so two tabs order it the same way. */
+export type PartyChatLine = { seq: number, from: string, name?: string, text: string, at: number, self: boolean }
+
+/** What a message listener is told beside the message. */
+export type PartyMessageMeta = { replayed: boolean, from: string, self: boolean }
+
 /** Where the host is, as the host's own app keeps reporting it. What a joiner is handed. */
-export type PartySnapshot = { path: string, y: number, playback?: PlaybackState }
+export type PartySnapshot = { path: string, y: number, playback?: PlaybackState, playbackAt?: number }
 
 type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 
@@ -32,19 +42,34 @@ export type PartyStore = {
   getState: () => PartyState
   subscribe: (listener: (state: PartyState) => void) => () => void
   /**
-   * What the host said, decoded. Fires for guests only: a host does not follow itself.
+   * What the room said, decoded and vetted: a host-only message only ever from the owner, and never
+   * the host's own echo of one; anyone's chat and name, echoes included, so a line renders once, in
+   * the order the api gave it.
    *
-   * `replayed` is true when `replay` is saying it again, which is the guest asking to be caught up
+   * `replayed` is true when `replay` is saying it again, which is a guest asking to be caught up
    * rather than the host saying something new.
    */
-  onMessage: (listener: (message: PartyMessage, replayed: boolean) => void) => () => void
+  onMessage: (listener: (message: PartyMessage, meta: PartyMessageMeta) => void) => () => void
   create: () => Promise<void>
   join: (invite: string) => Promise<void>
   leave: () => Promise<void>
   /** Rejoin whatever this tab was in before a reload, inside the api's hold. Silent when there was nothing. */
   resume: () => Promise<void>
-  /** Host only. Anything else is dropped here, and would be refused by the api anyway. */
+  /** Steering is the host's; talking is anyone's. A guest's steering message is dropped here. */
   send: (message: PartyMessage) => void
+  /** Everyone in the party, names included where they were given. */
+  roster: () => Promise<PartyMember[]>
+  /** The chat so far, newest last. */
+  chat: () => PartyChatLine[]
+  /** Call yourself this, here and in every room this tab joins. */
+  setName: (name: string | undefined) => void
+  name: () => string | undefined
+  /** Host only: put a member out; they can come back through the invite. */
+  kick: (id: string) => Promise<void>
+  /** Host only: put a member out and keep them out for the room's life. */
+  ban: (id: string) => Promise<void>
+  /** Whether the host's player is running, which is when a pointer on the page means nothing. */
+  playing: () => boolean
   /** The host's app keeps these current so a joiner can be told where the party is. */
   setLocation: (path: string, y: number) => void
   setPlayback: (playback: PlaybackState | undefined) => void
@@ -59,6 +84,9 @@ export type PartyStore = {
 }
 
 export const PARTY_SESSION_KEY = 'stub-party-invite'
+export const PARTY_NAME_KEY = 'stub-party-name'
+/** How much chat a tab keeps. The room keeps none: a joiner sees what is said from then on. */
+export const CHAT_KEEP = 200
 
 /**
  * How often a host repeats where the party is, whether or not anything happened.
@@ -69,6 +97,13 @@ export const PARTY_SESSION_KEY = 'stub-party-invite'
  * member has every second, and the longest a returning follower waits with nothing to follow.
  */
 export const STATE_HEARTBEAT_MS = 10_000
+
+/**
+ * How often everyone with a name says it again. Same blind spot as the state heartbeat: a member
+ * back from a reload heard no introductions and nobody was told to repeat them. One message per
+ * named member per half minute.
+ */
+export const NAME_HEARTBEAT_MS = 30_000
 
 const defaultStorage = (): StorageLike | undefined => {
   try { return globalThis.sessionStorage } catch { return undefined }
@@ -83,10 +118,14 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
   let unlisten: (() => void) | undefined
   const snapshot: PartySnapshot = { path: '/', y: 0 }
   const stateListeners = new Set<(state: PartyState) => void>()
-  const messageListeners = new Set<(message: PartyMessage, replayed: boolean) => void>()
+  const messageListeners = new Set<(message: PartyMessage, meta: PartyMessageMeta) => void>()
   let heartbeat: ReturnType<typeof setInterval> | undefined
+  let introductions: ReturnType<typeof setInterval> | undefined
   // the latest of each kind the host said, so a guest can be brought back without asking the host
   const heard = new Map<PartyMessage['t'], PartyMessage>()
+  const names = new Map<string, string>()
+  const lines: PartyChatLine[] = []
+  let ownName: string | undefined = (() => { try { return storage?.getItem(PARTY_NAME_KEY) ?? undefined } catch { return undefined } })()
 
   const setState = (next: PartyState) => {
     state = next
@@ -99,6 +138,8 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
 
   const roleIn = (joined: Room): PartyRole => joined.owner === joined.self.id ? 'host' : 'guest'
 
+  const tell = (message: PartyMessage, meta: PartyMessageMeta) => { for (const listener of messageListeners) listener(message, meta) }
+
   const memberCount = async (joined: Room) => {
     const members = await joined.members().catch(() => undefined)
     if (room !== joined || state.status !== 'active') return
@@ -109,11 +150,20 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
   // is the host scrubbing faster than the room admits, and the next heartbeat carries the position
   // anyway; `closed` is answered through `room.closed` below.
   const send = (message: PartyMessage) => {
-    if (!room || state.status !== 'active' || state.role !== 'host') return
+    if (!room || state.status !== 'active') return
+    if (isHostOnly(message) && state.role !== 'host') return
     room.send(encodePartyMessage(message)).catch(() => {})
   }
 
-  const whereWeAre = (): PartyMessage => ({ t: 'state', path: snapshot.path, y: snapshot.y, ...snapshot.playback ? { s: snapshot.playback } : {} })
+  // The playback is moved to NOW before it goes out. The player reported it some seconds ago and a
+  // joiner would otherwise be handed that second, then corrected by the next heartbeat; on the host's
+  // own clock the move is exact.
+  const whereWeAre = (): PartyMessage => ({
+    t: 'state',
+    path: snapshot.path,
+    y: snapshot.y,
+    ...snapshot.playback ? { s: advance(snapshot.playback, snapshot.playbackAt ?? Date.now(), Date.now()) } : {},
+  })
 
   const detach = () => {
     unlisten?.()
@@ -121,32 +171,50 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     room = undefined
     if (heartbeat) clearInterval(heartbeat)
     heartbeat = undefined
+    if (introductions) clearInterval(introductions)
+    introductions = undefined
   }
 
   const attach = async (joined: Room) => {
     room = joined
     const role = roleIn(joined)
-    setState({ status: 'active', role, invite: joined.invite, members: 1 })
+    names.clear()
+    lines.length = 0
+    setState({ status: 'active', role, invite: joined.invite, members: 1, self: joined.self.id, owner: joined.owner })
     remember(joined.invite)
 
     unlisten = await joined.on(event => {
       if (room !== joined) return
       switch (event.type) {
         case 'message': {
-          // The host hears its own messages back with the same seq, and a guest could in principle
-          // hear another guest if the defaults were ever loosened. Neither is the host speaking.
-          if (role === 'host' || event.message.from !== joined.owner) return
           const message = decodePartyMessage(event.message.text)
           if (!message) return
-          heard.delete(message.t)
-          heard.set(message.t, message)
-          for (const listener of messageListeners) listener(message, false)
+          const from = event.message.from
+          const self = from === joined.self.id
+          // Steering is the owner's, and the api hands a sender its own message back with the same
+          // seq: the host must not follow itself, and nobody follows anyone but the host, whatever
+          // the room let through.
+          if (isHostOnly(message)) {
+            if (from !== joined.owner || role === 'host') return
+            heard.delete(message.t)
+            heard.set(message.t, message)
+            tell(message, { replayed: false, from, self })
+            return
+          }
+          if (message.t === 'name') names.set(from, message.name)
+          if (message.t === 'chat') {
+            lines.push({ seq: event.message.seq, from, name: names.get(from), text: message.text, at: event.message.at, self })
+            if (lines.length > CHAT_KEEP) lines.splice(0, lines.length - CHAT_KEEP)
+          }
+          tell(message, { replayed: false, from, self })
           return
         }
         case 'joined': {
           // What a joiner needs is where the party is NOW, so it is built from the latest report
-          // rather than from the last thing that happened to be sent.
+          // rather than from the last thing that happened to be sent. And everyone with a name says
+          // it again, since a joiner heard none of the introductions.
           if (role === 'host') send(whereWeAre())
+          if (ownName) send({ t: 'name', name: ownName })
           void memberCount(joined)
           return
         }
@@ -165,6 +233,8 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     if (room !== joined) { unlisten(); unlisten = undefined; return }
 
     if (role === 'host') heartbeat = setInterval(() => send(whereWeAre()), STATE_HEARTBEAT_MS)
+    introductions = setInterval(() => { if (ownName) send({ t: 'name', name: ownName }) }, NAME_HEARTBEAT_MS)
+    if (ownName) send({ t: 'name', name: ownName })
     void memberCount(joined)
     joined.closed.then(({ reason }) => {
       if (room !== joined) return
@@ -206,9 +276,9 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     getState: () => state,
     subscribe: listener => { stateListeners.add(listener); return () => { stateListeners.delete(listener) } },
     onMessage: listener => { messageListeners.add(listener); return () => { messageListeners.delete(listener) } },
-    // Followers cannot send: the room is created with `send` off by default, and the owner keeps every
-    // permission whatever the defaults say. That is the whole permission model, enforced by the api.
-    create: () => open(undefined, () => api.create({ defaults: { send: false } })),
+    // Everyone may send, because everyone may talk. What keeps steering the host's is the class check
+    // on receipt above, and what keeps a room civil is the host's `kick` and `ban`.
+    create: () => open(undefined, () => api.create()),
     join: invite => open(invite, () => api.join(invite)),
     resume: async () => {
       const invite = remembered()
@@ -218,7 +288,7 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     leave: async () => { if (room) await end('left') },
     send,
     setLocation: (path, y) => { snapshot.path = path; snapshot.y = y },
-    setPlayback: playback => { snapshot.playback = playback },
+    setPlayback: playback => { snapshot.playback = playback; snapshot.playbackAt = Date.now() },
     invite: () => state.status === 'active' ? state.invite : undefined,
     hostPath: () => {
       const last = [...heard.values()].filter((message): message is Extract<PartyMessage, { path: string }> => 'path' in message)
@@ -230,9 +300,30 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
       // a nav first, so a scroll or a playback lands on the page it was meant for
       for (const kind of ['state', 'nav', 'scroll', 'playback'] as const) {
         const message = heard.get(kind)
-        if (message) for (const listener of messageListeners) listener(message, true)
+        if (message && room) tell(message, { replayed: true, from: room.owner, self: false })
       }
     },
+    roster: async () => {
+      if (!room) return []
+      const current = room
+      const members = await current.members().catch(() => [])
+      return members.map(member => ({
+        id: member.id,
+        name: names.get(member.id),
+        host: member.id === current.owner,
+        self: member.id === current.self.id,
+      }))
+    },
+    chat: () => lines.slice(),
+    setName: name => {
+      ownName = name
+      try { name ? storage?.setItem(PARTY_NAME_KEY, name) : storage?.removeItem(PARTY_NAME_KEY) } catch {}
+      if (name) send({ t: 'name', name })
+    },
+    name: () => ownName,
+    kick: async id => { if (room && state.status === 'active' && state.role === 'host') await room.remove(id) },
+    ban: async id => { if (room && state.status === 'active' && state.role === 'host') await room.block(id) },
+    playing: () => Boolean(snapshot.playback && !snapshot.playback.paused),
     dismiss: () => { if (state.status === 'ended' || state.status === 'failed') setState({ status: 'idle' }) },
   }
 }

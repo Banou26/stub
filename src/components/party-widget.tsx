@@ -4,6 +4,9 @@ import {
   useClick, useDismiss, useFloating, useInteractions, useRole,
 } from '@floating-ui/react'
 import { Check, Copy, LogOut, Radio, Users } from 'lucide-react'
+import { useLocation } from 'wouter'
+
+import { getRoutePath, Route } from '../router/path'
 import { useEffect, useState } from 'preact/hooks'
 
 import { party, partyLink } from '../party'
@@ -153,6 +156,8 @@ const PartyWidget = () => {
   const state = useParty()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [, navigate] = useLocation()
+  const toParty = () => { setOpen(false); navigate(getRoutePath(Route.PARTY)) }
 
   const { refs, floatingStyles, context } = useFloating({
     open,
@@ -225,6 +230,7 @@ const PartyWidget = () => {
                     </button>
                   </div>
                   <div className="actions">
+                    <button type="button" className="primary" onClick={toParty}><Users size={14}/> Party</button>
                     <button type="button" onClick={() => { void party.leave(); setOpen(false) }}><LogOut size={14}/> End party</button>
                   </div>
                 </>
@@ -237,6 +243,7 @@ const PartyWidget = () => {
                   </div>
                   <div className="actions">
                     <button type="button" className="primary" onClick={() => { party.replay(); setOpen(false) }}>Catch up</button>
+                    <button type="button" onClick={toParty}><Users size={14}/> Party</button>
                     <button type="button" onClick={() => { void party.leave(); setOpen(false) }}><LogOut size={14}/> Leave</button>
                   </div>
                 </>

@@ -1,5 +1,5 @@
 import type { PartyMessage } from './protocol'
-import type { PartyState } from './store'
+import type { PartyMessageMeta, PartyState } from './store'
 
 import { useEffect, useState } from 'preact/hooks'
 
@@ -18,8 +18,8 @@ export const useParty = (): PartyState => {
  * The listener is read through a ref on every message rather than re-subscribed on every render, so
  * a component can hand in a closure over its latest props without the subscription churning.
  */
-export const usePartyMessages = (listener: (message: PartyMessage, replayed: boolean) => void) => {
+export const usePartyMessages = (listener: (message: PartyMessage, meta: PartyMessageMeta) => void) => {
   const [latest] = useState(() => ({ current: listener }))
   latest.current = listener
-  useEffect(() => party.onMessage((message, replayed) => latest.current(message, replayed)), [])
+  useEffect(() => party.onMessage((message, meta) => latest.current(message, meta)), [])
 }

@@ -6,5 +6,5 @@ import { createPartyStore } from './store'
 export const party = createPartyStore(rooms)
 
 export { partyLink } from './invite'
-export type { PartyState, PartyRole, PartyEndReason } from './store'
+export type { PartyState, PartyRole, PartyEndReason, PartyMember, PartyChatLine, PartyMessageMeta } from './store'
 export type { PartyMessage, PlaybackState } from './protocol'

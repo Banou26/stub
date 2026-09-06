@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'preact/hooks'
 import { useLocation, useSearch } from 'wouter'
 
 import { party } from '../party'
+import { PARTY_PATH } from '../party/invite'
 import { useParty, usePartyMessages } from '../party/use-party'
 
 // Where the host is, followed. Mounted once at the router root, so it outlives every page: a party
@@ -27,15 +28,18 @@ const PartySync = () => {
   const path = search ? `${location}?${search}` : location
   const role = state.status === 'active' ? state.role : undefined
 
-  // The host: every move goes out, and the latest is what a joiner is told.
+  // The host: every move goes out, and the latest is what a joiner is told. Except the party's own
+  // page: a host there is managing the door, not taking the party somewhere, and a follower dragged
+  // to it would find nothing to follow.
+  const atTheDoor = location === PARTY_PATH
   useEffect(() => {
-    if (role !== 'host') return
+    if (role !== 'host' || atTheDoor) return
     party.setLocation(path, scrollFraction())
     party.send({ t: 'nav', path })
-  }, [role, path])
+  }, [role, path, atTheDoor])
 
   useEffect(() => {
-    if (role !== 'host') return
+    if (role !== 'host' || atTheDoor) return
     let last = 0
     let pending: ReturnType<typeof setTimeout> | undefined
     const flush = () => {
@@ -88,7 +92,7 @@ const PartySync = () => {
     }
   }
 
-  usePartyMessages((message, replayed) => {
+  usePartyMessages((message, { replayed }) => {
     if (role !== 'guest') return
     switch (message.t) {
       case 'nav':

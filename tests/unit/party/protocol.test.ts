@@ -2,7 +2,7 @@
 // so the decoder is the one place that decides what a host can make a follower do.
 import { describe, expect, test } from 'vitest'
 
-import { decodePartyMessage, encodePartyMessage, isAppPath, PARTY_PROTOCOL, type PartyMessage } from '../../../src/party/protocol'
+import { CHAT_MAX_CHARS, NAME_MAX_CHARS, chatText, decodePartyMessage, displayName, encodePartyMessage, isAppPath, isHostOnly, PARTY_PROTOCOL, type PartyMessage } from '../../../src/party/protocol'
 
 const PLAYBACK = { paused: false, time: 421.5, rate: 1, at: 1_788_700_000_000 }
 
@@ -14,6 +14,9 @@ describe('encode and decode', () => {
       { t: 'playback', s: PLAYBACK },
       { t: 'state', path: '/watch/a/b', y: 0, s: PLAYBACK },
       { t: 'state', path: '/', y: 1 },
+      { t: 'cursor', x: 0.25, y: 0.75 },
+      { t: 'chat', text: 'hello there' },
+      { t: 'name', name: 'Ann' },
     ]
     for (const message of messages) expect(decodePartyMessage(encodePartyMessage(message))).toEqual(message)
   })
@@ -40,6 +43,11 @@ describe('encode and decode', () => {
       { v: 1, t: 'playback', s: { ...PLAYBACK, paused: 'no' } },
       { v: 1, t: 'playback', s: { ...PLAYBACK, at: Number.NaN } },
       { v: 1, t: 'state', path: '/', y: 0, s: { paused: true } },
+      { v: 1, t: 'cursor', x: 2, y: 0 },
+      { v: 1, t: 'cursor', x: 0.5 },
+      { v: 1, t: 'chat', text: '   ' },
+      { v: 1, t: 'chat', text: 42 },
+      { v: 1, t: 'name', name: '' },
     ]
     for (const message of bad) expect(decodePartyMessage(JSON.stringify(message)), JSON.stringify(message)).toBeUndefined()
   })
@@ -60,5 +68,35 @@ describe('isAppPath', () => {
     }
     expect(decodePartyMessage(JSON.stringify({ v: 1, t: 'nav', path: '//evil.example' }))).toBeUndefined()
     expect(decodePartyMessage(JSON.stringify({ v: 1, t: 'state', path: 'https://evil.example', y: 0 }))).toBeUndefined()
+  })
+})
+
+describe('the two classes', () => {
+  test('steering is host only, talking is not', () => {
+    expect(isHostOnly({ t: 'nav', path: '/' })).toBe(true)
+    expect(isHostOnly({ t: 'scroll', y: 0 })).toBe(true)
+    expect(isHostOnly({ t: 'cursor', x: 0, y: 0 })).toBe(true)
+    expect(isHostOnly({ t: 'playback', s: PLAYBACK })).toBe(true)
+    expect(isHostOnly({ t: 'state', path: '/', y: 0 })).toBe(true)
+    expect(isHostOnly({ t: 'chat', text: 'hi' })).toBe(false)
+    expect(isHostOnly({ t: 'name', name: 'Ann' })).toBe(false)
+  })
+})
+
+describe('chatText and displayName', () => {
+  test('trimmed, bounded, and nothing when there is nothing', () => {
+    expect(chatText('  hello  ')).toBe('hello')
+    expect(chatText('x'.repeat(CHAT_MAX_CHARS + 50))).toHaveLength(CHAT_MAX_CHARS)
+    expect(chatText('   ')).toBeUndefined()
+    expect(displayName('  Ann   Lee ')).toBe('Ann Lee')
+    expect(displayName('n'.repeat(NAME_MAX_CHARS + 5))).toHaveLength(NAME_MAX_CHARS)
+    expect(displayName('')).toBeUndefined()
+  })
+
+  // The decoder applies the same bound, so a line that arrives over the cap from a client that did
+  // not bound it is cut rather than dropped: what was said still reaches the room.
+  test('the decoder bounds what a sender did not', () => {
+    const long = JSON.stringify({ v: PARTY_PROTOCOL, t: 'chat', text: 'y'.repeat(CHAT_MAX_CHARS + 100) })
+    expect((decodePartyMessage(long) as { text: string }).text).toHaveLength(CHAT_MAX_CHARS)
   })
 })

@@ -2,7 +2,10 @@ import { css } from '@emotion/react'
 import { packages } from '@fkn/lib'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
+import type { PlaybackLink } from '../party/bridge'
+
 import { STUB_SOURCE_PROTOCOL } from '../plugin-api'
+import { pluginPlaybackLink, type PlaybackSource } from '../party/plugin-link'
 import { fromUri } from '../utils/uri'
 
 const style = css`
@@ -33,7 +36,7 @@ const style = css`
   }
 `
 
-type PlayableSource = {
+type PlayableSource = PlaybackSource & {
   origin?: string
   play?: (release: { uri: string, url?: string }) => Promise<boolean>
 }
@@ -45,6 +48,8 @@ export type PluginPlayerProps = {
   /** the handle stub already holds for this release; the source reads whatever it put there */
   release: { uri: string, url?: string }
   onUnplayable: () => void
+  /** the player's link once it is up, and undefined again when it goes; only for a source that serves one */
+  onPlayback?: (link: PlaybackLink | undefined) => void
 }
 
 /**
@@ -58,15 +63,19 @@ export type PluginPlayerProps = {
  * The connection is this component's own, separate from the worker's: they are two documents of one
  * package, so calling `play` on the worker's connection would render into a frame nobody can see.
  */
-export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerProps) => {
+export const PluginPlayer = ({ pluginUri, release, onUnplayable, onPlayback }: PluginPlayerProps) => {
   const slot = useRef<HTMLIFrameElement>(null)
   const [failed, setFailed] = useState('')
+  // read at call time: the effect below is keyed on the release, and the page hands in new closures on every render
+  const callbacks = useRef({ onUnplayable, onPlayback })
+  callbacks.current = { onUnplayable, onPlayback }
 
   useEffect(() => {
     const iframe = slot.current
     if (!iframe) return
     let done = false
     let mounted: { unmount: () => void } | undefined
+    let link: PlaybackLink | undefined
     setFailed('')
 
     const run = async () => {
@@ -90,7 +99,9 @@ export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerP
         const played = await source.play?.({ uri: release.uri, url: release.url })
         if (done) return
         // false is the source saying it cannot play THIS release, which is a fallback, not a failure
-        if (!played) { connection.unmount(); mounted = undefined; onUnplayable() }
+        if (!played) { connection.unmount(); mounted = undefined; callbacks.current.onUnplayable(); return }
+        link = pluginPlaybackLink(source)
+        if (link) callbacks.current.onPlayback?.(link)
       } catch (error) {
         if (done) return
         setFailed(error instanceof Error ? error.message : String(error))
@@ -100,6 +111,7 @@ export const PluginPlayer = ({ pluginUri, release, onUnplayable }: PluginPlayerP
 
     return () => {
       done = true
+      if (link) { link.dispose(); callbacks.current.onPlayback?.(undefined) }
       mounted?.unmount()
     }
   }, [pluginUri, release.uri, release.url])

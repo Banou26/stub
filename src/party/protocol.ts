@@ -10,17 +10,42 @@ export type PlaybackState = {
 }
 
 /**
- * Everything the host says. Followers say nothing: the room is created with `send` off by default,
- * so a follower's message is refused by the api before any follower could hear it.
+ * What crosses the room, in two classes.
  *
- * `nav` and `scroll` are where the host is, `playback` is what the host's player did, and `state` is
- * all three at once, sent to whoever just joined so they land where the party already is.
+ * HOST ONLY: `nav` and `scroll` are where the host is, `cursor` is where the host is pointing,
+ * `playback` is what the host's player did, and `state` is location, scroll and playback at once,
+ * sent to whoever just joined so they land where the party already is. A follower drops any of these
+ * from anyone but the room's owner, whatever the api let through.
+ *
+ * ANYONE: `chat` is a line of text for the room, `name` is what the sender wants to be called.
  */
 export type PartyMessage =
   | { t: 'nav', path: string }
   | { t: 'scroll', y: number }
+  | { t: 'cursor', x: number, y: number }
   | { t: 'playback', s: PlaybackState }
   | { t: 'state', path: string, y: number, s?: PlaybackState }
+  | { t: 'chat', text: string }
+  | { t: 'name', name: string }
+
+const HOST_ONLY: ReadonlySet<PartyMessage['t']> = new Set(['nav', 'scroll', 'cursor', 'playback', 'state'])
+
+/** Whether a message is the host steering the party, as opposed to anyone talking in it. */
+export const isHostOnly = (message: PartyMessage): boolean => HOST_ONLY.has(message.t)
+
+/** The longest chat line and name the room carries. The api's own cap is 4,096 bytes of the whole message. */
+export const CHAT_MAX_CHARS = 500
+export const NAME_MAX_CHARS = 32
+
+/** A typed line or name as the wire carries it: trimmed, bounded, and nothing when empty. */
+export const chatText = (raw: string): string | undefined => {
+  const text = raw.trim().slice(0, CHAT_MAX_CHARS)
+  return text ? text : undefined
+}
+export const displayName = (raw: string): string | undefined => {
+  const name = raw.trim().replace(/\s+/g, ' ').slice(0, NAME_MAX_CHARS)
+  return name ? name : undefined
+}
 
 /** Bumped when a message shape changes; a follower on another version ignores what it cannot read. */
 export const PARTY_PROTOCOL = 1
@@ -47,6 +72,16 @@ export const decodePartyMessage = (text: string): PartyMessage | undefined => {
       return isAppPath(value.path) ? { t: 'nav', path: value.path } : undefined
     case 'scroll':
       return isFraction(value.y) ? { t: 'scroll', y: value.y } : undefined
+    case 'cursor':
+      return isFraction(value.x) && isFraction(value.y) ? { t: 'cursor', x: value.x, y: value.y } : undefined
+    case 'chat': {
+      const text = typeof value.text === 'string' ? chatText(value.text) : undefined
+      return text ? { t: 'chat', text } : undefined
+    }
+    case 'name': {
+      const name = typeof value.name === 'string' ? displayName(value.name) : undefined
+      return name ? { t: 'name', name } : undefined
+    }
     case 'playback':
       return isPlaybackState(value.s) ? { t: 'playback', s: value.s } : undefined
     case 'state': {
@@ -78,7 +113,8 @@ export const isAppPath = (value: unknown): value is string =>
 const isFraction = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1
 
-const isPlaybackState = (value: unknown): value is PlaybackState => {
+/** Whether a value is a playback state a follower could act on. A package's report is vetted with it before it reaches the room. */
+export const isPlaybackState = (value: unknown): value is PlaybackState => {
   if (!value || typeof value !== 'object') return false
   const state = value as Record<string, unknown>
   return typeof state.paused === 'boolean'

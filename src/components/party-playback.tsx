@@ -1,14 +1,14 @@
-import type { RefObject } from 'preact'
+import type { PlaybackLink } from '../party/bridge'
 import type { PlaybackState } from '../party'
 
 import { useEffect, useRef } from 'preact/hooks'
 
 import { party } from '../party'
-import { attachPlaybackBridge } from '../party/bridge'
+import { advance } from '../party/playback'
 import { useParty, usePartyMessages } from '../party/use-party'
 
 /**
- * The watch page's half of playback sync, over the embed iframe the page renders.
+ * The watch page's half of playback sync, over whichever player the page has up.
  *
  * A host forwards what its player reports and keeps the store's snapshot current, so a joiner is told
  * where the video is. A guest applies what the host said, and applies it AGAIN on every report from
@@ -17,30 +17,31 @@ import { useParty, usePartyMessages } from '../party/use-party'
  * matches the host and changes nothing, or a person touching a follower's controls, which the host's
  * word overrides.
  */
-const PartyPlayback = ({ iframe, src }: { iframe: RefObject<HTMLIFrameElement>, src: string | undefined }) => {
+const PartyPlayback = ({ link }: { link: PlaybackLink | undefined }) => {
   const state = useParty()
   const role = state.status === 'active' ? state.role : undefined
-  const bridge = useRef<ReturnType<typeof attachPlaybackBridge> | undefined>(undefined)
-  const wanted = useRef<PlaybackState | undefined>(undefined)
+  // what the host last said, and WHEN it was heard on this clock, so a re-apply later is moved
+  // forward by the time that passed rather than seeking the player back to a stale second
+  const wanted = useRef<{ state: PlaybackState, receivedAt: number } | undefined>(undefined)
 
   useEffect(() => {
-    const element = iframe.current
-    if (!element || !role || !src) return
-    const attached = attachPlaybackBridge(element, reported => {
+    // a state heard for one player is not for the next: a new link is a new player, or the same
+    // player on a different release, and either way it starts from what the host says next
+    wanted.current = undefined
+    if (!link || !role) return
+    const off = link.onReport(reported => {
       if (role === 'host') {
         party.setPlayback(reported)
         party.send({ t: 'playback', s: reported })
       } else if (wanted.current) {
-        attached.apply(wanted.current)
+        link.apply(advance(wanted.current.state, wanted.current.receivedAt, Date.now()))
       }
     })
-    bridge.current = attached
     return () => {
-      attached.dispose()
-      bridge.current = undefined
+      off()
       if (role === 'host') party.setPlayback(undefined)
     }
-  }, [role, src])
+  }, [role, link])
 
   usePartyMessages(message => {
     if (role !== 'guest') return
@@ -49,8 +50,8 @@ const PartyPlayback = ({ iframe, src }: { iframe: RefObject<HTMLIFrameElement>, 
     // the host's playback is for the host's page: a guest on another episode keeps its own
     const here = location.pathname + location.search
     if (party.hostPath() !== here) return
-    wanted.current = next
-    bridge.current?.apply(next)
+    wanted.current = { state: next, receivedAt: Date.now() }
+    link?.apply(next)
   })
 
   return null

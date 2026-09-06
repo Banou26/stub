@@ -4,7 +4,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import type { rooms } from '@fkn/lib'
-import { createPartyStore, PARTY_SESSION_KEY, STATE_HEARTBEAT_MS, type PartyState } from '../../../src/party/store'
+import { createPartyStore, NAME_HEARTBEAT_MS, PARTY_SESSION_KEY, STATE_HEARTBEAT_MS, type PartyState } from '../../../src/party/store'
 import { decodePartyMessage, encodePartyMessage } from '../../../src/party/protocol'
 
 type RoomEvent = rooms.RoomEvent
@@ -70,7 +70,7 @@ const settle = () => new Promise(resolve => setTimeout(resolve, 0))
 const lastSent = (sent: string[]) => decodePartyMessage(sent.at(-1)!)
 
 describe('hosting', () => {
-  test('creating makes this app the host, remembers the invite, and refuses followers a voice', async () => {
+  test('creating makes this app the host and remembers the invite', async () => {
     const fake = fakeRoom({ self: 'me', owner: 'me' })
     const storage = memoryStorage()
     const rooms = api(fake.room)
@@ -79,24 +79,30 @@ describe('hosting', () => {
     await party.create()
     await settle()
 
-    expect(rooms.create).toHaveBeenCalledWith({ defaults: { send: false } })
-    expect(party.getState()).toEqual({ status: 'active', role: 'host', invite: INVITE, members: 1 })
+    expect(party.getState()).toEqual({ status: 'active', role: 'host', invite: INVITE, members: 1, self: 'me', owner: 'me' })
     expect(storage.store.get(PARTY_SESSION_KEY)).toBe(INVITE)
   })
 
-  test('a host sends, and a guest does not', async () => {
+  // Two classes on the wire. Steering (nav, scroll, cursor, playback, state) is the host's; talking
+  // (chat, name) is anyone's. A guest's steering is dropped before it is sent, so a guest cannot even
+  // try to move the party.
+  test('a host steers and talks; a guest only talks', async () => {
     const asHost = fakeRoom({ self: 'me', owner: 'me' })
     const host = createPartyStore(api(asHost.room), memoryStorage())
     await host.create()
     host.send({ t: 'nav', path: '/search' })
-    expect(asHost.sent).toHaveLength(1)
-    expect(lastSent(asHost.sent)).toEqual({ t: 'nav', path: '/search' })
+    host.send({ t: 'chat', text: 'hi' })
+    expect(asHost.sent.map(text => decodePartyMessage(text)?.t)).toEqual(['nav', 'chat'])
 
     const asGuest = fakeRoom({ self: 'me', owner: 'them' })
     const guest = createPartyStore(api(asGuest.room), memoryStorage())
     await guest.join(INVITE)
     guest.send({ t: 'nav', path: '/search' })
-    expect(asGuest.sent).toHaveLength(0)
+    guest.send({ t: 'cursor', x: 0.5, y: 0.5 })
+    guest.send({ t: 'playback', s: { paused: true, time: 1, rate: 1, at: 1 } })
+    guest.send({ t: 'chat', text: 'hello' })
+    guest.send({ t: 'name', name: 'Ann' })
+    expect(asGuest.sent.map(text => decodePartyMessage(text)?.t)).toEqual(['chat', 'name'])
   })
 
   // What a joiner needs is where the party is NOW. The host's app keeps reporting that, and the
@@ -112,7 +118,13 @@ describe('hosting', () => {
     fake.emit({ type: 'joined', member: { id: 'guest', permissions: { send: false, receive: true, remove: false, block: false } } })
     await settle()
 
-    expect(lastSent(fake.sent)).toEqual({ t: 'state', path: '/watch/a/b', y: 0.25, s: { paused: false, time: 42, rate: 1, at: 1 } })
+    // the playback went out moved to NOW on the host's clock, not as the player reported it: the
+    // joiner is handed the second the party is at, not the second it was at when the host last heard
+    const told = lastSent(fake.sent) as Extract<ReturnType<typeof decodePartyMessage>, { t: 'state' }>
+    expect(told).toMatchObject({ t: 'state', path: '/watch/a/b', y: 0.25 })
+    expect(told.s!.paused).toBe(false)
+    expect(told.s!.time).toBeGreaterThanOrEqual(42)
+    expect(told.s!.time).toBeLessThan(43)
     expect((party.getState() as Extract<PartyState, { status: 'active' }>).members).toBe(2)
 
     // off the watch page the snapshot carries no playback, so a joiner is not handed a stale one
@@ -159,7 +171,8 @@ describe('hosting', () => {
 
   // The api hands the sender its own message back with the same seq. A host that followed itself
   // would navigate to where it already is on every move, and scroll to where it already scrolled.
-  test('a host does not hear itself', async () => {
+  // Its own chat it DOES hear, because that echo is how a line renders once, in the api's order.
+  test('a host does not hear its own steering, and does hear its own chat', async () => {
     const fake = fakeRoom({ self: 'me', owner: 'me' })
     const party = createPartyStore(api(fake.room), memoryStorage())
     await party.create()
@@ -168,6 +181,30 @@ describe('hosting', () => {
 
     fake.emit({ type: 'message', message: { seq: 1, from: 'me', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } })
     expect(heard).not.toHaveBeenCalled()
+    fake.emit({ type: 'message', message: { seq: 2, from: 'me', at: 5, text: encodePartyMessage({ t: 'chat', text: 'hi all' }) } })
+    expect(heard).toHaveBeenCalledWith({ t: 'chat', text: 'hi all' }, { replayed: false, from: 'me', self: true })
+    expect(party.chat()).toEqual([{ seq: 2, from: 'me', name: undefined, text: 'hi all', at: 5, self: true }])
+  })
+
+  test('a host hears a guest talk, and kicks or bans by id', async () => {
+    const fake = fakeRoom({ self: 'me', owner: 'me', members: ['me', 'g1'] })
+    const party = createPartyStore(api(fake.room), memoryStorage())
+    await party.create()
+    const heard = vi.fn()
+    party.onMessage(heard)
+
+    fake.emit({ type: 'message', message: { seq: 1, from: 'g1', at: 1, text: encodePartyMessage({ t: 'name', name: 'Ann' }) } })
+    fake.emit({ type: 'message', message: { seq: 2, from: 'g1', at: 2, text: encodePartyMessage({ t: 'chat', text: 'yo' }) } })
+    expect(party.chat()).toEqual([{ seq: 2, from: 'g1', name: 'Ann', text: 'yo', at: 2, self: false }])
+    expect(await party.roster()).toEqual([
+      { id: 'me', name: undefined, host: true, self: true },
+      { id: 'g1', name: 'Ann', host: false, self: false },
+    ])
+
+    await party.kick('g1')
+    expect(fake.room.remove).toHaveBeenCalledWith('g1')
+    await party.ban('g1')
+    expect(fake.room.block).toHaveBeenCalledWith('g1')
   })
 })
 
@@ -182,13 +219,81 @@ describe('following', () => {
 
     await party.join(INVITE)
     await settle()
-    expect(party.getState()).toEqual({ status: 'active', role: 'guest', invite: INVITE, members: 2 })
+    expect(party.getState()).toEqual({ status: 'active', role: 'guest', invite: INVITE, members: 2, self: 'me', owner: 'host' })
 
     fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } })
     fake.emit({ type: 'message', message: { seq: 2, from: 'someone', at: 1, text: encodePartyMessage({ t: 'nav', path: '/y' }) } })
     fake.emit({ type: 'message', message: { seq: 3, from: 'host', at: 1, text: 'not a party message' } })
     expect(heard).toHaveBeenCalledTimes(1)
-    expect(heard).toHaveBeenCalledWith({ t: 'nav', path: '/x' }, false)
+    expect(heard).toHaveBeenCalledWith({ t: 'nav', path: '/x' }, { replayed: false, from: 'host', self: false })
+  })
+
+  // The room lets everyone send now, so the class check on receipt is the whole defence: another
+  // guest saying "go here" or "pause" is heard as nothing, while the same guest saying hello is heard.
+  test('another guest is heard talking and never steering', async () => {
+    const fake = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me', 'other'] })
+    const party = createPartyStore(api(fake.room), memoryStorage())
+    await party.join(INVITE)
+    const heard = vi.fn()
+    party.onMessage(heard)
+
+    const say = (seq: number, from: string, message: Parameters<typeof encodePartyMessage>[0]) =>
+      fake.emit({ type: 'message', message: { seq, from, at: 1, text: encodePartyMessage(message) } })
+    say(1, 'other', { t: 'nav', path: '/evil' })
+    say(2, 'other', { t: 'scroll', y: 1 })
+    say(3, 'other', { t: 'cursor', x: 0, y: 0 })
+    say(4, 'other', { t: 'playback', s: { paused: true, time: 0, rate: 1, at: 1 } })
+    say(5, 'other', { t: 'state', path: '/evil', y: 0 })
+    expect(heard).not.toHaveBeenCalled()
+    expect(party.hostPath()).toBeUndefined()
+
+    say(6, 'other', { t: 'chat', text: 'hello' })
+    expect(heard).toHaveBeenCalledWith({ t: 'chat', text: 'hello' }, { replayed: false, from: 'other', self: false })
+  })
+
+  test('a name given is announced, remembered for next time, and said again when someone joins', async () => {
+    const storage = memoryStorage()
+    const fake = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me'] })
+    const party = createPartyStore(api(fake.room), storage)
+    await party.join(INVITE)
+    party.setName('Ann')
+    expect(lastSent(fake.sent)).toEqual({ t: 'name', name: 'Ann' })
+    expect(storage.store.get('stub-party-name')).toBe('Ann')
+
+    fake.emit({ type: 'joined', member: { id: 'new', permissions: { send: true, receive: true, remove: false, block: false } } })
+    expect(fake.sent.filter(text => decodePartyMessage(text)?.t === 'name')).toHaveLength(2)
+
+    // and a tab that remembered one introduces itself on the way in
+    const again = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me'] })
+    const rejoined = createPartyStore(api(again.room), storage)
+    await rejoined.join(INVITE)
+    expect(lastSent(again.sent)).toEqual({ t: 'name', name: 'Ann' })
+  })
+
+  // The other side of a reload: the member who reloaded heard no introductions, and a `joined` for it
+  // never fires inside the hold, so everyone says their name again on a clock. Nameless members say
+  // nothing, and the clock stops with the party.
+  test('a name is said again every half minute, by anyone who has one, until they leave', async () => {
+    vi.useFakeTimers()
+    const storage = memoryStorage()
+    storage.setItem('stub-party-name', 'Ann')
+    const fake = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me'] })
+    const party = createPartyStore(api(fake.room), storage)
+    await party.join(INVITE)
+    const names = () => fake.sent.filter(text => decodePartyMessage(text)?.t === 'name').length
+    expect(names()).toBe(1)
+    await vi.advanceTimersByTimeAsync(NAME_HEARTBEAT_MS * 2)
+    expect(names()).toBe(3)
+    await party.leave()
+    await vi.advanceTimersByTimeAsync(NAME_HEARTBEAT_MS * 2)
+    expect(names()).toBe(3)
+    expect(vi.getTimerCount()).toBe(0)
+
+    const quiet = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me'] })
+    const nameless = createPartyStore(api(quiet.room), memoryStorage())
+    await nameless.join(INVITE)
+    await vi.advanceTimersByTimeAsync(NAME_HEARTBEAT_MS * 2)
+    expect(quiet.sent).toHaveLength(0)
   })
 
   // A room outlives its owner and a party does not: nobody else can ever send, so a room whose host is
@@ -245,9 +350,9 @@ describe('following', () => {
     party.onMessage(heard)
 
     fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/a' }) } })
-    expect(heard).toHaveBeenLastCalledWith({ t: 'nav', path: '/a' }, false)
+    expect(heard).toHaveBeenLastCalledWith({ t: 'nav', path: '/a' }, { replayed: false, from: 'host', self: false })
     party.replay()
-    expect(heard).toHaveBeenLastCalledWith({ t: 'nav', path: '/a' }, true)
+    expect(heard).toHaveBeenLastCalledWith({ t: 'nav', path: '/a' }, { replayed: true, from: 'host', self: false })
   })
 
   // A scroll and a playback are for the page the host is on. The store keeps the latest of each kind,
@@ -270,6 +375,39 @@ describe('following', () => {
     say(5, { t: 'state', path: '/d', y: 0 })
     say(6, { t: 'nav', path: '/e' })
     expect(party.hostPath()).toBe('/e')
+  })
+})
+
+describe('the joiner snapshot moves with the clock', () => {
+  test('a playing report heard seconds ago is handed on seconds ahead, a paused one as it was', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(1_000_000)
+    const fake = fakeRoom({ self: 'me', owner: 'me' })
+    const party = createPartyStore(api(fake.room), memoryStorage())
+    await party.create()
+    party.setPlayback({ paused: false, time: 100, rate: 1, at: 1 })
+    await vi.advanceTimersByTimeAsync(4_000)
+    fake.emit({ type: 'joined', member: { id: 'g', permissions: { send: true, receive: true, remove: false, block: false } } })
+    const playing = lastSent(fake.sent) as { s: { time: number, at: number } }
+    expect(playing.s.time).toBeCloseTo(104, 2)
+    expect(playing.s.at).toBe(1_004_000)
+
+    party.setPlayback({ paused: true, time: 200, rate: 1, at: 1 })
+    await vi.advanceTimersByTimeAsync(4_000)
+    fake.emit({ type: 'joined', member: { id: 'h', permissions: { send: true, receive: true, remove: false, block: false } } })
+    expect((lastSent(fake.sent) as { s: { time: number } }).s.time).toBe(200)
+  })
+})
+
+describe('moderation is the host\'s', () => {
+  test('a guest asking to kick or ban asks nothing of the room', async () => {
+    const fake = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me', 'other'] })
+    const party = createPartyStore(api(fake.room), memoryStorage())
+    await party.join(INVITE)
+    await party.kick('other')
+    await party.ban('other')
+    expect(fake.room.remove).not.toHaveBeenCalled()
+    expect(fake.room.block).not.toHaveBeenCalled()
   })
 })
 

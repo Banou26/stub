@@ -49,3 +49,19 @@ export const playbackCorrection = (local: LocalPlayback, wanted: PlaybackState, 
   if (Math.abs(local.rate - wanted.rate) > 0.001) correction.rate = wanted.rate
   return correction
 }
+
+/**
+ * A state the follower heard a while ago, moved to where the host's player is NOW.
+ *
+ * The follower's own clock does this, not the host's: `receivedAt` and `now` are the same clock, so
+ * the gap between them is playback time with no skew in it. `expectedTime` cannot do this on its own
+ * because it only has the host's `at`, and it caps what it trusts of that. A follower re-applies a
+ * state whenever its own player reports (see components/party-playback.tsx), which can be many
+ * seconds after the state arrived; re-applying the state as received would seek it BACK by that
+ * much every time. Found in review, 2026-09-07.
+ */
+export const advance = (state: PlaybackState, receivedAt: number, now: number): PlaybackState => ({
+  ...state,
+  time: state.paused ? state.time : state.time + Math.max(0, now - receivedAt) / 1000 * state.rate,
+  at: now,
+})

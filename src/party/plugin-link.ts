@@ -1,0 +1,41 @@
+import type { PlaybackLink } from './bridge'
+import type { PlaybackState } from './protocol'
+
+import { isPlaybackState } from './protocol'
+
+/** The two optional methods a source package may serve beside `play`. See plugin-api.ts. */
+export type PlaybackSource = {
+  onPlayback?: (listener: (state: PlaybackState) => void) => Promise<void>
+  applyPlayback?: (state: PlaybackState) => Promise<void>
+}
+
+/**
+ * A source package's player as a link, or nothing for a package that does not offer one.
+ *
+ * The package takes ONE listener and replaces it on the next call, so this registers once and fans
+ * out; the party attaches and detaches its own ear through `onReport` without the package hearing
+ * about it. Both calls cross the package connection, and a refusal or a dead connection there is
+ * not the page's to surface: a player it cannot hear is a player it does not sync.
+ */
+export const pluginPlaybackLink = (source: PlaybackSource): PlaybackLink | undefined => {
+  const { onPlayback, applyPlayback } = source
+  if (!onPlayback || !applyPlayback) return undefined
+
+  const listeners = new Set<(state: PlaybackState) => void>()
+  let disposed = false
+  // vetted: the package is another origin's code, and what it says goes into the host's snapshot and
+  // out to every follower, where the decoder would drop it anyway; better to drop it here, once
+  const ear = (state: PlaybackState) => { if (!disposed && isPlaybackState(state)) for (const listener of listeners) listener(state) }
+  const listen = () => { onPlayback(ear).catch(() => {}) }
+  listen()
+
+  return {
+    apply: state => { applyPlayback(state).catch(() => {}) },
+    // registering the ear again is how the package is asked where the player is NOW: it greets its
+    // player on every registration, and the player answers a greeting with a report. A party that
+    // starts against a paused player would otherwise have nothing to tell a joiner until the host
+    // touched the controls.
+    onReport: listener => { listeners.add(listener); listen(); return () => { listeners.delete(listener) } },
+    dispose: () => { disposed = true; listeners.clear() },
+  }
+}

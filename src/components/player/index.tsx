@@ -9,6 +9,8 @@ import { videoFeatures } from '@videojs/core/dom'
 import { createPlayer, useMediaAttach } from '@videojs/react'
 import '@videojs/react/video/skin.css'
 
+import { exposePlayer } from '@banou/media-player/remote'
+
 import VideoSurface from './video-surface'
 
 const { Provider } = createPlayer({ features: videoFeatures })
@@ -28,7 +30,12 @@ const MediaAttach = ({ remote, frame, adapter }: {
     if (!adapted) return
     const binding = normalizeBinding(adapted)
     setMedia(binding.media)
+    // served to the page that frames this embed, stub's own watch page, and nobody else: the party's
+    // playback sync reads and moves the player through it. This is stub's videojs player rather than
+    // @banou/media-player's, so the prop that does it there is a call here.
+    const stop = exposePlayer(binding.media as unknown as Parameters<typeof exposePlayer>[0])
     return () => {
+      stop()
       setMedia(null)
       binding.dispose?.()
     }

@@ -14,6 +14,7 @@ import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import PluginPlayer from '../../components/plugin-player'
 import PartyPlayback from '../../components/party-playback'
+import { attachPlaybackBridge, type PlaybackLink } from '../../party/bridge'
 import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
@@ -181,6 +182,8 @@ const Watch = () => {
   }
   const [, navigate] = useLocation()
   const embedFrame = useRef<HTMLIFrameElement>(null)
+  // the player the page can hear and move, from whichever of the two below is up
+  const [playbackLink, setPlaybackLink] = useState<PlaybackLink | undefined>(undefined)
 
   const [{ data }] = useSubscription({
     query: GET_WATCH_MEDIA,
@@ -281,6 +284,15 @@ const Watch = () => {
   const [declined, setDeclined] = useState<string>()
   useEffect(() => { setDeclined(undefined) }, [selectedSourceUri])
 
+  const viaPlugin = Boolean(pluginPlayer && declined !== selectedSourceUri)
+  useEffect(() => {
+    const iframe = embedFrame.current
+    if (viaPlugin || !embedUrl || !iframe) return
+    const link = attachPlaybackBridge(iframe)
+    setPlaybackLink(link)
+    return () => { link.dispose(); setPlaybackLink(undefined) }
+  }, [viaPlugin, embedUrl])
+
   const sources: WatchSource[] = useMemo(
     () =>
       (originData?.originPage?.nodes ?? []).map(origin => {
@@ -324,12 +336,13 @@ const Watch = () => {
   return (
     <div css={style}>
       <div className="watch-container">
-        {pluginPlayer && declined !== selectedSourceUri
+        {viaPlugin && pluginPlayer
           ? (
             <PluginPlayer
               pluginUri={pluginPlayer.pluginUri}
               release={pluginPlayer.release}
               onUnplayable={() => setDeclined(selectedSourceUri)}
+              onPlayback={setPlaybackLink}
             />
           )
           : embedUrl
@@ -349,8 +362,7 @@ const Watch = () => {
             />
           )
           : undefined}
-        {/* a plugin's player is the package's own document, and stub has no handle on what plays in it */}
-        <PartyPlayback iframe={embedFrame} src={pluginPlayer && declined !== selectedSourceUri ? undefined : embedUrl}/>
+        <PartyPlayback link={playbackLink}/>
 
         <div className="watch-info">
           <div className="episode-info">

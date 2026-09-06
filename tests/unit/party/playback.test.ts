@@ -2,7 +2,7 @@
 // drifts is here, so it is pinned with the cases on both sides of it.
 import { describe, expect, test } from 'vitest'
 
-import { expectedTime, playbackCorrection, SEEK_TOLERANCE_S } from '../../../src/party/playback'
+import { advance, expectedTime, playbackCorrection, SEEK_TOLERANCE_S } from '../../../src/party/playback'
 
 const NOW = 1_788_700_000_000
 
@@ -43,5 +43,29 @@ describe('playbackCorrection', () => {
     expect(playbackCorrection({ paused: false, time: 100, rate: 1 }, { ...wanted, paused: true }, NOW)).toEqual({ pause: true })
     expect(playbackCorrection({ paused: false, time: 100, rate: 1 }, { ...wanted, rate: 1.5 }, NOW)).toEqual({ rate: 1.5 })
     expect(playbackCorrection({ paused: true, time: 0, rate: 1 }, { ...wanted, rate: 1.5 }, NOW)).toEqual({ seek: 100, play: true, rate: 1.5 })
+  })
+})
+
+// A follower re-applies what the host last said whenever its own player reports, which can be many
+// seconds later. Re-applied as received, a playing state seeks the player BACK by that much; found
+// in review, 2026-09-07.
+describe('advance', () => {
+  const heard = { paused: false, time: 100, rate: 1, at: NOW - 3_000 }
+
+  test('a playing state moves forward by the time since it was heard, on the follower’s own clock', () => {
+    expect(advance(heard, NOW - 5_000, NOW)).toEqual({ paused: false, time: 105, rate: 1, at: NOW })
+    expect(advance({ ...heard, rate: 2 }, NOW - 5_000, NOW)).toEqual({ paused: false, time: 110, rate: 2, at: NOW })
+  })
+
+  test('a paused state does not move, and a clock that went backwards moves nothing', () => {
+    expect(advance({ ...heard, paused: true }, NOW - 60_000, NOW).time).toBe(100)
+    expect(advance(heard, NOW + 1_000, NOW).time).toBe(100)
+  })
+
+  test('re-applying an advanced state seeks nothing on a follower that kept up', () => {
+    const local = { paused: false, time: 105.2, rate: 1 }
+    expect(playbackCorrection(local, advance(heard, NOW - 5_000, NOW), NOW)).toEqual({})
+    // and as received, the same follower would have been seeked back five seconds
+    expect(playbackCorrection(local, heard, NOW).seek).toBeDefined()
   })
 })
