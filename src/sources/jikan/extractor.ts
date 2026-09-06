@@ -221,11 +221,16 @@ const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeS
 /**
  * One page of a named season.
  *
- * The route is `GET /v4/seasons/{year}/{season}` with the season lower case, which is what the v4
- * docs describe. UNVERIFIED FROM HERE: api.jikan.moe answered 504 for every path while this was
- * written, invented ones included, so a probe could not tell a live route from a typo. Everything
- * that reads it therefore treats a non-200 or a body with no `data` as an empty season, never as an
- * error, so a wrong route costs this source's rows and nothing else.
+ * The route is `GET /v4/seasons/{year}/{season}`, season lower case. VERIFIED 2026-09-06:
+ * `/v4/seasons/2026/summer` answered 200 with 148 records over 6 pages, the first being mal_id 59193,
+ * and `/v4/seasons` lists which years the upstream holds. It could not be verified the day it was
+ * written, when api.jikan.moe answered 504 to every path including invented ones, so no probe could
+ * tell a live route from a typo.
+ *
+ * IT STILL FLAPS, which is why the handling below is unchanged: the same url answered 200 and then
+ * 504 within a minute, and eight consecutive retries all failed. A non-200, or a body with no `data`,
+ * is read as an empty season and never as an error, so an outage costs this source's rows and leaves
+ * the bundled catalogue and AniList answering.
  */
 const getSeason = (
   { season, year }: { season: AnimeSeason, year: number },
@@ -276,6 +281,9 @@ const normalizeScrapedMedia = (entry: MalSeasonEntry): Media => {
       { language: 'jp-en', title: entry.title, score: SCORE },
     ],
     covers: entry.cover ? [{ language: 'en', url: entry.cover, score: SCORE }] : [],
+    // MAL prints one flat genre list where the API splits genres, themes and demographics, which is
+    // the same union `normalizeMedia` builds from those three, so both paths supply the same shape.
+    genres: entry.genres ?? [],
     descriptions: entry.synopsis ? [{ language: 'en', description: entry.synopsis, score: DESCRIPTION_SCORE }] : [],
     shortDescriptions: entry.synopsis ? [{ language: 'en', shortDescription: entry.synopsis, score: DESCRIPTION_SCORE }] : [],
     episodeCount: entry.episodes,

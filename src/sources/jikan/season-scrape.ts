@@ -27,6 +27,8 @@ export type MalSeasonEntry = {
   typeId?: number
   /** MAL's own heading for the block this card sat in, empty when the page carries no headings. */
   section?: string
+  /** The genre chips MAL prints on the card. See `genresOf` for why they are worth parsing. */
+  genres?: string[]
 }
 
 /**
@@ -87,6 +89,36 @@ const num = (raw?: string) => {
 const one = (block: string, pattern: RegExp) => pattern.exec(block)?.[1]
 
 /**
+ * Every genre chip MAL prints on a card, across all three of its captioned groups.
+ *
+ * Worth parsing because this scrape is not a rare fallback: Jikan's API is unreachable from the FKN
+ * proxy's egress, measured 2026-08-16 and again 2026-09-06, so the API path yields no data and THIS is
+ * what actually supplies the current season. Without these the season carried no genres from this
+ * source at all, and a genre filter could only match what AniList happened to cover.
+ *
+ * SCANNED OVER THE WHOLE CARD, not over the `genres-inner` div, and that is the whole subtlety. MAL
+ * splits its chips the way the API splits its fields: `genres-inner` holds the GENRES, and the themes
+ * and demographics sit in separate captioned groups further down the card. Reading only the first div
+ * found 3 of this card's 6 and silently dropped exactly the theme vocabulary this was added for
+ * ("Isekai", "Reincarnation", "School" on mal 59193). The wider scan is still precise: studios are
+ * `/anime/producer/` links and the source is plain text, so `/anime/genre/` matches nothing else, and
+ * a block is one card because `parseMalSeason` splits on `js-anime-category-producer`.
+ *
+ * Measured on the SUMMER 2026 page: 216 cards, captions `Theme` 68, `Themes` 64, `Demographic` 66.
+ *
+ * Read off `title`, not the link text: both carry the display spelling, and the attribute cannot pick
+ * up whitespace or nested markup from the anchor's body.
+ */
+const genresOf = (block: string): string[] => {
+  const names: string[] = []
+  for (const match of block.matchAll(/<a[^>]+href="\/anime\/genre\/\d+\/[^"]*"[^>]*title="([^"]+)"/g)) {
+    const name = text(match[1])
+    if (name && !names.includes(name)) names.push(name)
+  }
+  return names
+}
+
+/**
  * Every entry on a MAL season page.
  *
  * Splitting on `js-anime-category-producer` rather than a wrapper element: it is the class the grid
@@ -142,6 +174,7 @@ export const parseMalSeason = (html: string): MalSeasonEntry[] => {
         startDate: malDate(one(block, /class="js-start_date">(\d+)</)),
         typeId: num(one(block, /js-anime-type-(\d+)/)),
         section: section.name,
+        genres: genresOf(block),
       })
     }
   }

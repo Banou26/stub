@@ -8,6 +8,10 @@ import { MAL_CONTINUING_SECTION, MAL_TYPE, isContinuing, malDate, parseMalSeason
 // themselves.
 const fixture = readFileSync(new URL('./__fixtures__/mal-season.html', import.meta.url), 'utf8')
 
+// One whole card, taken verbatim from the same page on 2026-09-06, kept because the older fixture
+// predates the genre chips being parsed and carries none.
+const cardFixture = readFileSync(new URL('./__fixtures__/mal-season-card.html', import.meta.url), 'utf8')
+
 describe('parseMalSeason', () => {
   const entries = parseMalSeason(fixture)
 
@@ -59,6 +63,8 @@ describe('parseMalSeason', () => {
       episodes: undefined,
       startDate: undefined,
       typeId: 1,
+      // a list, not undefined: a card with no chips carries no genres rather than an unknown number
+      genres: [],
       // no heading above it, so it belongs to no section and is never treated as carried over
       section: '',
     }])
@@ -188,5 +194,29 @@ describe('malDate', () => {
     expect(malDate('')).toBeUndefined()
     expect(malDate('2026')).toBeUndefined()
     expect(malDate('not a date')).toBeUndefined()
+  })
+})
+
+// Jikan's API is unreachable from the FKN proxy's egress, so this scrape is what actually supplies the
+// current season, and without these chips the season carried no genres from this source at all: the
+// filter could only ever match what AniList happened to cover. Measured on the SUMMER 2026 page: 216
+// cards, 674 chips, 64 distinct names.
+describe('the genre chips MAL prints on each card', () => {
+  const [card] = parseMalSeason(cardFixture)
+
+  test('are read off the real markup, themes and demographics included', () => {
+    expect(card!.id).toBe('59193')
+    // Isekai, Reincarnation and School are jikan THEMES, which its API returns in a separate field
+    // from genres. MAL prints one flat list, which is the same union normalizeMedia builds.
+    expect(card!.genres).toEqual(['Adventure', 'Drama', 'Fantasy', 'Isekai', 'Reincarnation', 'School'])
+  })
+
+  test('and a card with none carries an empty list rather than a missing field', () => {
+    const [bare] = parseMalSeason(
+      '<div class="js-anime-category-producer js-anime-type-1">'
+      + '<a href="https://myanimelist.net/anime/1/X" class="link-title">X</a>'
+      + '</div>'
+    )
+    expect(bare!.genres).toEqual([])
   })
 })
