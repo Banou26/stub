@@ -17,7 +17,12 @@ export type PlaybackState = {
  * sent to whoever just joined so they land where the party already is. A follower drops any of these
  * from anyone but the room's owner, whatever the api let through.
  *
- * ANYONE: `chat` is a line of text for the room, `name` is what the sender wants to be called.
+ * ANYONE: `chat` is a line of text for the room, `name` is what the sender wants to be called, and
+ * `ping` is a follower timing a round trip so it can tell the host's clock from its own.
+ *
+ * `pong` is host only and is the reply to one ping: it carries the asker's own `at` back untouched
+ * plus the host's clock at the moment it answered, which is everything Cristian's algorithm needs
+ * (see clock.ts). `n` is the asker's nonce, since every member hears every reply.
  */
 export type PartyMessage =
   | { t: 'nav', path: string }
@@ -27,8 +32,10 @@ export type PartyMessage =
   | { t: 'state', path: string, y: number, s?: PlaybackState }
   | { t: 'chat', text: string }
   | { t: 'name', name: string }
+  | { t: 'ping', n: number, at: number }
+  | { t: 'pong', n: number, at: number, host: number }
 
-const HOST_ONLY: ReadonlySet<PartyMessage['t']> = new Set(['nav', 'scroll', 'cursor', 'playback', 'state'])
+const HOST_ONLY: ReadonlySet<PartyMessage['t']> = new Set(['nav', 'scroll', 'cursor', 'playback', 'state', 'pong'])
 
 /** Whether a message is the host steering the party, as opposed to anyone talking in it. */
 export const isHostOnly = (message: PartyMessage): boolean => HOST_ONLY.has(message.t)
@@ -82,6 +89,12 @@ export const decodePartyMessage = (text: string): PartyMessage | undefined => {
       const name = typeof value.name === 'string' ? displayName(value.name) : undefined
       return name ? { t: 'name', name } : undefined
     }
+    case 'ping':
+      return isStamp(value.n) && isStamp(value.at) ? { t: 'ping', n: value.n, at: value.at } : undefined
+    case 'pong':
+      return isStamp(value.n) && isStamp(value.at) && isStamp(value.host)
+        ? { t: 'pong', n: value.n, at: value.at, host: value.host }
+        : undefined
     case 'playback':
       return isPlaybackState(value.s) ? { t: 'playback', s: value.s } : undefined
     case 'state': {
@@ -109,6 +122,15 @@ export const isAppPath = (value: unknown): value is string =>
   && !value.startsWith('//')
   && !value.startsWith('/\\')
   && !/[\r\n\t]/.test(value)
+
+/**
+ * A number a clock exchange may carry.
+ *
+ * Finite is the whole requirement and it is load bearing: a NaN or an Infinity anywhere in the
+ * arithmetic makes the offset NaN, and a NaN offset silently turns every target time into NaN, which
+ * a player takes as a seek to nowhere. Sign is not checked, since an offset is a difference.
+ */
+const isStamp = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value)
 
 const isFraction = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1

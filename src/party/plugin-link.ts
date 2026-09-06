@@ -30,6 +30,9 @@ export const pluginPlaybackLink = (source: PlaybackSource): PlaybackLink | undef
   listen()
 
   return {
+    // `measured` is not forwarded: the package's contract takes a state and nothing else, and it does
+    // not need to be told. What reaches it here already carries a local `at` (party-playback.tsx
+    // converts before applying), so the package's own cap on a report's age never binds.
     apply: state => { applyPlayback(state).catch(() => {}) },
     // registering the ear again is how the package is asked where the player is NOW: it greets its
     // player on every registration, and the player answers a greeting with a report. A party that

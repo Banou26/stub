@@ -12,7 +12,21 @@ import type { PlaybackState } from './protocol'
  * would buy nothing and cost a visible stall each time. Over it the follower has fallen behind, or
  * the host seeked, and either way the honest move is to jump.
  */
-export const SEEK_TOLERANCE_S = 1.5
+export const SEEK_TOLERANCE_S = 0.5
+
+/**
+ * The drift a follower closes by playing slightly faster or slower rather than by seeking.
+ *
+ * Between NUDGE_FLOOR_S and SEEK_TOLERANCE_S a seek would be the wrong tool: it costs a visible
+ * stall and a re-buffer to fix a gap nobody can see, and the host's heartbeat would hand it back a
+ * few seconds later. Running at NUDGE_RATE instead closes a quarter second in about five seconds,
+ * inaudibly, and the follower ends up genuinely level rather than merely within tolerance.
+ *
+ * Below the floor nothing is done at all, which is what stops the correction oscillating: a follower
+ * that nudged until it was exact would overshoot and nudge back forever.
+ */
+export const NUDGE_FLOOR_S = 0.05
+export const NUDGE_RATE = 1.05
 
 /** How often the host's player reports while it plays, so a follower that drifts is corrected. */
 export const HEARTBEAT_MS = 5_000
@@ -26,27 +40,50 @@ export type PlaybackCorrection = { seek?: number, play?: true, pause?: true, rat
 /**
  * Where the host's player IS now, from where it said it was.
  *
- * `at` is the host's clock and `now` is the follower's, so their difference is skew plus transit,
- * and nothing here can tell those apart. It is applied anyway, capped: a report a few hundred
- * milliseconds old is moved forward by that much, which is right whenever the clocks agree, and a
- * report that looks older than the cap is treated as arriving just now, which is right when they do
- * not. Paused players do not move.
+ * `at` is the host's clock and `now` is the follower's. When the two have been reconciled (see
+ * clock.ts, and party-playback.tsx which does the reconciling) their difference is transit alone and
+ * the answer is exact, so it is applied in full.
+ *
+ * Unreconciled it is skew plus transit with no way to tell them apart, so it is capped: a report a
+ * few hundred milliseconds old is moved forward by that much, which is right whenever the clocks
+ * happen to agree, and one that looks older than the cap is treated as arriving just now, which is
+ * the safe reading when they do not. That is the pre-measurement behaviour and it stays the
+ * behaviour for a follower whose first exchange has not landed yet.
+ *
+ * Paused players do not move.
  */
-export const expectedTime = (state: PlaybackState, now: number): number => {
+export const expectedTime = (state: PlaybackState, now: number, measured = false): number => {
   if (state.paused) return state.time
-  const elapsed = Math.min(Math.max(now - state.at, 0), MAX_TRANSIT_MS) / 1000
+  const raw = Math.max(now - state.at, 0)
+  const elapsed = (measured ? raw : Math.min(raw, MAX_TRANSIT_MS)) / 1000
   return state.time + elapsed * state.rate
 }
 
 const MAX_TRANSIT_MS = 2_000
 
-export const playbackCorrection = (local: LocalPlayback, wanted: PlaybackState, now: number): PlaybackCorrection => {
+/**
+ * What to do to `local` so it matches `wanted`, in three tiers of drift.
+ *
+ * Over SEEK_TOLERANCE_S it jumps, because the follower is somewhere else entirely: the host seeked,
+ * or a stall put it behind. Between the floor and the tolerance it runs off-rate to close the gap
+ * smoothly, so a follower converges on the host rather than settling anywhere inside a tolerance
+ * band. Under the floor it is left alone, since a correction that never stops is a stutter.
+ *
+ * A paused player is never nudged: it is not moving, so a rate has nothing to act on, and it would
+ * be left at the wrong rate for whenever it resumes.
+ */
+export const playbackCorrection = (local: LocalPlayback, wanted: PlaybackState, now: number, measured = false): PlaybackCorrection => {
   const correction: PlaybackCorrection = {}
-  const target = expectedTime(wanted, now)
-  if (Math.abs(local.time - target) > SEEK_TOLERANCE_S) correction.seek = target
+  const target = expectedTime(wanted, now, measured)
+  const drift = target - local.time
+  if (Math.abs(drift) > SEEK_TOLERANCE_S) correction.seek = target
   if (wanted.paused && !local.paused) correction.pause = true
   if (!wanted.paused && local.paused) correction.play = true
-  if (Math.abs(local.rate - wanted.rate) > 0.001) correction.rate = wanted.rate
+
+  // behind the host runs fast, ahead of it runs slow, and anything else runs at the host's own rate
+  const nudging = !wanted.paused && correction.seek === undefined && Math.abs(drift) >= NUDGE_FLOOR_S
+  const rate = nudging ? wanted.rate * (drift > 0 ? NUDGE_RATE : 1 / NUDGE_RATE) : wanted.rate
+  if (Math.abs(local.rate - rate) > 0.001) correction.rate = rate
   return correction
 }
 

@@ -2,7 +2,7 @@
 // drifts is here, so it is pinned with the cases on both sides of it.
 import { describe, expect, test } from 'vitest'
 
-import { advance, expectedTime, playbackCorrection, SEEK_TOLERANCE_S } from '../../../src/party/playback'
+import { NUDGE_FLOOR_S, NUDGE_RATE, SEEK_TOLERANCE_S, advance, expectedTime, playbackCorrection } from '../../../src/party/playback'
 
 const NOW = 1_788_700_000_000
 
@@ -28,9 +28,30 @@ describe('expectedTime', () => {
 describe('playbackCorrection', () => {
   const wanted = { paused: false, time: 100, rate: 1, at: NOW }
 
-  test('a follower inside the tolerance is left alone', () => {
-    expect(playbackCorrection({ paused: false, time: 100 + SEEK_TOLERANCE_S - 0.1, rate: 1 }, wanted, NOW)).toEqual({})
-    expect(playbackCorrection({ paused: false, time: 100 - SEEK_TOLERANCE_S + 0.1, rate: 1 }, wanted, NOW)).toEqual({})
+  // Three tiers, and the middle one is the point: a follower that is merely close used to be left
+  // close for ever, drifting inside the tolerance band with every heartbeat handing it back.
+  test('a follower under the floor is left alone', () => {
+    expect(playbackCorrection({ paused: false, time: 100 + NUDGE_FLOOR_S / 2, rate: 1 }, wanted, NOW)).toEqual({})
+    expect(playbackCorrection({ paused: false, time: 100 - NUDGE_FLOOR_S / 2, rate: 1 }, wanted, NOW)).toEqual({})
+  })
+
+  test('a follower inside the tolerance closes the gap by rate, not by seeking', () => {
+    // behind the host, so it runs fast until it is level
+    expect(playbackCorrection({ paused: false, time: 100 - 0.3, rate: 1 }, wanted, NOW)).toEqual({ rate: NUDGE_RATE })
+    // ahead of it, so it runs slow
+    expect(playbackCorrection({ paused: false, time: 100 + 0.3, rate: 1 }, wanted, NOW)).toEqual({ rate: 1 / NUDGE_RATE })
+    // and a nudge that did its job hands the rate back rather than leaving the player fast
+    expect(playbackCorrection({ paused: false, time: 100, rate: NUDGE_RATE }, wanted, NOW)).toEqual({ rate: 1 })
+  })
+
+  test('a nudge follows the host\'s own rate rather than replacing it', () => {
+    const fast = { ...wanted, rate: 2 }
+    expect(playbackCorrection({ paused: false, time: 99.7, rate: 2 }, fast, NOW)).toEqual({ rate: 2 * NUDGE_RATE })
+  })
+
+  test('a paused follower is never nudged, since a rate has nothing to act on', () => {
+    const stopped = { ...wanted, paused: true }
+    expect(playbackCorrection({ paused: true, time: 100 - 0.3, rate: 1 }, stopped, NOW)).toEqual({})
   })
 
   test('and one outside it is seeked to where the host is', () => {
@@ -64,7 +85,7 @@ describe('advance', () => {
 
   test('re-applying an advanced state seeks nothing on a follower that kept up', () => {
     const local = { paused: false, time: 105.2, rate: 1 }
-    expect(playbackCorrection(local, advance(heard, NOW - 5_000, NOW), NOW)).toEqual({})
+    expect(playbackCorrection(local, advance(heard, NOW - 5_000, NOW), NOW).seek).toBeUndefined()
     // and as received, the same follower would have been seeked back five seconds
     expect(playbackCorrection(local, heard, NOW).seek).toBeDefined()
   })

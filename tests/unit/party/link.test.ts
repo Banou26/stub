@@ -61,12 +61,14 @@ describe('linkMedia', () => {
     expect(Math.abs(media.currentTime - 100)).toBeLessThan(0.5)
 
     media.paused = false
-    media.currentTime = 100.8
+    media.currentTime = 100.3
     link.apply({ paused: false, time: 100, rate: 1, at: now })
-    expect(media.currentTime, 'inside the tolerance').toBe(100.8)
+    // inside the tolerance nothing seeks; the gap is closed by rate instead, so the clock is untouched
+    expect(media.currentTime, 'inside the tolerance').toBe(100.3)
+    expect(media.playbackRate, 'ahead of the host, so it runs slow until it is level').toBeLessThan(1)
     expect(media.play).toHaveBeenCalledTimes(1)
 
-    link.apply({ paused: true, time: 100.8, rate: 1.5, at: now })
+    link.apply({ paused: true, time: 100.3, rate: 1.5, at: now })
     expect(media.pause).toHaveBeenCalledTimes(1)
     expect(media.playbackRate).toBe(1.5)
     link.dispose()

@@ -14,7 +14,14 @@ import { HEARTBEAT_MS, playbackCorrection } from './playback'
 
 /** A player the page can hear and move. */
 export type PlaybackLink = {
-  apply: (state: PlaybackState) => void
+  /**
+   * Make the player match `state`.
+   *
+   * `measured` says `state.at` is on THIS clock rather than the host's, which is true once the
+   * follower has timed a round trip (see clock.ts). It decides whether the age of the report is
+   * trusted in full or capped, and nothing else.
+   */
+  apply: (state: PlaybackState, measured?: boolean) => void
   /** every report the player makes; returns the unsubscribe */
   onReport: (listener: (state: PlaybackState) => void) => () => void
   dispose: () => void
@@ -29,6 +36,8 @@ export type LinkableMedia = EventTarget & {
   currentTime: number
   playbackRate?: number
   play: () => Promise<void>
+  /** `play`, muting if the far document will not start sound without a gesture; see @banou/media-player */
+  autoplay?: () => Promise<{ muted: boolean }>
   pause: () => void
 }
 
@@ -49,13 +58,14 @@ export const linkMedia = (media: LinkableMedia, onClose: () => void = () => {}):
   for (const event of EVENTS) media.addEventListener(event, report)
   const heartbeat = setInterval(() => { if (!media.paused) report() }, HEARTBEAT_MS)
   return {
-    apply: wanted => {
-      const correction = playbackCorrection(stateOf(media), wanted, Date.now())
+    apply: (wanted, measured) => {
+      const correction = playbackCorrection(stateOf(media), wanted, Date.now(), measured)
       if (correction.seek !== undefined) media.currentTime = correction.seek
       if (correction.rate !== undefined) media.playbackRate = correction.rate
       if (correction.pause) media.pause()
-      // refused without a gesture on the player's document; the next heartbeat asks again
-      if (correction.play) media.play().catch(() => {})
+      // `autoplay` where the player has one: a follower never clicked inside the player's document,
+      // and starting muted is better than not starting. The next heartbeat asks again either way.
+      if (correction.play) (media.autoplay ? media.autoplay() : media.play()).catch(() => {})
     },
     // a new ear is answered with where the player is now, not at its next event
     onReport: listener => { listeners.add(listener); queueMicrotask(report); return () => { listeners.delete(listener) } },

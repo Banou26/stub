@@ -4,7 +4,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import type { rooms } from '@fkn/lib'
-import { createPartyStore, NAME_HEARTBEAT_MS, PARTY_SESSION_KEY, STATE_HEARTBEAT_MS, type PartyState } from '../../../src/party/store'
+import { CLOCK_SAMPLES, CLOCK_SPACING_MS, createPartyStore, NAME_HEARTBEAT_MS, PARTY_SESSION_KEY, STATE_HEARTBEAT_MS, type PartyState } from '../../../src/party/store'
 import { decodePartyMessage, encodePartyMessage } from '../../../src/party/protocol'
 
 type RoomEvent = rooms.RoomEvent
@@ -166,7 +166,8 @@ describe('hosting', () => {
     const party = createPartyStore(api(fake.room), memoryStorage())
     await party.join(INVITE)
     await vi.advanceTimersByTimeAsync(STATE_HEARTBEAT_MS * 2)
-    expect(fake.sent).toHaveLength(0)
+    // by kind, not by silence: a guest does time the host's clock, and that is not steering
+    expect(fake.sent.filter(text => decodePartyMessage(text)?.t === 'state')).toHaveLength(0)
   })
 
   // The api hands the sender its own message back with the same seq. A host that followed itself
@@ -293,7 +294,7 @@ describe('following', () => {
     const nameless = createPartyStore(api(quiet.room), memoryStorage())
     await nameless.join(INVITE)
     await vi.advanceTimersByTimeAsync(NAME_HEARTBEAT_MS * 2)
-    expect(quiet.sent).toHaveLength(0)
+    expect(quiet.sent.filter(text => decodePartyMessage(text)?.t === 'name')).toHaveLength(0)
   })
 
   // A room outlives its owner and a party does not: nobody else can ever send, so a room whose host is
@@ -481,5 +482,110 @@ describe('resuming', () => {
     await party.resume()
     expect(rooms.join).not.toHaveBeenCalled()
     expect(party.getState()).toEqual({ status: 'idle' })
+  })
+})
+
+// A follower has to turn the host's `at` into a position on its own clock, and one message can never
+// separate clock skew from transit. Timing a round trip can, which is what these drive.
+describe('timing the host clock', () => {
+  const pingsIn = (sent: string[]) =>
+    sent.map(text => decodePartyMessage(text)).filter(message => message?.t === 'ping')
+
+  test('a guest asks, a host does not', async () => {
+    vi.useFakeTimers()
+    try {
+      const asGuest = fakeRoom({ self: 'them', owner: 'host' })
+      const guest = createPartyStore(api(asGuest.room), memoryStorage())
+      await guest.join(INVITE)
+      await vi.advanceTimersByTimeAsync(CLOCK_SAMPLES * CLOCK_SPACING_MS + 100)
+      expect(pingsIn(asGuest.sent)).toHaveLength(CLOCK_SAMPLES)
+
+      const asHost = fakeRoom({ self: 'me', owner: 'me' })
+      const host = createPartyStore(api(asHost.room), memoryStorage())
+      await host.create()
+      await vi.advanceTimersByTimeAsync(CLOCK_SAMPLES * CLOCK_SPACING_MS + 100)
+      // the host IS the reference; asking itself what time it is would measure nothing
+      expect(pingsIn(asHost.sent)).toHaveLength(0)
+      expect(host.hostClock()).toBeUndefined()
+    } finally { vi.useRealTimers() }
+  })
+
+  test('a host answers a guest ping with its own clock and the asker\'s stamp', async () => {
+    const fake = fakeRoom({ self: 'me', owner: 'me' })
+    const host = createPartyStore(api(fake.room), memoryStorage())
+    await host.create()
+    await settle()
+
+    fake.emit({ type: 'message', message: { from: 'them', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'ping', n: 7, at: 1_000 }) } })
+    await settle()
+
+    const pong = lastSent(fake.sent)
+    expect(pong?.t).toBe('pong')
+    // the asker's stamp comes back untouched: it is the only thing that identifies its own trip
+    expect(pong).toMatchObject({ t: 'pong', n: 7, at: 1_000 })
+    expect((pong as { host: number }).host).toBeGreaterThan(1_000)
+  })
+
+  test('a guest turns the reply into an offset it can use', async () => {
+    const fake = fakeRoom({ self: 'them', owner: 'host' })
+    const guest = createPartyStore(api(fake.room), memoryStorage())
+    await guest.join(INVITE)
+    await settle()
+
+    expect(guest.hostClock(), 'nothing is assumed before anything is measured').toBeUndefined()
+    const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
+    expect(ping).toBeDefined()
+    // a host whose clock reads a full hour ahead, answering at once
+    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 3_600_000 }) } })
+    await settle()
+
+    const clock = guest.hostClock()
+    expect(clock).toBeDefined()
+    expect(clock!.offset).toBeGreaterThan(3_600_000 - 1_000)
+    expect(clock!.offset).toBeLessThan(3_600_000 + 1_000)
+  })
+
+  test('a reply to somebody else\'s question is not this guest\'s trip', async () => {
+    const fake = fakeRoom({ self: 'them', owner: 'host' })
+    const guest = createPartyStore(api(fake.room), memoryStorage())
+    await guest.join(INVITE)
+    await settle()
+    const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
+
+    // right nonce, a stamp this guest never sent: another member's trip, timed on another clock
+    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at + 5_000, host: ping.at + 9_000 }) } })
+    // and an unknown nonce
+    fake.emit({ type: 'message', message: { from: 'host', seq: 2, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: 999_999, at: ping.at, host: ping.at }) } })
+    await settle()
+
+    expect(guest.hostClock()).toBeUndefined()
+  })
+
+  test('a pong from anyone but the host is ignored', async () => {
+    const fake = fakeRoom({ self: 'them', owner: 'host' })
+    const guest = createPartyStore(api(fake.room), memoryStorage())
+    await guest.join(INVITE)
+    await settle()
+    const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
+
+    fake.emit({ type: 'message', message: { from: 'someone-else', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 60_000 }) } })
+    await settle()
+
+    expect(guest.hostClock(), 'anyone could offer a clock; only the host has the one that counts').toBeUndefined()
+  })
+
+  test('leaving forgets the clock, since the next party is another machine', async () => {
+    const fake = fakeRoom({ self: 'them', owner: 'host' })
+    const guest = createPartyStore(api(fake.room), memoryStorage())
+    await guest.join(INVITE)
+    await settle()
+    const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
+    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 5_000 }) } })
+    await settle()
+    expect(guest.hostClock()).toBeDefined()
+
+    await guest.leave()
+    await settle()
+    expect(guest.hostClock()).toBeUndefined()
   })
 })

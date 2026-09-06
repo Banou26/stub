@@ -3,6 +3,7 @@ import type { PartyMessage, PlaybackState } from './protocol'
 
 import { decodePartyMessage, encodePartyMessage, isHostOnly } from './protocol'
 import { advance } from './playback'
+import { bestSample, clockSample, MAX_USABLE_RTT_MS, type ClockSample } from './clock'
 
 // The party's state machine, over a room it is handed rather than one it imports: @fkn/lib cannot
 // load under vitest, and the machine is where the bugs would live (who may speak, who is ignored,
@@ -59,6 +60,13 @@ export type PartyStore = {
   send: (message: PartyMessage) => void
   /** Everyone in the party, names included where they were given. */
   roster: () => Promise<PartyMember[]>
+  /**
+   * What a member calls itself, if it has said so.
+   *
+   * Everyone with a name repeats it on a heartbeat and on every join, so this fills in shortly after
+   * anyone arrives and does not depend on them having spoken in the chat.
+   */
+  nameOf: (id: string) => string | undefined
   /** The chat so far, newest last. */
   chat: () => PartyChatLine[]
   /** Call yourself this, here and in every room this tab joins. */
@@ -77,6 +85,15 @@ export type PartyStore = {
   invite: () => string | undefined
   /** Where the host last said it was, for a guest deciding whether a scroll or a playback is for the page it is on. */
   hostPath: () => string | undefined
+  /**
+   * How the host's clock compares to this one, once a guest has timed a round trip; undefined until
+   * then, and always undefined for a host, which IS the reference.
+   *
+   * A reader turns a host timestamp into a local one with `toLocalTime` and applies the age of a
+   * report in full. Without it the age has unknown clock skew in it and is only trusted up to a
+   * cap, which is what everything did before this existed.
+   */
+  hostClock: () => ClockSample | undefined
   /** Say the last thing the host said again, for a guest who wandered off and wants back. */
   replay: () => void
   /** Clear an ended or failed party from view. */
@@ -105,6 +122,22 @@ export const STATE_HEARTBEAT_MS = 10_000
  */
 export const NAME_HEARTBEAT_MS = 30_000
 
+/**
+ * How a guest times the host's clock: this many round trips, spaced this far apart, redone this often.
+ *
+ * Several rather than one because the offset a sample gives is only as good as its round trip was
+ * quick, and one exchange that happened to queue behind something is indistinguishable from a clock
+ * that is genuinely off by that much. Spaced so they do not share a congested moment. Repeated
+ * because clocks drift, a laptop that slept comes back wrong, and a route can change under a party
+ * that runs for hours.
+ *
+ * The whole round is 5 messages each way per guest per minute, against a room that admits 10 a
+ * second from each member.
+ */
+export const CLOCK_SAMPLES = 5
+export const CLOCK_SPACING_MS = 400
+export const CLOCK_INTERVAL_MS = 60_000
+
 const defaultStorage = (): StorageLike | undefined => {
   try { return globalThis.sessionStorage } catch { return undefined }
 }
@@ -125,6 +158,14 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
   const heard = new Map<PartyMessage['t'], PartyMessage>()
   const names = new Map<string, string>()
   const lines: PartyChatLine[] = []
+  // What the host's clock reads relative to this one, and the round being collected. A guest that has
+  // measured nothing keeps `undefined`, which every reader treats as no offset: the behaviour there
+  // is exactly what it was before any of this existed.
+  let clock: ClockSample | undefined
+  let collecting: ClockSample[] | undefined
+  let clockTimer: ReturnType<typeof setInterval> | undefined
+  const pings = new Map<number, number>()
+  let nonce = 1
   let ownName: string | undefined = (() => { try { return storage?.getItem(PARTY_NAME_KEY) ?? undefined } catch { return undefined } })()
 
   const setState = (next: PartyState) => {
@@ -155,6 +196,38 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     room.send(encodePartyMessage(message)).catch(() => {})
   }
 
+  /**
+   * One round of round trips, as a guest.
+   *
+   * Each ping is stamped and remembered under a nonce, since every member hears every reply and a
+   * guest must only believe the one answering its own question. The round's fastest sample replaces
+   * the standing one when it closes, rather than the fastest ever seen: a sample kept forever would
+   * be a measurement of a network moment years of drift could never dislodge.
+   */
+  const measureClock = () => {
+    if (!room || state.status !== 'active' || state.role !== 'guest') return
+    const joined = room
+    const round: ClockSample[] = []
+    collecting = round
+    for (let index = 0; index < CLOCK_SAMPLES; index++) {
+      setTimeout(() => {
+        if (collecting !== round || room !== joined) return
+        const at = Date.now()
+        const n = nonce++
+        pings.set(n, at)
+        // a question nobody answered must not sit in the map for the life of the party
+        setTimeout(() => pings.delete(n), MAX_USABLE_RTT_MS)
+        send({ t: 'ping', n, at })
+      }, index * CLOCK_SPACING_MS)
+    }
+    setTimeout(() => {
+      if (collecting !== round || room !== joined) return
+      collecting = undefined
+      const best = bestSample(round)
+      if (best) clock = best
+    }, CLOCK_SAMPLES * CLOCK_SPACING_MS + MAX_USABLE_RTT_MS)
+  }
+
   // The playback is moved to NOW before it goes out. The player reported it some seconds ago and a
   // joiner would otherwise be handed that second, then corrected by the next heartbeat; on the host's
   // own clock the move is exact.
@@ -173,6 +246,12 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     heartbeat = undefined
     if (introductions) clearInterval(introductions)
     introductions = undefined
+    if (clockTimer) clearInterval(clockTimer)
+    clockTimer = undefined
+    // a fresh party is a fresh clock: the next host is another machine
+    collecting = undefined
+    clock = undefined
+    pings.clear()
   }
 
   const attach = async (joined: Room) => {
@@ -191,6 +270,27 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
           if (!message) return
           const from = event.message.from
           const self = from === joined.self.id
+          // The clock exchange is plumbing: it answers or it is answered, and nothing above the
+          // store ever sees it. Handled before the steering branch so a pong is not filed as the
+          // last thing the host said and replayed to a listener years of milliseconds later.
+          if (message.t === 'ping') {
+            if (role === 'host' && !self) send({ t: 'pong', n: message.n, at: message.at, host: Date.now() })
+            return
+          }
+          if (message.t === 'pong') {
+            if (role !== 'guest' || from !== joined.owner) return
+            const sent = pings.get(message.n)
+            // the echoed stamp must be the one that went out under that nonce, or it is not our trip
+            if (sent === undefined || sent !== message.at) return
+            pings.delete(message.n)
+            const sample = clockSample(sent, message.host, Date.now())
+            if (sample.rtt > MAX_USABLE_RTT_MS) return
+            collecting?.push(sample)
+            // the first answer beats no answer: a guest should not watch a whole round go by on the
+            // old assumption when it already has something measured
+            if (!clock) clock = sample
+            return
+          }
           // Steering is the owner's, and the api hands a sender its own message back with the same
           // seq: the host must not follow itself, and nobody follows anyone but the host, whatever
           // the room let through.
@@ -233,6 +333,10 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     if (room !== joined) { unlisten(); unlisten = undefined; return }
 
     if (role === 'host') heartbeat = setInterval(() => send(whereWeAre()), STATE_HEARTBEAT_MS)
+    if (role === 'guest') {
+      measureClock()
+      clockTimer = setInterval(measureClock, CLOCK_INTERVAL_MS)
+    }
     introductions = setInterval(() => { if (ownName) send({ t: 'name', name: ownName }) }, NAME_HEARTBEAT_MS)
     if (ownName) send({ t: 'name', name: ownName })
     void memberCount(joined)
@@ -290,6 +394,7 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     setLocation: (path, y) => { snapshot.path = path; snapshot.y = y },
     setPlayback: playback => { snapshot.playback = playback; snapshot.playbackAt = Date.now() },
     invite: () => state.status === 'active' ? state.invite : undefined,
+    hostClock: () => clock,
     hostPath: () => {
       const last = [...heard.values()].filter((message): message is Extract<PartyMessage, { path: string }> => 'path' in message)
       // whichever of the two carried a path was heard last: the store keeps one per kind, so the later
@@ -303,6 +408,7 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
         if (message && room) tell(message, { replayed: true, from: room.owner, self: false })
       }
     },
+    nameOf: id => names.get(id),
     roster: async () => {
       if (!room) return []
       const current = room
