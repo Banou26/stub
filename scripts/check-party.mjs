@@ -141,8 +141,13 @@ const run = async () => {
   await stray.close()
 
   console.log('\nthe host ending the party ends it for the guest')
-  await widget(host).click()
-  await host.getByRole('button', { name: 'End party' }).click()
+  // Dispatched rather than clicked: the broker's bar (a fixed iframe above everything) reveals itself
+  // over the header for a moment after another tab is opened and closed, which is what the control
+  // above just did, and a hit-tested click then lands on the bar. What this section measures is the
+  // party ending, not the header's stacking, so the click goes straight to the button.
+  await widget(host).dispatchEvent('click')
+  await host.getByRole('button', { name: 'End party' }).waitFor({ timeout: 10_000 })
+  await host.getByRole('button', { name: 'End party' }).dispatchEvent('click')
   const over = await until(() => widget(guest).innerText().catch(() => ''), text => /Party over/.test(text), 30_000)
   check(/Party over/.test(over), 'the guest’s widget reads Party over', over.replace(/\s+/g, ' '))
   const why = await guest.locator('[role="dialog"] .title').innerText().catch(() => '')
