@@ -100,7 +100,9 @@ const PartyCursor = () => {
   }, [ghost])
 
   if (role !== 'guest' || !ghost || now - ghost.at > LINGER_MS) return null
-  const name = party.chat().find(line => line.from === (state.status === 'active' ? state.owner : ''))?.name
+  // what the host calls itself, which everyone repeats on a heartbeat, rather than only what it has
+  // said in the chat: a host that never typed anything used to be labelled "host" for ever
+  const name = state.status === 'active' ? party.nameOf(state.owner) : undefined
   return (
     <div
       css={style}

@@ -27,9 +27,10 @@ import SourceSelector from '../../components/source-selector'
 import { useCoverUrl } from '../../utils/use-cover-url'
 
 const style = css`
-/* Above the sticky header (z-index 100) + the category bar (z-index 1) so the
-   "All/Anime/Series/Movies" tabs don't paint over the modal. Stays below the
-   fullscreen source players (z-index 9999999) launched from within it. */
+/* Above the category bar (z-index 1) so the "All/Anime/Series/Movies" tabs don't paint over the
+   modal. BELOW the sticky header (1100), which is deliberate: a follower in a watch party needs the
+   party pill to stop following, and it lives up there. Stays below the fullscreen source players
+   (z-index 9999999) launched from within it. */
 z-index: 1000;
 padding: 5rem 1rem;
 background-color: hsla(0, 0%, 0%, 0.439);
@@ -643,7 +644,9 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
 
   return (
     <FloatingPortal>
-      <FloatingOverlay lockScroll css={style} ref={refs.setReference} {...getReferenceProps()}>
+      {/* `data-party-scroll`: this overlay locks the body and scrolls inside itself, so the watch
+          party has to follow THIS box rather than the frozen page (see components/party-sync.tsx). */}
+      <FloatingOverlay lockScroll data-party-scroll css={style} ref={refs.setReference} {...getReferenceProps()}>
         <FloatingFocusManager context={context}>
           <div className="modal" ref={refs.setFloating} {...getFloatingProps()}>
             <div className="trailer" style={!selectedTrailer?.url && coverUrl ? { backgroundImage: `url(${coverUrl})` } : {}}>

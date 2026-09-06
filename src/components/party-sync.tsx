@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'preact/hooks'
 import { useLocation, useSearch } from 'wouter'
 
 import { party } from '../party'
+import { scrollFraction, scrollTo } from '../party/scroll'
 import { PARTY_PATH } from '../party/invite'
 import { useParty, usePartyMessages } from '../party/use-party'
 
@@ -10,16 +11,6 @@ import { useParty, usePartyMessages } from '../party/use-party'
 
 /** The most scroll messages a host sends per second. The room admits ten of anything, and the heartbeat and the navs share it. */
 const SCROLL_HZ = 2
-
-const scrollFraction = () => {
-  const room = document.documentElement.scrollHeight - window.innerHeight
-  return room > 0 ? Math.min(1, Math.max(0, window.scrollY / room)) : 0
-}
-
-const scrollTo = (fraction: number) => {
-  const room = document.documentElement.scrollHeight - window.innerHeight
-  window.scrollTo({ top: room > 0 ? fraction * room : 0 })
-}
 
 const PartySync = () => {
   const state = useParty()
@@ -55,9 +46,12 @@ const PartySync = () => {
       const wait = Math.max(0, 1000 / SCROLL_HZ - (Date.now() - last))
       pending = setTimeout(flush, wait)
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
+    // On the DOCUMENT in the capture phase, not on the window: a scroll inside an element does not
+    // bubble, so a window listener hears the page and nothing else. Capture hears every scroll on
+    // the way down, whichever box it happened in.
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true })
     return () => {
-      window.removeEventListener('scroll', onScroll)
+      document.removeEventListener('scroll', onScroll, { capture: true })
       if (pending) clearTimeout(pending)
     }
   }, [role, path])
