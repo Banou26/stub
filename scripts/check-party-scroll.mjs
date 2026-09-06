@@ -277,28 +277,81 @@ const run = async () => {
   check(inBetween(chased) >= 20, 'the follower moved continuously rather than in a few hops', `${inBetween(chased)} distinct positions`)
   check(Math.abs(ends[1] - ends[0]) < 0.08, 'and finished where the host finished, rather than trailing for ever', `${ends[1].toFixed(3)} against ${ends[0].toFixed(3)}`)
 
-  // The third call site, and the one that must NOT glide. A follower taken to a new page is being
-  // placed where the party already is; animating there would crawl down a page it has not seen. The
-  // decision lives in party-sync.tsx and nothing else covers it.
-  console.log('\nand a follower taken to a new page is placed there, not walked there')
-  await startSampling(guest)
-  // the host goes somewhere long and is already well down it, so the follower has a real distance to
-  // cover the moment it arrives
+  // The third call site, and the one that must NOT glide: a follower being PLACED on a page it has
+  // just been taken to. Animating there would crawl down a page nobody has seen.
+  //
+  // Reaching it needs care, and an earlier version of this section did not. `pendingScroll` is
+  // written in exactly one place, `land()`'s `to !== path` branch in party-sync.tsx, which runs only
+  // for a `state` message. A plain `nav` navigates WITHOUT setting it, so moving the host with
+  // `goto` exercises nothing at all here. A `state` that moves a guest arrives on a first join or on
+  // Catch up, so Catch up from another page is the way in. The earlier version also sliced its
+  // samples at the last scrollY of zero, which never occurred, leaving a one-element array that
+  // `inBetween` scores 0 whatever happened: it passed unconditionally under a comment claiming it
+  // covered this. Found by review, 2026-09-07.
+  console.log('\nand a follower taken to a page is placed there, not walked down it')
   await host.goto(`${ORIGIN}${PAGE}`, { waitUntil: 'domcontentloaded' })
   await host.locator('.grid > .card').first().waitFor({ timeout: 45_000 }).catch(() => {})
-  await host.waitForTimeout(1_500)
-  await host.evaluate(() => window.scrollTo({ top: Math.round(window.innerHeight * 1.2) }))
   await until(() => guest.evaluate(() => location.pathname + location.search), where => where.startsWith('/search?'), 30_000)
-  await until(() => guest.evaluate(() => window.scrollY), y => y > 100, 20_000)
-  await guest.waitForTimeout(2_000)
-  const navSamples = await readSamples(guest)
+  // The host waits well down the page, so the follower has a real distance to cover on arrival.
+  //
+  // SET AND CONFIRMED, because a `goto` to a url the page has already visited lets the browser
+  // RESTORE the old scroll position, asynchronously, after our scroll has run. A run that skipped
+  // this found the host at 0.41 of the page having been told to sit at 0.14, and read as the
+  // follower landing in the wrong place when it was the host that had moved.
+  let hostWhere = 0
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await host.evaluate(() => { history.scrollRestoration = 'manual'; window.scrollTo({ top: Math.round(window.innerHeight * 1.5) }) })
+    await host.waitForTimeout(1_000)
+    hostWhere = await host.evaluate(() => window.scrollY)
+    const wanted = await host.evaluate(() => Math.round(window.innerHeight * 1.5))
+    if (Math.abs(hostWhere - wanted) < 40) break
+  }
+  check(hostWhere > 200, 'the host is parked well down the page, and stayed there', `${Math.round(hostWhere)}px`)
+  await host.waitForTimeout(1_500)
 
-  // Counted from the arrival rather than from the whole recording: the samples start on the old page,
-  // where the follower was somewhere else entirely, and that drop to zero is the navigation, not a
-  // scroll. Everything after the last zero is this page.
-  const afterArrival = navSamples.slice(navSamples.lastIndexOf(0))
-  check(navSamples.at(-1) > 100, 'the follower is down the new page', `${Math.round(navSamples.at(-1))}px`)
-  check(inBetween(afterArrival) <= 3, 'and got there without walking down it', `${inBetween(afterArrival)} in-between positions after arriving`)
+  // the guest wanders off, the way a person does; a wandered guest is not dragged back until it asks
+  await guest.getByRole('link', { name: 'Settings' }).click()
+  const wandered = await until(() => guest.evaluate(() => location.pathname), where => where === '/settings', 20_000)
+  check(wandered === '/settings', 'the follower wandered off to another page', wandered)
+
+  // Sampled WITH the path on every frame, so the arrival is found by the navigation that actually
+  // happened rather than by a scroll position that may never occur.
+  await guest.evaluate(() => {
+    const samples = []
+    Object.assign(window, { __landing: samples })
+    const tick = () => {
+      samples.push({ y: window.scrollY, at: location.pathname + location.search })
+      window.__landingRaf = requestAnimationFrame(tick)
+    }
+    window.__landingRaf = requestAnimationFrame(tick)
+  })
+  await guest.getByRole('button', { name: /Following/ }).click()
+  await guest.getByRole('button', { name: 'Catch up' }).click()
+  await until(() => guest.evaluate(() => location.pathname + location.search), where => where.startsWith('/search?'), 30_000)
+  await until(() => guest.evaluate(() => window.scrollY), y => y > 200, 20_000)
+  await guest.waitForTimeout(2_500)
+  const landing = await guest.evaluate(() => { cancelAnimationFrame(window.__landingRaf); return window.__landing })
+
+  const arrivedAt = landing.findIndex((sample, index) => index > 0 && sample.at !== landing[index - 1].at && sample.at.startsWith('/search?'))
+  const afterArrival = arrivedAt >= 0 ? landing.slice(arrivedAt) : []
+  const ys = afterArrival.map(sample => sample.y)
+
+  check(arrivedAt >= 0, 'and Catch up navigated it back, which is the only way to reach this code', arrivedAt >= 0 ? `arrived at frame ${arrivedAt} of ${landing.length}` : 'it never navigated')
+  check(afterArrival.length >= 5, 'with enough frames after the arrival to see an animation if there were one', `${afterArrival.length} frames`)
+  // Compared as FRACTIONS again, and reported with both rooms, so a failure says whether the follower
+  // went to the wrong place or the page it landed on simply had nowhere to go.
+  const hostSpot = await host.evaluate(() => {
+    const room = document.documentElement.scrollHeight - window.innerHeight
+    return { fraction: room > 0 ? window.scrollY / room : 0, room }
+  })
+  const guestSpot = await guest.evaluate(() => {
+    const room = document.documentElement.scrollHeight - window.innerHeight
+    return { fraction: room > 0 ? window.scrollY / room : 0, room }
+  })
+  check(guestSpot.room > 400, 'the page it landed on has somewhere to go', `${Math.round(guestSpot.room)}px of room, host has ${Math.round(hostSpot.room)}px`)
+  check(Math.abs(guestSpot.fraction - hostSpot.fraction) < 0.06, 'the follower ended up where the host is', `${guestSpot.fraction.toFixed(3)} against ${hostSpot.fraction.toFixed(3)}`)
+  check((ys.at(-1) ?? 0) > 200, 'and that is a real distance down the page, not a rounding error', `${Math.round(ys.at(-1) ?? 0)}px`)
+  check(inBetween(ys) <= 2, 'and was placed there rather than walked there', `${inBetween(ys)} in-between positions after arriving`)
 
   await browser.close()
 }
