@@ -17,6 +17,11 @@ export const metadataOnly = true
 export const isApiOnly = false
 export const supportedUris = ['mal']
 
+// Jikan documents 3 requests a second and 60 a minute per address, and every user behind one FKN node
+// is one address to it. Spread across the fleet, so a busy evening does not spend the whole budget
+// from one node. The myanimelist.net scrape is not spread: it is a page, not a metered API.
+const SPREAD = { spread: true } as const
+
 const SCORE = 0.9
 const DESCRIPTION_SCORE = 0.9
 
@@ -186,7 +191,7 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
 const fetchSearchAnime = ({ search }: { search: string }, context: ExtractorServerContext) =>
   context
     // the search box takes arbitrary text, and an unescaped `&` or `#` there ends the query parameter
-    .fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(search)}`)
+    .fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(search)}`, SPREAD)
     .then(response => response.json() as Promise<AnimeSearchResponse>)
     .catch(error => {
       console.error('Jikan search failed', error)
@@ -200,7 +205,7 @@ const fetchSearchAnime = ({ search }: { search: string }, context: ExtractorServ
 
 const fetchMedia = ({ id }: { id: number }, context: ExtractorServerContext) =>
   context
-    .fetch(`https://api.jikan.moe/v4/anime/${id}/full`)
+    .fetch(`https://api.jikan.moe/v4/anime/${id}/full`, SPREAD)
     .then(response => response.json() as Promise<AnimeResponse>)
     .then(json =>
       json.data
@@ -211,7 +216,7 @@ const fetchMedia = ({ id }: { id: number }, context: ExtractorServerContext) =>
 // A rate limited page answers with an HTML body rather than JSON, so the parse itself can reject.
 const getSeasonNow = (page = 1, context: ExtractorServerContext): Promise<AnimeSearchResponse> =>
   context
-    .fetch(`https://api.jikan.moe/v4/seasons/now?page=${page}&sfw=true`)
+    .fetch(`https://api.jikan.moe/v4/seasons/now?page=${page}&sfw=true`, SPREAD)
     .then(response => response.json() as Promise<AnimeSearchResponse>)
     .catch(error => {
       console.error(`Jikan season page ${page} failed`, error)
@@ -238,7 +243,7 @@ const getSeason = (
   context: ExtractorServerContext
 ): Promise<AnimeSearchResponse> =>
   context
-    .fetch(`https://api.jikan.moe/v4/seasons/${year}/${season}?page=${page}&sfw=true`)
+    .fetch(`https://api.jikan.moe/v4/seasons/${year}/${season}?page=${page}&sfw=true`, SPREAD)
     .then(response => response.ok ? response.json() as Promise<AnimeSearchResponse> : {} as AnimeSearchResponse)
     .catch(error => {
       console.error(`Jikan ${season} ${year} page ${page} failed`, error)

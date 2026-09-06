@@ -2,7 +2,7 @@ import type { Resolvers } from '../worker'
 
 import { expose } from 'osra'
 
-import { withBackoff } from './backoff'
+import { withBackoff, type FetchInit } from './backoff'
 
 const exposePromise = expose<Resolvers>(
   {},
@@ -12,7 +12,7 @@ const exposePromise = expose<Resolvers>(
   }
 )
 
-export const fetch = (input: RequestInfo | URL, init?: RequestInit) =>
+export const fetch = (input: RequestInfo | URL, init?: FetchInit) =>
   exposePromise.then(({ fetch }) => fetch(input, init))
 
 export const fetchWithBackoff = withBackoff(fetch)

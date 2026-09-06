@@ -119,3 +119,18 @@ describe('retryDelay', () => {
     expect(retryDelay(res(429), 3)).toBe(8_000)
   })
 })
+
+// The `spread` flag rides `init` from an extractor through this wrapper, an osra hop and the main
+// thread to cloud.fetch, and every hop is typed loosely enough to drop it without a compile error.
+// This pins the one hop that has logic in it: a retry must carry the same init as the first attempt,
+// or a request that asked to spread would be retried on the tied node.
+describe('init travels with the request', () => {
+  test('every attempt carries the init it was called with, spread included', async () => {
+    const inits: unknown[] = []
+    const fetchImpl = async (_input: RequestInfo | URL, init?: RequestInit) => { inits.push(init); return res(inits.length < 3 ? 504 : 200) }
+    const { fetch } = noWait(fetchImpl)
+    await fetch('https://api.jikan.moe/v4/seasons/now', { spread: true, method: 'GET' })
+    expect(inits).toHaveLength(3)
+    for (const init of inits) expect(init).toEqual({ spread: true, method: 'GET' })
+  })
+})

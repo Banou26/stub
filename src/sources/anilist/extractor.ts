@@ -226,6 +226,11 @@ const frontend = createAnilistFrontendSession((input, init) => {
 const fetchPublicAnilist = async <T>({ query, variables }: { query: string, variables: any }, context: ExtractorServerContext): Promise<T | undefined> => {
   const response = await context.fetch('https://graphql.anilist.co/', {
     method: 'POST',
+    // The public API meters per source address, 30 a minute measured, and every user behind one FKN
+    // node shares that. Spreading across nodes multiplies it by the fleet. The frontend fallback is
+    // NOT spread: its CSRF pair was minted through one node and anilist.co may well bind it to the
+    // address, which is not something to find out from a gate refusal in production.
+    spread: true,
     headers: {
       'content-type': 'application/json'
     },

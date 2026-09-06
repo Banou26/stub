@@ -37,7 +37,18 @@ export const retryDelay = (response: Response, attempt: number, now = Date.now()
 export const backoffDelay = (attempt: number): number =>
   Math.min(1_000 * 2 ** attempt, MAX_RETRY_DELAY_MS)
 
-export type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+/**
+ * What an extractor may pass beside the platform's RequestInit, carried unchanged through the
+ * backoff, the osra hop and the main thread to `cloud.fetch`.
+ *
+ * `spread` sends the request through any healthy FKN node in turn instead of the node the session is
+ * on. For an upstream that meters per source address, and nothing else: AniList's public API answers
+ * `x-ratelimit-limit: 30` a minute per address (scripts/measure-start-date-window.mjs), shared by
+ * every user behind one node, and Jikan documents 3 a second and 60 a minute. An upstream that ties
+ * anything to the address a session was opened from stays on the one node.
+ */
+export type FetchInit = RequestInit & { spread?: boolean }
+export type FetchLike = (input: RequestInfo | URL, init?: FetchInit) => Promise<Response>
 
 /**
  * Wrap a fetch so a transient upstream failure is asked again instead of surfacing as data.

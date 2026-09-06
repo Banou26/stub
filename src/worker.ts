@@ -1,4 +1,5 @@
 import type { Resolvers as WorkerResolvers } from './worker/yoga'
+import type { FetchInit } from './worker/backoff'
 
 import { expose }  from 'osra'
 
@@ -12,7 +13,7 @@ const worker = new Worker()
 const resolvers = {
   // 404, never 503: `fetchWithBackoff` retries a 503 three times, and this refusal is the same shape
   // as the asset simply not being published yet, which the loader already answers undefined to.
-  fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+  fetch: (input: RequestInfo | URL, init?: FetchInit) =>
     refusesSeedAsset(location.href, input)
       ? new Response(null, { status: 404, statusText: 'the season seed is switched off for this page' })
       : fetch(input, init)
