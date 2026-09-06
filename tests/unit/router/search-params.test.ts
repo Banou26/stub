@@ -3,8 +3,8 @@ import { describe, expect, test } from 'vitest'
 import { MediaCategory, MediaSeason, MediaStatus, MediaType } from '../../../src/generated/graphql'
 import {
   EMPTY_SEARCH_FILTERS, KNOWN_GENRES, YEAR_MIN,
-  hasSearchFilters, isKnownGenre, legacySearchTerm, namesAQuery, parseSearchFilters, searchFiltersQuery,
-  searchHeading, searchPath, seasonValue, yearMax,
+  formatLabel, hasSearchFilters, isKnownGenre, legacySearchTerm, namesAQuery, parseSearchFilters,
+  searchFiltersQuery, searchHeading, searchPath, seasonLabel, seasonValue, statusLabel, yearMax,
 } from '../../../src/router/search/params'
 import type { SearchFilters } from '../../../src/router/search/params'
 import { writePluginUris } from '../../../src/utils/plugin-links'
@@ -209,5 +209,30 @@ describe('legacySearchTerm', () => {
       expect(() => legacySearchTerm(raw), raw).not.toThrow()
       expect(legacySearchTerm(raw), raw).toBe(raw)
     }
+  })
+})
+
+// The card and list modes render a format, a status and a broadcast window as words. They read the
+// same option lists the pickers do, so a label can only ever be written once.
+describe('formatLabel, statusLabel and seasonLabel', () => {
+  test('an enum value becomes the label its own picker shows', () => {
+    expect(formatLabel(MediaType.Tv)).toBe('TV Show')
+    expect(formatLabel(MediaType.Ova)).toBe('OVA')
+    expect(statusLabel(MediaStatus.Releasing)).toBe('Airing')
+    expect(statusLabel(MediaStatus.NotYetReleased)).toBe('Not yet aired')
+  })
+
+  test('a media no source typed answers nothing rather than a placeholder', () => {
+    expect(formatLabel(null)).toBeUndefined()
+    expect(formatLabel(undefined)).toBeUndefined()
+    expect(statusLabel(null)).toBeUndefined()
+  })
+
+  test('a season needs its year, a year does not need its season', () => {
+    expect(seasonLabel(MediaSeason.Fall, 2026)).toBe('Fall 2026')
+    expect(seasonLabel(null, 2026)).toBe('2026')
+    // "Fall" alone names a window in every year at once, which says less than nothing.
+    expect(seasonLabel(MediaSeason.Fall, null)).toBeUndefined()
+    expect(seasonLabel(null, null)).toBeUndefined()
   })
 })

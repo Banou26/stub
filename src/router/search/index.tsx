@@ -15,7 +15,11 @@ import {
   yearMax,
 } from './params'
 import MediaTitle from '../../components/media-title'
+import MediaCard from '../../components/media-card'
+import MediaRow from '../../components/media-row'
+import DisplayModeToggle from '../../components/display-mode-toggle'
 import FilterSelect, { FilterField } from '../../components/filter-select'
+import { readDisplayMode, writeDisplayMode, type DisplayMode } from './display'
 
 const SEARCH_MEDIA_PAGE = gql(`
   subscription SearchMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
@@ -36,6 +40,7 @@ const SEARCH_MEDIA_PAGE = gql(`
         covers {
           language
           url
+          color
         }
         banners {
           language
@@ -51,6 +56,15 @@ const SEARCH_MEDIA_PAGE = gql(`
         popularity
         genres
         tags
+        averageScore
+        status
+        type
+        season
+        seasonYear
+        nextAiringEpisode {
+          episodeNumber
+          airingAt
+        }
       }
     }
   }
@@ -60,10 +74,17 @@ const style = css`
   padding: calc(var(--stub-header-height) + 3rem) 3rem 4rem;
   min-height: 100vh;
 
+  .heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    margin-bottom: 2rem;
+  }
+
   .heading {
     font-size: 2.4rem;
     font-weight: 600;
-    margin-bottom: 2rem;
     color: rgba(255, 255, 255, 0.85);
   }
 
@@ -146,6 +167,20 @@ const style = css`
     justify-items: center;
   }
 
+  /* 42rem is the narrowest a card stays readable at: below it the description loses its last line
+     before the cover gives up any width. */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(42rem, 1fr));
+    gap: 1.6rem;
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
   .status {
     font-size: 1.8rem;
     color: rgba(255, 255, 255, 0.5);
@@ -164,6 +199,11 @@ const style = css`
 
     .grid {
       grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+      gap: 1.2rem;
+    }
+
+    .cards {
+      grid-template-columns: 1fr;
       gap: 1.2rem;
     }
   }
@@ -231,6 +271,14 @@ const Search = () => {
     variables: { input, shortDescriptionInput: { count: 1 } },
     pause: !asked,
   })
+
+  // Read from storage once rather than kept in the url: see ./display.ts for why a layout is not part
+  // of what was searched for.
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(readDisplayMode)
+  const pickDisplayMode = (mode: DisplayMode) => {
+    setDisplayMode(mode)
+    writeDisplayMode(mode)
+  }
 
   const [graceElapsed, setGraceElapsed] = useState(false)
   useEffect(() => {
@@ -305,6 +353,26 @@ const Search = () => {
     tags: next.filter(label => !isGenre(label)),
   })
 
+  // The container and the item, together: they have to agree, and a mode is told apart in the DOM by
+  // its container's class, which is what scripts/check-display-modes.mjs asserts against.
+  const layout = {
+    grid: {
+      className: 'grid',
+      item: (node: typeof nodes[number]) =>
+        <MediaTitle key={node._id} media={node} to={getRoutePath(Route.MEDIA, { uri: node.uri })} ellipsis={false}/>,
+    },
+    card: {
+      className: 'cards',
+      item: (node: typeof nodes[number]) =>
+        <MediaCard key={node._id} media={node} to={getRoutePath(Route.MEDIA, { uri: node.uri })}/>,
+    },
+    list: {
+      className: 'rows',
+      item: (node: typeof nodes[number]) =>
+        <MediaRow key={node._id} media={node} to={getRoutePath(Route.MEDIA, { uri: node.uri })}/>,
+    },
+  }[displayMode]
+
   const chips: { key: string, label: string, clear: Partial<SearchFilters> }[] = [
     ...filters.year ? [{ key: 'year', label: String(filters.year), clear: { year: null } }] : [],
     ...filters.season ? [{ key: 'season', label: SEASON_OPTIONS.find(option => option.value === filters.season)!.label, clear: { season: null } }] : [],
@@ -321,7 +389,10 @@ const Search = () => {
 
   return (
     <div css={style}>
-      <div className="heading">{searchHeading(filters)}</div>
+      <div className="heading-row">
+        <div className="heading">{searchHeading(filters)}</div>
+        <DisplayModeToggle mode={displayMode} onChange={pickDisplayMode}/>
+      </div>
 
       <div className="filters">
         <FilterField label="Search">
@@ -400,18 +471,7 @@ const Search = () => {
 
       {
         nodes.length
-          ? (
-            <div className="grid">
-              {nodes.map(node => (
-                <MediaTitle
-                  key={node._id}
-                  media={node}
-                  to={getRoutePath(Route.MEDIA, { uri: node.uri })}
-                  ellipsis={false}
-                />
-              ))}
-            </div>
-          )
+          ? <div className={layout.className}>{nodes.map(layout.item)}</div>
           : asked
             ? <div className="status">{graceElapsed ? 'No results found.' : 'Searching\u2026'}</div>
             : filtered

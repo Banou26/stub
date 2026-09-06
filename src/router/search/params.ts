@@ -258,6 +258,26 @@ export const searchHeading = (filters: SearchFilters): string => {
   return hasSearchFilters(filters) ? 'Browsing' : 'Search'
 }
 
+/** A format as the picker labels it ("TV Show"), or nothing for a media whose format no source named. */
+export const formatLabel = (type: MediaType | null | undefined): string | undefined =>
+  FORMAT_OPTIONS.find(option => option.value === type)?.label
+
+/** A release status as the picker labels it ("Airing"). */
+export const statusLabel = (status: MediaStatus | null | undefined): string | undefined =>
+  STATUS_OPTIONS.find(option => option.value === status)?.label
+
+/**
+ * A broadcast window as one label ("Fall 2026"), from whichever half is known.
+ *
+ * A year with no season is still worth showing, and a season with no year is not: "Fall" alone names
+ * a window in every year at once, which is worse than saying nothing.
+ */
+export const seasonLabel = (season: MediaSeason | null | undefined, year: number | null | undefined): string | undefined => {
+  const name = SEASON_OPTIONS.find(option => option.value === season)?.label
+  if (name && year) return `${name} ${year}`
+  return year ? String(year) : undefined
+}
+
 /** Whether anything is filtered at all. Nothing set means the page asks nothing and shows a prompt. */
 export const hasSearchFilters = (filters: SearchFilters): boolean =>
   Boolean(
