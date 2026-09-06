@@ -128,7 +128,7 @@ const MediaRow = ({ media, to }: { media: ListedMedia, to: Path }) => {
         <span>{statusLabel(media.status)}</span>
         {
           countdown && episode != null &&
-            <span className="secondary">Ep {episode} airing in {countdown}</span>
+            <span className="secondary airing">Ep {episode} airing in {countdown}</span>
         }
       </div>
     </Link>

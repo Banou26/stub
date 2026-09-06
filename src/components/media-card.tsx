@@ -167,7 +167,7 @@ const MediaCard = ({ media, to }: { media: ListedMedia, to: Path }) => {
                 ? (
                   <>
                     <div className="airing-label">Ep {episode} airing in</div>
-                    <div className="airing-value">{countdown}</div>
+                    <div className="airing-value airing">{countdown}</div>
                   </>
                 )
                 : <div className="airing-value">{statusLabel(media.status) ?? 'Unknown status'}</div>

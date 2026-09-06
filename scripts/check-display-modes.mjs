@@ -85,6 +85,7 @@ const run = async () => {
     process.exit(2)
   }
 
+  const rendered = {}
   for (const [mode, spec] of Object.entries(MODES)) {
     console.log(`\n${mode}`)
     await page.getByRole('button', { name: spec.label, exact: true }).click()
@@ -93,9 +94,24 @@ const run = async () => {
     check(shown > 0, `${mode} renders its own items`, `${shown}`)
     const others = Object.entries(all).filter(([other]) => other !== mode)
     check(others.every(([, count]) => count === 0), 'and only its own', others.map(([o, c]) => `${o}=${c}`).join(' '))
-    check(shown === first, 'over the same results as every other mode', `${shown} of ${first}`)
+    rendered[mode] = shown
     if (shotsAt) await page.screenshot({ path: `${shotsAt}/${mode}.png`, fullPage: false })
   }
+
+  console.log('\nevery mode renders the same results')
+  // Measured back to back, NEVER against the count taken before the first switch. Results keep
+  // ARRIVING while a mode is being read: on production the page settles at 92 from the bundled season
+  // seed and reaches 95 once the live sources answer, so a baseline captured early fails all three
+  // modes for a reason that has nothing to do with any of them.
+  const again = {}
+  for (const [mode, spec] of Object.entries(MODES)) {
+    await page.getByRole('button', { name: spec.label, exact: true }).click()
+    await page.waitForTimeout(1_000)
+    again[mode] = await page.locator(spec.items).count()
+  }
+  const values = Object.values(again)
+  check(values.every(count => count === values[0]) && values[0] > 0,
+    'the three modes agree', Object.entries(again).map(([mode, count]) => `${mode}=${count}`).join(' '))
 
   console.log('\nthe choice survives a reload, and a different search')
   await page.reload({ waitUntil: 'domcontentloaded' })
@@ -113,12 +129,15 @@ const run = async () => {
   check(impossible === 0, 'a genre nothing carries renders no items in any mode', `${impossible}`)
 
   console.log('\nthe fields only these modes read actually arrive')
+  // Waiting on the ROW COUNT is not enough and reported a false failure on production: the bundled
+  // season seed fills the rows in one go, so the count settles BEFORE AniList answers, and AniList is
+  // the only source that publishes a schedule. Both fields are waited on where they render.
   await page.goto(`${ORIGIN}/search?season=${season}&year=${year}`, { waitUntil: 'domcontentloaded' })
   await settled(page, MODES.list.items)
   const rows = page.locator(MODES.list.items)
-  const scored = await rows.locator('[aria-label^="Rated "]').count()
+  const scored = await settled(page, `${MODES.list.items} [aria-label^="Rated "]`, 60_000)
   check(scored > 0, 'a rating reaches the rows', `${scored} of ${await rows.count()}`)
-  const airing = await page.getByText(/Ep \d+ airing in/).count()
+  const airing = await settled(page, `${MODES.list.items} .airing`, 60_000)
   check(airing > 0, 'and so does a scheduled episode', `${airing} rows counting down`)
 
   console.log('\nno card shows more description than it clamps to')
