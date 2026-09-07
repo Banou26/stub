@@ -272,7 +272,7 @@ describe('following', () => {
     expect(lastSent(fake.sent)).toEqual({ t: 'name', name: 'Ann' })
     expect(storage.store.get('stub-party-name')).toBe('Ann')
 
-    fake.emit({ type: 'joined', member: { id: 'new', permissions: { send: true, receive: true, remove: false, block: false } } })
+    fake.emit({ type: 'joined', member: { id: 'new', permissions: { send: true, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 } })
     expect(fake.sent.filter(text => decodePartyMessage(text)?.t === 'name')).toHaveLength(2)
 
     // and a tab that remembered one introduces itself on the way in
@@ -329,7 +329,7 @@ describe('following', () => {
     await settle()
     expect((party.getState() as Extract<PartyState, { status: 'active' }>).members).toBe(3)
 
-    fake.room.members = async () => [{ id: 'host', permissions: { send: true, receive: true, remove: false, block: false } }, { id: 'me', permissions: { send: false, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 }]
+    fake.room.members = async () => [{ id: 'host', permissions: { send: true, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 }, { id: 'me', permissions: { send: false, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 }]
     fake.emit({ type: 'left', id: 'other', reason: 'left' })
     await settle()
     expect(party.getState()).toMatchObject({ status: 'active', members: 2 })
@@ -399,14 +399,14 @@ describe('the joiner snapshot moves with the clock', () => {
     await party.create()
     party.setPlayback({ paused: false, time: 100, rate: 1, at: 1 })
     await vi.advanceTimersByTimeAsync(4_000)
-    fake.emit({ type: 'joined', member: { id: 'g', permissions: { send: true, receive: true, remove: false, block: false } } })
+    fake.emit({ type: 'joined', member: { id: 'g', permissions: { send: true, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 } })
     const playing = lastSent(fake.sent) as { s: { time: number, at: number } }
     expect(playing.s.time).toBeCloseTo(104, 2)
     expect(playing.s.at).toBe(1_004_000)
 
     party.setPlayback({ paused: true, time: 200, rate: 1, at: 1 })
     await vi.advanceTimersByTimeAsync(4_000)
-    fake.emit({ type: 'joined', member: { id: 'h', permissions: { send: true, receive: true, remove: false, block: false } } })
+    fake.emit({ type: 'joined', member: { id: 'h', permissions: { send: true, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 } })
     expect((lastSent(fake.sent) as { s: { time: number } }).s.time).toBe(200)
   })
 })
