@@ -147,9 +147,9 @@ const FAILURE: Record<string, string> = {
  */
 const Party = () => {
   const state = useParty()
-  const [invite] = useState(() => inviteFromHash(location.hash))
+  const [invite] = useState(() => inviteFromHash(location.hash, location.origin))
   // a fragment that is not an invite is a broken link, which is not the same as no link at all
-  const [broken] = useState(() => location.hash.length > 1 && !inviteFromHash(location.hash))
+  const [broken] = useState(() => location.hash.length > 1 && !inviteFromHash(location.hash, location.origin))
   const [members, setMembers] = useState<PartyMember[]>([])
   const [name, setName] = useState(() => party.name() ?? '')
   const [copied, setCopied] = useState(false)
