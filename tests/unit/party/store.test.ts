@@ -21,13 +21,24 @@ const fakeRoom = ({ self, owner, members = [self] }: { self: string, owner: stri
   const perms = { send: true, receive: true, remove: false, block: false }
   const room = {
     id: INVITE.slice(INVITE.indexOf('.') + 1),
+    name: INVITE.slice(INVITE.lastIndexOf('/') + 1),
     key: INVITE.slice(0, INVITE.indexOf('.')),
     invite: INVITE,
-    self: { id: self, permissions: perms },
+    claimed: false,
+    mailbox: null,
+    self: { id: self, permissions: perms, maxMessageBytes: 262_144 },
     owner,
-    defaults: () => ({ send: false, receive: true }),
-    members: async () => members.map(id => ({ id, permissions: perms })),
+    defaults: () => ({ send: false, receive: true, maxMessageBytes: 262_144 }),
+    members: async () => members.map(id => ({ id, permissions: perms, maxMessageBytes: 262_144 })),
     send: vi.fn(async (text: string) => { sent.push(text) }),
+    // the surface the party never calls, present so the fake satisfies `Room`
+    edit: vi.fn(async () => {}),
+    delete: vi.fn(async () => {}),
+    backlog: vi.fn(async () => ({ last: 0, more: false })),
+    limit: vi.fn(async () => {}),
+    claim: vi.fn(async () => {}),
+    release: vi.fn(async () => {}),
+    usage: vi.fn(async () => null),
     setDefault: vi.fn(async () => {}),
     grant: vi.fn(async () => {}),
     revoke: vi.fn(async () => {}),
@@ -115,7 +126,7 @@ describe('hosting', () => {
     party.setPlayback({ paused: false, time: 42, rate: 1, at: 1 })
 
     fake.join('guest')
-    fake.emit({ type: 'joined', member: { id: 'guest', permissions: { send: false, receive: true, remove: false, block: false } } })
+    fake.emit({ type: 'joined', member: { id: 'guest', permissions: { send: false, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 } })
     await settle()
 
     // the playback went out moved to NOW on the host's clock, not as the player reported it: the
@@ -129,7 +140,7 @@ describe('hosting', () => {
 
     // off the watch page the snapshot carries no playback, so a joiner is not handed a stale one
     party.setPlayback(undefined)
-    fake.emit({ type: 'joined', member: { id: 'other', permissions: { send: false, receive: true, remove: false, block: false } } })
+    fake.emit({ type: 'joined', member: { id: 'other', permissions: { send: false, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 } })
     await settle()
     expect(lastSent(fake.sent)).toEqual({ t: 'state', path: '/watch/a/b', y: 0.25 })
   })
@@ -224,7 +235,7 @@ describe('following', () => {
 
     fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } })
     fake.emit({ type: 'message', message: { seq: 2, from: 'someone', at: 1, text: encodePartyMessage({ t: 'nav', path: '/y' }) } })
-    fake.emit({ type: 'message', message: { seq: 3, from: 'host', at: 1, text: 'not a party message' } })
+    fake.emit({ type: 'message', message: { seq: 3, from: 'host', at: 1, text: 'not a party message' } , replayed: false })
     expect(heard).toHaveBeenCalledTimes(1)
     expect(heard).toHaveBeenCalledWith({ t: 'nav', path: '/x' }, { replayed: false, from: 'host', self: false })
   })
@@ -239,7 +250,7 @@ describe('following', () => {
     party.onMessage(heard)
 
     const say = (seq: number, from: string, message: Parameters<typeof encodePartyMessage>[0]) =>
-      fake.emit({ type: 'message', message: { seq, from, at: 1, text: encodePartyMessage(message) } })
+      fake.emit({ type: 'message', message: { seq, from, at: 1, text: encodePartyMessage(message) } , replayed: false })
     say(1, 'other', { t: 'nav', path: '/evil' })
     say(2, 'other', { t: 'scroll', y: 1 })
     say(3, 'other', { t: 'cursor', x: 0, y: 0 })
@@ -318,7 +329,7 @@ describe('following', () => {
     await settle()
     expect((party.getState() as Extract<PartyState, { status: 'active' }>).members).toBe(3)
 
-    fake.room.members = async () => [{ id: 'host', permissions: { send: true, receive: true, remove: false, block: false } }, { id: 'me', permissions: { send: false, receive: true, remove: false, block: false } }]
+    fake.room.members = async () => [{ id: 'host', permissions: { send: true, receive: true, remove: false, block: false } }, { id: 'me', permissions: { send: false, receive: true, remove: false, block: false }, maxMessageBytes: 262_144 }]
     fake.emit({ type: 'left', id: 'other', reason: 'left' })
     await settle()
     expect(party.getState()).toMatchObject({ status: 'active', members: 2 })
@@ -332,7 +343,7 @@ describe('following', () => {
     party.onMessage(message => heard.push(message))
 
     const say = (seq: number, message: Parameters<typeof encodePartyMessage>[0]) =>
-      fake.emit({ type: 'message', message: { seq, from: 'host', at: 1, text: encodePartyMessage(message) } })
+      fake.emit({ type: 'message', message: { seq, from: 'host', at: 1, text: encodePartyMessage(message) } , replayed: false })
     say(1, { t: 'scroll', y: 0.1 })
     say(2, { t: 'nav', path: '/a' })
     say(3, { t: 'scroll', y: 0.9 })
@@ -365,7 +376,7 @@ describe('following', () => {
     expect(party.hostPath()).toBeUndefined()
 
     const say = (seq: number, message: Parameters<typeof encodePartyMessage>[0]) =>
-      fake.emit({ type: 'message', message: { seq, from: 'host', at: 1, text: encodePartyMessage(message) } })
+      fake.emit({ type: 'message', message: { seq, from: 'host', at: 1, text: encodePartyMessage(message) } , replayed: false })
     say(1, { t: 'state', path: '/a', y: 0 })
     expect(party.hostPath()).toBe('/a')
     say(2, { t: 'nav', path: '/b' })
