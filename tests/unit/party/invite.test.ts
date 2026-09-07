@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 
 import { inviteFromHash, partyLink, PARTY_PATH } from '../../../src/party/invite'
 
-const INVITE = '1b4e28ba-2fa1-11d2-883f-0016d3cca427.Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F5'
+const INVITE = 'Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F.https://anime.fkn.app/1b4e28ba2fa111d2883f0016d3cc'
 
 describe('partyLink and inviteFromHash', () => {
   test('the invite rides in the fragment, and comes back out of it', () => {
@@ -17,10 +17,10 @@ describe('partyLink and inviteFromHash', () => {
   })
 
   // The failures a shared link actually suffers: a chat client that dropped the fragment, a copy that
-  // cut the key, a key that is not the shape the broker mints. Each has to read as a broken link on
+  // cut the key, a key that is not the shape the broker mints, a name the grammar refuses. Each has to read as a broken link on
   // the page rather than an opaque refusal from the broker.
   test('a mangled link is nothing', () => {
-    for (const hash of ['', '#', '#1b4e28ba-2fa1-11d2-883f-0016d3cca427', '#1b4e28ba-2fa1-11d2-883f-0016d3cca427.short', '#not-a-uuid.Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F5', '#../../etc']) {
+    for (const hash of ['', '#', '#Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F', '#short.https://anime.fkn.app/lobby', '#Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F.no-slash', '#Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F.https://anime.fkn.app/Upper', '#../../etc']) {
       expect(inviteFromHash(hash), hash).toBeUndefined()
     }
   })

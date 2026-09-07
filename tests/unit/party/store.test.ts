@@ -10,7 +10,7 @@ import { decodePartyMessage, encodePartyMessage } from '../../../src/party/proto
 type RoomEvent = rooms.RoomEvent
 type Room = rooms.Room
 
-const INVITE = '1b4e28ba-2fa1-11d2-883f-0016d3cca427.Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F5'
+const INVITE = 'Qm9yZWQtYnV0LWhhcHB5LWV2ZXJ5LWRheS1vay1va2F.https://anime.fkn.app/1b4e28ba2fa111d2883f0016d3cc'
 
 /** A room as the store sees one, with the wires to drive it from the test. */
 const fakeRoom = ({ self, owner, members = [self] }: { self: string, owner: string, members?: string[] }) => {
@@ -20,8 +20,8 @@ const fakeRoom = ({ self, owner, members = [self] }: { self: string, owner: stri
   const closed = new Promise<rooms.RoomEnd>(resolve => { resolveClosed = resolve })
   const perms = { send: true, receive: true, remove: false, block: false }
   const room = {
-    id: INVITE.split('.')[0]!,
-    key: INVITE.split('.')[1]!,
+    id: INVITE.slice(INVITE.indexOf('.') + 1),
+    key: INVITE.slice(0, INVITE.indexOf('.')),
     invite: INVITE,
     self: { id: self, permissions: perms },
     owner,

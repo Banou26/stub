@@ -15,7 +15,7 @@ export const partyLink = (origin: string, invite: string): string => `${origin}$
 /**
  * The invite out of a location fragment, or nothing.
  *
- * `<uuid>.<key>`, the shape `@fkn/lib` mints. Checked here so a mangled link (a chat client that
+ * `<key>.<scope>/<name>`, the shape `@fkn/lib` mints. Checked here so a mangled link (a chat client that
  * dropped the fragment, a copy that cut the key) answers "this link is broken" on the page rather
  * than an `invalid` from the broker with no context.
  */
@@ -25,4 +25,5 @@ export const inviteFromHash = (hash: string): string | undefined => {
   return INVITE.test(invite) ? invite : undefined
 }
 
-const INVITE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[A-Za-z0-9_-]{40,50}$/
+// the 43-character key leads and the room id, `<scope>/<name>`, runs to the end; a name is lowercase and never carries a slash
+const INVITE = /^[A-Za-z0-9_-]{43}\.[\x21-\x7e]{1,256}\/[a-z0-9][a-z0-9._-]{0,63}$/
