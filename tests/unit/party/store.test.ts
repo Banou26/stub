@@ -191,9 +191,9 @@ describe('hosting', () => {
     const heard = vi.fn()
     party.onMessage(heard)
 
-    fake.emit({ type: 'message', message: { seq: 1, from: 'me', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } })
+    fake.emit({ type: 'message', message: { seq: 1, from: 'me', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } , replayed: false })
     expect(heard).not.toHaveBeenCalled()
-    fake.emit({ type: 'message', message: { seq: 2, from: 'me', at: 5, text: encodePartyMessage({ t: 'chat', text: 'hi all' }) } })
+    fake.emit({ type: 'message', message: { seq: 2, from: 'me', at: 5, text: encodePartyMessage({ t: 'chat', text: 'hi all' }) } , replayed: false })
     expect(heard).toHaveBeenCalledWith({ t: 'chat', text: 'hi all' }, { replayed: false, from: 'me', self: true })
     expect(party.chat()).toEqual([{ seq: 2, from: 'me', name: undefined, text: 'hi all', at: 5, self: true }])
   })
@@ -205,8 +205,8 @@ describe('hosting', () => {
     const heard = vi.fn()
     party.onMessage(heard)
 
-    fake.emit({ type: 'message', message: { seq: 1, from: 'g1', at: 1, text: encodePartyMessage({ t: 'name', name: 'Ann' }) } })
-    fake.emit({ type: 'message', message: { seq: 2, from: 'g1', at: 2, text: encodePartyMessage({ t: 'chat', text: 'yo' }) } })
+    fake.emit({ type: 'message', message: { seq: 1, from: 'g1', at: 1, text: encodePartyMessage({ t: 'name', name: 'Ann' }) } , replayed: false })
+    fake.emit({ type: 'message', message: { seq: 2, from: 'g1', at: 2, text: encodePartyMessage({ t: 'chat', text: 'yo' }) } , replayed: false })
     expect(party.chat()).toEqual([{ seq: 2, from: 'g1', name: 'Ann', text: 'yo', at: 2, self: false }])
     expect(await party.roster()).toEqual([
       { id: 'me', name: undefined, host: true, self: true },
@@ -233,8 +233,8 @@ describe('following', () => {
     await settle()
     expect(party.getState()).toEqual({ status: 'active', role: 'guest', invite: INVITE, members: 2, self: 'me', owner: 'host' })
 
-    fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } })
-    fake.emit({ type: 'message', message: { seq: 2, from: 'someone', at: 1, text: encodePartyMessage({ t: 'nav', path: '/y' }) } })
+    fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/x' }) } , replayed: false })
+    fake.emit({ type: 'message', message: { seq: 2, from: 'someone', at: 1, text: encodePartyMessage({ t: 'nav', path: '/y' }) } , replayed: false })
     fake.emit({ type: 'message', message: { seq: 3, from: 'host', at: 1, text: 'not a party message' } , replayed: false })
     expect(heard).toHaveBeenCalledTimes(1)
     expect(heard).toHaveBeenCalledWith({ t: 'nav', path: '/x' }, { replayed: false, from: 'host', self: false })
@@ -361,7 +361,7 @@ describe('following', () => {
     const heard = vi.fn()
     party.onMessage(heard)
 
-    fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/a' }) } })
+    fake.emit({ type: 'message', message: { seq: 1, from: 'host', at: 1, text: encodePartyMessage({ t: 'nav', path: '/a' }) } , replayed: false })
     expect(heard).toHaveBeenLastCalledWith({ t: 'nav', path: '/a' }, { replayed: false, from: 'host', self: false })
     party.replay()
     expect(heard).toHaveBeenLastCalledWith({ t: 'nav', path: '/a' }, { replayed: true, from: 'host', self: false })
@@ -527,7 +527,7 @@ describe('timing the host clock', () => {
     await host.create()
     await settle()
 
-    fake.emit({ type: 'message', message: { from: 'them', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'ping', n: 7, at: 1_000 }) } })
+    fake.emit({ type: 'message', message: { from: 'them', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'ping', n: 7, at: 1_000 }) } , replayed: false })
     await settle()
 
     const pong = lastSent(fake.sent)
@@ -547,7 +547,7 @@ describe('timing the host clock', () => {
     const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
     expect(ping).toBeDefined()
     // a host whose clock reads a full hour ahead, answering at once
-    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 3_600_000 }) } })
+    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 3_600_000 }) } , replayed: false })
     await settle()
 
     const clock = guest.hostClock()
@@ -564,9 +564,9 @@ describe('timing the host clock', () => {
     const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
 
     // right nonce, a stamp this guest never sent: another member's trip, timed on another clock
-    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at + 5_000, host: ping.at + 9_000 }) } })
+    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at + 5_000, host: ping.at + 9_000 }) } , replayed: false })
     // and an unknown nonce
-    fake.emit({ type: 'message', message: { from: 'host', seq: 2, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: 999_999, at: ping.at, host: ping.at }) } })
+    fake.emit({ type: 'message', message: { from: 'host', seq: 2, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: 999_999, at: ping.at, host: ping.at }) } , replayed: false })
     await settle()
 
     expect(guest.hostClock()).toBeUndefined()
@@ -579,7 +579,7 @@ describe('timing the host clock', () => {
     await settle()
     const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
 
-    fake.emit({ type: 'message', message: { from: 'someone-else', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 60_000 }) } })
+    fake.emit({ type: 'message', message: { from: 'someone-else', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 60_000 }) } , replayed: false })
     await settle()
 
     expect(guest.hostClock(), 'anyone could offer a clock; only the host has the one that counts').toBeUndefined()
@@ -591,7 +591,7 @@ describe('timing the host clock', () => {
     await guest.join(INVITE)
     await settle()
     const ping = pingsIn(fake.sent)[0] as { n: number, at: number }
-    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 5_000 }) } })
+    fake.emit({ type: 'message', message: { from: 'host', seq: 1, at: Date.now(), text: encodePartyMessage({ t: 'pong', n: ping.n, at: ping.at, host: ping.at + 5_000 }) } , replayed: false })
     await settle()
     expect(guest.hostClock()).toBeDefined()
 
