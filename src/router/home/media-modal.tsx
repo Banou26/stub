@@ -21,7 +21,7 @@ import Collapsible from '../../components/collapsible'
 import MediaRelations from '../../components/media-relations'
 import MediaFranchise from '../../components/media-franchise'
 import { gql } from '../../generated'
-import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
+import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri, shouldGrowAddress } from '../../utils/uri'
 import { nextThumbnail } from '../../utils/thumbnails'
 import { getRoutePath, Route } from '../path'
 import { releaseDateAttribute, releaseDateDisplay } from '../../utils/release-date'
@@ -700,12 +700,19 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   const [playerMuted, setPlayerMuted] = useState(true)
   const [playerVolume, setPlayerVolume] = useState(0.25)
 
+  // The address grows as the store folds more sources into the cluster, so a page opened knowing one
+  // source ends up at the uri naming all of them.
+  //
+  // ONLY WHEN THE MEDIA IN HAND IS THE WORK THE ADDRESS NAMES, which the length comparison alone does
+  // not establish. On a navigation the address changes first and `media` is still the PREVIOUS work
+  // for a beat, so a link to a work known through one source ran this with the old cluster's eight
+  // handles against the new address's one, decided the address had shrunk, and replaced it with the
+  // page you were leaving. Clicking a relation or a graph node did nothing at all, twice out of twice
+  // (measured 2026-09-09); before these linked to a bare source uri the guard above happened to hide
+  // it, since a bare uri is not aggregated and the effect returned early.
   useEffect(() => {
-    if (!media?.uri || !isAggregatedUri(media.uri) || !params.uri || !isAggregatedUri(params.uri)) return
-    const mediaAggregatedUris = fromAggregatedUri(media.uri)?.handleUris ?? []
-    const paramsAggregatedUris = fromAggregatedUri(params.uri)?.handleUris ?? []
-    if (mediaAggregatedUris.length > paramsAggregatedUris.length) {
-      navigate(getRoutePath(Route.MEDIA, { uri: media.uri }), { replace: true })
+    if (shouldGrowAddress(media?.uri, params.uri)) {
+      navigate(getRoutePath(Route.MEDIA, { uri: media!.uri }), { replace: true })
     }
   }, [media?.uri, params.uri])
 

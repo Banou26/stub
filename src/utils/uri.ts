@@ -105,6 +105,50 @@ export const isAggregatedUri = (uri: string): uri is AggregatedUri => {
 }
 
 /**
+ * The routable form of a work's uri: an aggregate, even when only one source is known.
+ *
+ * A relation and a graph node name a work by the SOURCE that mentioned it, `anilist:166873`, because
+ * that is all the naming source could say. Linking straight to it opens a page pinned to one source:
+ * the store has a single row to work with, so no other source is ever asked and the page shows
+ * whatever AniList alone knows. Wrapped as `ag:(anilist:166873)` it is the same work asked as a
+ * CLUSTER, which is the form the store keeps resolving: it fans out to the other sources, folds in
+ * whatever answers, and the modal rewrites its own address as the cluster grows.
+ *
+ * A uri that is already aggregated is returned untouched, and so is anything that is not a uri at all,
+ * since wrapping a non-uri would produce an `ag:(...)` that no validator accepts.
+ */
+export const asAggregatedUri = (uri: string): string => {
+  if (isAggregatedUri(uri)) return uri
+  // ROUTABLE, not merely well formed. `isUri` only counts colon separated parts, so it accepts
+  // `https://example.test/x` as origin `https`; wrapped, the slashes in the id would split the route
+  // segment and the link would match no page at all. `isRoutableUri` is the check that asks whether
+  // the id can survive being put in a path.
+  if (!isRoutableUri(uri) || !isUri(uri)) return uri
+  return toAggregatedUri([uri as Uri])
+}
+
+/**
+ * Whether a page showing `mediaUri` should rewrite its address to it, given the address says
+ * `paramsUri`.
+ *
+ * The address grows as the store folds more sources into a cluster, so a page opened knowing one
+ * source ends up naming all of them. Two conditions, and the second is the one that is easy to miss:
+ * the cluster in hand must be BIGGER, and it must be the SAME WORK.
+ *
+ * Without the identity check a navigation eats itself. The address changes first and the page still
+ * holds the previous work for a beat, so a link to a work known through one source is judged against
+ * the old cluster's eight handles, read as a shrinking address, and replaced with the page being left.
+ * Every relation and every graph node did nothing at all when clicked (measured 2026-09-09).
+ */
+export const shouldGrowAddress = (mediaUri: string | undefined, paramsUri: string | undefined): boolean => {
+  if (!mediaUri || !paramsUri || !isAggregatedUri(mediaUri) || !isAggregatedUri(paramsUri)) return false
+  if (!matchAggregatedUris(mediaUri, paramsUri)) return false
+  const inHand = fromAggregatedUri(mediaUri)?.handleUris ?? []
+  const named = fromAggregatedUri(paramsUri)?.handleUris ?? []
+  return inHand.length > named.length
+}
+
+/**
  * A uri as it arrives in a ROUTE PARAMETER, percent-decoded once when that is what makes it a uri.
  *
  * wouter hands a path segment through undecoded, and `isUri` and `isAggregatedUri` both refuse

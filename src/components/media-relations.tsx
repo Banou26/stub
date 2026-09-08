@@ -5,6 +5,7 @@ import { css } from '@emotion/react'
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
+import { asAggregatedUri } from '../utils/uri'
 import { isVideoFormat } from '../utils/franchise-layout'
 import { relationLabel, relationRank, workFormatLabel } from '../utils/relation-labels'
 import { statusLabel } from '../router/search/params'
@@ -111,7 +112,7 @@ const RelationCard = ({ edge }: { edge: RelationEdge }) => {
   const meta = [workFormatLabel(edge.format), statusLabel(edge.node.status)].filter(Boolean).join(' · ')
 
   return (
-    <Link className="relation-card" css={cardStyle} to={getRoutePath(Route.MEDIA, { uri: edge.node.uri })}>
+    <Link className="relation-card" css={cardStyle} to={getRoutePath(Route.MEDIA, { uri: asAggregatedUri(edge.node.uri) })}>
       {cover ? <img className="cover" src={cover} alt=""/> : <div className="cover"/>}
       <div className="body">
         <div className="relation">{relationLabel(edge.relation)}</div>

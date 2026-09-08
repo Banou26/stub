@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/ho
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
+import { asAggregatedUri } from '../utils/uri'
 import { edgeKey, formatsIn, highlightFor, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
 import type { HoverTarget } from '../utils/franchise-layout'
 import { IDENTITY, fit, panBy, zoomAt } from '../utils/viewport'
@@ -288,7 +289,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
   const current = new Set(currentUris)
 
   const canvas = useRef<HTMLDivElement>(null)
-  const grab = useRef<{ x: number, y: number, view: View } | undefined>(undefined)
+  const grab = useRef<{ x: number, y: number, view: View, id: number } | undefined>(undefined)
   const [dragging, setDragging] = useState(false)
   const [view, setView] = useState<View>(IDENTITY)
   // Remembered past the pointerup, because the CLICK fires after it: a drag that ends over a work
@@ -361,20 +362,30 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
         onPointerDown={event => {
           const box = canvas.current
           if (!box || event.button !== 0) return
-          grab.current = { x: event.clientX, y: event.clientY, view }
+          grab.current = { x: event.clientX, y: event.clientY, view, id: event.pointerId }
           moved.current = false
           setDragging(true)
-          box.setPointerCapture?.(event.pointerId)
         }}
         onPointerMove={event => {
           const from = grab.current
           if (!from) return
           const dx = event.clientX - from.x
           const dy = event.clientY - from.y
-          if (Math.abs(dx) > SLOP || Math.abs(dy) > SLOP) moved.current = true
+          if (!moved.current && (Math.abs(dx) > SLOP || Math.abs(dy) > SLOP)) {
+            moved.current = true
+            // CAPTURED HERE, not on the press. Capturing up front retargets the click that follows a
+            // press onto this element, so every click on a work landed on the canvas and the graph
+            // navigated nowhere (measured 2026-09-09). Taken only once the pointer has actually
+            // travelled, which is the point where a click is no longer what is happening.
+            canvas.current?.setPointerCapture?.(event.pointerId)
+          }
           setView(panBy(from.view, dx, dy))
         }}
-        onPointerUp={() => { grab.current = undefined; setDragging(false) }}
+        onPointerUp={event => {
+          canvas.current?.releasePointerCapture?.(event.pointerId)
+          grab.current = undefined
+          setDragging(false)
+        }}
         onPointerCancel={() => { grab.current = undefined; setDragging(false) }}
         onPointerLeave={() => setHover(undefined)}
         onClickCapture={event => {
@@ -484,7 +495,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
                 <Link
                   key={node.uri}
                   className={`node${current.has(node.uri) ? ' current' : ''}${lit.nodes.has(node.uri) ? ' lit' : ''}`}
-                  to={getRoutePath(Route.MEDIA, { uri: node.uri })}
+                  to={getRoutePath(Route.MEDIA, { uri: asAggregatedUri(node.uri) })}
                 >
                   <g
                     onPointerEnter={() => setHover({ kind: 'node', uri: node.uri })}

@@ -1,0 +1,73 @@
+// A relation names a work by the ONE source that mentioned it. Linking straight to that source opens a
+// page pinned to it, where the store has a single row and never asks anyone else, so the work shows
+// whatever AniList alone knew and nothing more. Wrapping it as a cluster is what starts the fan out.
+import { describe, expect, test } from 'vitest'
+
+import { asAggregatedUri, isAggregatedUri, shouldGrowAddress } from '../../../src/utils/uri'
+
+describe('asAggregatedUri', () => {
+  test('a single source becomes a cluster of one, which is a routable form', () => {
+    expect(asAggregatedUri('anilist:166873')).toBe('ag:(anilist:166873)')
+    expect(isAggregatedUri(asAggregatedUri('anilist:166873'))).toBe(true)
+  })
+
+  test('and it works for every origin, not just the one that names relations today', () => {
+    expect(asAggregatedUri('mal:59193')).toBe('ag:(mal:59193)')
+    expect(asAggregatedUri('kitsu:49002')).toBe('ag:(kitsu:49002)')
+  })
+
+  test('an already aggregated uri is left exactly as it is, never wrapped twice', () => {
+    const cluster = 'ag:(anilist:178789,mal:59193)'
+    expect(asAggregatedUri(cluster)).toBe(cluster)
+    expect(asAggregatedUri('ag:(anilist:1)')).toBe('ag:(anilist:1)')
+  })
+
+  test('and anything that is not a uri is returned untouched rather than wrapped into nonsense', () => {
+    // `ag:(not a uri)` passes no validator, so the page would render its shell and sit empty
+    for (const value of ['', 'not a uri', 'https://example.test/x', 'anilist']) {
+      expect(asAggregatedUri(value), value).toBe(value)
+    }
+  })
+
+  test('the result survives the round trip a route puts it through', () => {
+    const routed = asAggregatedUri('anilist:166873')
+    expect(isAggregatedUri(routed)).toBe(true)
+    expect(routed.startsWith('ag:(')).toBe(true)
+  })
+})
+
+describe('shouldGrowAddress', () => {
+  const known = 'ag:(anilist:108465)'
+  const full = 'ag:(anidb:14758,anilist:108465,kitsu:42323,mal:39535)'
+  const other = 'ag:(anilist:178789,kitsu:49002,mal:59193)'
+
+  test('grows once the store has folded more sources into the same work', () => {
+    expect(shouldGrowAddress(full, known)).toBe(true)
+  })
+
+  test('and stops once the address already names them all', () => {
+    expect(shouldGrowAddress(full, full)).toBe(false)
+  })
+
+  test('NEVER rewrites the address to a different work, however much bigger it is', () => {
+    // the bug: on a navigation the address changes first and the page still holds the previous work,
+    // so its eight handles beat the new address's one and the click was replaced with the page it
+    // came from. Every relation and every graph node did nothing when clicked.
+    expect(shouldGrowAddress(other, known)).toBe(false)
+  })
+
+  test('nor when the work in hand knows FEWER sources than the address names', () => {
+    expect(shouldGrowAddress(known, full)).toBe(false)
+  })
+
+  test('a bare source uri on either side is left alone', () => {
+    expect(shouldGrowAddress('anilist:108465', known)).toBe(false)
+    expect(shouldGrowAddress(full, 'anilist:108465')).toBe(false)
+  })
+
+  test('and a missing uri is not an address to grow', () => {
+    expect(shouldGrowAddress(undefined, known)).toBe(false)
+    expect(shouldGrowAddress(full, undefined)).toBe(false)
+    expect(shouldGrowAddress(undefined, undefined)).toBe(false)
+  })
+})
