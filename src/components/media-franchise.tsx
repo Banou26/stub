@@ -7,7 +7,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/ho
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
-import { formatsIn, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
+import { edgeKey, formatsIn, highlightFor, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
+import type { HoverTarget } from '../utils/franchise-layout'
 import { IDENTITY, fit, panBy, zoomAt } from '../utils/viewport'
 import type { View } from '../utils/viewport'
 import { relationLabel, workFormatLabel } from '../utils/relation-labels'
@@ -91,8 +92,7 @@ const overlayStyle = css`
     display: flex;
     align-items: center;
     gap: 2rem;
-    /* right padding clears the close button, which is positioned rather than in the flow so the
-       filters can wrap without pushing it off the edge */
+    /* right padding clears the close button, which is positioned rather than in the flow */
     padding: 1.5rem 7rem 1.5rem 2rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
@@ -103,12 +103,6 @@ const overlayStyle = css`
       flex-shrink: 0;
     }
 
-    & > .filters {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.6rem;
-    }
   }
 
   .close {
@@ -130,23 +124,51 @@ const overlayStyle = css`
     svg { width: 1.7rem; height: 1.7rem; }
   }
 
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: transparent;
-    color: rgba(255, 255, 255, 0.5);
-    font-family: inherit;
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: pointer;
+  /* Over the canvas rather than up in the bar, so the control sits with the thing it controls. It is
+     the one part of the surface that is NOT draggable, hence the pointer handlers it stops. */
+  .kinds {
+    position: absolute;
+    top: 1.2rem;
+    left: 1.2rem;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.6rem;
+    background: rgba(18, 18, 20, 0.9);
+    backdrop-filter: blur(6px);
+    cursor: default;
 
-    &.on {
-      color: #fff;
-      border-color: rgba(61, 180, 242, 0.7);
-      background: rgba(61, 180, 242, 0.15);
+    & > .legend {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 0.4rem;
+    }
+
+    & > label {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.55);
+      cursor: pointer;
+      white-space: nowrap;
+
+      &.on { color: #fff; }
+
+      input {
+        width: 1.4rem;
+        height: 1.4rem;
+        margin: 0;
+        accent-color: rgb(61, 180, 242);
+        cursor: pointer;
+      }
     }
   }
 
@@ -205,6 +227,18 @@ const overlayStyle = css`
 
   .node .title { fill: rgba(255, 255, 255, 0.95); font-size: 12px; font-weight: 700; text-anchor: middle; }
   .node .meta { fill: rgba(255, 255, 255, 0.5); font-size: 10px; text-anchor: middle; }
+
+  /* One colour for "what the pointer is talking about", amber so it never reads as the blue that
+     means "the work you came from". Both hovering a work and hovering an arrow use it, which is what
+     makes the two gestures feel like the same question asked from either end. */
+  .node.lit rect { stroke: rgb(255, 176, 62); stroke-width: 2; fill: rgb(52, 42, 26); }
+  .node.lit .title { fill: #fff; }
+  .edge.lit { stroke: rgb(255, 176, 62); stroke-width: 2.5; stroke-dasharray: none; }
+  .chain.lit { stroke: rgb(255, 176, 62); stroke-width: 3; }
+  .edge-label.lit { fill: rgb(255, 176, 62); }
+
+  /* the text alone is a thin target, so each label carries an invisible pad it can be caught by */
+  .label-hit { fill: transparent; cursor: pointer; }
 `
 
 /** A title broken into at most two lines that fit the box, measured in characters. */
@@ -295,6 +329,12 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
     return () => box.removeEventListener('wheel', onWheel)
   }, [])
 
+  const [hover, setHover] = useState<HoverTarget>(undefined)
+  const lit = useMemo(() => highlightFor(hover, layout.edges), [hover, layout.edges])
+  /** A chain step is lit by the work at either end of it, the same way a relation arrow is. */
+  const chainLit = (step: { from: string, to: string }) =>
+    hover?.kind === 'node' && (step.from === hover.uri || step.to === hover.uri)
+
   const toggle = (format: string) =>
     setShown(previous => {
       const next = new Set(previous)
@@ -307,21 +347,6 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
     <>
       <div className="bar">
         <div className="title">Series</div>
-        <div className="filters">
-          {
-            formats.map(format => (
-              <button
-                key={format}
-                type="button"
-                className={`chip${shown.has(format) ? ' on' : ''}`}
-                aria-pressed={shown.has(format)}
-                onClick={() => toggle(format)}
-              >
-                {workFormatLabel(format)}
-              </button>
-            ))
-          }
-        </div>
       </div>
       <div
         className={`canvas${dragging ? ' dragging' : ''}`}
@@ -351,6 +376,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
         }}
         onPointerUp={() => { grab.current = undefined; setDragging(false) }}
         onPointerCancel={() => { grab.current = undefined; setDragging(false) }}
+        onPointerLeave={() => setHover(undefined)}
         onClickCapture={event => {
           // captured, so it never reaches the link underneath
           if (!moved.current) return
@@ -359,6 +385,28 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
           moved.current = false
         }}
       >
+        {
+          formats.length
+            ? (
+              <div
+                className="kinds"
+                /* the panel is not part of the surface: a press here must not start a drag, and the
+                   pointer capture the canvas takes would otherwise swallow the click entirely */
+                onPointerDown={event => event.stopPropagation()}
+              >
+                <div className="legend">Show</div>
+                {
+                  formats.map(format => (
+                    <label key={format} className={shown.has(format) ? 'on' : undefined}>
+                      <input type="checkbox" checked={shown.has(format)} onChange={() => toggle(format)}/>
+                      <span>{workFormatLabel(format)}</span>
+                    </label>
+                  ))
+                }
+              </div>
+            )
+            : undefined
+        }
         <svg width="100%" height="100%" role="img" aria-label="Every work in this series, in order">
           <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
           {
@@ -372,7 +420,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
               return (
                 <path
                   key={`chain-${step.from}-${step.to}`}
-                  className="chain"
+                  className={`chain${chainLit(step) ? ' lit' : ''}`}
                   d={`M ${x1} ${from.y} C ${x1 + bend} ${from.y}, ${x2 - bend} ${to.y}, ${x2} ${to.y}`}
                 />
               )
@@ -391,12 +439,34 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
               // converges there, so midpoint labels land on each other in a stack
               const ALONG = 0.34
               const on = (a: number, b: number) => a + (b - a) * ALONG
+              const key = edgeKey(edge)
+              const on_ = lit.edges.has(key) ? ' lit' : ''
+              const label = relationLabel(edge.relation).toUpperCase()
+              const labelX = on(x1, x2)
+              const labelY = on(from.y, to.y) - 6
+              // Measured in CHARACTERS, since measuring text needs a live layout and this redraws on
+              // every store update. It only has to be big enough to catch a pointer aimed at the word.
+              const hitWidth = label.length * 6.4 + 12
               return (
-                <g key={`${edge.from}-${edge.to}-${edge.relation}`}>
-                  <path className="edge" d={`M ${x1} ${from.y} C ${x1 + bend} ${from.y}, ${x2 - bend} ${to.y}, ${x2} ${to.y}`}/>
-                  <text className="edge-label" x={on(x1, x2)} y={on(from.y, to.y) - 6}>
-                    {relationLabel(edge.relation).toUpperCase()}
-                  </text>
+                <g key={key}>
+                  <path className={`edge${on_}`} d={`M ${x1} ${from.y} C ${x1 + bend} ${from.y}, ${x2 - bend} ${to.y}, ${x2} ${to.y}`}/>
+                  {/* The pad and the word are ONE target. With the handlers on the pad alone the word
+                      sits above it and takes the hit itself, so the pointer never enters the pad and
+                      nothing ever lights: measured 2026-09-09, every label dead to the pointer. */}
+                  <g
+                    className="label"
+                    onPointerEnter={() => setHover({ kind: 'edge', key })}
+                    onPointerLeave={() => setHover(undefined)}
+                  >
+                    <rect
+                      className="label-hit"
+                      x={labelX - hitWidth / 2}
+                      y={labelY - 11}
+                      width={hitWidth}
+                      height={15}
+                    />
+                    <text className={`edge-label${on_}`} x={labelX} y={labelY}>{label}</text>
+                  </g>
                 </g>
               )
             })
@@ -413,10 +483,13 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
               return (
                 <Link
                   key={node.uri}
-                  className={`node${current.has(node.uri) ? ' current' : ''}`}
+                  className={`node${current.has(node.uri) ? ' current' : ''}${lit.nodes.has(node.uri) ? ' lit' : ''}`}
                   to={getRoutePath(Route.MEDIA, { uri: node.uri })}
                 >
-                  <g>
+                  <g
+                    onPointerEnter={() => setHover({ kind: 'node', uri: node.uri })}
+                    onPointerLeave={() => setHover(undefined)}
+                  >
                     <rect x={left} y={top} width={NODE_W} height={NODE_H}/>
                     {
                       lines.map((line, index) => (

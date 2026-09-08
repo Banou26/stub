@@ -4,7 +4,7 @@
 // from. All three are arithmetic, so none of them needs a browser.
 import { describe, expect, test } from 'vitest'
 
-import { canonicalEdges, formatsIn, inStoryOrder, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../../../src/utils/franchise-layout'
+import { canonicalEdges, edgeKey, formatsIn, highlightFor, inStoryOrder, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../../../src/utils/franchise-layout'
 import type { FranchiseEdge, FranchiseNode } from '../../../src/utils/franchise-layout'
 
 const node = (uri: string, extra: Partial<FranchiseNode> = {}): FranchiseNode =>
@@ -355,5 +355,49 @@ describe("layoutFranchise in 'graph' mode", () => {
       edges: [],
     }
     expect(layoutFranchise(franchise).chain).toEqual(layoutFranchise(franchise, 'story').chain)
+  })
+})
+
+describe('highlightFor', () => {
+  const edges = [edge('s1', 's2', 'SEQUEL'), edge('s2', 's3', 'SEQUEL'), edge('s1', 'ova', 'SIDE_STORY')]
+
+  test('nothing is lit when the pointer is on nothing', () => {
+    expect(highlightFor(undefined, edges)).toEqual({ nodes: new Set(), edges: new Set() })
+  })
+
+  test('a work lights itself and every arrow that touches it, in or out', () => {
+    const lit = highlightFor({ kind: 'node', uri: 's2' }, edges)
+    expect([...lit.nodes]).toEqual(['s2'])
+    expect(lit.edges.size).toBe(2)
+    expect(lit.edges.has(edgeKey(edges[0]!))).toBe(true)
+    expect(lit.edges.has(edgeKey(edges[1]!))).toBe(true)
+  })
+
+  test('and NOT the works at the far ends, which would light most of a small series', () => {
+    const lit = highlightFor({ kind: 'node', uri: 's1' }, edges)
+    expect(lit.nodes.has('s2')).toBe(false)
+    expect(lit.nodes.has('ova')).toBe(false)
+  })
+
+  test('an arrow lights itself and the two works it joins', () => {
+    const lit = highlightFor({ kind: 'edge', key: edgeKey(edges[2]!) }, edges)
+    expect([...lit.nodes].sort()).toEqual(['ova', 's1'])
+    expect([...lit.edges]).toEqual([edgeKey(edges[2]!)])
+  })
+
+  test('and only that arrow, not the other one leaving the same work', () => {
+    const lit = highlightFor({ kind: 'edge', key: edgeKey(edges[0]!) }, edges)
+    expect(lit.edges.size).toBe(1)
+    expect(lit.nodes.has('ova')).toBe(false)
+  })
+
+  test('an arrow that is no longer there lights nothing rather than throwing', () => {
+    expect(highlightFor({ kind: 'edge', key: 'gone' }, edges)).toEqual({ nodes: new Set(), edges: new Set() })
+  })
+
+  test('two arrows between the same works are told apart', () => {
+    const both = [edge('a', 'b', 'SEQUEL'), edge('a', 'b', 'ALTERNATIVE')]
+    expect(edgeKey(both[0]!)).not.toBe(edgeKey(both[1]!))
+    expect(highlightFor({ kind: 'edge', key: edgeKey(both[1]!) }, both).edges.size).toBe(1)
   })
 })
