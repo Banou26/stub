@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 
 import { getRouterRoutePath, getRoutePath, Route } from '../router/path'
 import { parseSearchFilters, searchPath } from '../router/search/params'
+import { askForTop } from '../router/scroll-reset'
 import AccountWidget from './account-widget'
 import PartyWidget from './party-widget'
 
@@ -189,7 +190,9 @@ export const Header = () => {
 
   return (
     <header css={style} className={onWatch ? 'docked' : undefined}>
-      <Link to={getRoutePath(Route.HOME)} className="logo">stub</Link>
+      {/* "home, from the top": the rule in router/scroll-reset.ts keeps the home page still under its
+          modal and on itself, and the wordmark is the one link that means the top of it anyway */}
+      <Link to={getRoutePath(Route.HOME)} className="logo" onClick={askForTop}>stub</Link>
       <form
         className="search"
         onSubmit={event => {

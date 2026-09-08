@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'preact/hooks'
 import { useLocation, useSearch } from 'wouter'
 
 import { party } from '../party'
+import { cancelReset } from '../router/scroll-reset'
 import { scrollFraction, scrollRoom, scrollTo } from '../party/scroll'
 import { PARTY_PATH } from '../party/invite'
 import { useParty, usePartyMessages } from '../party/use-party'
@@ -108,6 +109,11 @@ const PartySync = () => {
       for (const event of TAKEOVER_EVENTS) document.removeEventListener(event, takeOver)
     }
 
+    // The navigation that brought this follower here scheduled a reset to the top for the next frame
+    // (router/scroll-reset.ts). Placing the follower is the more specific instruction and it comes
+    // from the host, so it wins: otherwise the reset lands a frame later and undoes the placement.
+    cancelReset()
+
     // A host at the very top needs no chasing: the top of a page is the top whatever loads next, so one
     // placement settles it. Without this the loop below spins for its whole budget on the common case
     // of a host who has not scrolled, and on a page with nothing to scroll it never sees room appear.
@@ -153,6 +159,7 @@ const PartySync = () => {
     } else {
       // already on the right page, so this is a catch up rather than an arrival: worth gliding, and
       // scroll.ts jumps instead on its own if the party turns out to be a long way off
+      cancelReset()
       applied.current += 1
       scrollTo(y, { smooth: true })
     }
@@ -169,7 +176,7 @@ const PartySync = () => {
         // the host's scroll is for the host's page; a guest elsewhere has nothing of its own to move
         // Glided, because this is the one that repeats: the host's position lands twice a second while
         // they scroll, and jumping to each in turn reads as a stutter rather than as following someone.
-        if (party.hostPath() === path) { applied.current += 1; scrollTo(message.y, { smooth: true }) }
+        if (party.hostPath() === path) { cancelReset(); applied.current += 1; scrollTo(message.y, { smooth: true }) }
         return
       case 'state':
         if (!synced.current || replayed) land(message.path, message.y)

@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import { Link, useRoute } from 'wouter'
 
 import { getRouterRoutePath, getRoutePath, Route } from '../router/path'
+import { askForTop } from '../router/scroll-reset'
 
 const style = css`
   display: flex;
@@ -59,7 +60,7 @@ export const Footer = () => {
 
   return (
     <footer css={style}>
-      <Link to={getRoutePath(Route.HOME)} className="wordmark">stub</Link>
+      <Link to={getRoutePath(Route.HOME)} className="wordmark" onClick={askForTop}>stub</Link>
       <Link to={getRoutePath(Route.LEGAL)} className="nav-link">Legal</Link>
       <Link to={getRoutePath(Route.PRIVACY)} className="nav-link">Privacy</Link>
       <span className="version" title={`stub v${__STUB_VERSION__}, commit ${__STUB_COMMIT__}`}>v{__STUB_VERSION__} <span className="commit">{__STUB_COMMIT__}</span></span>

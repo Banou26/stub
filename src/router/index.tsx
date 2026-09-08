@@ -20,6 +20,7 @@ import Party from './party'
 import PartySync from '../components/party-sync'
 import PartyCursor from '../components/party-cursor'
 import PartyChat from '../components/party-chat'
+import ScrollReset from '../components/scroll-reset'
 
 /**
  * `/search/<term>`, the search route until the filters moved into the query string.
@@ -76,6 +77,7 @@ const RouterRoot = () => (
       <PartySync/>
       <PartyCursor/>
       <PartyChat/>
+      <ScrollReset/>
     </div>
   </Router>
 )
