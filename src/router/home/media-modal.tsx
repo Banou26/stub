@@ -22,6 +22,7 @@ import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { nextThumbnail } from '../../utils/thumbnails'
 import { getRoutePath, Route } from '../path'
+import { releaseDateAttribute, releaseDateLabel } from '../../utils/release-date'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import { useCoverUrl } from '../../utils/use-cover-url'
@@ -237,6 +238,18 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .side {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+          padding-left: 1.5rem;
+          /* decorative, like the thumbnail above it: the whole row is one link */
+          pointer-events: none;
+
+          & > .date {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+          }
         }
       }
     }
@@ -346,6 +359,7 @@ const GET_MEDIA_MODAL = gql(`
       episodes {
         ...EpisodeFragment
         episodeNumber
+        releaseDate
         titles {
           title
         }
@@ -361,6 +375,7 @@ const GET_MEDIA_MODAL = gql(`
           node {
             ...EpisodeFragment
             episodeNumber
+            releaseDate
             titles {
               title
             }
@@ -414,6 +429,12 @@ const Episode = (
   // one thumbnail per source, score first; a host that refuses this viewer must not blank the row
   const [failedThumbnails, setFailedThumbnails] = useState<ReadonlySet<string>>(() => new Set())
   const thumbnail = nextThumbnail(episode.thumbnails, failedThumbnails)
+  // The store already merges a date across the sources it folded into this row, so the handle is a
+  // fallback rather than the path: it covers an episode whose date only one source knows and which
+  // was not the row merged into. Four sources supply one at all (anizip, Crunchyroll, the bundled
+  // catalogue and Apple TV), so plenty of episodes have none and the column is simply empty there.
+  const releasedAt = episode.releaseDate ?? episode.handles?.find(handle => handle.node.releaseDate)?.node.releaseDate
+  const released = releaseDateLabel(releasedAt)
   const origins =
     episode.uri
       ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
@@ -523,8 +544,11 @@ const Episode = (
           )
       }
       <div className="side">
-        <span className="date">
-        </span>
+        {
+          released
+            ? <time className="date" dateTime={releaseDateAttribute(releasedAt)}>{released}</time>
+            : undefined
+        }
       </div>
     </div>
   )
