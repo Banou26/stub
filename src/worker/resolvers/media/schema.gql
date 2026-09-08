@@ -183,6 +183,45 @@ type MediaRelationEdge {
   format: String
 }
 
+"""
+One work in a franchise graph, thin enough that a whole series fits in one payload.
+"""
+type MediaFranchiseNode {
+  """What a click navigates to. Also the id the edges below join on."""
+  uri: String!
+  titles: [MediaTitle!]!
+  covers: [MediaCover!]!
+  """The naming source's own word for the kind of work. Display only, as on `MediaRelationEdge`."""
+  format: String
+  status: MediaStatus
+  episodeCount: Int
+  startDate: Date
+}
+
+"""One arrow in a franchise graph, joining two `MediaFranchiseNode` uris."""
+type MediaFranchiseEdge {
+  from: String!
+  to: String!
+  relation: MediaRelation!
+}
+
+"""
+Every work in one series, and how they connect: the whole graph rather than one media's own edges.
+
+WHY IT IS NOT JUST `relations` WALKED. Following every edge leaks out of the franchise entirely. A
+crossover promotional short relates BY CHARACTER to each series taking part, so two hops out of
+`That Time I Got Reincarnated as a Slime` reaches Attack on Titan, Fire Force, Chihayafuru and seven
+other unrelated shows. Measured 2026-09-08 against live AniList: following every edge reached 36
+works of which 10 were off-franchise, while following only the STORY edges reached 21 works and none.
+
+So CHARACTER and OTHER are reported as relations and never TRAVERSED. They answer "who appears in
+this" and "these are connected somehow", neither of which is "this is the same series".
+"""
+type MediaFranchise {
+  nodes: [MediaFranchiseNode!]!
+  edges: [MediaFranchiseEdge!]!
+}
+
 """One edge out of a media: which row, and what the edge claims about it."""
 type MediaHandle {
   """The related row. Carries its own uri, origin, id and url."""
@@ -218,6 +257,12 @@ type Media {
   source named none, which is most of them: only AniList supplies these today.
   """
   relations: [MediaRelationEdge!]!
+  """
+  The whole series this work belongs to, as a graph. Null where no source could supply one, which is
+  most of them. NULLABLE deliberately: a non-null list that a source omits nulls the media carrying
+  it, taking the rest of the payload with it.
+  """
+  franchise: MediaFranchise
   """Which identity space this row lives in. An absent value reads as RUN."""
   scope: MediaScope
   score: Float

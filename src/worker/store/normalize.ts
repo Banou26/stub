@@ -56,4 +56,23 @@ export const normalizeToStoreMedia = (media: Media): StoreMedia => ({
       startDate: node.startDate ?? null,
     }]
   }),
+  franchise:
+    media.franchise
+      ? {
+        nodes: (media.franchise.nodes ?? []).map(node => ({
+          uri: node.uri as Uri,
+          titles: node.titles ?? [],
+          covers: node.covers ?? [],
+          format: node.format ?? null,
+          status: (node.status as StoreMedia['status']) ?? null,
+          episodeCount: node.episodeCount ?? null,
+          startDate: node.startDate ?? null,
+        })),
+        edges: (media.franchise.edges ?? []).map(edge => ({
+          from: edge.from as Uri,
+          to: edge.to as Uri,
+          relation: edge.relation as StoreMedia['relations'][number]['relation'],
+        })),
+      }
+      : null,
 })

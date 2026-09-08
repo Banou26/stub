@@ -39,6 +39,7 @@ const row = (uri: string, { titles, ...fields }: Omit<Partial<Media>, 'titles'> 
   tags: [],
   scope: 'RUN',
   relations: [],
+  franchise: null,
   ...fields,
   titles: (titles ?? [uri]).map(title =>
     typeof title === 'string' ? { language: 'en', title, score: fields.score ?? 0.5 } : title),
@@ -127,7 +128,7 @@ describe('identity', () => {
   test('CONTAINER members move to containers, RUN-scoped partOf targets are dropped', () => {
     const { index } = buildSeed([snapshot(cluster(
       [row('anilist:1'), row('imdb:tt1', { scope: 'CONTAINER' })],
-      [row('cr:SERIES', { scope: 'CONTAINER' }), row('kitsu:9', { scope: 'RUN', relations: [] })],
+      [row('cr:SERIES', { scope: 'CONTAINER' }), row('kitsu:9', { scope: 'RUN', relations: [], franchise: null })],
     ))], meta())
     const run = index.runs[0]!
     expect(run.identity.map(h => h.uri)).toEqual(['anilist:1'])

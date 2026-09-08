@@ -64,6 +64,19 @@ export type Relation = {
   startDate: string | null
 }
 
+/** One work in a franchise graph, and one arrow between two of them. See `MediaFranchise`. */
+export type FranchiseNode = {
+  uri: Uri
+  titles: Title[]
+  covers: Cover[]
+  format: string | null
+  status: MediaStatus | null
+  episodeCount: number | null
+  startDate: string | null
+}
+export type FranchiseEdge = { from: Uri, to: Uri, relation: MediaRelation }
+export type Franchise = { nodes: FranchiseNode[], edges: FranchiseEdge[] }
+
 /**
  * Which identity space a row lives in, mirroring `MediaScope` in the graphql schema.
  *
@@ -114,6 +127,8 @@ export type Media = {
   scope: MediaScope
   /** Narrative edges out of this row. Never clustered on: see `Relation`. */
   relations: Relation[]
+  /** The whole series as a graph, where a source could supply one. Null is the common case. */
+  franchise: Franchise | null
 }
 
 export type Episode = {

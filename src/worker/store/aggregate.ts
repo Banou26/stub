@@ -182,6 +182,7 @@ function mediaToGQL(media: Media): GQLMedia {
     episodes: [],
     handles: [],
     relations: (media.relations ?? []).map(relationToGQL),
+    franchise: media.franchise ?? null,
   }
 }
 
@@ -343,6 +344,10 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
       banners: [...(acc.banners ?? []), ...(media.banners ?? [])],
       trailers: [...(acc.trailers ?? []), ...(media.trailers ?? [])],
       relations: [...(acc.relations ?? []), ...(gql.relations ?? [])],
+      // The FIRST source to supply one wins outright, in score order, rather than being merged with
+      // another's. A graph is one source's whole account of a series and two of them spliced together
+      // would carry edges between nodes only one of them has.
+      franchise: acc.franchise ?? gql.franchise,
     }
   }, {
     _id,

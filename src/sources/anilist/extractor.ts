@@ -182,6 +182,14 @@ const GET_MEDIA = `
           relationType(version: 2)
           node {
             ${RELATION_NODE_FIELDS.split('\n').join('\n            ')}
+            relations {
+              edges {
+                relationType(version: 2)
+                node {
+                  ${RELATION_NODE_FIELDS.split('\n').join('\n                  ')}
+                }
+              }
+            }
           }
         }
       }
@@ -461,6 +469,98 @@ const normalizeRelations = (media: Media) =>
       }]
     })
 
+/**
+ * The relations a franchise WALK may follow, which is not all of them.
+ *
+ * CHARACTER and OTHER are reported to the reader and never traversed. A crossover promotional short
+ * relates by CHARACTER to every series taking part, so following those edges walks straight out of
+ * the franchise: measured 2026-09-08 from `Tensei Shitara Slime Datta Ken`, two hops following
+ * everything reached 36 works of which 10 were other franchises entirely (Attack on Titan, Fire
+ * Force, Chihayafuru among them), while following only these reached 21 works and nothing foreign.
+ *
+ * The novel and the manga ARE followed, and have to be: an anime franchise's hub is its source
+ * material, and the later seasons hang off that rather than off each other.
+ */
+const FRANCHISE_EDGES = new Set([
+  'SEQUEL', 'PREQUEL', 'SIDE_STORY', 'SPIN_OFF', 'ALTERNATIVE',
+  'PARENT', 'SOURCE', 'ADAPTATION', 'SUMMARY', 'COMPILATION', 'CONTAINS',
+])
+
+/** How far a franchise walk may run. Two hops is what the query fetches; this guards the traversal. */
+const FRANCHISE_HOPS = 2
+
+type AnilistRelated = NonNullable<NonNullable<NonNullable<Media['relations']>['edges']>[number]>
+
+/**
+ * Every work in one series, and the arrows between them, out of the two hops the query fetched.
+ *
+ * Breadth first from the media itself, following only `FRANCHISE_EDGES`, deduplicated by uri. AniList
+ * publishes BOTH directions of a pair (108465 says SEQUEL to 127720, and 127720 says PREQUEL back),
+ * so an edge set built without dedup draws every arrow twice; the pair is keyed on from, to and
+ * relation together, which keeps a genuine second relationship between the same two works.
+ *
+ * Answers `undefined` rather than an empty graph when there is nothing to draw, so a media with no
+ * relations renders no panel instead of an empty one.
+ */
+const buildFranchise = (media: Media) => {
+  const uriOf = (id: number | string) => `${origin}:${id}`
+  const nodes = new Map<string, ReturnType<typeof franchiseNode>>()
+  const edges = new Map<string, { from: string, to: string, relation: GQLMediaRelation }>()
+
+  const relationsOf = (node: { relations?: Media['relations'] }): AnilistRelated[] =>
+    ((node.relations?.edges ?? []).filter(Boolean) as AnilistRelated[])
+
+  const add = (node: Parameters<typeof franchiseNode>[0]) => {
+    const uri = uriOf(node.id!)
+    if (!nodes.has(uri)) nodes.set(uri, franchiseNode(node))
+    return uri
+  }
+
+  add(media as Parameters<typeof franchiseNode>[0])
+  let frontier: { uri: string, node: { id?: number | null, relations?: Media['relations'] } }[] =
+    [{ uri: uriOf(media.id), node: media }]
+
+  for (let hop = 0; hop < FRANCHISE_HOPS && frontier.length; hop++) {
+    const next: typeof frontier = []
+    for (const current of frontier) {
+      for (const edge of relationsOf(current.node)) {
+        const node = edge.node
+        const relation = String(edge.relationType ?? '')
+        if (!node?.id || !FRANCHISE_EDGES.has(relation)) continue
+        const to = add(node as Parameters<typeof franchiseNode>[0])
+        const key = `${current.uri}\u0000${to}\u0000${relation}`
+        if (!edges.has(key)) edges.set(key, { from: current.uri, to, relation: relation as GQLMediaRelation })
+        next.push({ uri: to, node })
+      }
+    }
+    frontier = next
+  }
+
+  // one node is the media itself, so a graph of one is a media with nothing to draw
+  if (nodes.size < 2) return undefined
+  return { nodes: [...nodes.values()], edges: [...edges.values()] }
+}
+
+const franchiseNode = (node: { id?: number | null, format?: string | null, status?: MediaStatus | null, episodes?: number | null, startDate?: { year?: number | null } | null, title?: Media['title'], coverImage?: Media['coverImage'] }) => ({
+  uri: `${origin}:${node.id}`,
+  format: node.format ?? undefined,
+  episodeCount: node.episodes ?? undefined,
+  startDate: node.startDate?.year ? `${node.startDate.year}` : undefined,
+  status:
+    node.status === MediaStatus.NotYetReleased ? GQLMediaStatus.NotYetReleased
+    : node.status === MediaStatus.Releasing ? GQLMediaStatus.Releasing
+    : node.status === MediaStatus.Finished ? GQLMediaStatus.Finished
+    : undefined,
+  titles: [
+    ...node.title?.english ? [{ language: 'en', title: node.title.english, score: SCORE }] : [],
+    ...node.title?.romaji ? [{ language: 'jp-en', title: node.title.romaji, score: SCORE }] : [],
+  ],
+  covers:
+    node.coverImage?.large
+      ? [{ language: 'jp', url: node.coverImage.large, color: node.coverImage.color ?? undefined, score: SCORE }]
+      : [],
+})
+
 const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
   const malHandle =
     media.idMal
@@ -500,6 +600,7 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ...malHandle ? [malHandle] : []
     ],
     relations: normalizeRelations(media),
+    franchise: buildFranchise(media),
     score: SCORE,
     averageScore: percentScore(media.averageScore, 100),
     nextAiringEpisode: nextAiringEpisode(media.airingSchedule),
