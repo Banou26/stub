@@ -18,6 +18,7 @@ import { LucidePause, LucidePlay } from 'lucide-react'
 import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
 import Collapsible from '../../components/collapsible'
+import MediaRelations from '../../components/media-relations'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { nextThumbnail } from '../../utils/thumbnails'
@@ -361,6 +362,27 @@ const GET_MEDIA_MODAL = gql(`
       }
       popularity
       categories
+      relations {
+        relation
+        format
+        node {
+          _id
+          uri
+          origin
+          id
+          url
+          status
+          episodeCount
+          startDate
+          titles {
+            title
+          }
+          covers {
+            url
+            color
+          }
+        }
+      }
       episodes {
         ...EpisodeFragment
         episodeNumber
@@ -765,6 +787,7 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   )
                   : undefined
               }
+              <MediaRelations relations={media && 'relations' in media ? media.relations ?? [] : []}/>
               <div className="episodes">
                 {
                   media &&
