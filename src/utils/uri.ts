@@ -196,7 +196,21 @@ export const toAggregatedId = <T extends Uri[] | Uris>(uris: T, sort = true): st
       )
     )
 
+/**
+ * An aggregated uri taken apart, or `undefined` when it is not one.
+ *
+ * ABSENT counts as not one, and that guard is load bearing rather than defensive tidiness. On a
+ * browser `popstate`, `Home` re-renders BEFORE wouter's `<Switch>` does, because a browser dispatched
+ * event runs a microtask checkpoint between its listeners while an app dispatched one does not. So
+ * `useRoute('/media/:uri')` is already true while the surrounding params context still holds the
+ * previous route's empty params, and `MediaModal` matched against `params.uri === undefined` for a
+ * render or two. Dereferencing it threw mid render, and stub has no error boundary anywhere, so
+ * Preact abandoned the commit and left the already mounted Home subtree ORPHANED in the DOM. The next
+ * render appended a fresh copy beside it: back and forward a few times and the homepage stacked, each
+ * clone's hero absolutely positioned at the same place, which is the overlapping titles the owner saw.
+ */
 export const fromAggregatedUri = (uri: AggregatedUri) => {
+  if (typeof uri !== 'string') return undefined
   const match = uri.match(SCANNARR_REGEX)
   if (!match) return undefined
   const uris =

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { decodeRouteUri, extractAggregatedUriOrigin, isRoutableUri, originsOfUri } from '../../../src/utils/uri'
+import { decodeRouteUri, extractAggregatedUriOrigin, fromAggregatedUri, isRoutableUri, matchAggregatedUris, originsOfUri } from '../../../src/utils/uri'
 
 describe('originsOfUri', () => {
   test('lists the origins an aggregated uri lets a source recognise itself by', () => {
@@ -121,5 +121,36 @@ describe('decodeRouteUri', () => {
     expect(decodeRouteUri('not-a-uri')).toBe('not-a-uri')
     expect(decodeRouteUri('%E0%A4%A')).toBe('%E0%A4%A')
     expect(decodeRouteUri(undefined)).toBeUndefined()
+  })
+})
+
+// ─── An absent uri is not an uri ────────────────────────────────────────────
+//
+// Back and forward a few times on a media route and the homepage used to stack copies of itself, each
+// clone's hero absolutely positioned at the same place, so the titles painted over one another.
+//
+// The cause is a render ORDER divergence: a browser dispatched `popstate` runs a microtask checkpoint
+// between its listeners while an app dispatched `pushState` does not, so `Home` re-renders before
+// wouter's `<Switch>` and `useRoute('/media/:uri')` is already true while the params context still
+// holds the previous route's EMPTY params. `MediaModal` then matched against `undefined`.
+//
+// Dereferencing it threw during render, and there is no error boundary anywhere in the app, so Preact
+// abandoned the commit and orphaned the mounted subtree in the DOM rather than replacing it.
+describe('an absent uri', () => {
+  test('does not parse, and does not throw', () => {
+    expect(fromAggregatedUri(undefined as never)).toBeUndefined()
+    expect(fromAggregatedUri(null as never)).toBeUndefined()
+    expect(() => fromAggregatedUri(undefined as never)).not.toThrow()
+  })
+
+  test('matches nothing, which is the answer a half-updated route needs', () => {
+    const real = 'ag:(anilist:178789,mal:59193)' as never
+    expect(matchAggregatedUris(real, undefined as never)).toBe(false)
+    expect(matchAggregatedUris(undefined as never, real)).toBe(false)
+    expect(() => matchAggregatedUris(real, undefined as never)).not.toThrow()
+  })
+
+  test('and a real pair still matches, so the guard did not just disable matching', () => {
+    expect(matchAggregatedUris('ag:(anilist:178789,mal:59193)' as never, 'ag:(mal:59193)' as never)).toBe(true)
   })
 })
