@@ -3,28 +3,26 @@ import type { GetMediaModalSubscription } from '../generated/graphql'
 import { css } from '@emotion/react'
 import { FloatingFocusManager, FloatingOverlay, FloatingPortal, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import { Network, X } from 'lucide-react'
-import { useMemo, useState } from 'preact/hooks'
+import { useMemo, useRef, useState } from 'preact/hooks'
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
-import { formatsIn, isVideoFormat, layoutFranchise, nodeTitle, trackOffsets } from '../utils/franchise-layout'
+import { formatsIn, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
 import { relationLabel, workFormatLabel } from '../utils/relation-labels'
 
 /**
- * Every work in a series, drawn as a graph, in a dialog of its own.
+ * Every work in a series, drawn left to right IN THE ORDER IT HAPPENED.
  *
  * INLINE SVG and hand placed, because nothing in this tree lays out a graph: there is no d3, dagre,
  * elkjs, cytoscape or react-flow in the dependencies and none reachable transitively. The arithmetic
  * lives in utils/franchise-layout.ts where it can be tested; this turns columns and rows into pixels.
  *
- * A FILTERED WORK COLLAPSES TO A DOT RATHER THAN DISAPPEARING, and that is what keeps the graph
- * honest. A franchise hangs off its source novel: the seasons relate to the book rather than to each
- * other, so deleting the books to show only what plays leaves the seasons as loose boxes with no
- * arrows at all. Measured 2026-09-08 on `Tensei Shitara Slime Datta Ken`, video only: 10 works in 5
- * disconnected pieces, four of them with no edge whatsoever. A collapsed work keeps its place and its
- * arrows and shrinks, so the shape of the series survives and a column of novels costs a sliver
- * instead of a screen. Clicking one opens it. Nothing here derives an arrow, so every relation drawn
- * is one a source actually stated.
+ * TWO KINDS OF ARROW, and the difference is the point. A dashed labelled one is a relationship a
+ * source stated: sequel, side story, spin off. A solid unlabelled one is the READING ORDER, derived
+ * here from the dates, and it runs straight along the timeline so "season one, season two, the film,
+ * season three" can be read off the picture without following any relation at all. An earlier version
+ * laid works out by graph depth instead, which hung the whole series off its source novel and left
+ * the order nowhere in the shape.
  *
  * FOREIGN OBJECT is deliberately not used for the boxes. It is the obvious way to put wrapped HTML
  * text in an SVG and it is the one thing here that renders differently across engines, so a node's
@@ -35,11 +33,11 @@ type Franchise = NonNullable<NonNullable<GetMediaModalSubscription['media']>['fr
 
 const NODE_W = 190
 const NODE_H = 74
-/** A collapsed work: big enough to hit, small enough that a shelf of novels costs one narrow column. */
-const DOT = 22
 const COL_GAP = 90
 const ROW_GAP = 24
-const PAD = 24
+const PAD = 40
+const COL_W = NODE_W + COL_GAP
+const ROW_H = NODE_H + ROW_GAP
 
 const triggerStyle = css`
   display: inline-flex;
@@ -92,7 +90,7 @@ const overlayStyle = css`
     align-items: center;
     gap: 2rem;
     /* right padding clears the close button, which is positioned rather than in the flow so the
-       filters can wrap without pushing it off */
+       filters can wrap without pushing it off the edge */
     padding: 1.5rem 7rem 1.5rem 2rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
@@ -153,14 +151,36 @@ const overlayStyle = css`
   .canvas {
     flex: 1;
     overflow: auto;
-    padding: 1rem;
+    /* centred while it fits, and SAFE so a graph bigger than the box is not clipped at its start:
+       plain centring on an overflowing grid pushes the first column out of reach of any scroll */
+    display: grid;
+    place-content: safe center;
+    /* dragged rather than scrolled, so the pointer says so before it is pressed */
+    cursor: grab;
+    background-color: rgb(9, 9, 10);
+    /* the paper the graph is drawn on: one faint dot every 24px, which gives the panning something to
+       move against. The local attachment is load bearing: the default pins the grid to the viewport,
+       and the graph would then appear to slide over a field that never moves */
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.14) 1px, transparent 0);
+    background-size: 24px 24px;
+    background-attachment: local;
+
+    &.dragging { cursor: grabbing; }
   }
 
+  /* a relationship a source stated */
   .edge {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.25);
+    stroke: rgba(255, 255, 255, 0.22);
     stroke-width: 1.5;
     stroke-dasharray: 4 3;
+  }
+
+  /* the reading order, derived from the dates: solid, brighter, and never labelled */
+  .chain {
+    fill: none;
+    stroke: rgba(61, 180, 242, 0.55);
+    stroke-width: 2;
   }
 
   .edge-label {
@@ -182,18 +202,6 @@ const overlayStyle = css`
 
   .node .title { fill: rgba(255, 255, 255, 0.95); font-size: 12px; font-weight: 700; text-anchor: middle; }
   .node .meta { fill: rgba(255, 255, 255, 0.5); font-size: 10px; text-anchor: middle; }
-
-  .dot {
-    cursor: pointer;
-
-    circle {
-      fill: rgb(38, 38, 42);
-      stroke: rgba(255, 255, 255, 0.3);
-      stroke-width: 1.5;
-    }
-
-    &:hover circle { fill: rgb(61, 180, 242); stroke: #fff; }
-  }
 `
 
 /** A title broken into at most two lines that fit the box, measured in characters. */
@@ -217,50 +225,37 @@ const titleLines = (title: string): string[] => {
   return shown.length ? shown : [title.slice(0, LINE)]
 }
 
+/** How far the pointer may travel and still count as a click rather than a drag. */
+const SLOP = 4
+
 const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: readonly string[] }) => {
   const formats = useMemo(() => formatsIn(franchise), [franchise])
-  // Video by default: the novels and manga are context, and a viewer of this app came for what plays.
+  // Video by default. Stub aggregates things you watch, so a novel or a manga is context rather than
+  // somewhere to go: its page here has no episodes and nothing to read.
   const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set(formats.filter(isVideoFormat)))
-  // Works opened one at a time by clicking their dot. Kept separately from the filters so toggling a
-  // filter off again does not shut something the reader deliberately opened.
-  const [opened, setOpened] = useState<ReadonlySet<string>>(() => new Set())
 
-  const layout = useMemo(() => layoutFranchise(franchise), [franchise])
+  const layout = useMemo(
+    () => layoutFranchise(onlyFormats(franchise, node => !node.format || shown.has(node.format))),
+    [franchise, shown],
+  )
   const current = new Set(currentUris)
 
-  // the work whose page this is stays open whatever the filters say: it is where the reader IS, and a
-  // graph that collapses the one thing you are looking at has lost its anchor
-  const isOpen = (node: { uri: string, format?: string | null }) =>
-    current.has(node.uri) || opened.has(node.uri) || !node.format || shown.has(node.format)
+  const canvas = useRef<HTMLDivElement>(null)
+  const grab = useRef<{ x: number, y: number, left: number, top: number } | undefined>(undefined)
+  const [dragging, setDragging] = useState(false)
+  // Remembered past the pointerup, because the CLICK fires after it: a drag that ends over a work
+  // would otherwise navigate to it, and every attempt to pan the graph would leave the page.
+  const moved = useRef(false)
 
-  const columnSizes: number[] = []
-  const rowSizes: number[] = []
-  for (const node of layout.nodes) {
-    const open = isOpen(node)
-    columnSizes[node.column] = Math.max(columnSizes[node.column] ?? DOT, open ? NODE_W : DOT)
-    rowSizes[node.row] = Math.max(rowSizes[node.row] ?? DOT, open ? NODE_H : DOT)
-  }
-  for (let index = 0; index < layout.columns; index++) columnSizes[index] ??= DOT
-  for (let index = 0; index < layout.rows; index++) rowSizes[index] ??= DOT
-
-  const columnAt = trackOffsets(columnSizes, COL_GAP)
-  const rowAt = trackOffsets(rowSizes, ROW_GAP)
-  const width = (columnAt.at(-1) ?? 0) + (columnSizes.at(-1) ?? 0) + PAD * 2
-  const height = (rowAt.at(-1) ?? 0) + (rowSizes.at(-1) ?? 0) + PAD * 2
-
+  const width = Math.max(1, layout.columns) * COL_W - COL_GAP + PAD * 2
+  const height = Math.max(1, layout.rows) * ROW_H - ROW_GAP + PAD * 2
   const placed = new Map(layout.nodes.map(node => [node.uri, node]))
-  /** The centre of a work's cell, which is where its arrows meet at whatever size it is drawn. */
   const centre = (uri: string) => {
     const node = placed.get(uri)
     if (!node) return undefined
-    return {
-      x: PAD + (columnAt[node.column] ?? 0) + (columnSizes[node.column] ?? DOT) / 2,
-      y: PAD + (rowAt[node.row] ?? 0) + (rowSizes[node.row] ?? DOT) / 2,
-      open: isOpen(node),
-    }
+    return { x: PAD + node.column * COL_W + NODE_W / 2, y: PAD + node.row * ROW_H + NODE_H / 2 }
   }
 
-  const open = (uri: string) => setOpened(previous => new Set(previous).add(uri))
   const toggle = (format: string) =>
     setShown(previous => {
       const next = new Set(previous)
@@ -289,18 +284,64 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
           }
         </div>
       </div>
-      <div className="canvas">
-        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Every work in this series">
+      <div
+        className={`canvas${dragging ? ' dragging' : ''}`}
+        ref={canvas}
+        data-canvas
+        onPointerDown={event => {
+          const box = canvas.current
+          if (!box || event.button !== 0) return
+          grab.current = { x: event.clientX, y: event.clientY, left: box.scrollLeft, top: box.scrollTop }
+          moved.current = false
+          setDragging(true)
+        }}
+        onPointerMove={event => {
+          const box = canvas.current
+          const from = grab.current
+          if (!box || !from) return
+          const dx = event.clientX - from.x
+          const dy = event.clientY - from.y
+          if (Math.abs(dx) > SLOP || Math.abs(dy) > SLOP) moved.current = true
+          box.scrollLeft = from.left - dx
+          box.scrollTop = from.top - dy
+        }}
+        onPointerUp={() => { grab.current = undefined; setDragging(false) }}
+        onPointerLeave={() => { grab.current = undefined; setDragging(false) }}
+        onClickCapture={event => {
+          // captured, so it never reaches the link underneath
+          if (!moved.current) return
+          event.preventDefault()
+          event.stopPropagation()
+          moved.current = false
+        }}
+      >
+        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Every work in this series, in order">
+          {
+            layout.chain.map(step => {
+              const from = centre(step.from)
+              const to = centre(step.to)
+              if (!from || !to) return null
+              const x1 = from.x + NODE_W / 2
+              const x2 = to.x - NODE_W / 2
+              const bend = Math.max(20, (x2 - x1) / 2)
+              return (
+                <path
+                  key={`chain-${step.from}-${step.to}`}
+                  className="chain"
+                  d={`M ${x1} ${from.y} C ${x1 + bend} ${from.y}, ${x2 - bend} ${to.y}, ${x2} ${to.y}`}
+                />
+              )
+            })
+          }
           {
             layout.edges.map(edge => {
               const from = centre(edge.from)
               const to = centre(edge.to)
               if (!from || !to) return null
-              // right edge of the source cell to the left edge of the target's, so an arrow leaves a
-              // dot and an open card the same way
-              const x1 = from.x + (from.open ? NODE_W : DOT) / 2
-              const x2 = to.x - (to.open ? NODE_W : DOT) / 2
-              const bend = Math.max(20, (x2 - x1) / 2)
+              const forward = to.x >= from.x
+              const x1 = from.x + (forward ? NODE_W / 2 : -NODE_W / 2)
+              const x2 = to.x + (forward ? -NODE_W / 2 : NODE_W / 2)
+              const bend = Math.max(20, Math.abs(x2 - x1) / 2) * (forward ? 1 : -1)
               // a third of the way along rather than the midpoint: everything pointing AT one work
               // converges there, so midpoint labels land on each other in a stack
               const ALONG = 0.34
@@ -319,24 +360,6 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
             layout.nodes.map(node => {
               const spot = centre(node.uri)!
               const title = nodeTitle(node)
-              const kind = node.format ? ` (${workFormatLabel(node.format)})` : ''
-              if (!spot.open) {
-                return (
-                  <g
-                    key={node.uri}
-                    className="dot"
-                    role="button"
-                    tabIndex={0}
-                    data-collapsed
-                    onClick={() => open(node.uri)}
-                    onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') open(node.uri) }}
-                  >
-                    <circle cx={spot.x} cy={spot.y} r={DOT / 2}/>
-                    {/* the whole label, since a dot shows none of it until it is opened */}
-                    <title>{`${title}${kind}`}</title>
-                  </g>
-                )
-              }
               const lines = titleLines(title)
               const meta = [workFormatLabel(node.format), node.episodeCount ? `${node.episodeCount} ep` : undefined]
                 .filter(Boolean).join(' · ')
@@ -358,7 +381,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
                       ))
                     }
                     {meta ? <text className="meta" x={spot.x} y={top + NODE_H - 14}>{meta}</text> : undefined}
-                    <title>{`${title}${kind}`}</title>
+                    <title>{title}</title>
                   </g>
                 </Link>
               )

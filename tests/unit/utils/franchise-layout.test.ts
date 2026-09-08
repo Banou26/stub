@@ -4,7 +4,7 @@
 // from. All three are arithmetic, so none of them needs a browser.
 import { describe, expect, test } from 'vitest'
 
-import { canonicalEdges, formatsIn, isVideoFormat, layoutFranchise, nodeTitle, trackOffsets } from '../../../src/utils/franchise-layout'
+import { canonicalEdges, formatsIn, inStoryOrder, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../../../src/utils/franchise-layout'
 import type { FranchiseEdge, FranchiseNode } from '../../../src/utils/franchise-layout'
 
 const node = (uri: string, extra: Partial<FranchiseNode> = {}): FranchiseNode =>
@@ -48,24 +48,52 @@ describe('layoutFranchise', () => {
   const columnOf = (layout: ReturnType<typeof layoutFranchise>, uri: string) =>
     layout.nodes.find(node => node.uri === uri)?.column
 
-  test('a straight run of sequels reads left to right', () => {
+  test('a series reads left to right in the order it happened', () => {
+    // the shape the whole layout is for: season one, season two, the film, season three
     const layout = layoutFranchise({
-      nodes: [node('s1'), node('s2'), node('s3')],
-      edges: [edge('s1', 's2', 'SEQUEL'), edge('s2', 's3', 'SEQUEL')],
+      nodes: [
+        node('film', { startDate: '2022-06-01' }),
+        node('s3', { startDate: '2024-01-05' }),
+        node('s1', { startDate: '2018-10-02' }),
+        node('s2', { startDate: '2021-01-12' }),
+      ],
+      edges: [],
     })
     expect(columnOf(layout, 's1')).toBe(0)
     expect(columnOf(layout, 's2')).toBe(1)
-    expect(columnOf(layout, 's3')).toBe(2)
-    expect(layout.columns).toBe(3)
+    expect(columnOf(layout, 'film')).toBe(2)
+    expect(columnOf(layout, 's3')).toBe(3)
+    expect(layout.columns).toBe(4)
   })
 
-  test('a work that follows TWO things sits after both, not beside the earlier one', () => {
-    // the shortest-path answer would put the film in column 1, overlapping the thing it follows
+  test('and the chain says that order outright, step by step', () => {
     const layout = layoutFranchise({
-      nodes: [node('s1'), node('s2'), node('film')],
-      edges: [edge('s1', 's2', 'SEQUEL'), edge('s2', 'film', 'SEQUEL'), edge('s1', 'film', 'SEQUEL')],
+      nodes: [
+        node('s2', { startDate: '2021-01-12' }),
+        node('s1', { startDate: '2018-10-02' }),
+        node('film', { startDate: '2022-06-01' }),
+      ],
+      edges: [],
     })
-    expect(columnOf(layout, 'film')).toBe(2)
+    expect(layout.chain).toEqual([{ from: 's1', to: 's2' }, { from: 's2', to: 'film' }])
+  })
+
+  test('the order is by DAY, not by year, since a franchise puts two cours in one year', () => {
+    const layout = layoutFranchise({
+      nodes: [node('cour2', { startDate: '2021-10-04' }), node('cour1', { startDate: '2021-01-11' })],
+      edges: [],
+    })
+    expect(columnOf(layout, 'cour1')).toBe(0)
+    expect(columnOf(layout, 'cour2')).toBe(1)
+  })
+
+  test('a work whose date nobody recorded goes last, not first', () => {
+    const layout = layoutFranchise({
+      nodes: [node('unknown'), node('s1', { startDate: '2018-10-02' })],
+      edges: [],
+    })
+    expect(columnOf(layout, 's1')).toBe(0)
+    expect(columnOf(layout, 'unknown')).toBe(1)
   })
 
   test('a cycle lays out instead of hanging, which a depth-first walk would not', () => {
@@ -77,14 +105,16 @@ describe('layoutFranchise', () => {
     expect(layout.nodes.every(placed => Number.isFinite(placed.column))).toBe(true)
   })
 
-  test('works in one column get their own row, so none is drawn on top of another', () => {
+  test('works released the same day share a column and stack, rather than being put in an order nobody stated', () => {
     const layout = layoutFranchise({
-      nodes: [node('root'), node('a', { startDate: '2019' }), node('b', { startDate: '2020' })],
-      edges: [edge('root', 'a', 'SIDE_STORY'), edge('root', 'b', 'SIDE_STORY')],
+      nodes: [node('a', { startDate: '2020-04-01' }), node('b', { startDate: '2020-04-01' })],
+      edges: [],
     })
-    const placed = layout.nodes.filter(item => item.uri !== 'root')
-    expect(new Set(placed.map(item => item.row)).size).toBe(2)
+    expect(columnOf(layout, 'a')).toBe(columnOf(layout, 'b'))
+    expect(new Set(layout.nodes.map(item => item.row)).size).toBe(2)
     expect(layout.rows).toBe(2)
+    // and no chain step between them, since neither comes first
+    expect(layout.chain).toEqual([])
   })
 
   test('and their order is stable, by year then title, so the same graph draws the same twice', () => {
@@ -124,7 +154,7 @@ describe('layoutFranchise', () => {
 
   test('an edge naming a work the graph has no node for is not drawn', () => {
     const layout = layoutFranchise({
-      nodes: [node('a'), node('b')],
+      nodes: [node('a', { startDate: '2018-01-01' }), node('b', { startDate: '2019-01-01' })],
       edges: [edge('a', 'b', 'SEQUEL'), edge('a', 'ghost', 'SEQUEL')],
     })
     expect(layout.edges).toHaveLength(1)
@@ -180,18 +210,87 @@ describe('formatsIn', () => {
   })
 })
 
-describe('trackOffsets', () => {
-  test('each track starts after the one before it, plus the gap', () => {
-    expect(trackOffsets([100, 50, 100], 10)).toEqual([0, 110, 170])
+describe('isVideoFormat', () => {
+  test('the things you watch', () => {
+    for (const format of ['TV', 'TV_SHORT', 'MOVIE', 'SPECIAL', 'OVA', 'ONA', 'MUSIC']) {
+      expect(isVideoFormat(format), format).toBe(true)
+    }
   })
 
-  test('a collapsed track really does cost less room, which is the point of collapsing it', () => {
-    const open = trackOffsets([190, 190, 190], 110)
-    const mixed = trackOffsets([190, 24, 190], 110)
-    expect(mixed[2]!).toBeLessThan(open[2]!)
+  test('and the things you read', () => {
+    for (const format of ['MANGA', 'NOVEL', 'ONE_SHOT']) {
+      expect(isVideoFormat(format), format).toBe(false)
+    }
   })
 
-  test('and no tracks is no offsets rather than a throw', () => {
-    expect(trackOffsets([], 10)).toEqual([])
+  test('a work whose format nobody named is kept, since a gap is worse than a stray box', () => {
+    expect(isVideoFormat(undefined)).toBe(true)
+    expect(isVideoFormat(null)).toBe(true)
+    expect(isVideoFormat('')).toBe(true)
+  })
+})
+
+describe('formatsIn', () => {
+  test('names every kind present, once each, in a stable order', () => {
+    const franchise = {
+      nodes: [node('a', { format: 'TV' }), node('b', { format: 'NOVEL' }), node('c', { format: 'TV' })],
+      edges: [],
+    }
+    expect(formatsIn(franchise)).toEqual(['NOVEL', 'TV'])
+  })
+
+  test('and offers nothing for a work whose format is unknown', () => {
+    expect(formatsIn({ nodes: [node('a')], edges: [] })).toEqual([])
+  })
+})
+
+
+describe('inStoryOrder', () => {
+  test('earliest first, and an undated work last', () => {
+    const ordered = inStoryOrder([
+      node('late', { startDate: '2024-01-01' }),
+      node('undated'),
+      node('early', { startDate: '2018-01-01' }),
+    ])
+    expect(ordered.map(item => item.uri)).toEqual(['early', 'late', 'undated'])
+  })
+
+  test('and ties break on the title, so the same series draws the same way twice', () => {
+    const same = { startDate: '2020-01-01' }
+    expect(inStoryOrder([node('b', same), node('a', same)]).map(item => item.uri)).toEqual(['a', 'b'])
+  })
+})
+
+describe('onlyFormats', () => {
+  const mixed = () => ({
+    nodes: [
+      node('s1', { format: 'TV', startDate: '2018-01-01' }),
+      node('novel', { format: 'NOVEL', startDate: '2014-01-01' }),
+      node('s2', { format: 'TV', startDate: '2021-01-01' }),
+    ],
+    edges: [edge('s1', 'novel', 'SOURCE'), edge('s2', 'novel', 'SOURCE')],
+  })
+
+  test('a hidden work is GONE, not shrunk, and its arrows go with it', () => {
+    const only = onlyFormats(mixed(), item => isVideoFormat(item.format))
+    expect(only.nodes.map(item => item.uri).sort()).toEqual(['s1', 's2'])
+    expect(only.edges).toEqual([])
+  })
+
+  test('and the survivors still read in order, which is what replaces the arrows', () => {
+    const layout = layoutFranchise(onlyFormats(mixed(), item => isVideoFormat(item.format)))
+    expect(layout.nodes.find(item => item.uri === 's1')?.column).toBe(0)
+    expect(layout.nodes.find(item => item.uri === 's2')?.column).toBe(1)
+    expect(layout.chain).toEqual([{ from: 's1', to: 's2' }])
+  })
+
+  test('keeping everything changes nothing', () => {
+    const only = onlyFormats(mixed(), () => true)
+    expect(only.nodes).toHaveLength(3)
+    expect(only.edges).toHaveLength(2)
+  })
+
+  test('hiding everything leaves nothing rather than throwing', () => {
+    expect(onlyFormats(mixed(), () => false)).toEqual({ nodes: [], edges: [] })
   })
 })

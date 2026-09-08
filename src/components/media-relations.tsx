@@ -5,6 +5,7 @@ import { css } from '@emotion/react'
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
+import { isVideoFormat } from '../utils/franchise-layout'
 import { relationLabel, relationRank, workFormatLabel } from '../utils/relation-labels'
 import { statusLabel } from '../router/search/params'
 import { useCoverUrl } from '../utils/use-cover-url'
@@ -129,6 +130,16 @@ const RelationCard = ({ edge }: { edge: RelationEdge }) => {
 export const sortRelations = (edges: readonly RelationEdge[]): RelationEdge[] =>
   [...edges].sort((a, b) => relationRank(a.relation) - relationRank(b.relation))
 
+/**
+ * Only the works this app can actually play.
+ *
+ * Stub aggregates VIDEO. A source novel and a manga are real relations and genuinely interesting, but
+ * neither is something you can open here, so a card for one is a dead end: it navigates to a page with
+ * no episodes and no way to read it. They come back when there is a product to hand them to.
+ */
+export const watchableRelations = (edges: readonly RelationEdge[]): RelationEdge[] =>
+  edges.filter(edge => isVideoFormat(edge.format))
+
 const MediaRelations = (
   { relations, action }:
   { relations: readonly RelationEdge[], action?: ComponentChildren }
@@ -136,7 +147,8 @@ const MediaRelations = (
   // Nothing at all rather than an empty heading: only some sources name relations, so most media have
   // none and a "Relations" heading over blank space reads as a page that failed to load. The action
   // goes with it: whatever it opens is built from the same source that named these.
-  if (!relations.length) return null
+  const watchable = watchableRelations(relations)
+  if (!watchable.length) return null
 
   return (
     <div css={style} data-relations>
@@ -145,7 +157,7 @@ const MediaRelations = (
         {action}
       </div>
       <div className="grid">
-        {sortRelations(relations).map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge}/>)}
+        {sortRelations(watchable).map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge}/>)}
       </div>
     </div>
   )

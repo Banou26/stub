@@ -161,6 +161,8 @@ const RELATION_NODE_FIELDS = `
   }
   startDate {
     year
+    month
+    day
   }
 `
 
@@ -450,7 +452,7 @@ const normalizeRelations = (media: Media) =>
           url: node.siteUrl ?? undefined,
           score: SCORE,
           episodeCount: node.episodes ?? undefined,
-          startDate: node.startDate?.year ? `${node.startDate.year}` : undefined,
+          startDate: franchiseDate(node.startDate),
           titles: [
             ...node.title?.english ? [{ language: 'en', title: node.title.english, score: SCORE }] : [],
             ...node.title?.romaji ? [{ language: 'jp-en', title: node.title.romaji, score: SCORE }] : [],
@@ -541,11 +543,25 @@ const buildFranchise = (media: Media) => {
   return { nodes: [...nodes.values()], edges: [...edges.values()] }
 }
 
-const franchiseNode = (node: { id?: number | null, format?: string | null, status?: MediaStatus | null, episodes?: number | null, startDate?: { year?: number | null } | null, title?: Media['title'], coverImage?: Media['coverImage'] }) => ({
+/**
+ * A sortable day, zero padded, out of the parts AniList publishes.
+ *
+ * The YEAR ALONE is not enough for the one thing this graph is for. A franchise routinely puts two
+ * cours and a film in the same year, and a year-only key files all three into one column, which is
+ * exactly where the reading order stops being visible. A missing month or day sorts to the start of
+ * the year, which is the right guess for a work whose exact date nobody recorded.
+ */
+const franchiseDate = (date: { year?: number | null, month?: number | null, day?: number | null } | null | undefined): string | undefined => {
+  if (!date?.year) return undefined
+  const pad = (value: number | null | undefined) => String(value ?? 1).padStart(2, '0')
+  return `${date.year}-${pad(date.month)}-${pad(date.day)}`
+}
+
+const franchiseNode = (node: { id?: number | null, format?: string | null, status?: MediaStatus | null, episodes?: number | null, startDate?: { year?: number | null, month?: number | null, day?: number | null } | null, title?: Media['title'], coverImage?: Media['coverImage'] }) => ({
   uri: `${origin}:${node.id}`,
   format: node.format ?? undefined,
   episodeCount: node.episodes ?? undefined,
-  startDate: node.startDate?.year ? `${node.startDate.year}` : undefined,
+  startDate: franchiseDate(node.startDate),
   status:
     node.status === MediaStatus.NotYetReleased ? GQLMediaStatus.NotYetReleased
     : node.status === MediaStatus.Releasing ? GQLMediaStatus.Releasing
