@@ -124,8 +124,18 @@ interface Episode {
   episodeNumber: number
   absoluteEpisodeNumber: number
   title: EpisodeTitle
-  airDate: string
-  airDateUtc: string
+  /**
+   * Both ABSENT on a special, which is what makes the fallback below a real branch rather than the
+   * dead one this interface used to claim. Measured live 2026-09-08 over ten ids from
+   * `dist-seed/snapshots.jsonl`, 132 episodes: `airdate` on 132, `airDateUtc` on 94, neither on 0. On
+   * anidb 16392 the twelve numbered episodes carry both and the eight specials carry `airdate` alone.
+   *
+   * The two shapes differ, so a reader gets one or the other: `airDateUtc` is an instant
+   * (`2026-07-07T11:30:00Z`, seconds precision, always Z) and `airdate` names a day
+   * (`2026-08-28`). See `src/utils/release-date.ts` for why the difference has to survive to the UI.
+   */
+  airDate?: string
+  airDateUtc?: string
   runtime: number
   overview?: string
   image?: string

@@ -128,6 +128,10 @@ const normalizeEpisode = (episode: AppleEpisode, mediaUri: string): GQLEpisode =
     thumbnails: img(image(episode.images?.previewFrame ?? episode.images?.coverArt16X9, 1280, 720), SCORE),
     seasonNumber: episode.seasonNumber,
     episodeNumber: episode.episodeNumber,
+    // Epoch MILLISECONDS, converted here rather than at the reader: the units are established in
+    // ../catalogue-gate.ts from real values, and a seconds-for-milliseconds mixup read downstream is
+    // a silent 1970 rather than an error. Fetched on every episode and dropped until 2026-09-08.
+    releaseDate: episode.releaseDate != null ? new Date(episode.releaseDate).toISOString() : undefined,
   })
 
 /**
