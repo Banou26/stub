@@ -238,6 +238,26 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
     ...snapshot.playback ? { s: advance(snapshot.playback, snapshot.playbackAt ?? Date.now(), Date.now()) } : {},
   })
 
+  /**
+   * The host's last `state`, carrying the newest position the host has reported rather than the one
+   * that state was built with.
+   *
+   * A `state` goes out on a STATE_HEARTBEAT_MS timer, so its position can be ten seconds old, while a
+   * `scroll` goes out twice a second whenever the host moves. When the scroll is the later of the two
+   * it is the host's own correction to the same page, and a listener asking to be caught up should be
+   * placed there. Measured 2026-09-08: Catch up put followers at the top of a page the host was
+   * 1,080px down, whenever no heartbeat happened to fall between the host's move and the ask.
+   *
+   * `heard` is rewritten on every message (deleted, then set), so its key order IS arrival order.
+   */
+  const freshestState = (): PartyMessage | undefined => {
+    const state = heard.get('state')
+    const scroll = heard.get('scroll')
+    if (state?.t !== 'state' || scroll?.t !== 'scroll') return state
+    const order = [...heard.keys()]
+    return order.indexOf('scroll') > order.indexOf('state') ? { ...state, y: scroll.y } : state
+  }
+
   const detach = () => {
     unlisten?.()
     unlisten = undefined
@@ -402,9 +422,10 @@ export const createPartyStore = (api: RoomsApi, storage: StorageLike | undefined
       return last.at(-1)?.path
     },
     replay: () => {
-      // a nav first, so a scroll or a playback lands on the page it was meant for
+      // The state first, since it is the only one carrying a path and a position together, so a scroll
+      // or a playback after it lands on the page it was meant for.
       for (const kind of ['state', 'nav', 'scroll', 'playback'] as const) {
-        const message = heard.get(kind)
+        const message = kind === 'state' ? freshestState() : heard.get(kind)
         if (message && room) tell(message, { replayed: true, from: room.owner, self: false })
       }
     },

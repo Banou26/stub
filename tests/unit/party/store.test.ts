@@ -354,6 +354,51 @@ describe('following', () => {
     expect(heard).toEqual([{ t: 'nav', path: '/b' }, { t: 'scroll', y: 0.9 }])
   })
 
+  // A `state` goes out on a ten second heartbeat and a `scroll` twice a second while the host moves,
+  // so the position on a replayed state is routinely the older of the two. Catch up placed followers
+  // at the top of a page the host was 1,080px down, whenever no heartbeat fell between the host's
+  // move and the ask (measured 2026-09-08).
+  describe('the position a replayed state carries', () => {
+    const caughtUp = async (says: Parameters<typeof encodePartyMessage>[0][]) => {
+      const fake = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me'] })
+      const party = createPartyStore(api(fake.room), memoryStorage())
+      await party.join(INVITE)
+      const heard: unknown[] = []
+      party.onMessage(message => heard.push(message))
+      says.forEach((message, index) =>
+        fake.emit({ type: 'message', message: { seq: index + 1, from: 'host', at: 1, text: encodePartyMessage(message) }, replayed: false }))
+      heard.length = 0
+      party.replay()
+      return heard
+    }
+
+    test('is the later scroll, when the host moved after the state went out', async () => {
+      const heard = await caughtUp([{ t: 'state', path: '/a', y: 0 }, { t: 'scroll', y: 0.42 }])
+      expect(heard).toEqual([{ t: 'state', path: '/a', y: 0.42 }, { t: 'scroll', y: 0.42 }])
+    })
+
+    test('is the state\'s own, when the state is the later of the two', async () => {
+      const heard = await caughtUp([{ t: 'scroll', y: 0.42 }, { t: 'state', path: '/a', y: 0.9 }])
+      expect(heard).toEqual([{ t: 'state', path: '/a', y: 0.9 }, { t: 'scroll', y: 0.42 }])
+    })
+
+    test('is the state\'s own when no scroll was ever heard', async () => {
+      const heard = await caughtUp([{ t: 'state', path: '/a', y: 0.3 }])
+      expect(heard).toEqual([{ t: 'state', path: '/a', y: 0.3 }])
+    })
+
+    test('leaves everything else on the state alone, so a playback is not lost to a scroll', async () => {
+      const heard = await caughtUp([
+        { t: 'state', path: '/a', y: 0, s: { paused: false, time: 5, rate: 1, at: 12 } },
+        { t: 'scroll', y: 0.42 },
+      ])
+      expect(heard).toEqual([
+        { t: 'state', path: '/a', y: 0.42, s: { paused: false, time: 5, rate: 1, at: 12 } },
+        { t: 'scroll', y: 0.42 },
+      ])
+    })
+  })
+
   test('a replay is marked as one, so a guest can tell being caught up from the host moving', async () => {
     const fake = fakeRoom({ self: 'me', owner: 'host', members: ['host', 'me'] })
     const party = createPartyStore(api(fake.room), memoryStorage())
