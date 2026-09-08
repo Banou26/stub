@@ -19,6 +19,7 @@ import { attach } from '@fkn/lib/packages'
 import { typeDefs } from '../generated/schema/typeDefs.generated'
 import * as extractorDefinitions from '../sources'
 import { merge } from '../utils/merge'
+import { answersForOrigins, type Answerable } from '../sources/supported'
 import { fetch, fetchWithBackoff } from './fetch'
 import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../utils/uri'
 import { upsertMedia, upsertEpisodes, upsertOrigins, findAggregatedMedia } from './store/db'
@@ -800,13 +801,33 @@ export const proxyRequestToExtractors = (
    * generator with no retry (crunchyroll/extractor.ts:247-252). Re-asking is the only way it ever
    * fetches its own data on the click path, which is the whole of what a reload does differently.
    *
+   * MATCHED ON `supportedUris` AS WELL AS ON THE SOURCE'S OWN ORIGIN, and the difference is a whole
+   * class of source. anizip answers from an anidb or a mal id and publishes under `anizip:`, so its
+   * own name cannot appear in the cluster until it has already answered: matching by origin alone, it
+   * is never re-asked and never answers at all. Its data only appeared on a RELOAD, where the address
+   * bar already carried the mal id it needed (measured 2026-09-09 on
+   * `ag:(anilist:166873)`, which settled without anizip and gained it on the second load).
+   * `supportedUris` is declared by every source in src/sources and, until this, was read by nothing.
+   *
+   * Termination holds WITHOUT capping a source to one re-ask, and the cap would cost correctness. The
+   * caller only ever hands over origins it has never handed over before (`askedOrigins` in
+   * resolvers/media/index.ts grows and never shrinks), so a source is asked at most once per origin it
+   * declares plus once for its own: three questions for the widest source in the tree. Capping it at
+   * one instead means a source whose needed id lands in a LATER batch than the one that first named
+   * something it understands is asked too early, refuses, and never gets another chance. anizip
+   * survives that cap only because anilist happens to contribute anidb, kitsu, mal and offline in a
+   * single upsert.
+   *
    * Deliberately NOT recorded in `fanout.joined`, which tracks the original variables so a source
    * registering mid-flight joins exactly once. These land in `subscriptions`, so the caller's
    * teardown collects them with the rest.
    */
   const askOrigins = (originIds: string[], variables: SubscriptionArgs[1]) => {
     for (const extractor of extractors) {
-      if (!originIds.includes(extractor.extractor.origin)) continue
+      // A PLUGIN source is matched on its origin alone: `PluginSourceMeta` carries no `supportedUris`
+      // (see plugin-sources.ts), so a third party answering from a foreign id keeps the old behaviour.
+      const definition = extractor.extractor as Answerable
+      if (!answersForOrigins(definition, originIds)) continue
       try {
         fanout.subscriptions.push(
           extractor.client.subscription(fanout.query, stamp(variables ?? {}, fanout.root)).subscribe(() => {})
