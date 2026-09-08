@@ -19,6 +19,7 @@ import VolumeControl from '../../components/volume-control'
 import TextEllipsis from '../../components/text-ellipsis'
 import Collapsible from '../../components/collapsible'
 import MediaRelations from '../../components/media-relations'
+import MediaFranchise from '../../components/media-franchise'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { nextThumbnail } from '../../utils/thumbnails'
@@ -362,6 +363,23 @@ const GET_MEDIA_MODAL = gql(`
       }
       popularity
       categories
+      franchise {
+        nodes {
+          uri
+          format
+          status
+          episodeCount
+          startDate
+          titles {
+            title
+          }
+        }
+        edges {
+          from
+          to
+          relation
+        }
+      }
       relations {
         relation
         format
@@ -788,6 +806,12 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   : undefined
               }
               <MediaRelations relations={media && 'relations' in media ? media.relations ?? [] : []}/>
+              <MediaFranchise
+                franchise={media && 'franchise' in media ? media.franchise : undefined}
+                /* every uri this cluster answers to, so the node the reader is on is the one marked,
+                   whichever of its sources named it in the graph */
+                currentUris={media?.handles?.map(handle => handle.node.uri) ?? []}
+              />
               <div className="episodes">
                 {
                   media &&
