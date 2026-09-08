@@ -59,7 +59,7 @@
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.2",
     "react-window": "^2.0.1",
-    "sacha": "^0.2.3",
+    "sacha": "^0.2.4",
     "urql": "^4.2.2",
     "wouter": "^3.7.1"
   },
