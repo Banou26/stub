@@ -4,7 +4,7 @@
 // from. All three are arithmetic, so none of them needs a browser.
 import { describe, expect, test } from 'vitest'
 
-import { canonicalEdges, layoutFranchise, nodeTitle } from '../../../src/utils/franchise-layout'
+import { canonicalEdges, formatsIn, isVideoFormat, layoutFranchise, nodeTitle, trackOffsets } from '../../../src/utils/franchise-layout'
 import type { FranchiseEdge, FranchiseNode } from '../../../src/utils/franchise-layout'
 
 const node = (uri: string, extra: Partial<FranchiseNode> = {}): FranchiseNode =>
@@ -143,5 +143,55 @@ describe('nodeTitle', () => {
   test('a work with no title still names itself, so no box is blank', () => {
     expect(nodeTitle({ uri: 'anilist:1', titles: [] })).toBe('anilist:1')
     expect(nodeTitle({ uri: 'anilist:1', titles: [{ title: 'Slime' }] })).toBe('Slime')
+  })
+})
+
+describe('isVideoFormat', () => {
+  test('the things you watch', () => {
+    for (const format of ['TV', 'TV_SHORT', 'MOVIE', 'SPECIAL', 'OVA', 'ONA', 'MUSIC']) {
+      expect(isVideoFormat(format), format).toBe(true)
+    }
+  })
+
+  test('and the things you read', () => {
+    for (const format of ['MANGA', 'NOVEL', 'ONE_SHOT']) {
+      expect(isVideoFormat(format), format).toBe(false)
+    }
+  })
+
+  test('a work whose format nobody named is kept, since a gap is worse than a stray box', () => {
+    expect(isVideoFormat(undefined)).toBe(true)
+    expect(isVideoFormat(null)).toBe(true)
+    expect(isVideoFormat('')).toBe(true)
+  })
+})
+
+describe('formatsIn', () => {
+  test('names every kind present, once each, in a stable order', () => {
+    const franchise = {
+      nodes: [node('a', { format: 'TV' }), node('b', { format: 'NOVEL' }), node('c', { format: 'TV' })],
+      edges: [],
+    }
+    expect(formatsIn(franchise)).toEqual(['NOVEL', 'TV'])
+  })
+
+  test('and offers nothing for a work whose format is unknown', () => {
+    expect(formatsIn({ nodes: [node('a')], edges: [] })).toEqual([])
+  })
+})
+
+describe('trackOffsets', () => {
+  test('each track starts after the one before it, plus the gap', () => {
+    expect(trackOffsets([100, 50, 100], 10)).toEqual([0, 110, 170])
+  })
+
+  test('a collapsed track really does cost less room, which is the point of collapsing it', () => {
+    const open = trackOffsets([190, 190, 190], 110)
+    const mixed = trackOffsets([190, 24, 190], 110)
+    expect(mixed[2]!).toBeLessThan(open[2]!)
+  })
+
+  test('and no tracks is no offsets rather than a throw', () => {
+    expect(trackOffsets([], 10)).toEqual([])
   })
 })

@@ -805,12 +805,16 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
                   )
                   : undefined
               }
-              <MediaRelations relations={media && 'relations' in media ? media.relations ?? [] : []}/>
-              <MediaFranchise
-                franchise={media && 'franchise' in media ? media.franchise : undefined}
-                /* every uri this cluster answers to, so the node the reader is on is the one marked,
-                   whichever of its sources named it in the graph */
-                currentUris={media?.handles?.map(handle => handle.node.uri) ?? []}
+              <MediaRelations
+                relations={media && 'relations' in media ? media.relations ?? [] : []}
+                action={
+                  <MediaFranchise
+                    franchise={media && 'franchise' in media ? media.franchise : undefined}
+                    /* every uri this cluster answers to, so the node the reader is on is the one
+                       marked, whichever of its sources named it in the graph */
+                    currentUris={media?.handles?.map(handle => handle.node.uri) ?? []}
+                  />
+                }
               />
               <div className="episodes">
                 {

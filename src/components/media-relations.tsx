@@ -1,3 +1,4 @@
+import type { ComponentChildren } from 'preact'
 import type { GetMediaModalSubscription } from '../generated/graphql'
 
 import { css } from '@emotion/react'
@@ -24,6 +25,10 @@ const style = css`
   margin-top: 4rem;
 
   & > .heading {
+    display: flex;
+    align-items: center;
+    /* the graph button sits beside the word, not across the modal, so the two read as one control */
+    gap: 1.5rem;
     font-size: 1.8rem;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.9);
@@ -124,14 +129,21 @@ const RelationCard = ({ edge }: { edge: RelationEdge }) => {
 export const sortRelations = (edges: readonly RelationEdge[]): RelationEdge[] =>
   [...edges].sort((a, b) => relationRank(a.relation) - relationRank(b.relation))
 
-const MediaRelations = ({ relations }: { relations: readonly RelationEdge[] }) => {
+const MediaRelations = (
+  { relations, action }:
+  { relations: readonly RelationEdge[], action?: ComponentChildren }
+) => {
   // Nothing at all rather than an empty heading: only some sources name relations, so most media have
-  // none and a "Relations" heading over blank space reads as a page that failed to load.
+  // none and a "Relations" heading over blank space reads as a page that failed to load. The action
+  // goes with it: whatever it opens is built from the same source that named these.
   if (!relations.length) return null
 
   return (
     <div css={style} data-relations>
-      <div className="heading">Relations</div>
+      <div className="heading">
+        <span>Relations</span>
+        {action}
+      </div>
       <div className="grid">
         {sortRelations(relations).map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge}/>)}
       </div>
