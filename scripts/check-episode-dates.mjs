@@ -44,6 +44,10 @@ const CANDIDATES = (process.env.STUB_MEDIA ? [process.env.STUB_MEDIA] : []).conc
 const ZONES = { east: 'Asia/Tokyo', west: 'America/Los_Angeles' }
 /** `YYYY-MM-DD`, which is how the page marks a row whose source named a day rather than a moment. */
 const NAMED_DAY = /^\d{4}-\d{2}-\d{2}$/
+/** `Jul 3, 2026`, the shape a row falls back to once it is too old to count in days. */
+const ABSOLUTE = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/
+/** `today`, `yesterday`, `4 days ago`, which is what a release inside the last month reads as. */
+const RELATIVE = /^(today|yesterday|\d+ days ago)$/
 
 const chromePath = () => {
   if (process.env.CHROME_PATH) return process.env.CHROME_PATH
@@ -132,9 +136,14 @@ const main = async () => {
     `${dated.filter(episode => episode.attribute).length} of ${dated.length}`,
   )
   check(
-    dated.every(episode => /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(episode.text)),
-    'and reads as a day rather than a timestamp',
-    dated.slice(0, 3).map(episode => episode.text).join(' | '),
+    dated.every(episode => ABSOLUTE.test(episode.text) || RELATIVE.test(episode.text)),
+    'and reads either as a count of days or as a day, never as a timestamp',
+    dated.slice(0, 4).map(episode => episode.text).join(' | '),
+  )
+  check(
+    dated.every(episode => !RELATIVE.test(episode.text) || new Date(episode.attribute).getTime() <= Date.now()),
+    'and only a release that has already happened counts backwards',
+    `${dated.filter(episode => RELATIVE.test(episode.text)).length} of ${dated.length} count days`,
   )
 
   console.log(`\nand the same rows read from ${ZONES.west}`)
@@ -144,8 +153,15 @@ const main = async () => {
     .filter(pair => pair.west && pair.east.attribute && pair.west.attribute && pair.east.attribute === pair.west.attribute)
   check(pairs.length > 0, 'the same rows came back in the other zone, so there is something to compare', `${pairs.length} rows`)
 
-  const namedDays = pairs.filter(pair => NAMED_DAY.test(pair.east.attribute))
-  const instants = pairs.filter(pair => !NAMED_DAY.test(pair.east.attribute))
+  // Only rows showing an ABSOLUTE date can be compared across zones. A row inside the last month
+  // shows a count of days instead, and that count is measured from the VIEWER's today, so two zones
+  // sitting on different calendar dates disagree by one legitimately. Which rows those are changes
+  // with the hour the check runs at, so they are excluded by what they display rather than by a
+  // guess about the clock.
+  const comparable = pairs.filter(pair => ABSOLUTE.test(pair.east.text) && ABSOLUTE.test(pair.west.text))
+  const namedDays = comparable.filter(pair => NAMED_DAY.test(pair.east.attribute))
+  const instants = comparable.filter(pair => !NAMED_DAY.test(pair.east.attribute))
+  check(comparable.length > 0, 'some rows show a date rather than a count, so they can be compared', `${comparable.length} of ${pairs.length}`)
 
   // THE CONTROL, and it is the instants rather than an assumption. If two contexts pinned nine and
   // seven hours apart render the SAME day for a moment that falls either side of midnight, then this

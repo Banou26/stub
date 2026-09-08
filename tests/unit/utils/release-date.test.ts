@@ -7,7 +7,7 @@
 // one they happen to run in.
 import { afterEach, describe, expect, test } from 'vitest'
 
-import { parseReleaseDate, releaseDateAttribute, releaseDateLabel } from '../../../src/utils/release-date'
+import { RELATIVE_WITHIN_DAYS, parseReleaseDate, releaseDateAttribute, releaseDateDisplay, releaseDateLabel } from '../../../src/utils/release-date'
 
 const TZ = process.env.TZ
 
@@ -98,5 +98,62 @@ describe('releaseDateAttribute', () => {
   test('and there is no attribute where there is no label', () => {
     expect(releaseDateAttribute(undefined)).toBeUndefined()
     expect(releaseDateAttribute('TBA')).toBeUndefined()
+  })
+})
+
+describe('releaseDateDisplay', () => {
+  const show = (value: string, now: string, zone = 'Asia/Tokyo') =>
+    inZone(zone, () => releaseDateDisplay(value, { locale: 'en-US', now: new Date(now) }))
+
+  test('an episode from today says so', () => {
+    // both stamps land on 2026-09-08 in Tokyo: 18:00 and 22:00 JST. A `now` of 23:00Z would already
+    // be the 9th there, which is the kind of fixture that reads as a bug in the code under test.
+    expect(show('2026-09-08T09:00:00.000Z', '2026-09-08T13:00:00.000Z')).toBe('today')
+  })
+
+  test('and one from last night is yesterday, not today', () => {
+    // The case elapsed-hours arithmetic gets wrong: 23:00 JST yesterday against 11:00 JST today is
+    // twelve hours, which divided by a day is zero. Every reader calls it yesterday.
+    expect(show('2026-09-07T14:00:00.000Z', '2026-09-08T02:00:00.000Z')).toBe('yesterday')
+  })
+
+  test('and a run of days is counted in days', () => {
+    expect(show('2026-09-06T09:00:00.000Z', '2026-09-08T09:00:00.000Z')).toBe('2 days ago')
+    expect(show('2026-08-25T09:00:00.000Z', '2026-09-08T09:00:00.000Z')).toBe('14 days ago')
+  })
+
+  test('until a month has passed, and then it is the date instead', () => {
+    const now = '2026-09-08T09:00:00.000Z'
+    expect(show('2026-08-11T09:00:00.000Z', now)).toBe('28 days ago')
+    expect(show('2026-08-10T09:00:00.000Z', now)).toBe('29 days ago')
+    expect(show('2026-08-09T09:00:00.000Z', now)).toBe('Aug 9, 2026')
+    expect(show('2026-08-08T09:00:00.000Z', now)).toBe('Aug 8, 2026')
+  })
+
+  test('the boundary is the constant, so moving it moves the behaviour', () => {
+    expect(RELATIVE_WITHIN_DAYS).toBe(30)
+  })
+
+  test('an episode that has not aired yet shows its date rather than counting backwards', () => {
+    expect(show('2026-09-20T09:00:00.000Z', '2026-09-08T09:00:00.000Z')).toBe('Sep 20, 2026')
+    expect(show('2026-09-09T09:00:00.000Z', '2026-09-08T09:00:00.000Z')).toBe('Sep 9, 2026')
+  })
+
+  test('a named day is counted from the day it names, in every zone', () => {
+    // 2026-09-07 against a viewer whose today is 2026-09-08: yesterday, east or west
+    for (const zone of ['Asia/Tokyo', 'America/Los_Angeles', 'UTC']) {
+      const now = inZone(zone, () => new Date(zone === 'Asia/Tokyo' ? '2026-09-08T03:00:00.000Z' : '2026-09-08T20:00:00.000Z'))
+      expect(inZone(zone, () => releaseDateDisplay('2026-09-07', { locale: 'en-US', now })), zone).toBe('yesterday')
+    }
+  })
+
+  test('and an old named day falls back to the day it named, not the day before it', () => {
+    expect(inZone('America/Los_Angeles', () =>
+      releaseDateDisplay('2026-01-07', { locale: 'en-US', now: new Date('2026-09-08T20:00:00.000Z') }))).toBe('Jan 7, 2026')
+  })
+
+  test('there is nothing to show where there is no date', () => {
+    expect(releaseDateDisplay(undefined)).toBeUndefined()
+    expect(releaseDateDisplay('TBA')).toBeUndefined()
   })
 })

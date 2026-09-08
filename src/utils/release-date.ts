@@ -75,6 +75,52 @@ export const releaseDateLabel = (
 }
 
 /**
+ * How recent an episode still reads better as a count of days than as a date. A month, taken as 30
+ * days: past that "47 days ago" is arithmetic the reader has to do, and the date itself is the more
+ * useful thing.
+ */
+export const RELATIVE_WITHIN_DAYS = 30
+
+/**
+ * The day a moment falls on, as a number that can be subtracted from another.
+ *
+ * CALENDAR days, not elapsed hours, which is the whole reason this is not a subtraction. An episode
+ * that aired at 23:00 last night is twelve hours old and is `yesterday` to every reader; dividing the
+ * elapsed milliseconds by a day would call it today. Built through `Date.UTC` from the civil parts,
+ * so a day is exactly 86,400,000 apart from the next one and a daylight saving shift cannot move it.
+ *
+ * `utc` picks the frame: a source that named a DAY named it in no timezone at all, so its own day is
+ * read, while a moment is read where the viewer is.
+ */
+const civilDay = (date: Date, utc: boolean): number =>
+  utc
+    ? Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    : Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+
+const DAY_MS = 86_400_000
+
+/**
+ * What to show beside an episode: how long ago it landed while that is still short enough to mean
+ * something, and the date itself once it is not.
+ *
+ * Anything not in the recent past falls through to the date, which covers an episode that has not
+ * aired yet: a countdown is a different job, and `utils/countdown.ts` already does it for the one
+ * airing next.
+ */
+export const releaseDateDisplay = (
+  value: string | null | undefined,
+  { locale, now = new Date() }: ReleaseDateOptions & { now?: Date } = {}
+): string | undefined => {
+  const date = parseReleaseDate(value)
+  if (!date) return undefined
+  const days = Math.round((civilDay(now, false) - civilDay(date, DATE_ONLY.test(value!))) / DAY_MS)
+  if (days === 0) return 'today'
+  if (days === 1) return 'yesterday'
+  if (days > 1 && days < RELATIVE_WITHIN_DAYS) return `${days} days ago`
+  return releaseDateLabel(value, { locale })
+}
+
+/**
  * The machine-readable value for a `<time dateTime>`, or `undefined` alongside an undefined label.
  *
  * A named day is handed back as that day rather than as an instant, so the attribute and the visible

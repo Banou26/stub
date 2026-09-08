@@ -22,7 +22,7 @@ import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { nextThumbnail } from '../../utils/thumbnails'
 import { getRoutePath, Route } from '../path'
-import { releaseDateAttribute, releaseDateLabel } from '../../utils/release-date'
+import { releaseDateAttribute, releaseDateDisplay } from '../../utils/release-date'
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import { useCoverUrl } from '../../utils/use-cover-url'
@@ -238,17 +238,22 @@ animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .side {
+          /* auto rather than a grown .content: the row's other children keep the widths they had, and
+             the date sits against the right edge however long the title and description turn out */
+          margin-left: auto;
           display: flex;
           align-items: center;
           flex-shrink: 0;
-          padding-left: 1.5rem;
+          padding: 0 2.5rem 0 2rem;
           /* decorative, like the thumbnail above it: the whole row is one link */
           pointer-events: none;
 
           & > .date {
-            font-size: 1.3rem;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
             white-space: nowrap;
+            text-align: right;
           }
         }
       }
@@ -434,7 +439,7 @@ const Episode = (
   // was not the row merged into. Four sources supply one at all (anizip, Crunchyroll, the bundled
   // catalogue and Apple TV), so plenty of episodes have none and the column is simply empty there.
   const releasedAt = episode.releaseDate ?? episode.handles?.find(handle => handle.node.releaseDate)?.node.releaseDate
-  const released = releaseDateLabel(releasedAt)
+  const released = releaseDateDisplay(releasedAt)
   const origins =
     episode.uri
       ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
