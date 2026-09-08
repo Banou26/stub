@@ -3,11 +3,13 @@ import type { GetMediaModalSubscription } from '../generated/graphql'
 import { css } from '@emotion/react'
 import { FloatingFocusManager, FloatingOverlay, FloatingPortal, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import { Network, X } from 'lucide-react'
-import { useMemo, useRef, useState } from 'preact/hooks'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
 import { formatsIn, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
+import { IDENTITY, fit, panBy, zoomAt } from '../utils/viewport'
+import type { View } from '../utils/viewport'
 import { relationLabel, workFormatLabel } from '../utils/relation-labels'
 
 /**
@@ -150,11 +152,12 @@ const overlayStyle = css`
 
   .canvas {
     flex: 1;
-    overflow: auto;
-    /* centred while it fits, and SAFE so a graph bigger than the box is not clipped at its start:
-       plain centring on an overflowing grid pushes the first column out of reach of any scroll */
-    display: grid;
-    place-content: safe center;
+    /* HIDDEN, not auto. The drawing is moved by a transform rather than by a scroll offset, so there
+       is nothing here to scroll and no content bounds to be stopped by: the surface is unbounded in
+       every direction and at every zoom. */
+    overflow: hidden;
+    position: relative;
+    touch-action: none;
     /* dragged rather than scrolled, so the pointer says so before it is pressed */
     cursor: grab;
     background-color: rgb(9, 9, 10);
@@ -234,15 +237,26 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
   // somewhere to go: its page here has no episodes and nothing to read.
   const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set(formats.filter(isVideoFormat)))
 
+  /**
+   * Which layout, decided by what is on screen rather than by a second control.
+   *
+   * A timeline is the right picture while everything shown is something you watch: a handful of works
+   * in a line, in order. Switch the books on and it stops being right, because a franchise has far
+   * more volumes than seasons and they share dates freely, so the timeline becomes a mile of nearly
+   * empty columns. Depth packs those against the works they adapt.
+   */
+  const mode = [...shown].every(isVideoFormat) ? 'story' : 'graph'
+
   const layout = useMemo(
-    () => layoutFranchise(onlyFormats(franchise, node => !node.format || shown.has(node.format))),
-    [franchise, shown],
+    () => layoutFranchise(onlyFormats(franchise, node => !node.format || shown.has(node.format)), mode),
+    [franchise, shown, mode],
   )
   const current = new Set(currentUris)
 
   const canvas = useRef<HTMLDivElement>(null)
-  const grab = useRef<{ x: number, y: number, left: number, top: number } | undefined>(undefined)
+  const grab = useRef<{ x: number, y: number, view: View } | undefined>(undefined)
   const [dragging, setDragging] = useState(false)
+  const [view, setView] = useState<View>(IDENTITY)
   // Remembered past the pointerup, because the CLICK fires after it: a drag that ends over a work
   // would otherwise navigate to it, and every attempt to pan the graph would leave the page.
   const moved = useRef(false)
@@ -255,6 +269,31 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
     if (!node) return undefined
     return { x: PAD + node.column * COL_W + NODE_W / 2, y: PAD + node.row * ROW_H + NODE_H / 2 }
   }
+
+  // Framed once per layout, so switching a filter re-centres on what is now shown rather than leaving
+  // the viewer looking at empty canvas where the books used to be.
+  useLayoutEffect(() => {
+    const box = canvas.current
+    if (!box) return
+    setView(fit({ width, height }, { width: box.clientWidth, height: box.clientHeight }))
+  }, [width, height])
+
+  // Wheel is bound by hand because it has to be NON-PASSIVE: the default cannot call preventDefault,
+  // so the dialog underneath would scroll, and on a trackpad the browser would page-zoom instead.
+  useEffect(() => {
+    const box = canvas.current
+    if (!box) return
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault()
+      const rect = box.getBoundingClientRect()
+      // a fixed step per notch rather than one proportional to deltaY, which differs by an order of
+      // magnitude between a mouse wheel and a trackpad
+      const factor = Math.exp(-Math.sign(event.deltaY) * 0.18)
+      setView(previous => zoomAt(previous, event.clientX - rect.left, event.clientY - rect.top, factor))
+    }
+    box.addEventListener('wheel', onWheel, { passive: false })
+    return () => box.removeEventListener('wheel', onWheel)
+  }, [])
 
   const toggle = (format: string) =>
     setShown(previous => {
@@ -288,25 +327,30 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
         className={`canvas${dragging ? ' dragging' : ''}`}
         ref={canvas}
         data-canvas
+        style={{
+          // the grid is drawn by the canvas rather than the svg, so it is moved and scaled by hand to
+          // stay registered with the drawing: without this the graph slides over a field that never moves
+          backgroundPosition: `${view.x}px ${view.y}px`,
+          backgroundSize: `${24 * view.k}px ${24 * view.k}px`,
+        }}
         onPointerDown={event => {
           const box = canvas.current
           if (!box || event.button !== 0) return
-          grab.current = { x: event.clientX, y: event.clientY, left: box.scrollLeft, top: box.scrollTop }
+          grab.current = { x: event.clientX, y: event.clientY, view }
           moved.current = false
           setDragging(true)
+          box.setPointerCapture?.(event.pointerId)
         }}
         onPointerMove={event => {
-          const box = canvas.current
           const from = grab.current
-          if (!box || !from) return
+          if (!from) return
           const dx = event.clientX - from.x
           const dy = event.clientY - from.y
           if (Math.abs(dx) > SLOP || Math.abs(dy) > SLOP) moved.current = true
-          box.scrollLeft = from.left - dx
-          box.scrollTop = from.top - dy
+          setView(panBy(from.view, dx, dy))
         }}
         onPointerUp={() => { grab.current = undefined; setDragging(false) }}
-        onPointerLeave={() => { grab.current = undefined; setDragging(false) }}
+        onPointerCancel={() => { grab.current = undefined; setDragging(false) }}
         onClickCapture={event => {
           // captured, so it never reaches the link underneath
           if (!moved.current) return
@@ -315,7 +359,8 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
           moved.current = false
         }}
       >
-        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Every work in this series, in order">
+        <svg width="100%" height="100%" role="img" aria-label="Every work in this series, in order">
+          <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
           {
             layout.chain.map(step => {
               const from = centre(step.from)
@@ -387,6 +432,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
               )
             })
           }
+          </g>
         </svg>
       </div>
     </>

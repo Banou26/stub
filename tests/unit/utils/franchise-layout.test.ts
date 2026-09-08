@@ -294,3 +294,66 @@ describe('onlyFormats', () => {
     expect(onlyFormats(mixed(), () => false)).toEqual({ nodes: [], edges: [] })
   })
 })
+
+describe("layoutFranchise in 'graph' mode", () => {
+  const columnOf = (layout: ReturnType<typeof layoutFranchise>, uri: string) =>
+    layout.nodes.find(node => node.uri === uri)?.column
+
+  test('columns follow the edges rather than the calendar', () => {
+    // dated so that story order would put them in the OPPOSITE order to the relations
+    const franchise = {
+      nodes: [node('novel', { startDate: '2024-01-01' }), node('show', { startDate: '2018-01-01' })],
+      edges: [edge('novel', 'show', 'ADAPTATION')],
+    }
+    expect(columnOf(layoutFranchise(franchise, 'story'), 'show')).toBe(0)
+    // ADAPTATION canonicalises to SOURCE pointing show -> novel, so the show leads on depth
+    expect(columnOf(layoutFranchise(franchise, 'graph'), 'show')).toBe(0)
+    expect(columnOf(layoutFranchise(franchise, 'graph'), 'novel')).toBe(1)
+  })
+
+  test('a work that follows TWO things sits after both, not beside the earlier one', () => {
+    const layout = layoutFranchise({
+      nodes: [node('s1'), node('s2'), node('film')],
+      edges: [edge('s1', 's2', 'SEQUEL'), edge('s2', 'film', 'SEQUEL'), edge('s1', 'film', 'SEQUEL')],
+    }, 'graph')
+    expect(columnOf(layout, 'film')).toBe(2)
+  })
+
+  test('it PACKS, which is the reason it comes back once the books are shown', () => {
+    // ten works that share no edges are ten timeline columns and one depth column
+    const nodes = Array.from({ length: 10 }, (_, index) =>
+      node(`m${index}`, { format: 'MANGA', startDate: `20${10 + index}-01-01` }))
+    const franchise = { nodes, edges: [] }
+    expect(layoutFranchise(franchise, 'story').columns).toBe(10)
+    expect(layoutFranchise(franchise, 'graph').columns).toBe(1)
+  })
+
+  test('and draws no reading-order chain, since a column there is depth rather than a date', () => {
+    // The edge is load bearing. Without one, depth puts both works in column 0 and the chain comes out
+    // empty for that reason instead of the intended one, so removing the guard would not be noticed.
+    const franchise = {
+      nodes: [node('a', { startDate: '2018-01-01' }), node('b', { startDate: '2020-01-01' })],
+      edges: [edge('a', 'b', 'SEQUEL')],
+    }
+    expect(layoutFranchise(franchise, 'graph').nodes.find(item => item.uri === 'b')?.column).toBe(1)
+    expect(layoutFranchise(franchise, 'story').chain).toHaveLength(1)
+    expect(layoutFranchise(franchise, 'graph').chain).toEqual([])
+  })
+
+  test('a cycle lays out instead of hanging, which a depth-first walk would not', () => {
+    const layout = layoutFranchise({
+      nodes: [node('a'), node('b'), node('c')],
+      edges: [edge('a', 'b', 'SEQUEL'), edge('b', 'c', 'SEQUEL'), edge('c', 'a', 'OTHER')],
+    }, 'graph')
+    expect(layout.nodes).toHaveLength(3)
+    expect(layout.columns).toBeLessThanOrEqual(3)
+  })
+
+  test('story is the default, so a caller that names no mode gets the timeline', () => {
+    const franchise = {
+      nodes: [node('a', { startDate: '2018-01-01' }), node('b', { startDate: '2020-01-01' })],
+      edges: [],
+    }
+    expect(layoutFranchise(franchise).chain).toEqual(layoutFranchise(franchise, 'story').chain)
+  })
+})
