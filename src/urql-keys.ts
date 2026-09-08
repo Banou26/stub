@@ -20,6 +20,8 @@ export const keyResolvers = {
   // Omitting these compiles, because `satisfies KeyingConfig` does not force exhaustiveness, and shows
   // up only as a dev-console warning while the cache invents keys for unkeyable objects.
   MediaHandle: () => null,
+  // a narrative edge, keyed no more than a structural one: the work it points at carries its own `_id`
+  MediaRelationEdge: () => null,
   EpisodeHandle: () => null,
   MediaTitle: () => null,
   MediaDescription: () => null,

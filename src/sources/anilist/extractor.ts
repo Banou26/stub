@@ -3,7 +3,7 @@ import { airedDate } from '../aired-date'
 import { nextAiringEpisode } from '../next-airing'
 import { percentScore } from '../average-score'
 import type { Resolvers, Media as GQLMedia, MediaPageInput, RequestContext } from '../../generated/schema/types.generated'
-import { MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
+import { MediaRelation as GQLMediaRelation, MediaStatus as GQLMediaStatus, MediaType as GQLMediaType } from '../../generated/graphql'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { Maybe, Media, MediaExternalLink, MediaStatus, MediaTag, Page } from './types'
 import { makeMedia, normalizePage } from '../utils'
@@ -134,10 +134,57 @@ const BROWSE_QUERY = `
   }
 `
 
+/**
+ * What a related work needs to be drawn without being fetched.
+ *
+ * Deliberately NOT `MEDIA_FIELDS`: a franchise is dozens of entries, this would recurse if it carried
+ * `relations` itself, and a relation card shows a cover, a title, a format and a status. Everything
+ * else waits until somebody opens that work, at which point it is an ordinary media request.
+ */
+const RELATION_NODE_FIELDS = `
+  id
+  idMal
+  type
+  format
+  status
+  episodes
+  siteUrl
+  title {
+    romaji
+    english
+    native
+  }
+  coverImage {
+    medium
+    large
+    color
+  }
+  startDate {
+    year
+  }
+`
+
+/**
+ * Relations ride on the SINGLE media query only, never on the browse query.
+ *
+ * The browse query runs for every card of a season listing, and none of them draws a relation. Asking
+ * there would multiply a listing's payload by the size of each franchise for something nothing reads.
+ *
+ * `relationType(version: 2)` rather than the bare field: version 1 is AniList's older vocabulary,
+ * where what is now SOURCE was reported as ADAPTATION in the other direction.
+ */
 const GET_MEDIA = `
   query GetMedia ($id: Int, $idMal: Int, $type: MediaType) {
     Media(idMal: $idMal, id: $id, type: $type) {
       ${MEDIA_FIELDS.split('\n').join('\n    ')}
+      relations {
+        edges {
+          relationType(version: 2)
+          node {
+            ${RELATION_NODE_FIELDS.split('\n').join('\n            ')}
+          }
+        }
+      }
     }
   }
 `
@@ -356,6 +403,64 @@ const isPublicTag = (tag: Maybe<MediaTag>): tag is MediaTag =>
 const knownSeason = (season: Maybe<string> | undefined): MediaSeasonName | undefined =>
   MEDIA_SEASONS.find(name => name === season)
 
+/**
+ * The relation names this store understands, which are AniList's own under `version: 2`.
+ *
+ * Checked against the list rather than passed through, because an unknown value would reach a
+ * non-null enum field in the graphql layer and null the whole media payload with it. A name nobody
+ * here knows is carried as OTHER, which is what the reader would have been told anyway.
+ */
+const RELATIONS = new Set([
+  'ADAPTATION', 'PREQUEL', 'SEQUEL', 'PARENT', 'SIDE_STORY', 'CHARACTER', 'SUMMARY',
+  'ALTERNATIVE', 'SPIN_OFF', 'SOURCE', 'COMPILATION', 'CONTAINS', 'OTHER',
+])
+
+/**
+ * Every work AniList says this one is related to, as edges a card or a graph node can be drawn from.
+ *
+ * The node is a SNAPSHOT of another work rather than a row this store has fetched, so it is built at
+ * the SAME score as everything else here: if the reader opens it, the ordinary media path answers with
+ * the real row and this contributes nothing it should not.
+ *
+ * Non-anime relations are KEPT. The novel a show adapts and the manga beside it are most of what a
+ * relations list is for, and dropping them would leave the common case (a light novel adaptation with
+ * one sequel) showing one entry. They carry no `type`, which is anime formats only, and their kind
+ * travels on the edge's `format` instead.
+ */
+const normalizeRelations = (media: Media) =>
+  (media.relations?.edges ?? [])
+    .flatMap(edge => {
+      const node = edge?.node
+      if (!node?.id) return []
+      const relation = String(edge?.relationType ?? '')
+      return [{
+        relation: (RELATIONS.has(relation) ? relation : 'OTHER') as GQLMediaRelation,
+        format: node.format ?? undefined,
+        node: makeMedia({
+          origin,
+          id: node.id.toString(),
+          url: node.siteUrl ?? undefined,
+          score: SCORE,
+          episodeCount: node.episodes ?? undefined,
+          startDate: node.startDate?.year ? `${node.startDate.year}` : undefined,
+          titles: [
+            ...node.title?.english ? [{ language: 'en', title: node.title.english, score: SCORE }] : [],
+            ...node.title?.romaji ? [{ language: 'jp-en', title: node.title.romaji, score: SCORE }] : [],
+            ...node.title?.native ? [{ language: 'jp', title: node.title.native, score: SCORE }] : [],
+          ],
+          covers:
+            node.coverImage?.large
+              ? [{ language: 'jp', url: node.coverImage.large, color: node.coverImage.color ?? undefined, score: SCORE }]
+              : [],
+          status:
+            node.status === MediaStatus.NotYetReleased ? GQLMediaStatus.NotYetReleased
+            : node.status === MediaStatus.Releasing ? GQLMediaStatus.Releasing
+            : node.status === MediaStatus.Finished ? GQLMediaStatus.Finished
+            : undefined,
+        }),
+      }]
+    })
+
 const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
   const malHandle =
     media.idMal
@@ -394,6 +499,7 @@ const normalizeMedia = (media: Media, extraHandles: GQLMedia[] = []) => {
       ...extraHandles,
       ...malHandle ? [malHandle] : []
     ],
+    relations: normalizeRelations(media),
     score: SCORE,
     averageScore: percentScore(media.averageScore, 100),
     nextAiringEpisode: nextAiringEpisode(media.airingSchedule),

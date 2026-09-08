@@ -181,7 +181,81 @@ function mediaToGQL(media: Media): GQLMedia {
     scope: media.scope,
     episodes: [],
     handles: [],
+    relations: (media.relations ?? []).map(relationToGQL),
   }
+}
+
+/**
+ * A stored relation back out as an edge the schema describes.
+ *
+ * The node is inflated into a `Media` so the same components draw it as draw a handle, and it is
+ * deliberately THIN: what the store kept is what a card needs. Nothing downstream may treat it as a
+ * row this store holds, and `_id` is its uri rather than a cluster id for exactly that reason.
+ */
+function relationToGQL(relation: Media['relations'][number]): GQLMedia['relations'][number] {
+  return {
+    relation: relation.relation,
+    format: relation.format,
+    node: {
+      _id: relation.uri,
+      uri: relation.uri,
+      origin: relation.origin,
+      id: relation.id,
+      url: relation.url,
+      score: null,
+      type: null,
+      categories: [],
+      status: relation.status,
+      titles: relation.titles ?? [],
+      descriptions: [],
+      shortDescriptions: [],
+      trailers: [],
+      covers: relation.covers ?? [],
+      banners: [],
+      averageScore: null,
+      popularity: null,
+      startDate: relation.startDate,
+      endDate: null,
+      isAdult: null,
+      episodeCount: relation.episodeCount,
+      nextAiringEpisode: null,
+      season: null,
+      seasonYear: null,
+      genres: [],
+      tags: [],
+      scope: 'RUN',
+      episodes: [],
+      handles: [],
+      relations: [],
+    },
+  }
+}
+
+/**
+ * The narrative edges of a whole cluster: every source's, deduplicated, minus the ones pointing back
+ * inside.
+ *
+ * A cluster is one work described by several sources, so two of them naming the same sequel is one
+ * edge and not two. Deduplicated on the pair rather than on the target alone, because the same work
+ * can legitimately be reached twice under different names.
+ *
+ * SELF EDGES ARE DROPPED, and that is the part worth keeping. A source can name a related work whose
+ * row has merged into THIS cluster, and rendering it would show a media as its own alternative, with
+ * a card that navigates back to the page it is on. It is the one way this axis can produce something
+ * visibly wrong, so it is cut here rather than in the UI where only one reader would benefit.
+ */
+function mergeRelations(edges: GQLMedia['relations'], medias: Media[]): GQLMedia['relations'] {
+  const inside = new Set<string>(medias.map(media => media.uri))
+  const seen = new Set<string>()
+  const out: GQLMedia['relations'] = []
+  for (const edge of edges) {
+    if (!edge?.node?.uri || inside.has(edge.node.uri)) continue
+    const key = `${edge.relation}\u0000${edge.node.uri}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(edge)
+  }
+  return out
 }
 
 // a cluster is a container only when nothing in it names a run: a legacy mixed cluster is a run
@@ -268,6 +342,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
       covers: [...(acc.covers ?? []), ...(media.covers ?? [])],
       banners: [...(acc.banners ?? []), ...(media.banners ?? [])],
       trailers: [...(acc.trailers ?? []), ...(media.trailers ?? [])],
+      relations: [...(acc.relations ?? []), ...(gql.relations ?? [])],
     }
   }, {
     _id,
@@ -289,6 +364,7 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
 
   return {
     ...merged as GQLMedia,
+    relations: mergeRelations(merged.relations ?? [], medias),
     categories: reconcileCategories(merged.categories ?? []),
     ...seasonOf(sorted),
     genres: dedupeLabels(merged.genres),

@@ -64,6 +64,9 @@ export const makeMedia = ({ origin, id, handles, ...fields }: { origin: string, 
   url: undefined,
   scope: 'RUN',
   handles: (handles ?? []).map(handle => isMediaHandle(handle) ? handle : sameAs(handle)),
+  // Narrative edges, and empty unless a source names some. Separate from `handles` on purpose: see
+  // `MediaRelation` in worker/resolvers/media/schema.gql for why the two axes never mix.
+  relations: [],
   categories: [],
   genres: [],
   tags: [],

@@ -185,7 +185,9 @@ const normalizeMedia = async <T extends SearchAnimeData & Partial<Pick<AnimeData
     seasonYear: data.year ?? null,
     startDate: data.aired?.from ?? null,
     endDate: data.aired?.to ?? null,
-    trailers
+    trailers,
+    // this source names no narrative relations; the field is non-null so it is empty rather than absent
+    relations: []
   } satisfies Media
 }
 

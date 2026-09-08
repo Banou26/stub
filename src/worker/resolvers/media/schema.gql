@@ -110,6 +110,79 @@ enum MediaScope {
   CONTAINER
 }
 
+"""
+How one work relates to another as a STORY. The other axis, and never mixed with `MediaHandleRelation`.
+
+That enum answers "are these the same thing", this one answers "how does this story connect to that
+one", and the schema has kept them apart deliberately since the handle enum was written: PREQUEL says
+nothing about sameness and SAME_AS says nothing about story order. Nothing here may ever union a
+cluster. A sequel is a DIFFERENT work, and treating one as the same row is the mistake that merged
+three Mushoku Tensei seasons when it was made with SAME_AS.
+
+The values are AniList's set (`relationType(version: 2)`), which is the widest of the vocabularies in
+play and the one MyAnimeList's own relation names map into without inventing anything. Confirmed
+against live data 2026-09-08: anilist 108465 answers SOURCE, ALTERNATIVE and SEQUEL.
+"""
+enum MediaRelation {
+  """This work adapts the other, which is usually the manga or novel it came from."""
+  ADAPTATION
+  """The other work comes first in the story."""
+  PREQUEL
+  """The other work comes after."""
+  SEQUEL
+  """The other work is the parent story this one hangs off."""
+  PARENT
+  """A story beside the main one rather than before or after it."""
+  SIDE_STORY
+  """The other work follows a character out of this one."""
+  CHARACTER
+  """A recap or digest of the other work."""
+  SUMMARY
+  """A different telling of the same story."""
+  ALTERNATIVE
+  """A work spun out of this one, sharing a world rather than a plot."""
+  SPIN_OFF
+  """The material this work was adapted FROM. The inverse of ADAPTATION."""
+  SOURCE
+  """Several works collected into one release."""
+  COMPILATION
+  """This work contains the other."""
+  CONTAINS
+  """Related, in a way the source did not name."""
+  OTHER
+}
+
+"""
+One narrative edge out of a media: what it relates to, and how.
+
+The node is a SNAPSHOT and not necessarily a row this store has ever fetched. A franchise runs to
+dozens of entries and resolving each before anything could render would make one modal cost dozens of
+requests, so the edge carries what a card and a graph node need (uri, titles, format, status, cover,
+episode count, start date) and nothing else is promised. Opening one navigates to its uri, and the
+store fills that row in properly at that point.
+
+Same shape as `MediaHandle` on purpose, so the same components render both.
+"""
+type MediaRelationEdge {
+  """What this edge claims about the story. Never about identity."""
+  relation: MediaRelation!
+  """The related work, as much of it as the naming source supplied."""
+  node: Media!
+  """
+  What KIND of work the other end is, in the naming source's own words: `TV`, `MOVIE`, `MANGA`,
+  `NOVEL`, `ONE_SHOT`.
+
+  A string, and on the EDGE rather than on the node, for one reason: `MediaType` is anime formats
+  only, and a franchise's relations are mostly NOT anime. The novel a show adapts is the single most
+  useful relation there is and it cannot be spelled in that enum. Widening `MediaType` to hold it
+  would reach `mergeType` in store/fuzzy-merge.ts and every filter built on it, to carry something
+  only ever displayed; the enum's own comment records what moving it costs.
+
+  DISPLAY ONLY. Nothing may branch on it.
+  """
+  format: String
+}
+
 """One edge out of a media: which row, and what the edge claims about it."""
 type MediaHandle {
   """The related row. Carries its own uri, origin, id and url."""
@@ -138,6 +211,13 @@ type Media {
   entirely rather than carry its link.
   """
   handles: [MediaHandle!]!
+  """
+  Every work this one is related to as a STORY: prequels, sequels, the novel it adapts, side stories.
+
+  Separate from `handles`, which is about identity. See `MediaRelation`. Empty rather than null when a
+  source named none, which is most of them: only AniList supplies these today.
+  """
+  relations: [MediaRelationEdge!]!
   """Which identity space this row lives in. An absent value reads as RUN."""
   scope: MediaScope
   score: Float

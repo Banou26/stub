@@ -29,6 +29,42 @@ export const handleRelationEnum = ['SAME_AS', 'PART_OF'] as const
 export type HandleRelation = typeof handleRelationEnum[number]
 
 /**
+ * How one work relates to another as a STORY, mirroring `MediaRelation` in the graphql schema.
+ *
+ * The OTHER axis from `HandleRelation`, and the distinction is load bearing: nothing here may ever
+ * union a cluster, because a sequel is a different work. See the enum's own doc in
+ * `worker/resolvers/media/schema.gql`.
+ */
+export const mediaRelationEnum = [
+  'ADAPTATION', 'PREQUEL', 'SEQUEL', 'PARENT', 'SIDE_STORY', 'CHARACTER', 'SUMMARY',
+  'ALTERNATIVE', 'SPIN_OFF', 'SOURCE', 'COMPILATION', 'CONTAINS', 'OTHER',
+] as const
+export type MediaRelation = typeof mediaRelationEnum[number]
+
+/**
+ * One related work, stored FLAT rather than as a nested media.
+ *
+ * A snapshot, not a row. Storing the other end as a `Media` would put a second copy of a work into
+ * the store's own space, where the clustering would then have to decide what it is, and the whole
+ * point of this axis is that it never asks that question. Flat also keeps the record small: a
+ * franchise is dozens of edges and each carries a title and a cover, nothing more.
+ */
+export type Relation = {
+  relation: MediaRelation
+  /** The source's own word for the kind of work: `TV`, `MOVIE`, `MANGA`, `NOVEL`. Display only. */
+  format: string | null
+  uri: Uri
+  origin: string
+  id: string
+  url: string | null
+  titles: Title[]
+  covers: Cover[]
+  status: MediaStatus | null
+  episodeCount: number | null
+  startDate: string | null
+}
+
+/**
  * Which identity space a row lives in, mirroring `MediaScope` in the graphql schema.
  *
  * A RUN is one broadcast run, the unit this store aggregates. A CONTAINER is a show, a series, a
@@ -76,6 +112,8 @@ export type Media = {
   genres: string[]
   tags: string[]
   scope: MediaScope
+  /** Narrative edges out of this row. Never clustered on: see `Relation`. */
+  relations: Relation[]
 }
 
 export type Episode = {

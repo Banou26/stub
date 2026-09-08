@@ -37,4 +37,23 @@ export const normalizeToStoreMedia = (media: Media): StoreMedia => ({
   genres: media.genres ?? [],
   tags: media.tags ?? [],
   scope: (media.scope as StoreMedia['scope']) ?? 'RUN',
+  // Flattened here rather than kept as nested media: the other end is a snapshot the store never
+  // clusters on. See `Relation` in ./types.ts.
+  relations: (media.relations ?? []).flatMap(edge => {
+    const node = edge?.node
+    if (!node?.uri) return []
+    return [{
+      relation: edge.relation as StoreMedia['relations'][number]['relation'],
+      format: edge.format ?? null,
+      uri: node.uri as Uri,
+      origin: node.origin,
+      id: node.id,
+      url: node.url ?? null,
+      titles: node.titles ?? [],
+      covers: node.covers ?? [],
+      status: (node.status as StoreMedia['status']) ?? null,
+      episodeCount: node.episodeCount ?? null,
+      startDate: node.startDate ?? null,
+    }]
+  }),
 })

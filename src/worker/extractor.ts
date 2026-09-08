@@ -419,6 +419,7 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
             Media: {
               _id: (parent) => parent.uri,
               handles: (parent) => parent.handles ?? [],
+              relations: (parent) => parent.relations ?? [],
               categories: (parent) => parent.categories ?? [],
               // every non-null list on Media needs one of these, because a source may omit any field
               // and a null in a non-null position nulls its whole parent, taking the rest of the
