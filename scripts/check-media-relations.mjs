@@ -117,20 +117,11 @@ const main = async () => {
     spelled.join(', '),
   )
 
-  // the version-2 tell: a franchise's source material must read as SOURCE, never as ADAPTATION
-  const nonAnime = cards.filter(card => /Light Novel|Manga|Novel|One Shot/.test(card.meta))
-  check(
-    nonAnime.length > 0,
-    'CONTROL: a non-anime work survived, so the edge format carried what MediaType cannot spell',
-    nonAnime.map(card => card.meta).join(', ') || 'every relation here is an anime',
-  )
-  if (nonAnime.length) {
-    check(
-      nonAnime.every(card => card.relation !== 'Adaptation'),
-      'and the material this work came FROM reads as its source, not as its adaptation',
-      nonAnime.map(card => `${card.relation}/${card.meta}`).join(', '),
-    )
-  }
+  // Stub aggregates video, so the row shows nothing you can only read. This USED to assert the
+  // opposite, since the light novel a show adapts is the relation that proves the edge format carries
+  // what MediaType cannot spell; that proof moved into the graph below, where the books can be shown.
+  const reading = cards.filter(card => /Light Novel|Manga|Novel|One Shot/.test(card.meta))
+  check(reading.length === 0, 'and nothing you can only read is offered as somewhere to go', reading.map(card => card.meta).join(', ') || 'none')
 
   const here = decodeURIComponent(new URL(page.url()).pathname)
   check(
@@ -138,6 +129,53 @@ const main = async () => {
     'and no card links back to the page it is on',
     `${cards.filter(card => decodeURIComponent(card.href) === here).length} self links`,
   )
+  // A bare source uri opens a page pinned to that one source, which never fans out. The cluster form
+  // is what makes the store keep asking.
+  check(
+    cards.every(card => decodeURIComponent(card.href).startsWith('/media/ag:(')),
+    'and every card opens the work as a CLUSTER, not as the one source that named it',
+    cards.map(card => decodeURIComponent(card.href)).join(' '),
+  )
+
+  console.log('\nthe graph draws the same relations, and a click on one lands')
+  const opened = await page.locator('[data-franchise-open]').count()
+  check(opened > 0, 'the graph opens from beside the Relations heading', `${opened} button`)
+  if (opened) {
+    await page.locator('[data-franchise-open]').click()
+    await page.waitForTimeout(2_000)
+    // show everything, so the source material is on the graph even though the row hides it
+    const off = page.locator('[data-franchise] .kinds input:not(:checked)')
+    for (let index = await off.count(); index > 0; index--) await off.first().click({ force: true }).catch(() => {})
+    await page.waitForTimeout(1_200)
+
+    const labels = await page.locator('[data-franchise] .edge-label').allTextContents()
+    check(labels.length > 0, 'its arrows are labelled', labels.slice(0, 6).join(', '))
+    // THE VERSION-2 TELL, moved here from the row. `relationType` defaults to AniList's older
+    // vocabulary, which collapses SOURCE into ADAPTATION, so a query missing `(version: 2)` labels the
+    // novel a show was adapted FROM as something the show is an adaptation OF: backwards, silently,
+    // on every franchise, with every arrow still drawn.
+    check(
+      labels.includes('SOURCE') || !labels.includes('ADAPTATION'),
+      'CONTROL: source material reads as SOURCE, which only the version 2 vocabulary says',
+      [...new Set(labels)].join(', '),
+    )
+
+    const node = page.locator('[data-franchise] .node:not(.current)').first()
+    const wanted = await node.count() ? decodeURIComponent(await node.getAttribute('href') ?? '') : ''
+    check(Boolean(wanted), 'and a work other than this one is on it to click', wanted)
+    if (wanted) {
+      const box = await node.boundingBox()
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+      await page.waitForTimeout(2_500)
+      const landed = decodeURIComponent(new URL(page.url()).pathname)
+      // Not equality: the store folds more sources in and the address grows to name them, which is the
+      // point of linking to a cluster. What matters is that it MOVED, and moved to the work clicked.
+      const asked = wanted.replace(/^\/media\/ag:\(|\)$/g, '')
+      check(landed !== here, 'clicking a work in the graph actually goes there', `${here.slice(0, 34)} -> ${landed.slice(0, 46)}`)
+      check(landed.includes(asked), 'and lands on the work that was clicked', `asked ${asked}, landed ${landed.slice(0, 60)}`)
+      check(landed.startsWith('/media/ag:('), 'as a cluster the store can keep growing', landed.slice(0, 60))
+    }
+  }
 
   await browser.close()
   console.log(failures ? `\n${failures} FAILED` : '\nall good')
