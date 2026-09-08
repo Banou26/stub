@@ -435,7 +435,46 @@ export async function findAggregatedEpisodesForMedia(mediaUris: string[]): Promi
     groups.push(cluster)
   }
 
-  return groups
+  return mergeByEpisodeNumber(groups)
+}
+
+/**
+ * Within ONE run, two episodes carrying the same number are the same episode.
+ *
+ * Episodes only ever merged through an explicit `EPISODE_SAME_AS`, which nothing mints between two
+ * metadata sources, so a run described by two of them came out as two full lists rather than one.
+ * Measured 2026-09-09 on Mushoku Tensei season 2 part 2: twelve kitsu episodes with no titles followed
+ * by the same twelve from anizip with every title and date, drawn as twenty four rows.
+ *
+ * SAFE ONLY BECAUSE THE INPUT IS ONE RUN. The caller passes the uris of a single media cluster, which
+ * is its SAME_AS set by construction, and a run numbers its episodes once. This is emphatically not a
+ * rule about episodes in general: two runs of a show both have an episode 1, which is why nothing may
+ * read episodes across a PART_OF and why this must never be handed a container's uris.
+ *
+ * Keyed on the number ALONE, not on the season too. Sources disagree about which season a run belongs
+ * to (anizip says 2 where kitsu says nothing), so including it would prevent exactly the merges this
+ * exists for. A number is only usable when it is a positive whole one: a special carries none, so
+ * specials stay separate rather than colliding with episode 1.
+ */
+export const mergeByEpisodeNumber = (groups: Episode[][]): Episode[][] => {
+  const byNumber = new Map<number, Episode[]>()
+  const merged: Episode[][] = []
+  for (const group of groups) {
+    const numbers = group.map(episode => episode.episodeNumber)
+    const number = numbers.find(value => typeof value === 'number' && Number.isInteger(value) && value > 0)
+    if (number === undefined || number === null) {
+      merged.push(group)
+      continue
+    }
+    const already = byNumber.get(number)
+    if (already) already.push(...group)
+    else {
+      const started = [...group]
+      byNumber.set(number, started)
+      merged.push(started)
+    }
+  }
+  return merged
 }
 
 /**

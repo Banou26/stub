@@ -75,7 +75,25 @@ const normalizeMedia = (media: AnimeSeries, context: ExtractorServerContext) => 
                 : [],
             thumbnails: episode.image ? [{ url: episode.image, score: SCORE }] : [],
             seasonNumber: episode.seasonNumber,
-            episodeNumber: episode.episodeNumber,
+            /**
+             * The KEY, not `episode.episodeNumber`, and the difference is a duplicated episode list.
+             *
+             * anizip numbers within the SEASON while its entry is one broadcast run, so a split cour
+             * comes back numbered from where the previous cour stopped: anidb 18104 is Mushoku Tensei
+             * season 2 part 2, whose twelve episodes are keyed 1 to 12 and carry `episodeNumber` 13 to
+             * 24 (measured 2026-09-09). Every other source numbers that run 1 to 12, so nothing
+             * matched, and the modal listed the same twelve episodes twice: kitsu's numbered 1 to 12
+             * with no titles, then anizip's numbered 13 to 24 with all the titles and dates.
+             *
+             * The key is the position within THIS entry, which is the row this episode hangs off, so
+             * it is the number that agrees with whatever else describes the same run. It is exact
+             * rather than inferred: no offset is guessed at. A special is keyed `S1`, which is not a
+             * number and stays unnumbered, exactly as it was.
+             *
+             * `absoluteEpisodeNumber` is untouched and still carries anizip's series-wide count, which
+             * is the field that is supposed to be bigger than the run.
+             */
+            episodeNumber: /^\d+$/.test(episodeId) ? Number(episodeId) : episode.episodeNumber,
             absoluteEpisodeNumber: episode.absoluteEpisodeNumber,
             runtime: episode.runtime ?? episode.length,
             releaseDate: episode.airDateUtc ?? episode.airdate,
