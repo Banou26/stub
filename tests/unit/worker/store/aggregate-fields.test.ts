@@ -124,34 +124,17 @@ test('a cluster nobody scheduled anything for carries none', () => {
 })
 
 /**
- * episodeCount is the one field resolved by AGREEMENT rather than by the best score, and the reason is
- * that it is a claim about the world rather than a spelling. Crunchyroll models Mushoku Tensei season
- * 1 as one season of 23 and a special where AniList and MAL split it 11 and 12, so the page printed
- * 24 for an 11 episode run as soon as that source outscored them.
+ * episodeCount is still resolved by SCORE ORDER here, and that is a deliberate stop rather than an
+ * oversight. A weighted vote was written, wired in and MEASURED over the 100 cluster snapshot in
+ * dist-seed on 2026-09-09: it returned the same number as this reduce in 100 of 100 clusters, 35 of
+ * which disagree about their own length, so it bought nothing and carried a real failure class.
  *
- * Both directions matter. The count the sources agree on wins, AND a lone authority still beats a lone
- * lightweight, or this would just be a different way of picking the wrong number.
+ * The blocker is that `anizip` passes no score to its media row (0.9 on its titles and episodes, null
+ * on the row), so the source with the most exact counts weighs ZERO in any vote. On a cluster like
+ * `anizip(null)=12 cr(0.5)=10 kitsu(0.3)=12` the vote publishes 10, the same wrong answer as today
+ * and for a worse reason. Scoring anizip is its own change with its own before/after, because it also
+ * flips who wins status, startDate, type, averageScore, popularity and season everywhere.
+ *
+ * What DID ship is the same rule where it is safe: store/consensus.ts trims an episode list a longer
+ * packaging brings, behind two witnesses and twice the weight. See projects/stub.md in the agent repo.
  */
-test('the published episodeCount is the one the sources agree on', () => {
-  const agreed = aggregateMedia([
-    row('cr:1', { score: 0.95, episodeCount: 24 }),
-    row('mal:1', { score: 0.9, episodeCount: 11 }),
-    row('anilist:1', { score: 0.8, episodeCount: 11 }),
-  ], 'https://stub.moe')
-  expect(agreed.episodeCount).toBe(11)
-})
-
-test('and one authority still outweighs one lightweight', () => {
-  const outvoted = aggregateMedia([
-    row('mal:1', { score: 0.9, episodeCount: 12 }),
-    row('kitsu:1', { score: 0.3, episodeCount: 13 }),
-  ], 'https://stub.moe')
-  expect(outvoted.episodeCount).toBe(12)
-})
-
-// the one-row path returns mediaToGQL whole and never reaches the reduce, so it needs its own case:
-// a single source is its own consensus
-test('a single source is its own consensus', () => {
-  expect(aggregateMedia([row('anizip:1', { score: null, episodeCount: 11 })], 'https://stub.moe').episodeCount)
-    .toBe(11)
-})

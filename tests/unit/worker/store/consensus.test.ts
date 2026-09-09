@@ -107,8 +107,11 @@ describe('runEpisodes', () => {
    * never trims anything however well it scores.
    */
   test('one source alone never trims another, however well it scores', () => {
-    const cluster = [media('mal:1', 0.9, 6), media('cr:1', 0.5, 12)]
-    expect(runEpisodes(cluster, listOf('cr:1', 12))).toHaveLength(12)
+    // 0.9 against 0.3 clears the twice-the-weight bar comfortably, so the witness bar is the only
+    // thing refusing here, which is what makes this a test of it
+    const cluster = [media('mal:1', 0.9, 6), media('kitsu:1', 0.3, 12)]
+    expect(runLength(cluster)).toBe(6)
+    expect(runEpisodes(cluster, listOf('kitsu:1', 12))).toHaveLength(12)
   })
 
   // and two lightweights do not outvote one middling source in the first place, so the longer list is
@@ -139,10 +142,20 @@ describe('runEpisodes', () => {
     expect(listed.some(e => e.uri === 'cr:special')).toBe(true)
   })
 
-  // the second witness may be the unscored one: anizip carries no media score and is routinely the
-  // only other source describing an older run
-  test('an unscored member counts toward the two witnesses', () => {
-    const cluster = [media('anizip:1', null, 11), media('mal:1', 0.9, 11), media('cr:1', 0.5, 24)]
-    expect(runEpisodes(cluster, listOf('cr:1', 24))).toHaveLength(11)
+  /**
+   * An unscored member is a WITNESS but not a WEIGHT, which is anizip's exact position: it stamps 0.9
+   * on its titles and episodes and passes no score to its media row, so it counts toward the two
+   * witnesses and contributes nothing to the twice-the-weight bar.
+   *
+   * So `anizip + mal` against Crunchyroll is 0.9 against 0.5, under twice, and nothing is trimmed;
+   * add AniList and it is 1.7 against 0.5 and the fold goes. Both are the rule working: the first is
+   * a disagreement between two sources, the second is four sources against one.
+   */
+  test('an unscored member is a witness but adds no weight', () => {
+    const thin = [media('anizip:1', null, 11), media('mal:1', 0.9, 11), media('cr:1', 0.5, 24)]
+    expect(runEpisodes(thin, listOf('cr:1', 24))).toHaveLength(24)
+
+    const backed = [...thin, media('anilist:1', 0.8, 11)]
+    expect(runEpisodes(backed, listOf('cr:1', 24))).toHaveLength(11)
   })
 })

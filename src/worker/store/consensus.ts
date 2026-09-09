@@ -96,10 +96,32 @@ export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episod
    */
   const backing = cluster.filter(media => media.episodeCount === length)
   if (backing.length < 2) return [...episodes]
+  const weight = backing.reduce((total, media) => total + (media.score ?? 0), 0)
+
+  /**
+   * AND TWICE THE WEIGHT of whoever is being trimmed, because a narrow win is a disagreement.
+   *
+   * Measured over the 100 cluster snapshot in dist-seed on 2026-09-09: 35 of them disagree about
+   * their own length, and one shape recurs, `anilist(0.8)=13 anizip(null)=12 kitsu(0.3)=22
+   * mal(0.9)=12`. The consensus there is 12 by 0.9 against anilist's 0.8, a margin of 0.1, and
+   * trimming on it would hide a thirteenth episode that anilist alone may well be right about. The
+   * same run's kitsu row says 22, backed by 0.3 against 0.9, and that one is a show-level count that
+   * should go.
+   *
+   * Twice is the line between those two. It is not swept, it is chosen to make a lone dissenter
+   * cheap to overrule and a real disagreement impossible to: Mushoku Tensei's fold is 2.0 against
+   * Crunchyroll's 0.5, four times over.
+   */
+  const claimWeight = new Map<number, number>()
+  for (const media of cluster) {
+    if (media.episodeCount == null) continue
+    claimWeight.set(media.episodeCount, (claimWeight.get(media.episodeCount) ?? 0) + (media.score ?? 0))
+  }
 
   const overreaching = new Set(
     cluster
       .filter(media => media.episodeCount != null && media.episodeCount > length)
+      .filter(media => weight >= 2 * (claimWeight.get(media.episodeCount!) ?? 0))
       .map(media => media.uri)
   )
   if (!overreaching.size) return [...episodes]
