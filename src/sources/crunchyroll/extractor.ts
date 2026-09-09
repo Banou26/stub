@@ -1,6 +1,6 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaInput } from '../../generated/schema/types.generated'
-import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
+import { extractAggregatedUriOrigin, fromAggregatedUri, isAggregatedUri, isUri } from '../../utils/uri'
 import { SEASON_DATE_WINDOW } from '../catalogue-gate'
 import { isOnlySeasonLabel } from '../season'
 import { pickSimilarSeason, type RunEvidence, type SeasonCandidate } from '../similar'
@@ -276,7 +276,7 @@ export const getMedia = async (id: string, ctx: ExtractorServerContext): Promise
   return media
 }
 
-type CrSeasonCandidate = SeasonCandidate<{ resolvedId: string }>
+type CrSeasonCandidate = SeasonCandidate<{ resolvedId: string }> & { airDates?: string[] }
 type SeasonWalk = { seasons: CrSeason[], candidates: CrSeasonCandidate[] }
 
 /**
@@ -301,6 +301,9 @@ const walkSeasonCandidates = async (seriesId: string, ctx: ExtractorServerContex
         episodeCount: new Set(data.filter(ep => ep.episode_number != null).map(ep => ep.episode_number)).size,
         premiere: data[0]?.episode_air_date || undefined,
         episodeTitles: data.map(ep => ep.title),
+        // every air date, not just the first: a season that CONTAINS a run is recognised by its span,
+        // and the walk already holds the whole payload it would otherwise be refetched from
+        airDates: data.map(ep => ep.episode_air_date).filter((date): date is string => Boolean(date)),
       }
     })
   )
@@ -366,6 +369,76 @@ const CONFIDENT_TITLE_THRESHOLD = 0.9
 const MAX_SERIES_CANDIDATES = 3
 const MAX_SEARCH_QUERIES = 4
 
+/** The day a date falls on, which is the precision two catalogues actually agree to. */
+const dayOf = (date: string | undefined): number | undefined => {
+  const at = date ? Date.parse(date) : Number.NaN
+  return Number.isFinite(at) ? Math.floor(at / 86_400_000) : undefined
+}
+
+/**
+ * The season that CONTAINS this run, when no season IS it.
+ *
+ * Crunchyroll models a split cour as one season, so neither part matches: part one is refused by the
+ * fold veto for being shorter than what it found, and part two never comes near, because the season
+ * it belongs to premiered with part one nine months earlier. Both parts then carry no Crunchyroll at
+ * all, which is the state the site was in on 2026-09-09.
+ *
+ * WHAT IS RETURNED IS NOT AN IDENTITY. The season is one thing and the run is another, so it carries
+ * NO handles: claiming it would union both parts into one cluster through a shared uri, which is the
+ * defect the fold veto exists to prevent and which `graph.link` has no inverse for. What crosses over
+ * is the EPISODES, re-pointed at the run that asked, so a `HAS_EPISODE` edge exists and the run's own
+ * walk can reach them.
+ *
+ * They keep CRUNCHYROLL'S OWN NUMBERING. The node is shared with everything else that reads that
+ * season and `graph.set` is last-write-wins, so rewriting it here would change what those readers
+ * see. `store/consensus.ts` aligns them onto the run's numbering at READ time, from the dates both
+ * sides publish, and windows away the parts of the season that belong to the run's siblings.
+ *
+ * CONTAINMENT IS A SPAN, not a premiere. The run's start has to fall inside the season's own
+ * broadcast, and the season has to be longer than the run, and exactly ONE season may qualify: two
+ * would mean the catalogue splits this show differently again, and there is nothing here to choose
+ * between them with.
+ */
+const lendContainingSeason = async (
+  walks: { seriesId: string, candidates: CrSeasonCandidate[] }[],
+  evidence: RunEvidence,
+  aggregatedUri: string,
+  ctx: ExtractorServerContext
+): Promise<GQLMedia | undefined> => {
+  const start = dayOf(evidence.startDate ?? undefined)
+  const ours = evidence.episodeCount
+  if (start == null || ours == null) return undefined
+
+  const holders = walks.flatMap(({ seriesId, candidates }) =>
+    candidates
+      .filter(candidate => (candidate.episodeCount ?? 0) > ours)
+      .filter(candidate => {
+        const days = (candidate.airDates ?? []).map(dayOf).filter((day): day is number => day != null)
+        // a day of slack either end, the same allowance the alignment makes for one broadcast being
+        // stamped in two timezones
+        return days.length > 1 && start >= Math.min(...days) - 1 && start <= Math.max(...days) + 1
+      })
+      .map(candidate => ({ seriesId, seasonId: candidate.season.resolvedId })))
+
+  if (holders.length !== 1) return undefined
+  const holder = holders[0]!
+
+  const season = await getMedia(crunchyrollId(holder.seriesId, holder.seasonId), ctx)
+  if (!season?.episodes?.length) return undefined
+
+  // the row the run's walk starts from. Any member of the asking cluster reaches the same cluster, so
+  // the first is chosen for being deterministic rather than for being special.
+  const member = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])?.handleUris?.[0]
+  if (!member) return undefined
+
+  return {
+    ...season,
+    // no identity: this season is not this run, and saying so would weld the run to its own sibling
+    handles: [],
+    episodes: season.episodes.map(episode => ({ ...episode, mediaUri: member })),
+  }
+}
+
 const searchAndLinkMedia = async (
   aggregatedUri: string,
   ctx: ExtractorServerContext
@@ -426,19 +499,25 @@ const searchAndLinkMedia = async (
     }
 
     let best: { seriesId: string, seasonId: string } | undefined
+    const walks: { seriesId: string, candidates: CrSeasonCandidate[] }[] = []
     for (const { series } of scored) {
       const { candidates } = await seasonCandidates(series.id, ctx)
+      walks.push({ seriesId: series.id, candidates })
       const verdict = pickSimilarSeason(evidence, candidates)
       if (!verdict) continue
       best = { seriesId: series.id, seasonId: verdict.season.resolvedId }
       break
     }
-    if (!best) continue
 
-    const media = await getMedia(crunchyrollId(best.seriesId, best.seasonId), ctx)
-    if (!media) continue
-    media.handles = buildHandlesFromUri(aggregatedUri, origin)
-    return media
+    if (best) {
+      const media = await getMedia(crunchyrollId(best.seriesId, best.seasonId), ctx)
+      if (!media) continue
+      media.handles = buildHandlesFromUri(aggregatedUri, origin)
+      return media
+    }
+
+    const contained = await lendContainingSeason(walks, evidence, aggregatedUri, ctx)
+    if (contained) return contained
   }
 
   return undefined

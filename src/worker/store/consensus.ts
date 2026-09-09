@@ -131,9 +131,16 @@ export const alignmentOffset = (
   for (const episode of other) {
     const day = dayOf(episode)
     if (day == null || episode.episodeNumber == null) continue
-    const numbers = runByDay.get(day)
-    // a day the run uses for two different episodes cannot say which one this is
-    if (!numbers || numbers.size !== 1) continue
+    /**
+     * A DAY EITHER SIDE, because one broadcast is two dates.
+     *
+     * ani.zip stamps `2021-01-10T15:00:00Z`, which is the 11th in Tokyo, and Crunchyroll publishes
+     * the Tokyo date. Requiring the same UTC day would refuse a run whose sources are merely in
+     * different timezones, which is most of them. Episodes are a week apart, so a day of slack cannot
+     * reach the neighbour, and the ambiguity refusal still applies across the whole window.
+     */
+    const numbers = new Set([...runByDay.get(day - 1) ?? [], ...runByDay.get(day) ?? [], ...runByDay.get(day + 1) ?? []])
+    if (numbers.size !== 1) continue
     const offset = episode.episodeNumber - [...numbers][0]!
     votes.set(offset, (votes.get(offset) ?? 0) + 1)
   }
@@ -179,14 +186,31 @@ export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episod
     cluster
       .filter(media => media.episodeCount != null && media.episodeCount > length)
       .filter(media => (media.score ?? 0) < tier)
-      .map(media => media.uri)
+      .map(media => media.origin)
   )
-  if (!overreaching.size) return [...episodes]
 
+  /**
+   * A WINDOW OF 1 TO length, not a ceiling.
+   *
+   * A season that CONTAINS this run brings episodes on both sides of it: aligned onto the run's
+   * numbering, the previous part lands at zero and below and the next part above the length. A
+   * ceiling alone would leave the ones below on the page, numbered 0 and -1, which is a stranger
+   * failure than the one this started as.
+   *
+   * A source with no row in this cluster at all is windowed too. That is how a containing season
+   * reaches a run in the first place: it attaches its episodes and nothing else, so there is no
+   * member to read a count off, and the run's own length is the only thing that says which of them
+   * are its own.
+   */
+  // KNOWN, not reference: an origin that has a row in this cluster and agrees about the length is
+  // untouched, and so is one that disagrees from the SAME tier, which the rule above already spared.
+  // What gets windowed is a lower tier that overreaches, or a source with no row here at all.
+  const known = new Set(cluster.map(media => media.origin))
+  const foreign = (episode: T) => overreaching.has(episode.origin) || !known.has(episode.origin)
   return episodes.filter(episode =>
-    !overreaching.has(episode.mediaUri)
+    !foreign(episode)
     || episode.episodeNumber == null
-    || episode.episodeNumber <= length)
+    || (episode.episodeNumber >= 1 && episode.episodeNumber <= length))
 }
 
 /**
@@ -210,15 +234,23 @@ export const alignRunEpisodes = <T extends Episode>(
   const length = runLength(cluster)
   if (length == null) return aligned
 
-  const reference = new Set(cluster.filter(media => media.episodeCount === length).map(media => media.uri))
+  /**
+   * Grouped by ORIGIN, never by which row an episode hangs off.
+   *
+   * A source may attach its episodes to ANOTHER source's media, which is how a season that contains
+   * this run reaches it at all: the run's cluster holds no row for that source, so there is no member
+   * uri to group by. The origin is the thing that numbers, so the origin is what gets aligned.
+   */
+  const reference = new Set(
+    cluster.filter(media => media.episodeCount === length).map(media => media.origin)
+  )
   if (!reference.size) return aligned
-  const anchors = episodes.filter(episode => reference.has(episode.mediaUri))
+  const anchors = episodes.filter(episode => reference.has(episode.origin))
   if (!anchors.length) return aligned
 
-  for (const media of cluster) {
-    if (reference.has(media.uri)) continue
-    const theirs = episodes.filter(episode => episode.mediaUri === media.uri)
-    if (!theirs.length) continue
+  for (const origin of new Set(episodes.map(episode => episode.origin))) {
+    if (reference.has(origin)) continue
+    const theirs = episodes.filter(episode => episode.origin === origin)
     const offset = alignmentOffset(anchors, theirs)
     // `== null`, not falsy: 0 is a real answer, and it means this source already counts the way the
     // run does. Treating it as absent is harmless here and wrong everywhere it would be copied.

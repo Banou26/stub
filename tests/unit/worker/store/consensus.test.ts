@@ -9,8 +9,15 @@ import { alignRunEpisodes, alignmentOffset, runEpisodes, runLength, tieredConsen
 const media = (uri: string, score: number | null, episodeCount: number | null): Media =>
   ({ uri, origin: uri.slice(0, uri.indexOf(':')), score, episodeCount } as unknown as Media)
 
+// origin, because that is what the alignment groups by: a source can hang its episodes off another
+// source's row, so the row an episode points at does not say who numbered it
 const episode = (mediaUri: string, episodeNumber: number): Episode =>
-  ({ uri: `${mediaUri}-e${episodeNumber}`, mediaUri, episodeNumber } as unknown as Episode)
+  ({
+    uri: `${mediaUri}-e${episodeNumber}`,
+    origin: mediaUri.slice(0, mediaUri.indexOf(':')),
+    mediaUri,
+    episodeNumber,
+  } as unknown as Episode)
 
 const listOf = (mediaUri: string, count: number) =>
   Array.from({ length: count }, (_, index) => episode(mediaUri, index + 1))
@@ -178,7 +185,7 @@ describe('runEpisodes', () => {
   test('an unnumbered episode is never trimmed', () => {
     const listed = runEpisodes(MUSHOKU_S1P1, [
       ...listOf('cr:G24H1N3MP-G609CX3J4', 24),
-      { uri: 'cr:special', mediaUri: 'cr:G24H1N3MP-G609CX3J4' } as unknown as Episode,
+      { uri: 'cr:special', origin: 'cr', mediaUri: 'cr:G24H1N3MP-G609CX3J4' } as unknown as Episode,
     ])
     expect(listed.some(e => e.uri === 'cr:special')).toBe(true)
   })
@@ -198,6 +205,7 @@ describe('runEpisodes', () => {
 const dated = (mediaUri: string, from: number, days: string[]): Episode[] =>
   days.map((day, index) => ({
     uri: `${mediaUri}-e${from + index}`,
+    origin: mediaUri.slice(0, mediaUri.indexOf(':')),
     mediaUri,
     episodeNumber: from + index,
     releaseDate: `${day}T00:00:00.000Z`,
@@ -237,16 +245,16 @@ describe('alignmentOffset', () => {
    */
   test('a doubled day cannot out-vote the one unambiguous day', () => {
     const ambiguous = [
-      { uri: 'a-9', mediaUri: 'a', episodeNumber: 9, releaseDate: '2026-07-01T00:00:00.000Z' },
-      { uri: 'a-1', mediaUri: 'a', episodeNumber: 1, releaseDate: '2026-07-01T00:00:00.000Z' },
-      { uri: 'a-9b', mediaUri: 'a', episodeNumber: 9, releaseDate: '2026-07-08T00:00:00.000Z' },
-      { uri: 'a-2', mediaUri: 'a', episodeNumber: 2, releaseDate: '2026-07-08T00:00:00.000Z' },
-      { uri: 'a-3', mediaUri: 'a', episodeNumber: 3, releaseDate: '2026-07-15T00:00:00.000Z' },
+      { uri: 'a-9', origin: 'a', mediaUri: 'a', episodeNumber: 9, releaseDate: '2026-07-01T00:00:00.000Z' },
+      { uri: 'a-1', origin: 'a', mediaUri: 'a', episodeNumber: 1, releaseDate: '2026-07-01T00:00:00.000Z' },
+      { uri: 'a-9b', origin: 'a', mediaUri: 'a', episodeNumber: 9, releaseDate: '2026-07-08T00:00:00.000Z' },
+      { uri: 'a-2', origin: 'a', mediaUri: 'a', episodeNumber: 2, releaseDate: '2026-07-08T00:00:00.000Z' },
+      { uri: 'a-3', origin: 'a', mediaUri: 'a', episodeNumber: 3, releaseDate: '2026-07-15T00:00:00.000Z' },
     ] as unknown as Episode[]
     const theirs = [
-      { uri: 'b-11', mediaUri: 'b', episodeNumber: 11, releaseDate: '2026-07-01T00:00:00.000Z' },
-      { uri: 'b-11b', mediaUri: 'b', episodeNumber: 11, releaseDate: '2026-07-08T00:00:00.000Z' },
-      { uri: 'b-13', mediaUri: 'b', episodeNumber: 13, releaseDate: '2026-07-15T00:00:00.000Z' },
+      { uri: 'b-11', origin: 'b', mediaUri: 'b', episodeNumber: 11, releaseDate: '2026-07-01T00:00:00.000Z' },
+      { uri: 'b-11b', origin: 'b', mediaUri: 'b', episodeNumber: 11, releaseDate: '2026-07-08T00:00:00.000Z' },
+      { uri: 'b-13', origin: 'b', mediaUri: 'b', episodeNumber: 13, releaseDate: '2026-07-15T00:00:00.000Z' },
     ] as unknown as Episode[]
     expect(alignmentOffset(ambiguous, theirs)).toBeUndefined()
   })
@@ -266,7 +274,7 @@ describe('alignmentOffset', () => {
   })
 
   test('no dates on either side is no answer', () => {
-    const undated = [{ uri: 'cr:1-e1', mediaUri: 'cr:1', episodeNumber: 13 } as unknown as Episode]
+    const undated = [{ uri: 'cr:1-e1', origin: 'cr', mediaUri: 'cr:1', episodeNumber: 13 } as unknown as Episode]
     expect(alignmentOffset(dated('anizip:1', 1, WEEKLY), undated)).toBeUndefined()
     expect(alignmentOffset(undated, dated('cr:1', 1, WEEKLY))).toBeUndefined()
   })
@@ -305,5 +313,48 @@ describe('alignRunEpisodes', () => {
     const before = EPISODES.find(e => e.mediaUri.startsWith('cr:'))!.episodeNumber
     alignRunEpisodes(CLUSTER, EPISODES)
     expect(EPISODES.find(e => e.mediaUri.startsWith('cr:'))!.episodeNumber).toBe(before)
+  })
+})
+
+/**
+ * THE WHOLE JOURNEY AT THE STORE LAYER: a season that CONTAINS this run lends it every episode it
+ * has, and the run keeps only its own.
+ *
+ * Mushoku Tensei season 2 part 2. Crunchyroll models one season of 24 across a nine month gap, so
+ * neither part matches it and part 2 never came near it at all. The season now hands its episodes to
+ * whichever run asked, keeping Crunchyroll's own numbering, and the run works out the rest: the dates
+ * put CR 13 on the run's 1, which makes CR 1 to 12 land at zero and below, and the window drops them.
+ *
+ * The lower bound is the half a ceiling cannot do. Without it the page would draw rows numbered 0,
+ * -1, -2, which is a stranger failure than the one this started as.
+ */
+describe('a containing season lent to a run', () => {
+  const PART2 = [
+    media('anizip:18104', null, 12), media('mal:55888', 0.9, 12),
+    media('anilist:166873', 0.8, 12), media('kitsu:47694', 0.3, 12),
+  ]
+  const CR_SEASON = ['2023-07-09', '2023-07-16', '2023-07-23', '2023-07-30', '2023-08-06', '2023-08-13',
+    '2023-08-20', '2023-08-27', '2023-09-03', '2023-09-10', '2023-09-17', '2023-09-24']
+  const CR_PART2 = ['2024-04-07', '2024-04-14', '2024-04-21', '2024-04-28', '2024-05-05', '2024-05-12',
+    '2024-05-19', '2024-05-26', '2024-06-02', '2024-06-09', '2024-06-16', '2024-06-23']
+
+  // crunchyroll's episodes arrive attached to the RUN, with crunchyroll's own numbers 1..24
+  const lent = [...dated('cr:GSP1', 1, CR_SEASON), ...dated('cr:GSP1', 13, CR_PART2)]
+    .map(episode => ({ ...episode, origin: 'cr', mediaUri: 'anilist:166873' } as unknown as Episode))
+  const OWN = dated('anizip:18104', 1, CR_PART2)
+  const ALL = [...OWN, ...lent]
+
+  test("crunchyroll's 13 to 24 become this run's 1 to 12", () => {
+    const aligned = alignRunEpisodes(PART2, ALL)
+    const cr = lent.map(e => (aligned.get(e.uri) ?? e).episodeNumber)
+    expect(cr.slice(12)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+  })
+
+  test("and the previous cour's twelve are windowed away rather than drawn at zero and below", () => {
+    const aligned = alignRunEpisodes(PART2, ALL)
+    const kept = runEpisodes(PART2, ALL.map(e => aligned.get(e.uri) ?? e))
+    const numbers = [...new Set(kept.map(e => e.episodeNumber))].sort((a, b) => (a ?? 0) - (b ?? 0))
+    expect(numbers).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+    expect(kept.filter(e => e.origin === 'cr'), 'and twelve crunchyroll sources survive').toHaveLength(12)
   })
 })

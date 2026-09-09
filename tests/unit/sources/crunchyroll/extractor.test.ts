@@ -13,11 +13,26 @@ import { getMedia, resetCrunchyrollCaches, resolvers, cdnImageUrl } from '../../
 
 const CMS = 'https://www.crunchyroll.com/content/v2/cms'
 
-type Season = { id: string, seasonNumber: number, episodes: number, airDate?: string }
+type Season = {
+  id: string, seasonNumber: number, episodes: number, airDate?: string,
+  /** a split cour: the season stops after `after` episodes and resumes months later, as one season */
+  resume?: { after: number, at: string },
+}
 
 // Crunchyroll's own shape, trimmed to the fields getMedia reads. The three season lengths are what
 // make the count observable: grouped by episodeNumber alone the union is max(23, 24, 14) = 24, which
 // is the reported symptom, so a fixture where every season were the same length could not show it.
+const WEEK = 7 * 24 * 60 * 60 * 1000
+
+// WEEKLY from the premiere, and across the gap when the season is a split cour. A season is
+// recognised as CONTAINING a run by its span, and a fixture where every episode shares a date has no
+// span to read.
+const airDateOf = (season: Season, index: number): string => {
+  const first = Date.parse(season.airDate ?? '2026-07-04T15:00:00Z')
+  if (!season.resume || index < season.resume.after) return new Date(first + index * WEEK).toISOString()
+  return new Date(Date.parse(season.resume.at) + (index - season.resume.after) * WEEK).toISOString()
+}
+
 const series = (id: string, seasons: Season[]) => ({
   [`${CMS}/series/${id}?preferred_audio_language=ja-JP&locale=en-US`]: {
     data: [{ id, title: 'Mushoku Tensei', slug_title: 'mushoku-tensei', description: 'A show.', images: {} }]
@@ -45,7 +60,9 @@ const series = (id: string, seasons: Season[]) => ({
         sequence_number: index + 1,
         // the season walk reads the FIRST episode's air date as the season's premiere, which is what
         // the date axis compares against
-        episode_air_date: season.airDate ?? '2026-07-04T15:00:00Z',
+        // WEEKLY from the season's premiere, not all on one day. A season is recognised as containing
+        // a run by its SPAN, and a fixture where every episode shares a date has no span to read.
+        episode_air_date: airDateOf(season, index),
       }))
     },
   ])),
@@ -536,8 +553,20 @@ test('a season holding more episodes than the run does not become the run', asyn
     { findAggregatedMedia: async () => known, listenForMediaChanges: async function* () {} }
   )
   const { value } = await subscribe(undefined, { input: { uri: 'ag:(anilist:108465,kitsu:42323)' } }, ctx).next()
+  const media = value.media
 
-  expect(value.media, 'CR season 1 is 23 episodes over a run of 11, so it is not this run').toBeNull()
+  // it is not this run, and says so by claiming nothing: a SAME_AS here would union part 1 with its
+  // own part 2 through a shared uri, which is what the fold veto exists to prevent
+  expect(media?.handles ?? [], 'a containing season claims no identity').toEqual([])
+
+  // but it LENDS what it has. The episodes are re-pointed at the asking cluster so the run's own walk
+  // can reach them, and they keep Crunchyroll's numbering: store/consensus.ts aligns and windows them
+  // at read time, because the node is shared with everything else that reads that season.
+  expect(media?.uri).toBe('cr:G24H1N3MP-GSSEASON1')
+  expect(new Set((media?.episodes ?? []).map((episode: { mediaUri: string }) => episode.mediaUri)))
+    .toEqual(new Set(['anilist:108465']))
+  expect((media?.episodes ?? []).map((episode: { episodeNumber?: number }) => episode.episodeNumber).slice(0, 3))
+    .toEqual([1, 2, 3])
 })
 
 /**
@@ -658,4 +687,57 @@ test('an ordinal in the title picks a season the date alone could not', async ()
     { ...TWO_IN_2026, ...SEARCH('Mushoku Tensei Season 3', [{ id: 'GTWO2026', title: 'Mushoku Tensei' }]) },
   )
   expect(media?.uri).toBe('cr:GTWO2026-GT3')
+})
+
+/**
+ * THE PART TWO, which never came near a Crunchyroll season before.
+ *
+ * Mushoku Tensei season 2 part 2 starts 2024-04-07. Crunchyroll's season 2 premiered 2023-07-09 with
+ * part ONE, 273 days earlier, so no premiere is within any window of it and every date rule is
+ * silent. What IS true is that its broadcast SPANS this run: part 2 aired inside it.
+ */
+const SPANNING = series('GSPAN', [
+  // one crunchyroll season, two cours: twelve from July 2023 and twelve more from April 2024
+  { id: 'GSP1', seasonNumber: 1, episodes: 24, airDate: '2023-07-09T00:00:00Z', resume: { after: 12, at: '2024-04-07T00:00:00Z' } },
+])
+
+test('a run inside a season it never matched still gets that season\'s episodes', async () => {
+  const media = await searchFor(
+    { titles: NAMED, startDate: '2024-04-07T00:00:00Z', episodeCount: 12 },
+    { ...SPANNING, ...SEARCH('Mushoku Tensei', [{ id: 'GSPAN', title: 'Mushoku Tensei' }]) },
+    'ag:(anilist:166873,kitsu:47694)',
+  )
+  expect(media?.uri, 'the season that contains it').toBe('cr:GSPAN-GSP1')
+  expect(media?.handles ?? [], 'and still claims nothing').toEqual([])
+  expect(new Set((media?.episodes ?? []).map((e: { mediaUri: string }) => e.mediaUri)))
+    .toEqual(new Set(['anilist:166873']))
+})
+
+// the span has to actually contain the run: a season that ended before it started lends nothing
+test('and a season whose broadcast ended before the run started lends nothing', async () => {
+  const media = await searchFor(
+    { titles: NAMED, startDate: '2026-01-01T00:00:00Z', episodeCount: 12 },
+    { ...SPANNING, ...SEARCH('Mushoku Tensei', [{ id: 'GSPAN', title: 'Mushoku Tensei' }]) },
+    'ag:(anilist:1,kitsu:2)',
+  )
+  expect(media).toBeNull()
+})
+
+/**
+ * TWO seasons containing the run is not an answer either. A catalogue that splits a show differently
+ * again gives nothing to choose between, and choosing anyway is how the wrong episodes arrive.
+ */
+test('two seasons containing the run is a refusal', async () => {
+  // both split the same way, so both really do span 2024-04-07: the refusal has to come from there
+  // being two of them, not from neither containing the run
+  const overlapping = series('GOVER', [
+    { id: 'GO1', seasonNumber: 1, episodes: 24, airDate: '2023-07-09T00:00:00Z', resume: { after: 12, at: '2024-04-07T00:00:00Z' } },
+    { id: 'GO2', seasonNumber: 2, episodes: 26, airDate: '2023-07-16T00:00:00Z', resume: { after: 13, at: '2024-04-14T00:00:00Z' } },
+  ])
+  const media = await searchFor(
+    { titles: NAMED, startDate: '2024-04-07T00:00:00Z', episodeCount: 12 },
+    { ...overlapping, ...SEARCH('Mushoku Tensei', [{ id: 'GOVER', title: 'Mushoku Tensei' }]) },
+    'ag:(anilist:166873,kitsu:47694)',
+  )
+  expect(media).toBeNull()
 })
