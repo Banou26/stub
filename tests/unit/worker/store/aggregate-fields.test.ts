@@ -124,17 +124,40 @@ test('a cluster nobody scheduled anything for carries none', () => {
 })
 
 /**
- * episodeCount is still resolved by SCORE ORDER here, and that is a deliberate stop rather than an
- * oversight. A weighted vote was written, wired in and MEASURED over the 100 cluster snapshot in
- * dist-seed on 2026-09-09: it returned the same number as this reduce in 100 of 100 clusters, 35 of
- * which disagree about their own length, so it bought nothing and carried a real failure class.
+ * episodeCount is the one field resolved by the TIER rather than by the single best row, and the
+ * reason is that it is a claim about the world rather than a spelling.
  *
- * The blocker is that `anizip` passes no score to its media row (0.9 on its titles and episodes, null
- * on the row), so the source with the most exact counts weighs ZERO in any vote. On a cluster like
- * `anizip(null)=12 cr(0.5)=10 kitsu(0.3)=12` the vote publishes 10, the same wrong answer as today
- * and for a worse reason. Scoring anizip is its own change with its own before/after, because it also
- * flips who wins status, startDate, type, averageScore, popularity and season everywhere.
+ * It cannot answer worse than the reduce: the tier it reads is the same top score the sort puts
+ * first, so the two differ only when that tier disagrees with itself, where the reduce takes whichever
+ * row arrived first. Cluster order is HTTP arrival order, so that case is non-deterministic today.
  *
- * What DID ship is the same rule where it is safe: store/consensus.ts trims an episode list a longer
- * packaging brings, behind two witnesses and twice the weight. See projects/stub.md in the agent repo.
+ * A weighted SUM was written first and measured wrong three ways, including publishing Crunchyroll's
+ * folded 24 once four streaming catalogues echoed it. See store/consensus.ts.
  */
+test('a better source is not outvoted by any number of worse ones', () => {
+  const echoed = aggregateMedia([
+    row('mal:1', { score: 0.9, episodeCount: 11 }),
+    row('cr:1', { score: 0.5, episodeCount: 24 }),
+    row('jw:1', { score: 0.2, episodeCount: 24 }),
+    row('nf:1', { score: 0.2, episodeCount: 24 }),
+    row('appletv:1', { score: 0.2, episodeCount: 24 }),
+    row('paramount:1', { score: 0.2, episodeCount: 24 }),
+  ], 'https://stub.moe')
+  expect(echoed.episodeCount).toBe(11)
+})
+
+// and agreement decides among equals, which is the half the reduce resolves by arrival order
+test('and agreement decides among equals', () => {
+  const agreed = aggregateMedia([
+    row('other:1', { score: 0.9, episodeCount: 24 }),
+    row('mal:1', { score: 0.9, episodeCount: 11 }),
+    row('anizip:1', { score: 0.9, episodeCount: 11 }),
+  ], 'https://stub.moe')
+  expect(agreed.episodeCount).toBe(11)
+})
+
+// the one-row path returns mediaToGQL whole and never reaches the reduce, so it needs its own case
+test('a single source is its own answer', () => {
+  expect(aggregateMedia([row('anizip:1', { score: null, episodeCount: 11 })], 'https://stub.moe').episodeCount)
+    .toBe(11)
+})

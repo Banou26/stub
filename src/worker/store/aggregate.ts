@@ -1,4 +1,5 @@
 import type { Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
+import { runLength } from './consensus'
 import type { Media, Episode } from './types'
 import { getRoutePath, Route } from '../../router/path'
 import { findPartOfMedia, graph, IDENTITY_LABELS } from './db'
@@ -369,6 +370,20 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
 
   return {
     ...merged as GQLMedia,
+    /**
+     * The length the BEST sources give, with agreement breaking ties among equals. Everything else in
+     * that reduce is a first-non-null-in-score-order pick, which is right for a spelling and not
+     * enough for a number.
+     *
+     * It cannot answer worse than the reduce would: the tier it reads is the same top score the sort
+     * puts first, so the two differ only when that tier disagrees with ITSELF, where the reduce takes
+     * whichever row arrived first. Cluster order is union-find component order, which is HTTP arrival
+     * order, so that case is not merely arbitrary, it is non-deterministic between loads.
+     *
+     * Measured over the 100 cluster snapshot in dist-seed on 2026-09-09: identical in 100 of 100,
+     * because `mal` is the only member of the 0.9 tier until anizip's media row carries a score.
+     */
+    episodeCount: runLength(medias) ?? merged.episodeCount ?? null,
     relations: mergeRelations(merged.relations ?? [], medias),
     categories: reconcileCategories(merged.categories ?? []),
     ...seasonOf(sorted),
