@@ -43,6 +43,9 @@ const node = {
     { monetizationType: 'FLATRATE', standardWebURL: CR_OFFER, package: { clearName: 'Crunchyroll', shortName: 'cru' } },
     { monetizationType: 'FLATRATE', standardWebURL: NF_OFFER, package: { clearName: 'Netflix', shortName: 'nfx' } },
   ],
+  // the second licensing region the query now asks for; empty here so the fixtures below that do not
+  // exercise it read exactly as they did before
+  extraOffers: [] as { monetizationType: string, standardWebURL: string, package: { clearName: string, shortName: string } }[],
   seasons: [season(111, 2), season(222, 3)],
 }
 
@@ -63,6 +66,7 @@ const film = {
   offers: [
     { monetizationType: 'FLATRATE', standardWebURL: CR_OFFER, package: { clearName: 'Crunchyroll', shortName: 'cru' } },
   ],
+  extraOffers: [] as { monetizationType: string, standardWebURL: string, package: { clearName: string, shortName: string } }[],
   seasons: [],
 }
 
@@ -310,4 +314,87 @@ test('the media path picks its season through the shared picker: a season a uniq
   // the control: an agreed ordinal with a count the season does not exceed still places the run
   const { value: placed } = await subscribe(undefined, { input: { uri } }, knowing(uneven, { titles: [{ title: 'A Show Season 3' }], episodeCount: 12 })).next()
   expect(placed?.media?.uri).toBe('jw:12345-222')
+})
+
+// A JustWatch offer is scoped to ONE country, and the extractor asked US only. Anime is licensed per
+// region, so the US catalogue is blind to most of Netflix's anime: measured 2026-09-09, The Elusive
+// Samurai is `cra itu cru amz` in US and carries `nf:81907835` only in JP, and Mushoku Tensei's
+// Netflix offer (`nf:80987039`) exists in JP alone. The seed built 2026-09-05 held both, minted off
+// unogs' `/api/search`, which now answers `fail:unogskey` to every caller including unogs' own page,
+// so the id has to come from the offer or from nowhere.
+//
+// The second country rides on the same request as an aliased `extraOffers` selection, and its offers
+// are concatenated after the primary's. `buildOffersAsHandles` dedupes by package shortName, so this
+// can only ADD a service, never repoint one that both countries carry.
+test('a netflix offer that only the second licensing region carries still mints its handle', async () => {
+  const jpOnlyNetflix = {
+    ...node,
+    // the US catalogue: Crunchyroll, and no Netflix at all
+    offers: [
+      { monetizationType: 'FLATRATE', standardWebURL: CR_OFFER, package: { clearName: 'Crunchyroll', shortName: 'cru' } },
+    ],
+    extraOffers: [
+      { monetizationType: 'FLATRATE', standardWebURL: NF_OFFER, package: { clearName: 'Netflix', shortName: 'nfx' } },
+    ],
+  }
+
+  const { edges } = await scopedEdgesFor('jw:12345-111', jpOnlyNetflix)
+  expect(idFor(edges.map(edge => edge.node), 'nf'), 'the JP-only netflix title id').toEqual(['80123456'])
+
+  // the control that proves the assertion above is about the second region and not about the fixture
+  // simply carrying Netflix somewhere: with the SAME offers and no second region, nothing mints.
+  const { edges: usOnly } = await scopedEdgesFor('jw:12345-111', { ...jpOnlyNetflix, extraOffers: [] })
+  expect(idFor(usOnly.map(edge => edge.node), 'nf'), 'no netflix offer in either region').toEqual([])
+})
+
+// A service both regions carry keeps the PRIMARY region's url, because a deep link is regional and the
+// id read off it is not always. Netflix's is worldwide, but Amazon and Disney number per storefront,
+// so the order the two lists are concatenated in is load bearing rather than incidental.
+test('a service in both regions keeps the primary region url, and the second only adds', async () => {
+  const bothRegions = {
+    ...node,
+    offers: [
+      { monetizationType: 'FLATRATE', standardWebURL: 'https://www.netflix.com/title/11111111', package: { clearName: 'Netflix', shortName: 'nfx' } },
+    ],
+    extraOffers: [
+      { monetizationType: 'FLATRATE', standardWebURL: 'https://www.netflix.com/title/99999999', package: { clearName: 'Netflix', shortName: 'nfa' } },
+      { monetizationType: 'FLATRATE', standardWebURL: 'https://www.disneyplus.com/browse/entity-abc123', package: { clearName: 'Disney+', shortName: 'dnp' } },
+    ],
+  }
+
+  const { edges } = await scopedEdgesFor('jw:12345-111', bothRegions)
+  expect(idFor(edges.map(edge => edge.node), 'nf'), 'the primary region wins the shared service').toEqual(['11111111'])
+  expect(idFor(edges.map(edge => edge.node), 'disney'), 'and the region-only service is still added').toEqual(['abc123'])
+})
+
+// The queries have to ASK for the second region, and a fixture answers whatever it is sent, so the
+// tests above would stay green against a query that never requested it. This reads the request body.
+test('both queries ask for a second licensing region', async () => {
+  const bodies: string[] = []
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const ctx = {
+    fetch: async (url: string, init?: { body?: string }) => {
+      if (url === JW_API) {
+        bodies.push(init?.body ?? '')
+        return { json: async () => ({ data: { node } }) }
+      }
+      if (url === 'https://www.crunchyroll.com/auth/v1/token') {
+        return { json: async () => ({ access_token: 'test-token', expires_in: 3600 }) }
+      }
+      if (url.startsWith(`${CMS}/objects/GEPISODE1`)) {
+        return { json: async () => ({ data: [{ episode_metadata: { series_id: 'GSERIES', season_id: 'GSEASON2' } }] }) }
+      }
+      throw new Error(`fixture has no route for ${url}`)
+    },
+  } as never
+
+  await subscribe(undefined, { input: { uri: 'jw:12345-111' } }, ctx).next()
+
+  expect(bodies.length, 'the node query ran').toBeGreaterThan(0)
+  for (const body of bodies) {
+    const { query, variables } = JSON.parse(body)
+    expect(query, 'the second region is selected under its own alias').toContain('extraOffers: offers(country: $extraCountry')
+    expect(variables.extraCountry, 'and a country is actually bound to it').toBeTruthy()
+    expect(variables.extraCountry).not.toBe(variables.country)
+  }
 })

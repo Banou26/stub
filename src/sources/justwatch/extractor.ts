@@ -26,6 +26,19 @@ const JW_IMAGE_BASE = 'https://images.justwatch.com'
 const COUNTRY = 'US'
 const LANGUAGE = 'en'
 
+// A JustWatch offer is scoped to ONE country, so a single country is a single catalogue. Anime is
+// licensed per region and the Japanese catalogue is the one that carries it: measured 2026-09-09,
+// The Elusive Samurai is `cra itu cru amz` in US and `nfx amp dnp nfa aam dan pva amz hlu fuj` in JP,
+// and Mushoku Tensei has no US Netflix offer at all while JP names `nf:80987039`. Asking US alone is
+// therefore blind to Netflix for most of this catalogue.
+//
+// Offers from both countries are concatenated and `buildOffersAsHandles` dedupes by package
+// shortName, so US wins for any service in both and JP only ever adds. A JP-only service mints
+// nothing: `extractContentId` switches on the deep link's HOST and returns undefined for one it does
+// not know, so happyon.jp or abema.tv contribute no handle. Netflix is safe to take from either
+// because its host and title id are the same worldwide.
+const OFFER_COUNTRIES = { primary: COUNTRY, extra: 'JP' } as const
+
 const extractRealUrl = (affiliateUrl: string): string | undefined => {
   try {
     const url = new URL(affiliateUrl)
@@ -57,7 +70,7 @@ const jwFetch = async <T>(query: string, variables: Record<string, unknown>, ctx
 }
 
 const SEARCH_QUERY = `
-  query GetSearchTitles($searchTitlesFilter: TitleFilter!, $country: Country!, $language: Language!, $first: Int!) {
+  query GetSearchTitles($searchTitlesFilter: TitleFilter!, $country: Country!, $extraCountry: Country!, $language: Language!, $first: Int!) {
     popularTitles(country: $country, filter: $searchTitlesFilter, first: $first, sortBy: POPULAR, sortRandomSeed: 0) {
       edges {
         node {
@@ -90,6 +103,19 @@ const SEARCH_QUERY = `
               icon(profile: S100)
             }
           }
+          extraOffers: offers(country: $extraCountry, platform: WEB, filter: { bestOnly: true }) {
+            monetizationType
+            presentationType
+            standardWebURL
+            package {
+              id
+              packageId
+              clearName
+              technicalName
+              shortName
+              icon(profile: S100)
+            }
+          }
           ... on Show {
             seasons(sortDirection: ASC) {
               objectId
@@ -107,7 +133,7 @@ const SEARCH_QUERY = `
 `
 
 const NODE_QUERY = `
-  query GetTitleNode($nodeId: ID!, $language: Language!, $country: Country!) {
+  query GetTitleNode($nodeId: ID!, $language: Language!, $country: Country!, $extraCountry: Country!) {
     node(id: $nodeId) {
       ... on MovieOrShow {
         id
@@ -127,6 +153,19 @@ const NODE_QUERY = `
           }
         }
         offers(country: $country, platform: WEB, filter: { bestOnly: true }) {
+          monetizationType
+          presentationType
+          standardWebURL
+          package {
+            id
+            packageId
+            clearName
+            technicalName
+            shortName
+            icon(profile: S100)
+          }
+        }
+        extraOffers: offers(country: $extraCountry, platform: WEB, filter: { bestOnly: true }) {
           monetizationType
           presentationType
           standardWebURL
@@ -196,13 +235,16 @@ const deduplicatedFetch = async <T>(key: string, fn: () => Promise<T>): Promise<
 const searchTitles = (query: string, ctx: ExtractorServerContext) =>
   deduplicatedFetch(`search:${query}`, () =>
     jwFetch<JWSearchResponse>(SEARCH_QUERY, {
-      first: 10, searchTitlesFilter: { searchQuery: query }, language: LANGUAGE, country: COUNTRY
+      first: 10, searchTitlesFilter: { searchQuery: query }, language: LANGUAGE,
+      country: OFFER_COUNTRIES.primary, extraCountry: OFFER_COUNTRIES.extra
     }, ctx)
   )
 
 const getNodeDetails = (nodeId: string, ctx: ExtractorServerContext) =>
   deduplicatedFetch(`node:${nodeId}`, () =>
-    jwFetch<JWNodeResponse>(NODE_QUERY, { nodeId, language: LANGUAGE, country: COUNTRY }, ctx)
+    jwFetch<JWNodeResponse>(NODE_QUERY, {
+      nodeId, language: LANGUAGE, country: OFFER_COUNTRIES.primary, extraCountry: OFFER_COUNTRIES.extra
+    }, ctx)
   )
 
 interface JWOffer {
@@ -217,6 +259,8 @@ interface JWSearchNode {
   objectType?: string
   content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null, originalReleaseYear?: number | null }
   offers: JWOffer[]
+  /** the same offers read on the second licensing region; see OFFER_COUNTRIES */
+  extraOffers?: JWOffer[]
   /** present on a Show; the search query asks for it so a result can be expanded per season */
   seasons?: JWSeason[]
 }
@@ -284,11 +328,19 @@ const buildOffersAsHandles = async (
   for (const offer of offers) {
     if (!['FLATRATE', 'FLATRATE_AND_BUY', 'FREE', 'ADS'].includes(offer.monetizationType)) continue
     const shortName = offer.package.shortName
-    if (seen.has(shortName)) continue
-    seen.add(shortName)
 
     const mappedOrigin = PACKAGE_ORIGIN_MAP[shortName]
     if (!mappedOrigin) continue
+
+    // Keyed on the ORIGIN, not the package, because a package is a TIER and one service sells
+    // several: Netflix lists `nfx` beside `nfa`, Paramount+ splits into `ppp` and `ppe`. Within a
+    // single region every tier of a service links to the same url, so keying on the package only ever
+    // dropped a duplicate of the same uri. Across regions it does not: the primary region's `nfx` and
+    // the second's `nfa` are two different deep links carrying two different title ids, and minting
+    // both would hang two Netflix titles on one media. `graph.link` is a union with no inverse, so
+    // that weld would last the session.
+    if (seen.has(mappedOrigin)) continue
+    seen.add(mappedOrigin)
 
     const realUrl = offer.standardWebURL ? extractRealUrl(offer.standardWebURL) : undefined
     const url = realUrl ?? offer.standardWebURL ?? undefined
@@ -378,7 +430,7 @@ const normalizeMedia = async (
   )
 
   const handles = await buildOffersAsHandles(
-    node.offers ?? [],
+    [...node.offers ?? [], ...node.extraOffers ?? []],
     {
       shortDescription,
       title,
