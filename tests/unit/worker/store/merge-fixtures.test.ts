@@ -12,6 +12,7 @@ import {
   findAggregatedMedia, findRunEpisodes, resetStore, upsertEpisodes, upsertMedia,
 } from '../../../../src/worker/store/db'
 import { fuzzyMergeMediaClusters } from '../../../../src/worker/store/fuzzy-merge'
+import { clusterAnomalies } from '../../../../src/worker/store/anomalies'
 
 // Per-source score, because it decides which titles survive MAX_TITLES_PER_CLUSTER's slice and so
 // which pairs the matcher ever compares. These are the real constants: anizip and jikan 0.9,
@@ -133,6 +134,32 @@ describe('merge fixtures, hand-checked against real source payloads', () => {
         )
       }
       expect(failures).toEqual([])
+    })
+  }
+
+  /**
+   * THE SWEEP, and the reason it is separate from every case above.
+   *
+   * Each case decides one answer by hand, which pins what somebody already looked at. These rules
+   * need no expected answer: they are contradictions a cluster makes about ITSELF, so they run over
+   * every cluster the whole corpus produces, and a case added for one reason is checked for all of
+   * them. See store/anomalies.ts.
+   */
+  for (const testCase of MERGE_CASES) {
+    test(`no cluster contradicts itself: ${testCase.name}`, async () => {
+      await runCase(testCase)
+      const found: string[] = []
+      const seen = new Set<string>()
+      for (const { uri } of testCase.medias) {
+        const cluster = await findAggregatedMedia(uri)
+        const key = cluster.map(member => member.uri).sort().join(',')
+        if (!key || seen.has(key)) continue
+        seen.add(key)
+        for (const anomaly of clusterAnomalies(cluster, await listedEpisodes(uri))) {
+          found.push(`[${anomaly.rule}] ${key}: ${anomaly.detail}`)
+        }
+      }
+      expect(found, `WHY THIS CASE IS RIGHT: ${testCase.why}`).toEqual([])
     })
   }
 
