@@ -28,6 +28,7 @@ import { releaseDateAttribute, releaseDateDisplay } from '../../utils/release-da
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import { useCoverUrl } from '../../utils/use-cover-url'
+import { episodeOriginIds } from './episode-origins'
 import { layer } from '../../layers'
 
 const style = css`
@@ -477,11 +478,7 @@ const Episode = (
   // catalogue and Apple TV), so plenty of episodes have none and the column is simply empty there.
   const releasedAt = episode.releaseDate ?? episode.handles?.find(handle => handle.node.releaseDate)?.node.releaseDate
   const released = releaseDateDisplay(releasedAt)
-  const origins =
-    episode.uri
-      ? fromAggregatedUri(episode.uri as AggregatedUri)?.handleUrisValues
-      : undefined
-  const originIds = [...new Set(origins?.map(origin => origin.origin) ?? [])]
+  const originIds = episodeOriginIds(episode)
   const [{ data: originData }] = useSubscription({
     query: GET_MEDIA_MODAL_ORIGINS,
     variables: { input: { ids: originIds, filters: [OriginFilter.IsNotApiOnly] } },
