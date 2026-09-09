@@ -1,58 +1,66 @@
 import type { Episode, Media } from './types'
 
 /**
- * What the sources AGREE on, weighted by how much each is trusted.
+ * What the BEST SOURCES say, with agreement breaking ties only among equals.
  *
  * The store's other resolutions take the highest-scored source's value and stop (`acc.x ?? gql.x` over
  * a score-sorted list), so one source outvotes any number of others however many agree with each
  * other. That is right for a title, where sources are spelling the same thing differently and the
- * best-scored spelling is simply the one to show. It is wrong for a NUMBER, where sources are making
- * a claim about the world and disagreement means one of them is mistaken.
+ * best-scored spelling is simply the one to show. It is not enough for a NUMBER, where sources are
+ * making a claim about the world and two equals agreeing is evidence the first one alone is not.
  *
- * Each distinct value is credited the SUM of the scores claiming it, and the greatest total wins.
+ * SO THE TIERS ARE LEXICOGRAPHIC, NEVER ADDITIVE. The best score present decides which claims are
+ * looked at; among those, the value the most of them claim wins; nothing below that tier is consulted
+ * at all. A source cannot be outvoted by any number of sources beneath it.
  *
- * NOT the value times anything. The owner's sketch was `11 * 2 * 0.8 > 24 * 1 * 0.6`, which multiplies
- * by the claim itself and so favours the larger number for being larger: one source claiming 24 would
- * score 14.4 against one claiming 11 at 8.8, and the bigger packaging would win every time it was
- * alone. What is being weighed is the WITNESSES, so only their scores are summed.
+ * A SUM WAS TRIED FIRST AND IS WRONG, measured three ways on 2026-09-09:
  *
- * WHAT THIS DOES NOT MODEL, and it is worth knowing before trusting a margin: the witnesses are not
- * independent. Several catalogues restate MAL, so agreement between them is one source counted twice.
- * The per-source scores already discount the derivative ones (kitsu 0.3 against anizip and mal 0.9),
- * which is the whole of the correction here. A close result means "the sources disagree", not "the
- * winner is 0.2 more likely".
+ *   Mushoku Tensei S1 part 1, once the streaming tier echoes Crunchyroll's packaging:
+ *     24 scores cr 0.5 + jw 0.2 + nf 0.2 + appletv 0.2 + paramount 0.2 = 1.3
+ *     11 scores mal 0.9 + kitsu 0.3                                    = 1.2
+ *   and the sum publishes the folded 24, which is the defect it was written to stop. Five catalogues
+ *   restating one packaging is one witness counted five times.
+ *
+ *   Mushoku Tensei season 3 while airing: mal and AniList publish the announced 14, and six sources
+ *   publish `episodes.length`, the eleven aired so far. The sum goes 1.8 to 1.7 for 11.
+ *
+ *   Over the 100 cluster snapshot in dist-seed the sum was identical to today's rule in 100 of 100,
+ *   so it bought nothing anywhere and lost in exactly the cases that matter.
+ *
+ * Tiers answer 11 and 14, correctly, in both.
+ *
+ * NOT the value times anything, in either shape. The owner's first sketch was `11 * 2 * 0.8 >
+ * 24 * 1 * 0.6`, multiplying by the claim: that makes the larger number win for being larger, so a
+ * lone folded season beats a lone catalogue every time. The claim is what is being voted ON.
  */
-export const weightedConsensus = <T>(
+export const tieredConsensus = <T>(
   claims: readonly { value: T | null | undefined, score?: number | null }[]
-): T | undefined => {
-  const weight = new Map<T, { total: number, best: number }>()
-  for (const { value, score } of claims) {
-    if (value == null) continue
-    const seen = weight.get(value) ?? { total: 0, best: 0 }
-    // a source with no score of its own still counts as a witness, just the lightest one
-    const own = score ?? 0
-    weight.set(value, { total: seen.total + own, best: Math.max(seen.best, own) })
-  }
+): { value: T, tier: number } | undefined => {
+  const stated = claims.filter((claim): claim is { value: T, score?: number | null } => claim.value != null)
+  if (!stated.length) return undefined
+
+  // an unscored row is its own tier at the bottom, which is where anizip's media rows sit until
+  // src/sources/anizip/extractor.ts passes a score to makeMedia
+  const tier = Math.max(...stated.map(claim => claim.score ?? 0))
+  const atTier = stated.filter(claim => (claim.score ?? 0) === tier)
+
+  const support = new Map<T, number>()
+  for (const claim of atTier) support.set(claim.value, (support.get(claim.value) ?? 0) + 1)
 
   let winner: T | undefined
-  // NOT `{ total: 0 }`: a lone claim from an unscored source weighs zero, and starting the incumbent
-  // at zero would leave it losing to nothing at all. anizip's media row is unscored, so that is the
-  // ordinary case for an older run rather than a corner of one.
-  let winning: { total: number, best: number } | undefined
-  for (const [value, seen] of weight) {
-    // the best single score breaks a tie, so two lightweights never displace one authority on equal
-    // total, and an exact tie keeps the first claim in the order the caller gave
-    if (!winning || seen.total > winning.total || (seen.total === winning.total && seen.best > winning.best)) {
-      winner = value
-      winning = seen
-    }
+  let best = 0
+  for (const [value, count] of support) {
+    // a tie inside one tier goes to the LARGER value: everything downstream of this only ever refuses
+    // something for being too long, so over-estimating costs a refusal and under-estimating hides data
+    const better = count > best || (count === best && winner != null && Number(value) > Number(winner))
+    if (winner == null || better) { winner = value; best = count }
   }
-  return winner
+  return winner == null ? undefined : { value: winner, tier }
 }
 
-/** How long the sources say this run is, or nothing when none of them says. */
+/** How long the best-scored sources say this run is, or nothing when none of them says. */
 export const runLength = (cluster: readonly Media[]): number | undefined =>
-  weightedConsensus(cluster.map(media => ({ value: media.episodeCount, score: media.score })))
+  tieredConsensus(cluster.map(media => ({ value: media.episodeCount, score: media.score })))?.value
 
 /**
  * The episodes that belong to THIS run, dropping the tail a longer packaging of it brings.
@@ -74,54 +82,37 @@ export const runLength = (cluster: readonly Media[]): number | undefined =>
  * count": most of the store has no count.
  */
 export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episodes: readonly T[]): T[] => {
-  const length = runLength(cluster)
-  if (length == null) return [...episodes]
+  const agreed = tieredConsensus(cluster.map(media => ({ value: media.episodeCount, score: media.score })))
+  if (!agreed) return [...episodes]
+  const { value: length, tier } = agreed
 
   /**
-   * TWO WITNESSES, and one of them heavier than whoever is being trimmed.
+   * TWO WITNESSES before anything is hidden.
    *
-   * The bar is here because half the counts in this tree are not claims at all: twelve sources set
-   * `episodeCount = episodes.length`, so a catalogue that could only reach part of a run publishes a
-   * SHORT count as confidently as a catalogue that knows the whole one. Enough of those agreeing
-   * would carry a consensus below the truth, and trimming on it would hide episodes that aired.
-   *
-   * Requiring a second witness means a wrong consensus has to be wrong in company before it can cost
-   * anything. It is the difference between "the sources disagree and here is the majority" and "the
-   * sources agree and one of them is describing something longer", and only the second is worth
-   * acting on.
-   *
-   * A weight comparison was tried here too and deleted as dead: the consensus only wins by carrying
-   * more weight than any other value, so a member claiming a different one always scores under it and
-   * the test could never fail. Mutation caught that; reading it did not.
+   * Half the counts in this tree are not claims at all: twelve sources set `episodeCount =
+   * episodes.length`, so a catalogue that could only reach part of a run publishes a SHORT count as
+   * confidently as one that knows the whole run. A length resting on a single row, acted on, hides
+   * episodes that aired. The second witness may come from any tier, since the question here is only
+   * whether the number is corroborated at all.
    */
   const backing = cluster.filter(media => media.episodeCount === length)
   if (backing.length < 2) return [...episodes]
-  const weight = backing.reduce((total, media) => total + (media.score ?? 0), 0)
 
   /**
-   * AND TWICE THE WEIGHT of whoever is being trimmed, because a narrow win is a disagreement.
+   * AND ONLY A STRICTLY LOWER TIER IS TRIMMED.
    *
-   * Measured over the 100 cluster snapshot in dist-seed on 2026-09-09: 35 of them disagree about
-   * their own length, and one shape recurs, `anilist(0.8)=13 anizip(null)=12 kitsu(0.3)=22
-   * mal(0.9)=12`. The consensus there is 12 by 0.9 against anilist's 0.8, a margin of 0.1, and
-   * trimming on it would hide a thirteenth episode that anilist alone may well be right about. The
-   * same run's kitsu row says 22, backed by 0.3 against 0.9, and that one is a show-level count that
-   * should go.
+   * A member that packages this run inside a longer season is describing a different thing, and the
+   * only reason to believe that rather than believe its count is that better sources disagree with it.
+   * An equal cannot be overruled: two 0.9 catalogues disagreeing is a disagreement, and the answer to
+   * one of those is to show what the tier's majority says, never to delete the dissenter's episodes.
    *
-   * Twice is the line between those two. It is not swept, it is chosen to make a lone dissenter
-   * cheap to overrule and a real disagreement impossible to: Mushoku Tensei's fold is 2.0 against
-   * Crunchyroll's 0.5, four times over.
+   * Crunchyroll's fold is 0.5 against MAL's 0.9, and stays trimmed however many streaming catalogues
+   * echo it, which is the case a sum of scores got wrong.
    */
-  const claimWeight = new Map<number, number>()
-  for (const media of cluster) {
-    if (media.episodeCount == null) continue
-    claimWeight.set(media.episodeCount, (claimWeight.get(media.episodeCount) ?? 0) + (media.score ?? 0))
-  }
-
   const overreaching = new Set(
     cluster
       .filter(media => media.episodeCount != null && media.episodeCount > length)
-      .filter(media => weight >= 2 * (claimWeight.get(media.episodeCount!) ?? 0))
+      .filter(media => (media.score ?? 0) < tier)
       .map(media => media.uri)
   )
   if (!overreaching.size) return [...episodes]
