@@ -1,7 +1,7 @@
 import type { Media, Episode, Origin, HandleRelation, MediaScope } from './types'
 import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
-import { runEpisodes } from './consensus'
+import { alignRunEpisodes, runEpisodes } from './consensus'
 import { fromAggregatedUri, isAggregatedUri, type AggregatedUri } from '../../utils/uri'
 
 /**
@@ -423,8 +423,9 @@ export async function upsertEpisodes(
  */
 export async function findRunEpisodes(cluster: Media[]): Promise<Episode[][]> {
   const groups = await findAggregatedEpisodesForMedia(cluster.map(media => media.uri))
+  const aligned = alignRunEpisodes(cluster, groups.flat())
   return groups
-    .map(group => runEpisodes(cluster, group))
+    .map(group => runEpisodes(cluster, group.map(episode => aligned.get(episode.uri) ?? episode)))
     .filter(group => group.length)
 }
 

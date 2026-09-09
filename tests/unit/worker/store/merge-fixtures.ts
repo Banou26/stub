@@ -390,6 +390,33 @@ export const MERGE_CASES: MergeCase[] = [
     lists: { 'anilist:108465': 11 },
   },
   {
+    name: "a source counting on from the previous season lands on this run's episodes",
+    why:
+      'The Elusive Samurai season 2, read out of dist-seed/snapshots.jsonl on 2026-09-09. anizip, ' +
+      'kitsu, MAL and AniList publish it as episodes 1 to 12; Crunchyroll publishes the same ' +
+      'broadcast as 13 to 20, continuing its own count from season 1, with the SAME AIR DATES to the ' +
+      'day. It is not a fold, so nothing refused it and nothing trimmed it: 8 is fewer than 12. ' +
+      'Episodes merge by NUMBER, so the page drew twenty rows for a twelve episode run with every ' +
+      'Crunchyroll source stranded on rows 13 to 20. The dates are the only thing both sides measure ' +
+      'the same way, and they align it exactly.',
+    medias: [
+      media('anizip:18903', ['The Elusive Samurai Season 2'], '2026-07-17', { episodeCount: 12, episodes: RUN_OF(12) }),
+      media('kitsu:49265', ['The Elusive Samurai Season 2'], '2026-07-17', { episodeCount: 12, episodes: RUN_OF(12) }),
+      media('anilist:182616', ['Nige Jouzu no Wakagimi Season 2'], '2026-07-17', { episodeCount: 12, episodes: RUN_OF(12) }),
+      // crunchyroll's own numbering, 13 to 20, over the first eight of the same weekly slots
+      media('cr:GQWH0M19X-GS00366034', ['The Elusive Samurai'], '2026-07-17', {
+        episodeCount: 8,
+        episodes: Array.from({ length: 8 }, (_, index) => index + 13),
+      }),
+    ],
+    handles: [
+      ['anizip:18903', 'kitsu:49265'], ['anizip:18903', 'anilist:182616'],
+      ['anizip:18903', 'cr:GQWH0M19X-GS00366034'],
+    ],
+    together: [['anilist:182616', 'anizip:18903', 'cr:GQWH0M19X-GS00366034', 'kitsu:49265']],
+    lists: { 'anizip:18903': 12 },
+  },
+  {
     name: 'a season nobody splits still brings its episodes',
     why:
       'THE CONTROL for the case above, and the reason the rule is about the fold and not about ' +

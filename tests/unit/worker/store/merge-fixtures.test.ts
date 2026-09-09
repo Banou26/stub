@@ -43,16 +43,25 @@ const toStoreMedia = (fixture: FixtureMedia): Media => {
  * that groups them. So a case asserting what a cluster LISTS is asserting that grouping, not the
  * fixture's own arithmetic.
  */
-const toStoreEpisodes = (fixture: FixtureMedia): Episode[] =>
-  (fixture.episodes ?? []).map(episodeNumber => ({
+const WEEK = 7 * 24 * 60 * 60 * 1000
+
+const toStoreEpisodes = (fixture: FixtureMedia): Episode[] => {
+  // Weekly from the run's own start, by POSITION in this source's list rather than by its number.
+  // That is what makes two sources that number the same broadcast differently still share dates, which
+  // is the only thing an alignment can be read off. A real anime is weekly and a real fixture would
+  // carry the dates; this is the same shape with the arithmetic done here.
+  const start = fixture.startDate ? Date.parse(fixture.startDate) : Number.NaN
+  return (fixture.episodes ?? []).map((episodeNumber, index) => ({
     uri: `${fixture.uri}-e${episodeNumber}`,
     origin: fixture.uri.slice(0, fixture.uri.indexOf(':')),
     id: `${fixture.uri.slice(fixture.uri.indexOf(':') + 1)}-e${episodeNumber}`,
     mediaUri: fixture.uri,
     episodeNumber,
+    releaseDate: Number.isFinite(start) ? new Date(start + index * WEEK).toISOString() : null,
     score: SCORE[fixture.uri.slice(0, fixture.uri.indexOf(':'))] ?? 0.5,
     titles: [],
   } as unknown as Episode))
+}
 
 const runCase = async (testCase: MergeCase) => {
   resetStore()

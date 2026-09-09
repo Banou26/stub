@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 
 import type { Episode, Media } from '../../../../src/worker/store/types'
-import { runEpisodes, runLength, tieredConsensus } from '../../../../src/worker/store/consensus'
+import { alignRunEpisodes, alignmentOffset, runEpisodes, runLength, tieredConsensus } from '../../../../src/worker/store/consensus'
 
 // The scores are the real ones, read off the extractors: mal 0.9, anilist 0.8, cr 0.5, kitsu/tmdb/
 // tvmaze 0.3, jw/nf/appletv/paramount 0.2, and anizip's MEDIA row carries none at all (it stamps 0.9
@@ -181,5 +181,129 @@ describe('runEpisodes', () => {
       { uri: 'cr:special', mediaUri: 'cr:G24H1N3MP-G609CX3J4' } as unknown as Episode,
     ])
     expect(listed.some(e => e.uri === 'cr:special')).toBe(true)
+  })
+})
+
+/**
+ * THE ELUSIVE SAMURAI SEASON 2, read out of dist-seed/snapshots.jsonl on 2026-09-09.
+ *
+ * anizip, kitsu, MAL and AniList publish this run as episodes 1 to 12. Crunchyroll publishes the same
+ * broadcast as 13 to 20, continuing its own count from season 1, with THE SAME AIR DATES to the day.
+ * It is not a fold, so nothing refused it and nothing trimmed it: 8 is fewer than 12, so `foldVetoed`
+ * never fired and `runEpisodes` only ever trims a count strictly greater than the run's.
+ *
+ * `mergeByEpisodeNumber` keys on the number alone, so the page drew TWENTY rows for a twelve episode
+ * run, with every Crunchyroll source on rows 13 to 20 where nothing else was.
+ */
+const dated = (mediaUri: string, from: number, days: string[]): Episode[] =>
+  days.map((day, index) => ({
+    uri: `${mediaUri}-e${from + index}`,
+    mediaUri,
+    episodeNumber: from + index,
+    releaseDate: `${day}T00:00:00.000Z`,
+  } as unknown as Episode))
+
+// twelve weekly slots from the real premiere; crunchyroll had aired the first EIGHT when the seed was
+// taken, which is why its list is shorter than the run and still numbered 13 to 20
+const WEEKLY = [
+  '2026-07-17', '2026-07-24', '2026-07-31', '2026-08-07', '2026-08-14', '2026-08-21',
+  '2026-08-28', '2026-09-04', '2026-09-11', '2026-09-18', '2026-09-25', '2026-10-02',
+]
+const AIRED = WEEKLY.slice(0, 8)
+
+describe('alignmentOffset', () => {
+  test('a source counting on from a previous season is read off the dates it shares', () => {
+    expect(alignmentOffset(dated('anizip:18903', 1, WEEKLY), dated('cr:GQWH0M19X-GS00366034', 13, AIRED))).toBe(12)
+  })
+
+  test('and a source already counting the same way needs no offset', () => {
+    expect(alignmentOffset(dated('anizip:1', 1, WEEKLY), dated('cr:1', 1, WEEKLY))).toBe(0)
+  })
+
+  /**
+   * Nothing rather than a guess. Hana-Kimi season 2 has episodes 1 and 2 both dated 2026-07-01, and
+   * Mushoku Tensei season 3 aired its first two on one day: a day the run uses twice cannot say which
+   * episode a date belongs to.
+   */
+  test('a day the run uses twice is no anchor at all', () => {
+    const twice = dated('anizip:1', 1, ['2026-07-01', '2026-07-01'])
+    expect(alignmentOffset(twice, dated('cr:1', 5, ['2026-07-01', '2026-07-01']))).toBeUndefined()
+  })
+
+  /**
+   * And a doubled day must not out-vote the real alignment, which is what makes the refusal worth
+   * having rather than merely tidy. Here two doubled days would agree on an offset of 2 while the one
+   * unambiguous day says 10: reading them gives a confident wrong answer, refusing them gives none.
+   */
+  test('a doubled day cannot out-vote the one unambiguous day', () => {
+    const ambiguous = [
+      { uri: 'a-9', mediaUri: 'a', episodeNumber: 9, releaseDate: '2026-07-01T00:00:00.000Z' },
+      { uri: 'a-1', mediaUri: 'a', episodeNumber: 1, releaseDate: '2026-07-01T00:00:00.000Z' },
+      { uri: 'a-9b', mediaUri: 'a', episodeNumber: 9, releaseDate: '2026-07-08T00:00:00.000Z' },
+      { uri: 'a-2', mediaUri: 'a', episodeNumber: 2, releaseDate: '2026-07-08T00:00:00.000Z' },
+      { uri: 'a-3', mediaUri: 'a', episodeNumber: 3, releaseDate: '2026-07-15T00:00:00.000Z' },
+    ] as unknown as Episode[]
+    const theirs = [
+      { uri: 'b-11', mediaUri: 'b', episodeNumber: 11, releaseDate: '2026-07-01T00:00:00.000Z' },
+      { uri: 'b-11b', mediaUri: 'b', episodeNumber: 11, releaseDate: '2026-07-08T00:00:00.000Z' },
+      { uri: 'b-13', mediaUri: 'b', episodeNumber: 13, releaseDate: '2026-07-15T00:00:00.000Z' },
+    ] as unknown as Episode[]
+    expect(alignmentOffset(ambiguous, theirs)).toBeUndefined()
+  })
+
+  // two offsets with equal support are two readings of one set of dates, and picking either is a guess
+  test('two offsets explaining the same evidence is a refusal', () => {
+    const reference = dated('a', 1, ['2026-07-01', '2026-07-08', '2026-07-15', '2026-07-22'])
+    const split = [
+      ...dated('b', 5, ['2026-07-01', '2026-07-08']),
+      ...dated('b', 9, ['2026-07-15', '2026-07-22']),
+    ]
+    expect(alignmentOffset(reference, split), 'offset 4 twice and offset 6 twice').toBeUndefined()
+  })
+
+  test('and one shared date alone is a coincidence, not an alignment', () => {
+    expect(alignmentOffset(dated('anizip:1', 1, WEEKLY), dated('cr:1', 13, ['2026-07-17']))).toBeUndefined()
+  })
+
+  test('no dates on either side is no answer', () => {
+    const undated = [{ uri: 'cr:1-e1', mediaUri: 'cr:1', episodeNumber: 13 } as unknown as Episode]
+    expect(alignmentOffset(dated('anizip:1', 1, WEEKLY), undated)).toBeUndefined()
+    expect(alignmentOffset(undated, dated('cr:1', 1, WEEKLY))).toBeUndefined()
+  })
+})
+
+describe('alignRunEpisodes', () => {
+  const CLUSTER = [
+    media('anizip:18903', null, 12), media('mal:60059', 0.9, 12), media('anilist:182616', 0.8, 12),
+    media('kitsu:49265', 0.3, 12), media('cr:GQWH0M19X-GS00366034', 0.5, 8),
+  ]
+  const EPISODES = [...dated('anizip:18903', 1, WEEKLY), ...dated('cr:GQWH0M19X-GS00366034', 13, AIRED)]
+
+  test("crunchyroll's 13 to 20 become the run's 1 to 8", () => {
+    const aligned = alignRunEpisodes(CLUSTER, EPISODES)
+    const numbers = EPISODES
+      .filter(e => e.mediaUri.startsWith('cr:'))
+      .map(e => aligned.get(e.uri)?.episodeNumber ?? e.episodeNumber)
+    expect(numbers).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+  })
+
+  test('and the run drops from twenty distinct rows to twelve', () => {
+    const aligned = alignRunEpisodes(CLUSTER, EPISODES)
+    const drawn = new Set(EPISODES.map(e => (aligned.get(e.uri) ?? e).episodeNumber))
+    expect(new Set(EPISODES.map(e => e.episodeNumber)).size, 'what it drew before').toBe(20)
+    expect(drawn.size).toBe(12)
+  })
+
+  // the reference is never rewritten: it is the numbering everything else is aligned ONTO
+  test('the sources that agree about the length are left alone', () => {
+    const aligned = alignRunEpisodes(CLUSTER, EPISODES)
+    expect(EPISODES.filter(e => e.mediaUri.startsWith('anizip:')).some(e => aligned.has(e.uri))).toBe(false)
+  })
+
+  // and the stored node keeps crunchyroll's own number: what the run gets is a copy
+  test('the stored episode is not rewritten', () => {
+    const before = EPISODES.find(e => e.mediaUri.startsWith('cr:'))!.episodeNumber
+    alignRunEpisodes(CLUSTER, EPISODES)
+    expect(EPISODES.find(e => e.mediaUri.startsWith('cr:'))!.episodeNumber).toBe(before)
   })
 })

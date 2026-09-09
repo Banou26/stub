@@ -81,6 +81,72 @@ export const runLength = (cluster: readonly Media[]): number | undefined =>
  * be wrong about. That last case is the reason this cannot be written as "drop what exceeds the
  * count": most of the store has no count.
  */
+/** A release date as a DAY, which is the precision two catalogues actually agree to. */
+const dayOf = (episode: { releaseDate?: string | null }): number | undefined => {
+  const at = episode.releaseDate ? Date.parse(episode.releaseDate) : Number.NaN
+  return Number.isFinite(at) ? Math.floor(at / 86_400_000) : undefined
+}
+
+/**
+ * How far another source's numbering sits from this run's, read off the DATES they share.
+ *
+ * A catalogue may number a season continuing from the previous one where everyone else restarts at 1.
+ * The Elusive Samurai season 2, in the shipped seed: anizip, kitsu, MAL and AniList all publish
+ * episodes 1 to 12, and Crunchyroll publishes the same broadcast as 13 to 20, with the SAME AIR DATES
+ * to the day. `mergeByEpisodeNumber` keys on the number alone, so the page drew twenty rows for a
+ * twelve episode run and put every Crunchyroll source on rows 13 to 20, where nothing else was.
+ *
+ * The dates are the anchor because they are the one thing both sides measure the same way. A date is
+ * not compared to a start date, which is a claim that drifts (the highest-scored start date in this
+ * store is three days off Crunchyroll's own episode 1 for at least one show in the seed): it is
+ * compared to ANOTHER EPISODE'S date from the same broadcast, which either matches to the day or does
+ * not.
+ *
+ * NOTHING RATHER THAN A GUESS, in every ambiguous case:
+ *   - fewer than MIN_ALIGNED dates in common, so a coincidence could carry it
+ *   - two offsets explaining the same evidence, which is what a season with two episodes on one day
+ *     produces (Hana-Kimi season 2 has episodes 1 and 2 both dated 2026-07-01)
+ *   - any date matching more than one reference episode, for the same reason
+ */
+const MIN_ALIGNED = 2
+
+export const alignmentOffset = (
+  reference: readonly Episode[],
+  other: readonly Episode[]
+): number | undefined => {
+  // DISTINCT numbers per day, not rows per day. Several sources describing one run all say that this
+  // day is episode 1, and three of them agreeing is the opposite of an ambiguity; what disqualifies a
+  // day is the run using it for two DIFFERENT episodes.
+  const runByDay = new Map<number, Set<number>>()
+  for (const episode of reference) {
+    const day = dayOf(episode)
+    if (day == null || episode.episodeNumber == null) continue
+    const numbers = runByDay.get(day) ?? new Set<number>()
+    numbers.add(episode.episodeNumber)
+    runByDay.set(day, numbers)
+  }
+  if (!runByDay.size) return undefined
+
+  const votes = new Map<number, number>()
+  for (const episode of other) {
+    const day = dayOf(episode)
+    if (day == null || episode.episodeNumber == null) continue
+    const numbers = runByDay.get(day)
+    // a day the run uses for two different episodes cannot say which one this is
+    if (!numbers || numbers.size !== 1) continue
+    const offset = episode.episodeNumber - [...numbers][0]!
+    votes.set(offset, (votes.get(offset) ?? 0) + 1)
+  }
+
+  const ranked = [...votes.entries()].sort((a, b) => b[1] - a[1])
+  const [best, support] = ranked[0] ?? []
+  if (best == null || support == null || support < MIN_ALIGNED) return undefined
+  // one offset has to explain it ALONE: a second offset with the same support is two readings of the
+  // same evidence, and picking either is a guess
+  if (ranked[1] && ranked[1][1] === support) return undefined
+  return best
+}
+
 export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episodes: readonly T[]): T[] => {
   const agreed = tieredConsensus(cluster.map(media => ({ value: media.episodeCount, score: media.score })))
   if (!agreed) return [...episodes]
@@ -121,4 +187,46 @@ export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episod
     !overreaching.has(episode.mediaUri)
     || episode.episodeNumber == null
     || episode.episodeNumber <= length)
+}
+
+/**
+ * Every episode this cluster holds, renumbered onto the run's own numbering where another source
+ * counts differently.
+ *
+ * READ TIME, AND A COPY. The stored node keeps Crunchyroll's own number, because it is keyed by
+ * Crunchyroll's guid and is reachable through the whole season from other paths: `graph.set` is
+ * last-write-wins, so rewriting it here would change what those other readers see. What the run needs
+ * is a VIEW, and a view is what this returns.
+ *
+ * The reference is the members that agree about the run's length, which is the same set `runEpisodes`
+ * trims against. A source that agrees about how long the run is is the one to measure another
+ * source's numbering against; one that does not is exactly the source under suspicion.
+ */
+export const alignRunEpisodes = <T extends Episode>(
+  cluster: readonly Media[],
+  episodes: readonly T[]
+): Map<string, T> => {
+  const aligned = new Map<string, T>()
+  const length = runLength(cluster)
+  if (length == null) return aligned
+
+  const reference = new Set(cluster.filter(media => media.episodeCount === length).map(media => media.uri))
+  if (!reference.size) return aligned
+  const anchors = episodes.filter(episode => reference.has(episode.mediaUri))
+  if (!anchors.length) return aligned
+
+  for (const media of cluster) {
+    if (reference.has(media.uri)) continue
+    const theirs = episodes.filter(episode => episode.mediaUri === media.uri)
+    if (!theirs.length) continue
+    const offset = alignmentOffset(anchors, theirs)
+    // `== null`, not falsy: 0 is a real answer, and it means this source already counts the way the
+    // run does. Treating it as absent is harmless here and wrong everywhere it would be copied.
+    if (offset == null) continue
+    for (const episode of theirs) {
+      if (episode.episodeNumber == null) continue
+      aligned.set(episode.uri, { ...episode, episodeNumber: episode.episodeNumber - offset })
+    }
+  }
+  return aligned
 }
