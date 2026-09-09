@@ -398,3 +398,73 @@ test('both queries ask for a second licensing region', async () => {
     expect(variables.extraCountry).not.toBe(variables.country)
   }
 })
+
+// JustWatch FOLDS anime cours the same way Netflix does, so a run that is one cour matches none of its
+// seasons and `pickSimilarSeason` returns undefined. Measured live 2026-09-10 on Mushoku Tensei:
+// JustWatch publishes seasons of 23, 24 and 14 against cours of 11/12/12/12/14, the title gate passes
+// (`scored=1`) and the date gate passes (`dated=true`), and the season pick then refuses. Only the cour
+// whose length happened to equal a JustWatch season (14 against 14) survived, which is exactly why
+// Netflix appeared on the last season of the show and on none of the earlier ones: the OFFERS hang off
+// the show node, so refusing the node threw away the `nf:` id with it.
+//
+// The show now comes back as a CONTAINER instead. Refusing the SEASON is still right, and none of this
+// claims to be the run.
+import { showAsContainer } from '../../../../src/sources/justwatch/extractor'
+
+const showNode = (offers: { monetizationType: string, standardWebURL: string, package: { clearName: string, shortName: string } }[]) => ({
+  id: 'ts222366',
+  objectId: 222366,
+  objectType: 'SHOW',
+  content: {
+    title: 'Mushoku Tensei: Jobless Reincarnation',
+    fullPath: '/us/tv-show/mushoku-tensei',
+    posterUrl: null,
+    shortDescription: 'A show whose seasons fold two cours each.',
+    originalReleaseYear: 2021,
+  },
+  offers,
+  extraOffers: [],
+  seasons: [],
+})
+
+const bare = () => ({ fetch: async (url: string) => { throw new Error(`no route for ${url}`) } }) as never
+
+test('a show whose season cannot be established still yields its netflix id, as a container', async () => {
+  const media = await showAsContainer(showNode([
+    { monetizationType: 'FLATRATE', standardWebURL: NF_OFFER, package: { clearName: 'Netflix', shortName: 'nfx' } },
+  ]) as never, bare())
+
+  expect(media?.scope, 'a show is never a run: this is what keeps it out of every cour\'s identity space').toBe('CONTAINER')
+  expect(media?.id, 'the bare node id, with no season suffix').toBe('222366')
+
+  const netflix = (media?.handles ?? []).filter(handle => handle.node.origin === 'nf')
+  expect(netflix.map(handle => handle.node.id), 'the netflix title id the offers carry').toEqual(['80123456'])
+  // container to container is an identity between two SHOWS, which unions in the container space and
+  // never in a run's. That union is how the cour reaches the id at all.
+  expect(netflix[0]!.relation).toBe('SAME_AS')
+})
+
+// The trap this replaced: `buildOffersAsHandles` resolves a crunchyroll /watch/ url through Crunchyroll
+// to get a series id, and that answers with the SEASON the episode is in, which is a RUN. Claiming the
+// SHOW is that season is a cross-scope weld, and `graph.link` has no inverse. The fixture routes the
+// crunchyroll calls, so a resolution attempt would SUCCEED here rather than throw: if the gate is
+// removed this test goes red on a real handle, not on an error.
+test('a show container never claims to be a crunchyroll season', async () => {
+  const media = await showAsContainer(showNode([
+    { monetizationType: 'FLATRATE', standardWebURL: CR_OFFER, package: { clearName: 'Crunchyroll', shortName: 'cru' } },
+    { monetizationType: 'FLATRATE', standardWebURL: NF_OFFER, package: { clearName: 'Netflix', shortName: 'nfx' } },
+  ]) as never, context())
+
+  expect(idFor((media?.handles ?? []).map(handle => handle.node), 'cr'), 'no season id on a show').toEqual([])
+  expect(idFor((media?.handles ?? []).map(handle => handle.node), 'nf'), 'and the netflix id still lands').toEqual(['80123456'])
+})
+
+// A container naming no provider id is noise: the cluster already reaches the show through crunchyroll's
+// and tvmaze's containers, so one more adds nothing a reader could act on.
+test('a show with no offers worth minting yields nothing at all', async () => {
+  expect(await showAsContainer(showNode([]) as never, bare())).toBeNull()
+  const unmapped = await showAsContainer(showNode([
+    { monetizationType: 'FLATRATE', standardWebURL: 'https://happyon.jp/title/12345', package: { clearName: 'Hulu Japan', shortName: 'hlu' } },
+  ]) as never, bare())
+  expect(unmapped, 'a host `extractContentId` does not know mints no id').toBeNull()
+})

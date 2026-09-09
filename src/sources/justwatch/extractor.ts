@@ -318,7 +318,7 @@ const jwCandidates = (seasons: JWSeason[]): SeasonCandidate<JWSeason>[] =>
 
 const buildOffersAsHandles = async (
   offers: JWOffer[],
-  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number },
+  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number, showContainer?: boolean },
   ctx: ExtractorServerContext,
   policy: RequestPolicy = UNKNOWN_POLICY
 ): Promise<GQLMediaHandle[]> => {
@@ -365,7 +365,11 @@ const buildOffersAsHandles = async (
     // RESULT, and `mediaPage` runs this for every hit in a search. Nothing on a results page reads
     // that id: it identifies the run, which is a detail-view question. So on a listing the offer keeps
     // its url and loses only the identity claim, and the detail view spends the request as before.
-    if (!rawContentId && mappedOrigin === 'cr' && url && meta.seasonNumber == null && policy.crossSource) {
+    // `meta.showContainer` excludes this branch deliberately. It resolves a /watch/ url to the SEASON
+    // that episode is in, which is a RUN, and the media being built here is the SHOW: claiming the two
+    // are the same is a cross-scope weld, and `graph.link` has no inverse. The offer is dropped rather
+    // than demoted because crunchyroll already reaches this cluster under its own series container.
+    if (!rawContentId && mappedOrigin === 'cr' && url && meta.seasonNumber == null && !meta.showContainer && policy.crossSource) {
       const episodeId = extractCrunchyrollEpisodeId(url)
       if (episodeId) {
         const resolved = await resolveEpisodeToSeriesId(episodeId, ctx)
@@ -397,6 +401,63 @@ const buildOffersAsHandles = async (
   }
 
   return handles
+}
+
+/**
+ * The SHOW itself, as a CONTAINER, for a series whose season could not be established.
+ *
+ * JustWatch FOLDS anime cours exactly as Netflix does, so a run that is one cour matches none of its
+ * seasons and `normalizeMedia` refuses the whole node. Measured 2026-09-10 on Mushoku Tensei: JustWatch
+ * publishes seasons of 23, 24 and 14 against our cours of 11/12/12/12/14, the title and date gates both
+ * pass, and `pickSimilarSeason` then returns undefined. Only the cour whose length happens to equal a
+ * JustWatch season (season 3, 14 against 14) survived, which is why Netflix appeared on the last season
+ * of the show and on none of the others.
+ *
+ * Refusing the SEASON is still right: the bare node id is shared by every season and asserting it as a
+ * run's identity is what welded Mushoku's seasons together before. What was wrong is throwing the whole
+ * node away with it, because the OFFERS hang off the show rather than off any season, and they are what
+ * carries `nf:<title id>`. So the show comes back as a container instead.
+ *
+ * NOTHING HERE CLAIMS TO BE THE RUN. The caller must not `mergeHandles` this media: that mints a
+ * `sameAs` for every origin in the asking uri, which is precisely the weld above. The container reaches
+ * the run through the container space instead, where `fuzzy-merge` unions it with the crunchyroll and
+ * tvmaze containers the cluster already hangs under, and `findPartOfMedia` expands a PART_OF target to
+ * its whole SAME_AS component. A provider id read off a show is a container too, so `sameAs` between
+ * this node and `nf:<id>` is a claim about two SHOWS and unions in the container space.
+ */
+export const showAsContainer = async (
+  node: JWSearchNode,
+  ctx: ExtractorServerContext,
+  policy: RequestPolicy = UNKNOWN_POLICY
+): Promise<GQLMedia | null> => {
+  const handles = await buildOffersAsHandles(
+    [...node.offers ?? [], ...node.extraOffers ?? []],
+    {
+      shortDescription: node.content.shortDescription,
+      title: node.content.title,
+      posterUrl: resolveImageUrl(node.content.posterUrl),
+      showContainer: true
+    },
+    ctx,
+    policy
+  )
+  // a container carrying no provider id is noise: it names a show the cluster already reaches through
+  // its other containers and adds nothing a reader could act on
+  if (!handles.length) return null
+
+  return makeMedia({
+    origin,
+    id: String(node.objectId),
+    url: `https://www.justwatch.com${node.content.fullPath}`,
+    scope: 'CONTAINER',
+    categories: [node.objectType === 'MOVIE' ? 'MOVIE' : 'SERIES'],
+    score: SCORE,
+    handles,
+    titles: [{ language: 'en', title: node.content.title, score: SCORE }],
+    ...desc(node.content.shortDescription ?? undefined, SCORE),
+    covers: img(resolveImageUrl(node.content.posterUrl), SCORE),
+    startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
+  })
 }
 
 const normalizeMedia = async (
@@ -639,9 +700,16 @@ const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerCon
         : undefined
 
       const media = await normalizeMedia(node, { seasons: node.seasons, seasonNumber }, ctx)
-      if (!media) continue
-      mergeHandles(media, aggregatedUri)
-      return media
+      if (media) {
+        mergeHandles(media, aggregatedUri)
+        return media
+      }
+      // No season established, which for anime is usually the FOLD rather than a bad match: JustWatch
+      // packs two cours into one season, so a cour matches none of them. The show still comes back, as
+      // a container, because the offers hang off it and they carry the provider ids. Deliberately NOT
+      // `mergeHandles`d: see `showAsContainer`.
+      const container = await showAsContainer(node, ctx)
+      if (container) return container
     }
   }
   return null
