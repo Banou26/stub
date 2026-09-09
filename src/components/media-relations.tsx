@@ -1,13 +1,12 @@
 import type { ComponentChildren } from 'preact'
-import type { GetMediaModalSubscription } from '../generated/graphql'
 
 import { css } from '@emotion/react'
 import { Link } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
 import { asAggregatedUri } from '../utils/uri'
-import { isVideoFormat } from '../utils/franchise-layout'
-import { relationLabel, relationRank, workFormatLabel } from '../utils/relation-labels'
+import { relationLanes, watchableRelations, type RelationEdge } from '../utils/relation-lanes'
+import { relationLabel, workFormatLabel } from '../utils/relation-labels'
 import { statusLabel } from '../router/search/params'
 import { useCoverUrl } from '../utils/use-cover-url'
 
@@ -20,8 +19,6 @@ import { useCoverUrl } from '../utils/use-cover-url'
  * that already locks the body and hosts a watch party's scroll box, that is a real cost for a row
  * that fits on screen anyway.
  */
-
-export type RelationEdge = NonNullable<GetMediaModalSubscription['media']>['relations'][number]
 
 const style = css`
   margin-top: 4rem;
@@ -38,14 +35,39 @@ const style = css`
   }
 
   & > .grid {
-    display: grid;
-    /* auto-fill, so a franchise with two entries does not stretch two cards across the modal */
-    grid-template-columns: repeat(auto-fill, minmax(28rem, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 1.2rem;
+    align-items: stretch;
+  }
+
+  /* The two outer lanes take an EQUAL share of the free space, which is what centres the middle one
+     on the modal rather than on whatever is left over beside a sequel. An empty lane still takes its
+     share, so a row with no prequel keeps its side story centred instead of sliding left. */
+  & > .grid > .lane {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+  }
+
+  & > .grid > .before { flex: 1 1 0; justify-content: flex-start; }
+  & > .grid > .middle { flex: 0 1 auto; justify-content: center; }
+  & > .grid > .after { flex: 1 1 0; justify-content: flex-end; }
+
+  /* Below this the lanes cannot sit side by side, so they wrap onto their own lines and the timeline
+     stops being readable as one: a lone sequel pushed to the right edge of its own line is just a
+     card in a strange place. Measured at a 500px viewport, where the row is 458px and three 28rem
+     cards cannot share it. Stack them and let them read top to bottom instead. */
+  @media (max-width: 768px) {
+    & > .grid > .lane { flex: 1 1 100%; justify-content: flex-start; }
   }
 `
 
 const cardStyle = css`
+  /* A card sized itself off the grid track until the lanes replaced it, so it needs its own basis
+     now. 28rem is the track's old minimum, and shrinking is left on so a narrow modal wraps rather
+     than overflows. */
+  flex: 0 1 28rem;
   display: flex;
   align-items: stretch;
   gap: 1.2rem;
@@ -123,24 +145,6 @@ const RelationCard = ({ edge }: { edge: RelationEdge }) => {
   )
 }
 
-/**
- * Sorted by what the relation IS rather than by what the source happened to return first, so the
- * source novel and the sequel sit at the top of every page instead of wherever AniList put them.
- * Ties keep their arrival order, which is at least stable between renders.
- */
-export const sortRelations = (edges: readonly RelationEdge[]): RelationEdge[] =>
-  [...edges].sort((a, b) => relationRank(a.relation) - relationRank(b.relation))
-
-/**
- * Only the works this app can actually play.
- *
- * Stub aggregates VIDEO. A source novel and a manga are real relations and genuinely interesting, but
- * neither is something you can open here, so a card for one is a dead end: it navigates to a page with
- * no episodes and no way to read it. They come back when there is a product to hand them to.
- */
-export const watchableRelations = (edges: readonly RelationEdge[]): RelationEdge[] =>
-  edges.filter(edge => isVideoFormat(edge.format))
-
 const MediaRelations = (
   { relations, action }:
   { relations: readonly RelationEdge[], action?: ComponentChildren }
@@ -150,6 +154,7 @@ const MediaRelations = (
   // goes with it: whatever it opens is built from the same source that named these.
   const watchable = watchableRelations(relations)
   if (!watchable.length) return null
+  const lanes = relationLanes(watchable)
 
   return (
     <div css={style} data-relations>
@@ -158,7 +163,12 @@ const MediaRelations = (
         {action}
       </div>
       <div className="grid">
-        {sortRelations(watchable).map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge}/>)}
+        {/* rendered even when empty: an empty lane is what holds the middle in the centre */}
+        {(['before', 'middle', 'after'] as const).map(lane => (
+          <div className={`lane ${lane}`} key={lane}>
+            {lanes[lane].map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge}/>)}
+          </div>
+        ))}
       </div>
     </div>
   )
