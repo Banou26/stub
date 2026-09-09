@@ -1,6 +1,7 @@
 import type { Media, Episode, Origin, HandleRelation, MediaScope } from './types'
 import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
+import { runEpisodes } from './consensus'
 import { fromAggregatedUri, isAggregatedUri, type AggregatedUri } from '../../utils/uri'
 
 /**
@@ -411,6 +412,20 @@ export async function upsertEpisodes(
   }
 
   emit('episode:changed', {})
+}
+
+/**
+ * The episode groups a RUN should list, which is the walk above minus any tail a longer packaging of
+ * the run brings with it. See ./consensus.ts for the rule and for why it needs two witnesses.
+ *
+ * Takes the cluster rather than the uris, because the decision is made on what each member says its
+ * own length is, and a uri does not carry that.
+ */
+export async function findRunEpisodes(cluster: Media[]): Promise<Episode[][]> {
+  const groups = await findAggregatedEpisodesForMedia(cluster.map(media => media.uri))
+  return groups
+    .map(group => runEpisodes(cluster, group))
+    .filter(group => group.length)
 }
 
 export async function findAggregatedEpisodesForMedia(mediaUris: string[]): Promise<Episode[][]> {

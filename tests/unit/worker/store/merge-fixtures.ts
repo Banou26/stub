@@ -74,6 +74,10 @@ export type FixtureMedia = {
   uri: string
   titles: string[]
   startDate: string | null
+  /** what this source says the run is LONG, which is the number its own catalogue publishes */
+  episodeCount?: number | null
+  /** the episode numbers this source publishes, when the case is about what a cluster LISTS */
+  episodes?: number[]
 }
 
 export type MergeCase = {
@@ -87,34 +91,51 @@ export type MergeCase = {
   together?: string[][]
   /** Neither uri may ever appear in the other's cluster. */
   apart?: [string, string][]
+  /**
+   * How many DISTINCT episode numbers each named uri's cluster may list.
+   *
+   * A separate question from `together` and `apart`, and the one those two cannot ask. A cluster can
+   * be exactly right about who it contains and still list somebody else's episodes, because an
+   * episode arrives attached to whichever media published it: Crunchyroll models a split cour as one
+   * season, so an 11 episode run held a season of 23 and a special and listed all 24. Nothing about
+   * the cluster's membership was wrong.
+   */
+  lists?: Record<string, number>
 }
 
-const media = (uri: string, titles: string[], startDate: string | null): FixtureMedia =>
-  ({ uri, titles, startDate })
+/** 1..n, which is how every catalogue in these fixtures numbers a run of n. */
+const RUN_OF = (n: number): number[] => Array.from({ length: n }, (_, index) => index + 1)
+
+const media = (
+  uri: string,
+  titles: string[],
+  startDate: string | null,
+  rest: { episodeCount?: number | null, episodes?: number[] } = {}
+): FixtureMedia => ({ uri, titles, startDate, ...rest })
 
 // Every run of Mushoku Tensei, as anizip, kitsu and anilist each publish it. Five runs, and the pair
 // that matters most is kitsu:45950 and kitsu:47694: both are "season 2" by ordinal, so nothing but
 // the 273 days between them can tell them apart.
 const MUSHOKU = {
   s1: [
-    media('anizip:14758', ['Mushoku Tensei: Jobless Reincarnation', '無職転生~異世界行ったら本気だす~'], '2021-01-10T15:00:00Z'),
-    media('kitsu:42323', ['Mushoku Tensei: Jobless Reincarnation', 'Mushoku Tensei: Isekai Ittara Honki Dasu', '無職転生 ～異世界行ったら本気だす～'], '2021-01-10'),
-    media('anilist:108465', ['Mushoku Tensei: Isekai Ittara Honki Dasu', 'Mushoku Tensei: Jobless Reincarnation', '無職転生 ～異世界行ったら本気だす～'], '2021-01-11'),
+    media('anizip:14758', ['Mushoku Tensei: Jobless Reincarnation', '無職転生~異世界行ったら本気だす~'], '2021-01-10T15:00:00Z', { episodeCount: 11, episodes: RUN_OF(11) }),
+    media('kitsu:42323', ['Mushoku Tensei: Jobless Reincarnation', 'Mushoku Tensei: Isekai Ittara Honki Dasu', '無職転生 ～異世界行ったら本気だす～'], '2021-01-10', { episodeCount: 11, episodes: RUN_OF(11) }),
+    media('anilist:108465', ['Mushoku Tensei: Isekai Ittara Honki Dasu', 'Mushoku Tensei: Jobless Reincarnation', '無職転生 ～異世界行ったら本気だす～'], '2021-01-11', { episodeCount: 11, episodes: RUN_OF(11) }),
   ],
   s1p2: [
-    media('anizip:15954', ['Mushoku Tensei: Jobless Reincarnation (2021)', '無職転生~異世界行ったら本気だす~ (2021)'], '2021-10-03T15:00:00Z'),
-    media('kitsu:43907', ['Mushoku Tensei: Jobless Reincarnation Part 2', 'Mushoku Tensei: Isekai Ittara Honki Dasu Part 2', '無職転生 ～異世界行ったら本気だす～ 第2クール'], '2021-10-03'),
-    media('anilist:127720', ['Mushoku Tensei: Isekai Ittara Honki Dasu Part 2', 'Mushoku Tensei: Jobless Reincarnation Cour 2', '無職転生 ～異世界行ったら本気だす～ 第2クール'], '2021-10-04'),
+    media('anizip:15954', ['Mushoku Tensei: Jobless Reincarnation (2021)', '無職転生~異世界行ったら本気だす~ (2021)'], '2021-10-03T15:00:00Z', { episodeCount: 12, episodes: RUN_OF(12) }),
+    media('kitsu:43907', ['Mushoku Tensei: Jobless Reincarnation Part 2', 'Mushoku Tensei: Isekai Ittara Honki Dasu Part 2', '無職転生 ～異世界行ったら本気だす～ 第2クール'], '2021-10-03', { episodeCount: 12, episodes: RUN_OF(12) }),
+    media('anilist:127720', ['Mushoku Tensei: Isekai Ittara Honki Dasu Part 2', 'Mushoku Tensei: Jobless Reincarnation Cour 2', '無職転生 ～異世界行ったら本気だす～ 第2クール'], '2021-10-04', { episodeCount: 12, episodes: RUN_OF(12) }),
   ],
   s2: [
-    media('anizip:17236', ['Mushoku Tensei: Jobless Reincarnation Season 2', '無職転生II ~異世界行ったら本気だす~'], '2023-07-09T15:00:00Z'),
-    media('kitsu:45950', ['Mushoku Tensei: Jobless Reincarnation Season 2', 'Mushoku Tensei: Isekai Ittara Honki Dasu Season 2', '無職転生 ～異世界行ったら本気だす～ 第2期'], '2023-07-09'),
-    media('anilist:146065', ['Mushoku Tensei II: Isekai Ittara Honki Dasu', 'Mushoku Tensei: Jobless Reincarnation Season 2', '無職転生Ⅱ ～異世界行ったら本気だす～'], '2023-07-03'),
+    media('anizip:17236', ['Mushoku Tensei: Jobless Reincarnation Season 2', '無職転生II ~異世界行ったら本気だす~'], '2023-07-09T15:00:00Z', { episodeCount: 12, episodes: RUN_OF(12) }),
+    media('kitsu:45950', ['Mushoku Tensei: Jobless Reincarnation Season 2', 'Mushoku Tensei: Isekai Ittara Honki Dasu Season 2', '無職転生 ～異世界行ったら本気だす～ 第2期'], '2023-07-09', { episodeCount: 12, episodes: RUN_OF(12) }),
+    media('anilist:146065', ['Mushoku Tensei II: Isekai Ittara Honki Dasu', 'Mushoku Tensei: Jobless Reincarnation Season 2', '無職転生Ⅱ ～異世界行ったら本気だす～'], '2023-07-03', { episodeCount: 12, episodes: RUN_OF(12) }),
   ],
   s2p2: [
-    media('anizip:18104', ['Mushoku Tensei: Jobless Reincarnation Season 2 (2024)', '無職転生II ~異世界行ったら本気だす~ (2024)'], '2024-04-07T15:00:00Z'),
-    media('kitsu:47694', ['Mushoku Tensei: Jobless Reincarnation Season 2 Part 2', 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2', '無職転生 Ⅱ ～異世界行ったら本気だす～ 第2クール'], '2024-04-07'),
-    media('anilist:166873', ['Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2', 'Mushoku Tensei: Jobless Reincarnation Season 2 Part 2', '無職転生Ⅱ ～異世界行ったら本気だす～ 第2クール'], '2024-04-08'),
+    media('anizip:18104', ['Mushoku Tensei: Jobless Reincarnation Season 2 (2024)', '無職転生II ~異世界行ったら本気だす~ (2024)'], '2024-04-07T15:00:00Z', { episodeCount: 12, episodes: RUN_OF(12) }),
+    media('kitsu:47694', ['Mushoku Tensei: Jobless Reincarnation Season 2 Part 2', 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2', '無職転生 Ⅱ ～異世界行ったら本気だす～ 第2クール'], '2024-04-07', { episodeCount: 12, episodes: RUN_OF(12) }),
+    media('anilist:166873', ['Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2', 'Mushoku Tensei: Jobless Reincarnation Season 2 Part 2', '無職転生Ⅱ ～異世界行ったら本気だす～ 第2クール'], '2024-04-08', { episodeCount: 12, episodes: RUN_OF(12) }),
   ],
   s3: [
     media('anizip:18727', ['Mushoku Tensei: Jobless Reincarnation Season 3', '無職転生III ~異世界行ったら本気だす~'], '2026-07-03T15:00:00Z'),
@@ -314,6 +335,21 @@ const allPairsAcross = (groups: FixtureMedia[][]): [string, string][] => {
   return pairs
 }
 
+/**
+ * Crunchyroll's seasons for the same show, which are NOT the same runs.
+ *
+ * `G609CX3J4` is what Crunchyroll calls season 1: the 23 episodes AniList and MAL split into 11 and
+ * 12, plus the Eris special, so 24 numbered rows. `G6NQCJ9P1` is the same shape for season 2, and
+ * `GS00374452` is season 3, which nobody splits and which therefore agrees with everyone.
+ *
+ * The counts are what the live site listed on 2026-09-09 when each season was welded onto a part 1.
+ */
+const MUSHOKU_CR = {
+  s1: media('cr:G24H1N3MP-G609CX3J4', ['Mushoku Tensei: Jobless Reincarnation'], '2021-01-11', { episodeCount: 24, episodes: RUN_OF(24) }),
+  s2: media('cr:G24H1N3MP-G6NQCJ9P1', ['Mushoku Tensei: Jobless Reincarnation'], '2023-07-09', { episodeCount: 24, episodes: RUN_OF(24) }),
+  s3: media('cr:G24H1N3MP-GS00374452', ['Mushoku Tensei: Jobless Reincarnation'], '2026-07-03', { episodeCount: 14, episodes: RUN_OF(14) }),
+}
+
 export const MERGE_CASES: MergeCase[] = [
   {
     name: 'three catalogues describing one run are one media, with no handle to say so',
@@ -337,6 +373,33 @@ export const MERGE_CASES: MergeCase[] = [
     handles: handlesFor([...MUSHOKU.s1, ...MUSHOKU.s1p2, ...MUSHOKU.s2, ...MUSHOKU.s2p2, ...MUSHOKU.s3]),
     together: [uris(MUSHOKU.s1), uris(MUSHOKU.s1p2), uris(MUSHOKU.s2), uris(MUSHOKU.s2p2), uris(MUSHOKU.s3)],
     apart: allPairsAcross([MUSHOKU.s1, MUSHOKU.s1p2, MUSHOKU.s2, MUSHOKU.s2p2, MUSHOKU.s3]),
+  },
+  {
+    name: 'a run lists its own episodes, not those of the season a streamer folds it into',
+    why:
+      'Crunchyroll models Mushoku Tensei season 1 as ONE season of 23 and a special, where AniList ' +
+      'and MAL split the same broadcast into 11 and 12. Reported by the owner 2026-09-09: part 1 ' +
+      'listed 24 rows, and rows 12 to 23 were part 2 by title with the special at 24. ' +
+      'THE CLUSTER IS NOT WRONG ABOUT WHO IT CONTAINS, which is why `together` and `apart` cannot ' +
+      'see this: the fold arrives as an episode list, not as a member. A run must list its own ' +
+      'length whatever a catalogue that packages it differently says.',
+    medias: [...MUSHOKU.s1, MUSHOKU_CR.s1],
+    // the claim the crunchyroll search path used to assert: this season IS that run
+    handles: [...handlesFor(MUSHOKU.s1), ['cr:G24H1N3MP-G609CX3J4', 'anilist:108465']],
+    together: [uris(MUSHOKU.s1)],
+    lists: { 'anilist:108465': 11 },
+  },
+  {
+    name: 'a season nobody splits still brings its episodes',
+    why:
+      'THE CONTROL for the case above, and the reason the rule is about the fold and not about ' +
+      'Crunchyroll. Nobody splits season 3: Crunchyroll lists the same fourteen episodes AniList and ' +
+      'kitsu do. It must still join the cluster and its episodes must still count, or a rule that ' +
+      'refuses folds would be indistinguishable from one that refuses streamers.',
+    medias: [...MUSHOKU.s3, MUSHOKU_CR.s3],
+    handles: [...handlesFor(MUSHOKU.s3), ['cr:G24H1N3MP-GS00374452', 'anilist:178789']],
+    together: [[...uris(MUSHOKU.s3), 'cr:G24H1N3MP-GS00374452']],
+    lists: { 'anilist:178789': 14 },
   },
   {
     name: 'two unrelated shows premiering the same week are not one show',

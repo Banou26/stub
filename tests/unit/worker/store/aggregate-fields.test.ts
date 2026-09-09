@@ -122,3 +122,36 @@ test('a cluster nobody scheduled anything for carries none', () => {
   const aggregated = aggregateMedia([row('mal:1', { score: 0.9 }), row('anilist:1', { score: 0.8 })], 'https://x')
   expect(aggregated.nextAiringEpisode ?? null).toBeNull()
 })
+
+/**
+ * episodeCount is the one field resolved by AGREEMENT rather than by the best score, and the reason is
+ * that it is a claim about the world rather than a spelling. Crunchyroll models Mushoku Tensei season
+ * 1 as one season of 23 and a special where AniList and MAL split it 11 and 12, so the page printed
+ * 24 for an 11 episode run as soon as that source outscored them.
+ *
+ * Both directions matter. The count the sources agree on wins, AND a lone authority still beats a lone
+ * lightweight, or this would just be a different way of picking the wrong number.
+ */
+test('the published episodeCount is the one the sources agree on', () => {
+  const agreed = aggregateMedia([
+    row('cr:1', { score: 0.95, episodeCount: 24 }),
+    row('mal:1', { score: 0.9, episodeCount: 11 }),
+    row('anilist:1', { score: 0.8, episodeCount: 11 }),
+  ], 'https://stub.moe')
+  expect(agreed.episodeCount).toBe(11)
+})
+
+test('and one authority still outweighs one lightweight', () => {
+  const outvoted = aggregateMedia([
+    row('mal:1', { score: 0.9, episodeCount: 12 }),
+    row('kitsu:1', { score: 0.3, episodeCount: 13 }),
+  ], 'https://stub.moe')
+  expect(outvoted.episodeCount).toBe(12)
+})
+
+// the one-row path returns mediaToGQL whole and never reaches the reduce, so it needs its own case:
+// a single source is its own consensus
+test('a single source is its own consensus', () => {
+  expect(aggregateMedia([row('anizip:1', { score: null, episodeCount: 11 })], 'https://stub.moe').episodeCount)
+    .toBe(11)
+})

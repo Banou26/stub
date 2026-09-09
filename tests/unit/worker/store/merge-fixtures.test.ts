@@ -6,9 +6,11 @@
 // and why. Every assertion here names the pair, the case, and the reason the case gives.
 import { beforeEach, describe, expect, test } from 'vitest'
 
-import type { Media } from '../../../../src/worker/store/types'
+import type { Episode, Media } from '../../../../src/worker/store/types'
 import { MERGE_CASES, type FixtureMedia, type MergeCase } from './merge-fixtures'
-import { findAggregatedMedia, resetStore, upsertMedia } from '../../../../src/worker/store/db'
+import {
+  findAggregatedMedia, findRunEpisodes, resetStore, upsertEpisodes, upsertMedia,
+} from '../../../../src/worker/store/db'
 import { fuzzyMergeMediaClusters } from '../../../../src/worker/store/fuzzy-merge'
 
 // Per-source score, because it decides which titles survive MAX_TITLES_PER_CLUSTER's slice and so
@@ -26,9 +28,30 @@ const toStoreMedia = (fixture: FixtureMedia): Media => {
     type: 'TV',
     categories: ['ANIME', 'SERIES'],
     startDate: fixture.startDate,
+    episodeCount: fixture.episodeCount ?? null,
+    score,
     titles: fixture.titles.map(title => ({ language: 'en', title, score })),
   } as unknown as Media
 }
+
+/**
+ * The episodes a source publishes, attached to the media that published them.
+ *
+ * Numbered per source and never linked across sources, which is what the real store holds: two
+ * catalogues describing episode 1 of one run produce two rows, and it is `findAggregatedEpisodesForMedia`
+ * that groups them. So a case asserting what a cluster LISTS is asserting that grouping, not the
+ * fixture's own arithmetic.
+ */
+const toStoreEpisodes = (fixture: FixtureMedia): Episode[] =>
+  (fixture.episodes ?? []).map(episodeNumber => ({
+    uri: `${fixture.uri}-e${episodeNumber}`,
+    origin: fixture.uri.slice(0, fixture.uri.indexOf(':')),
+    id: `${fixture.uri.slice(fixture.uri.indexOf(':') + 1)}-e${episodeNumber}`,
+    mediaUri: fixture.uri,
+    episodeNumber,
+    score: SCORE[fixture.uri.slice(0, fixture.uri.indexOf(':'))] ?? 0.5,
+    titles: [],
+  } as unknown as Episode))
 
 const runCase = async (testCase: MergeCase) => {
   resetStore()
@@ -36,6 +59,8 @@ const runCase = async (testCase: MergeCase) => {
     testCase.medias.map(toStoreMedia),
     (testCase.handles ?? []).map(([mediaUri, handleUri]) => ({ mediaUri, handleUri }))
   )
+  const episodes = testCase.medias.flatMap(toStoreEpisodes)
+  if (episodes.length) await upsertEpisodes(episodes, [])
 
   // the app calls this on every page build, and it is idempotent, so running it until it stops
   // linking is what the app converges to rather than a single pass being what is under test
@@ -49,6 +74,17 @@ const runCase = async (testCase: MergeCase) => {
     clusterOf.set(uri, (await findAggregatedMedia(uri)).map(member => member.uri).sort())
   }
   return clusterOf
+}
+
+/** How many distinct episode numbers the cluster holding `uri` lists, the way the page renders them. */
+const listedEpisodes = async (uri: string): Promise<number> => {
+  const cluster = await findAggregatedMedia(uri)
+  const groups = await findRunEpisodes(cluster)
+  const numbers = new Set<number>()
+  for (const group of groups) {
+    for (const episode of group) if (episode.episodeNumber != null) numbers.add(episode.episodeNumber)
+  }
+  return numbers.size
 }
 
 describe('merge fixtures, hand-checked against real source payloads', () => {
@@ -72,6 +108,17 @@ describe('merge fixtures, hand-checked against real source payloads', () => {
         }
       }
 
+      for (const [uri, expected] of Object.entries(testCase.lists ?? {})) {
+        const listed = await listedEpisodes(uri)
+        if (listed !== expected) {
+          failures.push(
+            `LISTS ${listed} EPISODES, EXPECTED ${expected}: ${uri}'s cluster is ` +
+            `[${(clusterOf.get(uri) ?? []).join(', ')}]. A cluster can hold the right members and ` +
+            `still list somebody else's episodes.`
+          )
+        }
+      }
+
       for (const [a, b] of testCase.apart ?? []) {
         if ((clusterOf.get(a) ?? []).includes(b)) {
           failures.push(`WELD: ${a} and ${b} are one cluster and must not be. Cluster is [${(clusterOf.get(a) ?? []).join(', ')}]`)
@@ -80,7 +127,7 @@ describe('merge fixtures, hand-checked against real source payloads', () => {
 
       if (failures.length) {
         throw new Error(
-          `${failures.length} of ${(testCase.together ?? []).length + (testCase.apart ?? []).length} expectations failed\n\n` +
+          `${failures.length} of ${(testCase.together ?? []).length + (testCase.apart ?? []).length + Object.keys(testCase.lists ?? {}).length} expectations failed\n\n` +
           `WHY THIS CASE IS RIGHT: ${testCase.why}\n\n` +
           `${[...new Set(failures)].join('\n')}`
         )
@@ -92,10 +139,15 @@ describe('merge fixtures, hand-checked against real source payloads', () => {
   // The suite's own control. Every case above is written so that BOTH directions bite, and a case
   // carrying only one of them would silently be passed by an implementation that merges everything
   // or nothing. This fails the moment someone adds a case without deciding both.
+  //
+  // `lists` counts as the refusing direction: an implementation that merged everything would hand a
+  // run every episode in its franchise and fail it, exactly as `apart` would.
   test('every case asserts both directions, so neither extreme can pass the suite', () => {
     const oneSided = MERGE_CASES
       .filter(testCase => testCase.medias.length > 3)
-      .filter(testCase => !(testCase.together ?? []).length || !(testCase.apart ?? []).length)
+      .filter(testCase =>
+        !(testCase.together ?? []).length
+        || !((testCase.apart ?? []).length || Object.keys(testCase.lists ?? {}).length))
       .map(testCase => testCase.name)
 
     expect(oneSided).toEqual([])

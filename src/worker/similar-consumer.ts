@@ -16,6 +16,7 @@ import type { Media } from './store/types'
 import type { RequestContext } from './request-context'
 
 import { findAggregatedEpisodesForMedia, findAggregatedMedia, findPartOfMedia, upsertMedia } from './store/db'
+import { runLength } from './store/consensus'
 import {
   answerNamesOurShow,
   bestRunStartDate,
@@ -168,7 +169,9 @@ export const runEvidence = (cluster: Media[], episodeTitles: readonly string[]):
   return {
     titles: dedupe(sorted.flatMap(media => (media.titles ?? []).map(title => title.title))).filter(title => !isOnlySeasonLabel(title)),
     startDate: bestRunStartDate(sorted.map(media => media.startDate)),
-    episodeCount: sorted.find(media => media.episodeCount != null)?.episodeCount ?? undefined,
+    // the same consensus the aggregate publishes, so a source is asked against the number the page
+    // shows rather than a second opinion assembled here (store/consensus.ts)
+    episodeCount: runLength(cluster) ?? undefined,
     episodeTitles: dedupe(episodeTitles).slice(0, 200),
   }
 }

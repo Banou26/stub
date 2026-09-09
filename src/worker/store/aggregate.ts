@@ -1,4 +1,5 @@
 import type { Media as GQLMedia, Episode as GQLEpisode, MediaCategory } from '../../generated/schema/types.generated'
+import { runLength } from './consensus'
 import type { Media, Episode } from './types'
 import { getRoutePath, Route } from '../../router/path'
 import { findPartOfMedia, graph, IDENTITY_LABELS } from './db'
@@ -369,6 +370,15 @@ export function aggregateMedia(medias: Media[], locationOrigin: string): GQLMedi
 
   return {
     ...merged as GQLMedia,
+    /**
+     * The count the sources AGREE on, not the best-scored one's.
+     *
+     * Everything else in that reduce is a first-non-null-in-score-order pick, which is right for a
+     * spelling and wrong for a number: two catalogues saying 11 used to lose to one saying 24 as soon
+     * as it outscored them, and this is the number the UI prints AND the number every season picker
+     * reads back through `waitForMedia`. See ./consensus.ts.
+     */
+    episodeCount: runLength(medias) ?? merged.episodeCount ?? null,
     relations: mergeRelations(merged.relations ?? [], medias),
     categories: reconcileCategories(merged.categories ?? []),
     ...seasonOf(sorted),
