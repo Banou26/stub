@@ -506,3 +506,74 @@ test('an image url on the geo-gated site is served from the CDN host instead', a
     .toBe('https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1920/catalog/crunchyroll/x.png')
   expect(cdnImageUrl('https://s4.anilist.co/file/x.jpg'), 'another host is left alone').toBe('https://s4.anilist.co/file/x.jpg')
 })
+
+/**
+ * THE FOLD, and why title and date cannot see it.
+ *
+ * Crunchyroll models Mushoku Tensei season 1 as ONE season of 23, where AniList and MAL split the same
+ * broadcast into 11 and 12. Its premiere is season 1 part 1's premiere, so the date axis matches to
+ * the day and the title axis matches by construction: part 1 came back holding a season that is part 1
+ * plus part 2 plus the Eris special, and the modal listed 24 rows for an 11 episode run.
+ *
+ * Measured on the live site 2026-09-09, reached by opening season 3 and clicking the prequel relation
+ * four times: hop 2 and hop 4 each landed on a part 1 showing 24, and each had gained a `cr:` season
+ * handle the direct address did not have. Rows 12 to 23 were part 2's episodes by title and row 24 was
+ * the special.
+ *
+ * A count is the only axis that separates them, and `foldVetoed` is the rule the rest of this tree
+ * already uses for it.
+ */
+test('a season holding more episodes than the run does not become the run', async () => {
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  // part 1 as AniList and MAL describe it: 11 episodes, premiering the day before CR's season 1
+  const known = {
+    titles: [{ language: 'en', title: 'Mushoku Tensei', score: 1 }],
+    startDate: '2021-01-10T00:00:00Z',
+    episodeCount: 11,
+  }
+  const ctx = Object.assign(
+    context({ ...MUSHOKU, ...SEARCH('Mushoku Tensei', [{ id: 'G24H1N3MP', title: 'Mushoku Tensei' }]) }),
+    { findAggregatedMedia: async () => known, listenForMediaChanges: async function* () {} }
+  )
+  const { value } = await subscribe(undefined, { input: { uri: 'ag:(anilist:108465,kitsu:42323)' } }, ctx).next()
+
+  expect(value.media, 'CR season 1 is 23 episodes over a run of 11, so it is not this run').toBeNull()
+})
+
+/**
+ * THE CONTROL, and it is the whole point of the rule being a count rather than a refusal.
+ *
+ * The same show, the same search, the same date axis. A run whose own count matches the season still
+ * links, so the veto is separating folded seasons rather than switching Crunchyroll off for anything
+ * with a number attached.
+ */
+test('and a season the size of the run still links', async () => {
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  // season 3 as its metadata describes it: 14 episodes, premiering the day CR says
+  const known = {
+    titles: [{ language: 'en', title: 'Mushoku Tensei', score: 1 }],
+    startDate: '2026-07-04T00:00:00Z',
+    episodeCount: 14,
+  }
+  const ctx = Object.assign(
+    context({ ...MUSHOKU, ...SEARCH('Mushoku Tensei', [{ id: 'G24H1N3MP', title: 'Mushoku Tensei' }]) }),
+    { findAggregatedMedia: async () => known, listenForMediaChanges: async function* () {} }
+  )
+  const { value } = await subscribe(undefined, { input: { uri: 'ag:(anilist:178789,kitsu:49002)' } }, ctx).next()
+
+  expect(value.media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})
+
+// and a run that says nothing about its length is unchanged: the veto reads a count it was given, and
+// refusing on silence would take Crunchyroll off every cluster whose sources never published one
+test('a run with no count of its own still links, as it always did', async () => {
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const known = { titles: [{ language: 'en', title: 'Mushoku Tensei', score: 1 }], startDate: '2026-07-04T00:00:00Z' }
+  const ctx = Object.assign(
+    context({ ...MUSHOKU, ...SEARCH('Mushoku Tensei', [{ id: 'G24H1N3MP', title: 'Mushoku Tensei' }]) }),
+    { findAggregatedMedia: async () => known, listenForMediaChanges: async function* () {} }
+  )
+  const { value } = await subscribe(undefined, { input: { uri: 'ag:(anilist:178789)' } }, ctx).next()
+
+  expect(value.media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})

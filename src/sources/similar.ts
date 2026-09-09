@@ -136,9 +136,15 @@ const candidateYear = <T>(candidate: SeasonCandidate<T>): number | undefined =>
 // season whose episodes payload was empty (2026-09-05).
 const countOf = <T>(candidate: SeasonCandidate<T>): number | undefined => candidate.episodeCount || undefined
 
-// A season holding MORE episodes than the run holds other runs too (Netflix season 2 = 25 over 13 and
-// 12). Zero tolerance, the same allowance season.ts measured as the only one worth having.
-const foldVetoed = <T>(evidence: RunEvidence, candidate: SeasonCandidate<T>): boolean => {
+/**
+ * A season holding MORE episodes than the run holds other runs too (Netflix season 2 = 25 over 13 and
+ * 12). Zero tolerance, the same allowance season.ts measured as the only one worth having.
+ *
+ * Exported because a picker that answers on its own axes still needs it: Crunchyroll's search path
+ * matches on title and premiere, and a catalogue that folds two cours into one season premieres on
+ * the SAME DAY as the first of them, so neither axis can see the fold.
+ */
+export const foldVetoed = <T>(evidence: RunEvidence, candidate: SeasonCandidate<T>): boolean => {
   const theirs = countOf(candidate)
   return theirs != null && evidence.episodeCount != null && theirs > evidence.episodeCount
 }

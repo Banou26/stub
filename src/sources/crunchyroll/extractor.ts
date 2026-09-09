@@ -3,7 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaI
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { SEASON_DATE_WINDOW } from '../catalogue-gate'
 import { isOnlySeasonLabel } from '../season'
-import { pickSimilarSeason, type SeasonCandidate } from '../similar'
+import { foldVetoed, pickSimilarSeason, type SeasonCandidate } from '../similar'
 import {
   makeMedia, makeEpisode, desc, img,
   bestTitleScore, buildHandlesFromUri, getFirstTitle, simplifyTitle, waitForMedia
@@ -335,9 +335,12 @@ export const resetCrunchyrollCaches = () => { _seasonCandidates.clear() }
 
 const seasonAirDates = async (seriesId: string, ctx: ExtractorServerContext) => {
   const { seasons, candidates } = await seasonCandidates(seriesId, ctx)
-  const dates = candidates.map(({ season, premiere }) => ({
+  // the count rides along with the date: `searchAndLinkMedia` needs it to see a folded season, and
+  // the walk has already paid for it
+  const dates = candidates.map(({ season, premiere, episodeCount }) => ({
     resolvedId: season.resolvedId,
-    airDate: premiere ? new Date(premiere) : undefined
+    airDate: premiere ? new Date(premiere) : undefined,
+    episodeCount
   }))
   return { seasons, dates }
 }
@@ -424,7 +427,25 @@ const searchAndLinkMedia = async (
     let best: { seriesId: string, seasonId: string, diff: number } | undefined
     for (const { series } of scored) {
       const { dates } = await seasonAirDates(series.id, ctx)
-      const season = closestSeason(dates, targetDate)
+      /**
+       * A THIRD AXIS, because the two above cannot see this one.
+       *
+       * Crunchyroll models Mushoku Tensei season 1 as ONE season of 23 and a special, where AniList
+       * and MAL split the same broadcast into 11 and 12. It premieres within a day of part 1, so the
+       * date axis matches and the title axis matches by construction, and part 1 came back holding a
+       * season that is part 1 plus part 2 plus the special: 24 rows for an 11 episode run.
+       *
+       * Measured on the live site 2026-09-09, reached by opening season 3 and clicking the prequel
+       * relation four times. Hops 2 and 4 each landed on a part 1 showing 24 and each had gained a
+       * `cr:` season handle the direct address never had, which is why it does not reproduce by
+       * pasting the url.
+       *
+       * Same rule and same zero tolerance as every other season picker in this tree, which is why it
+       * is imported rather than restated.
+       */
+      const usable = dates.filter(({ resolvedId, episodeCount }) =>
+        !foldVetoed({ episodeCount: known.episodeCount }, { season: resolvedId, episodeCount }))
+      const season = closestSeason(usable, targetDate)
       if (!season || season.diff > SEASON_DATE_WINDOW) continue
       if (!best || season.diff < best.diff) best = { seriesId: series.id, seasonId: season.id, diff: season.diff }
     }
