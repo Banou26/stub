@@ -7,14 +7,13 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { party } from '../party'
 import { chatText } from '../party/protocol'
 import { useParty, usePartyMessages } from '../party/use-party'
+import { layer } from '../layers'
 
 const style = css`
   position: fixed;
   right: 2rem;
   bottom: 2rem;
-  /* the header band (see components/header.tsx): fixed at the router root, so it competes at ROOT
-     and 145 put it under any open modal, where a click on it closed the modal instead */
-  z-index: 1150;
+  z-index: ${layer.headerPopup};
   display: flex;
   flex-direction: column;
   align-items: flex-end;

@@ -3,6 +3,7 @@ import type { ComponentChildren } from 'preact'
 import { css } from '@emotion/react'
 import { useMemo, useState } from 'preact/hooks'
 import { Check, ChevronDown, Search } from 'lucide-react'
+import { layer } from '../layers'
 import {
   autoUpdate, flip, offset, shift, size,
   FloatingFocusManager, FloatingPortal,
@@ -61,7 +62,7 @@ const style = css`
 `
 
 const menuStyle = css`
-  z-index: 500;
+  z-index: ${layer.filterMenu};
   width: max-content;
   min-width: 22rem;
   max-width: 34rem;

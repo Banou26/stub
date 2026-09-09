@@ -8,6 +8,7 @@ import { ChevronDown, ExternalLink, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'preact/hooks'
 
 import { useAccount } from '../utils/use-account'
+import { layer } from '../layers'
 
 const MANAGE_URL = 'https://fkn.app/account'
 
@@ -66,15 +67,10 @@ const style = css`
   .chevron { flex-shrink: 0; }
 `
 
-/* Portalled to the body rather than left inside the header, so that a menu nested in the bar cannot
-   be capped by it. The cost of portalling is that it competes at ROOT rather than inheriting the
-   header's number, which is why this needs one of its own.
-
-   400 was written when the header was at 100 and the modal covered it, so a menu under the modal
-   could not be reached anyway. Neither half survived: the bar is 1100 now and stays visible over the
-   modal, so the button opened a menu nobody could see or click. The header band is 1150. */
+/* Portalled to the body rather than left inside the header, so the bar's own stacking context cannot
+   cap it. The cost is that it then competes at the root and needs a layer of its own. */
 const menuStyle = css`
-  z-index: 1150;
+  z-index: ${layer.headerPopup};
   display: flex;
   flex-direction: column;
   min-width: 18rem;

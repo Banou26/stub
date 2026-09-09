@@ -28,17 +28,10 @@ import { releaseDateAttribute, releaseDateDisplay } from '../../utils/release-da
 import { getPlayer } from '../../sources/players'
 import SourceSelector from '../../components/source-selector'
 import { useCoverUrl } from '../../utils/use-cover-url'
+import { layer } from '../../layers'
 
 const style = css`
-/* Above the category bar (z-index 1) so the "All/Anime/Series/Movies" tabs don't paint over the
-   modal. BELOW the header band, which is deliberate: a follower in a watch party needs the party
-   pill to stop following, and it lives up there with everything it opens (components/header.tsx).
-
-   This overlay is ALSO the modal's own dismiss target, and it takes pointer events across the whole
-   viewport, so anything that lands under it is not merely dimmed by the 44% black: it is unclickable,
-   and the click meant for it closes the modal instead. That is why a control meant to survive a
-   modal has to be over this number rather than merely visible through it. */
-z-index: 1000;
+z-index: ${layer.mediaModal};
 padding: 5rem 1rem;
 background-color: hsla(0, 0%, 0%, 0.439);
 animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);

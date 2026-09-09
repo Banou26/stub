@@ -3,11 +3,12 @@ import { packages } from '@fkn/lib'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
 import { selectRemoteRelease } from '../worker'
+import { layer } from '../layers'
 
 const style = css`
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: ${layer.sourcePopup};
   display: flex;
   align-items: center;
   justify-content: center;

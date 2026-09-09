@@ -13,6 +13,7 @@ import type { HoverTarget } from '../utils/franchise-layout'
 import { IDENTITY, fit, panBy, zoomAt } from '../utils/viewport'
 import type { View } from '../utils/viewport'
 import { relationLabel, workFormatLabel } from '../utils/relation-labels'
+import { layer } from '../layers'
 
 /**
  * Every work in a series, drawn left to right IN THE ORDER IT HAPPENED.
@@ -73,8 +74,7 @@ const overlayStyle = css`
   justify-content: center;
   padding: 4rem;
   background: rgba(0, 0, 0, 0.75);
-  /* above the media modal (1000) and the header over it (1100): this opens from inside that modal */
-  z-index: 1200;
+  z-index: ${layer.franchiseDialog};
 
   .sheet {
     position: relative;

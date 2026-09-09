@@ -2,14 +2,14 @@ import { css } from '@emotion/react'
 import { useEffect, useState } from 'preact/hooks'
 
 import { acceptInvites, declineInvites, dismissInvite, onInvitesChange, pluginInvites, type PluginInvite } from '../plugin-invites'
+import { layer } from '../layers'
 
 const style = css`
   position: fixed;
   inset: 0;
-  /* Above the media modal (1000) and the header band over it (1150). This mounts at the router root,
-     a sibling of the modal's portal rather than a child of it, so it competes in the root stacking
-     context and 200 put it behind the modal on any /media route. */
-  z-index: 2000;
+  /* a sibling of the modal's portal rather than a child of it, so it competes at the root and 200
+     put it behind the modal on any /media route */
+  z-index: ${layer.pluginPrompt};
   display: flex;
   align-items: center;
   justify-content: center;

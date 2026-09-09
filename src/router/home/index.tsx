@@ -13,6 +13,7 @@ import CategoryTabs from '../../components/category-tabs'
 import { orderKeys, settledOrder } from '../../utils/settled-order'
 import { searchPath, seasonValue } from '../search/params'
 import { mediaSeasonNow } from '../../sources/season'
+import { layer } from '../../layers'
 
 const GET_RELEASING_MEDIA_PAGE = gql(`
   subscription GetReleasingMediaPage($input: MediaPageInput!, $shortDescriptionInput: MediaShortDescriptionInput!) {
@@ -54,7 +55,7 @@ const GET_RELEASING_MEDIA_PAGE = gql(`
 const style = css`
   .category-bar {
     position: relative;
-    z-index: 1;
+    z-index: ${layer.categoryBar};
     padding: 1.5rem 3rem 0.5rem;
   }
 `

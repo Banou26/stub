@@ -18,6 +18,7 @@ import { getRoutePath, Route } from '../path'
 import MediaTitle from '../../components/media-title'
 import Draggable from '../../components/draggable'
 import { MediaPreview } from '../../components/media-preview'
+import { layer } from '../../layers'
 
 const style = css`
 display: flex;
@@ -139,9 +140,7 @@ const CellComponent = (
                 position: strategy,
                 top: y ?? 0,
                 left: x ?? 0,
-                // above the category bar (z-index 1), below the media modal (1000) and the header
-                // band over it: this previews a card, and a card is only hovered while nothing covers it
-                zIndex: 150
+                zIndex: layer.hoverCard
               }}
               {...getFloatingProps()}
             />
