@@ -1,4 +1,13 @@
-export const PLUGIN_PARAM = 'plugin'
+export const PLUGIN_PARAM = 'plugins'
+
+/**
+ * What the parameter was called until 2026-09-09, still READ and never written.
+ *
+ * The link is the whole point of this module: an invite is a url someone pasted into a chat, and it
+ * outlives the rename by however long that chat does. Reading both costs one line; not reading the
+ * old one turns every shared invite into a page that silently offers nothing.
+ */
+const LEGACY_PLUGIN_PARAM = 'plugin'
 
 const parse = (url: string, base?: string): URL | undefined => {
   try {
@@ -25,7 +34,13 @@ export const comparablePluginUri = (uri: string): string =>
 export const readPluginUris = (url: string, base?: string): string[] => {
   const parsed = parse(url, base)
   if (!parsed) return []
-  return dedupe(parsed.searchParams.getAll(PLUGIN_PARAM).map(uri => uri.trim()))
+  // walked in the order the url writes them, rather than one name's values and then the other's, so a
+  // link offering several sources prompts for them in the order it names them
+  return dedupe(
+    [...parsed.searchParams]
+      .filter(([name]) => name === PLUGIN_PARAM || name === LEGACY_PLUGIN_PARAM)
+      .map(([, uri]) => uri.trim())
+  )
 }
 
 // not the URLSearchParams serializer: it percent-encodes ':' '@' '/', which every plugin address is
@@ -41,6 +56,8 @@ export const writePluginUris = (url: string, uris: string[], base: string): stri
   const from = parse(base)
   if (!parsed || !from || parsed.origin !== from.origin) return url
   parsed.searchParams.delete(PLUGIN_PARAM)
+  // an url that arrives under the old name leaves under the new one, rather than carrying both
+  parsed.searchParams.delete(LEGACY_PLUGIN_PARAM)
   const others = parsed.searchParams.toString()
   const plugins =
     dedupe(uris.map(uri => uri.trim()))

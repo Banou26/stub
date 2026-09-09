@@ -13,7 +13,7 @@
 // whatever happened (measured on this machine, see agent conventions/lessons/verification.md), so a
 // run that printed `all good` still reports failure to anything gating on the status.
 //
-// Both contexts ACCEPT the source the link offers before anything else: a `?plugin=` url only opens
+// Both contexts ACCEPT the source the link offers before anything else: a `?plugins=` url only opens
 // an "Add this source?" prompt, so a run that ignores it has no plugin and no player.
 //
 // The plugin and ripple are the deployed ones (stub.plugins.banou.dev, torrent.fkn.app), because the
@@ -74,7 +74,7 @@ const widget = page => page.getByRole('button', { name: /Watch together|Hosting|
 /**
  * Accept the source this link offers, which is what makes the plugin exist at all.
  *
- * A `?plugin=` url does not install anything: it OFFERS an invite, and stub renders "Add this
+ * A `?plugins=` url does not install anything: it OFFERS an invite, and stub renders "Add this
  * source?" over the page until somebody answers. A run that skipped it got a watch page with no
  * plugin, no player and nothing to sync, which reads exactly like a broken chain (2026-09-07).
  * Tolerant of the prompt being absent, since a context that already accepted will not see it.
@@ -106,7 +106,7 @@ const run = async () => {
     page.on('pageerror', error => bad(`an uncaught page error on the ${name}`, String(error).slice(0, 160)))
   }
 
-  console.log(`\n[party playback via plugin] ${ORIGIN} plugin=${PLUGIN}`)
+  console.log(`\n[party playback via plugin] ${ORIGIN} plugins=${PLUGIN}`)
 
   console.log('\nthe host starts a party and opens the release through the plugin')
   await host.goto(`${ORIGIN}/`, { waitUntil: 'domcontentloaded' })
@@ -123,7 +123,7 @@ const run = async () => {
   const link = await host.getByRole('textbox', { name: 'Invite link' }).inputValue()
   await host.keyboard.press('Escape')
 
-  await host.goto(`${ORIGIN}${WATCH}?plugin=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
+  await host.goto(`${ORIGIN}${WATCH}?plugins=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
   check(await addTheSource(host), 'the host accepted the source the link offers')
   const hostVideo = await until(() => videoOf(host), video => video && video.ready >= 2, 180_000, 1_000)
   check(Boolean(hostVideo), 'the host’s embed has a video with data', JSON.stringify(hostVideo))
@@ -151,11 +151,11 @@ const run = async () => {
 
   console.log('\nthe guest joins and lands on the same release')
   // THE GUEST INSTALLS THE SOURCE FIRST, which is not a detail of the rig but a fact about the
-  // product: a party invite is `/party#<invite>` and carries no `?plugin=`, so a follower is never
+  // product: a party invite is `/party#<invite>` and carries no `?plugins=`, so a follower is never
   // offered the host's source. A follower who does not already have it gets the watch page and no
   // player at all. This check is about playback SYNC, so it puts the guest in the position of
   // somebody who already had the source, and the gap itself is recorded in agent projects/stub.md.
-  await guest.goto(`${ORIGIN}${WATCH}?plugin=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
+  await guest.goto(`${ORIGIN}${WATCH}?plugins=${PLUGIN}`, { waitUntil: 'domcontentloaded' })
   check(await addTheSource(guest), 'the guest has the source before it joins')
   await guest.goto(link, { waitUntil: 'domcontentloaded' })
   const landed = await until(() => new URL(guest.url()).pathname, path => path.startsWith('/watch/'), 60_000)
