@@ -670,6 +670,13 @@ const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerCon
     return request
   }
 
+  // The show container, held rather than returned. A season media is strictly better than it, so the
+  // search has to run to the end before settling for one: a franchise is routinely split across
+  // several catalogue entries, and returning the first candidate whose season folds would beat a
+  // later entry that matches a season exactly. First one wins, matching the rest of this loop, where
+  // candidates are already ordered by title score.
+  let container: GQLMedia | null = null
+
   for (const query of searchQueries(primary)) {
     const searchRes = await searchTitles(query, ctx)
     const results = (searchRes.data?.popularTitles?.edges ?? []).map(edge => edge.node)
@@ -708,11 +715,10 @@ const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerCon
       // packs two cours into one season, so a cour matches none of them. The show still comes back, as
       // a container, because the offers hang off it and they carry the provider ids. Deliberately NOT
       // `mergeHandles`d: see `showAsContainer`.
-      const container = await showAsContainer(node, ctx)
-      if (container) return container
+      if (!container) container = await showAsContainer(node, ctx)
     }
   }
-  return null
+  return container
 }
 
 const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<GQLMedia | null> => {

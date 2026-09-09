@@ -468,3 +468,80 @@ test('a show with no offers worth minting yields nothing at all', async () => {
   ]) as never, bare())
   expect(unmapped, 'a host `extractContentId` does not know mints no id').toBeNull()
 })
+
+// The container is HELD, never returned early. A franchise is routinely split across several catalogue
+// entries and the runners-up are checked for exactly that reason, so returning the first candidate
+// whose season folds would beat a later entry that matches a season exactly, trading a run for a
+// container. That is the one way this fallback could make results worse than refusing outright.
+const searchContext = (nodes: Record<string, unknown>[], known: Record<string, unknown>) => ({
+  findAggregatedMedia: async () => known,
+  listenForMediaChanges: async function* () {},
+  fetch: async (url: string, init?: { body?: string }) => {
+    if (url !== JW_API) throw new Error(`fixture has no route for ${url}`)
+    const body = init?.body ?? ''
+    if (body.includes('GetSearchTitles')) {
+      return { json: async () => ({ data: { popularTitles: { edges: nodes.map(node => ({ node })) } } }) }
+    }
+    const nodeId = JSON.parse(body).variables.nodeId
+    const node = nodes.find(candidate => candidate.id === nodeId)
+    if (!node) throw new Error(`fixture has no node ${nodeId}`)
+    return { json: async () => ({ data: { node } }) }
+  },
+}) as never
+
+const candidate = (id: number, seasons: { n: number, count: number }[], offers: unknown[] = []) => ({
+  id: `ts${id}`,
+  objectId: id,
+  objectType: 'SHOW',
+  content: {
+    title: 'A Folding Show', fullPath: `/us/tv-show/${id}`, posterUrl: null,
+    shortDescription: 'x', originalReleaseYear: 2023,
+  },
+  offers,
+  extraOffers: [],
+  seasons: seasons.map(({ n, count }) => ({
+    id: `s${id}-${n}`, objectId: id * 10 + n, totalEpisodeCount: count,
+    content: { title: `Season ${n}`, seasonNumber: n, isReleased: true, originalReleaseYear: 2023 },
+    episodes: [],
+  })),
+})
+
+test('a later candidate that matches a season exactly beats an earlier one that only folds', async () => {
+  const folded = candidate(1111, [{ n: 1, count: 24 }], [
+    { monetizationType: 'FLATRATE', standardWebURL: NF_OFFER, package: { clearName: 'Netflix', shortName: 'nfx' } },
+  ])
+  const exact = candidate(2222, [{ n: 1, count: 12 }])
+  const known = {
+    uri: 'ag:(anilist:999)', titles: [{ title: 'A Folding Show' }],
+    startDate: '2023-07-09', episodeCount: 12,
+  }
+
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const { value } = await subscribe(
+    undefined, { input: { uri: 'ag:(anilist:999)' } }, searchContext([folded, exact], known)
+  ).next()
+
+  expect(value?.media?.origin).toBe('jw')
+  expect(value?.media?.scope, 'the exact season is a RUN, not the folded show container').toBe('RUN')
+  expect(String(value?.media?.id), 'the SECOND candidate, whose season matches the run').toContain('2222')
+})
+
+// The other half of the same rule: when nothing matches a season, the held container is what comes back
+// rather than null. Without it the offers, and with them the netflix id, are lost entirely.
+test('when no candidate matches a season, the held container is returned', async () => {
+  const folded = candidate(1111, [{ n: 1, count: 24 }], [
+    { monetizationType: 'FLATRATE', standardWebURL: NF_OFFER, package: { clearName: 'Netflix', shortName: 'nfx' } },
+  ])
+  const known = {
+    uri: 'ag:(anilist:999)', titles: [{ title: 'A Folding Show' }],
+    startDate: '2023-07-09', episodeCount: 12,
+  }
+
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const { value } = await subscribe(
+    undefined, { input: { uri: 'ag:(anilist:999)' } }, searchContext([folded], known)
+  ).next()
+
+  expect(value?.media?.scope).toBe('CONTAINER')
+  expect(idFor((value?.media?.handles ?? []).map((h: any) => h.node), 'nf')).toEqual(['80123456'])
+})
