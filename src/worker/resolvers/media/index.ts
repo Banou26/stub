@@ -5,7 +5,7 @@ import type { Media, MediaPage, MediaPageResolvers, Resolvers, SubscriptionResol
 import _schema from './schema.gql?raw'
 import { implementsSimilarMedia, proxyRequestToExtractors, similarOutcomeFrom } from '../../extractor'
 import { resolveSimilarRuns } from '../../similar-consumer'
-import { findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, findRunEpisodes, hideAttachedContainers } from '../../store/db'
+import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, findRunEpisodes, hideAttachedContainers } from '../../store/db'
 import { applyMediaFilters } from '../../store/filter'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
@@ -186,7 +186,12 @@ export const resolvers = {
       // findRunEpisodes, not the bare walk: a member that packages this run inside a longer season
       // brings that season's whole list with it, and only the part of it that fits the run is this
       // run's. See store/consensus.ts.
-      const cluster = await findMediaForPage(parent.uri)
+      //
+      // The cluster is read from the FIRST HANDLE, not from `parent.uri` through findMediaForPage:
+      // that one falls back through handles and prefers an attached run, so it can answer with a
+      // different set from the one whose episodes are being walked, and the counts deciding the trim
+      // have to come from exactly the rows that supplied the episodes.
+      const cluster = await findAggregatedMedia(handleUris[0]!)
       const episodeGroups = cluster.length
         ? await findRunEpisodes(cluster)
         : await findAggregatedEpisodesForMedia(handleUris)
