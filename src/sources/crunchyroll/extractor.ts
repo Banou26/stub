@@ -3,7 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaI
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
 import { SEASON_DATE_WINDOW } from '../catalogue-gate'
 import { isOnlySeasonLabel } from '../season'
-import { foldVetoed, pickSimilarSeason, type SeasonCandidate } from '../similar'
+import { pickSimilarSeason, type RunEvidence, type SeasonCandidate } from '../similar'
 import {
   makeMedia, makeEpisode, desc, img,
   bestTitleScore, buildHandlesFromUri, getFirstTitle, simplifyTitle, waitForMedia
@@ -333,31 +333,6 @@ const seasonCandidates = (seriesId: string, ctx: ExtractorServerContext): Promis
 /** TESTS ONLY: forget every cached season walk. A module singleton, so a test counting requests otherwise reads the test before it. */
 export const resetCrunchyrollCaches = () => { _seasonCandidates.clear() }
 
-const seasonAirDates = async (seriesId: string, ctx: ExtractorServerContext) => {
-  const { seasons, candidates } = await seasonCandidates(seriesId, ctx)
-  // the count rides along with the date: `searchAndLinkMedia` needs it to see a folded season, and
-  // the walk has already paid for it
-  const dates = candidates.map(({ season, premiere, episodeCount }) => ({
-    resolvedId: season.resolvedId,
-    airDate: premiere ? new Date(premiere) : undefined,
-    episodeCount
-  }))
-  return { seasons, dates }
-}
-
-const closestSeason = (
-  dates: { resolvedId: string, airDate?: Date }[],
-  targetDate: Date
-): { id: string, diff: number } | undefined => {
-  let best: { id: string, diff: number } | undefined
-  for (const { resolvedId, airDate } of dates) {
-    if (!airDate) continue
-    const diff = Math.abs(airDate.getTime() - targetDate.getTime())
-    if (!best || diff < best.diff) best = { id: resolvedId, diff }
-  }
-  return best
-}
-
 /**
  * Linking a search hit asserts identity PERMANENTLY: `graph.link` is a union-find union with no
  * inverse, so a wrong hit is not a bad row, it is a different show welded to this title for the rest
@@ -424,30 +399,39 @@ const searchAndLinkMedia = async (
       .slice(0, MAX_SERIES_CANDIDATES)
     if (!scored.length) continue
 
-    let best: { seriesId: string, seasonId: string, diff: number } | undefined
+    /**
+     * THE SAME PICKER `seasonForShow` USES, rather than a date comparison of this path's own.
+     *
+     * This path had one rule where that one has five, and none of the guards the others carry.
+     * Measured 2026-09-09 against the manami database joined to real AniList dates: 82 pairs of
+     * RELATED entries premiere within 45 days of each other AND clear this file's own 0.9 title gate
+     * on both sides, 37 of them with a TV side. Rent-a-Girlfriend season 2 and its Petit shorts are
+     * three days apart and score 1.0000. Nothing here refused them; what kept them apart was whether
+     * Crunchyroll happened to publish the companion as its own season, which is upstream data rather
+     * than a rule, and a wrong claim unions two runs for the session with no inverse.
+     *
+     * What comes with the picker: a refusal when TWO seasons sit inside the window, which is exactly
+     * what two parts released together look like; a date rule that ignores a start date naming only a
+     * year, which seven extractors template as the first of January; the fold veto this path used to
+     * apply by hand; a year veto; and four further ways to match that a date comparison cannot.
+     *
+     * THE SERIES IS NOW DECIDED BY TITLE ALONE rather than by whichever series held the nearest
+     * season. `scored` is already sorted by title score, and the title is the axis that decides the
+     * franchise; letting a worse-named series win on a closer date is how a companion show gets in.
+     */
+    const evidence: RunEvidence = {
+      startDate: known.startDate,
+      titles: knownTitles,
+      episodeCount: known.episodeCount,
+    }
+
+    let best: { seriesId: string, seasonId: string } | undefined
     for (const { series } of scored) {
-      const { dates } = await seasonAirDates(series.id, ctx)
-      /**
-       * A THIRD AXIS, because the two above cannot see this one.
-       *
-       * Crunchyroll models Mushoku Tensei season 1 as ONE season of 23 and a special, where AniList
-       * and MAL split the same broadcast into 11 and 12. It premieres within a day of part 1, so the
-       * date axis matches and the title axis matches by construction, and part 1 came back holding a
-       * season that is part 1 plus part 2 plus the special: 24 rows for an 11 episode run.
-       *
-       * Measured on the live site 2026-09-09, reached by opening season 3 and clicking the prequel
-       * relation four times. Hops 2 and 4 each landed on a part 1 showing 24 and each had gained a
-       * `cr:` season handle the direct address never had, which is why it does not reproduce by
-       * pasting the url.
-       *
-       * Same rule and same zero tolerance as every other season picker in this tree, which is why it
-       * is imported rather than restated.
-       */
-      const usable = dates.filter(({ resolvedId, episodeCount }) =>
-        !foldVetoed({ episodeCount: known.episodeCount }, { season: resolvedId, episodeCount }))
-      const season = closestSeason(usable, targetDate)
-      if (!season || season.diff > SEASON_DATE_WINDOW) continue
-      if (!best || season.diff < best.diff) best = { seriesId: series.id, seasonId: season.id, diff: season.diff }
+      const { candidates } = await seasonCandidates(series.id, ctx)
+      const verdict = pickSimilarSeason(evidence, candidates)
+      if (!verdict) continue
+      best = { seriesId: series.id, seasonId: verdict.season.resolvedId }
+      break
     }
     if (!best) continue
 

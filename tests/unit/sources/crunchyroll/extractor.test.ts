@@ -43,7 +43,7 @@ const series = (id: string, seasons: Season[]) => ({
         season_id: season.id,
         series_id: id,
         sequence_number: index + 1,
-        // seasonAirDates reads the FIRST episode's air date as the season's premiere, which is what
+        // the season walk reads the FIRST episode's air date as the season's premiere, which is what
         // the date axis compares against
         episode_air_date: season.airDate ?? '2026-07-04T15:00:00Z',
       }))
@@ -576,4 +576,86 @@ test('a run with no count of its own still links, as it always did', async () =>
   const { value } = await subscribe(undefined, { input: { uri: 'ag:(anilist:178789)' } }, ctx).next()
 
   expect(value.media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})
+
+/**
+ * THE SEARCH PATH INHERITS THE PICKER'S GUARDS, which it had none of until 2026-09-09.
+ *
+ * It compared premiere dates itself and took the nearest, where `pickSimilarSeason` refuses an
+ * ambiguity, ignores a start date that names only a year, and vetoes a fold. A wrong claim here is
+ * not a bad row: `buildHandlesFromUri` mints SAME_AS against every member of the cluster, and
+ * `graph.link` is a union-find with no inverse, so it unions two runs for the session.
+ *
+ * The class is measured rather than imagined. Against the manami database joined to real AniList
+ * dates, 82 pairs of RELATED entries premiere within 45 days of each other and clear this file's own
+ * 0.9 title gate on both sides, 37 of them with a TV side: Rent-a-Girlfriend season 2 and its Petit
+ * shorts are three days apart and score 1.0000. What kept those apart was whether Crunchyroll
+ * published the companion as its own season, which is upstream data and not a rule.
+ */
+const searchFor = async (known: Record<string, unknown>, routes: Record<string, unknown>, uri = 'ag:(anilist:1,kitsu:2)') => {
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const ctx = Object.assign(
+    context(routes),
+    { findAggregatedMedia: async () => known, listenForMediaChanges: async function* () {} }
+  )
+  const { value } = await subscribe(undefined, { input: { uri } }, ctx).next()
+  return value.media
+}
+
+const NAMED = [{ language: 'en', title: 'Mushoku Tensei', score: 1 }]
+
+test('the search path refuses two seasons inside one window, which is two parts released together', async () => {
+  const pair = series('GPAIRSEARCH', [
+    { id: 'GPS1', seasonNumber: 1, episodes: 12, airDate: '2024-04-05T00:00:00Z' },
+    { id: 'GPS2', seasonNumber: 2, episodes: 12, airDate: '2024-04-15T00:00:00Z' },
+  ])
+  const media = await searchFor(
+    { titles: NAMED, startDate: '2024-04-08T00:00:00Z', episodeCount: 12 },
+    { ...pair, ...SEARCH('Mushoku Tensei', [{ id: 'GPAIRSEARCH', title: 'Mushoku Tensei' }]) },
+  )
+  expect(media, 'the date cannot say which of the two is ours, so neither is claimed').toBeNull()
+})
+
+/**
+ * A start date naming only a YEAR does not reach the date rule, so it cannot pick a season on
+ * proximity. Seven extractors template `YYYY-01-01` when they know only the year, and against a 45
+ * day window that is a year pretending to be a day.
+ *
+ * It is not thrown away either: the later rules still read the year, which is why this fixture needs
+ * TWO seasons in 2026 to show the refusal. With one, rule 4 would identify it correctly and should.
+ */
+test('and a start date naming only a year cannot pick between two seasons in it', async () => {
+  const media = await searchFor(
+    { titles: NAMED, startDate: '2026-01-01T00:00:00Z', episodeCount: 14 },
+    { ...TWO_IN_2026, ...SEARCH('Mushoku Tensei', [{ id: 'GTWO2026', title: 'Mushoku Tensei' }]) },
+  )
+  expect(media, 'two seasons dated 2026 and a date that names no day: nothing to choose on').toBeNull()
+})
+
+// the control for both: the same path, a day-precise date and one season inside the window, still links
+test('while a day-precise date with one season in range still links', async () => {
+  const media = await searchFor(
+    { titles: NAMED, startDate: '2026-07-04T00:00:00Z', episodeCount: 14 },
+    { ...MUSHOKU, ...SEARCH('Mushoku Tensei', [{ id: 'G24H1N3MP', title: 'Mushoku Tensei' }]) },
+  )
+  expect(media?.uri).toBe('cr:G24H1N3MP-GS00374452')
+})
+
+/**
+ * AND IT CAN NOW MATCH WHERE A DATE COMPARISON HAD NO ANSWER.
+ *
+ * A run whose only date names a year used to be unmatchable on this path: the window was the single
+ * rule, and 2026-01-01 is 185 days from a July premiere. The ordinal in its own title settles it,
+ * which is a rule the picker has and this path did not.
+ */
+test('an ordinal in the title picks a season the date alone could not', async () => {
+  const media = await searchFor(
+    {
+      titles: [{ language: 'en', title: 'Mushoku Tensei Season 3', score: 1 }],
+      startDate: '2026-01-01T00:00:00Z',
+      episodeCount: 14,
+    },
+    { ...TWO_IN_2026, ...SEARCH('Mushoku Tensei Season 3', [{ id: 'GTWO2026', title: 'Mushoku Tensei' }]) },
+  )
+  expect(media?.uri).toBe('cr:GTWO2026-GT3')
 })
