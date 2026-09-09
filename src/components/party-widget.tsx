@@ -68,7 +68,10 @@ const menuStyle = css`
   color: rgba(255, 255, 255, 0.85);
   font-size: 1.3rem;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-  z-index: 150;
+  /* the header band (see components/header.tsx): portalled to the body, so it does NOT inherit the
+     header's 1100 and has to clear the modal itself. This is the menu that bar is up there for, and
+     the party's own end notice force-opens it, which at 150 was told to nobody. */
+  z-index: 1150;
 
   .title {
     font-size: 1.4rem;

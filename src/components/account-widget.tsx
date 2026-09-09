@@ -66,12 +66,15 @@ const style = css`
   .chevron { flex-shrink: 0; }
 `
 
-/* Portalled to the body rather than left inside the header, which is a z-index 100 stacking context:
-   a menu nested in it can never paint above the media hover card (150) or the source popup (300) no
-   matter what z-index it carries. 400 clears both. It stays below the media modal (1000), which is
-   correct rather than a compromise: the modal covers the header, so the button cannot be open under it. */
+/* Portalled to the body rather than left inside the header, so that a menu nested in the bar cannot
+   be capped by it. The cost of portalling is that it competes at ROOT rather than inheriting the
+   header's number, which is why this needs one of its own.
+
+   400 was written when the header was at 100 and the modal covered it, so a menu under the modal
+   could not be reached anyway. Neither half survived: the bar is 1100 now and stays visible over the
+   modal, so the button opened a menu nobody could see or click. The header band is 1150. */
 const menuStyle = css`
-  z-index: 400;
+  z-index: 1150;
   display: flex;
   flex-direction: column;
   min-width: 18rem;

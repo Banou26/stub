@@ -2,11 +2,16 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { expect, describe, test } from 'vitest'
 
-// The three invariants below are CSS and one HTML attribute, so there is nothing to import and call.
-// They are read off the source instead, the way tests/unit/sources/index.test.ts reads the schema, and
-// every one of them carries a control: a regex that stopped matching would otherwise report a passing
-// invariant it never looked at. What no unit test here can do is LAY THE PAGE OUT, so the geometry
-// behind the search-bar rule was measured in a real browser and is recorded with the rule.
+// These invariants are CSS and one HTML attribute, so there is nothing to import and call. They are
+// read off the source instead, the way tests/unit/sources/index.test.ts reads the schema, and every
+// one of them carries a control: a regex that stopped matching would otherwise report a passing
+// invariant it never looked at.
+//
+// What no unit test here can do is LAY THE PAGE OUT, so each rule's behaviour was measured in a real
+// browser and the number is recorded with the rule. The stacking rows have a standing browser check
+// too, scripts/check-modal-header.mjs, which opens a real modal over a real party and hit-tests each
+// control with the old z-index as its control. That file is the one that can see a layer covered;
+// this one is what fails in CI when the number moves.
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(`../../../${path}`, import.meta.url)), 'utf-8')
 
@@ -18,17 +23,24 @@ const zIndexOf = (source: string, after: string) => {
 }
 
 describe('the stacking order', () => {
-  const cursor = read('src/components/party-cursor.tsx')
-  const modal = read('src/router/home/media-modal.tsx')
-  const header = read('src/components/header.tsx')
-  const franchise = read('src/components/media-franchise.tsx')
-  const prompt = read('src/components/plugin-prompt.tsx')
+  const modalLayer = zIndexOf(read('src/router/home/media-modal.tsx'), 'const style = css`')
+  const headerLayer = zIndexOf(read('src/components/header.tsx'), 'const style = css`')
+  const franchiseLayer = zIndexOf(read('src/components/media-franchise.tsx'), 'const overlayStyle = css`')
+  const promptLayer = zIndexOf(read('src/components/plugin-prompt.tsx'), 'const style = css`')
+  const cursorLayer = zIndexOf(read('src/components/party-cursor.tsx'), 'const style = css`')
 
-  const cursorLayer = zIndexOf(cursor, 'const style = css`')
-  const modalLayer = zIndexOf(modal, 'const style = css`')
-  const headerLayer = zIndexOf(header, 'const style = css`')
-  const franchiseLayer = zIndexOf(franchise, 'const overlayStyle = css`')
-  const promptLayer = zIndexOf(prompt, 'const style = css`')
+  /**
+   * Everything the header owns, which is the band that has to survive an open modal.
+   *
+   * A menu here is PORTALLED TO THE BODY, so it competes in the root stacking context on its own
+   * number and does not inherit the header's. The chat is not portalled and lands in the same place
+   * for the other reason: it is fixed at the router root, whose ancestors open no stacking context.
+   */
+  const headerBand = {
+    'the party menu': zIndexOf(read('src/components/party-widget.tsx'), 'const menuStyle = css`'),
+    'the account menu': zIndexOf(read('src/components/account-widget.tsx'), 'const menuStyle = css`'),
+    'the party chat': zIndexOf(read('src/components/party-chat.tsx'), 'const style = css`'),
+  }
 
   // CONTROL. Every assertion below is a comparison, and a comparison against undefined is not a
   // failure in a way anyone would notice. These are the anchors the app has carried for months, so a
@@ -37,6 +49,32 @@ describe('the stacking order', () => {
     expect({ modalLayer, headerLayer, franchiseLayer, promptLayer })
       .toEqual({ modalLayer: 1000, headerLayer: 1100, franchiseLayer: 1200, promptLayer: 2000 })
     expect(cursorLayer, 'the party cursor declares no z-index at all').toBeTypeOf('number')
+    for (const [name, layer] of Object.entries(headerBand)) expect(layer, name).toBeTypeOf('number')
+  })
+
+  /**
+   * The header sits at 1100 so a follower whose host opened a modal can still reach the party pill
+   * and stop following. That only ever covered the BUTTON: the menu it opens is a separate layer,
+   * and at 150 it opened under the modal, where it was invisible through the overlay's 44% black and
+   * took no clicks. The account menu (400) and the party chat (145) were the same shape.
+   *
+   * Worse than nothing happening: the overlay is ALSO the modal's dismiss target, so the click that
+   * missed the control closed the show the user was reading. And party-widget force-opens its menu
+   * when the host ends the party, so that notice was delivered to nobody.
+   */
+  test('what the header opens clears the modal, or the button it hangs off is a promise it breaks', () => {
+    for (const [name, layer] of Object.entries(headerBand)) {
+      expect(layer!, name).toBeGreaterThan(modalLayer!)
+    }
+  })
+
+  // and stays WITH the bar rather than above the app: the franchise dialog covers the header on
+  // purpose, so it has to cover what the header opens too
+  test('and still sits under the dialog that covers the header on purpose', () => {
+    for (const [name, layer] of Object.entries(headerBand)) {
+      expect(layer!, name).toBeGreaterThan(headerLayer!)
+      expect(layer!, name).toBeLessThan(franchiseLayer!)
+    }
   })
 
   /**
@@ -48,7 +86,8 @@ describe('the stacking order', () => {
    * no click from the dialog it covers.
    */
   test('the party cursor draws over every layer the app puts on the page', () => {
-    for (const [name, layer] of Object.entries({ modalLayer, headerLayer, franchiseLayer, promptLayer })) {
+    const below = { modalLayer, headerLayer, franchiseLayer, promptLayer, ...headerBand }
+    for (const [name, layer] of Object.entries(below)) {
       expect(cursorLayer!, name).toBeGreaterThan(layer!)
     }
   })

@@ -12,7 +12,9 @@ const style = css`
   position: fixed;
   right: 2rem;
   bottom: 2rem;
-  z-index: 145;
+  /* the header band (see components/header.tsx): fixed at the router root, so it competes at ROOT
+     and 145 put it under any open modal, where a click on it closed the modal instead */
+  z-index: 1150;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

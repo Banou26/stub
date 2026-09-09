@@ -16,9 +16,21 @@ const style = css`
   top: var(--fkn-inset-top, 0px);
   left: 0;
   right: 0;
-  /* Above the media modal (1000) on purpose: a follower whose host opened a modal still has to be
-     able to reach the party pill and stop following. Below the fullscreen source players
-     (9999999), which are meant to cover everything. */
+  /* THE HEADER BAND, which is 1100 for the bar and 1150 for everything it opens.
+
+     The bar is above the media modal (1000) on purpose: a follower whose host opened a modal still
+     has to be able to reach the party pill and stop following.
+
+     That promise only ever covered the BUTTONS. A menu one of them opens is portalled to the body,
+     so it competes at ROOT on its own number instead of inheriting this one, and until 2026-09-09
+     the party menu (150), the account menu (400) and the party chat (145) all opened UNDER the
+     modal: invisible through its 44% black, and unclickable, because the overlay is also the
+     modal's own dismiss target, so the click that missed them closed the show you were reading.
+     They sit at 1150 now, which keeps a popup with the control that opens it, and keeps both under
+     the franchise dialog (1200) that covers this bar deliberately.
+
+     Above that: the plugin prompt (2000) and the party ghost cursor (3000). Nothing here competes
+     with a source player: those inject their own rules into the framed site's document, not ours. */
   z-index: 1100;
   /* three tracks rather than a flex row: the search field stays centred on the VIEWPORT whatever the
      wordmark and the action cluster happen to measure, which auto margins on a flex item cannot promise */
