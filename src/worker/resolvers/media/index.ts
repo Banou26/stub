@@ -191,7 +191,14 @@ export const resolvers = {
       // that one falls back through handles and prefers an attached run, so it can answer with a
       // different set from the one whose episodes are being walked, and the counts deciding the trim
       // have to come from exactly the rows that supplied the episodes.
-      const cluster = await findAggregatedMedia(handleUris[0]!)
+      // the FIRST handle that resolves, not the first handle. They all reach the same cluster, but a
+      // uri whose row has not landed yet resolves to nothing, and taking that as "no cluster" dropped
+      // the page onto the unwindowed walk, where a lent season's whole 24 episodes are drawn
+      let cluster: Awaited<ReturnType<typeof findAggregatedMedia>> = []
+      for (const uri of handleUris) {
+        cluster = await findAggregatedMedia(uri)
+        if (cluster.length) break
+      }
       const episodeGroups = cluster.length
         ? await findRunEpisodes(cluster)
         : await findAggregatedEpisodesForMedia(handleUris)

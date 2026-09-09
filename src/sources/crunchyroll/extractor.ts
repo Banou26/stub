@@ -443,13 +443,25 @@ const searchAndLinkMedia = async (
   aggregatedUri: string,
   ctx: ExtractorServerContext
 ): Promise<GQLMedia | undefined> => {
-  const known = await waitForMedia(aggregatedUri, ctx, media => (getFirstTitle(media) ? media : undefined), 30_000)
-  if (!known) return undefined
-
-  const startDate = known.startDate
-  if (!startDate) return undefined
-  const targetDate = new Date(startDate)
-  if (isNaN(targetDate.getTime())) return undefined
+  /**
+   * WAITS FOR THE DATE, not just for a title.
+   *
+   * Every rule below reads `known.startDate`, and the very next line used to return on a null one. It
+   * waited for a title alone, so it fired as soon as ANY source named the show and gave up if the
+   * ones carrying a date had not landed yet: measured on a real Mushoku Tensei page 2026-09-09, the
+   * ask ran with `start=null` every time and this path never got past its second statement.
+   *
+   * Waiting for what it actually needs costs a cluster with no date the full timeout instead of an
+   * immediate refusal, and that cluster was never going to match on any rule here anyway.
+   */
+  const known = await waitForMedia(
+    aggregatedUri,
+    ctx,
+    media => (getFirstTitle(media) && media.startDate ? media : undefined),
+    30_000
+  )
+  if (!known?.startDate) return undefined
+  if (isNaN(new Date(known.startDate).getTime())) return undefined
 
   const knownTitles = (known.titles ?? []).map(title => title.title).filter(Boolean)
   const primary = knownTitles[0]

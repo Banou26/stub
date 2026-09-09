@@ -358,3 +358,34 @@ describe('a containing season lent to a run', () => {
     expect(kept.filter(e => e.origin === 'cr'), 'and twelve crunchyroll sources survive').toHaveLength(12)
   })
 })
+
+/**
+ * A LOAN IS ONLY ACCEPTED WHEN THE RUN CAN SAY WHICH EPISODES ARE ITS OWN.
+ *
+ * Mushoku Tensei season 2 part 1, read off the running app 2026-09-09: MAL publishes no count at all
+ * and AniList says 13 for a run that aired 12, so the length rests on ONE witness. Windowing a lent
+ * season to 13 put a thirteenth row on the page that only Crunchyroll had; declining the loan leaves
+ * the page exactly as it was.
+ *
+ * The bar applies to the LOAN, not to the run: a member's own episodes are never hidden on a shaky
+ * length, because that is how episodes that aired disappear.
+ */
+describe('an uncorroborated length', () => {
+  const SHAKY = [
+    media('anilist:146065', 0.8, 13), media('mal:51179', 0.9, null),
+    media('kitsu:45950', 0.3, 12), media('anizip:17236', null, 12),
+  ]
+  const own = dated('anizip:17236', 1, ['2023-07-09', '2023-07-16', '2023-07-23'])
+  const lent = dated('cr:GSP1', 1, ['2023-07-09', '2023-07-16', '2023-07-23'])
+    .map(e => ({ ...e, origin: 'cr', mediaUri: 'anilist:146065' } as unknown as Episode))
+
+  test('refuses a lent season rather than slicing on a length one source claims', () => {
+    expect(runLength(SHAKY), 'the tier rule still answers').toBe(13)
+    const kept = runEpisodes(SHAKY, [...own, ...lent])
+    expect(kept.filter(e => e.origin === 'cr'), 'the loan is declined whole').toHaveLength(0)
+  })
+
+  test("and keeps the run's own episodes, which are never the thing in doubt", () => {
+    expect(runEpisodes(SHAKY, [...own, ...lent]).filter(e => e.origin === 'anizip')).toHaveLength(3)
+  })
+})

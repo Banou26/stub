@@ -169,7 +169,6 @@ export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episod
    * whether the number is corroborated at all.
    */
   const backing = cluster.filter(media => media.episodeCount === length)
-  if (backing.length < 2) return [...episodes]
 
   /**
    * AND ONLY A STRICTLY LOWER TIER IS TRIMMED.
@@ -182,13 +181,6 @@ export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episod
    * Crunchyroll's fold is 0.5 against MAL's 0.9, and stays trimmed however many streaming catalogues
    * echo it, which is the case a sum of scores got wrong.
    */
-  const overreaching = new Set(
-    cluster
-      .filter(media => media.episodeCount != null && media.episodeCount > length)
-      .filter(media => (media.score ?? 0) < tier)
-      .map(media => media.origin)
-  )
-
   /**
    * A WINDOW OF 1 TO length, not a ceiling.
    *
@@ -202,11 +194,46 @@ export const runEpisodes = <T extends Episode>(cluster: readonly Media[], episod
    * member to read a count off, and the run's own length is the only thing that says which of them
    * are its own.
    */
-  // KNOWN, not reference: an origin that has a row in this cluster and agrees about the length is
-  // untouched, and so is one that disagrees from the SAME tier, which the rule above already spared.
-  // What gets windowed is a lower tier that overreaches, or a source with no row here at all.
-  const known = new Set(cluster.map(media => media.origin))
-  const foreign = (episode: T) => overreaching.has(episode.origin) || !known.has(episode.origin)
+  /**
+   * WHO IS SPARED, decided by what a source CLAIMS rather than by whether it holds a row here.
+   *
+   * A source that agrees about the length is describing this run and is never touched. A source in
+   * the deciding TIER that disagrees is an equal, and the answer to two equals disagreeing is to show
+   * the tier's majority, never to delete the dissenter's episodes.
+   *
+   * Everything else is windowed, which deliberately includes a source with no row in this cluster at
+   * all. That is how a season that CONTAINS this run arrives: it lends its episodes and claims no
+   * identity, so there is no member to read a count off, and the run's own length is the only thing
+   * that says which of them are its own. Keying this on cluster membership made it depend on whether
+   * that lend happened to be linked, which varies between loads.
+   */
+  const reference = new Set(backing.map(media => media.origin))
+  const equals = new Set(cluster.filter(media => (media.score ?? 0) >= tier).map(media => media.origin))
+  const members = new Set(cluster.map(media => media.origin))
+
+  /**
+   * THE WITNESS BAR APPLIES TO MEMBERS, AND A LOAN IS NOT A MEMBER.
+   *
+   * A member's episodes are this run's own data, and hiding them on a length only one source claims
+   * is how episodes that aired disappear. A LENT source has no row here at all: the only reason its
+   * episodes are on this page is that a season containing this run handed them over, and taking only
+   * the part that fits is the whole basis on which they were accepted.
+   *
+   * Measured 2026-09-09 on Mushoku Tensei season 2 part 1, where MAL publishes no count and AniList
+   * says 13: the length rests on one witness, the bar disabled every window, and a lent season put 24
+   * rows on a 12 episode page.
+   */
+  /**
+   * AN UNCORROBORATED LENGTH REFUSES THE LOAN OUTRIGHT rather than slicing on it.
+   *
+   * A lent season is only useful if the run can say which of its episodes are its own, and a length
+   * one source claims cannot. Mushoku Tensei season 2 part 1 is the case: MAL publishes no count at
+   * all and AniList says 13 for a run that aired 12, so windowing to 13 put a thirteenth row on the
+   * page that only Crunchyroll had. Declining leaves the page exactly as it was.
+   */
+  if (backing.length < 2) return episodes.filter(episode => members.has(episode.origin))
+
+  const foreign = (episode: T) => !reference.has(episode.origin) && !equals.has(episode.origin)
   return episodes.filter(episode =>
     !foreign(episode)
     || episode.episodeNumber == null
