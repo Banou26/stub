@@ -122,6 +122,29 @@ describe('runEpisodes', () => {
     expect(runEpisodes(cluster, listOf('cr:1', 12))).toHaveLength(12)
   })
 
+  /**
+   * A RELEASING SHOW, which is where a count vote is most dangerous and where the margin bar earns
+   * its keep.
+   *
+   * Mushoku Tensei season 3 while airing: mal and AniList publish the ANNOUNCED 14, and six sources
+   * publish `episodes.length`, the eleven that have aired. The vote goes to 11 by 1.8 against 1.7,
+   * because six derived lengths outweigh two declared counts, and a rule that acted on that would
+   * hide three episodes as they aired. 1.8 is nowhere near twice 1.7, so nothing is trimmed.
+   *
+   * This is the same shape that made the same vote unsafe for the PUBLISHED count, which is why that
+   * half was measured and pulled. See aggregate-fields.test.ts.
+   */
+  test('a releasing show is not trimmed to what has aired so far', () => {
+    const airing = [
+      media('mal:59193', 0.9, 14), media('anilist:178789', 0.8, 14),
+      media('cr:1', 0.5, 11), media('kitsu:49002', 0.3, 11), media('tmdb:1', 0.3, 11),
+      media('tvmaze:1', 0.3, 11), media('jw:1', 0.2, 11), media('nf:1', 0.2, 11),
+    ]
+    expect(runLength(airing), 'the vote itself does go to the aired-so-far count').toBe(11)
+    expect(runEpisodes(airing, listOf('mal:59193', 14)), 'but nothing is hidden on a 1.8 to 1.7 margin')
+      .toHaveLength(14)
+  })
+
   test('a cluster where nobody publishes a count is left alone', () => {
     const cluster = [media('anizip:1', null, null), media('cr:1', 0.5, null)]
     expect(runEpisodes(cluster, listOf('cr:1', 24))).toHaveLength(24)
