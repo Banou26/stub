@@ -88,12 +88,15 @@ const style = css`
     }
   }
 
+  /* The whole pill is the field. The inset belongs to the INPUT rather than to this box: padding here
+     is the form's own, so a click landing in it hits the form and sets no caret, and the field only
+     took 19px of the bar's 38 that way. The glyph is drawn over the field instead of beside it, so
+     the space it occupies stays part of the target. */
   .search {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 0.8rem;
     width: 100%;
-    padding: 0.8rem 1.4rem;
     background: rgba(35, 35, 35, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0.8rem;
@@ -106,12 +109,19 @@ const style = css`
     }
 
     svg {
-      flex-shrink: 0;
+      position: absolute;
+      left: 1.4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      /* it labels the field, it is not a target of its own: a click on it belongs to the input under it */
+      pointer-events: none;
       color: rgba(255, 255, 255, 0.6);
     }
 
     input {
       width: 100%;
+      /* left clears the glyph: 1.4rem to it, its own 2rem, then the 0.8rem the flex gap used to give */
+      padding: 0.8rem 1.4rem 0.8rem 4.2rem;
       background: transparent;
       border: none;
       outline: none;
@@ -146,9 +156,12 @@ const style = css`
     }
 
     .search {
-      padding: 0.6rem 1rem;
+      svg {
+        left: 1rem;
+      }
 
       input {
+        padding: 0.6rem 1rem 0.6rem 3.8rem;
         font-size: 1.4rem;
       }
     }

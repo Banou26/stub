@@ -16,7 +16,14 @@ const style = css`
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 140;
+  /* Above every layer the app draws, because this says where the host's HAND is and the host is as
+     likely to be pointing at the thing on top as at the page under it. At 140 it went behind the media
+     modal (1000), the header (1100), the franchise dialog (1200) and the plugin prompt (2000), so a
+     party spent inside a modal, which is the layer people browse in, showed no pointer at all. Those
+     layers give up nothing for it: the ghost takes no click from what it covers, having no pointer
+     events of its own.
+     Still under FKN's own overlay frame (2147483647), which is not ours to draw over. */
+  z-index: 3000;
   pointer-events: none;
   display: flex;
   align-items: flex-start;
