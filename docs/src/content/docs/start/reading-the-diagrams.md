@@ -79,7 +79,7 @@ colours on every page:
 
 The dim class does double duty, and it is worth knowing which you are looking at. On a path figure it
 is a refusal: a short terminal node hanging off a decision, with no arrow leaving it. On
-[the permanence legend](/#the-permanence-legend) it is the append-only band, `graph.edge` and
+[the permanence legend](/start/whole-flow/#the-permanence-legend) it is the append-only band, `graph.edge` and
 `graph.connect` and `graph.set`, where nothing is destroyed and a delete could be implemented. That is
 exactly the argument `db.ts:171` makes for routing every guess onto an edge. A node with no class at
 all is an ordinary step.
@@ -266,7 +266,7 @@ can change what another page shows.
 
 - **No flowchart of a code path without its branches.** A path drawn as a straight line is a claim that
   it cannot fail, and almost nothing here is that. The one exception is
-  [the permanence legend](/#the-permanence-legend), which is a key rather than a path.
+  [the permanence legend](/start/whole-flow/#the-permanence-legend), which is a key rather than a path.
 - **No decision node without its condition.** If the condition will not fit, the figure is too big and
   gets split, not shortened.
 - **No line numbers inside a node label, and no colour that means anything but permanence.** An edge

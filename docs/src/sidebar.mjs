@@ -1,10 +1,24 @@
 // The reading order, and the only place it is declared. Starlight's prev/next walks this, so the
-// sequence IS the argument the site makes: what the system is, how a request enters, what a source
-// may claim, how a claim becomes permanent, what comes back out, then the two hard subsystems
-// (merging, similarMedia), then the invariants that cut across all of it.
+// sequence IS the argument the site makes.
+//
+// TWO TIERS, and the first one is the whole site in about 2% of its words. The deep tier below it is
+// 218,892 words across 59 pages, which is more than anyone reads before they need an answer, so the
+// condensed tier is the front door and every one of its pages links down into the section it
+// compresses. Nothing was deleted to build it.
 export const sidebar = [
-  { label: 'Start here', items: [
-    { label: 'The whole flow',            slug: 'index' },
+  { label: 'TL;DR', items: [
+    { label: 'stub in one page',          slug: 'index' },
+    { label: 'Vocabulary, in one table',  slug: 'tldr/vocabulary' },
+    { label: 'The ask',                   slug: 'tldr/ask' },
+    { label: 'What a source may claim',   slug: 'tldr/sources' },
+    { label: 'The write',                 slug: 'tldr/write' },
+    { label: 'The read',                  slug: 'tldr/read' },
+    { label: 'The merge',                 slug: 'tldr/merge' },
+    { label: 'similarMedia',              slug: 'tldr/similar' },
+    { label: 'Every number, and every trap', slug: 'tldr/rules' },
+  ]},
+  { label: 'The long version', items: [
+    { label: 'The whole flow, in full',   slug: 'start/whole-flow' },
     { label: 'Reading these diagrams',    slug: 'start/reading-the-diagrams' },
     { label: 'A run is not a show',       slug: 'start/run-and-show' },
     { label: 'Vocabulary',                slug: 'start/vocabulary' },
