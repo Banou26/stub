@@ -6,6 +6,10 @@
     "fkn-type:app"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/banou26/stub.git"
+  },
   "files": [
     "build",
     "fkn.json"
