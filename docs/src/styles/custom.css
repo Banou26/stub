@@ -215,24 +215,27 @@ body {
   width: 100%;
 }
 
-/* THE BREAKOUT, and it is SYMMETRIC on purpose.
-   An earlier version used `margin-inline: min(-7rem, calc((100% - 100vw + 3rem) / 2))` so the figure
-   could grow toward the viewport. That second term goes hugely negative on a wide screen (-520px at
-   1920 against a 832px column), `min` picks it, and the figure is yanked to the left edge: measured
-   left=0 with 864px of dead space on the right. One value each side, gated to widths that have the
-   room, keeps the figure centred on the text it belongs to. */
-@media (min-width: 80rem) {
-  .sl-markdown-content .mermaid {
-    --fig-breakout: 6rem;
-    width: calc(100% + 2 * var(--fig-breakout));
-    margin-inline: calc(-1 * var(--fig-breakout));
-  }
+/* THE BREAKOUT, bounded by space that actually exists.
+
+   Two earlier versions were wrong, both in ways a naive check called a pass.
+   The first used `margin-inline: min(-7rem, calc((100% - 100vw + 3rem) / 2))`, whose second term goes
+   hugely negative on a wide screen (-520px at 1920 against an 832px column), so `min` picked it and
+   the figure was yanked to the viewport edge: measured left=0 with 864px of dead space opposite.
+   The second was a fixed 6rem/9rem each side, which is centred and still WRONG: it runs UNDER both
+   rails. Measured overlap of the table-of-contents by 72px at 1280 through 120px at 1920, and of the
+   left sidebar by up to 72px, while the page still did not scroll horizontally and no figure crossed
+   the viewport, so a check watching only those two reported success.
+
+   The pane is `column + 2 * --sl-content-pad-x` and the rails own everything outside it, so the
+   padding is the entire honest budget. Claiming it is safe at every width by construction rather
+   than by measurement, and a diagram wider than that scrolls inside its own figure, which is what
+   the overflow-x above is for. */
+.sl-markdown-content .mermaid {
+  --fig-breakout: var(--sl-content-pad-x, 1rem);
+  width: calc(100% + 2 * var(--fig-breakout));
+  margin-inline: calc(-1 * var(--fig-breakout));
 }
-@media (min-width: 100rem) {
-  .sl-markdown-content .mermaid {
-    --fig-breakout: 9rem;
-  }
-}
+
 .sl-markdown-content .mermaid svg {
   max-width: none;
   height: auto;

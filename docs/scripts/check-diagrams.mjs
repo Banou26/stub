@@ -48,9 +48,16 @@ const failures = []
 let drawn = 0
 let checked = 0
 
-for (const path of paths()) {
-  const want = expected.get(path) ?? 0
-  for (const theme of ['dark', 'light']) {
+// Every page in both themes is 120 loads on this site, and each one has to sit through mermaid's
+// draw, so serially it is minutes. The pages are independent and static, so a small pool is safe.
+const POOL = Number(process.env.DOCS_POOL ?? 6)
+const jobs = paths().flatMap(path => ['dark', 'light'].map(theme => ({ path, theme })))
+let cursor = 0
+
+const worker = async () => {
+  while (cursor < jobs.length) {
+    const { path, theme } = jobs[cursor++]
+    const want = expected.get(path) ?? 0
     const page = await browser.newPage({ viewport: { width: 1500, height: 1100 }, colorScheme: theme })
     const errors = []
     page.on('pageerror', error => errors.push(error.message.slice(0, 160)))
@@ -75,6 +82,23 @@ for (const path of paths()) {
           || /Syntax error in text/i.test(holder.textContent ?? '')).length,
         empty: holders.filter(holder => (holder.querySelector('svg')?.querySelectorAll('*').length ?? 0) < 3).length,
         scrollsX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        // A figure that breaks out of the text column must stop at the PANE. Running under the
+        // table-of-contents rail or the nav sidebar looks like a pass to a check that only watches
+        // for viewport overflow and body scroll: measured 72px of TOC overlap at 1280 and 120px at
+        // 1920 while both of those stayed clean. So the rails are asserted directly.
+        railOverlap: (() => {
+          const toc = document.querySelector('.right-sidebar-container, .right-sidebar')
+          const nav = document.querySelector('.sidebar-pane')
+          const tocLeft = toc?.getBoundingClientRect().left ?? Infinity
+          const navRight = nav && getComputedStyle(nav).position !== 'fixed'
+            ? nav.getBoundingClientRect().right : -Infinity
+          let worst = 0
+          for (const holder of holders) {
+            const box = holder.getBoundingClientRect()
+            worst = Math.max(worst, Math.round(box.right - tocLeft), Math.round(navRight - box.left))
+          }
+          return worst
+        })(),
       }
     })
     checked++
@@ -84,10 +108,12 @@ for (const path of paths()) {
     if (seen.broken) failures.push(`${path} [${theme}] ${seen.broken} diagram(s) rendered mermaid's syntax-error graphic`)
     if (seen.empty) failures.push(`${path} [${theme}] ${seen.empty} diagram(s) drew an empty svg`)
     if (seen.scrollsX) failures.push(`${path} [${theme}] the page scrolls horizontally; a wide diagram must scroll inside its own figure`)
+    if (seen.railOverlap > 1) failures.push(`${path} [${theme}] a diagram runs ${seen.railOverlap}px under a sidebar rail`)
     if (errors.length) failures.push(`${path} [${theme}] page error: ${errors[0]}`)
     await page.close()
   }
 }
+await Promise.all(Array.from({ length: POOL }, worker))
 await browser.close()
 
 console.log(`${checked} page loads checked, ${drawn} diagrams drawn`)
