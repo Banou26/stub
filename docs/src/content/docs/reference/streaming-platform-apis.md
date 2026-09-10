@@ -1,4 +1,12 @@
-# Streaming platform data-source research (2026-06-01)
+---
+title: Streaming platform APIs
+description: A 2026-06-01 research sweep of the undocumented per-platform endpoints the streaming sources are built on.
+---
+
+:::note
+Kept as it was written, on 2026-06-01. It is a research snapshot rather than a description of the
+code, and the endpoints in it are undocumented internal APIs that move without notice.
+:::
 
 > Auto-generated from a research sweep (yt-dlp/streamlink/devtools/TMDB) to plumb per-platform source extractors. Endpoints are undocumented internal APIs unless noted; treat as best-effort starting points.
 

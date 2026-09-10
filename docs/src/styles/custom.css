@@ -1,0 +1,286 @@
+/* Loaded UNLAYERED so it wins over Starlight's `@layer starlight.*` rules. Do not move it into a
+   layer. Structure follows fkn.dev's docs stylesheet; the palette is retuned to stub's own, which is
+   a near-black ground (rgb(9,9,10)) with rgb(35,35,35) cards rather than fkn's slate. */
+
+:root,
+:root[data-theme='dark'] {
+  --s-bg: #09090a;
+  --s-bg-2: #0f1011;
+  --s-card: #232323;
+  --s-card-2: #2b2b2c;
+  --s-border: #2c2c2e;
+  --s-border-2: #3a3a3d;
+  --s-ink: #ededf0;
+  --s-ink-dim: #a3a4aa;
+  --s-ink-faint: #74757c;
+  --s-brand: #6b95cd;
+  --s-brand-ink: #8db0de;
+  --s-brand-soft: #16202e;
+  --s-mint: #63c496;
+  --s-mint-soft: #142a20;
+  --s-sun: #f2b45c;
+  --s-sun-soft: #2d2415;
+  --s-rose: #e0796f;
+  --s-rose-soft: #2e1a18;
+  --s-shadow: 0 12px 32px rgba(0, 0, 0, .5);
+}
+
+:root[data-theme='light'] {
+  --s-bg: #f7f7f8;
+  --s-bg-2: #efeff1;
+  --s-card: #ffffff;
+  --s-card-2: #f0f0f2;
+  --s-border: #e4e5e9;
+  --s-border-2: #d5d7dd;
+  --s-ink: #17181b;
+  --s-ink-dim: #53555c;
+  --s-ink-faint: #7b7d85;
+  --s-brand: #4572b5;
+  --s-brand-ink: #3a629e;
+  --s-brand-soft: #e9eef7;
+  --s-mint: #2e8f63;
+  --s-mint-soft: #e4f3ec;
+  --s-sun: #8f5a0e;
+  --s-sun-soft: #faf1e0;
+  --s-rose: #b03f33;
+  --s-rose-soft: #fbeae7;
+  --s-shadow: 0 8px 24px rgba(16, 18, 22, .1);
+}
+
+:root {
+  --sl-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --sl-color-white: var(--s-ink);
+  --sl-color-gray-1: var(--s-ink);
+  --sl-color-gray-2: var(--s-ink-dim);
+  --sl-color-gray-3: var(--s-ink-dim);
+  --sl-color-gray-4: var(--s-border-2);
+  --sl-color-gray-5: var(--s-border-2);
+  --sl-color-gray-6: var(--s-border);
+  --sl-color-gray-7: var(--s-card-2);
+  --sl-color-black: var(--s-bg);
+
+  --sl-color-text: var(--s-ink);
+  --sl-color-bg: var(--s-bg);
+  --sl-color-bg-nav: var(--s-bg-2);
+  --sl-color-bg-sidebar: var(--s-bg);
+  --sl-color-bg-inline-code: var(--s-card-2);
+
+  --sl-color-accent-low: var(--s-brand-soft);
+  --sl-color-accent: var(--s-brand);
+  --sl-color-accent-high: var(--s-brand-ink);
+  --sl-color-text-accent: var(--s-brand-ink);
+  --sl-color-bg-accent: var(--s-brand);
+
+  --sl-color-hairline-light: var(--s-border);
+  --sl-color-hairline: var(--s-border);
+  --sl-color-hairline-shade: var(--s-border);
+
+  /* The TEXT column, not the panel. Wider than fkn.dev's 48rem because this site's argument is
+     carried by DIAGRAMS, and a flowchart with four decision nodes needs the room; prose still sits
+     at a readable measure because the diagram rule below lets a figure exceed the column on its own. */
+  --sl-content-width: 52rem;
+  --sl-sidebar-width: 19rem;
+  --sl-line-height: 1.75;
+  --sl-text-h1: 2.2rem;
+}
+
+html,
+body {
+  background-color: var(--s-bg);
+}
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+.sidebar-pane {
+  border-inline-end: 1px solid var(--s-border);
+  background: transparent;
+}
+.right-sidebar {
+  border-inline-start: none;
+}
+
+#starlight__sidebar a {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 0.38rem 0.6rem;
+  border-radius: 7px;
+  color: var(--s-ink-dim);
+  transition: background-color .15s, color .15s;
+}
+#starlight__sidebar a:hover,
+#starlight__sidebar a:focus-visible {
+  background-color: var(--s-card-2);
+  color: var(--s-ink);
+}
+#starlight__sidebar a[aria-current='page'],
+#starlight__sidebar a[aria-current='page']:hover {
+  font-weight: 600;
+  color: var(--s-brand-ink);
+  background-color: var(--s-brand-soft);
+}
+#starlight__sidebar .large {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--s-ink);
+  letter-spacing: -.01em;
+}
+#starlight__sidebar .top-level > li + li {
+  margin-top: 0.5rem;
+}
+
+.sl-markdown-content {
+  --sl-text-h2: 1.7rem;
+  --sl-text-h3: 1.4rem;
+  --sl-text-h4: 1.2rem;
+}
+.sl-markdown-content :is(h1, h2, h3, h4) {
+  color: var(--s-ink);
+  letter-spacing: -.018em;
+}
+.sl-markdown-content :not(.sl-heading-wrapper) + .sl-heading-wrapper.level-h2 {
+  margin-top: 1.9em;
+}
+.sl-markdown-content :not(.sl-heading-wrapper) + .sl-heading-wrapper.level-h3 {
+  margin-top: 1.6em;
+}
+.sl-markdown-content li + li:not(:where(.not-content *)) {
+  margin-top: 0.45rem;
+}
+
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--s-brand-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--s-brand-ink) 45%, transparent);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+}
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+  text-decoration-color: currentColor;
+}
+
+.sl-markdown-content :not(pre) > code:not(:where(.not-content *)) {
+  background-color: var(--s-card-2);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+  font-size: 0.86em;
+  color: var(--s-ink);
+}
+
+.sl-markdown-content table:not(:where(.not-content *)) {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+  border: none;
+  border-bottom: 1px solid var(--s-border);
+  padding: 0.7rem 1.05rem 0.7rem 0;
+  vertical-align: top;
+}
+.sl-markdown-content thead th:not(:where(.not-content *)) {
+  color: var(--s-ink);
+  font-weight: 600;
+  text-align: start;
+  border-bottom: 2px solid var(--s-border-2);
+}
+
+.sl-markdown-content blockquote:not(:where(.not-content *)) {
+  border-inline-start: 3px solid var(--s-brand);
+  color: var(--s-ink-dim);
+}
+
+/* DIAGRAMS.
+
+   A diagram here is a figure, not a code block, and several of them are genuinely wider than the
+   text column. Two rules make that work without the page scrolling sideways:
+
+   the figure may BREAK OUT of the column, up to the space the layout actually has, and
+   it scrolls INSIDE ITSELF when even that is not enough, which is the rule the house style asks for
+   (wide content scrolls in its own container, the body never scrolls horizontally).
+
+   `astro-mermaid` renders into `.mermaid`, and swaps the SVG on a theme change, so nothing here may
+   depend on the SVG's own colors. */
+.sl-markdown-content .mermaid {
+  margin-block: 1.9rem;
+  padding: 1.15rem 1rem;
+  background: var(--s-card);
+  border: 1px solid var(--s-border);
+  border-radius: 14px;
+  overflow-x: auto;
+  box-shadow: var(--s-shadow);
+  width: 100%;
+}
+
+/* THE BREAKOUT, and it is SYMMETRIC on purpose.
+   An earlier version used `margin-inline: min(-7rem, calc((100% - 100vw + 3rem) / 2))` so the figure
+   could grow toward the viewport. That second term goes hugely negative on a wide screen (-520px at
+   1920 against a 832px column), `min` picks it, and the figure is yanked to the left edge: measured
+   left=0 with 864px of dead space on the right. One value each side, gated to widths that have the
+   room, keeps the figure centred on the text it belongs to. */
+@media (min-width: 80rem) {
+  .sl-markdown-content .mermaid {
+    --fig-breakout: 6rem;
+    width: calc(100% + 2 * var(--fig-breakout));
+    margin-inline: calc(-1 * var(--fig-breakout));
+  }
+}
+@media (min-width: 100rem) {
+  .sl-markdown-content .mermaid {
+    --fig-breakout: 9rem;
+  }
+}
+.sl-markdown-content .mermaid svg {
+  max-width: none;
+  height: auto;
+  display: block;
+  margin-inline: auto;
+}
+
+/* A caption directly under a diagram. Written as a blockquote-free paragraph in italics so it needs
+   no component, and tightened against the figure it belongs to. */
+.sl-markdown-content .mermaid + p > em:only-child {
+  display: block;
+  margin-top: -1.35rem;
+  margin-bottom: 1.9rem;
+  color: var(--s-ink-dim);
+  font-size: 0.9rem;
+  font-style: normal;
+  text-align: center;
+}
+
+/* Asides carry the irreversibility warnings, which are the most important sentences on the site, so
+   the danger variant is loud on purpose. */
+.sl-markdown-content .starlight-aside {
+  border-radius: 12px;
+  border-inline-start-width: 3px;
+}
+.sl-markdown-content .starlight-aside--danger {
+  background: var(--s-rose-soft);
+  border-color: var(--s-rose);
+}
+.sl-markdown-content .starlight-aside--caution {
+  background: var(--s-sun-soft);
+  border-color: var(--s-sun);
+}
+.sl-markdown-content .starlight-aside--tip {
+  background: var(--s-mint-soft);
+  border-color: var(--s-mint);
+}
+
+.card {
+  border-radius: 14px;
+  border: 1px solid var(--s-border);
+  background: color-mix(in srgb, var(--s-card) 55%, transparent);
+}
+.card .icon {
+  color: var(--s-brand-ink);
+  background: var(--s-brand-soft);
+}
+
+.expressive-code .frame pre {
+  border-radius: 10px;
+}
