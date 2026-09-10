@@ -5,7 +5,7 @@
 import type { MediaScope, MediaType, MediaCategory } from '../../worker/store/types'
 
 export const SEED_VERSION = 1 as const
-export const SEED_REPO = 'Banou26/stub'
+export const SEED_REPO = 'banou26/stub'
 export const SEED_RELEASE_TAG = 'season-seed'
 export const SEED_INDEX_ASSET = 'season-seed.json.gz'
 export const SEED_EPISODES_ASSET = 'season-seed-episodes.json.gz'

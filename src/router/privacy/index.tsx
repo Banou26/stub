@@ -48,8 +48,8 @@ const Privacy = () => (
     <h2>Contact</h2>
     <p>
       Questions about privacy can be raised through the project repository at{' '}
-      <a href="https://github.com/Banou26/stub" target="_blank" rel="noreferrer noopener">
-        github.com/Banou26/stub
+      <a href="https://github.com/banou26/stub" target="_blank" rel="noreferrer noopener">
+        github.com/banou26/stub
       </a>
       .
     </p>

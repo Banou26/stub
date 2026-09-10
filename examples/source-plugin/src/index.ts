@@ -65,7 +65,7 @@ const cacheCatalog = async (): Promise<void> => {
 
 packages.onConnect(() => ({
   origin: 'example',
-  originUrl: 'https://github.com/Banou26/stub',
+  originUrl: 'https://github.com/banou26/stub',
   name: 'Example Source',
   isApiOnly: false,
   metadataOnly: true,

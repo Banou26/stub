@@ -27,7 +27,7 @@ export default defineConfig({
       description:
         'How data moves through stub: which sources are asked, what each one is allowed to claim, how the store merges the answers, and every decision taken on the way.',
       favicon: '/favicon.svg',
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Banou26/stub' }],
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/banou26/stub' }],
       sidebar,
       customCss: ['./src/styles/custom.css'],
       pagination: true,

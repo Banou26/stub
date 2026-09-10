@@ -40,8 +40,8 @@ const Legal = () => (
       stub stores no content itself; anything you see lives on the third-party service it
       came from. If you are a rights holder with a concern, you can reach the maintainer
       through the project repository at{' '}
-      <a href="https://github.com/Banou26/stub" target="_blank" rel="noreferrer noopener">
-        github.com/Banou26/stub
+      <a href="https://github.com/banou26/stub" target="_blank" rel="noreferrer noopener">
+        github.com/banou26/stub
       </a>
       .
     </p>

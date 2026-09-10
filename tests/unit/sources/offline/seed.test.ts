@@ -58,13 +58,13 @@ test('SEED_UNROUTABLE_ID is the complement of isRoutableUri', () => {
 })
 
 test('the asset url is the plain release download url', () => {
-  expect(seedAssetUrl(SEED_INDEX_ASSET)).toBe('https://github.com/Banou26/stub/releases/download/season-seed/season-seed.json.gz')
+  expect(seedAssetUrl(SEED_INDEX_ASSET)).toBe('https://github.com/banou26/stub/releases/download/season-seed/season-seed.json.gz')
 })
 
 test('isSeedAssetUrl names this seed\'s assets and nothing else', () => {
   expect(isSeedAssetUrl(seedAssetUrl(SEED_INDEX_ASSET))).toBe(true)
   expect(isSeedAssetUrl(seedAssetUrl(SEED_EPISODES_ASSET))).toBe(true)
-  expect(isSeedAssetUrl('https://github.com/Banou26/stub/releases/download/v0.0.17/other.json.gz')).toBe(false)
+  expect(isSeedAssetUrl('https://github.com/banou26/stub/releases/download/v0.0.17/other.json.gz')).toBe(false)
   expect(isSeedAssetUrl('https://api.anilist.co/')).toBe(false)
   expect(isSeedAssetUrl('')).toBe(false)
 })
