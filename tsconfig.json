@@ -22,5 +22,8 @@
     },
     "jsxImportSource": "@emotion/react",
     "skipLibCheck": true
-  }
+  },
+  // docs/ is its own Astro project with its own tsconfig, deps and `npm run check`. Naming an
+  // exclude replaces the default one, so node_modules has to be listed again beside it.
+  "exclude": ["node_modules", "docs", "build", "lib"]
 }
