@@ -10,13 +10,18 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
 
-import { validateCase, type CorpusCase, type CorpusClaim, type CorpusEpisode, type CorpusMedia } from './types'
+import {
+  validateCase,
+  type CorpusCase, type CorpusClaim, type CorpusEpisode, type CorpusEpisodeRange, type CorpusIncludes,
+  type CorpusMedia,
+} from './types'
 
 /**
  * What an implementation has to provide, and deliberately nothing more.
  *
- * Four methods, none of which names a mechanism. A store is free to cluster through a union-find, a
- * graph database, merge plugins or anything else: the corpus only ever asks who ended up with whom.
+ * Seven methods, none of which names a mechanism. A store is free to cluster through a union-find, a
+ * graph database, merge plugins or anything else: the corpus only ever asks who ended up with whom,
+ * what holds what, and which two rows are one episode.
  *
  * `upsert` takes the whole case in ONE call and is expected to return once the store has settled,
  * including any pass the app would run before a page is built. A store that merges lazily does that
@@ -28,12 +33,33 @@ import { validateCase, type CorpusCase, type CorpusClaim, type CorpusEpisode, ty
  *
  * `episodesOf` returns how many DISTINCT episode numbers the cluster holding that uri would draw,
  * which is the number a page renders as rows.
+ *
+ * A STORE THAT LACKS ONE OF THESE CONCEPTS RETURNS AN EMPTY RESULT AND NEVER THROWS. An empty answer
+ * is readable as "this store cannot hold that fact", which a case can be marked `pending` against; a
+ * throw is a broken adapter, and the two must not look alike.
  */
 export type CorpusStore = {
   reset(): Promise<void>
   upsert(rows: CorpusMedia[], claims: CorpusClaim[], episodes?: CorpusEpisode[]): Promise<void>
   clusters(): Promise<string[][]>
   episodesOf(uri: string): Promise<number>
+  /**
+   * The uris this row's cluster is attached to AS A CONTAINER: every whole it is a part of, expanded
+   * to every member of the whole's own cluster, so a run that is part of a show names every id that
+   * show has. Never includes the row's own cluster. Empty when the row is part of nothing.
+   */
+  containersOf(uri: string): Promise<string[]>
+  /**
+   * Every INCLUDES edge naming this uri, as the container or as the run, with the range when the
+   * store knows which of the container's episodes the run is. Empty when the store holds no INCLUDES.
+   */
+  includesOf(uri: string): Promise<CorpusIncludes[]>
+  /**
+   * The other episode rows this store would draw as the SAME broadcast episode, never including the
+   * uri asked about. Empty when the row stands alone, which is the right answer for an inserted
+   * special.
+   */
+  episodePairsOf(episodeUri: string): Promise<string[]>
 }
 
 const CASES_DIR = join(dirname(fileURLToPath(import.meta.url)), 'cases')
@@ -94,14 +120,114 @@ const checkClusters = (corpusCase: CorpusCase, clusters: string[][]): string[] =
   return failures
 }
 
+const describeRange = (range: CorpusEpisodeRange): string =>
+  `${range.fromStart}..${range.fromEnd} onto ${range.toStart}..${range.toEnd}`
+
+const describeIncludes = (edge: CorpusIncludes): string =>
+  `${edge.container} holds ${edge.run}${edge.range ? ` at ${describeRange(edge.range)}` : ' with no range'}`
+
+const sameRange = (a: CorpusEpisodeRange, b: CorpusEpisodeRange): boolean =>
+  a.fromStart === b.fromStart && a.fromEnd === b.fromEnd && a.toStart === b.toStart && a.toEnd === b.toEnd
+
+const list = (values: string[]): string => values.length ? values.join(', ') : 'nothing'
+
+/**
+ * Everything the case asks that a cluster listing cannot answer: containment, ranges and episode
+ * identity. Returns one line per broken promise, each naming the kind and what the store actually
+ * said, because "PART_OF failed" is not a thing anybody can act on.
+ *
+ * The store is asked as it stands, so the caller drives the case first.
+ *
+ * Exported for its own control (`tests/unit/worker/corpus/relation-checks.test.ts`): today's store
+ * holds no INCLUDES and no cross-cluster episode identity, so no case file can make those two lines
+ * fire against it, and a check nothing can redden is a check nobody should believe.
+ */
+export const checkRelations = async (corpusCase: CorpusCase, store: CorpusStore, clusters: string[][]): Promise<string[]> => {
+  const failures: string[] = []
+  const { partOf, includes, episodePairs, episodeApart, unrelated } = corpusCase.expect
+
+  for (const { part, whole } of partOf ?? []) {
+    const containers = await store.containersOf(part)
+    if (!containers.includes(whole)) {
+      failures.push(`PART_OF: ${part} must be attached to ${whole} as a container. containersOf(${part}) is [${list(containers)}]`)
+    }
+    const cluster = clusterHolding(clusters, part)
+    if (cluster.includes(whole)) {
+      failures.push(`PART_OF MERGED: ${part} and ${whole} are one cluster and must not be, because a container holds the run and is not the run. Cluster is [${list(cluster)}]`)
+    }
+  }
+
+  for (const edge of includes ?? []) {
+    const held = await store.includesOf(edge.container)
+    const actual = held.find(candidate => candidate.container === edge.container && candidate.run === edge.run)
+    if (!actual) {
+      failures.push(`INCLUDES: ${edge.container} must hold ${edge.run}. includesOf(${edge.container}) is [${list(held.map(describeIncludes))}]`)
+      continue
+    }
+    if (edge.range && !(actual.range && sameRange(actual.range, edge.range))) {
+      failures.push(
+        `INCLUDES RANGE: ${edge.container} holds ${edge.run} at ${describeRange(edge.range)} and the store says `
+        + `${actual.range ? describeRange(actual.range) : 'no range'}`
+      )
+    }
+  }
+
+  for (const { a, b } of episodePairs ?? []) {
+    for (const [from, to] of [[a, b], [b, a]] as [string, string][]) {
+      const paired = await store.episodePairsOf(from)
+      if (!paired.includes(to)) {
+        failures.push(`EPISODE_PAIR: ${from} and ${to} are one broadcast episode. episodePairsOf(${from}) is [${list(paired)}]`)
+      }
+    }
+  }
+
+  for (const { a, b } of episodeApart ?? []) {
+    for (const [from, to] of [[a, b], [b, a]] as [string, string][]) {
+      const paired = await store.episodePairsOf(from)
+      if (paired.includes(to)) {
+        failures.push(`EPISODE_WELD: ${from} and ${to} are two different episodes and must never be one row. episodePairsOf(${from}) is [${list(paired)}]`)
+      }
+    }
+  }
+
+  for (const uri of unrelated ?? []) {
+    const cluster = clusterHolding(clusters, uri)
+    if (cluster.length > 1) failures.push(`UNRELATED MERGED: ${uri} must stand alone and its cluster is [${list(cluster)}]`)
+    const containers = await store.containersOf(uri)
+    if (containers.length) failures.push(`UNRELATED ATTACHED: ${uri} must be part of nothing and containersOf(${uri}) is [${list(containers)}]`)
+    const held = await store.includesOf(uri)
+    if (held.length) failures.push(`UNRELATED HELD: ${uri} must be in no INCLUDES and includesOf(${uri}) is [${list(held.map(describeIncludes))}]`)
+    // the other direction, which is the half a row's own answers cannot see: nothing in the case may
+    // point AT a row that is supposed to stay a lone badge
+    for (const row of corpusCase.rows) {
+      if (row.uri === uri) continue
+      if ((await store.containersOf(row.uri)).includes(uri)) {
+        failures.push(`UNRELATED HOLDS: ${row.uri} is attached to ${uri}, which must hold nothing in this case`)
+      }
+    }
+  }
+
+  return failures
+}
+
 const report = (corpusCase: CorpusCase, failures: string[]): string => [
   `${failures.length} expectation${failures.length === 1 ? '' : 's'} failed in "${corpusCase.name}"`,
   `SOURCE: ${corpusCase.source.file} :: ${corpusCase.source.test}`,
+  ...(corpusCase.source.answers?.length ? [`ANSWERS: ${corpusCase.source.answers.join(', ')}`] : []),
   `WHY THIS CASE IS RIGHT: ${corpusCase.why}`,
+  ...(corpusCase.checked ? [`CHECKED BY: ${corpusCase.checked.by}, ${corpusCase.checked.at}`] : []),
   ...(corpusCase.expect.knownGap
     ? [`KNOWN GAP: this case pins what the store DOES, not what is right. ${corpusCase.expect.knownGap}`]
     : []),
   [...new Set(failures)].join('\n'),
+].join('\n\n')
+
+/** What a pending case prints instead of failing: the same lines, said as a waiting list. */
+const pendingReport = (corpusCase: CorpusCase, pending: string, failures: string[]): string => [
+  failures.length
+    ? `${failures.length} expectation${failures.length === 1 ? '' : 's'} PENDING on "${pending}" in "${corpusCase.name}"`
+    : `every pending expectation in "${corpusCase.name}" is already met: drop its "pending": "${pending}"`,
+  ...(failures.length ? [[...new Set(failures)].join('\n')] : []),
 ].join('\n\n')
 
 /**
@@ -147,7 +273,29 @@ export const runCorpus = (store: CorpusStore) => {
         expect(reversed, report(corpusCase, ['the two arrival orders produced different clusters'])).toEqual(forward)
       })
 
-      const { episodeRows } = corpusCase.expect
+      const { partOf, includes, episodePairs, episodeApart, unrelated, episodeRows } = corpusCase.expect
+      const { pending } = corpusCase
+      const asksRelations = [partOf, includes, episodePairs, episodeApart, unrelated].some(kind => kind !== undefined)
+      if (asksRelations) {
+        const name = `${file}: ${corpusCase.name} (containment and episode identity${pending ? `, pending: ${pending}` : ''})`
+        test(name, async () => {
+          const failures: string[] = []
+          for (const reversed of [false, true]) {
+            const clusters = await drive(store, corpusCase, reversed)
+            const found = await checkRelations(corpusCase, store, clusters)
+            failures.push(...found.map(line => reversed ? `${line} (rows reversed)` : line))
+          }
+          // A pending case is one whose expectations no implementation can yet be ASKED, so the
+          // question is printed rather than failed. `together` and `apart` above still assert, which
+          // is what keeps a pending case from being a case that checks nothing.
+          if (pending) {
+            console.log(pendingReport(corpusCase, pending, failures))
+            return
+          }
+          if (failures.length) throw new Error(report(corpusCase, failures))
+        })
+      }
+
       if (episodeRows) {
         test(`${file}: ${episodeRows.clusterOf} draws ${episodeRows.count} episode rows`, async () => {
           await drive(store, corpusCase, false)

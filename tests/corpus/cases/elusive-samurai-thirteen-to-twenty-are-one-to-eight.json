@@ -1,0 +1,371 @@
+{
+  "name": "Crunchyroll's 13 to 20 are this run's 1 to 8",
+  "source": {
+    "file": "docs/src/content/docs/design/representation.md",
+    "test": "section 8.2, The Elusive Samurai, the renumbering"
+  },
+  "why": "One broadcast, two numberings. anizip, kitsu and AniList publish The Elusive Samurai season 2 as episodes 1 to 12; Crunchyroll continues its own count from season 1 and publishes the same eight broadcasts as 13 to 20, on the same days. Crunchyroll is a MEMBER of this run, not a container of it (8 is fewer than 12 and the run is releasing), so nothing here is an INCLUDES: what is wrong is only which row each Crunchyroll episode is. The record: \"theirs 13 to 20 on days 1 to 8 (Tokyo, one day of slack). Eight pairs, fromNumber 13 to 20, toNumber 1 to 8, all inside 1..12\". Episode 13 is episode 1, so a page that keeps Crunchyroll's number draws a twelve episode run as twenty rows with every Crunchyroll source stranded past the end.",
+  "rows": [
+    {
+      "uri": "anizip:18903",
+      "origin": "anizip",
+      "id": "18903",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 12,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "The Elusive Samurai Season 2",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:49265",
+      "origin": "kitsu",
+      "id": "49265",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 12,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "The Elusive Samurai Season 2",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:182616",
+      "origin": "anilist",
+      "id": "182616",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 12,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Nige Jouzu no Wakagimi Season 2",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 8,
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "title": "The Elusive Samurai",
+          "score": 0.5
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:18903",
+      "handleUri": "kitsu:49265"
+    },
+    {
+      "mediaUri": "anizip:18903",
+      "handleUri": "anilist:182616"
+    },
+    {
+      "mediaUri": "anizip:18903",
+      "handleUri": "cr:GQWH0M19X-GS00366034"
+    }
+  ],
+  "episodes": [
+    {
+      "uri": "anizip:18903-e1",
+      "origin": "anizip",
+      "id": "18903-e1",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 1,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e2",
+      "origin": "anizip",
+      "id": "18903-e2",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 2,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e3",
+      "origin": "anizip",
+      "id": "18903-e3",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 3,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e4",
+      "origin": "anizip",
+      "id": "18903-e4",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 4,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e5",
+      "origin": "anizip",
+      "id": "18903-e5",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 5,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e6",
+      "origin": "anizip",
+      "id": "18903-e6",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 6,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e7",
+      "origin": "anizip",
+      "id": "18903-e7",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 7,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e8",
+      "origin": "anizip",
+      "id": "18903-e8",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 8,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e9",
+      "origin": "anizip",
+      "id": "18903-e9",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 9,
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e10",
+      "origin": "anizip",
+      "id": "18903-e10",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 10,
+      "releaseDate": "2026-09-18T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e11",
+      "origin": "anizip",
+      "id": "18903-e11",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 11,
+      "releaseDate": "2026-09-25T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e12",
+      "origin": "anizip",
+      "id": "18903-e12",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 12,
+      "releaseDate": "2026-10-02T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e13",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e13",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 13,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e14",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e14",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 14,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e15",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e15",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 15,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e16",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e16",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 16,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e17",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e17",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 17,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e18",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e18",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 18,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e19",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e19",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 19,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e20",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e20",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 20,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:182616",
+        "anizip:18903",
+        "cr:GQWH0M19X-GS00366034",
+        "kitsu:49265"
+      ]
+    ],
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e13",
+        "b": "anizip:18903-e1"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e14",
+        "b": "anizip:18903-e2"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e15",
+        "b": "anizip:18903-e3"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e16",
+        "b": "anizip:18903-e4"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e17",
+        "b": "anizip:18903-e5"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e18",
+        "b": "anizip:18903-e6"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e19",
+        "b": "anizip:18903-e7"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e20",
+        "b": "anizip:18903-e8"
+      }
+    ],
+    "episodeApart": [
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e13",
+        "b": "anizip:18903-e2"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e14",
+        "b": "anizip:18903-e1"
+      },
+      {
+        "a": "cr:GQWH0M19X-GS00366034-e20",
+        "b": "anizip:18903-e12"
+      }
+    ]
+  },
+  "checked": {
+    "by": "specification 8.2",
+    "at": "2026-09-12",
+    "notes": "Rows, claims and episodes are the corpus's own, copied from crunchyroll-counting-on-from-the-previous-season, which read them out of dist-seed/snapshots.jsonl on 2026-09-09; kitsu and AniList keep their rows and their episode lists are left out because the pairing under test is Crunchyroll against anizip's dates. 8.2 also names mal:60059 (0.9, declared 12) as the tier of this cluster and the record carries no titles for it, so it is not invented here. The two episodeApart pairs are the off by one either side of the true mapping: 13 is our 1, never our 2, and 14 is our 2, never our 1."
+  },
+  "pending": "new store"
+}

@@ -1,0 +1,301 @@
+{
+  "name": "five Netflix seasons are five parts of one 64 episode run",
+  "source": {
+    "file": "docs/src/content/docs/design/representation.md",
+    "test": "section 8.4, Fullmetal Alchemist, 64 episodes in five Netflix seasons"
+  },
+  "why": "One run of 64 episodes, which Netflix sells as five seasons of about 13. Netflix's seasons are real things a viewer can open, and none of them is the run: each holds a thirteenth of it. So the answer is six clusters and five containments, never a merge, and never a pick of one season as \"the\" season. The record: \"every season holds fewer than 64, rule 5's exactness refuses (a shorter first season may be one half of our run, so only exactness counts) ... any ask claim naming a season for a FINISHED run of 64 would meet guard 7's shorter direction and downgrade to PART_OF(season, run) reason count-mismatch\". The year rule that welded BAKI (anidb 12569, 26 regular episodes in three Netflix seasons of 13) is exactly what this refuses: a season whose count cannot be the run's is a part of it, whatever year it carries.",
+  "rows": [
+    {
+      "uri": "mal:5114",
+      "origin": "mal",
+      "id": "5114",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 64,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fullmetal Alchemist"
+        }
+      ]
+    },
+    {
+      "uri": "nf:<fma>",
+      "origin": "nf",
+      "id": "<fma>",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "titles": [],
+      "scope": "CONTAINER"
+    },
+    {
+      "uri": "nf:<fma>-1",
+      "origin": "nf",
+      "id": "<fma>-1",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "titles": [],
+      "scope": "RUN"
+    },
+    {
+      "uri": "nf:<fma>-2",
+      "origin": "nf",
+      "id": "<fma>-2",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "titles": [],
+      "scope": "RUN"
+    },
+    {
+      "uri": "nf:<fma>-3",
+      "origin": "nf",
+      "id": "<fma>-3",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "titles": [],
+      "scope": "RUN"
+    },
+    {
+      "uri": "nf:<fma>-4",
+      "origin": "nf",
+      "id": "<fma>-4",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "titles": [],
+      "scope": "RUN"
+    },
+    {
+      "uri": "nf:<fma>-5",
+      "origin": "nf",
+      "id": "<fma>-5",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "titles": [],
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "mal:5114",
+      "handleUri": "nf:<fma>",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-1",
+      "handleUri": "nf:<fma>",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-2",
+      "handleUri": "nf:<fma>",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-3",
+      "handleUri": "nf:<fma>",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-4",
+      "handleUri": "nf:<fma>",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-5",
+      "handleUri": "nf:<fma>",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-1",
+      "handleUri": "mal:5114",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-2",
+      "handleUri": "mal:5114",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-3",
+      "handleUri": "mal:5114",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-4",
+      "handleUri": "mal:5114",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "nf:<fma>-5",
+      "handleUri": "mal:5114",
+      "relation": "PART_OF"
+    }
+  ],
+  "expect": {
+    "together": [],
+    "apart": [
+      [
+        "mal:5114",
+        "nf:<fma>-1"
+      ],
+      [
+        "mal:5114",
+        "nf:<fma>-2"
+      ],
+      [
+        "mal:5114",
+        "nf:<fma>-3"
+      ],
+      [
+        "mal:5114",
+        "nf:<fma>-4"
+      ],
+      [
+        "mal:5114",
+        "nf:<fma>-5"
+      ],
+      [
+        "nf:<fma>-1",
+        "nf:<fma>-2"
+      ],
+      [
+        "nf:<fma>-1",
+        "nf:<fma>-3"
+      ],
+      [
+        "nf:<fma>-1",
+        "nf:<fma>-4"
+      ],
+      [
+        "nf:<fma>-1",
+        "nf:<fma>-5"
+      ],
+      [
+        "nf:<fma>-2",
+        "nf:<fma>-3"
+      ],
+      [
+        "nf:<fma>-2",
+        "nf:<fma>-4"
+      ],
+      [
+        "nf:<fma>-2",
+        "nf:<fma>-5"
+      ],
+      [
+        "nf:<fma>-3",
+        "nf:<fma>-4"
+      ],
+      [
+        "nf:<fma>-3",
+        "nf:<fma>-5"
+      ],
+      [
+        "nf:<fma>-4",
+        "nf:<fma>-5"
+      ],
+      [
+        "mal:5114",
+        "nf:<fma>"
+      ],
+      [
+        "nf:<fma>-1",
+        "nf:<fma>"
+      ],
+      [
+        "nf:<fma>-2",
+        "nf:<fma>"
+      ],
+      [
+        "nf:<fma>-3",
+        "nf:<fma>"
+      ],
+      [
+        "nf:<fma>-4",
+        "nf:<fma>"
+      ],
+      [
+        "nf:<fma>-5",
+        "nf:<fma>"
+      ]
+    ],
+    "partOf": [
+      {
+        "part": "nf:<fma>-1",
+        "whole": "mal:5114"
+      },
+      {
+        "part": "nf:<fma>-2",
+        "whole": "mal:5114"
+      },
+      {
+        "part": "nf:<fma>-3",
+        "whole": "mal:5114"
+      },
+      {
+        "part": "nf:<fma>-4",
+        "whole": "mal:5114"
+      },
+      {
+        "part": "nf:<fma>-5",
+        "whole": "mal:5114"
+      },
+      {
+        "part": "mal:5114",
+        "whole": "nf:<fma>"
+      },
+      {
+        "part": "nf:<fma>-1",
+        "whole": "nf:<fma>"
+      },
+      {
+        "part": "nf:<fma>-2",
+        "whole": "nf:<fma>"
+      },
+      {
+        "part": "nf:<fma>-3",
+        "whole": "nf:<fma>"
+      },
+      {
+        "part": "nf:<fma>-4",
+        "whole": "nf:<fma>"
+      },
+      {
+        "part": "nf:<fma>-5",
+        "whole": "nf:<fma>"
+      }
+    ]
+  },
+  "checked": {
+    "by": "specification 8.4",
+    "at": "2026-09-12",
+    "notes": "mal:5114 and the count of 64 are the record's. The Netflix title id is not (\"a Netflix title (its id is not in the record) with five seasons of about 13 each, no dates, positional numbers\"), so the title and its seasons carry the placeholder uris the record itself writes, nf:<fma> and nf:<fma>-1 to -5. 13 stands for \"about 13 each\", which is the only figure the record gives; nothing here depends on the number beyond every season holding fewer than 64. The season claims are written as PART_OF because that is how the writer takes them: the ask claim arrives as a SAME_AS naming a season and guard 7 downgrades it, part into whole by episode count. No range is claimed, because Netflix publishes no dates and retranslates its titles, so nothing per episode is known: 3.1 calls that a PART_OF and not a rangeless INCLUDES."
+  }
+}

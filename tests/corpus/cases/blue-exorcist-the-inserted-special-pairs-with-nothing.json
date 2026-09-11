@@ -1,0 +1,574 @@
+{
+  "name": "the special Netflix inserted at position 14 pairs with nothing",
+  "source": {
+    "file": "docs/src/content/docs/design/representation.md",
+    "test": "section 8.3, Blue Exorcist, the special that broke the offset vote"
+  },
+  "why": "Netflix lists 26 rows for a 25 episode run because position 14 is \"Runaway Kuro\", a special that aired after the run ended. There is no single shift that makes those 26 rows into these 25: positions 1 to 13 are episodes 1 to 13, positions 15 to 26 are episodes 14 to 25, and position 14 is nobody's episode. The record measured what happens when a number is guessed anyway: \"A title-vote offset scored [[0,12],[1,11]], answered offset 0 by one vote, and put 13 wrong playable urls on the page.\" A wrong play button is worse than a missing one, and nothing downstream can tell the two apart. Netflix publishes no dates here and retranslates its titles, so in this case nothing pairs at all and the Netflix season stays what it is: 26 rows that are not this run.",
+  "rows": [
+    {
+      "uri": "anilist:<Blue Exorcist>",
+      "origin": "anilist",
+      "id": "<Blue Exorcist>",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Blue Exorcist"
+        }
+      ]
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Blue Exorcist"
+        }
+      ]
+    },
+    {
+      "uri": "nf:70304252-1",
+      "origin": "nf",
+      "id": "70304252-1",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "titles": [],
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "handleUri": "anilist:<Blue Exorcist>"
+    }
+  ],
+  "episodes": [
+    {
+      "uri": "anizip:<Blue Exorcist>-e1",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e1",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 1,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e2",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e2",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 2,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e3",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e3",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 3,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e4",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e4",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 4,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e5",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e5",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 5,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e6",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e6",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 6,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e7",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e7",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 7,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e8",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e8",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 8,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e9",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e9",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 9,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e10",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e10",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 10,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e11",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e11",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 11,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e12",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e12",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 12,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e13",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e13",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 13,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e14",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e14",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 14,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e15",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e15",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 15,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e16",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e16",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 16,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e17",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e17",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 17,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e18",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e18",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 18,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e19",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e19",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 19,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e20",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e20",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 20,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e21",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e21",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 21,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e22",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e22",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 22,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e23",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e23",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 23,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e24",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e24",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 24,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "anizip:<Blue Exorcist>-e25",
+      "origin": "anizip",
+      "id": "<Blue Exorcist>-e25",
+      "mediaUri": "anizip:<Blue Exorcist>",
+      "episodeNumber": 25,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e1",
+      "origin": "nf",
+      "id": "70304252-1-e1",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 1,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e2",
+      "origin": "nf",
+      "id": "70304252-1-e2",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 2,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e3",
+      "origin": "nf",
+      "id": "70304252-1-e3",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 3,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e4",
+      "origin": "nf",
+      "id": "70304252-1-e4",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 4,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e5",
+      "origin": "nf",
+      "id": "70304252-1-e5",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 5,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e6",
+      "origin": "nf",
+      "id": "70304252-1-e6",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 6,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e7",
+      "origin": "nf",
+      "id": "70304252-1-e7",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 7,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e8",
+      "origin": "nf",
+      "id": "70304252-1-e8",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 8,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e9",
+      "origin": "nf",
+      "id": "70304252-1-e9",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 9,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e10",
+      "origin": "nf",
+      "id": "70304252-1-e10",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 10,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e11",
+      "origin": "nf",
+      "id": "70304252-1-e11",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 11,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e12",
+      "origin": "nf",
+      "id": "70304252-1-e12",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 12,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e13",
+      "origin": "nf",
+      "id": "70304252-1-e13",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 13,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:80005451",
+      "origin": "nf",
+      "id": "80005451",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 14,
+      "releaseDate": null,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Runaway Kuro"
+        }
+      ]
+    },
+    {
+      "uri": "nf:70304252-1-e15",
+      "origin": "nf",
+      "id": "70304252-1-e15",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 15,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e16",
+      "origin": "nf",
+      "id": "70304252-1-e16",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 16,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e17",
+      "origin": "nf",
+      "id": "70304252-1-e17",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 17,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e18",
+      "origin": "nf",
+      "id": "70304252-1-e18",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 18,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e19",
+      "origin": "nf",
+      "id": "70304252-1-e19",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 19,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e20",
+      "origin": "nf",
+      "id": "70304252-1-e20",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 20,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e21",
+      "origin": "nf",
+      "id": "70304252-1-e21",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 21,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e22",
+      "origin": "nf",
+      "id": "70304252-1-e22",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 22,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e23",
+      "origin": "nf",
+      "id": "70304252-1-e23",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 23,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e24",
+      "origin": "nf",
+      "id": "70304252-1-e24",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 24,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e25",
+      "origin": "nf",
+      "id": "70304252-1-e25",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 25,
+      "releaseDate": null,
+      "titles": []
+    },
+    {
+      "uri": "nf:70304252-1-e26",
+      "origin": "nf",
+      "id": "70304252-1-e26",
+      "mediaUri": "nf:70304252-1",
+      "episodeNumber": 26,
+      "releaseDate": null,
+      "titles": []
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:<Blue Exorcist>",
+        "anizip:<Blue Exorcist>"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:<Blue Exorcist>",
+        "nf:70304252-1"
+      ],
+      [
+        "anizip:<Blue Exorcist>",
+        "nf:70304252-1"
+      ]
+    ],
+    "episodeApart": [
+      {
+        "a": "nf:80005451",
+        "b": "anizip:<Blue Exorcist>-e13"
+      },
+      {
+        "a": "nf:80005451",
+        "b": "anizip:<Blue Exorcist>-e14"
+      },
+      {
+        "a": "nf:80005451",
+        "b": "anizip:<Blue Exorcist>-e15"
+      },
+      {
+        "a": "nf:70304252-1-e15",
+        "b": "anizip:<Blue Exorcist>-e15"
+      },
+      {
+        "a": "nf:70304252-1-e16",
+        "b": "anizip:<Blue Exorcist>-e16"
+      }
+    ]
+  },
+  "checked": {
+    "by": "specification 8.3",
+    "at": "2026-09-12",
+    "notes": "Every number and every Netflix id is the record's: title 70304252, season 1 of 26 rows against a 25 episode run, position 14 the epid 80005451 \"Runaway Kuro\". The run's own ids are NOT in the record (\"The catalogue run's ids are not in the record\"), so the two run rows carry the placeholder uris the record itself writes for them, anilist:<Blue Exorcist>. The other 25 Netflix positions have no epid in the record either and carry the corpus's <mediaUri>-e<number> convention instead. Neither side is dated here: Netflix publishes none at any level, and the record does not publish anizip's days for this run. The last two episodeApart pairs are the offset the title vote answered: under the piecewise mapping position 15 is episode 14 and position 16 is episode 15, so a page that reads position as number is wrong from 15 on."
+  }
+}

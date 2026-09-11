@@ -1,0 +1,906 @@
+{
+  "name": "Crunchyroll's season 1 holds both cours, episodes 1 to 11 and 12 to 23",
+  "source": {
+    "file": "docs/src/content/docs/design/representation.md",
+    "test": "section 8.1, Mushoku Tensei, the fold end to end"
+  },
+  "why": "One Crunchyroll season is two broadcast runs. Cour 1 aired 11 episodes from 2021-01-10 and cour 2 aired 12 from 2021-10-03, nine months later, and Crunchyroll sells both as season 1 with a special, 24 rows. The season is therefore neither run: it HOLDS them, its rows 1 to 11 are cour 1's 1 to 11 and its rows 12 to 23 are cour 2's 1 to 12, which is the only reading under which every episode is itself. The record: \"Emits eleven EPISODE_LINK and INCLUDES(cr season 1 to anilist:108465, fromStart 1, fromEnd 11, toStart 1, toEnd 11, contiguous, aligned 11, total 24) ... The same pass on cour 2's cluster pairs their 12 to 23 with cour 2's 1 to 12\". The special pairs with nothing, because nothing else is that episode. Netflix season 1 is 24 positional placeholders with no titles and no dates, and unogs refused the ask, so no claim exists and nothing may be minted from it: it stays a badge.",
+  "rows": [
+    {
+      "uri": "anizip:14758",
+      "origin": "anizip",
+      "id": "14758",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-10T15:00:00Z",
+      "episodeCount": 11,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "無職転生~異世界行ったら本気だす~",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:42323",
+      "origin": "kitsu",
+      "id": "42323",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-10",
+      "episodeCount": 11,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "無職転生 ～異世界行ったら本気だす～",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:108465",
+      "origin": "anilist",
+      "id": "108465",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11",
+      "episodeCount": 11,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "無職転生 ～異世界行ったら本気だす～",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:15954",
+      "origin": "anizip",
+      "id": "15954",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03T15:00:00Z",
+      "episodeCount": 12,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation (2021)",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "無職転生~異世界行ったら本気だす~ (2021)",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:43907",
+      "origin": "kitsu",
+      "id": "43907",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03",
+      "episodeCount": 12,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Part 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "無職転生 ～異世界行ったら本気だす～ 第2クール",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:127720",
+      "origin": "anilist",
+      "id": "127720",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-04",
+      "episodeCount": 12,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Cour 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "無職転生 ～異世界行ったら本気だす～ 第2クール",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11",
+      "episodeCount": 24,
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "uri": "nf:80987039-1",
+      "origin": "nf",
+      "id": "80987039-1",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "titles": [],
+      "episodeCount": 24,
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:14758",
+      "handleUri": "anilist:108465"
+    },
+    {
+      "mediaUri": "anizip:15954",
+      "handleUri": "anilist:127720"
+    },
+    {
+      "mediaUri": "anilist:108465",
+      "handleUri": "cr:G24H1N3MP-G609CX3J4",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "anilist:127720",
+      "handleUri": "cr:G24H1N3MP-G609CX3J4",
+      "relation": "PART_OF"
+    }
+  ],
+  "episodes": [
+    {
+      "uri": "anizip:14758-e1",
+      "origin": "anizip",
+      "id": "14758-e1",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 1,
+      "releaseDate": "2021-01-10T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e2",
+      "origin": "anizip",
+      "id": "14758-e2",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 2,
+      "releaseDate": "2021-01-17T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e3",
+      "origin": "anizip",
+      "id": "14758-e3",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 3,
+      "releaseDate": "2021-01-24T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e4",
+      "origin": "anizip",
+      "id": "14758-e4",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 4,
+      "releaseDate": "2021-01-31T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e5",
+      "origin": "anizip",
+      "id": "14758-e5",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 5,
+      "releaseDate": "2021-02-07T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e6",
+      "origin": "anizip",
+      "id": "14758-e6",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 6,
+      "releaseDate": "2021-02-14T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e7",
+      "origin": "anizip",
+      "id": "14758-e7",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 7,
+      "releaseDate": "2021-02-21T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e8",
+      "origin": "anizip",
+      "id": "14758-e8",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 8,
+      "releaseDate": "2021-02-28T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e9",
+      "origin": "anizip",
+      "id": "14758-e9",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 9,
+      "releaseDate": "2021-03-07T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e10",
+      "origin": "anizip",
+      "id": "14758-e10",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 10,
+      "releaseDate": "2021-03-14T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:14758-e11",
+      "origin": "anizip",
+      "id": "14758-e11",
+      "mediaUri": "anizip:14758",
+      "episodeNumber": 11,
+      "releaseDate": "2021-03-21T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e1",
+      "origin": "anizip",
+      "id": "15954-e1",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 1,
+      "releaseDate": "2021-10-03T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e2",
+      "origin": "anizip",
+      "id": "15954-e2",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 2,
+      "releaseDate": "2021-10-10T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e3",
+      "origin": "anizip",
+      "id": "15954-e3",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 3,
+      "releaseDate": "2021-10-17T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e4",
+      "origin": "anizip",
+      "id": "15954-e4",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 4,
+      "releaseDate": "2021-10-24T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e5",
+      "origin": "anizip",
+      "id": "15954-e5",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 5,
+      "releaseDate": "2021-10-31T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e6",
+      "origin": "anizip",
+      "id": "15954-e6",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 6,
+      "releaseDate": "2021-11-07T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e7",
+      "origin": "anizip",
+      "id": "15954-e7",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 7,
+      "releaseDate": "2021-11-14T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e8",
+      "origin": "anizip",
+      "id": "15954-e8",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 8,
+      "releaseDate": "2021-11-21T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e9",
+      "origin": "anizip",
+      "id": "15954-e9",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 9,
+      "releaseDate": "2021-11-28T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e10",
+      "origin": "anizip",
+      "id": "15954-e10",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 10,
+      "releaseDate": "2021-12-05T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e11",
+      "origin": "anizip",
+      "id": "15954-e11",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 11,
+      "releaseDate": "2021-12-12T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:15954-e12",
+      "origin": "anizip",
+      "id": "15954-e12",
+      "mediaUri": "anizip:15954",
+      "episodeNumber": 12,
+      "releaseDate": "2021-12-19T15:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e1",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e1",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 1,
+      "releaseDate": "2021-01-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e2",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e2",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 2,
+      "releaseDate": "2021-01-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e3",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e3",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 3,
+      "releaseDate": "2021-01-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e4",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e4",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 4,
+      "releaseDate": "2021-02-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e5",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e5",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 5,
+      "releaseDate": "2021-02-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e6",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e6",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 6,
+      "releaseDate": "2021-02-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e7",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e7",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 7,
+      "releaseDate": "2021-02-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e8",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e8",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 8,
+      "releaseDate": "2021-03-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e9",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e9",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 9,
+      "releaseDate": "2021-03-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e10",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e10",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 10,
+      "releaseDate": "2021-03-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e11",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e11",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 11,
+      "releaseDate": "2021-03-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e12",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e12",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 12,
+      "releaseDate": "2021-10-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e13",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e13",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 13,
+      "releaseDate": "2021-10-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e14",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e14",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 14,
+      "releaseDate": "2021-10-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e15",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e15",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 15,
+      "releaseDate": "2021-10-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e16",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e16",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 16,
+      "releaseDate": "2021-11-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e17",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e17",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 17,
+      "releaseDate": "2021-11-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e18",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e18",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 18,
+      "releaseDate": "2021-11-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e19",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e19",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 19,
+      "releaseDate": "2021-11-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e20",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e20",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 20,
+      "releaseDate": "2021-11-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e21",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e21",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 21,
+      "releaseDate": "2021-12-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e22",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e22",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 22,
+      "releaseDate": "2021-12-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e23",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e23",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 23,
+      "releaseDate": "2021-12-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-G609CX3J4-e24",
+      "origin": "cr",
+      "id": "G24H1N3MP-G609CX3J4-e24",
+      "mediaUri": "cr:G24H1N3MP-G609CX3J4",
+      "episodeNumber": 24,
+      "releaseDate": null,
+      "score": 0.5,
+      "titles": []
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:14758",
+        "kitsu:42323",
+        "anilist:108465"
+      ],
+      [
+        "anizip:15954",
+        "kitsu:43907",
+        "anilist:127720"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:14758",
+        "anizip:15954"
+      ],
+      [
+        "anizip:14758",
+        "kitsu:43907"
+      ],
+      [
+        "anizip:14758",
+        "anilist:127720"
+      ],
+      [
+        "kitsu:42323",
+        "anizip:15954"
+      ],
+      [
+        "kitsu:42323",
+        "kitsu:43907"
+      ],
+      [
+        "kitsu:42323",
+        "anilist:127720"
+      ],
+      [
+        "anilist:108465",
+        "anizip:15954"
+      ],
+      [
+        "anilist:108465",
+        "kitsu:43907"
+      ],
+      [
+        "anilist:108465",
+        "anilist:127720"
+      ]
+    ],
+    "partOf": [
+      {
+        "part": "anilist:108465",
+        "whole": "cr:G24H1N3MP-G609CX3J4"
+      },
+      {
+        "part": "anilist:127720",
+        "whole": "cr:G24H1N3MP-G609CX3J4"
+      }
+    ],
+    "includes": [
+      {
+        "container": "cr:G24H1N3MP-G609CX3J4",
+        "run": "anilist:108465",
+        "range": {
+          "fromStart": 1,
+          "fromEnd": 11,
+          "toStart": 1,
+          "toEnd": 11
+        }
+      },
+      {
+        "container": "cr:G24H1N3MP-G609CX3J4",
+        "run": "anilist:127720",
+        "range": {
+          "fromStart": 12,
+          "fromEnd": 23,
+          "toStart": 1,
+          "toEnd": 12
+        }
+      }
+    ],
+    "episodePairs": [
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e1",
+        "b": "anizip:14758-e1"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e2",
+        "b": "anizip:14758-e2"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e3",
+        "b": "anizip:14758-e3"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e4",
+        "b": "anizip:14758-e4"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e5",
+        "b": "anizip:14758-e5"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e6",
+        "b": "anizip:14758-e6"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e7",
+        "b": "anizip:14758-e7"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e8",
+        "b": "anizip:14758-e8"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e9",
+        "b": "anizip:14758-e9"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e10",
+        "b": "anizip:14758-e10"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e11",
+        "b": "anizip:14758-e11"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e12",
+        "b": "anizip:15954-e1"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e13",
+        "b": "anizip:15954-e2"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e14",
+        "b": "anizip:15954-e3"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e15",
+        "b": "anizip:15954-e4"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e16",
+        "b": "anizip:15954-e5"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e17",
+        "b": "anizip:15954-e6"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e18",
+        "b": "anizip:15954-e7"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e19",
+        "b": "anizip:15954-e8"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e20",
+        "b": "anizip:15954-e9"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e21",
+        "b": "anizip:15954-e10"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e22",
+        "b": "anizip:15954-e11"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e23",
+        "b": "anizip:15954-e12"
+      }
+    ],
+    "episodeApart": [
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e24",
+        "b": "anizip:14758-e11"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e24",
+        "b": "anizip:15954-e12"
+      },
+      {
+        "a": "cr:G24H1N3MP-G609CX3J4-e12",
+        "b": "anizip:15954-e12"
+      }
+    ],
+    "unrelated": [
+      "nf:80987039-1"
+    ]
+  },
+  "checked": {
+    "by": "specification 8.1",
+    "at": "2026-09-12",
+    "notes": "Rows and episodes are the corpus's own, copied from run-lists-its-own-episodes-not-the-folded-season (cour 1 and the Crunchyroll season) and five-mushoku-runs-stay-five (cour 2), so every uri, title, date and count is the one the record already carries. Two changes, both stated by 8.1. The Crunchyroll season's episodes 12 to 23 are dated on cour 2's Tokyo days (\"Their 12 to 23 fall on cour 2's days\"), read off anizip:15954 with the nine hour offset the fixture's own rows 1 to 11 already carry; merge-fixtures dated all 24 weekly from January because it was written to test trimming, not pairing. Position 24 is the special and carries no date, which the record does not publish. The Crunchyroll season arrives as PART_OF rather than SAME_AS because that is what the containing answer lands as: \"The containing claim lands as PART_OF(anilist:108465, cr:G24H1N3MP-G609CX3J4) reason containing, evidence: {theirs: 24, ours: 11}\". nf:80987039-1 carries no titles and no date because unogs publishes none: \"season 1 is 24 of 24 positional placeholders, so no titles, no date\"."
+  },
+  "pending": "new store"
+}
