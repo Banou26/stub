@@ -82,7 +82,7 @@ const Index = () => {
         // for RELEASING, and a season listing keeps the runs that have not aired yet.
         season: CURRENT_SEASON.season,
         seasonYear: CURRENT_SEASON.year,
-        sorts: [MediaSort.Popularity],
+        sorts: [MediaSort.PopularityDesc],
         ...(category ? { categories: [category] } : {})
       },
       shortDescriptionInput: {

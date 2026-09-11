@@ -421,8 +421,17 @@ input MediaInput {
   context: RequestContext
 }
 
+"""
+How a page is ordered. A bare member sorts ASCENDING and its `_DESC` twin descending, the reading the
+suffix carries in every enum of this shape, AniList's `MediaSort` included, which these two members
+are borrowed from. A media the sources give no value for sorts LAST in both directions.
+
+Naming more than one member runs them in order and the last one decides.
+"""
 enum MediaSort {
+  """Least popular first."""
   POPULARITY
+  """Most popular first. What the home row and the search page ask for."""
   POPULARITY_DESC
 }
 

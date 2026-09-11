@@ -6,7 +6,7 @@ import _schema from './schema.gql?raw'
 import { implementsSimilarMedia, proxyRequestToExtractors, similarOutcomeFrom } from '../../extractor'
 import { resolveSimilarRuns } from '../../similar-consumer'
 import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForMedia, findMediaForPage, findRunEpisodes, hideAttachedContainers } from '../../store/db'
-import { applyMediaFilters } from '../../store/filter'
+import { applyMediaFilters, applyMediaSorts } from '../../store/filter'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
 import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
@@ -151,14 +151,11 @@ export const resolvers = {
                 .map(entry => entry.media)
           }
 
-          const sorts = args.input.sorts ?? []
-          for (const sort of sorts) {
-            if (sort === 'POPULARITY') {
-              aggregated.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
-            } else if (sort === 'POPULARITY_DESC') {
-              aggregated.sort((a, b) => (a.popularity ?? 0) - (b.popularity ?? 0))
-            }
-          }
+          // `POPULARITY` is ascending and `POPULARITY_DESC` descending, the reading the `_DESC` suffix
+          // carries everywhere else, this app's own AniList calls included. Both members pointed the
+          // other way until 2026-09-12. The home row and the search page ask for `POPULARITY_DESC` and
+          // render the list in the order given, so this is what puts the most popular card first.
+          aggregated = applyMediaSorts(aggregated, args.input.sorts)
           return aggregated
         }
 

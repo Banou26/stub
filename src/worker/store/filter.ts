@@ -1,8 +1,8 @@
-// The `mediaPage` filters that can be decided from an aggregated row, kept out of
+// The `mediaPage` filters and sorts that can be decided from an aggregated row, kept out of
 // ../resolvers/media/index.ts so they can be tested. That module reaches urql and dies under vitest
 // with a CommonJS `require('react')`, which is the same reason `sameAsHandleUris` lives in
 // ./aggregate.ts and `normalizeToStoreMedia` in ./normalize.ts. A filter nothing can pin is a filter
-// nobody can prove empties a page.
+// nobody can prove empties a page, and a sort nothing can pin spent a year pointing the wrong way.
 
 import type { Media as GQLMedia } from '../../generated/schema/types.generated'
 
@@ -77,4 +77,36 @@ export const applyMediaFilters = <T extends Pick<GQLMedia, 'categories' | 'type'
     }
     return true
   })
+}
+
+// Nulls are decided BEFORE the direction, so reversing the order does not reverse where an unranked
+// row lands. A media with no popularity is unranked rather than unpopular, so it sorts last either
+// way, the same call `relation-labels.ts` makes for a relation the list does not name.
+const comparePopularity = (a: number | null | undefined, b: number | null | undefined, direction: 1 | -1) => {
+  if (a == null) return b == null ? 0 : 1
+  if (b == null) return -1
+  return (a - b) * direction
+}
+
+/**
+ * The page in the order `sorts` names, applied left to right so the last member decides.
+ *
+ * `POPULARITY` is ASCENDING and `POPULARITY_DESC` DESCENDING, which is what the `X` / `X_DESC` pair
+ * means everywhere it appears, AniList's own `MediaSort` included: this enum holds two of its members
+ * and `sources/anilist/extractor.ts` sends `POPULARITY_DESC` upstream to get the most popular first.
+ *
+ * A media with no popularity sorts LAST in both directions.
+ *
+ * Returns a new array. The input is left alone so a caller can keep the unsorted page.
+ */
+export const applyMediaSorts = <T extends Pick<GQLMedia, 'popularity'>>(
+  medias: readonly T[],
+  sorts: readonly string[] | null | undefined
+): T[] => {
+  const sorted = [...medias]
+  for (const sort of sorts ?? []) {
+    if (sort === 'POPULARITY') sorted.sort((a, b) => comparePopularity(a.popularity, b.popularity, 1))
+    else if (sort === 'POPULARITY_DESC') sorted.sort((a, b) => comparePopularity(a.popularity, b.popularity, -1))
+  }
+  return sorted
 }

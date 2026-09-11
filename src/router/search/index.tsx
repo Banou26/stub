@@ -225,7 +225,7 @@ const YEAR_OPTIONS = (() => {
  * answer the most popular media that matched at all.
  */
 const variablesFor = (filters: SearchFilters) => ({
-  ...filters.query ? { search: filters.query } : { sorts: [MediaSort.Popularity] },
+  ...filters.query ? { search: filters.query } : { sorts: [MediaSort.PopularityDesc] },
   ...filters.category ? { categories: [filters.category] } : {},
   ...filters.status ? { status: filters.status } : {},
   ...filters.season ? { season: filters.season } : {},

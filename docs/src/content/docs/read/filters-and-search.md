@@ -310,7 +310,7 @@ flowchart TD
   GATE -->|"0.7 or better"| SORT1
   SORT1 --> S2
   S2 -->|"no sorts named: the ranking survives"| KEEPO
-  S2 -->|"POPULARITY: (b.popularity ?? 0) - (a.popularity ?? 0), most popular first"| DISC
+  S2 -->|"POPULARITY_DESC: most popular first, unranked rows last (applyMediaSorts)"| DISC
   S2 -->|"POPULARITY_DESC: (a.popularity ?? 0) - (b.popularity ?? 0), least popular first"| DISC
 
   classDef irrev fill:#b03f33,stroke:#e0796f,color:#ffffff
