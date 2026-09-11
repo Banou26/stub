@@ -1,0 +1,66 @@
+{
+  "name": "mechanism 3: two different shows both titled only \"Season 3\" do not weld",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "mechanism 3: two different shows both titled only \"Season 3\" do not weld"
+  },
+  "why": "Crunchyroll titles a season with its bare position, so a great many unrelated shows carry the literal string \"Season 3\". Mushoku Tensei and Grand Blue Dreaming are different works; the label they share names a position in their own catalogue and identifies nothing.",
+  "rows": [
+    {
+      "uri": "cr:GRQ1000",
+      "origin": "cr",
+      "id": "GRQ1000",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Season 3",
+          "score": 0.5
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "cr:GRQ2000",
+      "origin": "cr",
+      "id": "GRQ2000",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Season 3",
+          "score": 0.5
+        },
+        {
+          "language": "ja",
+          "title": "Grand Blue Dreaming",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [],
+    "apart": [
+      [
+        "cr:GRQ1000",
+        "cr:GRQ2000"
+      ]
+    ]
+  }
+}

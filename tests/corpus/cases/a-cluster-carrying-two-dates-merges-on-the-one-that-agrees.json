@@ -1,0 +1,80 @@
+{
+  "name": "a cluster carrying two dates merges on whichever one agrees",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "a cluster carrying two dates merges on whichever one agrees"
+  },
+  "why": "One run of Kimi ni Todoke described by three catalogues, one of which (tvmaze) is nine months out. The three are the same run: anilist and tvmaze say so through a handle, and kitsu agrees with anilist to within two days. A cluster that has already absorbed a mis-dated member must not be cut off from everything else it belongs with.",
+  "rows": [
+    {
+      "uri": "anilist:2540",
+      "origin": "anilist",
+      "id": "2540",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-10-05T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Kimi ni Todoke",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "tvmaze:2541",
+      "origin": "tvmaze",
+      "id": "2541",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-20T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Kimi ni Todoke",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:2542",
+      "origin": "kitsu",
+      "id": "2542",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-10-07",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Kimi ni Todoke",
+          "score": 0.3
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:2540",
+      "handleUri": "tvmaze:2541"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:2540",
+        "kitsu:2542",
+        "tvmaze:2541"
+      ]
+    ],
+    "apart": []
+  }
+}

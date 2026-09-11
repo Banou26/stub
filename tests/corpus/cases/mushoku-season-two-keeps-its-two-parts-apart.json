@@ -1,0 +1,130 @@
+{
+  "name": "and so does season two",
+  "source": {
+    "file": "tests/unit/worker/store/mushoku-parts.test.ts",
+    "test": "and so does season two"
+  },
+  "why": "The same shape one season later, 12 episodes from 2023-07-09 and 12 from 2024-04-07, and the pair whose kitsu rows are BOTH \"season 2\" by ordinal, so nothing but the 273 days between them can tell them apart.",
+  "rows": [
+    {
+      "uri": "anilist:146065",
+      "origin": "anilist",
+      "id": "146065",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-09",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:45950",
+      "origin": "kitsu",
+      "id": "45950",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-09",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu Season 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "anilist:166873",
+      "origin": "anilist",
+      "id": "166873",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2024-04-07",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 2 Part 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:47694",
+      "origin": "kitsu",
+      "id": "47694",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2024-04-07",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:146065",
+      "handleUri": "kitsu:45950"
+    },
+    {
+      "mediaUri": "anilist:166873",
+      "handleUri": "kitsu:47694"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:146065",
+        "kitsu:45950"
+      ],
+      [
+        "anilist:166873",
+        "kitsu:47694"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:146065",
+        "anilist:166873"
+      ],
+      [
+        "anilist:146065",
+        "kitsu:47694"
+      ],
+      [
+        "kitsu:45950",
+        "anilist:166873"
+      ],
+      [
+        "kitsu:45950",
+        "kitsu:47694"
+      ]
+    ]
+  }
+}

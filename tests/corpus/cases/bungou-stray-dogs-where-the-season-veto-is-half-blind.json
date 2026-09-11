@@ -1,0 +1,242 @@
+{
+  "name": "two Bungou Stray Dogs seasons in one year, where the season veto is half blind",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "two Bungou Stray Dogs seasons in one year, where the season veto is half blind"
+  },
+  "why": "Season 4 starts 2023-01-04 and season 5 starts 2023-07-12, same year, 189 days. Their \"Nth Season\" titles score 0.9298 and their bare \"Bungou Stray Dogs 4\" / \"5\" titles score 0.9018, both at or above the 0.9 threshold, so the title axis says these are one show. The date refuses them at 189 days; widen the window and the season veto takes over on the \"Nth Season\" pair; the bare pair is skipped outright by differOnlyByTrailingNumber. Three mechanisms deep, which is why it takes two mutations to move.",
+  "rows": [
+    {
+      "uri": "anizip:16965",
+      "origin": "anizip",
+      "id": "16965",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-01-04T14:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bungo Stray Dogs 4",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "文豪ストレイドッグス (2023)",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:45460",
+      "origin": "kitsu",
+      "id": "45460",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-01-04",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bungou Stray Dogs 4",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Bungou Stray Dogs 4th Season",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "文豪ストレイドッグス 4",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:141249",
+      "origin": "anilist",
+      "id": "141249",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-01-04",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bungou Stray Dogs 4th Season",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Bungo Stray Dogs 4",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "文豪ストレイドッグス 第4シーズン",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:17962",
+      "origin": "anizip",
+      "id": "17962",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-12T14:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bungo Stray Dogs 5",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "文豪ストレイドッグス (2023) TV",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:47258",
+      "origin": "kitsu",
+      "id": "47258",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-12",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bungou Stray Dogs 5",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Bungou Stray Dogs 5th Season",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "文豪ストレイドッグス 5",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:163263",
+      "origin": "anilist",
+      "id": "163263",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-12",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bungou Stray Dogs 5th Season",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Bungo Stray Dogs 5",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "文豪ストレイドッグス 第5シーズン",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:16965",
+      "handleUri": "anilist:141249"
+    },
+    {
+      "mediaUri": "anizip:17962",
+      "handleUri": "anilist:163263"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:16965",
+        "kitsu:45460",
+        "anilist:141249"
+      ],
+      [
+        "anizip:17962",
+        "kitsu:47258",
+        "anilist:163263"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:16965",
+        "anizip:17962"
+      ],
+      [
+        "anizip:16965",
+        "kitsu:47258"
+      ],
+      [
+        "anizip:16965",
+        "anilist:163263"
+      ],
+      [
+        "kitsu:45460",
+        "anizip:17962"
+      ],
+      [
+        "kitsu:45460",
+        "kitsu:47258"
+      ],
+      [
+        "kitsu:45460",
+        "anilist:163263"
+      ],
+      [
+        "anilist:141249",
+        "anizip:17962"
+      ],
+      [
+        "anilist:141249",
+        "kitsu:47258"
+      ],
+      [
+        "anilist:141249",
+        "anilist:163263"
+      ]
+    ]
+  }
+}

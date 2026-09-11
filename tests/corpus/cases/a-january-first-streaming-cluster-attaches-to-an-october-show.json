@@ -1,0 +1,56 @@
+{
+  "name": "a January 1 streaming cluster still attaches to an October show",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "a January 1 streaming cluster still attaches to an October show"
+  },
+  "why": "A streaming catalogue that only knows the year publishes `${year}-01-01`: justwatch, omdb, tmdb, tvdb, unogs and crunchyroll all build that string literally. It is the same show under both rows and the January date is not a claim about a day at all. Believing it costs 14992 of 17946 attaches.",
+  "rows": [
+    {
+      "uri": "anilist:2520",
+      "origin": "anilist",
+      "id": "2520",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-10-04T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Dandadan",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "jw:2521",
+      "origin": "jw",
+      "id": "2521",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Dandadan",
+          "score": 0.2
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [
+      [
+        "anilist:2520",
+        "jw:2521"
+      ]
+    ],
+    "apart": []
+  }
+}

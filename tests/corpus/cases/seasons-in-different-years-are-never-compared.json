@@ -1,0 +1,142 @@
+{
+  "name": "mechanism 1: seasons in different years are never compared",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "mechanism 1: seasons in different years are never compared"
+  },
+  "why": "Mushoku Tensei season 2 aired 2023 and season 3 in 2026. Two broadcast runs three years apart are different works whatever their titles score, and each of them is one run described by two catalogues that link to each other, which is the pair every source really publishes.",
+  "rows": [
+    {
+      "uri": "anilist:146065",
+      "origin": "anilist",
+      "id": "146065",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-03T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei II: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 II 異世界行ったら本気だす",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:17173",
+      "origin": "anizip",
+      "id": "17173",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-03T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 2",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 第2期",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:189395",
+      "origin": "anilist",
+      "id": "189395",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 III 異世界行ったら本気だす",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:19999",
+      "origin": "anizip",
+      "id": "19999",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 第3期",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:146065",
+      "handleUri": "anizip:17173"
+    },
+    {
+      "mediaUri": "anilist:189395",
+      "handleUri": "anizip:19999"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:146065",
+        "anizip:17173"
+      ],
+      [
+        "anilist:189395",
+        "anizip:19999"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:146065",
+        "anilist:189395"
+      ],
+      [
+        "anilist:146065",
+        "anizip:19999"
+      ],
+      [
+        "anizip:17173",
+        "anilist:189395"
+      ],
+      [
+        "anizip:17173",
+        "anizip:19999"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "name": "a season-scoped source id keeps the same two clusters apart",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "a season-scoped source id keeps the same two clusters apart"
+  },
+  "why": "THE FIX for the case above, and the reason it is a source-side fix. The same Apple TV show with one media per season, each carrying its own season's premiere: season 1 and season 3 stay two runs AND both still get their Apple TV row, which is the whole point of the link. A rule that simply dropped Apple TV handles would pass the case above and fail this one.",
+  "rows": [
+    {
+      "uri": "anilist:701",
+      "origin": "anilist",
+      "id": "701",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:703",
+      "origin": "anilist",
+      "id": "703",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "appletv:umc.cmc.scoped-s1",
+      "origin": "appletv",
+      "id": "umc.cmc.scoped-s1",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.2
+        }
+      ]
+    },
+    {
+      "uri": "appletv:umc.cmc.scoped-s3",
+      "origin": "appletv",
+      "id": "umc.cmc.scoped-s3",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.2
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:701",
+      "handleUri": "appletv:umc.cmc.scoped-s1"
+    },
+    {
+      "mediaUri": "anilist:703",
+      "handleUri": "appletv:umc.cmc.scoped-s3"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:701",
+        "appletv:umc.cmc.scoped-s1"
+      ],
+      [
+        "anilist:703",
+        "appletv:umc.cmc.scoped-s3"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:701",
+        "anilist:703"
+      ],
+      [
+        "anilist:701",
+        "appletv:umc.cmc.scoped-s3"
+      ],
+      [
+        "appletv:umc.cmc.scoped-s1",
+        "anilist:703"
+      ],
+      [
+        "appletv:umc.cmc.scoped-s1",
+        "appletv:umc.cmc.scoped-s3"
+      ]
+    ]
+  }
+}

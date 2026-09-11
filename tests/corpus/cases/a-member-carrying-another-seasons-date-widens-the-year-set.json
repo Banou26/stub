@@ -1,0 +1,80 @@
+{
+  "name": "a member carrying another season's date widens the year set and welds",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "a member carrying another season's date widens the year set and welds"
+  },
+  "why": "A FOURTH way seasons weld, and it is not a merge rule at all: a source asserting the wrong date. tvmaze:556-s3 is a season-scoped id stamped with the SHOW's premiere, which is season 1's, so the season 3 cluster claims 2016 as one of its years. Once both clusters really do claim 2016 and an identical title, nothing downstream can tell them apart, and `expect` records that. tvmaze and tmdb both did exactly this and both are fixed AT THE SOURCE, which is where the next one has to be fixed too: no merge rule can recover from a row that lies about its own date.",
+  "rows": [
+    {
+      "uri": "anilist:301",
+      "origin": "anilist",
+      "id": "301",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2016-04-07T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Bungou Stray Dogs",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:302",
+      "origin": "anilist",
+      "id": "302",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-12T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Bungou Stray Dogs",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "tvmaze:556-s3",
+      "origin": "tvmaze",
+      "id": "556-s3",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2016-04-07T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Bungou Stray Dogs",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:302",
+      "handleUri": "tvmaze:556-s3"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:301",
+        "anilist:302",
+        "tvmaze:556-s3"
+      ]
+    ],
+    "apart": []
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "name": "a remake eighteen years later is a different work",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "a remake eighteen years later is a different work"
+  },
+  "why": "Fruits Basket 2001 and Fruits Basket 2019 adapt the same manga under the same name. Three of the six rows carry the byte-identical title \"Fruits Basket\", so the title axis cannot separate them at any threshold and only the eighteen years can.",
+  "rows": [
+    {
+      "uri": "anizip:34",
+      "origin": "anizip",
+      "id": "34",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2001-07-05T11:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fruits Basket",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "フルーツバスケット",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:99",
+      "origin": "kitsu",
+      "id": "99",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2001-07-05",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fruits Basket",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "フルーツバスケット",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:120",
+      "origin": "anilist",
+      "id": "120",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2001-07-05",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fruits Basket",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "フルーツバスケット",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:14490",
+      "origin": "anizip",
+      "id": "14490",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-05T16:30:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fruits Basket (2019)",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "フルーツバスケット 1st season",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:41995",
+      "origin": "kitsu",
+      "id": "41995",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-06",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fruits Basket (2019)",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "フルーツバスケット",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:105334",
+      "origin": "anilist",
+      "id": "105334",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-06",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Fruits Basket: 1st Season",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Fruits Basket (2019)",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "フルーツバスケット 1st Season",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:34",
+      "handleUri": "anilist:120"
+    },
+    {
+      "mediaUri": "anizip:14490",
+      "handleUri": "anilist:105334"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:34",
+        "kitsu:99",
+        "anilist:120"
+      ],
+      [
+        "anizip:14490",
+        "kitsu:41995",
+        "anilist:105334"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:34",
+        "anizip:14490"
+      ],
+      [
+        "anizip:34",
+        "kitsu:41995"
+      ],
+      [
+        "anizip:34",
+        "anilist:105334"
+      ],
+      [
+        "kitsu:99",
+        "anizip:14490"
+      ],
+      [
+        "kitsu:99",
+        "kitsu:41995"
+      ],
+      [
+        "kitsu:99",
+        "anilist:105334"
+      ],
+      [
+        "anilist:120",
+        "anizip:14490"
+      ],
+      [
+        "anilist:120",
+        "kitsu:41995"
+      ],
+      [
+        "anilist:120",
+        "anilist:105334"
+      ]
+    ]
+  }
+}

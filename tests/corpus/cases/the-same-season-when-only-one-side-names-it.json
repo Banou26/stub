@@ -1,0 +1,61 @@
+{
+  "name": "the same season still merges when only one side names it",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "the same season still merges when only one side names it"
+  },
+  "why": "THE MERGE THAT MUST KEEP WORKING, and the reason a season veto cannot read silence as season 1. Two catalogues describing the SAME run on the same day, where only one of them says which season it is. Refusing this would cost every merge where one side is silent, which is most of them.",
+  "rows": [
+    {
+      "uri": "anilist:2480",
+      "origin": "anilist",
+      "id": "2480",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei II: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:2481",
+      "origin": "anizip",
+      "id": "2481",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei II: Isekai Ittara Honki Dasu",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 第2期",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [
+      [
+        "anilist:2480",
+        "anizip:2481"
+      ]
+    ],
+    "apart": []
+  }
+}

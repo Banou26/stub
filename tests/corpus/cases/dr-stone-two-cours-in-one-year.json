@@ -1,0 +1,237 @@
+{
+  "name": "two cours of Dr. Stone in one year stay apart",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "two cours of Dr. Stone in one year stay apart"
+  },
+  "why": "Part 1 starts 2023-04-06 and Part 2 starts 2023-10-12, one calendar year apart, so the year bucket compares them and 189 days is well outside the start-date window. It was added believing the title axis would score them 1.0 and leave the date carrying the case alone. That was wrong and the measurement says so: `titleSimilarity` scores \"Dr. Stone: New World\" against \"Dr. Stone: New World Part 2\" at 0.6841, because a trailing \"Part 2\" is not stripped, so the title axis refuses this pair on its own. Kept because it is a real pair correctly separated, and because the wrong reason is now written down.",
+  "rows": [
+    {
+      "uri": "anizip:17053",
+      "origin": "anizip",
+      "id": "17053",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-04-06T13:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Dr. Stone: New World",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "Dr.STONE NEW WORLD",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:44289",
+      "origin": "kitsu",
+      "id": "44289",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-04-06",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Dr. Stone: New World",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Dr.STONE: NEW WORLD",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:131518",
+      "origin": "anilist",
+      "id": "131518",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-04-06",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Dr. STONE: NEW WORLD",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Dr. STONE New World",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Dr.STONE NEW WORLD",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:18064",
+      "origin": "anizip",
+      "id": "18064",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-10-12T13:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Dr. Stone: New World (2023)",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "Dr.STONE NEW WORLD (2023)",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:47246",
+      "origin": "kitsu",
+      "id": "47246",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-10-12",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Dr. Stone: New World Part 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Dr. STONE: NEW WORLD Part 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Dr. STONE NEW WORLD 第2クール",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:162670",
+      "origin": "anilist",
+      "id": "162670",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-10-12",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Dr. STONE: NEW WORLD Part 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Dr. STONE New World Part 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Dr.STONE NEW WORLD 第2クール",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:17053",
+      "handleUri": "anilist:131518"
+    },
+    {
+      "mediaUri": "anizip:18064",
+      "handleUri": "anilist:162670"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:17053",
+        "kitsu:44289",
+        "anilist:131518"
+      ],
+      [
+        "anizip:18064",
+        "kitsu:47246",
+        "anilist:162670"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:17053",
+        "anizip:18064"
+      ],
+      [
+        "anizip:17053",
+        "kitsu:47246"
+      ],
+      [
+        "anizip:17053",
+        "anilist:162670"
+      ],
+      [
+        "kitsu:44289",
+        "anizip:18064"
+      ],
+      [
+        "kitsu:44289",
+        "kitsu:47246"
+      ],
+      [
+        "kitsu:44289",
+        "anilist:162670"
+      ],
+      [
+        "anilist:131518",
+        "anizip:18064"
+      ],
+      [
+        "anilist:131518",
+        "kitsu:47246"
+      ],
+      [
+        "anilist:131518",
+        "anilist:162670"
+      ]
+    ]
+  }
+}

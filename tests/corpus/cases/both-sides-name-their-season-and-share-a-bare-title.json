@@ -1,0 +1,66 @@
+{
+  "name": "mechanism 2: same year and a shared bare title, still refused on the season",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "mechanism 2: same year and a shared bare title, still refused on the season"
+  },
+  "why": "The same two runs as above, with one title byte-identical on both sides. A shared exact title is the strongest thing the title axis can say, and it is still not identity when the two rows name different season ordinals 28 days apart.",
+  "rows": [
+    {
+      "uri": "anilist:2500",
+      "origin": "anilist",
+      "id": "2500",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "無職転生",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei Season 2",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:2501",
+      "origin": "anilist",
+      "id": "2501",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-02-03T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "無職転生",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei Season 3",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [],
+    "apart": [
+      [
+        "anilist:2500",
+        "anilist:2501"
+      ]
+    ]
+  }
+}

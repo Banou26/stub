@@ -1,0 +1,282 @@
+{
+  "name": "a season nobody splits still brings its episodes",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "a season nobody splits still brings its episodes"
+  },
+  "why": "THE CONTROL for the case above, and the reason the rule is about the fold and not about Crunchyroll. Nobody splits season 3: Crunchyroll lists the same fourteen episodes AniList and kitsu do. It must still join the cluster and its episodes must still count, or a rule that refuses folds would be indistinguishable from one that refuses streamers.",
+  "rows": [
+    {
+      "uri": "anizip:18727",
+      "origin": "anizip",
+      "id": "18727",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-03T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "無職転生III ~異世界行ったら本気だす~",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:49002",
+      "origin": "kitsu",
+      "id": "49002",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-04",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu 3rd Season",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "無職転生 ～異世界行ったら本気だす～ 第3期",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:178789",
+      "origin": "anilist",
+      "id": "178789",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-04",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "無職転生Ⅲ ～異世界行ったら本気だす～",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-03",
+      "episodeCount": 14,
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.5
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:18727",
+      "handleUri": "anilist:178789"
+    },
+    {
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "handleUri": "anilist:178789"
+    }
+  ],
+  "episodes": [
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e1",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e1",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 1,
+      "releaseDate": "2026-07-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e2",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e2",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 2,
+      "releaseDate": "2026-07-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e3",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e3",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 3,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e4",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e4",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 4,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e5",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e5",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 5,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e6",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e6",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 6,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e7",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e7",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 7,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e8",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e8",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 8,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e9",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e9",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 9,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e10",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e10",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 10,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e11",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e11",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 11,
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e12",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e12",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 12,
+      "releaseDate": "2026-09-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e13",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e13",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 13,
+      "releaseDate": "2026-09-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452-e14",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452-e14",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "episodeNumber": 14,
+      "releaseDate": "2026-10-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:18727",
+        "kitsu:49002",
+        "anilist:178789",
+        "cr:G24H1N3MP-GS00374452"
+      ]
+    ],
+    "apart": [],
+    "episodeRows": {
+      "clusterOf": "anilist:178789",
+      "count": 14
+    }
+  }
+}

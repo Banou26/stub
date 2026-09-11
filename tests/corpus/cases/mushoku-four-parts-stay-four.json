@@ -1,0 +1,306 @@
+{
+  "name": "and all four together",
+  "source": {
+    "file": "tests/unit/worker/store/mushoku-parts.test.ts",
+    "test": "and all four together"
+  },
+  "why": "All four cours in one store, which is what a franchise page holds. Four broadcast runs, four media, and every one of them described by exactly the two catalogues that claim it: a rule that separates a pair when it is alone must still separate it with the rest of the franchise present.",
+  "rows": [
+    {
+      "uri": "anilist:108465",
+      "origin": "anilist",
+      "id": "108465",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-10",
+      "episodeCount": 11,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:42323",
+      "origin": "kitsu",
+      "id": "42323",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-10",
+      "episodeCount": 11,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "anilist:127720",
+      "origin": "anilist",
+      "id": "127720",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Cour 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:43907",
+      "origin": "kitsu",
+      "id": "43907",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "anilist:146065",
+      "origin": "anilist",
+      "id": "146065",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-09",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:45950",
+      "origin": "kitsu",
+      "id": "45950",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2023-07-09",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu Season 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "anilist:166873",
+      "origin": "anilist",
+      "id": "166873",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2024-04-07",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 2 Part 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:47694",
+      "origin": "kitsu",
+      "id": "47694",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2024-04-07",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:108465",
+      "handleUri": "kitsu:42323"
+    },
+    {
+      "mediaUri": "anilist:127720",
+      "handleUri": "kitsu:43907"
+    },
+    {
+      "mediaUri": "anilist:146065",
+      "handleUri": "kitsu:45950"
+    },
+    {
+      "mediaUri": "anilist:166873",
+      "handleUri": "kitsu:47694"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:108465",
+        "kitsu:42323"
+      ],
+      [
+        "anilist:127720",
+        "kitsu:43907"
+      ],
+      [
+        "anilist:146065",
+        "kitsu:45950"
+      ],
+      [
+        "anilist:166873",
+        "kitsu:47694"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:108465",
+        "anilist:127720"
+      ],
+      [
+        "anilist:108465",
+        "kitsu:43907"
+      ],
+      [
+        "kitsu:42323",
+        "anilist:127720"
+      ],
+      [
+        "kitsu:42323",
+        "kitsu:43907"
+      ],
+      [
+        "anilist:108465",
+        "anilist:146065"
+      ],
+      [
+        "anilist:108465",
+        "kitsu:45950"
+      ],
+      [
+        "kitsu:42323",
+        "anilist:146065"
+      ],
+      [
+        "kitsu:42323",
+        "kitsu:45950"
+      ],
+      [
+        "anilist:108465",
+        "anilist:166873"
+      ],
+      [
+        "anilist:108465",
+        "kitsu:47694"
+      ],
+      [
+        "kitsu:42323",
+        "anilist:166873"
+      ],
+      [
+        "kitsu:42323",
+        "kitsu:47694"
+      ],
+      [
+        "anilist:127720",
+        "anilist:146065"
+      ],
+      [
+        "anilist:127720",
+        "kitsu:45950"
+      ],
+      [
+        "kitsu:43907",
+        "anilist:146065"
+      ],
+      [
+        "kitsu:43907",
+        "kitsu:45950"
+      ],
+      [
+        "anilist:127720",
+        "anilist:166873"
+      ],
+      [
+        "anilist:127720",
+        "kitsu:47694"
+      ],
+      [
+        "kitsu:43907",
+        "anilist:166873"
+      ],
+      [
+        "kitsu:43907",
+        "kitsu:47694"
+      ],
+      [
+        "anilist:146065",
+        "anilist:166873"
+      ],
+      [
+        "anilist:146065",
+        "kitsu:47694"
+      ],
+      [
+        "kitsu:45950",
+        "anilist:166873"
+      ],
+      [
+        "kitsu:45950",
+        "kitsu:47694"
+      ]
+    ]
+  }
+}

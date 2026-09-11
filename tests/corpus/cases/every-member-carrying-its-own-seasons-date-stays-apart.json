@@ -1,0 +1,88 @@
+{
+  "name": "the same clusters stay apart when every member carries its own season's date",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "the same clusters stay apart when every member carries its own season's date"
+  },
+  "why": "THE CONTROL for the case above, and the proof that the weld there is the bad date and not the shared title. The same two Bungou Stray Dogs seasons and the same tvmaze season-scoped row, with the tvmaze row carrying ITS season's premiere. Three years apart, two runs.",
+  "rows": [
+    {
+      "uri": "anilist:401",
+      "origin": "anilist",
+      "id": "401",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2016-04-07T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Bungou Stray Dogs",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:402",
+      "origin": "anilist",
+      "id": "402",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-12T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Bungou Stray Dogs",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "tvmaze:557-s3",
+      "origin": "tvmaze",
+      "id": "557-s3",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-12T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Bungou Stray Dogs",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:402",
+      "handleUri": "tvmaze:557-s3"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:402",
+        "tvmaze:557-s3"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:401",
+        "anilist:402"
+      ],
+      [
+        "anilist:401",
+        "tvmaze:557-s3"
+      ]
+    ]
+  }
+}

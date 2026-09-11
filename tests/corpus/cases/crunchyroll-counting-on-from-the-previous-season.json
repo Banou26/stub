@@ -1,0 +1,561 @@
+{
+  "name": "a source counting on from the previous season lands on this run's episodes",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "a source counting on from the previous season lands on this run's episodes"
+  },
+  "why": "The Elusive Samurai season 2, read out of dist-seed/snapshots.jsonl on 2026-09-09. anizip, kitsu, MAL and AniList publish it as episodes 1 to 12; Crunchyroll publishes the same broadcast as 13 to 20, continuing its own count from season 1, with the SAME AIR DATES to the day. It is not a fold, so nothing refused it and nothing trimmed it: 8 is fewer than 12. Episodes merge by NUMBER, so the page drew twenty rows for a twelve episode run with every Crunchyroll source stranded on rows 13 to 20. The dates are the only thing both sides measure the same way, and they align it exactly.",
+  "rows": [
+    {
+      "uri": "anizip:18903",
+      "origin": "anizip",
+      "id": "18903",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 12,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "The Elusive Samurai Season 2",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:49265",
+      "origin": "kitsu",
+      "id": "49265",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 12,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "The Elusive Samurai Season 2",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:182616",
+      "origin": "anilist",
+      "id": "182616",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 12,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Nige Jouzu no Wakagimi Season 2",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-17",
+      "episodeCount": 8,
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "title": "The Elusive Samurai",
+          "score": 0.5
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:18903",
+      "handleUri": "kitsu:49265"
+    },
+    {
+      "mediaUri": "anizip:18903",
+      "handleUri": "anilist:182616"
+    },
+    {
+      "mediaUri": "anizip:18903",
+      "handleUri": "cr:GQWH0M19X-GS00366034"
+    }
+  ],
+  "episodes": [
+    {
+      "uri": "anizip:18903-e1",
+      "origin": "anizip",
+      "id": "18903-e1",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 1,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e2",
+      "origin": "anizip",
+      "id": "18903-e2",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 2,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e3",
+      "origin": "anizip",
+      "id": "18903-e3",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 3,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e4",
+      "origin": "anizip",
+      "id": "18903-e4",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 4,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e5",
+      "origin": "anizip",
+      "id": "18903-e5",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 5,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e6",
+      "origin": "anizip",
+      "id": "18903-e6",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 6,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e7",
+      "origin": "anizip",
+      "id": "18903-e7",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 7,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e8",
+      "origin": "anizip",
+      "id": "18903-e8",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 8,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e9",
+      "origin": "anizip",
+      "id": "18903-e9",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 9,
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e10",
+      "origin": "anizip",
+      "id": "18903-e10",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 10,
+      "releaseDate": "2026-09-18T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e11",
+      "origin": "anizip",
+      "id": "18903-e11",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 11,
+      "releaseDate": "2026-09-25T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "anizip:18903-e12",
+      "origin": "anizip",
+      "id": "18903-e12",
+      "mediaUri": "anizip:18903",
+      "episodeNumber": 12,
+      "releaseDate": "2026-10-02T00:00:00.000Z",
+      "score": 0.9,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e1",
+      "origin": "kitsu",
+      "id": "49265-e1",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 1,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e2",
+      "origin": "kitsu",
+      "id": "49265-e2",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 2,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e3",
+      "origin": "kitsu",
+      "id": "49265-e3",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 3,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e4",
+      "origin": "kitsu",
+      "id": "49265-e4",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 4,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e5",
+      "origin": "kitsu",
+      "id": "49265-e5",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 5,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e6",
+      "origin": "kitsu",
+      "id": "49265-e6",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 6,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e7",
+      "origin": "kitsu",
+      "id": "49265-e7",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 7,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e8",
+      "origin": "kitsu",
+      "id": "49265-e8",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 8,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e9",
+      "origin": "kitsu",
+      "id": "49265-e9",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 9,
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e10",
+      "origin": "kitsu",
+      "id": "49265-e10",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 10,
+      "releaseDate": "2026-09-18T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e11",
+      "origin": "kitsu",
+      "id": "49265-e11",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 11,
+      "releaseDate": "2026-09-25T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "kitsu:49265-e12",
+      "origin": "kitsu",
+      "id": "49265-e12",
+      "mediaUri": "kitsu:49265",
+      "episodeNumber": 12,
+      "releaseDate": "2026-10-02T00:00:00.000Z",
+      "score": 0.3,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e1",
+      "origin": "anilist",
+      "id": "182616-e1",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 1,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e2",
+      "origin": "anilist",
+      "id": "182616-e2",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 2,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e3",
+      "origin": "anilist",
+      "id": "182616-e3",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 3,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e4",
+      "origin": "anilist",
+      "id": "182616-e4",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 4,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e5",
+      "origin": "anilist",
+      "id": "182616-e5",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 5,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e6",
+      "origin": "anilist",
+      "id": "182616-e6",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 6,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e7",
+      "origin": "anilist",
+      "id": "182616-e7",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 7,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e8",
+      "origin": "anilist",
+      "id": "182616-e8",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 8,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e9",
+      "origin": "anilist",
+      "id": "182616-e9",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 9,
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e10",
+      "origin": "anilist",
+      "id": "182616-e10",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 10,
+      "releaseDate": "2026-09-18T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e11",
+      "origin": "anilist",
+      "id": "182616-e11",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 11,
+      "releaseDate": "2026-09-25T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "anilist:182616-e12",
+      "origin": "anilist",
+      "id": "182616-e12",
+      "mediaUri": "anilist:182616",
+      "episodeNumber": 12,
+      "releaseDate": "2026-10-02T00:00:00.000Z",
+      "score": 0.8,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e13",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e13",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 13,
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e14",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e14",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 14,
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e15",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e15",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 15,
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e16",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e16",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 16,
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e17",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e17",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 17,
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e18",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e18",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 18,
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e19",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e19",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 19,
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    },
+    {
+      "uri": "cr:GQWH0M19X-GS00366034-e20",
+      "origin": "cr",
+      "id": "GQWH0M19X-GS00366034-e20",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "episodeNumber": 20,
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": []
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:182616",
+        "anizip:18903",
+        "cr:GQWH0M19X-GS00366034",
+        "kitsu:49265"
+      ]
+    ],
+    "apart": [],
+    "episodeRows": {
+      "clusterOf": "anizip:18903",
+      "count": 12
+    }
+  }
+}

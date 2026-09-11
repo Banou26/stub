@@ -1,0 +1,84 @@
+{
+  "name": "a show-level source id welds two season clusters through the handle alone",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "a show-level source id welds two season clusters through the handle alone"
+  },
+  "why": "A FIFTH way, and the one no merge rule reaches, because it is not a merge: a HANDLE is an identity claim, so two season clusters handed the SAME source id are one cluster before any comparison runs. Apple TV minted `id: content.id`, the show id with no season component, so a gate matching a season cluster to the catalogue's show entry gave both seasons the same `appletv:<id>`. Five years apart and welded anyway, and `expect` records that, because the row data really does say the two are the same appletv media. The fix is at the source, in the id it mints, which is what the next case shows.",
+  "rows": [
+    {
+      "uri": "anilist:601",
+      "origin": "anilist",
+      "id": "601",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:603",
+      "origin": "anilist",
+      "id": "603",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "appletv:umc.cmc.showlevel",
+      "origin": "appletv",
+      "id": "umc.cmc.showlevel",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei",
+          "score": 0.2
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:601",
+      "handleUri": "appletv:umc.cmc.showlevel"
+    },
+    {
+      "mediaUri": "anilist:603",
+      "handleUri": "appletv:umc.cmc.showlevel"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:601",
+        "anilist:603",
+        "appletv:umc.cmc.showlevel"
+      ]
+    ],
+    "apart": []
+  }
+}

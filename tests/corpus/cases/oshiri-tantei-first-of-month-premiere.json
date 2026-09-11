@@ -1,0 +1,77 @@
+{
+  "name": "a first-of-month premiere leaves only the title axis, and it holds",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "a first-of-month premiere leaves only the title axis, and it holds"
+  },
+  "why": "Oshiri Tantei season 1 starts 2018-05-03 and season 2 starts 2018-12-01. Same year, so the bucket compares them; season 2's date is a first of the month, so startDay discards it and the date veto cannot fire; and parseSeasonNumber reads neither \"Oshiri Tantei 2\" nor \"第2シリーズ\", so the season veto cannot fire either. That leaves the title loop, where the romaji pair is SKIPPED by differOnlyByTrailingNumber before it is scored, and would be 0.8134 and still under threshold if it were. This case exists to pin that the premise of the mutation table is real: a cluster CAN reach the matcher with no usable day.",
+  "rows": [
+    {
+      "uri": "anilist:100790",
+      "origin": "anilist",
+      "id": "100790",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2018-05-03",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Oshiri Tantei",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "おしりたんてい",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anilist:132694",
+      "origin": "anilist",
+      "id": "132694",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2018-12-01",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Oshiri Tantei 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "おしりたんてい (第2シリーズ)",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [
+      [
+        "anilist:100790"
+      ],
+      [
+        "anilist:132694"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:100790",
+        "anilist:132694"
+      ]
+    ]
+  }
+}

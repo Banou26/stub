@@ -1,0 +1,56 @@
+{
+  "name": "one show straddling a quarter boundary by days still merges",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "one show straddling a quarter boundary by days still merges"
+  },
+  "why": "One show, eight days between the two dates its catalogues publish, and the two dates fall in different broadcast quarters. A quarter is a bucket, not a distance: a rule that read the quarter would refuse this correct merge and would also pass a pair 89 days apart inside one quarter.",
+  "rows": [
+    {
+      "uri": "anilist:2530",
+      "origin": "anilist",
+      "id": "2530",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-03-28T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Sakamoto Days",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:2531",
+      "origin": "kitsu",
+      "id": "2531",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-04-05",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Sakamoto Days",
+          "score": 0.3
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [
+      [
+        "anilist:2530",
+        "kitsu:2531"
+      ]
+    ],
+    "apart": []
+  }
+}

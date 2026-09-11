@@ -1,0 +1,237 @@
+{
+  "name": "two unrelated shows premiering the same week are not one show",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "two unrelated shows premiering the same week are not one show"
+  },
+  "why": "Grand Blue season 3 starts 2026-07-06 and Mushoku Tensei season 3 starts 2026-07-03. Three days apart, same year, and both are somebody's \"Season 3\", so every date mechanism in the store is silent and the title axis is carrying this alone. This is the pair named in crunchyroll/extractor.ts as the one that really did weld, back when a source was allowed to publish the bare string \"Season 3\" as a title.",
+  "rows": [
+    {
+      "uri": "anizip:19600",
+      "origin": "anizip",
+      "id": "19600",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-06T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 3",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 3",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:50181",
+      "origin": "kitsu",
+      "id": "50181",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-06",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Season 3",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 3",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:199111",
+      "origin": "anilist",
+      "id": "199111",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-07",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Season 3",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 3",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 3",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:18727",
+      "origin": "anizip",
+      "id": "18727",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-03T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "無職転生III ~異世界行ったら本気だす~",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:49002",
+      "origin": "kitsu",
+      "id": "49002",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-04",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu 3rd Season",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "無職転生 ～異世界行ったら本気だす～ 第3期",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:178789",
+      "origin": "anilist",
+      "id": "178789",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-04",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "無職転生Ⅲ ～異世界行ったら本気だす～",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:18727",
+      "handleUri": "anilist:178789"
+    },
+    {
+      "mediaUri": "anizip:19600",
+      "handleUri": "anilist:199111"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:19600",
+        "kitsu:50181",
+        "anilist:199111"
+      ],
+      [
+        "anizip:18727",
+        "kitsu:49002",
+        "anilist:178789"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:19600",
+        "anizip:18727"
+      ],
+      [
+        "anizip:19600",
+        "kitsu:49002"
+      ],
+      [
+        "anizip:19600",
+        "anilist:178789"
+      ],
+      [
+        "kitsu:50181",
+        "anizip:18727"
+      ],
+      [
+        "kitsu:50181",
+        "kitsu:49002"
+      ],
+      [
+        "kitsu:50181",
+        "anilist:178789"
+      ],
+      [
+        "anilist:199111",
+        "anizip:18727"
+      ],
+      [
+        "anilist:199111",
+        "kitsu:49002"
+      ],
+      [
+        "anilist:199111",
+        "anilist:178789"
+      ]
+    ]
+  }
+}

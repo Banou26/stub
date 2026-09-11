@@ -1,0 +1,315 @@
+{
+  "name": "the search path plus the media path leave season 1 and season 3 as two media",
+  "source": {
+    "file": "tests/unit/worker/store/season-weld.test.ts",
+    "test": "the search path plus the media path leave season 1 and season 3 as two media"
+  },
+  "why": "THE LIVE WELD, as it happened on the site. Mushoku Tensei season 1 and season 3 became one media: the SEARCH path merged crunchyroll's bare series id and tvmaze's bare show id into season 1 on a title match, and season 3's MEDIA path then claimed sameness through the series id. They are two broadcast runs five years apart. The series id names the SHOW, so it is not the same thing as either run however many rows claim it is, and the answer is three clusters: season 1, season 3, and the show the two are on. Note what the rows do: the series id arrives four times, three times stamped CONTAINER and once stamped RUN (a stale bookmark, a source that says nothing), and the last stamp must not decide what it is.",
+  "rows": [
+    {
+      "uri": "cr:G24H1N3MP",
+      "origin": "cr",
+      "id": "G24H1N3MP",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "CONTAINER"
+    },
+    {
+      "uri": "tvmaze:52279",
+      "origin": "tvmaze",
+      "id": "52279",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "CONTAINER"
+    },
+    {
+      "uri": "anilist:108465",
+      "origin": "anilist",
+      "id": "108465",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11T00:00:00Z",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:42323",
+      "origin": "kitsu",
+      "id": "42323",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11T00:00:00Z",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "anilist:178789",
+      "origin": "anilist",
+      "id": "178789",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-10T00:00:00Z",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00374452",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-11",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "cr:G24H1N3MP",
+      "origin": "cr",
+      "id": "G24H1N3MP",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "CONTAINER"
+    },
+    {
+      "uri": "cr:G24H1N3MP-GS00378061",
+      "origin": "cr",
+      "id": "G24H1N3MP-GS00378061",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-10",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "cr:G24H1N3MP",
+      "origin": "cr",
+      "id": "G24H1N3MP",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "CONTAINER"
+    },
+    {
+      "uri": "cr:G24H1N3MP",
+      "origin": "cr",
+      "id": "G24H1N3MP",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "kitsu:42323",
+      "handleUri": "anilist:108465",
+      "relation": "SAME_AS"
+    },
+    {
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "handleUri": "anilist:108465",
+      "relation": "SAME_AS"
+    },
+    {
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "handleUri": "cr:G24H1N3MP",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "cr:G24H1N3MP-GS00378061",
+      "handleUri": "anilist:178789",
+      "relation": "SAME_AS"
+    },
+    {
+      "mediaUri": "cr:G24H1N3MP-GS00378061",
+      "handleUri": "cr:G24H1N3MP",
+      "relation": "PART_OF"
+    },
+    {
+      "mediaUri": "anilist:178789",
+      "handleUri": "cr:G24H1N3MP",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:108465",
+        "kitsu:42323",
+        "cr:G24H1N3MP-GS00374452"
+      ],
+      [
+        "anilist:178789",
+        "cr:G24H1N3MP-GS00378061"
+      ],
+      [
+        "cr:G24H1N3MP",
+        "tvmaze:52279"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:108465",
+        "anilist:178789"
+      ],
+      [
+        "anilist:108465",
+        "cr:G24H1N3MP-GS00378061"
+      ],
+      [
+        "kitsu:42323",
+        "anilist:178789"
+      ],
+      [
+        "kitsu:42323",
+        "cr:G24H1N3MP-GS00378061"
+      ],
+      [
+        "cr:G24H1N3MP-GS00374452",
+        "anilist:178789"
+      ],
+      [
+        "cr:G24H1N3MP-GS00374452",
+        "cr:G24H1N3MP-GS00378061"
+      ],
+      [
+        "anilist:108465",
+        "cr:G24H1N3MP"
+      ],
+      [
+        "anilist:108465",
+        "tvmaze:52279"
+      ],
+      [
+        "kitsu:42323",
+        "cr:G24H1N3MP"
+      ],
+      [
+        "kitsu:42323",
+        "tvmaze:52279"
+      ],
+      [
+        "cr:G24H1N3MP-GS00374452",
+        "cr:G24H1N3MP"
+      ],
+      [
+        "cr:G24H1N3MP-GS00374452",
+        "tvmaze:52279"
+      ],
+      [
+        "anilist:178789",
+        "cr:G24H1N3MP"
+      ],
+      [
+        "anilist:178789",
+        "tvmaze:52279"
+      ],
+      [
+        "cr:G24H1N3MP-GS00378061",
+        "cr:G24H1N3MP"
+      ],
+      [
+        "cr:G24H1N3MP-GS00378061",
+        "tvmaze:52279"
+      ]
+    ]
+  }
+}

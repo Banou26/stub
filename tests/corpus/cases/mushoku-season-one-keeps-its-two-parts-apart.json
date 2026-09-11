@@ -1,0 +1,130 @@
+{
+  "name": "season one keeps its two parts apart",
+  "source": {
+    "file": "tests/unit/worker/store/mushoku-parts.test.ts",
+    "test": "season one keeps its two parts apart"
+  },
+  "why": "Mushoku Tensei season 1 aired as two cours, 11 episodes from 2021-01-10 and 12 from 2021-10-03. They are two broadcast runs inside ONE calendar year, which is the only bucket where a same-season pair can even meet, and welding them is the report this repo is named for: part 1 listing 24 episodes, its own 11 plus part 2's 12 plus a special.",
+  "rows": [
+    {
+      "uri": "anilist:108465",
+      "origin": "anilist",
+      "id": "108465",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-10",
+      "episodeCount": 11,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:42323",
+      "origin": "kitsu",
+      "id": "42323",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-01-10",
+      "episodeCount": 11,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "anilist:127720",
+      "origin": "anilist",
+      "id": "127720",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Jobless Reincarnation Cour 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    },
+    {
+      "uri": "kitsu:43907",
+      "origin": "kitsu",
+      "id": "43907",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03",
+      "episodeCount": 12,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2",
+          "score": 0.8
+        }
+      ],
+      "scope": "RUN"
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anilist:108465",
+      "handleUri": "kitsu:42323"
+    },
+    {
+      "mediaUri": "anilist:127720",
+      "handleUri": "kitsu:43907"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anilist:108465",
+        "kitsu:42323"
+      ],
+      [
+        "anilist:127720",
+        "kitsu:43907"
+      ]
+    ],
+    "apart": [
+      [
+        "anilist:108465",
+        "anilist:127720"
+      ],
+      [
+        "anilist:108465",
+        "kitsu:43907"
+      ],
+      [
+        "kitsu:42323",
+        "anilist:127720"
+      ],
+      [
+        "kitsu:42323",
+        "kitsu:43907"
+      ]
+    ]
+  }
+}

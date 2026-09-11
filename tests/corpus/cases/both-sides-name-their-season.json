@@ -1,0 +1,66 @@
+{
+  "name": "mechanism 2: same year, both naming their season, refused on the season",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "mechanism 2: same year, both naming their season, refused on the season"
+  },
+  "why": "Season 2 and season 3 of one show are two broadcast runs. On titles alone \"Mushoku Tensei Season 2\" and \"Mushoku Tensei Season 3\" score 0.9175, above the 0.9 threshold, and the two dates are 28 days apart so no date rule can separate them either. The ordinals disagree, and that is the only thing in the data that says these are different runs.",
+  "rows": [
+    {
+      "uri": "anilist:2460",
+      "origin": "anilist",
+      "id": "2460",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei Season 2",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 第2期",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "anilist:2461",
+      "origin": "anilist",
+      "id": "2461",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-02-03T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei Season 3",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "無職転生 第3期",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [],
+    "apart": [
+      [
+        "anilist:2460",
+        "anilist:2461"
+      ]
+    ]
+  }
+}

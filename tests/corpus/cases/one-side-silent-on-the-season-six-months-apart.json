@@ -1,0 +1,66 @@
+{
+  "name": "mechanism 4: same year, only one side naming a season, refused on the start date",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "mechanism 4: same year, only one side naming a season, refused on the start date"
+  },
+  "why": "THE OWNER'S OWN CASE: \"if we have mushoku tensei season 2, it shouldn't get merged in with mushoku tensei s3\", where \"sometimes seasons air like S1=1-4months, S2=7-10months\". Same calendar year, an identical shared title, and only the later side names a season, so nothing but the six months between the two premieres says these are two runs. They are.",
+  "rows": [
+    {
+      "uri": "anilist:2490",
+      "origin": "anilist",
+      "id": "2490",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "無職転生",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei II",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anilist:2491",
+      "origin": "anilist",
+      "id": "2491",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "無職転生",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei Season 3",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [],
+    "apart": [
+      [
+        "anilist:2490",
+        "anilist:2491"
+      ]
+    ]
+  }
+}

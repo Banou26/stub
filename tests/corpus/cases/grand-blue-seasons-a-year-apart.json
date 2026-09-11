@@ -1,0 +1,237 @@
+{
+  "name": "consecutive Grand Blue seasons a year apart stay apart",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "consecutive Grand Blue seasons a year apart stay apart"
+  },
+  "why": "Season 2 starts 2025-07-07 and season 3 starts 2026-07-06, so they fall in different years and share almost every title once the season marker is stripped. The year bucket should refuse to compare them at all; this pins that it does, and that the two still assemble.",
+  "rows": [
+    {
+      "uri": "anizip:18892",
+      "origin": "anizip",
+      "id": "18892",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2025-07-07T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 2",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 2",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:49247",
+      "origin": "kitsu",
+      "id": "49247",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2025-07-07",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Grand Blue Season 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 2",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:182309",
+      "origin": "anilist",
+      "id": "182309",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2025-07-08",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Season 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 2",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:19600",
+      "origin": "anizip",
+      "id": "19600",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-06T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 3",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 3",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:50181",
+      "origin": "kitsu",
+      "id": "50181",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-06",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Season 3",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 3",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:199111",
+      "origin": "anilist",
+      "id": "199111",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-07",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Grand Blue Season 3",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "Grand Blue Dreaming Season 3",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "ぐらんぶる Season 3",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:18892",
+      "handleUri": "anilist:182309"
+    },
+    {
+      "mediaUri": "anizip:19600",
+      "handleUri": "anilist:199111"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:18892",
+        "kitsu:49247",
+        "anilist:182309"
+      ],
+      [
+        "anizip:19600",
+        "kitsu:50181",
+        "anilist:199111"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:18892",
+        "anizip:19600"
+      ],
+      [
+        "anizip:18892",
+        "kitsu:50181"
+      ],
+      [
+        "anizip:18892",
+        "anilist:199111"
+      ],
+      [
+        "kitsu:49247",
+        "anizip:19600"
+      ],
+      [
+        "kitsu:49247",
+        "kitsu:50181"
+      ],
+      [
+        "kitsu:49247",
+        "anilist:199111"
+      ],
+      [
+        "anilist:182309",
+        "anizip:19600"
+      ],
+      [
+        "anilist:182309",
+        "kitsu:50181"
+      ],
+      [
+        "anilist:182309",
+        "anilist:199111"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "a first-of-month coercion 32 days off still merges",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "a first-of-month coercion 32 days off still merges"
+  },
+  "why": "kitsu and jikan answer YYYY-MM-01 when only the month is known, which reads as precise and is up to 30 days early. This pair is real: kitsu says 1988-08-01 for Aikodesho where AniList says Fri, 02 Sep 1988. One work, one run, two catalogues 32 days apart, and it is the only one of the 198 such pairs in the corpus that lands in the 31 to 45 day band.",
+  "rows": [
+    {
+      "uri": "anilist:2510",
+      "origin": "anilist",
+      "id": "2510",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "1988-09-02T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Aikodesho",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:2511",
+      "origin": "kitsu",
+      "id": "2511",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "1988-08-01",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "Aikodesho",
+          "score": 0.3
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [
+      [
+        "anilist:2510",
+        "kitsu:2511"
+      ]
+    ],
+    "apart": []
+  }
+}

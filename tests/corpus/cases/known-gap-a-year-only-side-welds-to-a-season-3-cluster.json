@@ -1,0 +1,67 @@
+{
+  "name": "KNOWN GAP: a year-only silent side still welds to a season-3 cluster",
+  "source": {
+    "file": "tests/unit/worker/store/season-separation.test.ts",
+    "test": "KNOWN GAP: a year-only silent side still welds to a season-3 cluster"
+  },
+  "why": "The same shape as the case above with one difference: the silent side carries 2026-01-01, the string seven extractors mint out of a bare year, so it declares a year and no day. The date rule blocks on a DISAGREEMENT and a cluster that declares nothing disagrees with nothing, so the two weld. `expect` below is what the store does TODAY, pinned deliberately rather than hidden; see `knownGap` for the answer the works give.",
+  "rows": [
+    {
+      "uri": "anilist:2492",
+      "origin": "anilist",
+      "id": "2492",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "無職転生",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei II",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anilist:2493",
+      "origin": "anilist",
+      "id": "2493",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2026-07-06T00:00:00Z",
+      "titles": [
+        {
+          "language": "ja",
+          "title": "無職転生",
+          "score": 0.9
+        },
+        {
+          "language": "ja",
+          "title": "Mushoku Tensei Season 3",
+          "score": 0.9
+        }
+      ]
+    }
+  ],
+  "claims": [],
+  "expect": {
+    "together": [
+      [
+        "anilist:2492",
+        "anilist:2493"
+      ]
+    ],
+    "apart": [],
+    "knownGap": "anilist:2492 is season 2 and anilist:2493 is season 3, so the right answer is two clusters and `apart`. Closing it by treating silence as a mismatch is the rule already refused for seasons, measured at one wrong weld stopped per 37 correct merges destroyed, so the gap is accepted until a mechanism exists that costs less. A replacement store that splits these two is BETTER than the one this corpus was extracted from: change the case, do not weaken it."
+  }
+}

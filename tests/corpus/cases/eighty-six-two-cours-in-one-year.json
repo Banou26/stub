@@ -1,0 +1,232 @@
+{
+  "name": "two cours of 86 inside one calendar year stay apart",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "two cours of 86 inside one calendar year stay apart"
+  },
+  "why": "86 starts 2021-04-10 and 86 Part 2 starts 2021-10-02: one year, 175 days, and titles that reduce to the same string once \"Part 2\" comes off. The year bucket cannot help here and neither side names a season NUMBER, so the start-date window is the only thing standing between them. season-separation.test.ts names this show as the shape of the remaining gap.",
+  "rows": [
+    {
+      "uri": "anizip:15441",
+      "origin": "anizip",
+      "id": "15441",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-04-10T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "86 Eighty-Six",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "86",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:43066",
+      "origin": "kitsu",
+      "id": "43066",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-04-11",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "86",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "86―エイティシックス―",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:116589",
+      "origin": "anilist",
+      "id": "116589",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-04-11",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "86: Eighty Six",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "86 EIGHTY-SIX",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "86－エイティシックス－",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:16172",
+      "origin": "anizip",
+      "id": "16172",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-02T15:00:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "86 Eighty-Six (2021)",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "エイティシックス (2021)",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:44398",
+      "origin": "kitsu",
+      "id": "44398",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-02",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "86 Part 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "86－エイティシックス－ 第2クール",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:131586",
+      "origin": "anilist",
+      "id": "131586",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2021-10-03",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "86: Eighty Six Part 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "86 EIGHTY-SIX Part 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "86－エイティシックス－ 第2クール",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:15441",
+      "handleUri": "anilist:116589"
+    },
+    {
+      "mediaUri": "anizip:16172",
+      "handleUri": "anilist:131586"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:15441",
+        "kitsu:43066",
+        "anilist:116589"
+      ],
+      [
+        "anizip:16172",
+        "kitsu:44398",
+        "anilist:131586"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:15441",
+        "anizip:16172"
+      ],
+      [
+        "anizip:15441",
+        "kitsu:44398"
+      ],
+      [
+        "anizip:15441",
+        "anilist:131586"
+      ],
+      [
+        "kitsu:43066",
+        "anizip:16172"
+      ],
+      [
+        "kitsu:43066",
+        "kitsu:44398"
+      ],
+      [
+        "kitsu:43066",
+        "anilist:131586"
+      ],
+      [
+        "anilist:116589",
+        "anizip:16172"
+      ],
+      [
+        "anilist:116589",
+        "kitsu:44398"
+      ],
+      [
+        "anilist:116589",
+        "anilist:131586"
+      ]
+    ]
+  }
+}

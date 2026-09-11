@@ -1,0 +1,242 @@
+{
+  "name": "two seasons of We Never Learn in one year, held apart by the date alone",
+  "source": {
+    "file": "tests/unit/worker/store/merge-fixtures.ts",
+    "test": "two seasons of We Never Learn in one year, held apart by the date alone"
+  },
+  "why": "Season 1 starts 2019-04-06 and season 2 starts 2019-10-05: one calendar year, 182 days, and titles that differ only by a trailing \"!\" which stripTitle removes. Two of the pairs score exactly 1.0000, so the title axis is not merely weak here, it actively says these are the same show. Neither side names a season on those titles, so the season veto cannot fire. The start date is the only mechanism left, which is what makes this the seed that fails when the window is widened, and the one row of the mutation table above that reads CAUGHT for the date axis.",
+  "rows": [
+    {
+      "uri": "anizip:14289",
+      "origin": "anizip",
+      "id": "14289",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-06T15:30:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "We Never Learn: Bokuben",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "ぼくたちは勉強ができない",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:41956",
+      "origin": "kitsu",
+      "id": "41956",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-07",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "We Never Learn: BOKUBEN",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Bokutachi wa Benkyou ga Dekinai",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "ぼくたちは勉強ができない",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:103900",
+      "origin": "anilist",
+      "id": "103900",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-04-07",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bokutachi wa Benkyou ga Dekinai",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "We Never Learn: BOKUBEN",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "ぼくたちは勉強ができない",
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "uri": "anizip:14968",
+      "origin": "anizip",
+      "id": "14968",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-10-05T15:30:00Z",
+      "episodeCount": null,
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "title": "We Never Learn!: Bokuben",
+          "score": 0.9
+        },
+        {
+          "language": "en",
+          "title": "ぼくたちは勉強ができない!",
+          "score": 0.9
+        }
+      ]
+    },
+    {
+      "uri": "kitsu:42414",
+      "origin": "kitsu",
+      "id": "42414",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-10-06",
+      "episodeCount": null,
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "title": "We Never Learn!: BOKUBEN Season 2",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "Bokutachi wa Benkyou ga Dekinai!",
+          "score": 0.3
+        },
+        {
+          "language": "en",
+          "title": "ぼくたちは勉強ができない !",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "uri": "anilist:110229",
+      "origin": "anilist",
+      "id": "110229",
+      "type": "TV",
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "startDate": "2019-10-06",
+      "episodeCount": null,
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "title": "Bokutachi wa Benkyou ga Dekinai!",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "We Never Learn!: BOKUBEN Season 2",
+          "score": 0.8
+        },
+        {
+          "language": "en",
+          "title": "ぼくたちは勉強ができない！",
+          "score": 0.8
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "mediaUri": "anizip:14289",
+      "handleUri": "anilist:103900"
+    },
+    {
+      "mediaUri": "anizip:14968",
+      "handleUri": "anilist:110229"
+    }
+  ],
+  "expect": {
+    "together": [
+      [
+        "anizip:14289",
+        "kitsu:41956",
+        "anilist:103900"
+      ],
+      [
+        "anizip:14968",
+        "kitsu:42414",
+        "anilist:110229"
+      ]
+    ],
+    "apart": [
+      [
+        "anizip:14289",
+        "anizip:14968"
+      ],
+      [
+        "anizip:14289",
+        "kitsu:42414"
+      ],
+      [
+        "anizip:14289",
+        "anilist:110229"
+      ],
+      [
+        "kitsu:41956",
+        "anizip:14968"
+      ],
+      [
+        "kitsu:41956",
+        "kitsu:42414"
+      ],
+      [
+        "kitsu:41956",
+        "anilist:110229"
+      ],
+      [
+        "anilist:103900",
+        "anizip:14968"
+      ],
+      [
+        "anilist:103900",
+        "kitsu:42414"
+      ],
+      [
+        "anilist:103900",
+        "anilist:110229"
+      ]
+    ]
+  }
+}
