@@ -16,11 +16,16 @@ const API = 'https://api.simkl.com'
 // the id block simkl really publishes on an anime run, trimmed to what buildHandles reads
 const IDS = { simkl: 1080329, imdb: 'tt13303712', tmdb: '94664', mal: '39535', anilist: '108465', kitsu: '42323' }
 
-type Row = { uri?: string, scope?: string, handles: { node: { uri: string, origin: string, id: string, scope?: string } }[] }
+type Row = { uri?: string, scope?: string, handles: { node: { uri: string, origin: string, id: string, scope?: string } }[], episodes?: { releaseDate?: string }[] }
 
-const context = (type: 'tv' | 'anime' | 'movies', ids: Record<string, unknown> = IDS) => ({
+const context = (type: 'tv' | 'anime' | 'movies', ids: Record<string, unknown> = IDS, episodes: readonly object[] = []) => ({
   key: () => 'test-key',
   fetch: async (url: string) => {
+    // BEFORE the detail routes: an episodes url starts with `/tv/` and `/anime/` too, so the miss
+    // branch below would answer it and the list could never be anything but empty.
+    if (url.startsWith(`${API}/anime/episodes/`) || url.startsWith(`${API}/tv/episodes/`)) {
+      return { json: async () => episodes }
+    }
     const detail = `${API}/${type}/1080329?extended=full`
     if (url === detail) {
       return {
@@ -35,16 +40,13 @@ const context = (type: 'tv' | 'anime' | 'movies', ids: Record<string, unknown> =
     if (url.startsWith(`${API}/tv/`) || url.startsWith(`${API}/anime/`) || url.startsWith(`${API}/movies/`)) {
       return { json: async () => undefined }
     }
-    if (url.startsWith(`${API}/anime/episodes/`) || url.startsWith(`${API}/tv/episodes/`)) {
-      return { json: async () => [] }
-    }
     throw new Error(`fixture has no route for ${url}`)
   },
 }) as never
 
-const mediaFor = async (type: 'tv' | 'anime' | 'movies', ids?: Record<string, unknown>) => {
+const mediaFor = async (type: 'tv' | 'anime' | 'movies', ids?: Record<string, unknown>, episodes?: readonly object[]) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
-  const { value } = await subscribe(undefined, { input: { uri: 'simkl:1080329' } }, context(type, ids)).next()
+  const { value } = await subscribe(undefined, { input: { uri: 'simkl:1080329' } }, context(type, ids, episodes)).next()
   const media = value?.media as Row | null
   expect(media, 'the media itself must exist').not.toBeNull()
   return media!
@@ -117,6 +119,27 @@ test('a movie is a run and its imdb handle follows it', async () => {
 
   expect(media.scope).toBe('RUN')
   expect(handle(media, 'imdb').scope).toBe('RUN')
+})
+
+// THE EPISODE DATE. Simkl fetched `date` and dropped it, so this source contributed nothing to the
+// date alignment `store/consensus.ts` pairs episodes by. `date` arrives in either shape and the two
+// are not interchangeable: a bare YYYY-MM-DD is rendered as that calendar day in UTC while a timestamp
+// is rendered where the viewer is, so a day parsed into an instant shows a day early west of
+// Greenwich. Each shape goes out as itself, and an episode simkl dates with nothing gets nothing.
+test('an episode carries simkl\'s date, a day as a day and a timestamp as an instant', async () => {
+  const media = await mediaFor('anime', IDS, [
+    { title: 'E1', season: 1, episode: 1, date: '2021-01-11' },
+    { title: 'E2', season: 1, episode: 2, date: '2021-01-18T15:30:00Z' },
+    { title: 'E3', season: 1, episode: 3 },
+  ])
+
+  expect((media.episodes ?? []).map(episode => episode.releaseDate)).toEqual(['2021-01-11', '2021-01-18T15:30:00.000Z', undefined])
+})
+
+test('an episode simkl has no date for carries none', async () => {
+  const media = await mediaFor('anime', IDS, [{ title: 'E1', season: 1, episode: 1 }])
+
+  expect((media.episodes ?? [])[0]!.releaseDate, 'a missing date is left missing, never invented').toBeUndefined()
 })
 
 // Search mints through its own normalizer, keyed on endpoint_type, so it gets its own assertion.

@@ -16,10 +16,22 @@ const season = (number: number, episodes: number) => ({
   episodes: Array.from({ length: episodes }, (_, i) => ({ number: i + 1, title: `S${number}E${i + 1}`, ids: { trakt: number * 100 + i } })),
 })
 
+// One season whose episodes carry the dates given, or no date at all where one is undefined. Built
+// through a function so the extra field is not an excess property on a literal.
+const datedSeason = (dates: readonly (string | undefined)[]) => ({
+  number: 1,
+  episodes: dates.map((first_aired, i) => ({
+    number: i + 1,
+    title: `S1E${i + 1}`,
+    ids: { trakt: i },
+    ...first_aired ? { first_aired } : {},
+  })),
+})
+
 // misses are COLLECTED rather than thrown: `api` swallows a rejection with `.catch(() => undefined)`
 // and an empty list is exactly the absence these tests assert, so a drifted fixture would pass them
 // while proving nothing.
-const context = (seasons: ReturnType<typeof season>[], misses: string[]) => ({
+const context = (seasons: readonly object[], misses: string[]) => ({
   key: () => 'test-key',
   fetch: async (url: string) => {
     if (url.startsWith(`${BASE}/shows/breaking-bad?extended=full`)) {
@@ -33,12 +45,12 @@ const context = (seasons: ReturnType<typeof season>[], misses: string[]) => ({
   },
 }) as never
 
-const mediaFor = async (seasons: ReturnType<typeof season>[]) => {
+const mediaFor = async (seasons: readonly object[]) => {
   const misses: string[] = []
   const subscribe = (resolvers.Subscription as any).media.subscribe
   const { value } = await subscribe(undefined, { input: { uri: 'trakt:breaking-bad' } }, context(seasons, misses)).next()
   expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
-  const media = value?.media as { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: unknown[], episodeCount?: number } | null
+  const media = value?.media as { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: { releaseDate?: string }[], episodeCount?: number } | null
   // a null media satisfies every `episodes ?? []` assertion below, so it is ruled out here once
   expect(media, 'the media itself must exist; only its episode list is ever refused').not.toBeNull()
   return media!
@@ -86,6 +98,30 @@ test('a one-season show is still scoped CONTAINER', async () => {
 
   expect(media.scope).toBe('CONTAINER')
   for (const handle of media.handles) expect(handle.node.scope, handle.node.uri).toBe('CONTAINER')
+})
+
+// THE EPISODE DATE. Trakt fetched `first_aired` and dropped it, so this source contributed nothing to
+// the date alignment `store/consensus.ts` pairs episodes by. `first_aired` is an INSTANT and goes out
+// as one; an episode trakt has no date for gets none.
+test('an episode carries trakt\'s first_aired as the instant it names', async () => {
+  const media = await mediaFor([datedSeason(['2008-01-21T02:00:00.000Z', undefined])])
+
+  expect((media.episodes ?? []).map(episode => episode.releaseDate)).toEqual(['2008-01-21T02:00:00.000Z', undefined])
+})
+
+test('an episode trakt has no date for carries none', async () => {
+  const media = await mediaFor([datedSeason([undefined])])
+
+  expect((media.episodes ?? [])[0]!.releaseDate, 'a missing date is left missing, never invented').toBeUndefined()
+})
+
+// A DAY IS NOT AN INSTANT, and parsing one into an instant is the whole trap: `2008-01-21` parsed and
+// re-emitted is midnight UTC, which utils/release-date.ts then renders in local time, showing the 20th
+// everywhere west of Greenwich. A value already naming a day therefore comes out unchanged.
+test('a day-shaped first_aired stays a day', async () => {
+  const media = await mediaFor([datedSeason(['2008-01-21'])])
+
+  expect((media.episodes ?? []).map(episode => episode.releaseDate)).toEqual(['2008-01-21'])
 })
 
 // Trakt mints no run at all (it reads /shows/ only), so the RUN control is the helper's default: the

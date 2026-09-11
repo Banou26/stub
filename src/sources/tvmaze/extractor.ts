@@ -53,8 +53,19 @@ interface TvmazeEpisode {
   season?: number
   number?: number
   airdate?: string | null
+  airstamp?: string | null
   summary?: string | null
   image?: TvmazeImage | null
+}
+
+// TVmaze publishes both shapes and they are not interchangeable: `airdate` NAMES A DAY while
+// `airstamp` names an INSTANT, and utils/release-date.ts renders a bare `YYYY-MM-DD` as that calendar
+// day in UTC and a timestamped value where the viewer is. A day widened into an instant therefore
+// shows a day early everywhere west of Greenwich, so the instant goes out only when TVmaze published
+// one and the day goes out as a day.
+const airedAt = (episode: TvmazeEpisode): string | undefined => {
+  const instant = episode.airstamp ? new Date(episode.airstamp) : undefined
+  return instant && !Number.isNaN(instant.getTime()) ? instant.toISOString() : episode.airdate || undefined
 }
 
 // The imdb id is the SHOW's, one for every season, so it is a CONTAINER whichever row carries it.
@@ -114,6 +125,7 @@ const normalizeEpisode = (episode: TvmazeEpisode, mediaUri: string): GQLEpisode 
     thumbnails: img(episode.image?.original ?? episode.image?.medium, SCORE),
     seasonNumber: episode.season,
     episodeNumber: episode.number,
+    releaseDate: airedAt(episode),
   })
 
 /** The earliest airdate among one season's episodes, off the embedded list, no extra request. */
@@ -168,7 +180,7 @@ const getMedia = async (uri: string, id: string, pinned: number | undefined, ctx
   const seasonNumber = pinned ?? (candidates.length ? await waitForMedia(uri, ctx, (media: any) => pickSimilarSeason({
     titles: (media?.titles ?? []).map((title: { title: string }) => title.title),
     startDate: media?.startDate,
-    episodeCount: media?.episodeCount ?? media?.episodes?.length,
+    episodeCount: media?.episodeCount ?? undefined,
   }, candidates)?.season.seasonNumber) : undefined)
 
   // a series whose season cannot be determined has no identity here: see normalizeMedia

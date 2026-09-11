@@ -127,6 +127,18 @@ const buildHandles = (ids: SimklIds | undefined, type: SimklType): GQLMedia[] =>
   return handles
 }
 
+// An episode's `date` arrives in either shape, and they are not interchangeable: utils/release-date.ts
+// renders a bare `YYYY-MM-DD` as that calendar day in UTC and a timestamped value where the viewer is,
+// so a day widened into an instant shows a day early everywhere west of Greenwich. A value naming a
+// day is therefore passed through untouched and only a real timestamp is normalised.
+const DAY_ONLY = /^\d{4}-\d{2}-\d{2}$/
+const airedAt = (value?: string | null): string | undefined => {
+  if (!value) return undefined
+  if (DAY_ONLY.test(value)) return value
+  const at = new Date(value)
+  return Number.isNaN(at.getTime()) ? undefined : at.toISOString()
+}
+
 const rating = (ratings?: SimklRatings): number | undefined =>
   ratings?.simkl?.rating ?? ratings?.imdb?.rating ?? ratings?.mal?.rating
 
@@ -189,6 +201,7 @@ const normalizeEpisode = (episode: SimklEpisode, mediaId: string, mediaUri: stri
     thumbnails: img(still(episode.img), SCORE),
     seasonNumber: episode.season ?? undefined,
     episodeNumber: number ?? undefined,
+    releaseDate: airedAt(episode.date),
   })
 }
 

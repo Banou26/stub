@@ -71,6 +71,18 @@ const api = <T>(path: string, ctx: ExtractorServerContext): Promise<T | undefine
     .catch(() => undefined)
 }
 
+// `first_aired` is an INSTANT (`2008-01-21T02:00:00.000Z`), and an instant and a day are not
+// interchangeable: utils/release-date.ts renders a bare `YYYY-MM-DD` as that calendar day in UTC and
+// a timestamped value where the viewer is, so a day widened into an instant shows a day early
+// everywhere west of Greenwich. A value already naming a day is therefore passed through untouched.
+const DAY_ONLY = /^\d{4}-\d{2}-\d{2}$/
+const airedAt = (value?: string | null): string | undefined => {
+  if (!value) return undefined
+  if (DAY_ONLY.test(value)) return value
+  const at = new Date(value)
+  return Number.isNaN(at.getTime()) ? undefined : at.toISOString()
+}
+
 const mediaId = (ids?: TraktIds): string | undefined => ids?.slug ?? (ids?.trakt !== undefined ? String(ids.trakt) : undefined)
 
 // Everything this source mints is CONTAINER: it reads /shows/ and /search/show only, so a row is
@@ -114,6 +126,7 @@ const normalizeEpisode = (episode: TraktEpisode, season: number, mediaId: string
     ...desc(episode.overview, SCORE),
     seasonNumber: season,
     episodeNumber: number,
+    releaseDate: airedAt(episode.first_aired),
   })
 }
 

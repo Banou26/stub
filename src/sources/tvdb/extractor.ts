@@ -125,6 +125,9 @@ const normalizeSeries = (series: SeriesExtended): GQLMedia | undefined => {
   })
 }
 
+// `aired` NAMES A DAY (`2011-04-17`) and goes out as one, never parsed into an instant:
+// utils/release-date.ts renders a bare `YYYY-MM-DD` as that calendar day in UTC and a timestamped
+// value where the viewer is, so widening this would show a day early everywhere west of Greenwich.
 const normalizeEpisode = (episode: EpisodeRecord, seriesId: string, mediaUri: string): GQLEpisode =>
   makeEpisode({
     origin,
@@ -136,6 +139,7 @@ const normalizeEpisode = (episode: EpisodeRecord, seriesId: string, mediaUri: st
     thumbnails: img(resolveImage(episode.image), SCORE),
     seasonNumber: episode.seasonNumber,
     episodeNumber: episode.number,
+    releaseDate: episode.aired || undefined,
   })
 
 const fetchEpisodes = async (id: string, mediaUri: string, ctx: ExtractorServerContext): Promise<GQLEpisode[]> => {

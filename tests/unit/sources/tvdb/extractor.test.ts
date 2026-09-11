@@ -14,7 +14,7 @@ const BASE = 'https://api4.thetvdb.com/v4'
 // the two remote ids buildHandles maps, spelled the way HANDLE_ORIGINS reads them
 const REMOTE_IDS = [{ id: 'tt0944947', sourceName: 'IMDB' }, { id: '1399', sourceName: 'TheMovieDB' }]
 
-type Row = { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: unknown[], episodeCount?: number }
+type Row = { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: { releaseDate?: string }[], episodeCount?: number }
 
 const episode = (seasonNumber: number, number: number) => ({
   id: seasonNumber * 1000 + number,
@@ -22,6 +22,10 @@ const episode = (seasonNumber: number, number: number) => ({
   seasonNumber,
   number,
 })
+
+// the same episode with the day tvdb aired it on. A function, so the extra field is not an excess
+// property on a literal.
+const datedEpisode = (seasonNumber: number, number: number, aired: string) => ({ ...episode(seasonNumber, number), aired })
 
 // `ok` is load bearing: `api` returns undefined on a falsy `res.ok`, and its `.catch(() => undefined)`
 // swallows a thrown fixture miss, so a wrong route reports "no episodes" rather than failing. That is
@@ -113,6 +117,22 @@ test('a search hit is scoped CONTAINER with its handles', async () => {
   expect(rows[0]!.scope).toBe('CONTAINER')
   expect(rows[0]!.handles.map(handle => handle.node.uri).sort()).toEqual(['imdb:tt0944947', 'tmdb:1399'])
   for (const handle of rows[0]!.handles) expect(handle.node.scope, handle.node.uri).toBe('CONTAINER')
+})
+
+// THE EPISODE DATE. TVDB fetched `aired` and dropped it, so this source contributed nothing to the
+// date alignment `store/consensus.ts` pairs episodes by. `aired` NAMES A DAY and goes out as one,
+// never parsed into an instant: `2011-04-17` parsed is midnight UTC, which utils/release-date.ts then
+// renders in local time, showing the 16th everywhere west of Greenwich.
+test('an episode carries tvdb\'s aired day, still shaped as a day', async () => {
+  const media = await mediaFor([datedEpisode(1, 1, '2011-04-17'), datedEpisode(1, 2, '2011-04-24')])
+
+  expect((media.episodes ?? []).map(row => row.releaseDate)).toEqual(['2011-04-17', '2011-04-24'])
+})
+
+test('an episode tvdb has no date for carries none', async () => {
+  const media = await mediaFor([datedEpisode(1, 1, '2011-04-17'), episode(1, 2)])
+
+  expect((media.episodes ?? []).map(row => row.releaseDate), 'a missing date is left missing, never invented').toEqual(['2011-04-17', undefined])
 })
 
 // TVDB mints no run at all (it reads /series/ only), so the RUN control is the helper's default: the

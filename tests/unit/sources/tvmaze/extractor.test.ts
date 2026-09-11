@@ -26,6 +26,24 @@ const SHOW = {
 // a show tvmaze lists with NO episodes yet, so no season can be named for it
 const EMPTY_SHOW = { id: 99, name: 'Announced Show', premiered: null, externals: { imdb: null }, _embedded: { episodes: [] } }
 
+// One season carrying each shape tvmaze publishes: an `airdate` naming a DAY, an `airstamp` naming an
+// INSTANT beside it, and an episode with neither. The two shapes render differently on purpose
+// (utils/release-date.ts formats a bare YYYY-MM-DD in UTC and a timestamp where the viewer is), so the
+// shape tvmaze used is the shape that has to come out.
+const DATED_SHOW = {
+  id: 77,
+  name: 'Dated Show',
+  premiered: '2021-01-11',
+  externals: { imdb: null },
+  _embedded: {
+    episodes: [
+      { id: 771, name: 'a day', season: 1, number: 1, airdate: '2021-01-11' },
+      { id: 772, name: 'a day and an instant', season: 1, number: 2, airdate: '2021-01-18', airstamp: '2021-01-18T15:30:00+09:00' },
+      { id: 773, name: 'no date at all', season: 1, number: 3, airdate: null },
+    ],
+  },
+}
+
 // misses are COLLECTED rather than thrown: `api` swallows a rejection with `.catch(() => undefined)`,
 // so a drifted fixture would return no media and fail on a line that says nothing about the fixture.
 const context = (misses: string[], known?: unknown) => ({
@@ -33,6 +51,7 @@ const context = (misses: string[], known?: unknown) => ({
   fetch: async (url: string) => {
     if (url.startsWith(`${API}/shows/52279?embed=episodes`)) return { ok: true, status: 200, json: async () => SHOW }
     if (url.startsWith(`${API}/shows/99?embed=episodes`)) return { ok: true, status: 200, json: async () => EMPTY_SHOW }
+    if (url.startsWith(`${API}/shows/77?embed=episodes`)) return { ok: true, status: 200, json: async () => DATED_SHOW }
     if (url.startsWith(`${API}/search/shows?q=`)) return { ok: true, status: 200, json: async () => [{ show: SHOW }] }
     misses.push(url)
     return { ok: false, status: 404, json: async () => ({}) }
@@ -168,6 +187,45 @@ test('the one season dated our year answers a year-only date with a count; a cou
 
   expect((await askSeason({ showId: '52279', titles: ['Mushoku Tensei'], episodeCount: 2 }))?.uri).toBe('tvmaze:52279-s1')
   expect(await askSeason({ showId: '52279', titles: ['Mushoku Tensei'], episodeCount: 1 }), 'never season 3 by count').toBeNull()
+})
+
+// THE EPISODE DATE. tvmaze fetched `airdate` and dropped it, so this source contributed nothing to
+// the date alignment `store/consensus.ts` pairs episodes by. Both shapes go out as themselves: the day
+// stays a day, and the instant is normalised to ISO rather than truncated to the day it falls on,
+// which is not the same day in every zone (15:30 on the 18th in Tokyo is 06:30 on the 18th in UTC).
+test('an episode carries the date tvmaze published, a day as a day and an instant as an instant', async () => {
+  const media = await mediaFor('tvmaze:77')
+  const dates = (media.episodes as { releaseDate?: string }[]).map(episode => episode.releaseDate)
+
+  expect(dates).toEqual(['2021-01-11', '2021-01-18T06:30:00.000Z', undefined])
+})
+
+test('an episode tvmaze has no date for carries none', async () => {
+  const media = await mediaFor('tvmaze:77')
+  const undated = (media.episodes as { releaseDate?: string }[])[2]
+
+  expect(undated!.releaseDate, 'a missing date is left missing, never invented').toBeUndefined()
+})
+
+// THE NO-COUNT SITE. `aggregateMedia` always emits `episodes: []`, so reading a count off that list
+// turned "no count" into ZERO, and zero vetoes every candidate through `foldVetoed` (`theirs > 0` is
+// true of every season), so every season of every show was refused and the refusal looked exactly like
+// tvmaze having nothing to say. Absent and zero are two different states here (01 edge cases, case 23).
+const AGGREGATE = { titles: [{ title: 'Mushoku Tensei: Jobless Reincarnation' }], startDate: '2022-01-03', episodes: [] }
+
+test('an aggregated media with no count asks with no count rather than with zero', async () => {
+  const media = await mediaFor('tvmaze:52279', { ...AGGREGATE, episodeCount: null })
+
+  expect(media.uri).toBe('tvmaze:52279-s2')
+})
+
+// The control, and the reason this is not "stop reading episodeCount": a count the aggregate really
+// declares still vetoes a season holding more episodes than the run.
+test('a count the aggregate really declares is still read', async () => {
+  expect(
+    await mediaOrNull('tvmaze:52279', { ...AGGREGATE, episodeCount: 2 }),
+    'season 2 holds 3 against a run of 2, which is a fold'
+  ).toBeNull()
 })
 
 test('similarMedia is null for a show with no episodes and an unknown show, and yields exactly once', async () => {
