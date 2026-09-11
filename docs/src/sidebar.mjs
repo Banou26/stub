@@ -86,6 +86,9 @@ export const sidebar = [
     { label: 'Order is not an input',     slug: 'invariants/determinism' },
     { label: 'The uri grammar',           slug: 'invariants/uris' },
   ]},
+  { label: 'The redesign', items: [
+    { label: 'The representation',       slug: 'design/representation' },
+  ]},
   { label: 'Reference', items: [
     { label: 'Every constant',            slug: 'reference/constants' },
     { label: 'Every refusal',             slug: 'reference/refusal-index' },
