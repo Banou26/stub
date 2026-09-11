@@ -29,13 +29,17 @@ expose<typeof resolvers>(
   }
 )
 
-const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease, exportStore } = await expose<WorkerResolvers>(
+const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease, exportStore, setGraphEnabled } = await expose<WorkerResolvers>(
   {},
   {
     transport: worker,
     key: 'yoga'
   }
 )
+
+// The graph engine is opt in while the store migration runs. The worker has no view of the page's
+// query string, so the flag is read here and handed over as soon as the osra channel is up.
+void setGraphEnabled(new URLSearchParams(location.search).has('graph'))
 
 export {
   handleRequest,

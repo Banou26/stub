@@ -9,6 +9,7 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 import { extractors, setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
 import { exportStore } from './store/export'
+import { enableGraph } from './graph'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -41,6 +42,8 @@ export const osraResolvers = {
   handleRequest: (input: RequestInfo | URL, init?: RequestInit) =>
     yoga.handleRequest(new Request(input, init), {}),
   setUserKeys: (keys: Record<string, string>) => setUserKeys(keys),
+  // The page owns the `?graph` flag and hands it over once, right after spawning the worker.
+  setGraphEnabled: (enabled: boolean) => enableGraph(enabled),
   registerRemoteSource: async (port: MessagePort, pluginUri: string): Promise<{ ok: { sources: { origin: string, name: string }[], rejected: { origin: string, reason: string }[] } } | { error: string }> => {
     try {
       return { ok: await registerRemoteExtractor(port, pluginUri) }
