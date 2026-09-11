@@ -1,0 +1,1458 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard row was nf:80987039-3: 12 episodes against the run's 14, no dates, Netflix-translated episode titles, and the same SAME_AS claims coming from the nf:80987039 container, so it was left unasserted and flagged. The short cr and jw rows (11 episodes) were read as the run still releasing, since their episode titles and dates match anizip 1 to 11 exactly and episode 12 airs 2026-09-13. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:G24H1N3MP-GS00374452",
+      "mediaUri": "anilist:178789",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "anilist:178789",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "kitsu:49002",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "kitsu:49002",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:G24H1N3MP",
+      "mediaUri": "kitsu:49002",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "offline:mal-59193",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "offline:mal-59193",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49002",
+      "mediaUri": "offline:mal-59193",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "anizip:18727",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "anizip:18727",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18727",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:222366-490814",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49002",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:80987039-3",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59193",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:80987039",
+      "mediaUri": "jw:222366-490814",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18727",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:G24H1N3MP-GS00374452",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49002",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:80987039-3",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59193",
+      "mediaUri": "jw:222366-490814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "nf:80987039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18727",
+      "mediaUri": "nf:80987039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:222366-490814",
+      "mediaUri": "nf:80987039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49002",
+      "mediaUri": "nf:80987039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "nf:80987039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59193",
+      "mediaUri": "nf:80987039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178789",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18727",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:G24H1N3MP-GS00374452",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:222366-490814",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49002",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59193",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59193",
+      "mediaUri": "nf:80987039-3",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "369836",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369836"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "369837",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369837"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "369838",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369838"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "369839",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369839"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "369840",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369840"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "369841",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369841"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "369842",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369842"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "369843",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369843"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "369844",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369844"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "369845",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369845"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "369846",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369846"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "369847",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369847"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "369848",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369848"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "369849",
+      "mediaUri": "kitsu:49002",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:369849"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18727-1",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Burn Bright, Mad Dog"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "燃えよ狂犬"
+        }
+      ],
+      "uri": "anizip:18727-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18727-2",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Howl, Mad Dog"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "吠えよ狂犬"
+        }
+      ],
+      "uri": "anizip:18727-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18727-3",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Life Back at Home"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "帰ってきた日常"
+        }
+      ],
+      "uri": "anizip:18727-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18727-4",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A King-Class Water Mage"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "水王級魔術師"
+        }
+      ],
+      "uri": "anizip:18727-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18727-5",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Celebrations"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "お祝い"
+        }
+      ],
+      "uri": "anizip:18727-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18727-6",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Another Domestic Disaster?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "修羅場再び?"
+        }
+      ],
+      "uri": "anizip:18727-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18727-7",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Phase Four"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "第四段階"
+        }
+      ],
+      "uri": "anizip:18727-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18727-8",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Flying Fortress"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "空中城塞"
+        }
+      ],
+      "uri": "anizip:18727-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18727-9",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Lament"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "慟哭"
+        }
+      ],
+      "uri": "anizip:18727-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18727-10",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Audience with an Immortal Demon King"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "不死魔王との謁見"
+        }
+      ],
+      "uri": "anizip:18727-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18727-11",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Turning Point 4"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ターニングポイント4"
+        }
+      ],
+      "uri": "anizip:18727-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18727-12",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An End and a Beginning"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "終わりと始まり"
+        }
+      ],
+      "uri": "anizip:18727-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "18727-13",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18727-13"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "18727-14",
+      "mediaUri": "anizip:18727",
+      "origin": "anizip",
+      "releaseDate": "2026-09-27T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18727-14"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "G24H1N3MP-GS00374452-GE00374453JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Burn Bright, Mad Dog"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374453JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "G24H1N3MP-GS00374452-GE00374454JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Howl, Mad Dog"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374454JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "G24H1N3MP-GS00374452-GE00374455JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Life Back at Home"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374455JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "G24H1N3MP-GS00374452-GE00374456JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A King-Class Water Mage"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374456JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "G24H1N3MP-GS00374452-GE00374457JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Celebrations"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374457JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "G24H1N3MP-GS00374452-GE00374458JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Another Domestic Disaster?"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374458JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "G24H1N3MP-GS00374452-GE00374459JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Phase Four"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374459JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "G24H1N3MP-GS00374452-GE00374460JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Flying Fortress"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374460JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "G24H1N3MP-GS00374452-GE00374461JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Lament"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374461JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "G24H1N3MP-GS00374452-GE00374462JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "An Audience with an Immortal Demon King"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374462JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "G24H1N3MP-GS00374452-GE00374463JAJP",
+      "mediaUri": "cr:G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Turning Point 4"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452-GE00374463JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9054830",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Burn Bright, Mad Dog"
+        }
+      ],
+      "uri": "jw:9054830"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10562336",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Howl, Mad Dog"
+        }
+      ],
+      "uri": "jw:10562336"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10562337",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Life Back at Home"
+        }
+      ],
+      "uri": "jw:10562337"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10562338",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A King-Class Water Mage"
+        }
+      ],
+      "uri": "jw:10562338"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10562339",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Celebrations"
+        }
+      ],
+      "uri": "jw:10562339"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10562340",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Another Domestic Disaster?"
+        }
+      ],
+      "uri": "jw:10562340"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10562341",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Phase Four"
+        }
+      ],
+      "uri": "jw:10562341"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10562342",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Flying Fortress"
+        }
+      ],
+      "uri": "jw:10562342"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10562343",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lament"
+        }
+      ],
+      "uri": "jw:10562343"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10562344",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "jw:10562344"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10562345",
+      "mediaUri": "jw:222366-490814",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "jw:10562345"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82941639",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rage, Mad Dog"
+        }
+      ],
+      "uri": "nf:82941639"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82941640",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Howl, Mad Dog"
+        }
+      ],
+      "uri": "nf:82941640"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82941641",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82941641"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82941642",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82941642"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82941643",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82941643"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82941644",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82941644"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82941645",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82941645"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82941646",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82941646"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82941647",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82941647"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82941648",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82941648"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82941649",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82941649"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82941650",
+      "mediaUri": "nf:80987039-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82941650"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:18727-1",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374453JAJP"
+      },
+      {
+        "a": "anizip:18727-2",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374454JAJP"
+      },
+      {
+        "a": "anizip:18727-3",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374455JAJP"
+      },
+      {
+        "a": "anizip:18727-4",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374456JAJP"
+      },
+      {
+        "a": "anizip:18727-5",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374457JAJP"
+      },
+      {
+        "a": "anizip:18727-6",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374458JAJP"
+      },
+      {
+        "a": "anizip:18727-7",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374459JAJP"
+      },
+      {
+        "a": "anizip:18727-8",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374460JAJP"
+      },
+      {
+        "a": "anizip:18727-9",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374461JAJP"
+      },
+      {
+        "a": "anizip:18727-10",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374462JAJP"
+      },
+      {
+        "a": "anizip:18727-11",
+        "b": "cr:G24H1N3MP-GS00374452-GE00374463JAJP"
+      },
+      {
+        "a": "anizip:18727-1",
+        "b": "jw:9054830"
+      },
+      {
+        "a": "anizip:18727-2",
+        "b": "jw:10562336"
+      },
+      {
+        "a": "anizip:18727-3",
+        "b": "jw:10562337"
+      },
+      {
+        "a": "anizip:18727-4",
+        "b": "jw:10562338"
+      },
+      {
+        "a": "anizip:18727-5",
+        "b": "jw:10562339"
+      },
+      {
+        "a": "anizip:18727-6",
+        "b": "jw:10562340"
+      },
+      {
+        "a": "anizip:18727-7",
+        "b": "jw:10562341"
+      },
+      {
+        "a": "anizip:18727-8",
+        "b": "jw:10562342"
+      },
+      {
+        "a": "anizip:18727-9",
+        "b": "jw:10562343"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:178789",
+        "whole": "cr:G24H1N3MP"
+      },
+      {
+        "part": "anilist:178789",
+        "whole": "nf:80987039"
+      }
+    ],
+    "together": [
+      [
+        "anilist:178789",
+        "kitsu:49002",
+        "mal:59193",
+        "offline:mal-59193",
+        "anizip:18727",
+        "cr:G24H1N3MP-GS00374452",
+        "jw:222366-490814"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Mushoku Tensei: Jobless Reincarnation Season 3",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "178789",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "無職転生Ⅲ ～異世界行ったら本気だす～"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:178789"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "49002",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mushoku Tensei: Isekai Ittara Honki Dasu 3rd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "無職転生 ～異世界行ったら本気だす～ 第3期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49002"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "59193",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:59193"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "mal-59193",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-59193"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "18727",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mushoku Tensei: Jobless Reincarnation Season 3"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "無職転生III ~異世界行ったら本気だす~"
+        }
+      ],
+      "uri": "anizip:18727"
+    },
+    {
+      "id": "G24H1N3MP",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:G24H1N3MP"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "G24H1N3MP-GS00374452",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mushoku Tensei: Jobless Reincarnation"
+        }
+      ],
+      "uri": "cr:G24H1N3MP-GS00374452"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "222366-490814",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:222366-490814"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80987039",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mushoku Tensei: Jobless Reincarnation"
+        }
+      ],
+      "uri": "nf:80987039"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "80987039-3",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mushoku Tensei: Jobless Reincarnation"
+        }
+      ],
+      "uri": "nf:80987039-3"
+    }
+  ],
+  "source": {
+    "answers": [
+      "cddca2f3154a1794d7aca22e6954ccf1a214335f45dc554f7ca8ea7371ffa139",
+      "36bf3a2470a21fcdfc3a52ce00bda8116fea796b99ac233a23b9da006bebe430",
+      "e43ceb14e86a9c16f0128833becef4c6068e158acd8f756f78144c8be71bb3ae",
+      "31a5c7c95df569975deed900ad21ae9b4d2ec40da1244fa606ab50a9a35a0849",
+      "3f704c711717e5cd2a5be3fa1d298c40a09ebf69daf227a5696f3ea0b9e50a47",
+      "ed5526c5d7f3f64b446378e8859a56a5f0cbb7baefc38ac9df6ca1173e7d3d28",
+      "24fd05141ce9ba9eabc382734aab02d6ceae1ff8f12687f566779c82cea5f987",
+      "c77d8b45fb944c10e5e6b829b0e578b7157642e38e3b698a0d98119896ac591e",
+      "5b700a7df5d2a47ed6ca515606b188da0d0b91a7af871825723f49ced12ee16e",
+      "20ebf70278a4b9100e3ff578300e4178b5c321eaa40b3b3430e98f580f7d81cc",
+      "eaa739eaa0f018f713ae69b4fd7cb7e76905478d6f2c2f8cf2019c71cc7d5fcc",
+      "91709d1bca558027d53bdd3055bd32d52ee835fbd5a6e7528619ba3d0e97fd48"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:178789,kitsu:49002,mal:59193,offline:mal-59193)"
+  },
+  "why": "The run is Mushoku Tensei: Jobless Reincarnation Season 3, a 14 episode TV run of summer 2026 that started 2026-07-04 and ends 2026-09-27, so it is still releasing on 2026-09-12 and several sources list only the 11 episodes broadcast so far. anizip:18727 is the same run: it maps SAME_AS to mal:59193 and anilist:178789, carries the same count of 14, and its episode dates run from 2026-07-03T15:00Z (2026-07-04 in Japan) to 2026-09-27, matching the run's start and end. cr:G24H1N3MP-GS00374452 is the same run: anilist:178789 itself maps SAME_AS to it, and its 11 episodes carry the same titles on the same dates as anizip:18727 episodes 1 to 11, from Burn Bright, Mad Dog on 2026-07-04 to Turning Point 4 on 2026-09-06. jw:222366-490814 is the same run: it maps SAME_AS to anilist:178789, mal:59193, kitsu:49002, offline:mal-59193 and anizip:18727, and its episodes 1 to 9 carry the same exact titles as anizip:18727 episodes 1 to 9, from Burn Bright, Mad Dog to Lament. cr:G24H1N3MP holds the run: it is the Crunchyroll series container (scope CONTAINER, a bare series id) and kitsu:49002 maps PART_OF to it. nf:80987039 holds the run: it is the Netflix series container (scope CONTAINER, titled Mushoku Tensei: Jobless Reincarnation with a start of 2021-01-01, covering the whole show), and jw:222366-490814 maps PART_OF to it. The episode pairs anizip 1 to 11 with cr 1 to 11 rest on equal episode titles and release dates at most a day apart, and anizip 1 to 9 with jw 1 to 9 rest on the exact, non generic titles; jw episodes 10 and 11 are only Episode 10 and Episode 11, so they are left unpaired, and the kitsu episodes carry neither title nor date, so they are left unpaired too. nf:80987039-3 is left unsettled: it lists 12 episodes against the run's 14 with no dates at all, its only non generic titles are Netflix's own translation (Rage, Mad Dog where the run has Burn Bright, Mad Dog), and every SAME_AS claim it makes is also made by the nf:80987039 container row, so the Netflix handles identify the show and not a season."
+}
