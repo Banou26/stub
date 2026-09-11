@@ -85,14 +85,39 @@ const airedAt = (value?: string | null): string | undefined => {
 
 const mediaId = (ids?: TraktIds): string | undefined => ids?.slug ?? (ids?.trakt !== undefined ? String(ids.trakt) : undefined)
 
-// Everything this source mints is CONTAINER: it reads /shows/ and /search/show only, so a row is
-// trakt's show slug and the imdb and tmdb ids on it are the show's, identical for every season. The
-// bare tmdb tv id is the one to watch, since tmdb is not in the store's show-level backstop and
-// `tmdb/extractor.ts` mints real `<id>-s<n>` runs that a bare id must never be unioned with.
+/**
+ * The handles a trakt id block is worth minting.
+ *
+ * Everything this source mints is CONTAINER: it reads `/shows/` and `/search/show` only, so a row is
+ * trakt's show slug and the ids on it are the show's, identical for every season. There is no movie
+ * branch here to reason about separately.
+ *
+ * `tmdb` IS NOT MINTED, for the two reasons simkl and watchmode already refuse it.
+ *
+ * IT IS A SHOW LEVEL ID. `ids.tmdb` on a trakt show is one TMDB tv id covering every season, while
+ * `tmdb/extractor.ts` mints season scoped `tmdb:<id>-s<n>` runs through `seasonScopedId`. A handle is
+ * an identity claim, so a bare `tmdb:<id>` says every season of the show is one media and
+ * `upsertMedia` unions them on it before any season mechanism is consulted. The CONTAINER stamp this
+ * used to carry does not save it, because tmdb is not in the store's show level backstop
+ * (`SHOW_LEVEL_ORIGINS` is imdb alone) and a claim minted under an origin that also mints honest
+ * season ids has to stand on its own.
+ *
+ * THE NUMBER IS AMBIGUOUS ANYWAY. TMDB numbers films and shows in separate sequences that both start
+ * at 1, measured 2026-09-04: `themoviedb.org/movie/550` is Fight Club and `themoviedb.org/tv/550` is
+ * Till Death Us Do Part. Stub's uri is `tmdb:550` for both, carrying no kind, so a tv id minted here
+ * can weld a show to an unrelated film that holds the same number.
+ *
+ * `tmdb` deliberately stays OUT of `SHOW_LEVEL_ORIGINS` for this: exempting the origin would demote
+ * `tmdb/extractor.ts`'s correct `<id>-s<n>` runs to fix a bare id minted somewhere else. The refusal
+ * belongs at the source that cannot build an honest id, which is this one.
+ *
+ * The cost is the TMDB link disappearing from a trakt sourced media, the same trade simkl records.
+ * `imdb` stays: a `tt` id names the show, it has no season level equivalent, and CONTAINER says so at
+ * the point the claim is made rather than leaving it to the backstop.
+ */
 const buildHandles = (ids?: TraktIds): GQLMedia[] => {
   const handles: GQLMedia[] = []
   if (ids?.imdb) handles.push(makeMedia({ origin: 'imdb', id: ids.imdb, url: `https://www.imdb.com/title/${ids.imdb}`, scope: 'CONTAINER' }))
-  if (ids?.tmdb !== undefined) handles.push(makeMedia({ origin: 'tmdb', id: String(ids.tmdb), url: `https://www.themoviedb.org/tv/${ids.tmdb}`, scope: 'CONTAINER' }))
   return handles
 }
 

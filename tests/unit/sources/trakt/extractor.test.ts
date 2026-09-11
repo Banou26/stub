@@ -28,14 +28,18 @@ const datedSeason = (dates: readonly (string | undefined)[]) => ({
   })),
 })
 
+// The id block trakt returns for a show, tmdb id included. Named so a test can assert the fixture
+// still carries that id: a refusal proven against a fixture that never had one proves nothing.
+const SHOW_IDS = { slug: 'breaking-bad', trakt: 1, imdb: 'tt0903747', tmdb: 1396 }
+
 // misses are COLLECTED rather than thrown: `api` swallows a rejection with `.catch(() => undefined)`
 // and an empty list is exactly the absence these tests assert, so a drifted fixture would pass them
 // while proving nothing.
-const context = (seasons: readonly object[], misses: string[]) => ({
+const context = (seasons: readonly object[], misses: string[], ids: object) => ({
   key: () => 'test-key',
   fetch: async (url: string) => {
     if (url.startsWith(`${BASE}/shows/breaking-bad?extended=full`)) {
-      return { ok: true, status: 200, json: async () => ({ title: 'Breaking Bad', year: 2008, ids: { slug: 'breaking-bad', trakt: 1, imdb: 'tt0903747', tmdb: 1396 } }) }
+      return { ok: true, status: 200, json: async () => ({ title: 'Breaking Bad', year: 2008, ids }) }
     }
     if (url.startsWith(`${BASE}/shows/breaking-bad/seasons`)) {
       return { ok: true, status: 200, json: async () => seasons }
@@ -45,10 +49,10 @@ const context = (seasons: readonly object[], misses: string[]) => ({
   },
 }) as never
 
-const mediaFor = async (seasons: readonly object[]) => {
+const mediaFor = async (seasons: readonly object[], ids: object = SHOW_IDS) => {
   const misses: string[] = []
   const subscribe = (resolvers.Subscription as any).media.subscribe
-  const { value } = await subscribe(undefined, { input: { uri: 'trakt:breaking-bad' } }, context(seasons, misses)).next()
+  const { value } = await subscribe(undefined, { input: { uri: 'trakt:breaking-bad' } }, context(seasons, misses, ids)).next()
   expect(misses, 'the fixture has drifted: these urls had no route').toEqual([])
   const media = value?.media as { uri?: string, scope?: string, handles: { node: { uri: string, scope?: string } }[], episodes?: { releaseDate?: string }[], episodeCount?: number } | null
   // a null media satisfies every `episodes ?? []` assertion below, so it is ruled out here once
@@ -78,17 +82,40 @@ test('a show whose episodes are all one season keeps them', async () => {
   expect(media.episodeCount).toBe(7)
 })
 
-// `trakt:<slug>` names the show, and the imdb and tmdb ids on it are the show's too: the same three
-// ids come back for every season of Breaking Bad. None of them may enter a run's identity space, so
-// the row and both bare handles go out scoped CONTAINER. The tmdb one matters most, because tmdb is not
-// in the store's show-level backstop and a bare tmdb tv id has welded seasons on the live site.
-test('the show row and its bare imdb and tmdb handles are scoped CONTAINER', async () => {
+// `trakt:<slug>` names the show, and the imdb id on it is the show's too: the same id comes back for
+// every season of Breaking Bad. It may not enter a run's identity space, so the row and the bare
+// handle both go out scoped CONTAINER.
+test('the show row and its bare imdb handle are scoped CONTAINER', async () => {
   const media = await mediaFor([season(1, 7), season(2, 13)])
 
   expect(media.scope).toBe('CONTAINER')
   const handles = media.handles.map(handle => handle.node)
-  expect(handles.map(handle => handle.uri).sort()).toEqual(['imdb:tt0903747', 'tmdb:1396'])
+  expect(handles.map(handle => handle.uri).sort()).toEqual(['imdb:tt0903747'])
   for (const handle of handles) expect(handle.scope, handle.uri).toBe('CONTAINER')
+})
+
+// THE TMDB REFUSAL. `ids.tmdb` on a trakt show is the show's ONE tv id, the same number on every
+// season, while `tmdb/extractor.ts` mints season scoped `tmdb:<id>-s<n>` runs a bare id would union.
+// The number is ambiguous on top of that: tmdb counts films and shows in separate sequences that both
+// start at 1, so `tmdb:550` is Fight Club and Till Death Us Do Part at once. No tmdb handle comes out
+// of this source, and the imdb one is untouched by that.
+test('a show carrying ids.tmdb mints no tmdb handle and keeps its imdb one', async () => {
+  expect(SHOW_IDS.tmdb, 'the fixture must carry a tmdb id, or the refusal below proves nothing').toBe(1396)
+
+  const media = await mediaFor([season(1, 7), season(2, 13)])
+
+  const uris = media.handles.map(handle => handle.node.uri)
+  expect(uris.filter(uri => uri.startsWith('tmdb:'))).toEqual([])
+  expect(uris).toEqual(['imdb:tt0903747'])
+})
+
+// The control: a record with no tmdb id at all comes out identical, which is what makes the test above
+// a statement about the refusal rather than about the shape of the handle list.
+test('a show with no ids.tmdb produces the same single CONTAINER imdb handle', async () => {
+  const media = await mediaFor([season(1, 7), season(2, 13)], { slug: 'breaking-bad', trakt: 1, imdb: 'tt0903747' })
+
+  expect(media.handles.map(handle => handle.node.uri)).toEqual(['imdb:tt0903747'])
+  for (const handle of media.handles) expect(handle.node.scope, handle.node.uri).toBe('CONTAINER')
 })
 
 // Scope comes from the id's grammar, never from the episode list: a show with one season so far is
