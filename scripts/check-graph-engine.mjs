@@ -7,10 +7,13 @@
  * that only ran the first could not tell "the flag works" from "the engine loads unconditionally".
  *
  * The third opens a media page with `?graph=1&export=answers` and reads the log back through
- * `window.__stubExportAnswers`. It is the only arm that talks to the real sources over the network,
- * which is deliberate: the unit suite drives the hook against a fixture server, and what it cannot
- * tell you is whether 24 sources answering at once produce answers the log recognises. It reports
- * the rows, the bytes and the time, since that is the cost the tee of step 1b has to fit inside.
+ * `window.__stubExportAnswers`, and the graph the ingest made of it through `window.__stubGraphCounts`.
+ * It is the only arm that talks to the real sources over the network, which is deliberate: the unit
+ * suite drives the hook against a fixture server, and what it cannot tell you is whether 24 sources
+ * answering at once produce answers the log recognises and rows the ingest can write. It reports the
+ * rows, the bytes, the time and the row count of every table, since that is the cost the tee of step
+ * 1b has to fit inside. A log that filled while `Media` or `CLAIMS` stayed at zero is a tee that
+ * quarantined the page, which is the failure a rows-only arm cannot see.
  *
  * Run it from inside the repo, against a `vp build` output:
  *   node_modules/.bin/vp build && node scripts/check-graph-engine.mjs
@@ -131,7 +134,9 @@ const answersArm = async (route, waitMs) => {
       // the read is a worker round trip plus every row crossing it as a string: the number step 1b's
       // tee has to fit beside, measured rather than assumed
       const ms = Math.round(performance.now() - started)
-      return { ms, rows: rows.length, bytes: rows.reduce((total, row) => total + row.raw.length, 0), origins: [...new Set(rows.map(row => row.origin))].sort(), kinds: [...new Set(rows.map(row => row.kind))].sort() }
+      // the same flush answers both, so the counts can never describe a log the page has not seen
+      const counts = typeof window.__stubGraphCounts === 'function' ? await window.__stubGraphCounts() : undefined
+      return { ms, counts, rows: rows.length, bytes: rows.reduce((total, row) => total + row.raw.length, 0), origins: [...new Set(rows.map(row => row.origin))].sort(), kinds: [...new Set(rows.map(row => row.kind))].sort() }
     } catch (error) {
       return { failed: String(error?.message ?? error) }
     }
@@ -163,8 +168,16 @@ console.log(`  rows ${answers.rows}, ${answers.bytes} bytes of raw, first row af
 if (answers.failed) console.log(`  the page could not read the log: ${answers.failed}`)
 console.log(`  kinds: ${answers.kinds.join(', ') || 'none'}`)
 console.log(`  origins (${answers.origins.length}): ${answers.origins.join(', ') || 'none'}`)
+const counts = answers.counts ?? {}
+const filled = Object.entries(counts).filter(([, total]) => total > 0)
+console.log(`  tables: ${filled.map(([table, total]) => `${table} ${total}`).join(', ') || 'none'}`)
 if (!answers.installed) failures.push('the flagged load never installed window.__stubExportAnswers')
 if (answers.failed) failures.push(`window.__stubExportAnswers threw: ${answers.failed}`)
+if (answers.installed && !answers.failed && !answers.counts) failures.push('the flagged load never installed window.__stubGraphCounts')
+// the ingest is the point of the arm, not the log: a page whose sources answered must produce rows
+// and the claims between them, and zero on either is a tee that ran and wrote nothing
+if (answers.rows && !(counts.Media > 0)) failures.push(`the log filled but Media is ${counts.Media ?? 'absent'}`)
+if (answers.rows && !(counts.CLAIMS > 0)) failures.push(`the log filled but CLAIMS is ${counts.CLAIMS ?? 'absent'}`)
 if (answers.installed && !answers.failed && !answers.rows) {
   // this machine could not complete the arm: say so with what the page reported, rather than
   // asserting something weaker that a session with no network would also pass

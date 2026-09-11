@@ -1,7 +1,14 @@
+// The graph's two write events (4.5) share this bus so a later step can listen without a second one.
+// They are INERT while the `?graph` flag is off, since the ingest that emits them does not run, and
+// they have no listener yet either: the plugin scheduler of step 2 is the first.
 type StoreEventMap = {
   'media:changed': { uris?: string[] }
   'episode:changed': { uris?: string[] }
   'origin:changed': { ids?: string[] }
+  /** A new row, a new claim, a new HAS_EPISODE, or a projected column that moved. Wakes a pass. */
+  'graph:changed': { seq: number, uris: string[] }
+  /** Unprojected `raw` fields only, or a re-asserted claim's node. Wakes a re-materialization. */
+  'row:changed': { uris: string[] }
 }
 
 const eventBus = new EventTarget()

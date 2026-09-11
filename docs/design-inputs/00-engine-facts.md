@@ -54,3 +54,45 @@ usable in the browser. No persistence (owner's decision): in-memory for the work
   goes through `graphReady()`, which awaits the schema; pinned in `tests/unit/worker/graph/ready.test.ts`.
 - The Answer log on one real page fan-out (`/media/ag:(anilist:108465)`, 24 sources): 843 to 896 rows,
   1.6 to 1.9 MB of raw, the first row 1.7 to 2.1 s after navigation, read back in 41 to 61 ms.
+
+## Measured on 2026-09-12 while building the ingest (step 1b)
+
+How a JS param becomes a column value is the whole of this section, and each line below rejected or
+corrupted a WHOLE batch rather than one row.
+
+- **A struct field is typed from the FIRST row of the `UNWIND` list.** A field that is an empty list
+  in row one and a filled list in row two binds as `LIST(ANY)` and the statement dies at RUNTIME with
+  `Trying to a create a vector with ANY type. This should not happen.`, after the binder passed it.
+  `cast(r.x AS STRING[])` does NOT rescue it, and the reverse order (filled first) works, which is
+  what makes it read as a data problem rather than a spelling one. It cost a real page 148 of its 816
+  answers, visible only because the browser arm reads the row counts back.
+  **So no list travels as a list**: join it into a STRING and split it in the statement, where the
+  type is written down, with the empty case spelled as NULL:
+  ```cypher
+  UNWIND $rows AS r MERGE (m:Media {uri: r.uri})
+  ON CREATE SET m.categories = CASE WHEN r.categories = '' THEN cast(NULL AS STRING[])
+                               ELSE string_split(r.categories, $separator) END,
+    m.fieldSeq = CASE WHEN r.fieldKeys = '' THEN cast(NULL AS MAP(STRING, INT64))
+                 ELSE map(string_split(r.fieldKeys, $separator), cast(string_split(r.fieldSeqs, $separator) AS INT64[])) END
+  ```
+  `string_split` exists, takes the separator as a param (a NUL works), returns `['']` for an empty
+  input, and `cast(<STRING[]> AS INT64[])` parses element by element.
+- **A column whose param is null in EVERY row binds as STRING**, so `m.episodeCount = r.episodeCount`
+  dies with `has data type STRING but expected INT64` on a batch where nobody stated a count.
+- **`cast(<INT64> AS DOUBLE)` REINTERPRETS the bits rather than converting.** A DOUBLE field holding
+  `0.5` in one row and the integer `3` in the next reads back as `1.5e-323`. Nothing errors.
+- Both are answered by the same rule: **every typed scalar travels as a STRING and is cast in the
+  statement**. `cast('3' AS DOUBLE)` is 3.0, `cast('12' AS INT64)` is 12, `cast(NULL AS T)` is NULL,
+  and it binds identically whether or not any row in the batch carries a value.
+- **An INT64 may only be offered a SAFE integer.** `String(1e21)` is `'1e+21'` and
+  `cast('1e+21' AS INT64)` fails with `Conversion exception: Cast failed`. `Number.MAX_SAFE_INTEGER`
+  round trips.
+- 2,000 rows through `MERGE ... ON CREATE SET ... ON MATCH SET` with those spellings: 434 ms (against
+  107 ms for 2,000 plain `CREATE`s), so a MERGE-shaped batch is about 4x a create-shaped one.
+- `MATCH (a:Media)-[c:CLAIMS {key: k}]->(b:Media)` under `UNWIND` reads an edge back by property, and
+  `WHERE NOT EXISTS { MATCH (a)-[:CLAIMS {key: h.key}]->(b) } CREATE ...` is idempotent on a re-run.
+- The ingest on one real page (`/media/ag:(anilist:108465)`, 24 sources, 2026-09-12): 824 answers
+  become `Media` 673, `Episode` 263, `Origin` 24, `CLAIMS` 683, `HAS_EPISODE` 263, `RELATED` 7,
+  `ABOUT` 824. Replaying 800 recorded rows of one page costs 1,444 ms in one batch, 2,608 ms over the
+  22 flush-sized batches a live page actually writes, and 150 ms on a second identical pass, which
+  writes nothing.

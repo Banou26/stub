@@ -207,6 +207,11 @@ export const tableNameOf = (statement: string): string =>
 /** Every table name the schema declares, in creation order. */
 export const GRAPH_TABLES = GRAPH_SCHEMA.map(tableNameOf)
 
+// Split because counting one takes a different pattern: `MATCH (n:T)` for a node table and
+// `MATCH ()-[e:T]->()` for a rel table, and asking the wrong one is a binder error rather than a zero.
+export const GRAPH_NODE_TABLES = [...SOURCE_NODE_TABLES, ...PLUGIN_NODE_TABLES].map(tableNameOf)
+export const GRAPH_REL_TABLES = [...SOURCE_REL_TABLES, ...PLUGIN_REL_TABLES].map(tableNameOf)
+
 /**
  * Creates every table of section 2 on an open engine, one statement at a time.
  *

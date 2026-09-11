@@ -26,6 +26,7 @@
     "seed:export": "node scripts/export-season-seed.mjs",
     "corpus:walk": "node scripts/walk-season-answers.mjs",
     "corpus:label": "node scripts/label-corpus.mjs",
+    "corpus:replay": "node scripts/replay-answers.mjs",
     "build-test": "npm run data:build && vp build --config vite.test.config.ts",
     "build-test-watch": "vp build --config vite.test.config.ts --watch",
     "test": "npm run test:unit && npm run build-test && playwright test",

@@ -7,15 +7,21 @@
 // The log fills behind `?graph=1` and nothing else, so a page carrying this flag alone installs a
 // function that THROWS rather than one that answers an empty list: a log that is off and a log that
 // is empty are different facts about a session.
+//
+// `__stubGraphCounts` rides the same flag and the same rule. It is the other half of one question:
+// the log says what the sources answered, the counts say what the ingest made of it, and a walk that
+// reads only the first cannot tell a working tee from one that quarantined every row.
 import { readAnswersExportFlag } from './utils/export-flag'
-import { exportAnswers } from './worker'
+import { exportAnswers, graphCounts } from './worker'
 
 declare global {
   interface Window {
     __stubExportAnswers?: () => Promise<unknown>
+    __stubGraphCounts?: () => Promise<unknown>
   }
 }
 
 if (readAnswersExportFlag(location.href)) {
   window.__stubExportAnswers = () => exportAnswers()
+  window.__stubGraphCounts = () => graphCounts()
 }

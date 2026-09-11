@@ -15,6 +15,7 @@ import type { GraphQLResolveInfo } from 'graphql'
 
 import { contextOf } from '../request-context'
 import { graphEnabled } from './engine'
+import { canonicalJson, sha256Hex } from './hash'
 import { graphReady } from './schema'
 
 /** What an answer is about. The `Answer.kind` column of 2.1. */
@@ -89,32 +90,31 @@ export const answerKindOf = (info: Pick<GraphQLResolveInfo, 'path'>, typeName: s
   return expected === typeName ? KIND_OF_TYPE[typeName] : undefined
 }
 
-/**
- * The canonical form of a value: object keys sorted recursively, array order kept (2.1).
- *
- * It exists so that two answers carrying the same facts in a different key order hash alike, which
- * is what makes the re-fetch of a source that iterates an object differently a no-op rather than a
- * second row. `raw` itself is NOT canonicalized: that column keeps the bytes the source returned.
- */
-const canonicalize = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(canonicalize)
-  if (value === null || typeof value !== 'object') return value
-  const entries = Object.keys(value as object).sort().map(key => [key, canonicalize((value as Record<string, unknown>)[key])])
-  return Object.fromEntries(entries)
-}
-
-const hex = (bytes: ArrayBuffer): string =>
-  [...new Uint8Array(bytes)].map(byte => byte.toString(16).padStart(2, '0')).join('')
-
 // A separator no uri, origin or kind can contain, so (origin 'a', uri 'b:c') and (origin 'a:b',
 // uri 'c') cannot hash alike. The same reason `handlePairs` joins on `\0` (`extractor.ts:116`).
-const keyOf = async (origin: string, kind: AnswerKind, uri: string, value: unknown): Promise<string> => {
-  const canonical = JSON.stringify(canonicalize(value))
-  const bytes = new TextEncoder().encode(`${origin}\0${kind}\0${uri}\0${canonical}`)
-  return hex(await crypto.subtle.digest('SHA-256', bytes))
-}
+const keyOf = (origin: string, kind: AnswerKind, uri: string, value: unknown): Promise<string> =>
+  sha256Hex(`${origin}\0${kind}\0${uri}\0${canonicalJson(value)}`)
 
 type Draft = Omit<AnswerRow, 'seq'>
+
+/**
+ * What the log hands its rows to once they are written: the ingest of section 4, in the live worker.
+ *
+ * A sink rather than a direct call so the log stays what step 1a made it, and so a test or a replay
+ * can drive the ingest with no log in front of it. It is registered from `./index.ts`'s boot, which
+ * runs only behind the `?graph` flag, and it is handed the rows that were actually CREATED: a
+ * byte-identical re-fetch reaches it with nothing, the same way it writes nothing.
+ */
+type AnswerSink = (rows: AnswerRow[]) => Promise<unknown>
+
+let sink: AnswerSink | undefined
+
+/** Registers the sink, or clears it with no argument. Returns the one it replaced. */
+export const setAnswerSink = (next?: AnswerSink): AnswerSink | undefined => {
+  const previous = sink
+  sink = next
+  return previous
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -159,6 +159,9 @@ const operationOf = (info: Pick<GraphQLResolveInfo, 'variableValues'>): string =
 // 935 ms, 2026-09-11), so what lands inside one window is written by one statement.
 const FLUSH_MS = 50
 
+// A separator no field name carries, the same one the ingest joins its list columns on.
+const SELECTION_SEPARATOR = '\u0000'
+
 let pending: Draft[] = []
 let timer: ReturnType<typeof setTimeout> | undefined
 let settle: (() => void) | undefined
@@ -187,12 +190,31 @@ const write = async (batch: Draft[]): Promise<void> => {
   const rows = [...unique.values()].filter(draft => !existing.has(draft.key)).map(draft => ({ ...draft, seq: ++seq }))
   if (!rows.length) return
 
+  // `selection` travels JOINED and is split in the statement, never as a JS list. An `UNWIND` struct
+  // field is typed from the FIRST row only, so a batch whose first answer selected nothing and whose
+  // second selected fields binds that field as LIST(ANY) and the CREATE dies at runtime, taking the
+  // whole batch of answers with it (measured 2026-09-12, 0.20.4; see `./ingest.ts`'s header).
   await query(
     `UNWIND $rows AS r
      CREATE (:Answer {key: r.key, seq: r.seq, uri: r.uri, origin: r.origin, kind: r.kind,
-                      operation: r.operation, selection: r.selection, raw: r.raw})`,
-    { rows }
+                      operation: r.operation,
+                      selection: CASE WHEN r.selection = '' THEN cast(NULL AS STRING[]) ELSE string_split(r.selection, $separator) END,
+                      raw: r.raw})`,
+    { separator: SELECTION_SEPARATOR, rows: rows.map(row => ({ ...row, selection: row.selection.join(SELECTION_SEPARATOR) })) }
   )
+
+  // the ingest runs on the rows this batch WROTE, inside the same serialized window, so a caller that
+  // awaits the log (`flushAnswers`, `exportAnswers`, `graphCounts`) has the graph too. It is wrapped
+  // here rather than inside itself: a graph the ingest could not write is a gap in a projection of
+  // the log, and the log is the source of truth, so it must not take the log's own write down
+  try {
+    await sink?.(rows)
+  } catch (error) {
+    // the reason is spelled into the message, not left in `cause`: a page's console shows the top
+    // error and its stack, so a binder error reported only as a cause is invisible where it happens
+    const reason = error instanceof Error ? error.message : String(error)
+    console.error(new Error(`graph: the ingest dropped a batch of ${rows.length} answer(s): ${reason}`, { cause: error }))
+  }
 }
 
 const fire = (): Promise<void> => {
