@@ -2,9 +2,10 @@
 // one of them, a handle to a container that answers nothing of its own, and one episode.
 //
 // What it pins is the half of the tool that no screenshot can check: which rows the one-hop expansion
-// puts in front of a judge, that a case only ever reaches `tests/corpus/cases/` through
-// `validateCase`, that no raw answer survives into the file it writes, and the compact read the
-// labelling agents work from. The cases here are written into a temp directory, never into the corpus.
+// puts in front of a judge, the case skeleton both a labelling agent and the UI build every case out
+// of, that a case only ever reaches `tests/corpus/cases/` through `validateCase`, that no raw answer
+// survives into the file it writes, and the compact read the labelling agents work from. The cases
+// here are written into a temp directory, never into the corpus.
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -190,6 +191,97 @@ describe('GET /api/runs/:index', () => {
     expect(withEpisode.answers).toBe(2)
     expect(withEpisode.answerKey).toBe('key-kitsu-2')
     expect(withEpisode.answerKeys).toEqual(['key-kitsu-2', 'key-kitsu-2-e1'])
+  })
+})
+
+describe('GET /api/runs/:index/case', () => {
+  test('the skeleton carries every row, claim, episode and answer key of the run view, and no raw', async () => {
+    const { body: detail } = await api('/api/runs/0')
+    const { status, body: skeleton } = await api('/api/runs/0/case')
+    expect(status).toBe(200)
+    const rows = rowsOf(detail)
+
+    // every row the view puts in front of a judge, which is the members AND both one-hop directions:
+    // cr:CONTAINER1 is the container a member names, cr:CONTAINER1-S1 the season that names a member
+    expect(skeleton.rows.map((row: any) => row.uri)).toEqual(rows.map(row => row.uri))
+    expect(skeleton.rows.map((row: any) => row.uri).sort())
+      .toEqual(['anilist:1', 'cr:CONTAINER1', 'cr:CONTAINER1-S1', 'kitsu:2'])
+    expect(skeleton.rows.find((row: any) => row.uri === 'cr:CONTAINER1')).toEqual({
+      uri: 'cr:CONTAINER1',
+      origin: 'cr',
+      id: 'CONTAINER1',
+      titles: [],
+      scope: 'CONTAINER',
+    })
+
+    // one claim per handle, and the fixture's handles all land on a row the case describes
+    const handles = rows.flatMap(row => row.handles.map((handle: any) => `${row.uri}|${handle.uri}|${handle.relation}`))
+    expect(skeleton.claims.map((claim: any) => `${claim.mediaUri}|${claim.handleUri}|${claim.relation}`).sort())
+      .toEqual(handles.sort())
+    expect(skeleton.claims).toContainEqual({ mediaUri: 'anilist:1', handleUri: 'cr:CONTAINER1', relation: 'PART_OF' })
+
+    // every episode the view lists, store-shaped rather than as the view names its fields
+    expect(skeleton.episodes.map((episode: any) => episode.uri)).toEqual(rows.flatMap(row => row.episodes.map((episode: any) => episode.uri)))
+    expect(skeleton.episodes).toEqual([{
+      uri: 'kitsu:2-1',
+      origin: 'kitsu',
+      id: '2-1',
+      mediaUri: 'kitsu:2',
+      episodeNumber: 1,
+      releaseDate: '2026-07-05T15:00:00Z',
+      score: 0.8,
+      titles: [{ language: 'en', title: 'The first one', score: 0.8 }],
+    }])
+
+    // the join back to the dump: every key a row or an episode was read out of
+    for (const row of rows) for (const key of row.answerKeys) expect(skeleton.source.answers).toContain(key)
+    expect(skeleton.source.answers.sort()).toEqual(['key-anilist-1', 'key-cr-season', 'key-kitsu-2', 'key-kitsu-2-e1'])
+    expect(skeleton.source).toMatchObject({ file: 'tests/unit/tools/fixtures/answers.jsonl', test: 'ag:(anilist:1,kitsu:2)' })
+
+    // no raw, with the view it was built from as the control: that one carries a raw answer
+    expect(hasRawKey(skeleton)).toBe(false)
+    expect(hasRawKey(detail)).toBe(true)
+
+    // and nothing that is a judgement
+    expect(skeleton.name).toBe('Fixture Show Season 2')
+    expect(skeleton.why).toBe('')
+    expect(skeleton.expect).toEqual({})
+    expect(skeleton.checked).toBe(undefined)
+    expect(skeleton.pending).toBe('new store')
+  })
+
+  test('the skeleton is not a case until a labeller fills expect in, and then it validates and writes', async () => {
+    const { body: skeleton } = await api('/api/runs/0/case')
+
+    // the control: as served it is refused, on the two fields the skeleton deliberately leaves blank
+    const refused = await post('skeleton-empty', skeleton)
+    expect(refused.status).toBe(400)
+    expect(refused.body.error).toBe('skeleton-empty.json.why: expected a non-empty string, got ""')
+    const noExpect = await post('skeleton-empty', { ...skeleton, why: 'the two catalogue rows are one run' })
+    expect(noExpect.status).toBe(400)
+    expect(noExpect.body.error).toBe('skeleton-empty.json.expect.together: expected an array, got undefined')
+    expect(existsSync(join(casesDir, 'skeleton-empty.json'))).toBe(false)
+
+    const { status, body } = await post('skeleton-1', {
+      ...skeleton,
+      why: 'The two catalogue rows are one broadcast run, and the Crunchyroll series is the show that run belongs to.',
+      expect: {
+        together: [['anilist:1', 'kitsu:2', 'cr:CONTAINER1-S1']],
+        apart: [],
+        partOf: [{ part: 'anilist:1', whole: 'cr:CONTAINER1' }],
+      },
+      checked: { by: 'agent:opus', at: '2026-09-12' },
+    })
+    expect(status).toBe(200)
+
+    const written = JSON.parse(readFileSync(body.path, 'utf8'))
+    expect(() => validateCase(written, 'skeleton-1.json')).not.toThrow()
+    expect(written.rows).toHaveLength(4)
+    expect(written.claims).toHaveLength(4)
+    expect(written.episodes).toHaveLength(1)
+    expect(written.source.answers).toContain('key-kitsu-2-e1')
+    expect(written.pending).toBe('new store')
+    expect(hasRawKey(written)).toBe(false)
   })
 })
 

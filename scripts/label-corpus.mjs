@@ -38,6 +38,18 @@
  *                           10 rows where the full read is 113,064, and the widest of eleven runs
  *                           sampled across the season was 12,859. Run 3 lists 552 episodes and still
  *                           compacts to 12,382, which is the cap doing its job.
+ *   GET  /api/runs/:index/case
+ *                           the case SKELETON for that run: `name`, `source` with every answer key
+ *                           the rows and episodes came from, a `rows` entry for every row the run
+ *                           view carries, the `claims` their handles make, their `episodes`, an
+ *                           empty `expect`, an empty `why`, no `checked` and `pending: 'new store'`.
+ *                           No `raw` anywhere. IT DOES NOT VALIDATE as served and is not meant to: an
+ *                           empty `expect` asserts neither `together` nor `apart`, which is the whole
+ *                           of what a labeller adds. Fill `expect`, `why` and `checked` in and post
+ *                           it back to `POST /api/cases/:slug`. See `caseSkeleton`, which the UI
+ *                           fetches too rather than assembling a second one. Measured against
+ *                           summer-2026 on 2026-09-12: run 0 is 19,442 bytes over 10 rows, 38 claims
+ *                           and 62 episodes, where the full read of the same run is 113,293.
  *   GET  /api/cases/:slug   the saved case, or 404 when the run is unlabelled.
  *   POST /api/cases/:slug   strips `raw` from every row and episode, validates what is left with
  *                           `validateCase` (tests/corpus/types.ts, imported directly: node strips
@@ -51,16 +63,20 @@
  *   DELETE /api/review/:slug
  *                           clears the run's entry, which is what a person does on resolving it.
  *
- * THE CASE IT WRITES. The format is `tests/corpus/types.ts`, and what the tool fills in is:
+ * THE CASE IT WRITES. The format is `tests/corpus/types.ts`, and what the tool fills in is the
+ * following. Everything above `expect` is derived from the dump alone, which is what `caseSkeleton`
+ * assembles and the skeleton endpoint serves; `expect` and `checked` are the label itself.
  *
  *   source.file     the dump the case was built from, relative to the repo root
  *   source.test     the run's aggregated uri, which is the address the walk loaded
  *   source.answers  the `key` of every answer row the case was actually built from: the richest
- *                   answer for each judged row, and the richest for each of its episodes. The dump
- *                   holds many more answers per uri (95 for one member of the first run), all of
- *                   them re-findable from the uri, and naming all of them would bury the ones the
- *                   rows came from.
- *   rows / episodes the store-shaped fields of every judged row, and NOT its `raw`: run 0's raw
+ *                   answer for each row, and the richest for each of its episodes. The dump holds
+ *                   many more answers per uri (95 for one member of the first run), all of them
+ *                   re-findable from the uri, and naming all of them would bury the ones the rows
+ *                   came from.
+ *   rows / episodes the store-shaped fields of every row the run view carries, and NOT its `raw`:
+ *                   an unmarked row is described like any other, because the store is handed
+ *                   everything the judge saw and `expect` is what names a row. Run 0's raw
  *                   answers are 77,129 bytes against 2,885 bytes of store-shaped fields, so a case
  *                   was 96% recorded answer and a season of 223 would be 20 MB of git history for
  *                   something already on disk. `source.answers` is the join back to the dump.
@@ -343,6 +359,22 @@ const viewRow = (dump, uri, why, members) => {
   }
 }
 
+/** The run's rows as the UI lists them: grouped by origin, the origins holding a member first. */
+const groupRows = (dump, entry) => {
+  const rows = rowsForRun(dump, entry.members).map(found => viewRow(dump, found.uri, found.why, entry.members))
+  const byOrigin = new Map()
+  for (const row of rows) {
+    const group = byOrigin.get(row.origin) ?? { origin: row.origin, name: dump.origins.get(row.origin)?.name ?? row.origin, rows: [] }
+    group.rows.push(row)
+    byOrigin.set(row.origin, group)
+  }
+  // the run's own origins first, so the rows the labeller already trusts head the page
+  const holdsAMember = group => (group.rows.some(row => row.isMember) ? 0 : 1)
+  const groups = [...byOrigin.values()].sort((a, b) => holdsAMember(a) - holdsAMember(b) || a.origin.localeCompare(b.origin))
+  for (const group of groups) group.rows.sort((a, b) => Number(b.isMember) - Number(a.isMember) || a.uri.localeCompare(b.uri))
+  return groups
+}
+
 /**
  * The episodes a compact row lists before it stops counting.
  *
@@ -468,6 +500,102 @@ const stripRaw = posted => {
   return stripped
 }
 
+const cleanTitles = titles => (titles ?? [])
+  .filter(entry => entry && typeof entry.language === 'string' && entry.language && typeof entry.title === 'string' && entry.title)
+  .map(entry => ({ language: entry.language, title: entry.title, score: typeof entry.score === 'number' ? entry.score : undefined }))
+
+/** One view row as `CorpusMedia`, which is the store-shaped fields and never the answer they came from. */
+const storeShaped = row => ({
+  uri: row.uri,
+  origin: row.origin,
+  id: row.id,
+  type: row.type ?? undefined,
+  categories: row.categories?.length ? row.categories : undefined,
+  titles: cleanTitles(row.titles),
+  startDate: row.startDate ?? undefined,
+  episodeCount: typeof row.episodeCount === 'number' ? row.episodeCount : undefined,
+  score: typeof row.score === 'number' ? row.score : undefined,
+  scope: row.scope,
+})
+
+const episodeShaped = (row, episode) => ({
+  uri: episode.uri,
+  origin: episode.origin ?? row.origin,
+  id: episode.id ?? episode.uri,
+  mediaUri: episode.mediaUri ?? row.uri,
+  episodeNumber: episode.number,
+  releaseDate: episode.releaseDate ?? undefined,
+  score: typeof episode.score === 'number' ? episode.score : undefined,
+  titles: cleanTitles(episode.titles),
+})
+
+/**
+ * The part of a case the run's data already decides, with every judgement left blank.
+ *
+ * Everything here is derived and nothing is decided: the rows the run view carries (its members and
+ * both directions of the one hop), the claims their handles make about one another, their episodes,
+ * and the answer keys all of that was read out of. What is left empty is exactly a labeller's job:
+ * `expect`, `why`, and the `checked` stamp that makes the judged expectations admissible.
+ *
+ * IT IS NOT A VALID CASE and `validateCase` refuses it as served, because an empty `expect` asserts
+ * neither `together` nor `apart`. A labeller fills those in and posts the result to
+ * `POST /api/cases/:slug`, which is the only thing that validates or writes.
+ *
+ * This is the only assembly there is: the UI fetches it and overlays its marks rather than building a
+ * second one, so the file a person saves and the file an agent posts cannot be assembled differently.
+ *
+ * @param run  `{ title, source: { file, test } }`, the run the case is written about
+ * @param rows the run view's rows, in the order the view lists them
+ */
+export const caseSkeleton = (run, rows) => {
+  const described = new Set(rows.map(row => row.uri))
+
+  const episodes = []
+  const seenEpisodes = new Set()
+  for (const row of rows) {
+    for (const episode of row.episodes ?? []) {
+      // an unnumbered episode is not a CorpusEpisode, and no expectation can name a row that has no
+      // number to name it by
+      if (typeof episode.number !== 'number' || seenEpisodes.has(episode.uri)) continue
+      seenEpisodes.add(episode.uri)
+      episodes.push(episodeShaped(row, episode))
+    }
+  }
+
+  const claims = []
+  const seenClaims = new Set()
+  for (const row of rows) {
+    for (const handle of row.handles ?? []) {
+      // a handle reaching past the one hop names a uri this case describes no row for, and a claim
+      // about a row nobody wrote down would put a work in the store that the case never shows
+      if (!described.has(handle.uri)) continue
+      const id = `${row.uri}|${handle.uri}|${handle.relation}`
+      if (seenClaims.has(id)) continue
+      seenClaims.add(id)
+      claims.push({ mediaUri: row.uri, handleUri: handle.uri, relation: handle.relation })
+    }
+  }
+
+  const answers = new Set()
+  for (const row of rows) {
+    if (row.answerKey) answers.add(row.answerKey)
+    for (const episode of row.episodes ?? []) {
+      if (episode.answerKey && seenEpisodes.has(episode.uri)) answers.add(episode.answerKey)
+    }
+  }
+
+  return {
+    name: run.title,
+    source: { file: run.source.file, test: run.source.test, answers: [...answers] },
+    why: '',
+    rows: rows.map(storeShaped),
+    claims,
+    episodes: episodes.length ? episodes : undefined,
+    expect: {},
+    pending: 'new store',
+  }
+}
+
 /* --------------------------------------------------------------------------------------------- */
 /* the review queue                                                                                */
 /* --------------------------------------------------------------------------------------------- */
@@ -572,22 +700,21 @@ export const startLabelServer = async ({ dir, casesDir, reviewFile, port = 4570,
       return send(response, 200, { ...listing, runs: runs.map(run => ({ ...run, review: flagged.get(run.slug) })) })
     }
 
+    const caseFor = path.match(/^\/api\/runs\/(\d+)\/case$/)
+    if (request.method === 'GET' && caseFor) {
+      const loaded = dump()
+      const entry = runEntry(loaded, casesDir, Number(caseFor[1]))
+      if (!entry) return send(response, 404, { error: `no run at index ${caseFor[1]}` })
+      const rows = groupRows(loaded, entry).flatMap(group => group.rows)
+      return send(response, 200, caseSkeleton({ title: entry.title, source: { file: sourceFile, test: entry.uri } }, rows))
+    }
+
     const runAt = path.match(/^\/api\/runs\/(\d+)$/)
     if (request.method === 'GET' && runAt) {
       const loaded = dump()
       const entry = runEntry(loaded, casesDir, Number(runAt[1]))
       if (!entry) return send(response, 404, { error: `no run at index ${runAt[1]}` })
-      const rows = rowsForRun(loaded, entry.members).map(found => viewRow(loaded, found.uri, found.why, entry.members))
-      const byOrigin = new Map()
-      for (const row of rows) {
-        const group = byOrigin.get(row.origin) ?? { origin: row.origin, name: loaded.origins.get(row.origin)?.name ?? row.origin, rows: [] }
-        group.rows.push(row)
-        byOrigin.set(row.origin, group)
-      }
-      // the run's own origins first, so the rows the labeller already trusts head the page
-      const holdsAMember = group => (group.rows.some(row => row.isMember) ? 0 : 1)
-      const groups = [...byOrigin.values()].sort((a, b) => holdsAMember(a) - holdsAMember(b) || a.origin.localeCompare(b.origin))
-      for (const group of groups) group.rows.sort((a, b) => Number(b.isMember) - Number(a.isMember) || a.uri.localeCompare(b.uri))
+      const groups = groupRows(loaded, entry)
       if (compact) for (const group of groups) group.rows = group.rows.map(compactRow)
       return send(response, 200, {
         ...entry,

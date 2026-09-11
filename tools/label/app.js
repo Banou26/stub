@@ -3,17 +3,19 @@
  *
  * Two screens behind the hash: `#/` lists the season's runs with their label state, `#/run/<index>`
  * shows everything the sources said about one run and collects the marks. A mark is a statement
- * about the WORKS, so an unmarked row asserts nothing and never reaches the case.
+ * about the WORKS, so an unmarked row asserts nothing: the case still describes it, because the
+ * store is handed every row the judge saw, and no expectation names it.
  *
  * THE REVIEW SURFACE. The labelling itself is done by agents through the API, and a person reads
  * this for the runs two of them disagreed about: a flagged run carries a `review` marker in the list
  * and its reason and the two verdicts at the top of its own screen, and saving a case clears the
  * flag, which is what resolving one means.
  *
- * The case is assembled in `buildCase` and posted to the server, which is the only thing that
- * decides whether it is valid: the validator's own message is what this shows on a refusal, rather
- * than a second opinion written here that could disagree with it. It carries no `raw`, because the
- * raw answers are in the dump and `source.answers` names the ones the case was built from.
+ * The case is NOT assembled here. `GET /api/runs/:index/case` serves the skeleton, which is every
+ * part of a case the data already decides, and `buildCase` overlays the marks on it: an agent
+ * labelling over the API and a person labelling here post the same rows, claims and episodes because
+ * there is only one thing that builds them. The post is what decides whether the result is valid,
+ * and the validator's own message is what this shows on a refusal.
  */
 
 const el = (tag, props = {}, ...children) => {
@@ -122,6 +124,7 @@ const MARKS = [
 const PENDING_WHY = 'today\'s store cannot answer containment with ranges, so the case waits for one that can'
 
 let run
+let skeleton
 let saved
 let marks = new Map()
 let ranges = new Map()
@@ -183,36 +186,6 @@ const prefill = () => {
 /* the case                                                                                        */
 /* --------------------------------------------------------------------------------------------- */
 
-const cleanTitles = titles => (titles ?? [])
-  .filter(entry => entry && typeof entry.language === 'string' && entry.language && typeof entry.title === 'string' && entry.title)
-  .map(entry => ({ language: entry.language, title: entry.title, score: typeof entry.score === 'number' ? entry.score : undefined }))
-
-// no `raw`: a run's raw answers are most of a 90 kB case and all of them are already in the dump,
-// which `source.answers` names the keys into. The server strips it from the payload too.
-const storeShaped = row => ({
-  uri: row.uri,
-  origin: row.origin,
-  id: row.id,
-  type: row.type ?? undefined,
-  categories: row.categories?.length ? row.categories : undefined,
-  titles: cleanTitles(row.titles),
-  startDate: row.startDate ?? undefined,
-  episodeCount: typeof row.episodeCount === 'number' ? row.episodeCount : undefined,
-  score: typeof row.score === 'number' ? row.score : undefined,
-  scope: row.scope,
-})
-
-const episodeShaped = (row, episode) => ({
-  uri: episode.uri,
-  origin: episode.origin ?? row.origin,
-  id: episode.id ?? episode.uri,
-  mediaUri: episode.mediaUri ?? row.uri,
-  episodeNumber: episode.number,
-  releaseDate: episode.releaseDate ?? undefined,
-  score: typeof episode.score === 'number' ? episode.score : undefined,
-  titles: cleanTitles(episode.titles),
-})
-
 const validRange = range =>
   Boolean(range)
   && [range.fromStart, range.fromEnd, range.toStart, range.toEnd].every(value => Number.isFinite(value))
@@ -221,51 +194,21 @@ const validRange = range =>
   && range.fromEnd - range.fromStart === range.toEnd - range.toStart
 
 /**
- * The case, exactly as it is posted. Nothing here decides whether it is valid: the server runs
- * `validateCase` and its message is what the owner reads.
+ * The case, exactly as it is posted: the server's skeleton with the marks laid over it.
  *
- * An episode list is carried for the rows the case relates (the run and whatever holds or spans it)
- * and not for an `unrelated` row, whose episodes nothing asserts anything about.
+ * The rows, claims, episodes and answer keys are the skeleton's own and are not rebuilt here, so this
+ * and an agent posting over the API describe the run identically. What the marks decide is `expect`,
+ * plus the name, the reason and the stamp. Nothing here decides whether the result is valid: the
+ * server runs `validateCase` and its message is what the owner reads.
  */
 const buildCase = () => {
   const key = run.keyMember
-  const rows = judged()
-  const uris = new Set(rows.map(row => row.uri))
-  const marked = kind => rows.filter(row => !row.isMember && markOf(row.uri) === kind).map(row => row.uri)
+  const marked = kind => allRows().filter(row => !row.isMember && markOf(row.uri) === kind).map(row => row.uri)
   const same = marked('same')
   const holds = marked('holds')
   const spans = marked('spans')
   const unrelated = marked('unrelated')
-
-  const withEpisodes = rows.filter(row => row.isMember || ['same', 'holds', 'spans'].includes(markOf(row.uri)))
-  const episodes = []
-  const seenEpisodes = new Set()
-  for (const row of withEpisodes) {
-    for (const episode of row.episodes) {
-      if (typeof episode.number !== 'number' || seenEpisodes.has(episode.uri)) continue
-      seenEpisodes.add(episode.uri)
-      episodes.push(episodeShaped(row, episode))
-    }
-  }
-
-  const answers = new Set()
-  for (const row of rows) {
-    if (row.answerKey) answers.add(row.answerKey)
-    if (!withEpisodes.includes(row)) continue
-    for (const episode of row.episodes) if (episode.answerKey && seenEpisodes.has(episode.uri)) answers.add(episode.answerKey)
-  }
-
-  const claims = []
-  const seenClaims = new Set()
-  for (const row of rows) {
-    for (const handle of row.handles) {
-      if (!uris.has(handle.uri)) continue
-      const id = `${row.uri}|${handle.uri}|${handle.relation}`
-      if (seenClaims.has(id)) continue
-      seenClaims.add(id)
-      claims.push({ mediaUri: row.uri, handleUri: handle.uri, relation: handle.relation })
-    }
-  }
+  const seenEpisodes = new Set((skeleton.episodes ?? []).map(episode => episode.uri))
 
   const partOf = [
     ...holds.map(uri => ({ part: key, whole: uri })),
@@ -284,12 +227,9 @@ const buildCase = () => {
   }
 
   return {
+    ...skeleton,
     name: draft.name,
-    source: { file: run.source.file, test: run.source.test, answers: [...answers] },
     why: draft.why,
-    rows: rows.map(storeShaped),
-    claims,
-    episodes: episodes.length ? episodes : undefined,
     expect: {
       together: [[...run.members, ...same]],
       apart: unrelated.map(uri => [key, uri]),
@@ -576,6 +516,9 @@ const renderRun = () => {
 
 const showRun = async index => {
   run = await get(`/api/runs/${index}`)
+  // the rows, claims and episodes of the case, built once and on the server: the marks are laid over
+  // this rather than assembling a second copy here
+  skeleton = await get(`/api/runs/${index}/case`)
   saved = await get(`/api/cases/${run.slug}`).then(body => body.case, () => undefined)
   if (!listing) listing = await get('/api/runs').catch(() => undefined)
   focus = 0
