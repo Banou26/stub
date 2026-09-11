@@ -395,19 +395,16 @@ Not added, deliberately:
   answer's own row lands through the answering extractor as today.
 - `seed`: the offline seed's identity handles. Consumed like `source`; the seed's handle nodes are
   placeholders and never write a row (`offline/seed-source.ts:136-148`).
-- `address` (**NEW**): a handle rebuilt from the address bar by `buildHandlesFromUri`
-  (`src/sources/utils.ts:465-471`), which stamps no scope in either direction. **This is the owner's
-  call (section 11), and the design's recommendation is**: an `address` claim is consumed only when
-  the claimer's own row is one endpoint, which is a source saying "I resolved myself out of this
-  cluster" (Crunchyroll's season row to `anilist:X`), and it is then subject to every guard like any
-  claim, in the last precedence class (5.2). An `address` claim relating two rows both foreign to the
-  claimer is a POINTER: it routes re-asks (7.1) and never enters the closure. The reason to consume the
-  first kind at all: `buildHandlesFromUri` is the ONLY attach path for crunchyroll, unogs, appletv and
-  justwatch rows resolved through an aggregated uri (none of the four mints handles of its own), so a
-  pure pointer rule turns every such row into a singleton cluster and, under the listing rule of 6.1,
-  into a hidden or orphan card. The stale show-level `cr:` of a pre-fix bookmark is CONTAINER and rides
-  `PART_OF` by guard 2; two old season links in one uri are two ids of one origin and guard 4 refuses
-  them.
+- `address` (**NEW**, decided by the owner 2026-09-12): a handle rebuilt from the address bar by
+  `buildHandlesFromUri` (`src/sources/utils.ts:465-471`). **The address names WHICH sources to ask
+  and asserts nothing about how they relate.** An `address` claim is a POINTER: it routes re-asks
+  (7.1) and never enters the closure, whatever the claimer. Every relation between the rows an address
+  names is re-derived at runtime from what the sources answer (their own claims, the `ask` answers,
+  the title and range plugins). What keeps this from orphaning a row: a uri the address names whose
+  row the graph cannot relate to anything is still drawn on the page as a plain badge carrying that
+  row's own url (6.2), never merged into the card and never hidden. The stale show-level `cr:` of a
+  pre-fix bookmark is then a badge with a url and nothing else, and two old season links in one uri can
+  weld nothing.
 
 ### 3.4 The episode range form, literally
 
@@ -900,8 +897,7 @@ the contract rather than of each plugin's discipline.
 within a class by `(fromUri, toUri)`: (0) a `source` claim between two per-run origins (mal, anilist,
 kitsu, anizip, anidb, offline, simkl anime rows); (1) a `source` claim naming a season-scoped catalogue
 id (`cr:<series>-<season>`, `nf:<title>-<n>`, `jw:<object>-<seasonObject>`, `appletv:<umc>-s<n>`,
-`tmdb:<id>-s<n>`, `tvmaze:<id>-s<n>`); (2) `ask`; (3) `seed`; (4) a title link; (5) an `address` claim
-with the claimer as an endpoint. That is determinism without a hash tie-break, and it is what today's
+`tmdb:<id>-s<n>`, `tvmaze:<id>-s<n>`); (2) `ask`; (3) `seed`; (4) a title link. An `address` claim is never a proposal (guard 3). That is determinism without a hash tie-break, and it is what today's
 link sorting does by accident (`fuzzy-merge.ts:631-633`, "the SEQUENCE of unions decides root survival").
 
 **The guards, in this order.** Every `SAME_AS` proposal, whatever plugin made it, passes them. A refusal
@@ -911,7 +907,7 @@ is written as `LINK {status: 'refused', reason}` so it can be queried.
 | --- | --- | --- | --- |
 | 1 | `unknown-scope` | either endpoint's effective scope is NULL: the proposal waits for the next pass; nothing is written | `db.ts:113-123`, the claim that took the RUN default before its row landed |
 | 2 | `cross-scope` | effective scopes differ: downgraded (below). **Re-evaluated for every ACTIVE link every pass**: a link whose endpoints' scopes now differ is retracted and downgraded, which is the justwatch-before-crunchyroll race of `db.ts:113-123` as a fixture rather than a comment | `db.ts:166-169`, the derivation table |
-| 3 | `address-only` | the proposal's only supports are `address` claims relating two rows neither of which is the claimer's own: a pointer. Refused and NOT downgraded, because the claimer described neither endpoint and no offer is at stake; the target still routes a re-ask (7.1) and its owner's own claims decide its cluster. The owner's call, section 11 | **NEW**; `src/sources/utils.ts:465-471` stamps no scope in either direction |
+| 3 | `address-only` | any support is an `address` claim: a pointer, whoever the claimer. Refused and NOT downgraded, because the address asserts nothing about how its uris relate; the target still routes a re-ask (7.1), its owner's own claims and the plugins decide its cluster, and an unrelated address row still renders as a badge (6.2). Decided by the owner, 2026-09-12 | **NEW**; `src/sources/utils.ts:465-471` stamps no scope in either direction |
 | 4 | `disagreeing-ids` | the union would put two ids of one origin in one component that are not prefix related (`A-1` beside `A-2`; `A` beside `A-1` is precision, `src/utils/uri.ts:23-34`): downgraded from each claimant toward the shared row. Evaluated against the GRAPH as it stands, never within one pass: an active `SAME_AS` into the target from a component that disagrees with the new claimant retracts BOTH, and both downgrade | `anomalies.ts:18-25`, one-way at `:38` so `[A, A-1, A-2]` reports; `similar-consumer.ts:239-245` |
 | 5 | `contested` | two or more components hold consumed `SAME_AS` claims into one target and disagree with each other by guard 4: every such proposal is refused and downgraded, and an active link among them is retracted, so neither wins by order. Evaluated over every CLAIM in the graph rather than over active links, so two claimants landing in different flushes still meet and the verdict is the same on every later pass | **NEW** as a store rule; the residue it prices is 11 welds of 105 runs over 33 multi-season Netflix shows (`season.ts:154-161`, `:170-173`), and `nf:81091393-3` holding two Demon Slayer runs of eleven episodes each (2026-09-04) |
 | 6 | `contained` | an active `PART_OF` or `INCLUDES` already joins the pair (3.5): refused; the downgrade is a no-op because the containment edge already exists | the owner's rule |
@@ -964,9 +960,9 @@ flowchart TD
   G1 -->|"unknown-scope: the claim edge stays, nothing is written, replayed next pass"| W["waits"]
   G1 -->|"both known"| G2{"one scope, or two?<br/><small>pa.scope &lt;&gt; pb.scope</small>"}
   G2 -->|"cross-scope, re-checked on every active link every pass"| DG
-  G2 -->|"one scope"| G3{"is the only support an address claim between two rows foreign to the claimer?<br/><small>every support has provenance 'address' AND claimer NOT IN [a.origin, b.origin]</small>"}
-  G3 -->|"address-only: a pointer, it routes a re-ask and enters nothing"| PTR["refused, no edge<br/><small>the owner's call</small>"]
-  G3 -->|"a source, ask, seed or title support, or the claimer's own row"| G4{"would the union put two ids of one origin in one component?<br/><small>same origin, neither id the other's idParent, over the graph as it stands</small>"}
+  G2 -->|"one scope"| G3{"does any support come from the address bar?<br/><small>some support has provenance 'address'</small>"}
+  G3 -->|"address-only: a pointer, it routes a re-ask and enters nothing"| PTR["refused, no edge<br/><small>the row still renders as a badge</small>"]
+  G3 -->|"a source, ask, seed or title support"| G4{"would the union put two ids of one origin in one component?<br/><small>same origin, neither id the other's idParent, over the graph as it stands</small>"}
   G4 -->|"disagreeing-ids, or contested when a second claimant meets a first: BOTH downgrade toward the shared row"| DG
   G4 -->|"no origin disagrees"| G6{"does an active containment edge already join the pair?<br/><small>l.kind IN ['PART_OF', 'INCLUDES'] AND l.status = 'active'</small>"}
   G6 -->|"contained: the owner's rule, the containment edge already exists"| DG
@@ -1572,7 +1568,7 @@ hanging off its own title by `prefix`, `nf:80987039-1` under `nf:80987039`, `jw:
 `jw:222366`). A cluster none of whose members is owned is hidden whatever its links, which is what
 "a placeholder cluster is never a card" means (a placeholder whose only claim was refused
 `address-only` has no active link at all). `hiddenBy` is the run cluster ids those three clauses
-found. Unless it is the requested uri, which is never hidden (6.2). So a folded Netflix season, a
+found. Unless it is the requested uri, which is never hidden (6. A uri the address names whose row the graph relates to nothing is drawn as a plain badge with that row's own url, never merged and never hidden: the address is a list of sources to ask, not a statement of how they relate (3.3).2). So a folded Netflix season, a
 JustWatch season and a contested `mal:` row all hide behind the runs they hold, a live-action
 container with no run keeps its card (today's behaviour for those catalogues, `db.ts:389`), and a run
 cluster with a per-run origin is never hidden. The transitional lend has no season row at all
@@ -2252,7 +2248,7 @@ loads behind the flag until step 3 rather than on every cold load.
 | 3 | `plugin:title` AND `plugin:range` land here, with `store/consensus.test.ts` rewritten case for case first: the listing and the detail page never disagree about membership, and no page loses a proven-pair button for the length of a step (the Elusive Samurai's Crunchyroll rows 13 to 20 are placed by `alignRunEpisodes` today and by rule 1's pairs here; a slot read without `plugin:range` would trim them and place nothing, and the transitional lend is in the same position). `alignmentOffset` and `alignRunEpisodes` are replaced by rule 1's pairs and `runEpisodes` by P5's window and trimming. `Subscription.media`, `Media.episodes` AND `mediaPage` switch together behind `?store=graph`: the resolve, `Cluster.media`, `Cluster.episodes` and `Cluster.card` lookups; the fuzzy pass no longer runs inside `getPage`; `view:changed` carries cluster ids and member uris and `mediaPage` re-reads only those; the engine loads for everyone. `_id` changes once for every cached media (a cache version bump). **The singleton path goes, on both types**: a one-member card's `uri` becomes `ag:(mal:39535)` where it was `mal:39535`, its `origin` `ag`, its `url` the app route; a one-row episode's `_id` becomes its `Slot.id` and its `uri` `ag:(<row uri>)` where today it is the member's raw uri and `clusterId([uri], 'EPISODE')` (`aggregate.ts:401-409`); `asAggregatedUri` (`src/utils/uri.ts:107-128`) accepts both spellings so every existing bookmark and party path of a single-source page still opens, and `uri-aggregated.test.ts` pins both. The `waitForMedia` wake check runs here | the listing, the detail page and the episode list on the new store; the fold and the renumbering as plugin output with proof; the Elusive Samurai and Mushoku fixtures through the real ingest; the whole-store re-read on every event gone |
 | 4 | the similar consumer reads `ATTACHED_TO`, builds its evidence from the run's own slots, writes `ask` claims and the `Ask` log; `similarMedia.containing` ships to Crunchyroll first; the lend stays accepted as `plugin:range` evidence (4.4) | every ask a row; the fold visible as a `containing` edge where an answerer states it |
 | 5 | `lendContainingSeason` deleted, only once Crunchyroll answers `containing` and both Mushoku part-twos are verified live at 12 Crunchyroll sources on their own episodes 1 to 12 (the 2026-09-09 measurement); `alignRunEpisodes`, `runEpisodes` deleted; the other four answerers gain `containing` one at a time, unogs and justwatch after the 33-show arm | nothing lends; every Crunchyroll button is a proven pair |
-| 6a, flagged | `buildHandlesFromUri` stamps `provenance: 'address'` and guard 3 activates under the owner's decision (section 11), its own step so the deletion below is not blocked on it and the decision stays reversible | the re-injection path closed to the extent decided |
+| 6a, flagged | `buildHandlesFromUri` stamps `provenance: 'address'` and guard 3 activates as decided (11.3, decision 1), its own step so the deletion below is not blocked on it | the re-injection path closed to the extent decided |
 | 6b | flip the flag default; bake for a session on the live site with the store export diffed against a pre-flip export | one store serving every read, the old store still on disk |
 | 6c, a separate commit | the old store (`graph.ts`, `db.ts`, `fuzzy-merge.ts`, `consensus.ts` except the moved pure functions, `anomalies.ts`, `normalize.ts`) deleted; `exportStore` walks `LINK`; the flag removed | one store |
 | 7 | the source-side changes of 4.6: the seven `?? episodes.length` sites read `episodeCount` only (done, `c47faab` and `b84a403`); tvmaze, trakt, simkl, tvdb emit the episode dates they already fetch (done, `b84a403`); `startDatePrecision` on kitsu and jikan first, then extractors that know it; `episodeCountKind` and `episodeNumberSpace`; unogs's fenced `INCLUDES` handles; `PluginSourceMeta`'s declared fields; anizip's row `score` becomes moot for the count because the vote reads classes, and stays open for scalars | more pairs proven by date; more January premieres kept; a remote source that declares rather than inherits |
@@ -2313,7 +2309,7 @@ Each changes the schema or the plugin contract. Everything else in this document
 
 | question | recommendation | cost of the alternative |
 | --- | --- | --- |
-| **1. What an address-bar handle may assert** (`buildHandlesFromUri`, `src/sources/utils.ts:465-471`) | consume an `address` claim only when the claimer's own row is one endpoint (a source resolving itself out of a cluster), subject to every guard and in the last precedence class; treat an `address` claim between two rows both foreign to the claimer as a pointer that routes re-asks and never enters the closure | pure pointer: `buildHandlesFromUri` is the only attach path for crunchyroll, unogs, appletv and justwatch rows resolved through an aggregated uri, so every such row becomes a singleton and, under 6.1, a hidden or orphan card, an unpriced number of duplicate season cards. Full assertion: the re-injection path stays open, bounded only by the scope derivation and guard 4 |
+| **1. What an address-bar handle may assert** (`buildHandlesFromUri`, `src/sources/utils.ts:465-471`) | **DECIDED 2026-09-12 by the owner: nothing.** The address includes as many sources as it can and never defines how they relate; an `address` claim is a pointer that routes re-asks, every relation is re-derived at runtime from the sources' own answers, and a row the graph cannot relate still renders as a badge (3.3, 5.2 guard 3, 6.2) | no longer open |
 | **2. `similarMedia` returns `{ media, containing }`** | yes; Crunchyroll first, since it already has the lend | the lend hack stays permanently in one extractor, and the fold is never visible for Netflix or JustWatch |
 | **3. `MediaHandleRelation` gains `INCLUDES`**, as an output value (a run's page lists the seasons that hold it, a split run lists its seasons, a container page lists its seasons) and as a source claim fenced to one id space | both. The badge reader takes "SAME_AS first then anything" and playback takes SAME_AS only, so no button can come from it; the case in `episode-origins.test.ts` pins that | without the output value the split direction has no rendering; without the fenced claim unogs's seasons never enter the graph for a refused ask and the container page cannot list seasons |
 | **4. The optional evidence fields** on the source schema (`startDatePrecision`, `startDateSubject`, `startDateDerivation`, `episodeCountKind`, `episodeNumberSpace`, `MediaTitle.class`, `MediaHandle.provenance`) and on `PluginSourceMeta` (`countKind`, `folding`, `retranslates`, `showLevel`) | yes, all optional; kitsu and jikan first for precision (their `YYYY-MM-01` is the measured 30.65 day error), tvmaze and tmdb first for the subject (the two that stamped a show premiere on a season row, 912227f) | every per-origin table inside the profile plugin stays a constant standing in for a per-claim property, a genuine January 1 premiere stays invisible (0.52% of correct merges), and a show date on a season row stays a source-side fix the store cannot see (5.4 P0) |
