@@ -20,7 +20,7 @@
     "postinstall": "patch-package",
     "dev": "vp dev --port 4560",
     "test-server": "vp dev --port 7357 --config vite.test.config.ts",
-    "build": "npm run data:build && npm run gql-generate && vp build && fkn-sign check && fkn-sign place --out build",
+    "build": "npm run data:build && npm run gql-generate && vp build && vp build --config vite.lib.config.ts && node scripts/check-npm-entry.mjs && fkn-sign check && fkn-sign place --out build",
     "data:build": "node scripts/build-anime-data.mjs",
     "data:build-offline": "node scripts/build-anime-data.mjs --offline",
     "seed:export": "node scripts/export-season-seed.mjs",
