@@ -5,9 +5,15 @@
  * shows everything the sources said about one run and collects the marks. A mark is a statement
  * about the WORKS, so an unmarked row asserts nothing and never reaches the case.
  *
+ * THE REVIEW SURFACE. The labelling itself is done by agents through the API, and a person reads
+ * this for the runs two of them disagreed about: a flagged run carries a `review` marker in the list
+ * and its reason and the two verdicts at the top of its own screen, and saving a case clears the
+ * flag, which is what resolving one means.
+ *
  * The case is assembled in `buildCase` and posted to the server, which is the only thing that
  * decides whether it is valid: the validator's own message is what this shows on a refusal, rather
- * than a second opinion written here that could disagree with it.
+ * than a second opinion written here that could disagree with it. It carries no `raw`, because the
+ * raw answers are in the dump and `source.answers` names the ones the case was built from.
  */
 
 const el = (tag, props = {}, ...children) => {
@@ -65,7 +71,8 @@ const listRows = () => {
     || run.title.toLowerCase().includes(wanted)
     || run.uri.toLowerCase().includes(wanted)
     || run.memberOrigins.join(' ').includes(wanted)
-    || run.state.startsWith(wanted))
+    || run.state.startsWith(wanted)
+    || (run.review && 'review'.startsWith(wanted)))
   return el('table', { class: 'runs' }, ...runs.map(run =>
     el('tr', {},
       el('td', { class: 'idx', text: String(run.index) }),
@@ -73,6 +80,8 @@ const listRows = () => {
       el('td', { class: 'uri muted', text: run.memberOrigins.join(' ') }),
       el('td', { class: 'muted count', text: `${run.rows} answers` }),
       el('td', {}, el('span', { class: `state ${run.state}`, text: run.state })),
+      // the marker the queue exists for: a person reads the flagged runs and nothing else
+      el('td', {}, run.review ? el('span', { class: 'state review', title: run.review.reason, text: 'review' }) : undefined),
       el('td', { class: 'uri muted', text: run.slug }))))
 }
 
@@ -83,6 +92,7 @@ const showList = async () => {
     el('div', { class: 'top' },
       el('h1', { text: `corpus labels: ${listing.season}` }),
       el('span', { class: 'muted', text: `${listing.progress.labelled} / ${listing.progress.total} labelled` }),
+      el('span', { class: 'muted', text: `${listing.runs.filter(run => run.review).length} flagged for review` }),
       el('span', { class: 'grow' }),
       el('input', {
         placeholder: 'filter by title, uri, origin or state',
@@ -118,7 +128,7 @@ let ranges = new Map()
 let episodeMarks = new Map()
 let runEpisodesFrom
 let focus = 0
-let draft = { name: '', why: '', by: '', pending: true }
+let draft = { name: '', why: '', by: '', notes: '', pending: true }
 
 const allRows = () => run.origins.flatMap(group => group.rows)
 const markOf = uri => marks.get(uri) ?? 'unknown'
@@ -145,7 +155,7 @@ const prefill = () => {
   marks = new Map()
   ranges = new Map()
   episodeMarks = new Map()
-  draft = { name: run.title, why: '', by: localStorage.getItem('corpus-label-by') ?? '', pending: true }
+  draft = { name: run.title, why: '', by: localStorage.getItem('corpus-label-by') ?? '', notes: '', pending: true }
   if (!saved) return
   const key = run.keyMember
   for (const group of saved.expect.together ?? []) {
@@ -164,6 +174,7 @@ const prefill = () => {
     name: saved.name ?? run.title,
     why: saved.why ?? '',
     by: saved.checked?.by ?? draft.by,
+    notes: saved.checked?.notes ?? '',
     pending: Boolean(saved.pending),
   }
 }
@@ -176,6 +187,8 @@ const cleanTitles = titles => (titles ?? [])
   .filter(entry => entry && typeof entry.language === 'string' && entry.language && typeof entry.title === 'string' && entry.title)
   .map(entry => ({ language: entry.language, title: entry.title, score: typeof entry.score === 'number' ? entry.score : undefined }))
 
+// no `raw`: a run's raw answers are most of a 90 kB case and all of them are already in the dump,
+// which `source.answers` names the keys into. The server strips it from the payload too.
 const storeShaped = row => ({
   uri: row.uri,
   origin: row.origin,
@@ -187,7 +200,6 @@ const storeShaped = row => ({
   episodeCount: typeof row.episodeCount === 'number' ? row.episodeCount : undefined,
   score: typeof row.score === 'number' ? row.score : undefined,
   scope: row.scope,
-  raw: row.raw,
 })
 
 const episodeShaped = (row, episode) => ({
@@ -287,7 +299,9 @@ const buildCase = () => {
       episodeApart: apartEpisodes.length ? apartEpisodes : undefined,
       unrelated: unrelated.length ? unrelated : undefined,
     },
-    checked: { by: draft.by, at: today() },
+    // `by` is free text on purpose: an agent name (`agent:opus`) and a person (`human:banou`) are
+    // both a record of who decided it
+    checked: { by: draft.by, at: today(), notes: draft.notes || undefined },
     pending: draft.pending ? 'new store' : undefined,
   }
 }
@@ -474,6 +488,16 @@ const saveBar = () => {
     message.className = 'message ok'
     message.textContent = `saved ${body.path}`
     saved = body.case
+    // a saved case IS the resolution of a disagreement, so the queue loses the run here. The banner
+    // is removed in place rather than by re-rendering, which would take the message above with it
+    if (run.review) {
+      await fetch(`/api/review/${run.slug}`, { method: 'DELETE' })
+      run.review = undefined
+      const cached = listing?.runs?.[run.index]
+      if (cached) cached.review = undefined
+      document.getElementById('review-banner')?.remove()
+      message.textContent = `saved ${body.path}, and the run is out of the review queue`
+    }
   }
 
   return el('div', { class: 'save' },
@@ -481,8 +505,15 @@ const saveBar = () => {
       el('label', { text: 'name' }),
       el('input', { size: 52, value: draft.name, oninput: event => { draft.name = event.target.value } }),
       el('label', { text: 'checked by' }),
-      el('input', { size: 18, value: draft.by, oninput: event => { draft.by = event.target.value } }),
+      el('input', {
+        size: 18,
+        value: draft.by,
+        placeholder: 'agent:opus or human:banou',
+        oninput: event => { draft.by = event.target.value },
+      }),
       el('span', { class: 'muted', text: `at ${today()}` }),
+      el('label', { text: 'notes' }),
+      el('input', { size: 36, value: draft.notes, oninput: event => { draft.notes = event.target.value } }),
       el('label', {},
         el('input', { type: 'checkbox', checked: draft.pending, onchange: event => { draft.pending = event.target.checked } }),
         ' pending: new store'),
@@ -500,6 +531,18 @@ const saveBar = () => {
     message)
 }
 
+/** Why this run is in front of a person: the reason, and the two verdicts that differed. */
+const reviewBanner = () => el('div', { class: 'review', id: 'review-banner' },
+  el('span', { class: 'chip key', text: 'review' }),
+  el('span', { text: run.review.reason }),
+  run.review.disagreement ? el('span', { class: 'muted', text: run.review.disagreement }) : undefined,
+  el('span', { class: 'muted', text: `flagged by ${run.review.by} on ${run.review.at}` }))
+
+/** Who decided the saved case and when, which is an agent name as often as a person's. */
+const stampLine = () => el('div', { class: 'stamp muted' },
+  el('span', { text: `checked by ${saved.checked.by} on ${saved.checked.at}` }),
+  saved.checked.notes ? el('span', { class: 'notes', text: saved.checked.notes }) : undefined)
+
 const renderRun = () => {
   const cards = []
   let index = 0
@@ -509,7 +552,9 @@ const renderRun = () => {
       el('h2', { text: group.name === group.origin ? group.origin : `${group.name} (${group.origin})` }),
       ...rows))
   }
-  app.replaceChildren(
+  // filtered, because replaceChildren stringifies an absent child into the word "undefined" where
+  // `el` above drops it
+  app.replaceChildren(...[
     el('div', { class: 'top' },
       el('a', { href: '#/', text: '< runs' }),
       el('h1', { text: run.title }),
@@ -518,10 +563,13 @@ const renderRun = () => {
       el('span', { class: 'muted', text: `${allRows().length} rows, ${judged().length} judged` }),
       el('span', { class: `state ${saved ? 'labelled' : 'unlabelled'}`, text: saved ? 'labelled' : 'unlabelled' }),
       run.index + 1 < (listing?.progress.total ?? 0) && el('a', { href: `#/run/${run.index + 1}`, text: 'next >' })),
+    run.review ? reviewBanner() : undefined,
+    saved?.checked ? stampLine() : undefined,
     el('div', { class: 'members' }, ...run.members.map(uri =>
       el('span', { class: `chip uri${uri === run.keyMember ? ' key' : ''}`, text: uri }))),
     ...cards,
-    saveBar())
+    saveBar(),
+  ].filter(Boolean))
   const focused = document.getElementById(`row-${focus}`)
   if (focused) focused.scrollIntoView({ block: 'nearest' })
 }

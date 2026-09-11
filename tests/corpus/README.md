@@ -156,6 +156,15 @@ Two more optional fields carry the season walk, which is what the format grew fo
 of it. A case built from the walk names in `source.answers` the `key` of every answer row it was built
 from, so the raw answers behind it can be found again without rerunning the walk.
 
+**A case's raw evidence is the DUMP, and the join to it is `source.answers`.** No case written here
+carries `raw`: `scripts/label-corpus.mjs` strips it from every row and episode before validating, so
+a case is a few kB of decisions instead of 90 kB of recorded answers, and a season of 223 of them
+stays out of git at 20 MB. The answers are not lost, because `answers.jsonl` is deduped on `key` and
+`source.answers` names exactly the keys each row and episode was built from. A harness that needs the
+raw rows, which today means the new store's ingest replay, reads them back out of the dump under
+`corpus/season/<season>/` and skips the cases whose dump is absent with a message saying which, since
+`corpus/` is gitignored and a fresh checkout has none of it.
+
 ## Running it
 
 ```ts

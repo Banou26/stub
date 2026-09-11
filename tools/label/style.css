@@ -101,8 +101,25 @@ table.runs a { text-decoration: none }
 .state { font-size: 11px; padding: 0 5px; border-radius: 9px; border: 1px solid var(--line) }
 .state.labelled { color: var(--ok); border-color: var(--ok) }
 .state.unlabelled { color: var(--muted) }
+.state.review { color: var(--holds); border-color: var(--holds) }
 
 /* run screen */
+
+/* the two judges disagreed, which is the only reason a run is read by a person at all */
+.review {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  border: 1px solid var(--holds);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--holds) 12%, transparent);
+}
+
+.stamp { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; margin-bottom: 6px }
+.stamp .notes { font-style: italic }
 
 .members { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 10px }
 .chip {
