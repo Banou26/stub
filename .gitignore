@@ -3,6 +3,7 @@
 /test-results
 /build
 /dist-seed
+/corpus
 /src/generated
 /examples/source-plugin/dist
 /examples/source-plugin/node_modules
