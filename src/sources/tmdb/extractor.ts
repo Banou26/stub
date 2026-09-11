@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, desc, img, getFirstTitle, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, desc, img, getFirstTitle, waitForMedia, declaredEpisodeCount } from '../utils'
 import { parseSeasonNumber, pickSeasonByEpisodeCount, seasonScopedId, splitSeasonScopedId } from '../season'
 import { percentScore } from '../average-score'
 
@@ -158,7 +158,7 @@ const resolveSeasonNumber = async (uri: string, id: string, seasons: number[], c
   const hint = await waitForMedia(uri, ctx, (media: any) => {
     const title = getFirstTitle(media)
     const season = title ? parseSeasonNumber(title) : undefined
-    const count = media?.episodeCount ?? media?.episodes?.length
+    const count = declaredEpisodeCount(media)
     return season != null || count ? { season, count } : undefined
   })
   if (hint?.season != null) return hint.season

@@ -2,7 +2,7 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, SimilarMediaInput } from '../../generated/schema/types.generated'
 
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, buildHandlesFromUri, waitForMedia } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, buildHandlesFromUri, waitForMedia, declaredEpisodeCount } from '../utils'
 import { seasonScopedId, splitSeasonScopedId } from '../season'
 import { pickGatedCandidate, searchQueries } from '../catalogue-gate'
 import { pickSimilarSeason, type SeasonCandidate } from '../similar'
@@ -230,7 +230,7 @@ const pickSeason = async (
   return waitForMedia(uri, ctx, (media: any) => pickSimilarSeason({
     titles: (media?.titles ?? []).map((title: { title: string }) => title.title),
     startDate: media?.startDate,
-    episodeCount: media?.episodeCount ?? media?.episodes?.length,
+    episodeCount: declaredEpisodeCount(media),
   }, candidates)?.season)
 }
 

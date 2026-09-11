@@ -7,7 +7,7 @@ import { policyFor, UNKNOWN_POLICY, type RequestPolicy } from '../../worker/requ
 import { isOnlySeasonLabel, parseSeasonNumber } from '../season'
 import { hasEvidence, pickSimilarSeason, type SeasonCandidate } from '../similar'
 import { rankByTitle, searchQueries, yearAppearsInShow } from '../catalogue-gate'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia, partOf, sameAs } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, mergeHandles, waitForMedia, partOf, sameAs, declaredEpisodeCount } from '../utils'
 
 const SCORE = 0.2
 
@@ -571,7 +571,7 @@ const resolveSeasonNumber = async (uri: string, node: JWShowNode, ctx: Extractor
   return waitForMedia(uri, ctx, m => {
     const evidence = {
       titles: (m?.titles ?? []).map((title: { title: string }) => title.title),
-      episodeCount: m?.episodeCount ?? m?.episodes?.length,
+      episodeCount: declaredEpisodeCount(m),
       startDate: m?.startDate
     }
     return hasEvidence(evidence) ? pickSimilarSeason(evidence, candidates)?.season.content.seasonNumber : undefined
@@ -701,7 +701,7 @@ const searchAndLinkMedia = async (aggregatedUri: string, ctx: ExtractorServerCon
       // stand; a show with no season the evidence establishes is refused by `normalizeMedia` below
       const seasonNumber = node.seasons?.length
         ? pickSimilarSeason(
-            { titles: knownTitles, episodeCount: known.episodeCount ?? known.episodes?.length, startDate },
+            { titles: knownTitles, episodeCount: declaredEpisodeCount(known), startDate },
             jwCandidates(node.seasons)
           )?.season.content.seasonNumber
         : undefined

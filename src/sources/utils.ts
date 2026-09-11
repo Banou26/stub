@@ -173,6 +173,17 @@ export const img = (url?: string | null, score?: number) =>
 export const getFirstTitle = (media: { titles?: { title: string }[] } | undefined) =>
   media?.titles?.[0]?.title
 
+/**
+ * The episode count an aggregated media DECLARES, and undefined when it declares none.
+ *
+ * The count a run's sources agree on, never a list length: `aggregateMedia` emits `episodes: []` on
+ * every cluster (the episodes are a separate resolver's), so `media.episodes.length` read as a count
+ * is 0 for every cluster, and 0 is a count rather than an absence. `foldVetoed` then reads a run of
+ * zero episodes and refuses every candidate season longer than it, which is all of them.
+ */
+export const declaredEpisodeCount = (media: { episodeCount?: number | null } | null | undefined): number | undefined =>
+  media?.episodeCount ?? undefined
+
 // keeps letters of every script. Stripping to [a-z0-9] erased a japanese title down to its ascii digits, so
 // ani.zip's "転生したらスライムだった件 (2026)" was the literal string "2026" and was equal to every other 2026 show.
 export const stripTitle = (title: string) =>

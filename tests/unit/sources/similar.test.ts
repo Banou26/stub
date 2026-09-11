@@ -9,6 +9,7 @@ import {
   answerNamesOurShow,
   bestRunStartDate,
   describeEvidence,
+  foldVetoed,
   hasEvidence,
   isRunAnswerFrom,
   namesAPart,
@@ -199,6 +200,35 @@ test('a season listing zero episodes has no count', () => {
   expect(pickSimilarSeason({ titles: ['Another Run Of It'], episodeCount: 24, startDate: '2022-10-02' }, empty)).toBeUndefined()
   expect(pickSimilarSeason({ titles: ['Show Season 2'], episodeCount: 12 }, [{ season: 2, seasonNumber: 2, episodeCount: 0 }]), 'nor by ordinal')
     .toBeUndefined()
+})
+
+// The run side of the same distinction, and what every caller has to hand in: an absent count is
+// UNKNOWN and each rule says which of "silent" and "refuse" it means by it. The fold veto has nothing
+// to be longer than, so it is silent and the rules that read a date or the episode titles still
+// answer; the three rules that need a count refuse, because a season whose length cannot be compared
+// is not established.
+test('an unknown run count leaves the fold veto silent and refuses the rules that need a count', () => {
+  expect(foldVetoed({ titles: [SHOW] }, NF[0]!), 'nothing to be longer than').toBe(false)
+  expect(foldVetoed({ titles: [SHOW], episodeCount: 11 }, NF[0]!), 'the control: 24 over 11 is a fold').toBe(true)
+  expect(foldVetoed({ titles: [SHOW], episodeCount: 24 }, NF[0]!), 'equal is not longer').toBe(false)
+
+  // the date and the episode titles place a run whose length nobody published
+  expect(pickSimilarSeason({ startDate: '2023-07-09' }, CR), 'the veto is silent, not passed').toEqual({ season: 2, rule: 'date' })
+  expect(pickSimilarSeason({ episodeTitles: episodeTitles(3, 11) }, NF)).toEqual({ season: 3, rule: 'episode-titles' })
+
+  // and the three that read a count refuse rather than answering on the rest of the evidence
+  expect(pickSimilarSeason({ titles: [`${SHOW} Season 3`] }, NF), 'the ordinal rule').toBeUndefined()
+  expect(pickSimilarSeason({ titles: ['Some Show'], startDate: '2021-01-01' }, NF), 'the year rule').toBeUndefined()
+  expect(pickSimilarSeason({ titles: ['Some Show'] }, NF), 'the first-season rule').toBeUndefined()
+})
+
+// Zero is a COUNT here, and it refuses every season longer than it. That is the whole cost of case 23:
+// `media.episodeCount ?? media.episodes?.length` over an aggregate, whose list is always empty, handed
+// this in for every cluster that declares no count. `declaredEpisodeCount` in ../utils.ts is what the
+// answering sources read instead, and these two lines are why it may never fall back to a length.
+test('a run count of zero is a count, and it vetoes every candidate', () => {
+  expect(foldVetoed({ titles: [SHOW], episodeCount: 0 }, NF[0]!)).toBe(true)
+  expect(NF.every(candidate => foldVetoed({ titles: [SHOW], episodeCount: 0 }, candidate))).toBe(true)
 })
 
 test('a part spelled in roman numerals or words is still a part', () => {

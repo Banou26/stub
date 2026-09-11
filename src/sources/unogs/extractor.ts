@@ -1,7 +1,7 @@
 import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope, SimilarMediaInput } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
-import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch } from '../utils'
+import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch, declaredEpisodeCount } from '../utils'
 import { pickSimilarSeason, type SeasonCandidate } from '../similar'
 import { percentScore } from '../average-score'
 
@@ -348,7 +348,7 @@ const matchNetflixSeason = async (
   titleYear?: number | string | null
 ): Promise<NetflixMatch | undefined> => {
   const known = await waitForMedia<GQLMedia>(aggregatedUri, ctx, media =>
-    (media?.episodeCount ?? media?.episodes?.length) ? media as GQLMedia : undefined
+    declaredEpisodeCount(media) ? media as GQLMedia : undefined
   )
   if (!known) return undefined
 
@@ -358,7 +358,7 @@ const matchNetflixSeason = async (
   const verdict = pickSimilarSeason(
     {
       titles: (known.titles ?? []).map(title => title.title),
-      episodeCount: known.episodeCount ?? known.episodes?.length,
+      episodeCount: declaredEpisodeCount(known),
       startDate: known.startDate
     },
     netflixCandidates(seasons, titleYear)
