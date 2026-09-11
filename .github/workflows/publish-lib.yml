@@ -151,7 +151,9 @@ jobs:
         env:
           VERSION: ${{ steps.decide.outputs.version }}
         run: |
-          for attempt in 1 2 3 4 5; do
+          # the version document lags the publish by minutes on 2026-09-11 (five tries at 15 s all
+          # answered 404 for a publish that had succeeded), so this waits up to ten minutes
+          for attempt in $(seq 1 40); do
             CODE=$(curl -sS -o /dev/null -w '%{http_code}' "https://registry.npmjs.org/@banou%2fstub/$VERSION")
             if [ "$CODE" = "200" ]; then
               echo "::notice::the registry serves @banou/stub $VERSION"
