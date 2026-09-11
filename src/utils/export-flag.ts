@@ -2,19 +2,31 @@ import { isSeedAssetUrl } from '../sources/offline/seed'
 
 export const EXPORT_PARAM = 'export'
 export const EXPORT_VALUE = 'store'
+export const EXPORT_ANSWERS_VALUE = 'answers'
+
+const asks = (url: string, value: string, base?: string): boolean => {
+  try {
+    return new URL(url, base).searchParams.getAll(EXPORT_PARAM).includes(value)
+  } catch {
+    return false
+  }
+}
 
 /**
  * Whether this url asks for the store export hook. Exactly `?export=store`, never mere presence, so a
  * stray `?export=1` in a shared link cannot attach anything. Never throws: an unparseable url reads
  * false. `base` resolves a relative url, the same way `readPluginUris` takes one.
  */
-export const readExportFlag = (url: string, base?: string): boolean => {
-  try {
-    return new URL(url, base).searchParams.getAll(EXPORT_PARAM).includes(EXPORT_VALUE)
-  } catch {
-    return false
-  }
-}
+export const readExportFlag = (url: string, base?: string): boolean => asks(url, EXPORT_VALUE, base)
+
+/**
+ * Whether this url asks for the ANSWER LOG export hook, exactly `?export=answers`.
+ *
+ * A separate value on the same param, so one page can carry both (`?export=store&export=answers`)
+ * and neither reads the other's flag. The log itself only fills behind `?graph=1`; this flag decides
+ * whether the page publishes a way to read it.
+ */
+export const readAnswersExportFlag = (url: string, base?: string): boolean => asks(url, EXPORT_ANSWERS_VALUE, base)
 
 export const NO_SEED_PARAM = 'seed'
 export const NO_SEED_VALUE = 'off'

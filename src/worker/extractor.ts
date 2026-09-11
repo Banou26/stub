@@ -27,6 +27,7 @@ import { aggregateMedia, recursivelyUnwrapMediaHandles } from './store/aggregate
 import { normalizeToStoreMedia } from './store/normalize'
 import { listenMultipleIterator } from './store/events'
 import { readPluginPayload, readPluginSources } from './plugin-sources'
+import { recordAnswers } from './graph/answers'
 import { describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
 import { SIMILAR_MEDIA_DOCUMENT } from './similar-document'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
@@ -472,25 +473,32 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
         onPluginInit: ({ addPlugin }) => {
           addPlugin(useOnResolve(({ info }) =>
             async ({ result }) => {
-              if (getNamedType(info.returnType).name === 'Media') {
+              const named = getNamedType(info.returnType).name
+              // The answer log is started BESIDE the inserters, never after them: both coalesce on a
+              // 50 ms window, so awaiting them in series would add the two windows together on every
+              // resolve. It returns undefined with the `?graph` flag down, which is the whole of its
+              // cost there.
+              const logged = recordAnswers(info, named, result)
+              if (named === 'Media') {
                 if (Array.isArray(result)) {
                   await mediaInserter.loadMany(result as Media[])
                 } else if (result) {
                   await mediaInserter.load(result as Media)
                 }
-              } else if (getNamedType(info.returnType).name === 'Episode') {
+              } else if (named === 'Episode') {
                 if (Array.isArray(result)) {
                   await episodeInserter.loadMany(result as Episode[])
                 } else if (result) {
                   await episodeInserter.load(result as Episode)
                 }
-              } else if (getNamedType(info.returnType).name === 'Origin') {
+              } else if (named === 'Origin') {
                 if (Array.isArray(result)) {
                   await originInserter.loadMany(result as Origin[])
                 } else if (result) {
                   await originInserter.load(result as Origin)
                 }
               }
+              await logged
             }
           ))
         }

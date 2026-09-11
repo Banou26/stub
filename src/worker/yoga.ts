@@ -9,7 +9,7 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 import { extractors, setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
 import { exportStore } from './store/export'
-import { enableGraph } from './graph'
+import { enableGraph, exportAnswers } from './graph'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -63,6 +63,10 @@ export const osraResolvers = {
         ...extractors.filter(entry => entry.pluginUri).map(entry => entry.extractor.origin),
       ],
     }),
+  // The answer log has no options: it is the whole log, ordered by seq, and a caller that wants a
+  // subset filters it. Unlike `exportStore` there is nothing to exclude, because a plugin source's
+  // answers are rows about that user's own plugin and the export is the user's own.
+  exportAnswers: () => exportAnswers(),
   remotePicker: (origin: string) => remotePicker(origin),
   remotePlayer: (origin: string) => remotePlayer(origin),
   selectRemoteRelease: (origin: string, uris: string[]) => selectRemoteRelease(origin, uris)

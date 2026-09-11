@@ -17,5 +17,12 @@ export default defineConfig({
     environment: 'node',
     // seeds sacha's wasm, which cannot self-init under node. See the file for why it is not inlined.
     setupFiles: ['./vitest.setup.ts'],
+    // TWO GRAPHQL REALMS, or a yoga server cannot execute a document here. Externalized, yoga and
+    // its plugins load graphql through node while a test's own `import ... from 'graphql'` resolves
+    // through vite, so a schema built by one and a `getNamedType` from the other meet as strangers:
+    // every field errors with "Cannot use GraphQLNonNull \"String!\" from another module or realm",
+    // which reads as a duplicate install and is not one (there is exactly one graphql in the tree).
+    // Inlining these makes vite resolve them, so the whole run shares one graphql.
+    server: { deps: { inline: [/graphql-yoga/, /@envelop\//, /@graphql-tools\//, /@whatwg-node\//] } },
   },
 })

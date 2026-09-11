@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest'
 
 import {
-  EXPORT_PARAM, EXPORT_VALUE, NO_SEED_PARAM, NO_SEED_VALUE, readExportFlag, readNoSeedFlag, refusesSeedAsset,
+  EXPORT_ANSWERS_VALUE, EXPORT_PARAM, EXPORT_VALUE, NO_SEED_PARAM, NO_SEED_VALUE, readAnswersExportFlag,
+  readExportFlag, readNoSeedFlag, refusesSeedAsset,
 } from '../../../src/utils/export-flag'
 import { SEED_EPISODES_ASSET, SEED_INDEX_ASSET, seedAssetUrl } from '../../../src/sources/offline/seed'
 
@@ -10,6 +11,20 @@ test('the flag is exactly ?export=store', () => {
   expect(EXPORT_VALUE).toBe('store')
   expect(readExportFlag('https://anime.fkn.app/?export=store')).toBe(true)
   expect(readExportFlag('https://anime.fkn.app/media/anilist:1?plugin=x&export=store')).toBe(true)
+})
+
+// The answer log is a second value on the same param, so a page may carry both and neither reads the
+// other's flag: `?export=store` must not install the answer hook, or a store walk would publish a
+// function whose engine was never enabled.
+test('the answer log flag is exactly ?export=answers, and the two values are independent', () => {
+  expect(EXPORT_ANSWERS_VALUE).toBe('answers')
+  expect(readAnswersExportFlag('https://anime.fkn.app/?export=answers')).toBe(true)
+  expect(readAnswersExportFlag('https://anime.fkn.app/media/mal:1?graph=1&export=answers')).toBe(true)
+  expect(readAnswersExportFlag('https://anime.fkn.app/?export=store')).toBe(false)
+  expect(readExportFlag('https://anime.fkn.app/?export=answers')).toBe(false)
+
+  const both = 'https://anime.fkn.app/?export=store&export=answers'
+  expect([readExportFlag(both), readAnswersExportFlag(both)]).toEqual([true, true])
 })
 
 test('anything else reads false, including an unparseable url', () => {

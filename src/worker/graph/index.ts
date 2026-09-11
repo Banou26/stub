@@ -5,17 +5,23 @@
  * `setGraphEnabled` over osra right after spawning. Off is the default and costs nothing: the engine
  * client is imported lazily, so with the flag down neither it nor the 22 MB engine is ever fetched.
  */
-import { graphEnabled, openGraph, setGraphEnabled } from './engine'
+import { graphEnabled, setGraphEnabled } from './engine'
+import { graphReady, GRAPH_TABLES } from './schema'
 
 export { closeGraph, graphEnabled, openGraph, setGraphEnabled } from './engine'
 export type { Graph, GraphRow } from './engine'
+export { createGraphSchema, graphReady, GRAPH_SCHEMA, GRAPH_TABLES } from './schema'
+export { exportAnswers, flushAnswers, recordAnswers } from './answers'
+export type { AnswerKind, AnswerRow } from './answers'
 
 let booting: Promise<void> | undefined
 
 const boot = async () => {
   const started = performance.now()
-  const { version } = await openGraph()
-  console.info(`graph: engine ready in ${Math.round(performance.now() - started)} ms, version ${version}`)
+  // the schema of section 2 is created at start, so the first answer of the session has a table to
+  // land in; `graphReady` is also what every reader waits on, so nothing can race this boot
+  const graph = await graphReady()
+  console.info(`graph: engine ready in ${Math.round(performance.now() - started)} ms, version ${graph.version}, ${GRAPH_TABLES.length} tables`)
 }
 
 /** Carries the page's flag in, and opens the engine once when it is on. */

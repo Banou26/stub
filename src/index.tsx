@@ -9,6 +9,7 @@ import Router from './router'
 import { party } from './party'
 import './plugin-url.ts'
 import './store-export.ts'
+import './answers-export.ts'
 import { pushKeys } from './utils/keys'
 
 pushKeys()

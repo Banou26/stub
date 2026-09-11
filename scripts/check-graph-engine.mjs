@@ -1,9 +1,16 @@
 /**
- * Does the built app reach the graph engine behind `?graph`, and leave it alone without it?
+ * Does the built app reach the graph engine behind `?graph`, leave it alone without it, and fill the
+ * answer log from real sources?
  *
- * Two arms, and the second is the control: with the flag the worker must open LadybugDB and fetch
- * the 22 MB engine the vite plugin emits, and without it neither may happen. A check that only ran
- * the first arm could not tell "the flag works" from "the engine loads unconditionally".
+ * Three arms. The second is the control for the first: with the flag the worker must open LadybugDB
+ * and fetch the 22 MB engine the vite plugin emits, and without it neither may happen, so a check
+ * that only ran the first could not tell "the flag works" from "the engine loads unconditionally".
+ *
+ * The third opens a media page with `?graph=1&export=answers` and reads the log back through
+ * `window.__stubExportAnswers`. It is the only arm that talks to the real sources over the network,
+ * which is deliberate: the unit suite drives the hook against a fixture server, and what it cannot
+ * tell you is whether 24 sources answering at once produce answers the log recognises. It reports
+ * the rows, the bytes and the time, since that is the cost the tee of step 1b has to fit inside.
  *
  * Run it from inside the repo, against a `vp build` output:
  *   node_modules/.bin/vp build && node scripts/check-graph-engine.mjs
@@ -17,6 +24,9 @@ import { chromium } from 'playwright'
 
 const ROOT = new URL('../build/', import.meta.url).pathname
 const ENGINE = '/lbug_wasm_worker.js'
+// Mushoku Tensei season 1, as `getRoutePath(Route.MEDIA, { uri })` spells it (`src/router/path.ts`):
+// one real uri that most of the 24 sources can answer about, so the fan-out is a real one.
+const ANSWER_URI = 'ag:(anilist:108465)'
 const TYPES = {
   '.css': 'text/css',
   '.html': 'text/html; charset=utf-8',
@@ -93,6 +103,73 @@ console.log(`without the flag, after ${settle} ms: graph lines ${off.graphLogs.l
 console.log(`  ${ENGINE} requests: ${off.engineRequests.map(entry => `${entry.status} ${entry.url}`).join(', ') || 'none'}`)
 if (off.graphLogs.length) failures.push('the unflagged load touched the graph')
 if (off.engineRequests.length) failures.push(`the unflagged load fetched ${ENGINE}`)
+
+/**
+ * The third arm: a real media page, the real sources, and the log read back off `window`.
+ *
+ * The absence of `window.__stubExportAnswers` is what tells the caller the flag never reached the
+ * app, so it is waited for separately from the rows: a page that installed nothing and a page whose
+ * sources answered nothing are different failures and are reported as such.
+ */
+const answersArm = async (route, waitMs) => {
+  const context = await browser.newContext()
+  const page = await context.newPage()
+  const errors = []
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+
+  const started = Date.now()
+  await page.goto(`${origin}${route}?graph=1&export=answers`, { waitUntil: 'domcontentloaded' })
+  const installed = await page
+    .waitForFunction(() => typeof window.__stubExportAnswers === 'function', null, { timeout: 15000 })
+    .then(() => true)
+    .catch(() => false)
+
+  const read = () => page.evaluate(async () => {
+    try {
+      const started = performance.now()
+      const rows = await window.__stubExportAnswers()
+      // the read is a worker round trip plus every row crossing it as a string: the number step 1b's
+      // tee has to fit beside, measured rather than assumed
+      const ms = Math.round(performance.now() - started)
+      return { ms, rows: rows.length, bytes: rows.reduce((total, row) => total + row.raw.length, 0), origins: [...new Set(rows.map(row => row.origin))].sort(), kinds: [...new Set(rows.map(row => row.kind))].sort() }
+    } catch (error) {
+      return { failed: String(error?.message ?? error) }
+    }
+  })
+
+  let first
+  let last = { rows: 0, bytes: 0, origins: [], kinds: [] }
+  while (installed && Date.now() - started < waitMs) {
+    const outcome = await read()
+    // a read that failed is kept only until one succeeds: early in a cold load the worker is still
+    // booting, and ending the arm on that would report a failure the next second would not have
+    last = { ...last, ...outcome, failed: outcome.failed }
+    if (outcome.rows > 0) { first ??= Date.now() - started; break }
+    await page.waitForTimeout(1000)
+  }
+  // the first row says the path works; the rest of the window says what a fan-out costs
+  if (first) {
+    await page.waitForTimeout(Math.max(0, waitMs - (Date.now() - started)))
+    last = { ...last, ...await read() }
+  }
+  await context.close()
+  return { installed, first, ...last, errors }
+}
+
+const answers = await answersArm(`/media/${ANSWER_URI}`, 30000)
+console.log(`with ?graph=1&export=answers on /media/${ANSWER_URI}:`)
+console.log(`  window.__stubExportAnswers: ${answers.installed ? 'installed' : 'NEVER INSTALLED'}`)
+console.log(`  rows ${answers.rows}, ${answers.bytes} bytes of raw, first row after ${answers.first ?? '-'} ms, read back in ${answers.ms ?? '-'} ms`)
+if (answers.failed) console.log(`  the page could not read the log: ${answers.failed}`)
+console.log(`  kinds: ${answers.kinds.join(', ') || 'none'}`)
+console.log(`  origins (${answers.origins.length}): ${answers.origins.join(', ') || 'none'}`)
+if (!answers.installed) failures.push('the flagged load never installed window.__stubExportAnswers')
+if (answers.failed) failures.push(`window.__stubExportAnswers threw: ${answers.failed}`)
+if (answers.installed && !answers.failed && !answers.rows) {
+  // this machine could not complete the arm: say so with what the page reported, rather than
+  // asserting something weaker that a session with no network would also pass
+  failures.push(`no Answer row after 30 s of a real fan-out${answers.errors.length ? `, console errors: ${JSON.stringify(answers.errors.slice(0, 3))}` : ', and the page logged no error'}`)
+}
 
 await browser.close()
 server.close()
