@@ -1,0 +1,182 @@
+/* Dense on purpose: the owner spends hours here, so every run should fit on one screen of scanning. */
+
+:root {
+  --bg: #12141a;
+  --panel: #191c24;
+  --panel-2: #1f232d;
+  --line: #2c313d;
+  --text: #e3e6ee;
+  --muted: #8b93a7;
+  --accent: #7aa2f7;
+  --same: #7ee787;
+  --holds: #f0b72f;
+  --spans: #d2a8ff;
+  --unrelated: #f97583;
+  --ok: #3fb950;
+  --bad: #f85149;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --panel-2: #eef0f4;
+    --line: #d6dae2;
+    --text: #1b1f27;
+    --muted: #5c6474;
+    --accent: #2f5bd0;
+    --same: #1a7f37;
+    --holds: #9a6700;
+    --spans: #6639ba;
+    --unrelated: #cf222e;
+    --ok: #1a7f37;
+    --bad: #cf222e;
+  }
+}
+
+* { box-sizing: border-box }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.45 ui-sans-serif, system-ui, sans-serif;
+}
+
+main { padding: 10px 14px 24px }
+
+a { color: var(--accent) }
+
+code, .uri {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.muted { color: var(--muted) }
+.bad { color: var(--bad) }
+.ok { color: var(--ok) }
+
+/* header */
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.top h1 { font-size: 15px; margin: 0 }
+.top .grow { flex: 1 }
+
+input, textarea, select, button {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+
+textarea { width: 100%; resize: vertical; font-family: inherit }
+button { cursor: pointer }
+button:hover { border-color: var(--accent) }
+
+/* run list */
+
+table.runs { width: 100%; border-collapse: collapse }
+table.runs td { padding: 3px 8px 3px 0; border-bottom: 1px solid var(--line); vertical-align: top }
+table.runs tr:hover td { background: var(--panel) }
+table.runs td.idx { color: var(--muted); text-align: right; width: 40px }
+table.runs td.count { white-space: nowrap }
+table.runs td.title { font-weight: 600 }
+table.runs a { text-decoration: none }
+
+.state { font-size: 11px; padding: 0 5px; border-radius: 9px; border: 1px solid var(--line) }
+.state.labelled { color: var(--ok); border-color: var(--ok) }
+.state.unlabelled { color: var(--muted) }
+
+/* run screen */
+
+.members { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 10px }
+.chip {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel);
+}
+.chip.key { border-color: var(--accent); color: var(--accent) }
+
+.group { margin: 10px 0 }
+.group > h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 8px 0 4px;
+}
+
+.row {
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: 4px;
+  background: var(--panel);
+  padding: 5px 8px;
+  margin-bottom: 4px;
+}
+.row.focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) }
+.row.mark-same { border-left-color: var(--same) }
+.row.mark-holds { border-left-color: var(--holds) }
+.row.mark-spans { border-left-color: var(--spans) }
+.row.mark-unrelated { border-left-color: var(--unrelated) }
+.row.member { background: var(--panel-2) }
+
+.row .line { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap }
+.row .name { font-weight: 600 }
+.row .facts { color: var(--muted); font-size: 12px }
+.row .handles { color: var(--muted); font-size: 11px; margin-top: 2px; word-break: break-all }
+
+.marks { display: flex; gap: 3px; margin-left: auto }
+.marks button { padding: 1px 7px; font-size: 12px; background: var(--panel-2) }
+.marks button.on { background: var(--accent); color: #0b0d12; border-color: var(--accent) }
+
+/* episode panel */
+
+.episodes { margin-top: 6px; border-top: 1px dashed var(--line); padding-top: 6px }
+.range { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px }
+.range input { width: 56px }
+table.eps { width: 100%; border-collapse: collapse; font-size: 12px }
+table.eps th { text-align: left; color: var(--muted); font-weight: 500; padding: 2px 6px 2px 0 }
+table.eps td { padding: 1px 6px 1px 0; border-top: 1px solid var(--line); vertical-align: top }
+table.eps td.num { color: var(--muted); text-align: right; width: 28px }
+table.eps td.date { color: var(--muted); white-space: nowrap }
+table.eps tr.pair td { background: color-mix(in srgb, var(--same) 14%, transparent) }
+table.eps tr.apart td { background: color-mix(in srgb, var(--unrelated) 14%, transparent) }
+table.eps button { padding: 0 6px; font-size: 11px }
+table.eps button.on { background: var(--accent); color: #0b0d12; border-color: var(--accent) }
+table.eps select { max-width: 260px }
+
+/* save bar */
+
+.save {
+  position: sticky;
+  bottom: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 12px;
+}
+.save .fields { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px }
+.save .fields label { color: var(--muted) }
+.save .why { margin-bottom: 6px }
+.save .message { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px }
+.save button.primary { background: var(--accent); color: #0b0d12; border-color: var(--accent); padding: 4px 14px }
+
+.legend { color: var(--muted); font-size: 11px }

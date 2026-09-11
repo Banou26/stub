@@ -1,0 +1,44 @@
+{
+  "season": "2026-SUMMER",
+  "seasonDir": "summer-2026",
+  "enumeration": "listing",
+  "startedAt": "2026-09-12T00:00:00.000Z",
+  "commit": "fixture",
+  "appVersion": "0.0.0",
+  "runsPlanned": 1,
+  "totals": {
+    "runs": 1,
+    "rows": 6,
+    "bytes": 0,
+    "origins": [
+      "anilist",
+      "cr",
+      "kitsu"
+    ]
+  },
+  "runs": [
+    {
+      "uri": "ag:(anilist:1,kitsu:2)",
+      "members": [
+        "anilist:1",
+        "kitsu:2"
+      ],
+      "title": "Fixture Show Season 2",
+      "rows": 5,
+      "newRows": 5,
+      "origins": [
+        "anilist",
+        "cr",
+        "kitsu"
+      ],
+      "answerOrigins": [
+        "anilist",
+        "cr",
+        "kitsu"
+      ],
+      "settleMs": 1234,
+      "capped": false,
+      "consoleErrors": []
+    }
+  ]
+}

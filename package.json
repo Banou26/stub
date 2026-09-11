@@ -25,6 +25,7 @@
     "data:build-offline": "node scripts/build-anime-data.mjs --offline",
     "seed:export": "node scripts/export-season-seed.mjs",
     "corpus:walk": "node scripts/walk-season-answers.mjs",
+    "corpus:label": "node scripts/label-corpus.mjs",
     "build-test": "npm run data:build && vp build --config vite.test.config.ts",
     "build-test-watch": "vp build --config vite.test.config.ts --watch",
     "test": "npm run test:unit && npm run build-test && playwright test",
