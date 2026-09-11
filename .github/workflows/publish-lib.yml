@@ -1,8 +1,8 @@
 # Publishes @banou/stub to npm and keeps the signed app manifest fresh on both sources.
 #
 # THE FILENAME IS PART OF THE TRUST RELATIONSHIP AND MUST NOT CHANGE. npm trusted publishing binds
-# the package to a repository PLUS a workflow filename, so renaming this file breaks publishing and
-# needs reconfiguring on npmjs.org by hand. The `name:` below is display text and is safe to edit.
+# the package to a repository PLUS a workflow filename (banou26/stub + publish-lib.yml on npmjs.org),
+# so renaming this file breaks publishing and needs reconfiguring on npmjs.org by hand. The `name:` below is display text and is safe to edit.
 # There is no npm token anywhere: the job exchanges its OIDC identity for a short lived credential.
 #
 # Two halves, and only the first runs on every push:
@@ -131,8 +131,10 @@ jobs:
         run: npm run build
 
       # No credential is passed. npm exchanges the job's OIDC identity for a short lived token against
-      # the trusted publisher configured on npmjs.org for banou26/stub + publish.yml. BOTH HALVES ARE
-      # THE TRUST RELATIONSHIP: renaming this file breaks publishing, and so does renaming the repo.
+      # the trusted publisher configured on npmjs.org for banou26/stub + publish-lib.yml. BOTH HALVES
+      # ARE THE TRUST RELATIONSHIP: renaming this file breaks publishing, and so does renaming the
+      # repo. The file was born as publish.yml and the exchange answered "package not found" until it
+      # matched the registered name (2026-09-11).
       # Provenance is attested automatically under trusted publishing; --provenance says so out loud.
       - name: Publish
         if: steps.decide.outputs.changed == 'true'
