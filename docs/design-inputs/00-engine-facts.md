@@ -147,3 +147,26 @@ the second pass over the same graph is **560 ms in 1 iteration and writes nothin
 - A full pass over 800 recorded rows with profile, direct and aggregate: 3,212 ms, three iterations,
   audit about 190 ms of it; the second pass 856 ms writing nothing. The corpus (249 cases, both
   orders, 16,926 answers) replays through the new store in 354 s.
+
+## Measured on 2026-09-12 while building plugin:range (step 2f)
+
+- **Row order inside an `ORDER BY` tie is NOT stable between two passes in one process.** Two
+  `PART_OF` rows reach one season (`plugin:direct`'s `asserted` beside `plugin:containment`'s
+  `span`), the scan returns one row per link per episode, and a `supports` list derived in scan
+  order flipped between two spellings from one pass to the next: 11 `EPISODE_LINK` rows rewritten
+  every iteration and `fixed-point-cap` reported on about half the runs. Any list a plugin derives
+  from a scan and writes onto a row is sorted first; pinned by a test whose mutation reverses the
+  sort.
+- **An undirected `-[l:LINK]-` with a property `WHERE` and an `s.uri <> r.uri` guard** works, which
+  is how the class 1 scan sees a `PART_OF` whichever way it points (a downgrade points from the
+  shorter side to the longer, so a run-to-season scan written directed never sees 8.4's seasons).
+- **A list literal in a `WHERE` OR'd with a bare `BOOLEAN` column**, `coalesce(ps.countDistinct,
+  ps.countStated)` in a projection, and an `ORDER BY` mixing a relationship property with a node
+  property: all exercised on 0.20.4.
+- **A JSON column inside a `collect({...})` struct is UNMEASURED**, and the failure mode of a struct
+  the binder accepts is a runtime death, so `plugin:range` returns flat rows and groups them in JS.
+- Costs, 800 recorded rows, profile then direct, aggregate, containment and range: a pass is
+  **4.6 to 6.8 s over 3 iterations**, `plugin:range` 199 to 437 ms of each iteration; the second
+  pass 1.2 to 1.7 s in 1 iteration writing nothing. The recorded page contributes 7 pairs, 0 ranges
+  and 0 refusals on its own (no source ships `containing` yet, so class 1 is nearly empty on a real
+  page and the transitional lend of 4.4 carries what there is).

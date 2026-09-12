@@ -43,6 +43,12 @@ export default defineConfig({
   test: {
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     environment: 'node',
+    // The engine-backed graph suites seed a page and run a pass in `beforeAll`, and the first cold
+    // transform of a run can spend the default 10 s before the hook's own work starts: measured
+    // 2026-09-12 as `Hook timed out in 10000ms` on title.test.ts the first time a new engine suite
+    // joined the pool, green alone and on every warm run since. 300 s is what the two newest suites
+    // already pass per file; here it covers the older ones too.
+    hookTimeout: 300_000,
     // seeds sacha's wasm, which cannot self-init under node. See the file for why it is not inlined.
     setupFiles: ['./vitest.setup.ts'],
     // TWO GRAPHQL REALMS, or a yoga server cannot execute a document here. Externalized, yoga and
