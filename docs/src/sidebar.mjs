@@ -88,6 +88,7 @@ export const sidebar = [
   ]},
   { label: 'The redesign', items: [
     { label: 'The representation',       slug: 'design/representation' },
+    { label: 'The corpus',               slug: 'design/corpus' },
   ]},
   { label: 'Reference', items: [
     { label: 'Every constant',            slug: 'reference/constants' },
