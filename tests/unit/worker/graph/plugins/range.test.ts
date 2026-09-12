@@ -29,7 +29,8 @@ import { aggregatePlugin } from '../../../../../src/worker/graph/plugins/aggrega
 import { containmentPlugin } from '../../../../../src/worker/graph/plugins/containment'
 import {
   alignByTitle, closeWithSpecials, decideCandidate, forcedByBracket, hullOf, MIN_ALIGNED, numbersOutsideRun,
-  pairsByDay, pairsBySequence, pairsByTitle, placesClaim, rangePlugin, scheduleSkew,
+  MIN_SCORED_ANCHORS, pairsByDay, pairsBySequence, pairsByTitle, placesClaim, rangePlugin, scheduleSkew,
+  SCORED_ANCHOR_FLOOR, SCORED_ANCHOR_MARGIN, titleDice,
 } from '../../../../../src/worker/graph/plugins/range'
 import { stripTitle } from '../../../../../src/sources/utils'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
@@ -918,8 +919,11 @@ test('3.4a the located special closes the alignment, and the anchors agree with 
     kind: 'INCLUDES', status: 'active', reason: 'sequence',
     fromStart: 2, fromEnd: 25, toStart: 1, toEnd: 24, contiguous: true, aligned: 24, total: 25,
   })
+  // `scored: 0` is the whole of what the 2026-09-13 anchor change did to this walkthrough: four exact
+  // anchors bracket it, so the scored fallback was never consulted and the range is an equality's
   expect(evidenceOf(range!)).toEqual({
-    rule: 'sequence', theirs: 25, ours: 24, anchors: 4, forced: 3, closure: 17, unequal: 0, closed: true,
+    rule: 'sequence', theirs: 25, ours: 24, anchors: 4, scored: 0, forced: 3, closure: 17,
+    unequal: 0, closed: true,
   })
   // the `PART_OF` that reached it is untouched, in this branch as in every other
   expect((await linksBetween('anilist:146065', 'nf:80987039-2'))
@@ -1507,7 +1511,14 @@ test('rule 3 anchors the four Netflix rows the titles prove and forces exactly t
   const verdict = decideCandidate({ runLength: 24, reference, candidate: { retranslates: true, episodes: theirs } })
   expect(verdict.ok && verdict.rule, 'rule 3 runs where rule 2 is refused outright').toBe('sequence')
   expect(verdict.ok && verdict.pairs).toHaveLength(7)
-  expect(verdict.ok && verdict.sequence).toEqual({ anchors: 4, forced: 3, closure: 0, unequal: 0, closed: false })
+  expect(verdict.ok && verdict.sequence)
+    .toEqual({ anchors: 4, scored: 0, forced: 3, closure: 0, unequal: 0, closed: false })
+  // AND THE SCORE WAS NEVER CONSULTED, because four exact anchors bracket this season by themselves
+  // (2026-09-13). Mutation: run the scored fallback unconditionally and their row 9
+  // `The Fiance of Despair` welds onto our 8 `The Fiancé of Despair` at Dice 0.75, which turns a row
+  // ORDER forced into a row a score placed and drops `forced` from 3 to 2
+  expect(sequence.alignment.scored).toBe(0)
+  expect(sequence.alignment.anchors.every(anchor => anchor.scored === undefined)).toBe(true)
 })
 
 // THE CLOSURE, at the level the specials rule lives at: the same two sides plus ani.zip's `S1`.
@@ -1772,6 +1783,337 @@ test('the alignment, the bracket and the closure are three separate claims', () 
   expect(closeWithSpecials({ alignment, unequal: bracket.unequal }).closed).toBe(true)
   expect(closeWithSpecials({ alignment, unequal: 1 }), 'a refused region refuses the closure')
     .toEqual({ pairs: [], located: [], closed: false })
+})
+
+// ---------------------------------------------------------------------------------------------
+// THE SCORED ANCHOR (2026-09-13), and the four guards that keep it from becoming a second title
+// rule. Every case here is about the ANCHOR test, and every one of them asserts that the placement
+// is still order's: the score can add a weld and can never add a pair.
+
+/** One side numbered 1 to N and titled by position, which is how every fixture below is built. */
+const titledSide = (prefix: string, titles: readonly string[]): SideEpisode[] =>
+  titles.map((name, index) => side(`${prefix}-${index + 1}`, index + 1, null, [name]))
+
+// A SCORE NEVER PLACES A ROW, which is the whole safety argument. Two scored anchors sit next to each
+// other, so no bracket has anything between them and the surplus is zero, and rule 3 mints NOTHING:
+// the anchors ride out with the rows order placed or not at all.
+// Mutation: mint on `anchored.length` alone in `pairsBySequence` and these two welds become two
+// pairs on a similarity score, which is the Blue Exorcist shape and exactly what rule 2 is refused
+// for on a retranslating origin.
+test('a scored anchor proposes and never places: two of them with nothing between mint nothing', () => {
+  const reference = titledSide('anizip:sc', ['Alpha Beta Gamma', 'Delta Epsilon Zeta', 'Eta Theta Iota', 'Kappa Lambda Mu'])
+  const theirs = titledSide('nf:sc', ['Alpha Beta Gamma Extra', 'Delta Epsilon Zeta Extra', 'Unrelated Three', 'Unrelated Four'])
+
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number, anchor.scored?.score]))
+    .toEqual([[1, 1, 0.857], [2, 2, 0.857]])
+  expect(sequence.alignment.scored, 'both anchors are welds, and the exact rule found none').toBe(2)
+  expect(sequence.alignment.matches).toBe(0)
+  expect(sequence.forced, 'adjacent anchors bracket nothing').toEqual([])
+  expect(sequence.closure, 'and a surplus of zero closes nothing').toEqual([])
+  expect(sequence.pairs, 'so order placed no row and rule 3 says nothing at all').toEqual([])
+  expect(decideCandidate({ runLength: 4, reference, candidate: { retranslates: true, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'retranslates' })
+  // `no-anchors` rather than `no-titles`: two welds and no equality is BELOW the anchor minimum, so
+  // the refusal names the absence rather than a bar that was weighed (`minAnchorsFor`)
+  expect(decideCandidate({ runLength: 4, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-anchors' })
+
+  // THE CONTROL: the same two sides with one more row between the anchors on each side, which IS a
+  // bracket, and a third weld so the alignment clears `MIN_SCORED_ANCHORS`. The anchors then ride
+  // out with the row order placed.
+  const wider = titledSide('anizip:sd', ['Alpha Beta Gamma', 'Middle Slot', 'Delta Epsilon Zeta', 'Eta Theta Iota'])
+  const theirsWider = titledSide('nf:sd', [
+    'Alpha Beta Gamma Extra', 'Their Own Middle', 'Delta Epsilon Zeta Extra', 'Eta Theta Iota Extra',
+  ])
+  const bracketed = pairsBySequence(wider, theirsWider)
+  expect(bracketed.forced.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[2, 2]])
+  expect(bracketed.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual([[1, 1], [2, 2], [3, 3], [4, 4]])
+  expect(bracketed.pairs.map(pair => pair.evidence)).toEqual([
+    { scored: stripTitle('Alpha Beta Gamma Extra'), onto: stripTitle('Alpha Beta Gamma'), score: 0.857 },
+    { between: ['nf:sd-1', 'nf:sd-3'] },
+    { scored: stripTitle('Delta Epsilon Zeta Extra'), onto: stripTitle('Delta Epsilon Zeta'), score: 0.857 },
+    { scored: stripTitle('Eta Theta Iota Extra'), onto: stripTitle('Eta Theta Iota'), score: 0.857 },
+  ])
+})
+
+// THREE WELDS, NOT TWO, WHERE NO EQUALITY HOLDS THE ALIGNMENT DOWN (`MIN_SCORED_ANCHORS`).
+// The input is the probe that disproved this file's first claim: with zero exact anchors, two welds
+// at one offset and an equal gap between them, rule 3 minted FOUR pairs, two of them the welds
+// themselves and two of them forced by an offset that came only from those two similarities. The
+// bracket reads no title, but the offset it counts in is the anchors', so two votes for one offset
+// is not a measurement.
+// Mutation: `minAnchorsFor` returning `MIN_ALIGNED` unconditionally and the first alignment below
+// mints [[1,2],[2,3],[3,4],[4,5]], which is the Blue Exorcist shape refitted from two votes.
+test('an offset no exact equality corroborates needs three welds, not two', () => {
+  expect([MIN_ALIGNED, MIN_SCORED_ANCHORS], 'the two minimums, and the second is the one under test')
+    .toEqual([2, 3])
+  const reference = titledSide('anizip:mn', [
+    'Alpha Report Filed', 'The Black Swordsman', 'Filler Number Three', 'Filler Number Four',
+    'The Red Nosed Reindeer', 'Omega Report Filed',
+  ])
+  const theirs = titledSide('nf:mn', [
+    'The Black Swordsman Returns', 'Their Own Second Row', 'Their Own Third Row', 'The Red Nosed Reindeer Again',
+  ])
+
+  // the two welds are real, the bracket between them counts two rows on each side, and the gate
+  // still mints nothing, which is the whole of the fix
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number, anchor.scored?.score]))
+    .toEqual([[1, 2, 0.857], [4, 5, 0.889]])
+  expect([sequence.alignment.scored, sequence.alignment.matches]).toEqual([2, 0])
+  expect(sequence.forced.map(pair => [pair.fromNumber, pair.toNumber]),
+    'the bracket did force rows, so this is the gate refusing and not an empty bracket')
+    .toEqual([[2, 3], [3, 4]])
+  expect(sequence.pairs, 'two welds and no equality: below MIN_SCORED_ANCHORS, so nothing is minted').toEqual([])
+  expect(decideCandidate({ runLength: 6, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-anchors' })
+
+  // THE CONTROL, so the bar is a bar and not a switch: one more weldable row, three welds agreeing
+  // on the same offset, and the same alignment mints
+  const third = titledSide('nf:mo', [
+    'The Black Swordsman Returns', 'Their Own Second Row', 'Filler Number Four Extra', 'The Red Nosed Reindeer Again',
+  ])
+  const passes = pairsBySequence(reference, third)
+  expect(passes.alignment.scored).toBe(3)
+  expect(passes.pairs.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[1, 2], [2, 3], [3, 4], [4, 5]])
+
+  // AND ONE EXACT ANCHOR IS ENOUGH TO DROP BACK TO TWO, which is the fifth pairing the live corpus
+  // unlocks (Blue Exorcist season 3: one exact anchor, one weld, one row forced between them)
+  const withExact = titledSide('nf:mp', [
+    'The Black Swordsman Returns', 'Their Own Second Row', 'Filler Number Four', 'Their Own Fourth Row',
+  ])
+  const corroborated = pairsBySequence(reference, withExact)
+  expect(corroborated.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number, Boolean(anchor.scored)]))
+    .toEqual([[1, 2, true], [3, 4, false]])
+  expect(corroborated.pairs.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[1, 2], [2, 3], [3, 4]])
+})
+
+// THE WINDOW IS PART OF THE GATE, because `pairsBySequence` counts before it and `decideCandidate`
+// applies it after. The probe: two welds inside `1..runLength` and every row the closure placed
+// above it, so the pairs left standing were the two similarities and nothing order placed.
+// Mutation: drop `placedInWindow` from the two conditions in `decideCandidate` and this returns
+// `ok: 'sequence'` with the two weld pairs, on an alignment where order placed nothing that counts.
+test('an order-placed row outside the run is not a row order placed', () => {
+  // our own numbering runs past `runLength`, which is reachable: `reference` is filtered by origin
+  // membership and only its COUNT is checked against the run, never its numbering
+  const reference = [
+    ...titledSide('anizip:wd', [
+      'Alpha Beta Gamma', 'Delta Epsilon Zeta', 'Eta Theta Iota', 'Kappa Lambda Mu', 'Nu Xi Omicron',
+    ]),
+    side('anizip:wd-s1', null, '2026-07-10', ['Guardian Fitz']),
+  ]
+  const theirs = titledSide('nf:wd', [
+    'Alpha Beta Gamma Extra', 'Delta Epsilon Zeta Extra', 'Eta Theta Iota Extra', 'Fitz the Guardian',
+    'Their Own Fifth Row', 'Their Own Sixth Row',
+  ])
+
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.scored, 'three welds, so MIN_SCORED_ANCHORS is not what refuses here').toBe(3)
+  expect(sequence.closure.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[5, 4], [6, 5]])
+  expect(sequence.pairs.map(pair => [pair.fromNumber, pair.toNumber]),
+    'before the window, order placed two rows and rule 3 speaks')
+    .toEqual([[1, 1], [2, 2], [3, 3], [5, 4], [6, 5]])
+
+  // runLength 3 puts both rows the closure placed outside the run, leaving three welds inside it
+  expect(decideCandidate({ runLength: 3, reference, candidate: { retranslates: true, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'retranslates' })
+  expect(decideCandidate({ runLength: 3, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-titles' })
+
+  // THE CONTROL: the same two sides against the whole run, where those rows are inside the window
+  // and rule 3 speaks, so the rig can express the verdict it refuses above
+  const verdict = decideCandidate({ runLength: 5, reference, candidate: { retranslates: true, episodes: theirs } })
+  expect(verdict.ok && verdict.rule).toBe('sequence')
+  expect(verdict.ok && verdict.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual([[1, 1], [2, 2], [3, 3], [5, 4], [6, 5]])
+  expect(verdict.ok && verdict.sequence?.scored).toBe(3)
+})
+
+// A WELD NAMES THE ROW WHOSE TITLE CARRIED THE KEY, which is what `Anchor.to` is documented as and
+// what 3.2 traces show. Several origins describe one number, so the key that won the score can
+// belong to any of them.
+// Mutation: `to: canonical[best.index]!.rows[0]!` in `scoredAnchors` and the anchor names
+// `anizip:tn-2`, whose only title shares no token with the evidence's `onto`.
+test('a scored anchor names the reference row whose title carried the key', () => {
+  const reference = [
+    side('anizip:tn-1', 1, null, ['Alpha One Marker']),
+    // two origins at number 2, and the winning key belongs to the SECOND of them by uri
+    side('anizip:tn-2', 2, null, ['Totally Different Words Here']),
+    side('kitsu:tn-2', 2, null, ['The Black Swordsman']),
+    side('anizip:tn-3', 3, null, ['Omega Three Marker']),
+  ]
+  const theirs = titledSide('nf:tn', ['Unshared One', 'The Black Swordsman Returns', 'Unshared Three'])
+
+  const anchors = alignByTitle(reference, theirs).anchors
+  expect(anchors.map(anchor => [anchor.from.uri, anchor.to.uri, anchor.to.number]))
+    .toEqual([['nf:tn-2', 'kitsu:tn-2', 2]])
+  expect(anchors[0]!.scored).toEqual({ onto: stripTitle('The Black Swordsman'), score: 0.857 })
+  // the key the evidence names is a key of the row the anchor names, which is the property
+  expect(anchors[0]!.to.keys.map(stripTitle)).toContain(anchors[0]!.scored!.onto)
+})
+
+// THE MARGIN REFUSES AMBIGUITY RATHER THAN RESOLVING IT, pinned on the case the constant was
+// measured from: Mushoku Tensei's Netflix season 3, where `Rage, Mad Dog` scores 0.667 against our
+// `Howl, Mad Dog` and 0.571 against our `Burn Bright, Mad Dog`. Truth is N onto N, so the higher
+// score is the WRONG neighbour, and the margin refuses the row rather than picking between the two.
+// Order then places it anyway through the bracket, so the ambiguity costs the pairing nothing.
+// Mutation: drop the margin test in `scoredAnchors` and their row 4 welds onto our 3, which mints
+// the wrong pair [4, 3], loses the two rows the bracket forced, and leaves two regions refused.
+test('the margin refuses the Mushoku season 3 ambiguity, and order places the row anyway', () => {
+  const reference = titledSide('anizip:md', [
+    'The Search for Nanahoshi', 'Rudeus Returns', 'Howl, Mad Dog', 'Burn Bright, Mad Dog',
+    'The Labyrinth of Teleportation', 'The Water God\'s Wrath',
+  ])
+  const theirs = titledSide('nf:md', [
+    'Nanahoshi Search', 'Rudeus Returns', 'A Quiet Night', 'Rage, Mad Dog',
+    'Teleportation Labyrinth', 'Wrath of the Water God',
+  ])
+
+  // THE PREMISE, measured rather than asserted: the two candidates are 0.095 apart, which no floor
+  // can separate and the margin refuses outright
+  const best = titleDice(stripTitle('Rage, Mad Dog'), stripTitle('Howl, Mad Dog'))
+  const second = titleDice(stripTitle('Rage, Mad Dog'), stripTitle('Burn Bright, Mad Dog'))
+  expect([Math.round(best * 1000) / 1000, Math.round(second * 1000) / 1000]).toEqual([0.667, 0.571])
+  expect(best, 'the wrong neighbour clears the floor on its own').toBeGreaterThan(SCORED_ANCHOR_FLOOR)
+  expect(best - second, 'and is not clear of the true one').toBeLessThan(SCORED_ANCHOR_MARGIN)
+
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number]))
+    .toEqual([[1, 1], [2, 2], [5, 5], [6, 6]])
+  expect(sequence.alignment.anchors.filter(anchor => !anchor.scored).map(anchor => anchor.from.number),
+    'one exact anchor, which is why the fallback ran at all').toEqual([2])
+  expect(sequence.alignment.anchors.some(anchor => anchor.from.number === 4),
+    '`Rage, Mad Dog` is no anchor').toBe(false)
+  // and the row is placed by ORDER, onto the true slot the score ranked second
+  expect(sequence.forced.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[3, 3], [4, 4]])
+  expect(sequence.forced[1]!.evidence).toEqual({ between: ['nf:md-2', 'nf:md-5'] })
+  expect(sequence.unequal).toBe(0)
+  expect(sequence.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]])
+})
+
+// AN EXACT MATCH IS AN ANCHOR AT ANY MARGIN, so the change can only ADD anchors. Two ways a looser
+// test could take one away, and neither is allowed: the margin never reads an exact match, and a
+// scored proposal that CROSSES an exact anchor is dropped before the monotone filter could prefer it.
+// Mutation: apply the floor and the margin to the exact matches too and the near-tied `(Part 1)`
+// anchor below is refused, which is the 23 of 1600 exact agreements the corpus sweep measured losing;
+// drop `clearsAnchors` and the two crossing welds below beat the exact anchor 2 to 1 on length and
+// the anchor the shipped rule holds is GONE.
+test('an exact match is an anchor at any margin, and no score displaces one', () => {
+  // the near tie, from the corpus sweep: `(Part 1)` and `(Part 2)` are 0.857 apart by Dice, a gap of
+  // 0.143, which is inside the margin
+  const parts = titledSide('anizip:pt', [
+    'Zeta Nine Marker', 'The Knight\'s Festival of the Hunt (Part 1)',
+    'The Knight\'s Festival of the Hunt (Part 2)', 'Omega Twelve Marker',
+  ])
+  const theirPart = titledSide('jw:pt', ['Unshared One', 'The Knight\'s Festival of the Hunt (Part 1)'])
+  const nearTie = titleDice(
+    stripTitle('The Knight\'s Festival of the Hunt (Part 1)'),
+    stripTitle('The Knight\'s Festival of the Hunt (Part 2)')
+  )
+  expect(Math.round(nearTie * 1000) / 1000).toBe(0.857)
+  expect(1 - nearTie, 'an exact match with a neighbour inside the margin').toBeLessThan(SCORED_ANCHOR_MARGIN)
+  const held = alignByTitle(parts, theirPart)
+  expect(held.anchors.map(anchor => [anchor.from.number, anchor.to.number, Boolean(anchor.scored)]))
+    .toEqual([[2, 2, false]])
+
+  // THE CROSSING WELDS: two rows of theirs score high onto our 5 and 6 while an exact anchor sits at
+  // our 2, so a chain of the two welds is LONGER than the chain holding the anchor
+  const reference = titledSide('anizip:cr', [
+    'Alpha Beta Gamma', 'Delta Epsilon Zeta', 'Eta Theta Iota', 'Kappa Lambda Mu', 'Nu Xi Omicron', 'Pi Rho Sigma',
+  ])
+  const crossing = titledSide('nf:cr', ['Nu Xi Omicron Extra', 'Pi Rho Sigma Extra', 'Delta Epsilon Zeta'])
+  const alignment = alignByTitle(reference, crossing)
+  expect(alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number, Boolean(anchor.scored)]),
+    'the exact anchor, and neither weld').toEqual([[3, 2, false]])
+  expect(alignment.scored).toBe(0)
+  expect(pairsBySequence(reference, crossing).pairs, 'one anchor brackets nothing').toEqual([])
+
+  // THE CONTROL: the same two welds the other way round, which cross nothing, and they are admitted
+  const straight = titledSide('nf:cs', ['Delta Epsilon Zeta', 'Nu Xi Omicron Extra', 'Pi Rho Sigma Extra'])
+  expect(alignByTitle(reference, straight).anchors.map(anchor => [anchor.from.number, anchor.to.number]))
+    .toEqual([[1, 2], [2, 5], [3, 6]])
+})
+
+// ONE NUMBER, ONE ROW, for a score exactly as for an exact title, and the interesting case is a
+// number an exact match reached and the MONOTONE FILTER then dropped. `single` rather than the
+// surviving anchors decides what is taken, so an equality that lost to a crossing one still holds its
+// number against a weld: the reason it is not an anchor is that it crosses, which is no licence.
+// Mutation: drop the `takenSlots` test and the third row below welds onto our 5, which their row 1
+// proved exactly, giving two anchors where the shipped rule has one and a refused region where it has
+// none. `clearsAnchors` cannot catch this one: the anchor it would displace is not in the set it
+// checks against, which is exactly why both guards exist.
+test('a number an exact title reached is no anchor for a score, even a dropped one', () => {
+  const reference = titledSide('anizip:tk', [
+    'Alpha One Marker', 'Delta Epsilon Zeta', 'Eta Theta Iota', 'Kappa Lambda Mu', 'Nu Xi Omicron', 'Pi Rho Sigma',
+  ])
+  // their 1 and 2 are exact and CROSS, so one of the two matches survives the monotone filter and the
+  // other is dropped while still owning its number
+  const theirs = titledSide('cr:tk', ['Nu Xi Omicron', 'Delta Epsilon Zeta', 'Nu Xi Omicron Extra'])
+
+  const alignment = alignByTitle(reference, theirs)
+  expect(alignment.matches, 'two exact unique matches, which disagree about the order').toBe(2)
+  expect(alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number, Boolean(anchor.scored)]))
+    .toEqual([[2, 2, false]])
+  expect(alignment.scored).toBe(0)
+  expect(pairsBySequence(reference, theirs).unequal, 'and no region was even reached').toBe(0)
+
+  // THE CONTROL: the same weld with the exact matches gone, which is admitted, so the rig can express
+  // the anchor it refuses above
+  const alone = titledSide('cr:tl', ['Unshared One', 'Unshared Two', 'Nu Xi Omicron Extra'])
+  expect(alignByTitle(reference, alone).anchors.map(anchor => [anchor.from.number, anchor.to.number, anchor.scored?.score]))
+    .toEqual([[3, 5, 0.857]])
+
+  // TWO SCORED ROWS ONTO ONE NUMBER: both clear the floor and both are clear of their own runner-up,
+  // and the number they share names neither.
+  // Mutation: drop the claims filter over the proposals and it anchors whichever row the scan reached
+  // first, which is an arrival-order answer to an identity question.
+  const shared = titledSide('anizip:nk', ['Unshared One', 'Alpha Beta Gamma', 'Kappa Lambda'])
+  const doubled = titledSide('nf:nk', ['Alpha Beta Gamma Delta', 'Alpha Beta Gamma Epsilon', 'Distinct Third Row'])
+  expect(alignByTitle(shared, doubled).anchors).toEqual([])
+  expect(alignByTitle(shared, doubled).scored).toBe(0)
+
+  // THE CONTROL: one of the two rows alone, which anchors
+  expect(alignByTitle(shared, [doubled[0]!, doubled[2]!]).anchors.map(anchor => [anchor.from.number, anchor.to.number]))
+    .toEqual([[1, 2]])
+})
+
+// THE CONSTANTS THEMSELVES, and the measurements they were chosen from, so a scorer swap or a moved
+// threshold reddens a case rather than quietly changing what welds. Every number here was measured
+// on 2026-09-13; the calibration behind them is in the constants' own doc comments.
+// Mutation: swap `titleDice` for any other scorer and the five values below change; move either
+// constant and one of the four comparisons flips.
+test('the floor and the margin are the calibrated pair, on token Dice', () => {
+  expect([SCORED_ANCHOR_FLOOR, SCORED_ANCHOR_MARGIN]).toEqual([0.6, 0.15])
+  const dice = (a: string, b: string): number =>
+    Math.round(titleDice(stripTitle(a), stripTitle(b)) * 1000) / 1000
+  // ORDER IS FREE, which is the retranslation shape 3.4a's own token match was written for
+  expect(dice('Guardian Fitz', 'Fitz Guardian')).toBe(1)
+  // and the real pair off that season, where Netflix also carries an article ani.zip does not
+  expect(dice('Fitz the Guardian', 'Guardian Fitz')).toBe(0.8)
+  // one word of four replaced, which is what the floor admits
+  expect(dice('The Nijimura Brothers, Part 2', 'The Nijimura Brothers, Part 1')).toBe(0.8)
+  // a genuine retranslation of the same episode, which it does NOT admit: `Unwilling to Die` against
+  // `I Don't Want to Die` is 0.5, and that row is placed by the bracket instead
+  expect(dice('Unwilling to Die', 'I Don\'t Want to Die')).toBe(0.5)
+  // two unrelated episodes of one season, which is the hazard the floor is set against: 21.8% of the
+  // recorded page's titled rows have a NEIGHBOUR clearing 0.34, and 42% of the Netflix ones do
+  expect(dice('A Quiet Night', 'The Water God\'s Wrath')).toBe(0)
+  expect(dice('This Feeling', 'These Feelings'), 'and Dice is a TOKEN measure, so a plural is a miss').toBe(0)
+
+  // AND THE FLOOR REFUSES, rather than merely scoring low: the 0.5 pair anchors NOTHING, which is
+  // what leaves it to the bracket in the measured season above.
+  // Mutation: drop the floor test in `scoredAnchors` and the retranslated row welds on 0.5, which is
+  // a score placing a row against a field it never cleared
+  const reference = titledSide('anizip:fl', ['Alpha One Marker', 'I Don\'t Want to Die', 'Omega Nine Marker'])
+  const under = titledSide('nf:fl', ['Unshared One', 'Unwilling to Die', 'Unshared Three'])
+  expect(alignByTitle(reference, under).anchors).toEqual([])
+  // THE CONTROL: the same row rewritten to clear the floor, which welds
+  const over = titledSide('nf:fm', ['Unshared One', 'I Do Not Want to Die', 'Unshared Three'])
+  expect(alignByTitle(reference, over).anchors.map(anchor => [anchor.from.number, anchor.to.number, anchor.scored?.score]))
+    .toEqual([[2, 2, 0.727]])
 })
 
 // ---------------------------------------------------------------------------------------------

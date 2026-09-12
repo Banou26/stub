@@ -20,9 +20,21 @@
  * RULE 3 IS ALLOWED WHERE RULE 2 IS REFUSED, `retranslates` INCLUDED, and 3.4a gives the argument:
  * rule 2 is refused for a retranslating origin because it mints on a COVERAGE SCORE, and a score can
  * be wrong while looking strong (Netflix, 4 exact of 25, the best wrong pair outscoring the true one,
- * 2026-09-10). Rule 3 consults titles only for EXACT, UNIQUE, NON-GENERIC equality and places every
- * pair beyond those by ORDER, so a retranslated title cannot produce a pair: it can only fail to
- * become an anchor.
+ * 2026-09-10). Rule 3 reads titles to ANCHOR and never to place: an anchor is exact, unique,
+ * non-generic equality, or, only where those cannot bracket at all, a scored similarity that clears
+ * `SCORED_ANCHOR_FLOOR` by `SCORED_ANCHOR_MARGIN` over its own runner-up (2026-09-13). Every pair
+ * beyond the anchors is placed by ORDER: no row is ever paired by comparing its own title to
+ * anything, and the gate mints nothing unless order placed a row inside the run.
+ *
+ * BE PRECISE ABOUT WHAT THAT DOES NOT SAY, because the first version of this header said the stronger
+ * thing and an executed probe disproved it. A weld WRITES ITS OWN ANCHOR PAIR, exactly as an exact
+ * match does, and where no exact anchor survives, the offset the bracket counts in came from scores
+ * alone. So the distinction from the failure this file was written against is not "a score places
+ * nothing": it is that the title-vote offset fitted ONE global offset out of title votes, a minority
+ * of which could carry it, and placed every row by it, where here an offset no equality corroborates
+ * needs `MIN_SCORED_ANCHORS` welds that agree on it, each weld has to clear the floor and the margin
+ * and take a number nothing else reached, every bracket has to count the same number of rows on each
+ * side, and `scheduleSkew` is asked about the answer.
  *
  * PAIRS ARE ONLY EVER ONTO AN EXISTING MEMBER EPISODE, inside `1..runLength`. That is what lets a
  * date pair skip the two-witness bar a count-based loan needed (`consensus.ts:171,234`): the loan was
@@ -67,7 +79,7 @@ import { stripTitle } from '../../../sources/utils'
 import { RETRANSLATING_ORIGINS } from './origins'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const RANGE_VERSION = 3
+export const RANGE_VERSION = 4
 
 /**
  * Two pairs or nothing (`consensus.ts:111`).
@@ -90,8 +102,9 @@ export const DAY_SLACK = 1
  * Why nothing was minted for a candidate, written onto its refused `LINK` row so it is queryable.
  *
  * `no-anchors` and `unequal-gap` are rule 3's own two, and they say which half of the alignment
- * failed: no anchor to bracket from (Netflix's season 1, 24 placeholder titles, 3.4a point 4), or
- * anchors whose bracket counted a different number of rows on each side.
+ * failed: no anchor to bracket from, the scored fallback included, so it names a candidate no title
+ * reached exactly and none scored clear of its neighbours either (Netflix's season 1, 24 placeholder
+ * titles, 3.4a point 4); or anchors whose bracket counted a different number of rows on each side.
  */
 export type RangeRefusal =
   'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles' | 'date-skew' | 'no-anchors' | 'unequal-gap'
@@ -113,16 +126,19 @@ export type SideEpisode = {
 /**
  * HOW one pair was placed, which is the whole of a trace's answer to "why is this button here" (3.2).
  *
- * One shape per rule, and rule 3 carries three of its own because it places a row three different
+ * One shape per rule, and rule 3 carries four of its own because it places a row four different
  * ways: `day` and `slack` are rule 1's, `key` is rule 2's exact title match, `anchor` is rule 3's
- * (the key that anchored it), `between` names the two anchors whose equal-gap bracket forced a row
- * that no title reached, and `closed` names the specials whose location closed the alignment (3.4a),
- * which is empty for nothing, since a closure needs at least one.
+ * exact one (the key that anchored it), `scored` is rule 3's SCORED anchor (their key, our key, and
+ * the token Dice between them, so a trace can tell a weld from an equality at a glance), `between`
+ * names the two anchors whose equal-gap bracket forced a row that no title reached, and `closed`
+ * names the specials whose location closed the alignment (3.4a), which is empty for nothing, since a
+ * closure needs at least one.
  */
 export type PairEvidence =
   | { day: number, slack: number }
   | { key: string }
   | { anchor: string }
+  | { scored: string, onto: string, score: number }
   | { between: [string, string] }
   | { closed: string[] }
 
@@ -334,7 +350,7 @@ export type CanonicalEpisode = {
   rows: SideEpisode[]
 }
 
-/** One ANCHOR: their row and our number, joined by a key that is exact, unique and non-generic on both sides. */
+/** One ANCHOR: their row and our number, joined by a key that is exact, or scored above the floor. */
 export type Anchor = {
   from: SideEpisode
   /** The reference row whose title carried the key, which is the row the pair NAMES. */
@@ -342,7 +358,10 @@ export type Anchor = {
   /** Position in the alignment's own two lists. Order, and nothing else, places every other pair. */
   fromIndex: number
   toIndex: number
+  /** Their key. On an exact anchor it is ours as well, which is what `scored` being absent says. */
   key: string
+  /** Present only on a SCORED anchor: OUR key it beat the field with, and the token Dice it reached. */
+  scored?: { onto: string, score: number }
 }
 
 /** The two ordered lists rule 3 reads, the anchors it found in them, and the run's specials. */
@@ -356,6 +375,12 @@ export type Alignment = {
   anchors: Anchor[]
   /** Exact unique matches before the monotone filter, so a crossing one is countable rather than silent. */
   matches: number
+  /**
+   * How many of `anchors` were SCORED rather than exact, which is 0 on every alignment the exact
+   * anchors could bracket by themselves. It rides the `INCLUDES` evidence: a range proven off welded
+   * anchors is a different claim from one proven off equalities, and a query has to be able to ask.
+   */
+  scored: number
 }
 
 const pairOnto = (from: SideEpisode, slot: CanonicalEpisode, evidence: PairEvidence): Pair => ({
@@ -395,6 +420,239 @@ const longestMonotone = (matches: readonly Anchor[]): Anchor[] => {
 }
 
 /**
+ * TOKEN DICE over two `stripTitle` keys: twice the tokens they share, over the two token counts.
+ *
+ * WHY THIS SCORER AND NOT THE REPO'S OWN. Two were measured against the episode-pair labels of
+ * `tests/corpus/cases` on 2026-09-13, over 190 oriented list pairs and 1624 exact anchors, 91 cells
+ * each. Dice CONTRADICTED a label at none of its 91 cells, margin 0 included; `titleSimilarity`
+ * (frizbee) contradicted 5, every one of them a single-token romaji key against an English one
+ * (`kaisan` onto `sea` at 0.293, `unmei` onto `might be fun` at 0.200), which is the shape an
+ * episode title takes far more often than a show title does. Dice scores all five of those pairs 0.
+ * `bestTitleScore` was ruled out outright: over 400 distinct Netflix episode titles its
+ * `franchiseTitle` pass rewrites 36 and COLLAPSES 19 onto another title of the same show
+ * (`The Nijimura Brothers, Part 1` == `Part 2` == `Part 3`), deleting the only thing separating two
+ * episodes.
+ *
+ * It is also the only one of the three that keeps this file's promise above: pure, synchronous, a
+ * function of the two lists alone. frizbee is an async wasm init.
+ */
+export const titleDice = (a: string, b: string): number => {
+  const left = new Set(a.split(' ').filter(Boolean))
+  const right = new Set(b.split(' ').filter(Boolean))
+  if (!left.size || !right.size) return 0
+  let shared = 0
+  for (const token of left) if (right.has(token)) shared += 1
+  return (2 * shared) / (left.size + right.size)
+}
+
+/**
+ * The token Dice a key pair must REACH to propose a scored anchor: 0.6, calibrated 2026-09-13.
+ *
+ * WHAT IT RESTS ON. A live sweep over retranslating sources (Netflix unOGS titles against ani.zip
+ * canonical): 65 seasons across 33 shows, 1109 truth row pairs derived without any scorer, 68
+ * same-show hard negatives, 790 pairings, 98 cells. Plus the corpus sweep above, 190 list pairs over
+ * 59 labelled cases. Both are reproduced by
+ * `scripts/calibrate-episode-anchors.test.ts` and `scripts/calibrate-anchor-corpus.test.ts`; every
+ * figure below was re-read off a run whose TRUTH is derived by an exact-only matcher inside the
+ * harness rather than through this function, which is the only way these numbers mean anything now
+ * that `alignByTitle` welds (the first version of this comment quoted a run that had read its own
+ * output as ground truth, and four of its headline figures moved when that was fixed).
+ *
+ * THE CURVE EITHER SIDE, from the live sweep. Below, the cliff is on the NEGATIVES and not on the
+ * truth set: floor 0.55 or lower with margin 0.05 or lower lets up to 3 wrong pairings speak and
+ * mints up to 28 wrong pairs (Sword Art Online season 3 welded onto the season 1 run, 2 anchors and
+ * 2 rows placed, at 0.50/0.05), while floor 0.60 or more is 0 wrong at every margin tried. Above, the
+ * cliff is recall: novel anchor recall 60.6% at 0.60, 56.7% at 0.70, 50.6% at 0.80, 27.7% at 0.90,
+ * 2.2% at 0.95. Truth-set precision is 100% from floor 0.40 up at every margin, so precision alone
+ * would have picked a much lower floor and the negatives are what forbid it.
+ *
+ * AND IT IS NOW MEASURED ON THIS SCORER, which it was not when the constant was chosen. The grid
+ * above ran on frizbee `titleSimilarity` and 0.60 was carried across by a hazard-curve coincidence,
+ * which was an inference. The same 98 cells were then swept on token Dice over the same truth set
+ * and the same 68 negatives: Dice is the SAFER of the two by a wide margin, with 0 wrong anchors and
+ * 0 negatives speaking at every cell whose margin is 0.05 or more, the only damage anywhere being
+ * margin 0 at floors 0.35 and 0.40 (one wrong pairing, 6 wrong pairs: Food Wars season 3 welded onto
+ * the Second Plate run). At the shipped cell: 1000 anchors proposed, 0 wrong, novel anchor recall
+ * 57.1% of the 231 truth pairs no exact anchor reaches, 0 of 68 negatives speaking. So 0.60/0.15
+ * sits well inside Dice's clean region rather than on its edge, and the margin below is the guard
+ * that carries the low-floor cells rather than the floor.
+ *
+ * The hazard table that licensed the transfer is still worth keeping, because it is the only thing
+ * measured on BOTH scorers: the share of the recorded page's 2416 titled episode rows whose own
+ * NEIGHBOUR clears the floor is Dice 18.5% at 0.50, 10.6% at 0.60 and 4.8% at 0.70, against
+ * frizbee's 16.6%, 10.0% and 4.9%. It is also why a floor near the owner's hand-measured 0.34 was
+ * refused: 21.8% of rows have a neighbour that clears it, and 42% of the Netflix ones do, Netflix
+ * being the most internally confusable source on the page by a factor of two.
+ */
+export const SCORED_ANCHOR_FLOOR = 0.6
+
+/**
+ * How far a scored anchor must BEAT its own runner-up: 0.15, calibrated 2026-09-13.
+ *
+ * THE MARGIN REFUSES AMBIGUITY RATHER THAN RESOLVING IT. A row whose best two candidate numbers sit
+ * within 0.15 of each other is no anchor at all, and order then places it if a bracket reaches it, so
+ * an ambiguity costs a pair nothing. Mushoku Tensei's Netflix season 3 is the case that fixes the
+ * figure: `Rage, Mad Dog` scores 0.667 against our `Howl, Mad Dog` and 0.571 against our
+ * `Burn Bright, Mad Dog`, a gap of 0.095, and without a margin the tie-break took the wrong
+ * neighbour. 0.05 would not have caught it.
+ *
+ * WHY A SECOND GUARD AT ALL, when floor 0.60 already shows 0 wrong on both axes: a wrong weld is
+ * permanent, since union-find has no unlink, and the two guards fail independently. On the live
+ * sweep margin 0.15 or more is 0 wrong pairings at EVERY floor, including the ones the floor alone
+ * cannot save (0.50/0.05 welds SAO season 3 onto the season 1 run; 0.50/0.15 does not). 0.15 and not
+ * 0.10: margin 0.10 still lets one wrong pairing speak and mints 7 wrong pairs at floors 0.30, 0.35
+ * and 0.40. This comment said 0.10 until 2026-09-13, which the corrected run disproved.
+ *
+ * WHAT IT COSTS, measured on the corpus axis: at margin 0.15 a scored rule loses 23 of 1600 exact
+ * agreements, because the margin refuses a row whose true slot is an exact match with a near-tied
+ * neighbour (`The Knight's Festival of the Hunt (Part 1)` against `(Part 2)`, Dice 0.857, gap
+ * 0.143). NONE of that cost is paid here: exact equality never consults the floor or the margin, so
+ * the loss the corpus sweep measured is a property of the replacement it swept and not of this
+ * fallback.
+ */
+export const SCORED_ANCHOR_MARGIN = 0.15
+
+/**
+ * How many anchors an alignment that NO exact equality holds down needs before it may mint: 3.
+ *
+ * WHAT THIS GUARD IS FOR, and it is the one the first version of this change did not have. A row
+ * strictly between two anchors is placed by ORDER, which reads no title at all, but the OFFSET that
+ * order works in comes from the anchors. Where every anchor is a weld, that offset came from scores
+ * alone, and two votes for one offset is not a measurement: with zero exact anchors, two welds at
+ * one offset and an equal gap between them, the rule minted four `EPISODE_LINK` rows off two
+ * similarities (executed 2026-09-13, `The Black Swordsman Returns` onto `The Black Swordsman` at
+ * 0.857 and `The Red Nosed Reindeer Again` onto `The Red Nosed Reindeer` at 0.889, on a season that
+ * belongs to another run). That is the shape this file was written against, refitted from two votes
+ * instead of one global one.
+ *
+ * WHY THREE, AND WHY IT IS FREE HERE. Three is rule 2's own bar for a title claim
+ * (`MIN_EPISODE_TITLE_MATCHES`, `similar.ts:59`) and the bar the calibration's conservative closure
+ * demanded before it would trust an offset at all. It costs nothing measurable: on the live corpus
+ * (63 shows, 189 Netflix seasons, 790 pairings, 2026-09-13) the fallback unlocks five pairings the
+ * exact rule cannot bracket, and all five stand under this bar, four of them on welds alone with 20,
+ * 9, 8 and 6 anchors agreeing on one offset.
+ *
+ * ONE EXACT ANCHOR IS ENOUGH TO DROP BACK TO `MIN_ALIGNED`, which is why this reads
+ * `anchors.length > scored` rather than a flat three. An equality corroborates the offset the welds
+ * agree on, and the fifth unlocked pairing is exactly that shape (Blue Exorcist season 3 onto the
+ * Shimane Illuminati Saga: one exact anchor, one weld, one row forced between them).
+ */
+export const MIN_SCORED_ANCHORS = 3
+
+/**
+ * The anchor minimum THIS alignment has to clear: `MIN_ALIGNED`, or `MIN_SCORED_ANCHORS` where no
+ * anchor is an exact equality. `anchors.length > scored` is "at least one exact anchor survives".
+ */
+const minAnchorsFor = (alignment: Alignment): number =>
+  alignment.anchors.length > alignment.scored ? MIN_ALIGNED : MIN_SCORED_ANCHORS
+
+/**
+ * The best token Dice between any key of their row and any key of one canonical episode.
+ *
+ * It returns the winning reference ROW as well as the two keys, because `Anchor.to` is documented as
+ * the row whose title carried the key and that is the row the pair NAMES: several origins describe
+ * one number, and the key that won can belong to any of them.
+ */
+const bestAgainst = (
+  keys: readonly string[],
+  slot: readonly { row: SideEpisode, keys: readonly string[] }[]
+): { score: number, key: string, onto: string, row: SideEpisode | null } => {
+  let best: { score: number, key: string, onto: string, row: SideEpisode | null } =
+    { score: 0, key: '', onto: '', row: null }
+  for (const key of keys) {
+    for (const our of slot) {
+      for (const onto of our.keys) {
+        const score = titleDice(key, onto)
+        // strictly greater, over lists that are already sorted, so a tie keeps the lowest key pair
+        // and the evidence does not depend on the scan's order
+        if (score > best.score) best = { score, key, onto, row: our.row }
+      }
+    }
+  }
+  return best
+}
+
+/**
+ * Whether a proposed match sits on ONE side of every exact anchor in both of its indices.
+ *
+ * This is what makes "an exact match is an anchor at any margin" structural rather than hoped for. A
+ * proposal that crosses an exact anchor could be picked over it by the monotone filter, which would
+ * REMOVE an anchor the shipped rule holds; filtered here, every longest increasing chain of the union
+ * contains every exact anchor, because any chain missing one can be extended by it.
+ */
+const clearsAnchors = (match: Anchor, anchors: readonly Anchor[]): boolean =>
+  anchors.every(anchor =>
+    (match.fromIndex < anchor.fromIndex && match.toIndex < anchor.toIndex)
+    || (match.fromIndex > anchor.fromIndex && match.toIndex > anchor.toIndex))
+
+/**
+ * Rule 3's SCORED anchors, which is the one place a similarity is consulted (3.4a).
+ *
+ * Every one of their unanchored rows is scored against EVERY canonical number, and it proposes an
+ * anchor only when all five of these hold. Each refusal is an identity question a score cannot
+ * answer, and the first two are the calibrated pair:
+ *
+ * - the best score clears `SCORED_ANCHOR_FLOOR`;
+ * - it beats the runner-up by `SCORED_ANCHOR_MARGIN`. The runner-up is taken over ALL numbers,
+ *   sub-floor ones included, because ambiguity is about separation and not about how many candidates
+ *   happened to clear a bar;
+ * - the best number is not one an EXACT match already reached. A row whose own best is a taken
+ *   number is refused outright rather than moved down to its runner-up, which is the displacement
+ *   the corpus sweep measured: a looser test reaching a slot a correct anchor owns kills BOTH under
+ *   the one-claim-per-number rule below, so 15 exact agreements were lost at margin 0 with no wrong
+ *   placement anywhere near it;
+ * - the number is reached by ONE of their rows, exactly as an exact match must be;
+ * - it crosses no exact anchor (`clearsAnchors`).
+ */
+const scoredAnchors = (options: {
+  ordered: readonly SideEpisode[]
+  canonical: readonly CanonicalEpisode[]
+  matches: readonly Anchor[]
+  anchors: readonly Anchor[]
+}): Anchor[] => {
+  const { ordered, canonical, matches, anchors } = options
+  const takenRows = new Set(matches.map(match => match.from.uri))
+  const takenSlots = new Set(matches.map(match => match.toIndex))
+  // one key list per canonical row, built once: inside the loops below it would be re-stripped
+  // `their rows x their keys` times, which measured 109 ms on a 220 number run described by three
+  // origins against 100 rows
+  const slots = canonical.map(slot => slot.rows.map(row => ({ row, keys: anchorKeysOf(row) })))
+
+  const proposed: Anchor[] = []
+  ordered.forEach((row, fromIndex) => {
+    if (takenRows.has(row.uri)) return
+    const keys = anchorKeysOf(row)
+    let best = { index: -1, score: 0, key: '', onto: '', row: null as SideEpisode | null }
+    let second = 0
+    slots.forEach((slot, index) => {
+      const found = bestAgainst(keys, slot)
+      if (found.score > best.score) {
+        second = best.score
+        best = { index, score: found.score, key: found.key, onto: found.onto, row: found.row }
+      } else if (found.score > second) second = found.score
+    })
+    // `best.row` is set by any score above zero, and the floor is above zero
+    if (best.score < SCORED_ANCHOR_FLOOR || !best.row) return
+    if (best.score - second < SCORED_ANCHOR_MARGIN) return
+    if (takenSlots.has(best.index)) return
+    const match: Anchor = {
+      from: row,
+      to: best.row,
+      fromIndex,
+      toIndex: best.index,
+      key: best.key,
+      // rounded for the trace it ends up in, and only AFTER both comparisons above: the floor and
+      // the margin read the full value, and a rounded one is what stays byte-stable across passes
+      scored: { onto: best.onto, score: Math.round(best.score * 1000) / 1000 },
+    }
+    if (clearsAnchors(match, anchors)) proposed.push(match)
+  })
+  const claims = new Map<number, number>()
+  for (const match of proposed) claims.set(match.toIndex, (claims.get(match.toIndex) ?? 0) + 1)
+  return proposed.filter(match => claims.get(match.toIndex) === 1)
+}
+
+/**
  * Rule 3's first step: the ANCHORS, and the two ordered lists they sit in.
  *
  * An anchor is exact `stripTitle` equality, non-generic, and unique on each side, then MONOTONE: the
@@ -405,6 +663,32 @@ const longestMonotone = (matches: readonly Anchor[]): Anchor[] => {
  * - a key naming two different numbers of OURS (a key several rows of one number carry is that
  *   number's, however many origins spell it);
  * - a canonical number two of their rows reach, which is one row too many for one episode.
+ *
+ * THEN, AND ONLY WHERE THOSE CANNOT BRACKET AT ALL, the scored anchors of `scoredAnchors` are added
+ * (2026-09-13). It is a FALLBACK and not a replacement, and the live sweep is why: as a replacement
+ * at these constants the anchor recall rises from 66.0% to 86.5% and rule 3's OWN contribution falls
+ * by two thirds, 250 rows placed by order becoming 87, 46 of 65 pairings speaking becoming 17, 810
+ * pairs minted becoming 367. Every extra anchor consumes a row a bracket would otherwise have
+ * forced, and it is bought with no precision at all, since the exact rule is already at 0 wrong. As a
+ * fallback the same sweep keeps all 43 truth pairings the exact rule speaks on, adds 0 certainly
+ * wrong, and unlocks 5 pairings the exact rule cannot bracket at all.
+ *
+ * WHAT IT BUYS, measured on THIS CODE rather than on an emulation of it (2026-09-13, the whole 790
+ * pairing cross product, `alignByTitle` against an exact-only alignment over the same two lists,
+ * both through the gate). On the 65 truth pairings and the 68 hard negatives the two are IDENTICAL:
+ * 43 speaking, 162 rows placed, 769 pairs, 0 wrong, and 0 of the negatives speaking either way. The
+ * whole of the difference is 5 pairings the exact rule cannot bracket at all, and 78 pairs on them:
+ * Attack on Titan season 1 onto anilist 16498 (20 welds agreeing on offset 0, 25 pairs), Naruto
+ * season 6 and season 8 onto anilist 20 (offset 135 and 186, 21 and 18 pairs), Mob Psycho 100 season
+ * 3 onto 140439 (11), Blue Exorcist season 3 onto 158931 (3). None is a hard negative, and all five
+ * are corroborated by the one judge that reads no title at all: the offset each one produces closes
+ * the count surplus exactly and covers every surplus row with a dated special. Two of the five
+ * carry NO exact anchor, which is the population neither sweep could certify, so the count closure
+ * is the strongest thing said about them.
+ *
+ * So below `MIN_ALIGNED` exact anchors, which is exactly where the shipped rule mints NOTHING, the
+ * score is consulted; at or above it this function returns what it always returned, byte for byte.
+ * That is what makes the change purely additive: no pair the exact rule minted can be lost.
  *
  * Every list is sorted before it is read (their rows by number then uri, ours by number, the
  * specials by uri), so the alignment is a function of the two lists and not of the scan's order.
@@ -462,8 +746,17 @@ export const alignByTitle = (
   const claims = new Map<number, number>()
   for (const match of matches) claims.set(match.toIndex, (claims.get(match.toIndex) ?? 0) + 1)
   const single = matches.filter(match => claims.get(match.toIndex) === 1)
+  const exact = longestMonotone(single)
+  const found = { theirs: ordered, canonical, specials, matches: single.length }
+  if (exact.length >= MIN_ALIGNED) return { ...found, anchors: exact, scored: 0 }
 
-  return { theirs: ordered, canonical, specials, anchors: longestMonotone(single), matches: single.length }
+  // THE FALLBACK. `single` rather than `exact` decides what is taken, so a match the monotone filter
+  // dropped still holds its row and its number against the score: it is an exact equality, and the
+  // reason it is not an anchor is that it crosses another one, which is not a licence to weld it
+  const scored = scoredAnchors({ ordered, canonical, matches: single, anchors: exact })
+  const union = [...exact, ...scored].sort((a, b) => a.fromIndex - b.fromIndex)
+  const anchors = longestMonotone(union)
+  return { ...found, anchors, scored: anchors.filter(anchor => anchor.scored).length }
 }
 
 /**
@@ -655,6 +948,17 @@ export type SequencePairing = {
  * fold whose titles happen to be shared. So the anchors ride out with the forced rows or not at all:
  * what rule 3 adds, and the only thing it adds, is the rows no title reaches.
  *
+ * WHAT THE GATE DOES AND DOES NOT DO FOR A SCORED ANCHOR (2026-09-13, corrected the same day). It
+ * mints nothing unless ORDER placed at least one row, so a weld can never ride out alone on its own
+ * similarity, and no row is ever paired by comparing its own title to anything. It does NOT make a
+ * weld pairless: a weld writes its own anchor pair exactly as an exact match writes one, and where
+ * every anchor is a weld the offset the bracket then counts in came from scores. So the guards
+ * against a wrong weld are the calibrated floor and margin, `MIN_SCORED_ANCHORS` above (three
+ * agreeing welds where no equality corroborates the offset), the one-row-per-number filters, the
+ * equal-gap arithmetic, and `scheduleSkew` over the result. The gate is a necessary condition, not
+ * the safety argument, and this comment said otherwise until an executed probe minted four rows off
+ * two score votes.
+ *
  * The three steps are separate exported functions because each is a different kind of claim: the
  * anchors are a title measurement, the brackets are arithmetic over one order, and the closure is an
  * argument about a surplus. `reference` is the run's own rows, exactly as rules 1 and 2 read them,
@@ -666,14 +970,16 @@ export const pairsBySequence = (
   theirs: readonly SideEpisode[]
 ): SequencePairing => {
   const alignment = alignByTitle(reference, theirs)
-  const anchored = alignment.anchors.length < 2
+  const anchored = alignment.anchors.length < minAnchorsFor(alignment)
     ? []
     : alignment.anchors.map(anchor => ({
       from: anchor.from,
       to: anchor.to,
       fromNumber: anchor.from.number!,
       toNumber: anchor.to.number!,
-      evidence: { anchor: anchor.key },
+      evidence: anchor.scored
+        ? { scored: anchor.key, onto: anchor.scored.onto, score: anchor.scored.score }
+        : { anchor: anchor.key },
     } satisfies Pair))
   const bracket = forcedByBracket(alignment)
   const closure = closeWithSpecials({ alignment, unequal: bracket.unequal })
@@ -727,7 +1033,15 @@ export type Verdict =
      * Counted BEFORE the window, where `pairs` is counted after it: the numbers describe what the
      * alignment found, and `Hull.aligned` is what was minted out of it.
      */
-    sequence?: { anchors: number, forced: number, closure: number, unequal: number, closed: boolean }
+    sequence?: {
+      anchors: number
+      /** How many of `anchors` were SCORED rather than exact equalities, which a trace has to know. */
+      scored: number
+      forced: number
+      closure: number
+      unequal: number
+      closed: boolean
+    }
   }
   | { ok: false, reason: RangeRefusal }
 
@@ -738,21 +1052,22 @@ export type Verdict =
  * | --- | --- |
  * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window and they are not a skew |
  * | `titles` | rule 1 did not, the candidate's origin does not retranslate, and rule 2 cleared both halves of its bar |
- * | `sequence` | neither did, and rule 3's alignment placed a row by ORDER: two or more anchors, at least one row forced by a bracket or by 3.4a's closure, `MIN_ALIGNED` pairs inside the window, and not the same offset rule 1 refused as a skew |
+ * | `sequence` | neither did, and rule 3's alignment placed a row by ORDER: `minAnchorsFor` anchors, at least one row forced by a bracket or by 3.4a's closure AND still inside the window, `MIN_ALIGNED` pairs inside the window, and not the same offset rule 1 refused as a skew |
  * | `retranslates` | nothing was proven and rule 2 was refused outright (Netflix, 4 exact of 25, the best wrong pair above the true one, 2026-09-10) |
  * | `date-skew` | rule 1's pairs were a constant offset the candidate's own numbering cannot absorb (`scheduleSkew`) and neither rule 2 nor rule 3 minted |
  * | `ambiguous-day` | rule 1 reached reference days and a day named two reference numbers |
  * | `unequal-gap` | rule 3 anchored and a bracket counted a different number of rows on each side, so order placed nothing |
- * | `no-anchors` | both sides carry non-generic titles and rule 3 found fewer than two anchors (Netflix's season 1, 3.4a point 4) |
- * | `no-titles` | both sides carry non-generic titles, rule 2 missed its bar, and rule 3 anchored with nothing to force |
+ * | `no-anchors` | both sides carry non-generic titles and rule 3 found fewer anchors than `minAnchorsFor` asks of it, which is two, or three where no exact equality holds the alignment down (Netflix's season 1, 3.4a point 4) |
+ * | `no-titles` | both sides carry non-generic titles, rule 2 missed its bar, and rule 3 anchored with nothing to force, or nothing it forced landed inside the window |
  * | `no-dates` | everything else: the date rule could not run or its days met nothing, and the title rules had no material either |
  *
  * RULE 3 RUNS THIRD, and where rule 2 is REFUSED rather than merely short of its bar. Two things fix
  * that position. It is the weakest evidence of the three, since a bracket consults no evidence at all
  * for the row it forces, and the rules are ordered by what they measure. And it is the only one that
- * may read a retranslating origin's titles, because it reads them for exact equality rather than for
- * a score (see the header), so putting it before rule 2 would let an alignment answer where a
- * coverage that cleared both halves of its bar was available.
+ * may read a retranslating origin's titles, because it reads them to ANCHOR and never to place (see
+ * the header), so putting it before rule 2 would let an alignment answer where a coverage that
+ * cleared both halves of its bar was available. A scored anchor does not move it: rule 2 mints ON a
+ * score, where rule 3 mints only what order places, and that is the whole difference between them.
  *
  * A PAIRING RULE 1 REFUSED AS A SKEW IS NOT RESURRECTED BY RULE 3. `scheduleSkew` is asked again
  * about rule 3's own pairs: an alignment that reproduces the offset the dates were refused for is
@@ -793,20 +1108,31 @@ export const decideCandidate = (options: {
 
   const sequence = pairsBySequence(reference, candidate.episodes)
   const sequenced = inWindow(sequence.pairs)
-  const sequenceSkew = sequenced.length >= MIN_ALIGNED
+  // THE GATE AGAIN, THIS TIME AFTER THE WINDOW, because `pairsBySequence` counts before it. Where
+  // every row order placed falls outside `1..runLength` the pairs left standing are the anchors
+  // alone, which for a welded alignment is a set of similarities and nothing else (executed
+  // 2026-09-13: two welds inside the window, a closure of three rows all above `runLength`, two
+  // pairs written on score evidence with no order-placed row surviving). Reachable because
+  // `reference` is filtered by origin membership and only its COUNT is checked against the run's
+  // length, never its numbering, so two reference origins that number differently put a canonical
+  // number above `runLength`
+  const placedInWindow = inWindow([...sequence.forced, ...sequence.closure]).length
+  const sequenceSkew = sequenced.length >= MIN_ALIGNED && placedInWindow
     ? scheduleSkew({ runLength, episodes: candidate.episodes, pairs: sequenced })
     : null
-  if (sequenceSkew === null && sequenced.length >= MIN_ALIGNED) {
+  if (sequenceSkew === null && sequenced.length >= MIN_ALIGNED && placedInWindow) {
     return {
       ok: true,
       rule: 'sequence',
       pairs: sequenced,
-      // NOT A SCORE, deliberately: every anchor is exact unique non-generic equality and every other
-      // pair is placed by order, so there is no ratio to report and a coverage here would be the one
-      // thing 3.4a says not to trust
+      // NOT A SCORE, deliberately, and still not one now that an anchor can be scored: every pair
+      // here is placed by ORDER, so there is no ratio to report, and a coverage would be the one
+      // thing 3.4a says not to trust. What the score did is reported as `sequence.scored` instead,
+      // where it is a count of welds rather than a confidence
       coverage: 1,
       sequence: {
         anchors: sequence.anchored.length,
+        scored: sequence.alignment.scored,
         forced: sequence.forced.length,
         closure: sequence.closure.length,
         unequal: sequence.unequal,
@@ -832,7 +1158,10 @@ export const decideCandidate = (options: {
   const titledBothSides = reference.some(episode => keysOf(episode).length)
     && candidate.episodes.some(episode => keysOf(episode).length)
   if (!titledBothSides) return { ok: false, reason: 'no-dates' }
-  return { ok: false, reason: sequence.alignment.anchors.length < 2 ? 'no-anchors' : 'no-titles' }
+  return {
+    ok: false,
+    reason: sequence.alignment.anchors.length < minAnchorsFor(sequence.alignment) ? 'no-anchors' : 'no-titles',
+  }
 }
 
 /** The `INCLUDES` range of 3.4, as literal properties: the hull of the pairs on both sides. */
