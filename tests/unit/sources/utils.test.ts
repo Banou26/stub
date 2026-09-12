@@ -162,3 +162,65 @@ describe('scope stamps', () => {
     expect(show.handles.map(handle => handle.node.scope), 'the siblings are not the container\'s to scope').not.toContain('CONTAINER')
   })
 })
+
+// An address names the sources a cluster was built from, and asserts nothing about how they relate.
+// Two ids of ONE source inside it is `disagreeingIds`' shape (src/worker/store/anomalies.ts): that
+// source names one thing once, so the pair is a union the cluster has not settled. Rebuilding a
+// SAME_AS for both made the answering source settle it, with no inverse. Measured on the recorded
+// season corpus: the JustWatch season jw:531130-580247 (One-Room TA) claimed SAME_AS to mal:64683 and
+// mal:63225 at once, and one of the three addresses carrying two mal ids held a mis-minted mal:202717.
+describe('an address naming two ids of one origin', () => {
+  test('mints neither of them, and leaves the origins it names once alone', () => {
+    const handles = buildHandlesFromUri('ag:(anilist:205068,kitsu:50932,mal:64683,mal:63225,jw:531130-580247)', 'jw')
+
+    expect(handles.map(handle => handle.node.origin), 'mal is refused whole').not.toContain('mal')
+    expect(handles.map(handle => handle.node.uri).sort()).toEqual(['anilist:205068', 'kitsu:50932'])
+  })
+
+  // The precision case, which is not a disagreement: `mostSpecific` in utils/uri.ts already prefers
+  // the season-scoped form, and refusing the pair here would throw that precision away.
+  test('keeps the most specific id when one extends the other', () => {
+    const handles = buildHandlesFromUri('ag:(anilist:108465,cr:G24H1N3MP,cr:G24H1N3MP-GS00374452)', 'anilist')
+
+    expect(handles.map(handle => handle.node.uri)).toEqual(['cr:G24H1N3MP-GS00374452'])
+    expect(handles.map(handle => handle.relation)).toEqual(['SAME_AS'])
+  })
+
+  // One-way, the same reading `disagreeingIds` takes: the shared parent must not hide the two seasons
+  // welded under it.
+  test('refuses a series id sitting between two of its own seasons', () => {
+    const handles = buildHandlesFromUri('ag:(cr:G24H1N3MP,cr:G24H1N3MP-GS00374452,cr:G24H1N3MP-GS00374453,tvmaze:52279)', 'tvmaze')
+
+    expect(handles.map(handle => handle.node.uri)).toEqual([])
+  })
+
+  test('the same id twice is not a disagreement', () => {
+    const handles = buildHandlesFromUri('ag:(mal:64683,mal:64683)', 'jw')
+
+    expect(handles.map(handle => handle.node.uri)).toEqual(['mal:64683'])
+  })
+
+  // The control for the rule not overreaching: one id per origin is minted exactly as it always was.
+  test('one id per origin still mints one handle each', () => {
+    const handles = buildHandlesFromUri('ag:(anilist:108465,kitsu:42323,mal:40748,tvmaze:52279)', 'kitsu')
+
+    expect(handles.map(handle => handle.node.uri).sort()).toEqual(['anilist:108465', 'mal:40748', 'tvmaze:52279'])
+    expect(handles.map(handle => handle.relation)).toEqual(['SAME_AS', 'SAME_AS', 'SAME_AS'])
+  })
+
+  // The exclusion is read before the rule, so a caller whose OWN origin is the doubled one is neither
+  // rebuilt nor rescued by the refusal.
+  test('the caller is still the one origin never rebuilt', () => {
+    expect(buildHandlesFromUri('ag:(mal:64683,mal:63225,tvmaze:52279)', 'mal').map(handle => handle.node.uri))
+      .toEqual(['tvmaze:52279'])
+    expect(buildHandlesFromUri('ag:(anilist:108465,tvmaze:52279)', 'tvmaze').map(handle => handle.node.uri))
+      .toEqual(['anilist:108465'])
+  })
+
+  test('mergeHandles adds nothing for the disagreeing origin', () => {
+    const season = makeMedia({ origin: 'jw', id: '531130-580247' })
+    mergeHandles(season, 'ag:(anilist:205068,mal:64683,mal:63225,jw:531130-580247)')
+
+    expect(season.handles.map(handle => handle.node.uri)).toEqual(['anilist:205068'])
+  })
+})

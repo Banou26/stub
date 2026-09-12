@@ -4,6 +4,7 @@ import type { Media as GQLMedia, Episode as GQLEpisode, MediaHandle as GQLMediaH
 import initFrizbee, { Matcher } from 'frizbee'
 import initSacha, { parse as parseMediaName } from 'sacha'
 import { fromAggregatedUri, toUri } from '../utils/uri'
+import { extendsId } from './offline/seed-gate'
 import { SEASON_MARKER } from './season'
 
 /**
@@ -472,13 +473,33 @@ export const simplifyTitle = (title: string): string[] => {
  * welded them in the container space, and a RUN caller minted a RUN row for a show whose own row was
  * still in flight and unioned with it. The store holds a claim naming a bare node until the node's
  * own source describes it, so the uri contributes the claim and nothing else, in every direction.
+ *
+ * It REFUSES an origin the uri names twice, minting neither id, unless the two are the same id at
+ * different precision.
  */
 export const buildHandlesFromUri = (aggregatedUri: string, excludeOrigin: string): GQLMediaHandle[] => {
   const parsed = fromAggregatedUri(aggregatedUri as Parameters<typeof fromAggregatedUri>[0])
   if (!parsed) return []
-  return parsed.handleUrisValues
-    .filter(({ origin }) => origin !== excludeOrigin)
-    .map(({ origin, id }) => sameAs(makeMedia({ origin, id })))
+
+  const byOrigin = new Map<string, string[]>()
+  for (const { origin, id } of parsed.handleUrisValues) {
+    if (origin === excludeOrigin) continue
+    byOrigin.set(origin, [...(byOrigin.get(origin) ?? []), id])
+  }
+
+  const handles: GQLMediaHandle[] = []
+  for (const [origin, ids] of byOrigin) {
+    // `disagreeingIds`' rule, one-way as it reads it: only the ids nothing else extends survive, so
+    // `A` beside `A-1` keeps the season and two unrelated ids both survive and are refused. An address
+    // names sources; which of two ids of ONE source is the run is a question it has not settled, and
+    // minting both makes this source assert it. The JustWatch season jw:531130-580247 stamped SAME_AS
+    // to mal:64683 and mal:63225 at once that way on the recorded season corpus, one of the three
+    // manifest addresses carrying two mal ids (2026-09-12).
+    const [id, ...rest] = [...new Set(ids)].filter(id => !ids.some(other => extendsId(other, id) && other.startsWith(`${id}-`)))
+    if (!id || rest.length) continue
+    handles.push(sameAs(makeMedia({ origin, id })))
+  }
+  return handles
 }
 
 /**
