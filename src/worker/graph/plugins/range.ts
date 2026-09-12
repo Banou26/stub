@@ -59,7 +59,7 @@ import { stripTitle } from '../../../sources/utils'
 import { RETRANSLATING_ORIGINS } from './origins'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const RANGE_VERSION = 1
+export const RANGE_VERSION = 2
 
 /**
  * Two pairs or nothing (`consensus.ts:111`).
@@ -79,7 +79,7 @@ export const MIN_ALIGNED = 2
 export const DAY_SLACK = 1
 
 /** Why nothing was minted for a candidate, written onto its refused `LINK` row so it is queryable. */
-export type RangeRefusal = 'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles'
+export type RangeRefusal = 'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles' | 'date-skew'
 
 /** One episode of either side, as both rules read it. */
 export type SideEpisode = {
@@ -162,6 +162,52 @@ export const pairsByDay = (
     })
   }
   return { pairs, ambiguous }
+}
+
+/**
+ * Rule 1's guard: a constant offset the candidate's OWN numbering cannot absorb is a SCHEDULE SKEW.
+ *
+ * Crunchyroll publishes the streaming schedule and ani.zip the broadcast one, and the two can run a
+ * few days apart. When they do, Crunchyroll's episode N+1 lands inside the day of slack around
+ * ani.zip's episode N while Crunchyroll's own N lands nowhere near it, so rule 1 pairs the whole list
+ * one late and `plugin:aggregate` then fills slot 1 from episode 2: the user opens episode 1 and
+ * watches episode 2. Measured on `anilist:208044` in the summer 2026 corpus, eleven pairs
+ * `fromNumber N+1 toNumber N`, both lists numbered 1 to 12 with identical titles at the same number.
+ *
+ * WHAT MAKES IT A SKEW RATHER THAN A RENUMBERING, which is the whole of this function:
+ *
+ * - every in-window pair shares ONE offset. A per-episode disagreement is real date evidence, and a
+ *   specials-shifted list (8.3) is piecewise rather than constant, so neither is touched here.
+ * - the candidate numbers from 1 and fits inside the run (`min === 1`, `max <= runLength`), so it is
+ *   numbering THIS run from the top rather than a segment of a longer whole. The Elusive Samurai
+ *   (8.2) is the case this clause keeps out: rows 13 to 20 against a run of 12 start nowhere near 1,
+ *   and their offset of -12 is a genuine renumbering onto 1 to 8.
+ * - the offset would carry one of the candidate's own rows OFF the run, so it cannot be read as that
+ *   candidate's numbering of this run at all. 8.4 is the case this clause keeps out, and it is the
+ *   reason the clause exists: Fullmetal's Crunchyroll season 2 numbers its rows 1 to 13 inside a run
+ *   of 64 and its pairs carry a constant +13, which every clause above admits and which IS a
+ *   renumbering, because 14 to 26 are rows of that run and nothing is pushed off either end.
+ *
+ * An offset of ZERO needs no clause of its own: a candidate that reaches the last two is numbered
+ * inside the run, so it absorbs zero by construction and the dates are agreeing with the numbering.
+ *
+ * Returns the offset when the pairing is a skew, so a refusal can print what it saw, and `null` when
+ * rule 1 stands.
+ */
+export const scheduleSkew = (options: {
+  runLength: number
+  episodes: readonly SideEpisode[]
+  pairs: readonly Pair[]
+}): number | null => {
+  const { runLength, episodes, pairs } = options
+  if (!pairs.length) return null
+  const offset = pairs[0]!.toNumber - pairs[0]!.fromNumber
+  if (pairs.some(pair => pair.toNumber - pair.fromNumber !== offset)) return null
+
+  // no numbers at all makes `Math.min` Infinity, which the clause below refuses on its own
+  const numbers = episodes.map(episode => episode.number).filter((number): number is number => number !== null)
+  if (Math.min(...numbers) !== 1 || Math.max(...numbers) > runLength) return null
+  return numbers.every(number => number + offset >= 1 && number + offset <= runLength) ? null : offset
 }
 
 /** A key present more than once on a side carries no identity there, so it is dropped rather than guessed. */
@@ -261,8 +307,9 @@ export type Verdict =
  *
  * | outcome | when |
  * | --- | --- |
- * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window |
+ * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window and they are not a skew |
  * | `titles` | rule 1 did not, the candidate's origin does not retranslate, and rule 2 cleared both halves of its bar |
+ * | `date-skew` | rule 1's pairs were a constant offset the candidate's own numbering cannot absorb (`scheduleSkew`) and rule 2 did not clear its bar |
  * | `retranslates` | rule 1 proved nothing and rule 2 was refused outright (Netflix, 4 exact of 25, the best wrong pair above the true one, 2026-09-10) |
  * | `ambiguous-day` | rule 1 reached reference days and a day named two reference numbers |
  * | `no-titles` | both sides carry non-generic titles and rule 2 still missed its bar |
@@ -283,7 +330,12 @@ export const decideCandidate = (options: {
 
   const dates = pairsByDay(reference, candidate.episodes)
   const dated = inWindow(dates.pairs)
-  if (dated.length >= MIN_ALIGNED) return { ok: true, rule: 'dates', pairs: dated, coverage: 1 }
+  // rule 1 stands unless the pairing it found is a schedule skew, in which case it is evidence that
+  // the two lists are the same sequence and NOT evidence of a renumbering, so rule 2 decides
+  const skew = dated.length >= MIN_ALIGNED
+    ? scheduleSkew({ runLength, episodes: candidate.episodes, pairs: dated })
+    : null
+  if (skew === null && dated.length >= MIN_ALIGNED) return { ok: true, rule: 'dates', pairs: dated, coverage: 1 }
 
   if (candidate.retranslates) return { ok: false, reason: 'retranslates' }
 
@@ -293,6 +345,9 @@ export const decideCandidate = (options: {
     return { ok: true, rule: 'titles', pairs: titled, coverage: titles.coverage }
   }
 
+  // the skew is the most specific thing that happened, and the only refusal that says the dates DID
+  // meet: nothing rather than a guess, with what was seen written down (`consensus.ts:105-110`)
+  if (skew !== null) return { ok: false, reason: 'date-skew' }
   if (dates.ambiguous) return { ok: false, reason: 'ambiguous-day' }
   // `no-titles` says the title rule had material on both sides and missed its bar, which is the more
   // specific of the two; `no-dates` is the fallback, and it covers both "one side carries no day" and

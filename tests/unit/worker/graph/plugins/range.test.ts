@@ -29,6 +29,7 @@ import { aggregatePlugin } from '../../../../../src/worker/graph/plugins/aggrega
 import { containmentPlugin } from '../../../../../src/worker/graph/plugins/containment'
 import {
   decideCandidate, hullOf, MIN_ALIGNED, numbersOutsideRun, pairsByDay, pairsByTitle, placesClaim, rangePlugin,
+  scheduleSkew,
 } from '../../../../../src/worker/graph/plugins/range'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
 import { alignmentOffset } from '../../../../../src/worker/store/consensus'
@@ -355,6 +356,66 @@ const lendAnswers = async () => [
   })),
 ]
 
+// THE SCHEDULE SKEW, `anilist-208044` of the summer 2026 corpus. Crunchyroll publishes the STREAMING
+// schedule from a Thursday and ani.zip the BROADCAST one from the following Wednesday at 15:00Z, so
+// Crunchyroll's episode N+1 falls one day after ani.zip's episode N, inside the day of slack, while
+// its own N falls six days before it. Both lists number 1 to 12, the run is 12 long, and the title at
+// each number is the same on both sides. The ids are the record's; the record names the first and the
+// last episode title, so the ten between them carry a name.
+const SKEW_STREAM = weekly('2026-06-25', 12)
+const SKEW_BROADCAST = weekly('2026-07-01', 12)
+const SKEW_TITLES = [
+  'Prologue', 'Lost Technology', 'The Buried City', 'A Borrowed Name', 'The Long March',
+  'Ashes of the Keep', 'The Third Seal', 'Hollow Crown', 'The River Gate', 'What the Archive Kept',
+  'The Last Convoy', 'I Am Eftal',
+]
+const skewAnswers = async () => [
+  await answer('media', media('anilist:208044', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 12, startDate: SKEW_BROADCAST[0],
+    titles: [title('en', 'The Eftal Record')],
+    handles: [sameAs(media('anizip:19896', {}))],
+  })),
+  await answer('media', media('anizip:19896', {
+    type: 'TV', episodeCount: 12, titles: [title('en', 'The Eftal Record')],
+    episodes: SKEW_BROADCAST.map((day, index) => episode(`anizip:19896-${index + 1}`, 'anizip:19896', {
+      episodeNumber: index + 1, releaseDate: anizipDay(day), titles: [title('en', SKEW_TITLES[index]!)],
+    })),
+  })),
+  // the lend: twelve `cr:` rows hung on the `anilist:` member, with no season row of their own (4.4)
+  await answer('media', media('cr:GE00379300', {
+    score: 0.5, type: 'TV', status: 'FINISHED', titles: [title('en', 'The Eftal Record')],
+    episodes: SKEW_STREAM.map((day, index) => episode(`cr:GE003793${String(index + 2).padStart(2, '0')}JAJP`, 'anilist:208044', {
+      episodeNumber: index + 1, releaseDate: day, titles: [title('en', SKEW_TITLES[index]!)],
+    })),
+  })),
+]
+
+// THE SAME SKEW ON A CLASS 1 CANDIDATE, which is the shape the corpus has no example of and the code
+// reaches identically: a season row attached by an uncertain `PART_OF`, numbered 1 to 12 against a run
+// of 12, on the streaming schedule. Its titles are its own, so rule 2 has nothing to fall back on and
+// the skew becomes a WRITTEN refusal on the `LINK` rather than eleven pairs one late.
+const SKEW_S_STREAM = weekly('2026-04-02', 12)
+const SKEW_S_BROADCAST = weekly('2026-04-08', 12)
+const skewSeasonAnswers = async () => [
+  await answer('media', media('anilist:910', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 12, startDate: SKEW_S_BROADCAST[0],
+    titles: [title('en', 'Skewed Season')],
+    handles: [sameAs(media('anizip:910', {})), partOf(media('cr:910', { score: 0.5 }))],
+  })),
+  await answer('media', media('anizip:910', {
+    type: 'TV', episodeCount: 12, titles: [title('en', 'Skewed Season')],
+    episodes: SKEW_S_BROADCAST.map((day, index) => episode(`anizip:910-${index + 1}`, 'anizip:910', {
+      episodeNumber: index + 1, releaseDate: anizipDay(day), titles: [title('en', `Skewed ${index + 1}`)],
+    })),
+  })),
+  await answer('media', media('cr:910', {
+    score: 0.5, type: 'TV', status: 'FINISHED', episodeCount: 12, titles: [title('en', 'Skewed Season One')],
+    episodes: SKEW_S_STREAM.map((day, index) => episode(`cr:910-${index + 1}`, 'cr:910', {
+      episodeNumber: index + 1, releaseDate: day, titles: [title('en', `Skewed Stream ${index + 1}`)],
+    })),
+  })),
+]
+
 // THE FOURTH INPUT of 5.4 P4: an episode `SAME_AS` a source stated. Two shapes, and the whole rule
 // is which of the two it is: both rows inside one run cluster, or two runs nothing joins.
 const CLAIMED = weekly('2026-01-06', 2)
@@ -402,6 +463,8 @@ beforeAll(async () => {
     ...await fmaAnswers(),
     ...await windowAnswers(),
     ...await lendAnswers(),
+    ...await skewAnswers(),
+    ...await skewSeasonAnswers(),
     ...await claimAnswers(),
   ])
   resetPassState()
@@ -707,6 +770,60 @@ test('a lent season is paired by day and given no range', async () => {
   expect((await rangeLinks()).filter(row => row.fromUri === 'cr:GSP1'), 'no season row, no label').toEqual([])
 })
 
+// THE SCHEDULE SKEW, AND THE VIDEO IT PUT ON THE WRONG ROW. Crunchyroll streams from a Thursday and
+// ani.zip broadcasts from the Wednesday six days later, so Crunchyroll's N+1 falls one day after
+// ani.zip's N: rule 1 minted eleven pairs `N+1` to `N`, Crunchyroll's "Prologue" paired with nothing,
+// and `plugin:aggregate` filled slot 1 from episode 2. Both lists number 1 to 12 and the titles agree
+// at each number, so rule 2 was right and rule 1 ran first (`anilist-208044`, summer 2026 corpus).
+// Mutation: delete the `scheduleSkew` call from `decideCandidate` and the twelve pairs become eleven
+// reading `[2,1] [3,2] ... [12,11]` by `dates`, with slot 1 carrying the second video.
+test('a streaming schedule a few days off the broadcast one does not renumber the lend', async () => {
+  const pairs = await rowsOf(
+    `MATCH (a:Episode)-[l:EPISODE_LINK]->(b:Episode)
+     WHERE l.by = 'plugin:range' AND a.uri STARTS WITH 'cr:GE003793'
+     RETURN a.uri AS fromUri, b.uri AS toUri, l.fromNumber AS fromNumber, l.toNumber AS toNumber,
+       l.reason AS reason, l.status AS status
+     ORDER BY l.fromNumber`
+  )
+  expect(pairs.map(row => [Number(row.fromNumber), Number(row.toNumber)]))
+    .toEqual(Array.from({ length: 12 }, (_, index) => [index + 1, index + 1]))
+  expect(pairs.map(row => [String(row.reason), String(row.status)]))
+    .toEqual(pairs.map(() => ['titles', 'active']))
+  expect(pairs[0]!.fromUri, 'Crunchyroll\'s own first row').toBe('cr:GE00379302JAJP')
+  expect(pairs[0]!.toUri, 'and ani.zip\'s first, not its second').toBe('anizip:19896-1')
+
+  // WHAT THE BUG COST: the slot the user opens first. A pair one late puts episode 2's video here
+  const fills = await fillsFrom('cr:GE003793')
+  expect(fills.map(fill => [fill.uri, fill.number]))
+    .toEqual(SKEW_TITLES.map((_, index) => [`cr:GE003793${String(index + 2).padStart(2, '0')}JAJP`, index + 1]))
+  expect(fills.every(fill => fill.via === 'aligned'), 'a pair placed every one of them').toBe(true)
+  const [slotOne] = await rowsOf(
+    `MATCH (e:Episode {uri: 'cr:GE00379302JAJP'})-[:FILLS]->(s:Slot)<-[:FILLS]-(o:Episode)
+     RETURN s.number AS number, collect(o.uri) AS uris`
+  )
+  expect(Number(slotOne!.number)).toBe(1)
+  expect((slotOne!.uris as string[]).sort()).toEqual(['anizip:19896-1', 'cr:GE00379302JAJP'])
+})
+
+// THE SAME SKEW REACHES CLASS 1, and there the candidate has a row to write the refusal on. Nothing
+// in `decideCandidate` knows which class asked it, which is why the guard lives in the rule and not
+// in the candidate scan: a season attached by an uncertain `PART_OF` is renumbered by exactly the
+// same eleven pairs. Its titles are its own, so rule 2 cannot rescue it and the honest answer is none.
+// Mutation: delete the `scheduleSkew` call and eleven `dates` pairs appear reading `[2,1] ... [12,11]`
+// with no refusal at all. Replace the guard with a `numbersOutsideRun` test on the class 2 scan, which
+// is the shape of fix a lend-only reading suggests, and this case is renumbered exactly as before
+// while the lend above loses all twelve of its pairs instead of getting the right ones (measured).
+test('the skew reaches a season candidate too, and is refused in writing', async () => {
+  expect(await pairsBetween('cr:910-', 'anizip:910-'), 'nothing rather than a guess').toEqual([])
+  const refusal = (await rangeLinks()).filter(row => row.fromUri === 'cr:910')
+  expect(refusal.map(row => [String(row.kind), String(row.status), String(row.reason)]))
+    .toEqual([['INCLUDES', 'refused', 'date-skew']])
+  expect(evidenceOf(refusal[0]!)).toMatchObject({ reason: 'date-skew', theirs: 12, ours: 12 })
+  // and the `PART_OF` that reached it is untouched, in this branch as in every other
+  expect((await linksBetween('anilist:910', 'cr:910')).some(row => row.kind === 'PART_OF' && row.status === 'active'))
+    .toBe(true)
+})
+
 // THE SAME GRAPH TWICE IS THE SAME VIEW (5.1): the output is a desired set, so a second pass that
 // wrote anything would mean the rule read something other than the graph.
 // Mutation: key a pair on the arrival order of the scan (drop the `ORDER BY`, or the lowest-uri
@@ -996,6 +1113,116 @@ test('a member is a candidate only when its numbering does not fit the run', () 
   expect(numbersOutsideRun(listed('cr:f', 13, weekly('2026-07-17', 8)), 12)).toBe(true)
   expect(numbersOutsideRun(listed('cr:g', 1, weekly('2026-07-17', 14)), 12), 'and a list past the end is one too').toBe(true)
   expect(numbersOutsideRun([], 12)).toBe(false)
+})
+
+// A CONSTANT OFFSET IS TWO DIFFERENT FACTS, and the candidate's own numbering is what tells them
+// apart. A list that numbers this run from 1 and fits inside it cannot be renumbered by an offset
+// that would carry one of its rows off the end: that offset is the two sources publishing on
+// different schedules. A list that starts at 13, or one that numbers a segment of a longer run, can.
+// Mutation: drop the `absorbed` clause and 8.4 goes red, because Fullmetal's season 2 numbers 1 to 13
+// inside a run of 64 at a constant +13 and that IS a renumbering; drop `min === 1` and a list that
+// starts at 2 stops being renumbered; drop `max > runLength` and the lend of 8.1 goes red; drop the
+// one-offset test and a single disagreeing row carries the whole list; drop the empty-pairs return
+// and the function throws on a candidate that paired with nothing.
+test('a constant offset a candidate cannot absorb is a skew, and every other one is a renumbering', () => {
+  const skewOf = (runLength: number, reference: SideEpisode[], theirs: SideEpisode[]) =>
+    scheduleSkew({ runLength, episodes: theirs, pairs: pairsByDay(reference, theirs).pairs })
+
+  // the bug: twelve rows numbered 1 to 12 against a run of 12, streamed six days before the broadcast
+  const broadcast = listed('anizip:s', 1, weekly('2026-07-01', 12).map(anizipDay))
+  expect(skewOf(12, broadcast, listed('cr:s', 1, weekly('2026-06-25', 12))), 'one late, and row 1 has nowhere to go').toBe(-1)
+
+  // 8.2: Crunchyroll's 13 to 20 on the run's own days. The offset is -12 and it is a real renumbering
+  const samurai = listed('anizip:t', 1, weekly('2026-07-17', 12).map(anizipDay))
+  const elusive = listed('cr:t', 13, weekly('2026-07-17', 8))
+  expect(skewOf(12, samurai, elusive), 'a list that starts at 13 is numbering something else').toBe(null)
+  expect(decideCandidate({ runLength: 12, reference: samurai, candidate: { retranslates: false, episodes: elusive } }))
+    .toMatchObject({ ok: true, rule: 'dates' })
+  expect(pairsByDay(samurai, elusive).pairs.map(pair => [pair.fromNumber, pair.toNumber]),
+    '8.2 still renumbers 13 to 20 onto 1 to 8')
+    .toEqual(Array.from({ length: 8 }, (_, index) => [index + 13, index + 1]))
+
+  // 8.4: Crunchyroll's season 2 numbers 1 to 13 inside a run of 64, at a constant +13. Every row it
+  // renumbers lands on a row of that run, so the offset is absorbed and rule 1 is right
+  const fma = listed('anizip:u', 1, weekly('2009-04-05', 64).map(anizipDay))
+  expect(skewOf(64, fma, listed('cr:u', 1, weekly('2009-04-05', 13, 13))), 'rows 14 to 26 are rows of that run').toBe(null)
+
+  // the mirror of the bug, to show the clause is about the offset and not about its sign: a stream
+  // six days AHEAD of the broadcast pairs its 1 to 11 onto 2 to 12, and its own 12 has nowhere to go
+  expect(skewOf(12, broadcast, listed('cr:v', 1, weekly('2026-07-07', 12))), 'one early').toBe(1)
+
+  // a list that does not START at 1 has not claimed this run's numbering, so the dates decide even
+  // when its offset is unabsorbable: 2 to 9 against a run of 12, pairing 3 to 9 onto 1 to 7 at -2.
+  // This is 8.2's principle stated generally, and it is the whole of the `min === 1` clause, which
+  // 8.2 itself never reaches because 13 to 20 is already past a run of 12
+  expect(skewOf(12, broadcast, listed('cr:p', 2, weekly('2026-06-24', 8))), 'and 2 is not 1').toBe(null)
+
+  // ONE ROW THAT DOES NOT SHARE THE OFFSET is enough: a list that is one late everywhere except in
+  // one place is not a schedule, and rule 1 is then the per-episode evidence it always was
+  const late = listed('cr:w', 1, weekly('2026-06-25', 12))
+  const bent = pairsByDay(broadcast, late).pairs
+  expect(scheduleSkew({ runLength: 12, episodes: late, pairs: bent }), 'the control: all of them at -1').toBe(-1)
+  expect(scheduleSkew({
+    runLength: 12,
+    episodes: late,
+    pairs: [...bent.slice(1), { ...bent[0]!, toNumber: bent[0]!.toNumber + 1 }],
+  })).toBe(null)
+
+  expect(skewOf(12, broadcast, listed('cr:x', 1, weekly('2026-07-01', 12))), 'an offset of zero is agreement').toBe(null)
+  expect(scheduleSkew({ runLength: 12, episodes: late, pairs: [] }), 'and a candidate that paired with nothing').toBe(null)
+
+  // CLASS 3 CAN NEVER REACH THIS GUARD: its entry test is `numbersOutsideRun`, which is the exact
+  // negation of this guard's own numbering clause, so the two select disjoint sets of candidates
+  for (const own of [elusive, listed('cr:y', 1, weekly('2026-07-17', 14)), listed('cr:z', 2, weekly('2026-07-17', 6))]) {
+    expect(numbersOutsideRun(own, 12)).toBe(true)
+    expect(skewOf(12, samurai, own)).toBe(null)
+  }
+})
+
+// WHEN THE TWO RULES DISAGREE, the numbering decides which one was measuring the right thing. A
+// candidate numbered 1 to 12 against a run of 12 is placed by its own numbering, so the dates are a
+// skew and rule 2 answers; a candidate numbered 13 to 20 is not, so rule 1 answers and rule 2 never
+// runs, which is the order 5.4 P4 states.
+// Mutation: return the skew offset from `scheduleSkew` unconditionally and the second half flips to
+// `titles` at 5 to 12, which is 8.2 renumbered by the wrong eight rows.
+test('date evidence and title evidence that disagree are settled by the candidate\'s own numbering', () => {
+  const days = weekly('2026-07-01', 12)
+  const named = (uri: string, number: number, day: string | null, name: string): SideEpisode =>
+    side(uri, number, day, [name])
+  const reference = days.map((day, index) => named(`anizip:d-${index + 1}`, index + 1, anizipDay(day), `chapter ${index + 1}`))
+
+  // the dates say N+1 to N and the titles say N to N: the titles are right, and the guard is what
+  // lets them be heard at all
+  const skewed = weekly('2026-06-25', 12).map((day, index) => named(`cr:d-${index + 1}`, index + 1, day, `chapter ${index + 1}`))
+  expect(pairsByDay(reference, skewed).pairs.map(pair => [pair.fromNumber, pair.toNumber])
+    .sort((a, b) => a[0]! - b[0]!), 'what rule 1 alone says')
+    .toEqual(Array.from({ length: 11 }, (_, index) => [index + 2, index + 1]))
+  const settled = decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: skewed } })
+  expect(settled.ok && settled.rule).toBe('titles')
+  expect(settled.ok && settled.pairs.map(pair => [pair.fromNumber, pair.toNumber]).sort((a, b) => a[0]! - b[0]!))
+    .toEqual(Array.from({ length: 12 }, (_, index) => [index + 1, index + 1]))
+
+  // and the same disagreement on 8.2's numbering: rule 1 runs first and rule 2 is never consulted
+  const renumbered = days.slice(0, 8).map((day, index) => named(`cr:e-${index + 13}`, index + 13, day, `chapter ${index + 5}`))
+  const byDates = decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: renumbered } })
+  expect(byDates.ok && byDates.rule).toBe('dates')
+  expect(byDates.ok && byDates.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual(Array.from({ length: 8 }, (_, index) => [index + 13, index + 1]))
+  expect(pairsByTitle(reference, renumbered).pairs.map(pair => [pair.fromNumber, pair.toNumber])[0], 'what rule 2 would have said')
+    .toEqual([13, 5])
+})
+
+// A SKEW WITH NOTHING TO FALL BACK ON IS A WRITTEN REFUSAL, not a silence and not a guess.
+// Mutation: return `no-dates` instead of `date-skew` and "why is this button missing" stops
+// distinguishing a schedule that never met from one that met and was refused.
+test('a skew whose titles cannot rescue it refuses date-skew', () => {
+  const reference = listed('anizip:g', 1, weekly('2026-07-01', 12).map(anizipDay))
+  const theirs = listed('cr:g', 1, weekly('2026-06-25', 12))
+  expect(decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'date-skew' })
+  // and a retranslating origin is still refused for the older reason, which is the more specific one
+  expect(decideCandidate({ runLength: 12, reference, candidate: { retranslates: true, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'retranslates' })
 })
 
 // ---------------------------------------------------------------------------------------------
