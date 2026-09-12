@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "kitsu prefixes every title with EPISODE 01 to EPISODE 10 and anizip does not, so only the five single segment titles could be matched outright; episodes 1, 2, 3, 8 and 10 join two or three segments and the two sources use different separators and abbreviations, so those were left unpaired. nf:82942010-1 was left unjudged even though its count matches, since it carries no dates and only its first entry has a real title. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "kitsu prefixes every title with EPISODE 01 to EPISODE 10 and anizip does not, so only the five single segment titles could be matched outright; episodes 1, 2, 3, 8 and 10 join two or three segments and the two sources use different separators and abbreviations, so those were left unpaired. nf:82942010-1 was left unjudged even though its count matches, since it carries no dates and only its first entry has a real title. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 5"
   },
   "claims": [
     {
@@ -780,6 +780,26 @@
       {
         "a": "kitsu:393261",
         "b": "anizip:18652-9"
+      },
+      {
+        "a": "jw:10567779",
+        "b": "anizip:18652-4"
+      },
+      {
+        "a": "jw:10567780",
+        "b": "anizip:18652-5"
+      },
+      {
+        "a": "jw:10567781",
+        "b": "anizip:18652-6"
+      },
+      {
+        "a": "jw:10567782",
+        "b": "anizip:18652-7"
+      },
+      {
+        "a": "jw:10567784",
+        "b": "anizip:18652-9"
       }
     ],
     "together": [
@@ -974,5 +994,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:177699,kitsu:48899,mal:58929,offline:mal-58929)"
   },
-  "why": "THE GHOST IN THE SHELL is the ten episode summer 2026 cour on a weekly 14:00 slot, 2026-07-07 to 2026-09-08, and it has finished airing.\nanizip:18652 is the same run: the same ten episode count, and its own SAME_AS ids name mal:58929 and anilist:177699, both members.\njw:475917-500221 is the same run: it maps SAME_AS to all four members and to anizip:18652, and its ten episode titles are the run's own, PROLOGUE + SUPER SPARTAN i through BRAIN DRAIN + GHOST COAST + EPILOGUE; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe kitsu episodes 4, 5, 6, 7 and 9 pair with the same numbered anizip:18652 episodes on identical titles once kitsu's EPISODE 0N numbering prefix is set aside: Robot Rondo, Phantom Fund, Dumb Barter, Bye Bye Clay and Brain Drain II."
+  "why": "THE GHOST IN THE SHELL is the ten episode summer 2026 cour on a weekly 14:00 slot, 2026-07-07 to 2026-09-08, and it has finished airing.\nanizip:18652 is the same run: the same ten episode count, and its own SAME_AS ids name mal:58929 and anilist:177699, both members.\njw:475917-500221 is the same run: it maps SAME_AS to all four members and to anizip:18652, and its ten episode titles are the run's own, PROLOGUE + SUPER SPARTAN i through BRAIN DRAIN + GHOST COAST + EPILOGUE; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe kitsu episodes 4, 5, 6, 7 and 9 pair with the same numbered anizip:18652 episodes on identical titles once kitsu's EPISODE 0N numbering prefix is set aside: Robot Rondo, Phantom Fund, Dumb Barter, Bye Bye Clay and Brain Drain II. The JustWatch episodes 4, 5, 6, 7 and 9 pair with the same numbered anizip:18652 episodes on the same exact titles, Robot Rondo, Phantom Fund, Dumb Barter, Bye Bye Clay and Brain Drain II; the other five join two or three segments with a plus sign where anizip uses a slash, so no two strings match and they stay unpaired."
 }

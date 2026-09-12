@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "Crunchyroll labels its first episode Episode 1 and anizip carries only the Japanese title for that one, so the pairing there rests on the 2026-07-06 date rather than a title. kitsu has neither titles nor dates. The JustWatch episodes match the run's titles but carry no dates and were left unpaired, and nf:81169530-3 was left unjudged. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "Crunchyroll labels its first episode Episode 1 and anizip carries only the Japanese title for that one, so the pairing there rests on the 2026-07-06 date rather than a title. kitsu has neither titles nor dates. The JustWatch episodes match the run's titles but carry no dates and were left unpaired, and nf:81169530-3 was left unjudged. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 9"
   },
   "claims": [
     {
@@ -948,6 +948,42 @@
       {
         "a": "cr:GNVHKN94W-GS00378061-GE00378273JAJP",
         "b": "anizip:19600-10"
+      },
+      {
+        "a": "jw:10583313",
+        "b": "anizip:19600-2"
+      },
+      {
+        "a": "jw:10583315",
+        "b": "anizip:19600-3"
+      },
+      {
+        "a": "jw:10583317",
+        "b": "anizip:19600-4"
+      },
+      {
+        "a": "jw:10583319",
+        "b": "anizip:19600-5"
+      },
+      {
+        "a": "jw:10583321",
+        "b": "anizip:19600-6"
+      },
+      {
+        "a": "jw:10583323",
+        "b": "anizip:19600-7"
+      },
+      {
+        "a": "jw:10583325",
+        "b": "anizip:19600-8"
+      },
+      {
+        "a": "jw:10583327",
+        "b": "anizip:19600-9"
+      },
+      {
+        "a": "jw:10583329",
+        "b": "anizip:19600-10"
       }
     ],
     "together": [
@@ -1159,5 +1195,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:199111,kitsu:50181,mal:62542,offline:mal-62542)"
   },
-  "why": "Grand Blue Dreaming Season 3 is the twelve episode summer 2026 cour on a weekly 15:00 slot, 2026-07-06 to 2026-09-21, with ten episodes aired so far.\nanizip:19600 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:62542 and anilist:199111, both members.\ncr:GNVHKN94W-GS00378061 is the same run: anilist:199111 maps to it SAME_AS, and its ten episodes sit on the run's own weekly dates, 2026-07-06 through 2026-09-07, with the same titles from Homecoming to Lottery.\njw:80747-577206 is the same run: it maps SAME_AS to all four members, to anizip:19600 and to the Crunchyroll season, and lists exactly the ten episodes aired so far with the run's titles; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19600 episodes 1 to 10 on identical release dates week by week, 2026-07-06 through 2026-09-07."
+  "why": "Grand Blue Dreaming Season 3 is the twelve episode summer 2026 cour on a weekly 15:00 slot, 2026-07-06 to 2026-09-21, with ten episodes aired so far.\nanizip:19600 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:62542 and anilist:199111, both members.\ncr:GNVHKN94W-GS00378061 is the same run: anilist:199111 maps to it SAME_AS, and its ten episodes sit on the run's own weekly dates, 2026-07-06 through 2026-09-07, with the same titles from Homecoming to Lottery.\njw:80747-577206 is the same run: it maps SAME_AS to all four members, to anizip:19600 and to the Crunchyroll season, and lists exactly the ten episodes aired so far with the run's titles; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19600 episodes 1 to 10 on identical release dates week by week, 2026-07-06 through 2026-09-07. The JustWatch episodes 2 to 10 pair with anizip:19600 episodes 2 to 10 on exact titles, Homecoming through Lottery; JustWatch episode 1 is Unfinished Business where anizip carries only the Japanese title, so it is left unpaired."
 }

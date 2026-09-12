@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "The JustWatch season carries the right episode titles but no release dates, and it is not a metadata catalogue, so its episodes are left unpaired even though the titles line up one for one with Crunchyroll; only the anizip to Crunchyroll pairs, which have day matching dates on both sides, are asserted. anizip episode 11 has no title, so that pair rests on the 2026-09-10 date alone. refuted: 0 marks overturned."
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "The JustWatch season carries the right episode titles but no release dates, and it is not a metadata catalogue, so its episodes are left unpaired even though the titles line up one for one with Crunchyroll; only the anizip to Crunchyroll pairs, which have day matching dates on both sides, are asserted. anizip episode 11 has no title, so that pair rests on the 2026-09-10 date alone. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 11"
   },
   "claims": [
     {
@@ -842,6 +842,50 @@
       {
         "a": "anizip:19764-11",
         "b": "cr:GT00377933-GS00377934-GE00377945JAJP"
+      },
+      {
+        "a": "jw:10136059",
+        "b": "cr:GT00377933-GS00377934-GE00377935JAJP"
+      },
+      {
+        "a": "jw:10582881",
+        "b": "cr:GT00377933-GS00377934-GE00377936JAJP"
+      },
+      {
+        "a": "jw:10582884",
+        "b": "cr:GT00377933-GS00377934-GE00377937JAJP"
+      },
+      {
+        "a": "jw:10582888",
+        "b": "cr:GT00377933-GS00377934-GE00377938JAJP"
+      },
+      {
+        "a": "jw:10582944",
+        "b": "cr:GT00377933-GS00377934-GE00377939JAJP"
+      },
+      {
+        "a": "jw:10582945",
+        "b": "cr:GT00377933-GS00377934-GE00377940JAJP"
+      },
+      {
+        "a": "jw:10582946",
+        "b": "cr:GT00377933-GS00377934-GE00377941JAJP"
+      },
+      {
+        "a": "jw:10582947",
+        "b": "cr:GT00377933-GS00377934-GE00377942JAJP"
+      },
+      {
+        "a": "jw:10582948",
+        "b": "cr:GT00377933-GS00377934-GE00377943JAJP"
+      },
+      {
+        "a": "jw:10582949",
+        "b": "cr:GT00377933-GS00377934-GE00377944JAJP"
+      },
+      {
+        "a": "jw:10582950",
+        "b": "cr:GT00377933-GS00377934-GE00377945JAJP"
       }
     ],
     "partOf": [
@@ -1051,5 +1095,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:203880,kitsu:50751,mal:63082,offline:mal-63082)"
   },
-  "why": "Dara-san of the Reiwa Era is a 13 episode summer 2026 TV run that is still airing: anilist gives 2026-07-02 to 2026-09-24 with 13 episodes, kitsu and mal the same 2026-07-02 start and 13, and anizip still lists episodes 12 and 13 for 2026-09-17 and 2026-09-24. anizip:19764 is the same run: it carries SAME_AS ids to both mal:63082 and anilist:203880, the same count of 13, and weekly episodes from 2026-07-02T12:30:00Z to 2026-09-24T12:30:00Z. cr:GT00377933-GS00377934 is the same run: anilist:203880 names it SAME_AS, and its 11 episodes are the run's first 11 on the same days (2026-07-02 through 2026-09-10) under the same titles, 11 being what had aired. jw:517665-551904 is the same run: its 11 episodes carry the same titles in the same order (Yamatagi-Madara of the Accursed Land, Genealogy of Mountain Stewards, The Taboo Test of Courage), the same count of 11 as Crunchyroll, and it names anilist:203880, anizip:19764, kitsu:50751, mal:63082 and offline:mal-63082 as the same run. cr:GT00377933 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50751 declares the run PART_OF it. The eleven episode pairs are between anizip and Crunchyroll only, where the release dates agree to the day (2026-07-02, 2026-07-09 and so on to 2026-09-10) and the titles are the same text."
+  "why": "Dara-san of the Reiwa Era is a 13 episode summer 2026 TV run that is still airing: anilist gives 2026-07-02 to 2026-09-24 with 13 episodes, kitsu and mal the same 2026-07-02 start and 13, and anizip still lists episodes 12 and 13 for 2026-09-17 and 2026-09-24. anizip:19764 is the same run: it carries SAME_AS ids to both mal:63082 and anilist:203880, the same count of 13, and weekly episodes from 2026-07-02T12:30:00Z to 2026-09-24T12:30:00Z. cr:GT00377933-GS00377934 is the same run: anilist:203880 names it SAME_AS, and its 11 episodes are the run's first 11 on the same days (2026-07-02 through 2026-09-10) under the same titles, 11 being what had aired. jw:517665-551904 is the same run: its 11 episodes carry the same titles in the same order (Yamatagi-Madara of the Accursed Land, Genealogy of Mountain Stewards, The Taboo Test of Courage), the same count of 11 as Crunchyroll, and it names anilist:203880, anizip:19764, kitsu:50751, mal:63082 and offline:mal-63082 as the same run. cr:GT00377933 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50751 declares the run PART_OF it. The eleven anizip to Crunchyroll pairs rest on release dates that agree to the day (2026-07-02, 2026-07-09 and so on to 2026-09-10) and on titles that are the same text. The eleven JustWatch episodes pair with the same Crunchyroll episodes on exact titles, Yamatagi-Madara of the Accursed Land through The Taboo Test of Courage."
 }

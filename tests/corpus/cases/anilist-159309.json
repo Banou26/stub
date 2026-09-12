@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "kitsu:46925 counts 42 untitled episodes where every other member counts 12, so nothing on the kitsu side could be placed. The JustWatch episodes carry the run's titles but no dates, so they were left unpaired. nf:81716837 claims SAME_AS to all four members yet is titled Trapped Lemming and dated 2021, which is why it was marked unrelated rather than treated as the show's Netflix container. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "kitsu:46925 counts 42 untitled episodes where every other member counts 12, so nothing on the kitsu side could be placed. The JustWatch episodes carry the run's titles but no dates, so they were left unpaired. nf:81716837 claims SAME_AS to all four members yet is titled Trapped Lemming and dated 2021, which is why it was marked unrelated rather than treated as the show's Netflix container. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 5"
   },
   "claims": [
     {
@@ -878,6 +878,28 @@
         "nf:81716837"
       ]
     ],
+    "episodePairs": [
+      {
+        "a": "jw:10637145",
+        "b": "anizip:17796-2"
+      },
+      {
+        "a": "jw:10637147",
+        "b": "anizip:17796-3"
+      },
+      {
+        "a": "jw:10637149",
+        "b": "anizip:17796-5"
+      },
+      {
+        "a": "jw:10637141",
+        "b": "anizip:17796-7"
+      },
+      {
+        "a": "jw:10637151",
+        "b": "anizip:17796-10"
+      }
+    ],
     "together": [
       [
         "anilist:159309",
@@ -1072,5 +1094,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:159309,kitsu:46925,mal:54000,offline:mal-54000)"
   },
-  "why": "Trapped in a Dating Sim: The World of Otome Games is Tough for Mobs Season 2 is the twelve episode summer 2026 cour on a weekly 14:30 slot, 2026-07-08 to 2026-09-23, with ten episodes aired so far.\nanizip:17796 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:54000 and anilist:159309, both members.\njw:326566-479662 is the same run: it maps SAME_AS to all four members and to anizip:17796, and its ten listed episodes carry the run's own titles in order, It's Always Love That Saves the World through They Hit Where It Hurts; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nnf:81716837 is a different work: it is titled Trapped Lemming in the only title it carries, with a 2021 start that predates this franchise, and it matches none of the run's titles in English, romaji or Japanese, so its SAME_AS claims against the four members do not hold."
+  "why": "Trapped in a Dating Sim: The World of Otome Games is Tough for Mobs Season 2 is the twelve episode summer 2026 cour on a weekly 14:30 slot, 2026-07-08 to 2026-09-23, with ten episodes aired so far.\nanizip:17796 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:54000 and anilist:159309, both members.\njw:326566-479662 is the same run: it maps SAME_AS to all four members and to anizip:17796, and its ten listed episodes carry the run's own titles in order, It's Always Love That Saves the World through They Hit Where It Hurts; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nnf:81716837 is a different work: it is titled Trapped Lemming in the only title it carries, with a 2021 start that predates this franchise, and it matches none of the run's titles in English, romaji or Japanese, so its SAME_AS claims against the four members do not hold. The JustWatch episodes 2, 3, 5, 7 and 10 pair with the same numbered anizip:17796 episodes on the same exact titles, Do You Enjoy the Aesthetics of Destruction? through They Hit Where It Hurts; the other five differ from anizip by an apostrophe character, a reworded line or the length of an ellipsis, so they stay unpaired."
 }

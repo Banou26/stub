@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "The JustWatch season lists the ten aired episodes with exact titles but no release dates, so its episodes were left unpaired; the Netflix row claims SAME_AS to the run but is the series container opened in 2017. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "The JustWatch season lists the ten aired episodes with exact titles but no release dates, so its episodes were left unpaired; the Netflix row claims SAME_AS to the run but is the series container opened in 2017. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 10"
   },
   "claims": [
     {
@@ -818,6 +818,46 @@
       {
         "a": "cr:GR9P57W96-GS00380130-GE00380140JAJP",
         "b": "anizip:16392-10"
+      },
+      {
+        "a": "jw:5734401",
+        "b": "anizip:16392-1"
+      },
+      {
+        "a": "jw:10626649",
+        "b": "anizip:16392-2"
+      },
+      {
+        "a": "jw:10626655",
+        "b": "anizip:16392-3"
+      },
+      {
+        "a": "jw:10626666",
+        "b": "anizip:16392-4"
+      },
+      {
+        "a": "jw:10626674",
+        "b": "anizip:16392-5"
+      },
+      {
+        "a": "jw:10626683",
+        "b": "anizip:16392-6"
+      },
+      {
+        "a": "jw:10626695",
+        "b": "anizip:16392-7"
+      },
+      {
+        "a": "jw:10626706",
+        "b": "anizip:16392-8"
+      },
+      {
+        "a": "jw:10626718",
+        "b": "anizip:16392-9"
+      },
+      {
+        "a": "jw:10626728",
+        "b": "anizip:16392-10"
       }
     ],
     "partOf": [
@@ -1048,5 +1088,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:135865,kitsu:44778,mal:49233,offline:mal-49233)"
   },
-  "why": "Saga of Tanya the Evil Season 2 is the twelve episode summer 2026 cour, airing 2026-07-08 to 2026-09-23, with episodes 11 and 12 still to come.\nanizip:16392 is the same run: same twelve episode count, and its own SAME_AS ids point at mal:49233 and anilist:135865, both members.\ncr:GR9P57W96-GS00380130 is the same run: anilist:135865 maps to it SAME_AS, and its ten listed episodes carry the run's exact titles, Salamander Combat Team through A Way to Survive, on the same weekly dates as anizip:16392 (2026-07-08 to 2026-09-09).\njw:53433-304924 is the same run: it maps SAME_AS to all four members plus anizip:16392 and the Crunchyroll season, and its ten episode titles are the run's first ten in order; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GR9P57W96 holds the run: a bare Crunchyroll series container with no title, count or dates, and kitsu:44778 declares PART_OF against it.\nnf:80169285 holds the run: the Netflix container for Saga of Tanya the Evil with a 2017 start, so it covers the 2017 first season as well as this cour and is the whole show rather than this run.\nThe ten Crunchyroll episodes pair with anizip:16392 episodes 1 to 10 on identical release dates (2026-07-08 through 2026-09-09, same day each) and identical English titles."
+  "why": "Saga of Tanya the Evil Season 2 is the twelve episode summer 2026 cour, airing 2026-07-08 to 2026-09-23, with episodes 11 and 12 still to come.\nanizip:16392 is the same run: same twelve episode count, and its own SAME_AS ids point at mal:49233 and anilist:135865, both members.\ncr:GR9P57W96-GS00380130 is the same run: anilist:135865 maps to it SAME_AS, and its ten listed episodes carry the run's exact titles, Salamander Combat Team through A Way to Survive, on the same weekly dates as anizip:16392 (2026-07-08 to 2026-09-09).\njw:53433-304924 is the same run: it maps SAME_AS to all four members plus anizip:16392 and the Crunchyroll season, and its ten episode titles are the run's first ten in order; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GR9P57W96 holds the run: a bare Crunchyroll series container with no title, count or dates, and kitsu:44778 declares PART_OF against it.\nnf:80169285 holds the run: the Netflix container for Saga of Tanya the Evil with a 2017 start, so it covers the 2017 first season as well as this cour and is the whole show rather than this run.\nThe ten Crunchyroll episodes pair with anizip:16392 episodes 1 to 10 on identical release dates (2026-07-08 through 2026-09-09, same day each) and identical English titles. The ten JustWatch episodes pair with anizip:16392 episodes 1 to 10 on the same exact titles, Salamander Combat Team through A Way to Survive, none of them generic."
 }

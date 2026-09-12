@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "The run skips a beat between episode 1 on 2026-07-04 and episode 2 on 2026-07-13, and Crunchyroll carries the same two dates, so the date alignment holds through the gap. kitsu has no episode titles or dates. JustWatch misreads episode 2 as Elvish Blade and gives episode 10 a different title altogether, and it has no dates, so its episodes were left unpaired. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "The run skips a beat between episode 1 on 2026-07-04 and episode 2 on 2026-07-13, and Crunchyroll carries the same two dates, so the date alignment holds through the gap. kitsu has no episode titles or dates. JustWatch misreads episode 2 as Elvish Blade and gives episode 10 a different title altogether, and it has no dates, so its episodes were left unpaired. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 7"
   },
   "claims": [
     {
@@ -998,6 +998,34 @@
       {
         "a": "cr:G8DHV7WJP-GS00377992-GE00378002JAJP",
         "b": "anizip:19053-10"
+      },
+      {
+        "a": "jw:8938858",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00377993JAJP"
+      },
+      {
+        "a": "jw:10614088",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00377995JAJP"
+      },
+      {
+        "a": "jw:10633779",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00377996JAJP"
+      },
+      {
+        "a": "jw:10644612",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00377997JAJP"
+      },
+      {
+        "a": "jw:10654447",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00377998JAJP"
+      },
+      {
+        "a": "jw:10696793",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00377999JAJP"
+      },
+      {
+        "a": "jw:10796751",
+        "b": "cr:G8DHV7WJP-GS00377992-GE00378000JAJP"
       }
     ],
     "together": [
@@ -1214,5 +1242,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:185542,kitsu:49410,mal:60522,offline:mal-60522)"
   },
-  "why": "Skeleton Knight in Another World Season 2 is the twelve episode summer 2026 cour, episode 1 on 2026-07-04 and then weekly at 13:00 from 2026-07-13 to 2026-09-21, with ten episodes aired so far.\nanizip:19053 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:60522 and anilist:185542, both members.\ncr:G8DHV7WJP-GS00377992 is the same run: anilist:185542 maps to it SAME_AS, it maps back to all four members and to anizip:19053, and its ten episodes sit on the run's own dates including the irregular 2026-07-04 then 2026-07-13 opening, with the same titles.\njw:292827-483261 is the same run: it maps SAME_AS to all four members, to anizip:19053 and to the Crunchyroll season, and its ten listed episodes are the ten aired, carrying the run's titles; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19053 episodes 1 to 10 on identical release dates, 2026-07-04, 2026-07-13 and then weekly through 2026-09-07."
+  "why": "Skeleton Knight in Another World Season 2 is the twelve episode summer 2026 cour, episode 1 on 2026-07-04 and then weekly at 13:00 from 2026-07-13 to 2026-09-21, with ten episodes aired so far.\nanizip:19053 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:60522 and anilist:185542, both members.\ncr:G8DHV7WJP-GS00377992 is the same run: anilist:185542 maps to it SAME_AS, it maps back to all four members and to anizip:19053, and its ten episodes sit on the run's own dates including the irregular 2026-07-04 then 2026-07-13 opening, with the same titles.\njw:292827-483261 is the same run: it maps SAME_AS to all four members, to anizip:19053 and to the Crunchyroll season, and its ten listed episodes are the ten aired, carrying the run's titles; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19053 episodes 1 to 10 on identical release dates, 2026-07-04, 2026-07-13 and then weekly through 2026-09-07. The JustWatch episodes 1, 3, 4, 5, 6, 7 and 8 pair with the same numbered Crunchyroll episodes on exact titles; JustWatch episode 2 reads Elvish Blade where the run has Elvish Bride, episode 9 differs from both Crunchyroll and anizip by the apostrophe character alone, and episode 10 is a different translation, so those three stay unpaired."
 }

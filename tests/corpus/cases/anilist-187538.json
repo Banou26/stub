@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "Crunchyroll and anizip disagree on the wording of episodes 7 and 9 (3 ON THREE against On Three, ONE against One), so those two pairs rest on the dates alone like the rest. kitsu has no episode titles or dates. The JustWatch episodes match Crunchyroll's titles exactly but carry no dates and were left unpaired. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "Crunchyroll and anizip disagree on the wording of episodes 7 and 9 (3 ON THREE against On Three, ONE against One), so those two pairs rest on the dates alone like the rest. kitsu has no episode titles or dates. The JustWatch episodes match Crunchyroll's titles exactly but carry no dates and were left unpaired. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 10"
   },
   "claims": [
     {
@@ -1298,6 +1298,46 @@
       {
         "a": "cr:GT00377907-GS00377908-GE00377918JAJP",
         "b": "anizip:19203-10"
+      },
+      {
+        "a": "jw:9157060",
+        "b": "cr:GT00377907-GS00377908-GE00377909JAJP"
+      },
+      {
+        "a": "jw:10574659",
+        "b": "cr:GT00377907-GS00377908-GE00377910JAJP"
+      },
+      {
+        "a": "jw:10574660",
+        "b": "cr:GT00377907-GS00377908-GE00377911JAJP"
+      },
+      {
+        "a": "jw:10574661",
+        "b": "cr:GT00377907-GS00377908-GE00377912JAJP"
+      },
+      {
+        "a": "jw:10574662",
+        "b": "cr:GT00377907-GS00377908-GE00377913JAJP"
+      },
+      {
+        "a": "jw:10574663",
+        "b": "cr:GT00377907-GS00377908-GE00377914JAJP"
+      },
+      {
+        "a": "jw:10574664",
+        "b": "cr:GT00377907-GS00377908-GE00377915JAJP"
+      },
+      {
+        "a": "jw:10574665",
+        "b": "cr:GT00377907-GS00377908-GE00377916JAJP"
+      },
+      {
+        "a": "jw:10574666",
+        "b": "cr:GT00377907-GS00377908-GE00377917JAJP"
+      },
+      {
+        "a": "jw:10574667",
+        "b": "cr:GT00377907-GS00377908-GE00377918JAJP"
       }
     ],
     "partOf": [
@@ -1545,5 +1585,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:187538,kitsu:49656,mal:61169,offline:mal-61169)"
   },
-  "why": "BLACK TORCH is the twelve episode summer 2026 cour on a weekly 13:00 slot, 2026-07-04 to 2026-09-19, with ten episodes aired so far.\nanizip:19203 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:61169 and anilist:187538, both members.\ncr:GT00377907-GS00377908 is the same run: anilist:187538 maps to it SAME_AS, it maps back to all four members, and its ten episodes sit on the run's own weekly dates, 2026-07-04 through 2026-09-05.\njw:472682-496533 is the same run: it maps SAME_AS to all four members, to anizip:19203 and to the Crunchyroll season, and its ten episode titles are the run's first ten in order; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GT00377907 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:49656 as PART_OF.\nnf:70264888 is a different work: it is Black Mirror, the British anthology series starting 2011, and its listed episodes are that show's (The National Anthem, Fifteen Million Merits, San Junipero and the rest), so its SAME_AS claims against the four members are a title collision with BLACK TORCH.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19203 episodes 1 to 10 on identical release dates week by week, 2026-07-04 through 2026-09-05."
+  "why": "BLACK TORCH is the twelve episode summer 2026 cour on a weekly 13:00 slot, 2026-07-04 to 2026-09-19, with ten episodes aired so far.\nanizip:19203 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:61169 and anilist:187538, both members.\ncr:GT00377907-GS00377908 is the same run: anilist:187538 maps to it SAME_AS, it maps back to all four members, and its ten episodes sit on the run's own weekly dates, 2026-07-04 through 2026-09-05.\njw:472682-496533 is the same run: it maps SAME_AS to all four members, to anizip:19203 and to the Crunchyroll season, and its ten episode titles are the run's first ten in order; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GT00377907 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:49656 as PART_OF.\nnf:70264888 is a different work: it is Black Mirror, the British anthology series starting 2011, and its listed episodes are that show's (The National Anthem, Fifteen Million Merits, San Junipero and the rest), so its SAME_AS claims against the four members are a title collision with BLACK TORCH.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19203 episodes 1 to 10 on identical release dates week by week, 2026-07-04 through 2026-09-05. The ten JustWatch episodes pair with the Crunchyroll episodes 1 to 10 on exact titles, The Future Is in Our Hands through Deadly Skillz, including 3 ON THREE and ONE where anizip words them differently."
 }

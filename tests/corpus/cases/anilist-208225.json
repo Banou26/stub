@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "The JustWatch season has the right titles but no release dates and is not a metadata catalogue, so its episodes are left unpaired; only anizip to Crunchyroll, with matching dates on both sides, is asserted. The kitsu member's 22 episodes and the offline member's 1 disagree with the 12 that anilist, mal and anizip carry, but both are members of the run's own address. refuted: 0 marks overturned."
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "The JustWatch season has the right titles but no release dates and is not a metadata catalogue, so its episodes are left unpaired; only anizip to Crunchyroll, with matching dates on both sides, is asserted. The kitsu member's 22 episodes and the offline member's 1 disagree with the 12 that anilist, mal and anizip carry, but both are members of the run's own address. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 10"
   },
   "claims": [
     {
@@ -838,6 +838,46 @@
       {
         "a": "anizip:19909-10",
         "b": "cr:GT00378118-GS00378134-GE00378558JAJP"
+      },
+      {
+        "a": "jw:10290742",
+        "b": "cr:GT00378118-GS00378134-GE00378549JAJP"
+      },
+      {
+        "a": "jw:10679732",
+        "b": "cr:GT00378118-GS00378134-GE00378550JAJP"
+      },
+      {
+        "a": "jw:10679958",
+        "b": "cr:GT00378118-GS00378134-GE00378551JAJP"
+      },
+      {
+        "a": "jw:10679741",
+        "b": "cr:GT00378118-GS00378134-GE00378552JAJP"
+      },
+      {
+        "a": "jw:10679902",
+        "b": "cr:GT00378118-GS00378134-GE00378553JAJP"
+      },
+      {
+        "a": "jw:10679837",
+        "b": "cr:GT00378118-GS00378134-GE00378554JAJP"
+      },
+      {
+        "a": "jw:10679845",
+        "b": "cr:GT00378118-GS00378134-GE00378555JAJP"
+      },
+      {
+        "a": "jw:10679942",
+        "b": "cr:GT00378118-GS00378134-GE00378556JAJP"
+      },
+      {
+        "a": "jw:10679933",
+        "b": "cr:GT00378118-GS00378134-GE00378557JAJP"
+      },
+      {
+        "a": "jw:10679786",
+        "b": "cr:GT00378118-GS00378134-GE00378558JAJP"
       }
     ],
     "partOf": [
@@ -1042,5 +1082,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:208225,kitsu:50767,mal:63537,offline:mal-63537)"
   },
-  "why": "The Duke's Son Claims He Won't Love Me Yet Showers Me with Adoration is a 12 episode summer 2026 TV run that is still airing: anilist gives 2026-07-05 to 2026-09-19 with 12 episodes, mal the same 2026-07-05 start and 12, and anizip still lists episodes 11 and 12 for 2026-09-12 and 2026-09-19. anizip:19909 is the same run: it carries SAME_AS ids to both mal:63537 and anilist:208225 and the same count of 12, with weekly episodes from 2026-07-04T16:30:00Z. cr:GT00378118-GS00378134 is the same run: anilist:208225 names it SAME_AS, and its 10 episodes are the run's first 10 on the same days (2026-07-04 through 2026-09-05) under the same titles, 10 being what had aired. jw:523894-560933 is the same run: it lists the same 10 episodes in the same order under the same titles (A Marriage Just for Show, The Sound of Distant Rain, Julius's Wish) and names anilist:208225, anizip:19909, the Crunchyroll season, kitsu:50767, mal:63537 and offline:mal-63537 as the same run. cr:GT00378118 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50767 declares the run PART_OF it. The ten episode pairs are between anizip and Crunchyroll, whose release dates agree to the day and whose titles are the same text (Soiree against Soirée on episode 6 being an accent only)."
+  "why": "The Duke's Son Claims He Won't Love Me Yet Showers Me with Adoration is a 12 episode summer 2026 TV run that is still airing: anilist gives 2026-07-05 to 2026-09-19 with 12 episodes, mal the same 2026-07-05 start and 12, and anizip still lists episodes 11 and 12 for 2026-09-12 and 2026-09-19. anizip:19909 is the same run: it carries SAME_AS ids to both mal:63537 and anilist:208225 and the same count of 12, with weekly episodes from 2026-07-04T16:30:00Z. cr:GT00378118-GS00378134 is the same run: anilist:208225 names it SAME_AS, and its 10 episodes are the run's first 10 on the same days (2026-07-04 through 2026-09-05) under the same titles, 10 being what had aired. jw:523894-560933 is the same run: it lists the same 10 episodes in the same order under the same titles (A Marriage Just for Show, The Sound of Distant Rain, Julius's Wish) and names anilist:208225, anizip:19909, the Crunchyroll season, kitsu:50767, mal:63537 and offline:mal-63537 as the same run. cr:GT00378118 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50767 declares the run PART_OF it. The ten episode pairs are between anizip and Crunchyroll, whose release dates agree to the day and whose titles are the same text (Soiree against Soirée on episode 6 being an accent only). The ten JustWatch episodes pair with the same Crunchyroll episodes on exact titles, A Marriage Just for Show through Julius's Wish."
 }

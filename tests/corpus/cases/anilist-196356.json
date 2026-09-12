@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "The JustWatch season could not be checked on titles because it lists them in romaji against AniZip's English, and it carries no episode dates, so the row was accepted as the same run on its slug, its six first-party SAME_AS handles and the proper nouns Kounokura and Miya landing at the same positions, while every per-episode pair was refused. Kitsu's episodeCount of 34 against the run's 12 is left alone since Kitsu is a member of the run's own address. refuted: 0 marks overturned."
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "The JustWatch season could not be checked on titles because it lists them in romaji against AniZip's English, and it carries no episode dates, so the row was accepted as the same run on its slug, its six first-party SAME_AS handles and the proper nouns Kounokura and Miya landing at the same positions, while every per-episode pair was refused. Kitsu's episodeCount of 34 against the run's 12 is left alone since Kitsu is a member of the run's own address. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 0"
   },
   "claims": [
     {

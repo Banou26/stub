@@ -1,8 +1,8 @@
 {
   "checked": {
     "at": "2026-09-12",
-    "by": "agent:opus:label+refute",
-    "notes": "Netflix lists eleven episodes against the run's twelve and titles them Episode 2 to Episode 11 with a Smoke 1 opener, so none of its episodes were placed; the JustWatch episodes carry the right titles but no dates and were left unpaired too. refuted: 0 marks overturned"
+    "by": "agent:opus:label+refute+ruling",
+    "notes": "Netflix lists eleven episodes against the run's twelve and titles them Episode 2 to Episode 11 with a Smoke 1 opener, so none of its episodes were placed; the JustWatch episodes carry the right titles but no dates and were left unpaired too. refuted: 0 marks overturned. ruling 2026-09-12: JustWatch titles are evidence (rule 2), pairs added on exact titles: 10"
   },
   "claims": [
     {
@@ -939,6 +939,46 @@
       {
         "a": "kitsu:385597",
         "b": "anizip:19479-9"
+      },
+      {
+        "a": "jw:9484764",
+        "b": "anizip:19479-1"
+      },
+      {
+        "a": "jw:10430238",
+        "b": "anizip:19479-2"
+      },
+      {
+        "a": "jw:10430239",
+        "b": "anizip:19479-3"
+      },
+      {
+        "a": "jw:10430240",
+        "b": "anizip:19479-4"
+      },
+      {
+        "a": "jw:10430241",
+        "b": "anizip:19479-5"
+      },
+      {
+        "a": "jw:10430242",
+        "b": "anizip:19479-6"
+      },
+      {
+        "a": "jw:10430250",
+        "b": "anizip:19479-7"
+      },
+      {
+        "a": "jw:10430251",
+        "b": "anizip:19479-8"
+      },
+      {
+        "a": "jw:10430252",
+        "b": "anizip:19479-9"
+      },
+      {
+        "a": "jw:10430253",
+        "b": "anizip:19479-10"
       }
     ],
     "partOf": [
@@ -1201,5 +1241,5 @@
     "file": "corpus/season/summer-2026/answers.jsonl",
     "test": "ag:(anilist:196187,anizip:19479,jw:488719-515179,kitsu:50040,mal:62076,nf:82757039-1,offline:mal-62076)"
   },
-  "why": "Smoking Behind the Supermarket with You is the twelve episode summer 2026 cour, airing 2026-07-09 to 2026-09-24 on a weekly 14:45 slot.\nThe seven members (anilist:196187, anizip:19479, jw:488719-515179, kitsu:50040, mal:62076, nf:82757039-1, offline:mal-62076) are one run: anilist, kitsu, anizip and offline all map SAME_AS to mal:62076, anilist and kitsu agree on the twelve episode count and the 2026-07-09 start, and jw and nf both map SAME_AS across the whole set.\ncr:GT00378116 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:50040 as PART_OF.\njw:488719 holds the run: the JustWatch title container for the show, carrying only the series title and a year level 2026-01-01 start, with jw:488719-515179 declared PART_OF it.\nnf:82757039 holds the run: the Netflix show container for the same title, with no count and a year level start, of which nf:82757039-1 is the first season.\ndisney:25eb842b-a4c2-4120-9c86-7feec790de08 holds the run: a bare Disney container with no title, count or dates, named by jw:488719-515179 as PART_OF.\nThe kitsu episodes 1 to 9 pair with anizip:19479 episodes 1 to 9 on nine exact English titles, Smoking Behind the Supermarket With You through Asking Behind the Supermarket Alone, all distinctive and none generic; kitsu 10 to 12 have no titles yet and were left alone."
+  "why": "Smoking Behind the Supermarket with You is the twelve episode summer 2026 cour, airing 2026-07-09 to 2026-09-24 on a weekly 14:45 slot.\nThe seven members (anilist:196187, anizip:19479, jw:488719-515179, kitsu:50040, mal:62076, nf:82757039-1, offline:mal-62076) are one run: anilist, kitsu, anizip and offline all map SAME_AS to mal:62076, anilist and kitsu agree on the twelve episode count and the 2026-07-09 start, and jw and nf both map SAME_AS across the whole set.\ncr:GT00378116 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:50040 as PART_OF.\njw:488719 holds the run: the JustWatch title container for the show, carrying only the series title and a year level 2026-01-01 start, with jw:488719-515179 declared PART_OF it.\nnf:82757039 holds the run: the Netflix show container for the same title, with no count and a year level start, of which nf:82757039-1 is the first season.\ndisney:25eb842b-a4c2-4120-9c86-7feec790de08 holds the run: a bare Disney container with no title, count or dates, named by jw:488719-515179 as PART_OF.\nThe kitsu episodes 1 to 9 pair with anizip:19479 episodes 1 to 9 on nine exact English titles, Smoking Behind the Supermarket With You through Asking Behind the Supermarket Alone, all distinctive and none generic; kitsu 10 to 12 have no titles yet and were left alone. The JustWatch episodes 1 to 10 pair with anizip:19479 episodes 1 to 10 on those same exact titles; JustWatch 11 and 12 are only Episode 11 and Episode 12, so they pair with nothing."
 }
