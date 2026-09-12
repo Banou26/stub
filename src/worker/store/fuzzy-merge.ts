@@ -4,12 +4,14 @@ import { stripTitle, titleSimilarity } from '../../sources/utils'
 import { isOnlySeasonLabel, parseSeasonNumber } from '../../sources/season'
 import { findAggregatedMedia, linkPartOfPairs, linkSameContainerPairs, linkSameMediaPairs } from './db'
 
-const SIMILARITY_THRESHOLD = 0.9
+// exported for `plugin:title` (5.4 P3), which scores a pair against the same threshold
+export const SIMILARITY_THRESHOLD = 0.9
 // Bounds the wasm work, and it is the square that matters: sameShow compares every kept title of one
 // cluster against every kept title of the other, so a pair costs up to 36 alignments today and a year
 // bucket costs that times its pairs. Eight titles would take one pair to 64, +78% on the single loop
 // the whole pass spends its time in, so this is not a knob to turn without measuring the loop first.
-const MAX_TITLES_PER_CLUSTER = 6
+// Exported for `plugin:title` (5.4 P3), which caps a cluster at the same six.
+export const MAX_TITLES_PER_CLUSTER = 6
 const MAX_CACHED_DECISIONS = 50_000
 
 /**
@@ -42,8 +44,10 @@ const MAX_CACHED_DECISIONS = 50_000
  * So the ceiling is structural and the ratio only picks between the widths under it. 45 is the widest
  * that leaves a full month of clearance below a cour, and it is the constant crunchyroll/extractor.ts
  * already ships for the same question, which keeps one number in the codebase instead of two.
+ *
+ * Exported for `plugin:title` (5.4 P3), whose date gate is this window.
  */
-const START_DATE_WINDOW_DAYS = 45
+export const START_DATE_WINDOW_DAYS = 45
 const MS_PER_DAY = 86_400_000
 
 /**
@@ -185,8 +189,10 @@ const startDay = (date: string | null) => {
  * Read off the profile titles, so it sees the same six the matcher does and nothing normalizeTitle
  * already threw away: "Ore, Tsushima (ONA)" arrives here as "ore tsushima ona" and the marker is a
  * plain trailing word by then.
+ *
+ * Exported for `plugin:title` (5.4 P3), whose companion gate is this rule over the same six.
  */
-const namesCompanionContent = (a: string[], b: string[]) => {
+export const namesCompanionContent = (a: string[], b: string[]) => {
   for (const [marked, plain] of [[a, b], [b, a]] as [string[], string[]][]) {
     for (const title of marked) {
       for (const marker of COMPANION_MARKERS) {
@@ -264,7 +270,18 @@ const selectTitles = (cluster: Media[]): string[] => {
       if (current === undefined || value > current) bestScore.set(normalized, value)
     }
   }
+  return selectByScore(bestScore)
+}
 
+/**
+ * The half of the selection above that is a function of the best score per normalised title, and
+ * nothing else: bucket by score, title ascending within a tier, take six.
+ *
+ * Split out rather than repeated because `plugin:title` selects the same six (5.4 P3) from the
+ * profile's `titleKeys` instead of from `Media.titles`, and two passes that select different sixes
+ * merge different clusters while every number in the comment above is about this one rule.
+ */
+export const selectByScore = (bestScore: Map<string, number>): string[] => {
   const byScore = new Map<number, string[]>()
   for (const [title, score] of bestScore) {
     const tier = byScore.get(score)
@@ -390,7 +407,8 @@ const trailingNumber = (title: string) => {
 // 1.0000, so no threshold tells them apart: alignment charges nothing for a hyphen that is noise and
 // almost nothing for a digit that is the whole identity. Both re-measured on frizbee 2026-08-29; they
 // read 0.929 and 0.833 here until then, which were seal-wasm's and outlived it.
-const differOnlyByTrailingNumber = (a: string, b: string) => {
+// Exported for `plugin:title` (5.4 P3), whose title gate skips a pair on the same rule.
+export const differOnlyByTrailingNumber = (a: string, b: string) => {
   const left = trailingNumber(a)
   const right = trailingNumber(b)
   return left.value !== right.value && left.stem === right.stem
