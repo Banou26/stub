@@ -297,7 +297,7 @@ const dedupeRelated = (related: readonly RelatedRow[]): RelatedRow[] => {
   for (const entry of [...related].sort((a, b) =>
     a.relation.localeCompare(b.relation) || a.uri.localeCompare(b.uri)
     || a.by.localeCompare(b.by) || a.via.localeCompare(b.via))) {
-    const key = `${entry.relation} ${entry.uri}`
+    const key = `${entry.relation}\u0000${entry.uri}`
     if (!best.has(key)) best.set(key, entry)
   }
   return [...best.values()]
