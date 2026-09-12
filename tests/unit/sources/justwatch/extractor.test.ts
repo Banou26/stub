@@ -218,21 +218,119 @@ test('a crunchyroll series offer leaves as a CONTAINER, and everything season sc
   expect(netflix?.relation).toBe('PART_OF')
 })
 
-// The synthesized "<show> Season <n>" is gone. Measured before writing this: the series media carries
-// NO titles at all (`titles: []`, the show title moved onto the film's synthetic episode in 65fd475),
-// so a title on it is the one place JustWatch's ordinal could re-enter a cluster's title set, where the
-// fuzzy merge's exact-title shortcut and the worker's similarMedia evidence both read. It stays empty,
-// and the show's title lives on the show CONTAINER, which is the only node it is true of.
-test('a season media carries no synthesized ordinal title: its own titles stay empty and the show container carries the show title', async () => {
+// THE TITLE, which this source computed and then dropped until 2026-09-12. Two rules in one assertion,
+// and the synthesized "<show> Season <n>" is still gone: the media takes the SEASON's own title when
+// JustWatch gives it one naming more than a position, and the SHOW's otherwise, so JustWatch's ordinal
+// never enters a cluster's title set while the row is still findable by `plugin:title`.
+//
+// Mutation: delete the `titles` line in `normalizeMedia` and the first two go red; drop the `!` from
+// `isOnlySeasonLabel` and the last two swap.
+const mediaFor = async (uri: string, which: typeof node | typeof film = node) => {
   const subscribe = (resolvers.Subscription as any).media.subscribe
-  const { value } = await subscribe(undefined, { input: { uri: 'jw:12345-111' } }, context(node)).next()
-  const media = value?.media as GQLMedia
+  const { value } = await subscribe(undefined, { input: { uri } }, context(which)).next()
+  return value?.media as GQLMedia
+}
 
-  expect(media.titles.map(title => title.title)).toEqual([])
-  const show = media.handles.find(handle => handle.node.origin === 'jw')
+const titlesOf = (media: GQLMedia | undefined) => (media?.titles ?? []).map(title => title.title)
+
+test('a season media carries a title: its own when it names one, the show\'s otherwise, never an ordinal', async () => {
+  // the season JustWatch titles with nothing at all
+  expect(titlesOf(await mediaFor('jw:12345-111')), 'the show\'s, so the row is findable by title')
+    .toEqual(['A Show With Several Seasons'])
+
+  const named = {
+    ...node,
+    seasons: [{ ...season(111, 2), content: { ...season(111, 2).content, title: 'The War Arc' } }, season(222, 3)],
+  }
+  expect(titlesOf(await mediaFor('jw:12345-111', named as typeof node)), 'a season title naming more than a position wins')
+    .toEqual(['The War Arc'])
+
+  const positional = {
+    ...node,
+    seasons: [{ ...season(111, 2), content: { ...season(111, 2).content, title: 'Season 2' } }, season(222, 3)],
+  }
+  const fallback = await mediaFor('jw:12345-111', positional as typeof node)
+  expect(titlesOf(fallback), 'a bare position label is an ordinal this source does not trust')
+    .toEqual(['A Show With Several Seasons'])
+  expect(titlesOf(fallback)).not.toContainEqual(expect.stringMatching(/season\s+\d/i))
+
+  // and the show CONTAINER still carries the show's own title, which is the node similarMedia is asked of
+  const show = (await mediaFor('jw:12345-111')).handles.find(handle => handle.node.origin === 'jw')
   expect(show?.node.titles.map(title => title.title)).toEqual(['A Show With Several Seasons'])
-  expect(media.handles.flatMap(handle => handle.node.titles).map(title => title.title))
+  expect((await mediaFor('jw:12345-111')).handles.flatMap(handle => handle.node.titles).map(title => title.title))
     .not.toContainEqual(expect.stringMatching(/season\s+\d/i))
+})
+
+// A film keeps what it had: its own title on the media, and the same title on the one synthetic episode
+// the playback path reads. That episode used to be the ONLY place a JustWatch title survived.
+test('a film keeps its title, on the media and on its one episode', async () => {
+  const media = await mediaFor('jw:999', film)
+
+  expect(titlesOf(media)).toEqual(['A Film'])
+  expect((media.episodes ?? []).map(episode => (episode?.titles ?? []).map(title => title.title)))
+    .toEqual([['A Film']])
+})
+
+// THE DATE. `${year}-01-01` is the exact spelling the store reads as no day at all, and it was every
+// JustWatch row's date because nothing asked for the day. The day is asked for now, at season level.
+//
+// Mutation: drop `originalReleaseDate` from the NODE_QUERY season block, or make `dayOrYear` ignore its
+// day, and the first assertion goes back to 2022-01-01.
+const dated = (day: string | null) => ({
+  ...node,
+  content: { ...node.content, originalReleaseDate: '2021-04-01' },
+  seasons: [
+    { ...season(111, 2), content: { ...season(111, 2).content, originalReleaseDate: day } },
+    season(222, 3),
+  ],
+})
+
+test('a season media takes the season\'s own day, and falls back to its year and never to the show\'s day', async () => {
+  expect((await mediaFor('jw:12345-111', dated('2022-07-06') as typeof node)).startDate).toBe('2022-07-06')
+
+  const undated = await mediaFor('jw:12345-111', dated(null) as typeof node)
+  expect(undated.startDate, 'year precision, awaiting startDatePrecision: never the show\'s 2021-04-01')
+    .toBe('2022-01-01')
+
+  // the control: a film has no season, so the show-level day IS its own and is taken
+  const film2026 = { ...film, content: { ...film.content, originalReleaseDate: '2020-02-26' } }
+  expect((await mediaFor('jw:999', film2026 as typeof film)).startDate).toBe('2020-02-26')
+})
+
+// The episode dates `plugin:range` pairs a folded packaging's rows on. JustWatch carries them on the
+// episode list NODE_QUERY already fetches, and none of them reached us before 2026-09-12.
+//
+// Mutation: drop `releaseDate` from `normalizeEpisode` and the first assertion is [undefined, undefined].
+test('episodes carry the day they aired, and an undated one is absent rather than invented', async () => {
+  const episodes = [
+    { objectId: 1, content: { title: 'One', episodeNumber: 1, seasonNumber: 2, isReleased: true, shortDescription: null, originalReleaseDate: '2022-07-06', runtime: 24 } },
+    { objectId: 2, content: { title: 'Two', episodeNumber: 2, seasonNumber: 2, isReleased: true, shortDescription: null, originalReleaseDate: null, runtime: 24 } },
+  ]
+  const listed = { ...node, seasons: [{ ...season(111, 2), episodes }, season(222, 3)] }
+
+  const media = await mediaFor('jw:12345-111', listed as unknown as typeof node)
+  expect((media.episodes ?? []).map(episode => episode?.releaseDate)).toEqual(['2022-07-06', undefined])
+})
+
+// The query has to ASK for the days, and a fixture answers whatever it is sent, so every assertion above
+// would stay green against a query that never requested one.
+test('the node query asks for the season and episode release days', async () => {
+  const bodies: string[] = []
+  const subscribe = (resolvers.Subscription as any).media.subscribe
+  const ctx = {
+    fetch: async (url: string, init?: { body?: string }) => {
+      if (url !== JW_API) throw new Error(`fixture has no route for ${url}`)
+      bodies.push(init?.body ?? '')
+      return { json: async () => ({ data: { node: { ...node, offers: [], extraOffers: [] } } }) }
+    },
+  } as never
+
+  await subscribe(undefined, { input: { uri: 'jw:12345-111' } }, ctx).next()
+
+  const query = JSON.parse(bodies[0] ?? '{}').query ?? ''
+  expect(query, 'the node query ran').toContain('GetTitleNode')
+  expect([...query.matchAll(/originalReleaseDate/g)].length, 'the work, the season and the episode')
+    .toBeGreaterThanOrEqual(3)
 })
 
 // What makes JustWatch askable: the worker asks `similarMedia` of CONTAINER origins only, and it is

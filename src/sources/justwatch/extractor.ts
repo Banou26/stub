@@ -81,6 +81,7 @@ const SEARCH_QUERY = `
             title
             fullPath
             originalReleaseYear
+            originalReleaseDate
             shortDescription
             posterUrl(profile: S718, format: JPG)
             externalIds {
@@ -143,6 +144,7 @@ const NODE_QUERY = `
           title
           fullPath
           originalReleaseYear
+          originalReleaseDate
           shortDescription
           posterUrl(profile: S718, format: JPG)
           externalIds {
@@ -190,6 +192,7 @@ const NODE_QUERY = `
               fullPath
               posterUrl
               originalReleaseYear
+              originalReleaseDate
               isReleased
             }
             episodes(limit: 50) {
@@ -201,6 +204,7 @@ const NODE_QUERY = `
                 seasonNumber
                 isReleased
                 shortDescription
+                originalReleaseDate
                 runtime
               }
               flatrate: offers(
@@ -257,7 +261,15 @@ interface JWSearchNode {
   id: string
   objectId: number
   objectType?: string
-  content: { title: string, fullPath: string, posterUrl: string | null, shortDescription: string | null, originalReleaseYear?: number | null }
+  content: {
+    title: string
+    fullPath: string
+    posterUrl: string | null
+    shortDescription: string | null
+    originalReleaseYear?: number | null
+    /** the day this WORK premiered, which on a Show is its first season's day; see `dayOrYear` */
+    originalReleaseDate?: string | null
+  }
   offers: JWOffer[]
   /** the same offers read on the second licensing region; see OFFER_COUNTRIES */
   extraOffers?: JWOffer[]
@@ -284,13 +296,33 @@ interface JWSeason {
      * season that came off a search payload genuinely does not carry it.
      */
     originalReleaseYear?: number | null
+    /**
+     * The DAY this season premiered, `YYYY-MM-DD`, which NODE_QUERY now asks for beside the year.
+     *
+     * Measured 2026-09-12 over the 24 season-scoped JustWatch rows of the recorded season: 22 carry
+     * one. It is the season's own day and never the show's, which is why the two that do not fall
+     * back to the year rather than to `node.content.originalReleaseDate` (Mushoku's season row is
+     * 2026-07-04 while its show row is 2021-01-11).
+     *
+     * Optional for the same reason the year is: SEARCH_QUERY's seasons block does not ask for it.
+     */
+    originalReleaseDate?: string | null
   }
   episodes: JWEpisode[]
 }
 
 interface JWEpisode {
   objectId: number
-  content: { title: string, episodeNumber: number, seasonNumber: number, isReleased: boolean, shortDescription: string | null, runtime: number | null }
+  content: {
+    title: string
+    episodeNumber: number
+    seasonNumber: number
+    isReleased: boolean
+    shortDescription: string | null
+    /** the day this episode aired, `YYYY-MM-DD`; 155 of 180 episodes carried one (2026-09-12) */
+    originalReleaseDate?: string | null
+    runtime: number | null
+  }
 }
 
 interface JWShowNode extends JWSearchNode { seasons: JWSeason[] }
@@ -301,11 +333,34 @@ const resolveImageUrl = (url: string | null | undefined) =>
   url ? (url.startsWith('http') ? url : `${JW_IMAGE_BASE}${url}`) : undefined
 
 /**
+ * A start date at the best precision this node has for THIS media: the day when JustWatch names one,
+ * else the year as `YYYY-01-01`, else nothing.
+ *
+ * `${year}-01-01` is honest year precision and is also the exact spelling the store reads as no day
+ * at all: a parsed date whose UTC day-of-month is 1 is `month-or-year`, so `startDay` is dropped and
+ * only the year survives to bucket on (5.4 P0). Every JustWatch row was that shape until 2026-09-12,
+ * because nothing asked for the day, so this source could never clear the 45 day window and its date
+ * gate was permanently silent. The day is asked for now and 22 of 24 recorded seasons carry one.
+ *
+ * The year fallback stays YEAR PRECISION AWAITING `startDatePrecision` (4.6, and 11.3 decision 4):
+ * until this source declares the field, a caller cannot tell our January 1 from a real New Year
+ * premiere, and the store's first-of-month reading is what keeps that safe.
+ *
+ * The day and the year must come from THE SAME SUBJECT. Pass a season's day beside a season's year,
+ * never a show's day beside a season's year: the show's day is its FIRST season's premiere, which is
+ * the show-vs-season confusion the uri scoping in ./id.ts exists to prevent, in the date field.
+ */
+const dayOrYear = (day: string | null | undefined, year: number | null | undefined): string | undefined =>
+  day ?? (year ? `${year}-01-01` : undefined)
+
+/**
  * JustWatch's seasons as the shared picker reads them: a count, a year and the episode titles the node
- * carries. A year is all JustWatch knows about a date, so the picker's date rule never applies here
- * and its year rule plus the year veto carry that axis, the one ../catalogue-gate.ts calibrated for
- * this source. A `totalEpisodeCount` of 0 is a season JustWatch has not listed yet, offered as no count
- * rather than as a season shorter than every run.
+ * carries. The YEAR and not the day, deliberately: `season.content.originalReleaseDate` is fetched now
+ * and 22 of 24 recorded seasons carry one, but `premiere` would move this source off the year rule and
+ * onto the picker's 45 day window, and the year rule plus the year veto are the axis
+ * ../catalogue-gate.ts calibrated for it. That swap is a measurement, not an edit. A `totalEpisodeCount`
+ * of 0 is a season JustWatch has not listed yet, offered as no count rather than as a season shorter
+ * than every run.
  */
 const jwCandidates = (seasons: JWSeason[]): SeasonCandidate<JWSeason>[] =>
   seasons.map(season => ({
@@ -316,9 +371,13 @@ const jwCandidates = (seasons: JWSeason[]): SeasonCandidate<JWSeason>[] =>
     episodeTitles: (season.episodes ?? []).map(episode => episode.content.title)
   }))
 
+// `meta` is what the offer loop DECIDES on, and nothing else. A title, a description and a poster
+// used to ride along here for offer handles that never read one, which is the same stale intent as
+// the media's missing titles: a handle this mints is a BARE node in another source's id space, and
+// writing our reading onto a row we never saw is what `buildHandlesFromUri` refuses too.
 const buildOffersAsHandles = async (
   offers: JWOffer[],
-  meta: { shortDescription?: string | null, title?: string, posterUrl?: string, seasonNumber?: number, showContainer?: boolean },
+  meta: { seasonNumber?: number, showContainer?: boolean },
   ctx: ExtractorServerContext,
   policy: RequestPolicy = UNKNOWN_POLICY
 ): Promise<GQLMediaHandle[]> => {
@@ -432,12 +491,7 @@ export const showAsContainer = async (
 ): Promise<GQLMedia | null> => {
   const handles = await buildOffersAsHandles(
     [...node.offers ?? [], ...node.extraOffers ?? []],
-    {
-      shortDescription: node.content.shortDescription,
-      title: node.content.title,
-      posterUrl: resolveImageUrl(node.content.posterUrl),
-      showContainer: true
-    },
+    { showContainer: true },
     ctx,
     policy
   )
@@ -456,7 +510,8 @@ export const showAsContainer = async (
     titles: [{ language: 'en', title: node.content.title, score: SCORE }],
     ...desc(node.content.shortDescription ?? undefined, SCORE),
     covers: img(resolveImageUrl(node.content.posterUrl), SCORE),
-    startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
+    // the SHOW's own day, which is the right subject here and only here: this media IS the show
+    startDate: dayOrYear(node.content.originalReleaseDate, node.content.originalReleaseYear)
   })
 }
 
@@ -474,6 +529,9 @@ const normalizeMedia = async (
   const id = opts.seasonNumber == null ? String(node.objectId) : jwId(node.objectId, season!.objectId)
   const { shortDescription } = node.content
   const seasonYear = season?.content?.originalReleaseYear ?? node.content.originalReleaseYear
+  // the SEASON's day when a season is pinned, and no fallback to the show's: the show's day is its
+  // first season's premiere, so a later season taking it would publish another run's date as its own
+  const seasonDay = season ? season.content.originalReleaseDate : node.content.originalReleaseDate
 
   // the season's own title when JustWatch gives it one naming more than a position, else the show's.
   // "<show> Season <n>" used to be synthesized here, and its ordinal is the number this source no
@@ -492,12 +550,7 @@ const normalizeMedia = async (
 
   const handles = await buildOffersAsHandles(
     [...node.offers ?? [], ...node.extraOffers ?? []],
-    {
-      shortDescription,
-      title,
-      posterUrl: resolveImageUrl(node.content.posterUrl),
-      seasonNumber: opts.seasonNumber
-    },
+    { seasonNumber: opts.seasonNumber },
     ctx,
     policy
   )
@@ -513,7 +566,7 @@ const normalizeMedia = async (
       url: `https://www.justwatch.com${node.content.fullPath}`,
       categories: [node.objectType === 'MOVIE' ? 'MOVIE' : 'SERIES'],
       titles: [{ language: 'en', title: node.content.title, score: SCORE }],
-      startDate: node.content.originalReleaseYear ? `${node.content.originalReleaseYear}-01-01` : undefined
+      startDate: dayOrYear(node.content.originalReleaseDate, node.content.originalReleaseYear)
     })))
   }
 
@@ -525,23 +578,28 @@ const normalizeMedia = async (
     score: SCORE,
     handles,
     episodes,
+    // THE TITLE THIS MEDIA IS FOUND BY, and until 2026-09-12 it was computed above and then dropped.
+    // A row with no title cannot be matched by `plugin:title`, and since an address handle asserts
+    // nothing (3.3, the `provenance: 'address'` refusal), the echo of the asked uri is no longer a
+    // route into a cluster either, so a titleless row can never join one: 132 of the 138 recorded
+    // JustWatch rows carried none, and with them go the offers, which are the whole value of this
+    // source. The show's own title lives on the show CONTAINER handle below as well, because it is
+    // true of that node too and that is the node `similarMedia` is asked of.
+    titles: title ? [{ language: 'en', title, score: SCORE }] : [],
     // the search query carries totalEpisodeCount but not the episodes themselves, so an expanded
     // season still reports how long it is - which is also what season matching elsewhere keys on
     episodeCount: episodes.length || filteredSeasons.reduce((total, season) => total + (season.totalEpisodeCount ?? 0), 0) || undefined,
-    // the SEASON's year when a season is pinned, falling back to the show's. A season media publishing
-    // the show's year publishes the franchise's FIRST season's year as its own start date, which every
-    // date comparison downstream then reads as this season's - the same show-vs-season confusion the
-    // uri scoping in ./id.ts exists to prevent, in the date field instead of the id.
-    startDate: seasonYear ? `${seasonYear}-01-01` : undefined
+    // the SEASON's own date, and its own year when it names no day. Only the YEAR falls back to the
+    // show's: a season media publishing the show's DATE publishes the franchise's FIRST season's as
+    // its own start date, which every date comparison downstream then reads as this season's - the
+    // same show-vs-season confusion the uri scoping in ./id.ts exists to prevent, in the date field.
+    startDate: dayOrYear(seasonDay, seasonYear)
   })
 
-  // JustWatch keeps title and description on the per provider offer handles, not on the media itself
+  // A film's episode is the film, so it takes the media's own title and description: `makeMovieEpisode`
+  // copies `media.titles`, which is now where the title is.
   if (isMovie(media)) {
-    media.episodes = [makeMovieEpisode(media, {
-      score: SCORE,
-      titles: [{ language: 'en', title, score: SCORE }],
-      ...desc(shortDescription, SCORE)
-    })]
+    media.episodes = [makeMovieEpisode(media, { score: SCORE, ...desc(shortDescription, SCORE) })]
     media.episodeCount = 1
   }
 
@@ -556,6 +614,10 @@ const normalizeEpisode = (ep: JWEpisode, mediaUri: string): GQLEpisode =>
     score: SCORE,
     titles: [{ language: 'en', title: ep.content.title, score: SCORE }],
     ...desc(ep.content.shortDescription, SCORE),
+    // the day this episode aired, which is what `plugin:range` pairs a folded packaging's rows on.
+    // JustWatch carries it on the episode list this query already fetches: 155 of the 180 episodes
+    // behind the recorded season carry one (2026-09-12), and none of them reached us before today.
+    releaseDate: ep.content.originalReleaseDate ?? undefined,
     seasonNumber: ep.content.seasonNumber,
     episodeNumber: ep.content.episodeNumber,
     runtime: ep.content.runtime ?? undefined
