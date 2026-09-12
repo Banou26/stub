@@ -42,6 +42,8 @@ export { titlePlugin } from './plugins/title'
 export { aggregatePlugin } from './plugins/aggregate'
 // Section 5.4 P2: the RUN versus CONTAINER exchange, plus the listing rules of 6.1 and 6.5 it owns.
 export { containmentPlugin } from './plugins/containment'
+// Section 5.4 P4: the episode pairs and the ranges of 3.4, which is what places a play button.
+export { rangePlugin } from './plugins/range'
 export { aggregateEpisodeFields, aggregateFields } from './plugins/fields'
 export type { AggregatedEpisode, AggregatedMedia, ClusterCard } from './plugins/fields'
 export { checkInvariants, INVARIANTS } from './plugins/invariants'
