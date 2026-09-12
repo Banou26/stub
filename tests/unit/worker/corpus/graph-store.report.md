@@ -10,8 +10,8 @@ Every line below carries a VERDICT (see Triage), and a line with none fails the 
 
 ## Counts
 
-- cases: 249, of which 196 report nothing at all
-- cases with at least one line: 53
+- cases: 249, of which 197 report nothing at all
+- cases with at least one line: 52
 - `PART_OF` lines a source CLAIMED, which is the store's debt: 0
 - `PART_OF` lines no claim carries: 8
 - `WELD` cases: 0
@@ -22,10 +22,10 @@ Every line below carries a VERDICT (see Triage), and a line with none fails the 
 | WELD | 15 | 0 | an `apart` pair came back as one cluster |
 | PART_OF | 0 | 8 | a container attachment the labels state and the store does not hold |
 | INCLUDES | 2 | 0 | an episode range, which `plugin:range` writes (5.4 P4) |
-| EPISODE_PAIR | 162 | 732 | two rows that are one broadcast episode, or two that must never be one |
+| EPISODE_PAIR | 162 | 710 | two rows that are one broadcast episode, or two that must never be one |
 | UNRELATED | 169 | 0 | a row that must stand alone and does not |
 | ORDER | 0 | 0 | the two arrival orders disagreed (invariant I15) |
-| cases reporting nothing | 166 | 196 | the case is fully satisfied, both arrival orders |
+| cases reporting nothing | 166 | 197 | the case is fully satisfied, both arrival orders |
 
 ### What moved, per kind
 
@@ -37,7 +37,7 @@ Every line below carries a VERDICT (see Triage), and a line with none fails the 
   `known-disagreements.graph.json`), and it no longer attaches to it either, which is what every
   `UNRELATED ATTACHED` and `UNRELATED HOLDS` line was.
 - **`SPLIT` 106 to 280, and `EPISODE_PAIR` 162 to 732, while the cases reporting nothing went 166 to
-  196.** The same change, seen from the other side, and the reason the line count rises
+  197.** The same change, seen from the other side, and the reason the line count rises
   while the case count falls: thirty cases that only ever failed through an echo weld now pass
   outright, and the cases that used the echo to HOLD a group now fail visibly instead, each one
   naming every member of the group rather than one pair. `plugin:title` holds a group only when it
@@ -63,44 +63,13 @@ failures, so this section cannot rot quietly.
 
 | verdict | lines | rules | cases |
 | --- | --- | --- | --- |
-| STORE BUG | 22 | 1 | 1 |
+| STORE BUG | 0 | 0 | 0 |
 | LABEL DOUBTED | 8 | 1 | 3 |
 | RECORDING | 982 | 3 | 44 |
 | EXPECTED GAP | 8 | 1 | 8 |
 | (untriaged) | 0 | 0 | 0 |
 
 ### STORE BUG
-
-**`range-date-pair-renumbers-a-lend-that-already-fits`**, 22 lines over 1 case, kinds EPISODE_PAIR.
-
-plugin:range, rule 1 (by DATE), on a class 2 lend. The recorded walk hangs Crunchyroll's twelve episode rows on anilist:208044 (a foreign claimer on a member, 4.4), so they are a lend candidate rather than the member rows they look like. Crunchyroll publishes the STREAMING schedule from 2026-06-25 and ani.zip the BROADCAST schedule from 2026-07-01T15:00Z, which puts cr episode N+1 exactly ONE day after anizip episode N, inside the Tokyo day of slack, while cr episode N sits six days before it and is out of reach. So every one of the eleven pairs is minted one episode late: cr "Lost Technology" is written SAME_AS anizip "Prologue" with evidence {"day":20636,"slack":1}, cr "Prologue" pairs with nothing, and plugin:aggregate then fills the slots from those pairs, so the run's episode 1 is the wrong video. The titles are identical on both sides at the SAME number (Prologue, Lost Technology, Seek Freedom ... I Am Eftal), so rule 2 would have got it right and rule 1 overrode it. Both lists number 1..12 and the cluster runLength is 12. EXPECTED FIX: give class 2 the test class 3 already has (`numbersOutsideRun`, range.ts:497): a lend whose own numbers already lie in 1..runLength is placed by its own numbering and never renumbered by dates. Failing that, refuse a candidate whose date pairs and title pairs disagree, which is "nothing rather than a guess" (consensus.ts:105-110). anilist-209800 is the only other case carrying a lend and it asserts no pair, so this case is the whole of what the corpus can see of it.
-
-Cases: `anilist-208044`
-
-```
-anilist-208044.json: EPISODE_PAIR: anizip:19896-1 and cr:GT00378115-GS00378128-GE00379302JAJP are one broadcast episode. episodePairsOf(anizip:19896-1) is [cr:GT00378115-GS00378128-GE00379303JAJP, kitsu:404612]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379302JAJP and anizip:19896-1 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379302JAJP) is [nothing]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-2 and cr:GT00378115-GS00378128-GE00379303JAJP are one broadcast episode. episodePairsOf(anizip:19896-2) is [cr:GT00378115-GS00378128-GE00379304JAJP, kitsu:404613]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379303JAJP and anizip:19896-2 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379303JAJP) is [anizip:19896-1, kitsu:404612]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-4 and cr:GT00378115-GS00378128-GE00379305JAJP are one broadcast episode. episodePairsOf(anizip:19896-4) is [cr:GT00378115-GS00378128-GE00379306JAJP, kitsu:404615]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379305JAJP and anizip:19896-4 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379305JAJP) is [anizip:19896-3, kitsu:404614]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-5 and cr:GT00378115-GS00378128-GE00379306JAJP are one broadcast episode. episodePairsOf(anizip:19896-5) is [cr:GT00378115-GS00378128-GE00379307JAJP, kitsu:404616]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379306JAJP and anizip:19896-5 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379306JAJP) is [anizip:19896-4, kitsu:404615]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-6 and cr:GT00378115-GS00378128-GE00379307JAJP are one broadcast episode. episodePairsOf(anizip:19896-6) is [cr:GT00378115-GS00378128-GE00379308JAJP, kitsu:404617]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379307JAJP and anizip:19896-6 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379307JAJP) is [anizip:19896-5, kitsu:404616]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-7 and cr:GT00378115-GS00378128-GE00379308JAJP are one broadcast episode. episodePairsOf(anizip:19896-7) is [cr:GT00378115-GS00378128-GE00379309JAJP, kitsu:404618]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379308JAJP and anizip:19896-7 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379308JAJP) is [anizip:19896-6, kitsu:404617]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-8 and cr:GT00378115-GS00378128-GE00379309JAJP are one broadcast episode. episodePairsOf(anizip:19896-8) is [cr:GT00378115-GS00378128-GE00379310JAJP, kitsu:404619]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379309JAJP and anizip:19896-8 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379309JAJP) is [anizip:19896-7, kitsu:404618]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-9 and cr:GT00378115-GS00378128-GE00379310JAJP are one broadcast episode. episodePairsOf(anizip:19896-9) is [cr:GT00378115-GS00378128-GE00379311JAJP, kitsu:404620]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379310JAJP and anizip:19896-9 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379310JAJP) is [anizip:19896-8, kitsu:404619]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-10 and cr:GT00378115-GS00378128-GE00379311JAJP are one broadcast episode. episodePairsOf(anizip:19896-10) is [cr:GT00378115-GS00378128-GE00379312JAJP, kitsu:404621]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379311JAJP and anizip:19896-10 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379311JAJP) is [anizip:19896-9, kitsu:404620]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-11 and cr:GT00378115-GS00378128-GE00379312JAJP are one broadcast episode. episodePairsOf(anizip:19896-11) is [cr:GT00378115-GS00378128-GE00379313JAJP, kitsu:404622]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379312JAJP and anizip:19896-11 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379312JAJP) is [anizip:19896-10, kitsu:404621]
-anilist-208044.json: EPISODE_PAIR: anizip:19896-12 and cr:GT00378115-GS00378128-GE00379313JAJP are one broadcast episode. episodePairsOf(anizip:19896-12) is [kitsu:404623]
-anilist-208044.json: EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379313JAJP and anizip:19896-12 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379313JAJP) is [anizip:19896-11, kitsu:404622]
-```
 
 ### LABEL DOUBTED
 
@@ -1492,40 +1461,6 @@ EPISODE_PAIR: jw:10729222 and anizip:19894-9 are one broadcast episode. episodeP
 EPISODE_PAIR: anizip:19894-9 and jw:10729222 are one broadcast episode. episodePairsOf(anizip:19894-9) is [kitsu:394783]
 EPISODE_PAIR: jw:10729224 and anizip:19894-10 are one broadcast episode. episodePairsOf(jw:10729224) is [nothing]
 EPISODE_PAIR: anizip:19894-10 and jw:10729224 are one broadcast episode. episodePairsOf(anizip:19894-10) is [kitsu:394784]
-```
-
-### anilist-208044.json
-
-From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage
-
-PENDING on "new store": the case says this cannot be asked of any store yet.
-
-
-VERDICTS: range-date-pair-renumbers-a-lend-that-already-fits
-
-```
-EPISODE_PAIR: anizip:19896-1 and cr:GT00378115-GS00378128-GE00379302JAJP are one broadcast episode. episodePairsOf(anizip:19896-1) is [cr:GT00378115-GS00378128-GE00379303JAJP, kitsu:404612]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379302JAJP and anizip:19896-1 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379302JAJP) is [nothing]
-EPISODE_PAIR: anizip:19896-2 and cr:GT00378115-GS00378128-GE00379303JAJP are one broadcast episode. episodePairsOf(anizip:19896-2) is [cr:GT00378115-GS00378128-GE00379304JAJP, kitsu:404613]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379303JAJP and anizip:19896-2 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379303JAJP) is [anizip:19896-1, kitsu:404612]
-EPISODE_PAIR: anizip:19896-4 and cr:GT00378115-GS00378128-GE00379305JAJP are one broadcast episode. episodePairsOf(anizip:19896-4) is [cr:GT00378115-GS00378128-GE00379306JAJP, kitsu:404615]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379305JAJP and anizip:19896-4 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379305JAJP) is [anizip:19896-3, kitsu:404614]
-EPISODE_PAIR: anizip:19896-5 and cr:GT00378115-GS00378128-GE00379306JAJP are one broadcast episode. episodePairsOf(anizip:19896-5) is [cr:GT00378115-GS00378128-GE00379307JAJP, kitsu:404616]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379306JAJP and anizip:19896-5 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379306JAJP) is [anizip:19896-4, kitsu:404615]
-EPISODE_PAIR: anizip:19896-6 and cr:GT00378115-GS00378128-GE00379307JAJP are one broadcast episode. episodePairsOf(anizip:19896-6) is [cr:GT00378115-GS00378128-GE00379308JAJP, kitsu:404617]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379307JAJP and anizip:19896-6 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379307JAJP) is [anizip:19896-5, kitsu:404616]
-EPISODE_PAIR: anizip:19896-7 and cr:GT00378115-GS00378128-GE00379308JAJP are one broadcast episode. episodePairsOf(anizip:19896-7) is [cr:GT00378115-GS00378128-GE00379309JAJP, kitsu:404618]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379308JAJP and anizip:19896-7 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379308JAJP) is [anizip:19896-6, kitsu:404617]
-EPISODE_PAIR: anizip:19896-8 and cr:GT00378115-GS00378128-GE00379309JAJP are one broadcast episode. episodePairsOf(anizip:19896-8) is [cr:GT00378115-GS00378128-GE00379310JAJP, kitsu:404619]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379309JAJP and anizip:19896-8 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379309JAJP) is [anizip:19896-7, kitsu:404618]
-EPISODE_PAIR: anizip:19896-9 and cr:GT00378115-GS00378128-GE00379310JAJP are one broadcast episode. episodePairsOf(anizip:19896-9) is [cr:GT00378115-GS00378128-GE00379311JAJP, kitsu:404620]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379310JAJP and anizip:19896-9 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379310JAJP) is [anizip:19896-8, kitsu:404619]
-EPISODE_PAIR: anizip:19896-10 and cr:GT00378115-GS00378128-GE00379311JAJP are one broadcast episode. episodePairsOf(anizip:19896-10) is [cr:GT00378115-GS00378128-GE00379312JAJP, kitsu:404621]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379311JAJP and anizip:19896-10 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379311JAJP) is [anizip:19896-9, kitsu:404620]
-EPISODE_PAIR: anizip:19896-11 and cr:GT00378115-GS00378128-GE00379312JAJP are one broadcast episode. episodePairsOf(anizip:19896-11) is [cr:GT00378115-GS00378128-GE00379313JAJP, kitsu:404622]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379312JAJP and anizip:19896-11 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379312JAJP) is [anizip:19896-10, kitsu:404621]
-EPISODE_PAIR: anizip:19896-12 and cr:GT00378115-GS00378128-GE00379313JAJP are one broadcast episode. episodePairsOf(anizip:19896-12) is [kitsu:404623]
-EPISODE_PAIR: cr:GT00378115-GS00378128-GE00379313JAJP and anizip:19896-12 are one broadcast episode. episodePairsOf(cr:GT00378115-GS00378128-GE00379313JAJP) is [anizip:19896-11, kitsu:404622]
 ```
 
 ### anilist-209504.json

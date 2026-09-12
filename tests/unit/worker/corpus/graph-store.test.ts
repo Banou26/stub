@@ -175,28 +175,11 @@ type TriageRule = {
 }
 
 const TRIAGE: TriageRule[] = [
-  {
-    id: 'range-date-pair-renumbers-a-lend-that-already-fits',
-    verdict: 'STORE BUG',
-    cases: ['anilist-208044'],
-    kinds: ['EPISODE_PAIR'],
-    why: 'plugin:range, rule 1 (by DATE), on a class 2 lend. The recorded walk hangs Crunchyroll\'s twelve '
-      + 'episode rows on anilist:208044 (a foreign claimer on a member, 4.4), so they are a lend candidate '
-      + 'rather than the member rows they look like. Crunchyroll publishes the STREAMING schedule from '
-      + '2026-06-25 and ani.zip the BROADCAST schedule from 2026-07-01T15:00Z, which puts cr episode N+1 '
-      + 'exactly ONE day after anizip episode N, inside the Tokyo day of slack, while cr episode N sits six '
-      + 'days before it and is out of reach. So every one of the eleven pairs is minted one episode late: '
-      + 'cr "Lost Technology" is written SAME_AS anizip "Prologue" with evidence {"day":20636,"slack":1}, '
-      + 'cr "Prologue" pairs with nothing, and plugin:aggregate then fills the slots from those pairs, so '
-      + 'the run\'s episode 1 is the wrong video. The titles are identical on both sides at the SAME number '
-      + '(Prologue, Lost Technology, Seek Freedom ... I Am Eftal), so rule 2 would have got it right and '
-      + 'rule 1 overrode it. Both lists number 1..12 and the cluster runLength is 12. EXPECTED FIX: give '
-      + 'class 2 the test class 3 already has (`numbersOutsideRun`, range.ts:497): a lend whose own numbers '
-      + 'already lie in 1..runLength is placed by its own numbering and never renumbered by dates. Failing '
-      + 'that, refuse a candidate whose date pairs and title pairs disagree, which is "nothing rather than a '
-      + 'guess" (consensus.ts:105-110). anilist-209800 is the only other case carrying a lend and it asserts '
-      + 'no pair, so this case is the whole of what the corpus can see of it.',
-  },
+  // The STORE BUG this list carried on 2026-09-12 is FIXED (`c69c5ff`, plugin:range's schedule skew),
+  // and the fix reached the corpus as 22 fewer EPISODE_PAIR lines and one more clean case. Its rule is
+  // gone rather than kept as a passing entry: a triage rule that matches no line fails this run by
+  // design, which is how a fixed case announces itself here. What the bug was, and the fix that was
+  // rejected for dropping every play button rather than moving it, is in the commit and in the record.
   {
     id: 'the-case-pins-a-weld-the-new-store-refuses',
     verdict: 'LABEL DOUBTED',
