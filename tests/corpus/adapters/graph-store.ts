@@ -37,14 +37,19 @@ import type { CorpusClaim, CorpusEpisode, CorpusIncludes, CorpusMedia } from '..
 import { contentHash } from '../../../src/worker/graph/hash'
 import { ingestAnswers } from '../../../src/worker/graph/ingest'
 import { GRAPH_NODE_TABLES, graphReady } from '../../../src/worker/graph/schema'
-import { aggregatePlugin } from '../../../src/worker/graph/plugins/aggregate'
-import { containmentPlugin } from '../../../src/worker/graph/plugins/containment'
-import { directPlugin } from '../../../src/worker/graph/plugins/direct'
-import { profilePlugin } from '../../../src/worker/graph/plugins/profile'
+import { DEFAULT_PLUGINS } from '../../../src/worker/graph/scheduler'
 import { resetPassState, runPlugins } from '../../../src/worker/graph/plugins/runner'
 
-/** The pass this adapter runs, in `after` order. `plugin:title` and `plugin:range` are later steps. */
-export const CORPUS_PLUGINS = [profilePlugin, directPlugin, aggregatePlugin, containmentPlugin]
+/**
+ * The pass this adapter runs: EXACTLY the live worker's list, imported rather than retyped.
+ *
+ * A second list of plugins is the drift that lets the harness prove a pass the app never runs, which
+ * is what this was until step 2g-c (it named four of the six, so no title match and no episode range
+ * existed here while both shipped). `runPlugins` is still driven directly rather than through the
+ * scheduler, because the corpus wants one settled pass per `upsert` and no event timing in it; the
+ * scheduler's own suite covers the bus path.
+ */
+export const CORPUS_PLUGINS = DEFAULT_PLUGINS
 
 /** What the last `upsert` cost, so a caller can report the pass rather than guess at it. */
 export type UpsertCost = { answers: number, ingestMs: number, passMs: number, iterations: number }
@@ -125,16 +130,6 @@ const episodeAnswer = (episode: CorpusEpisode): Record<string, unknown> => ({
   score: episode.score ?? null,
   titles: episode.titles,
 })
-
-/** Every member of the cluster holding `uri`, or the row itself when nothing clustered it. */
-const clusterMembers = async (uri: string): Promise<string[]> => {
-  const rows = await query(
-    `MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster)<-[:MEMBER_OF]-(other:Media)
-     RETURN other.uri AS uri ORDER BY uri`,
-    { uri }
-  )
-  return rows.map(row => String(row.uri))
-}
 
 /**
  * The refusals a guard of 5.2 wrote between two rows of one group: WHY the closure does not hold it.
@@ -239,39 +234,41 @@ export const graphStore: CorpusStore = {
   },
 
   /**
-   * The containers of this row's cluster: ONE hop of active `PART_OF` out of a member, expanded to
-   * every member of the target's own cluster (3.5, first walk).
+   * The containers of this row's cluster, read off the MATERIALIZED attachment: every member of every
+   * cluster this row's cluster is `ATTACHED_TO` (5.4 P2).
    *
-   * A target that ended up inside the asking cluster is dropped, so a run welded to its own container
-   * reports no container rather than reporting itself, which is what `current-store.ts` does too.
+   * IT IS A DIFFERENT READ FROM THE ONE THIS ANSWERED UNTIL STEP 2g-c, and the difference is the
+   * point. That read walked the `PART_OF` links out of the cluster's members itself and expanded each
+   * target's cluster in JS, which is the walk of 3.5 done by hand; this one asks `plugin:containment`
+   * what it concluded, which is what a page reads (6.5). Three consequences, all of them intended:
+   * - a `PART_OF` whose TARGET has no cluster contributes nothing, where the hand walk fell back to
+   *   the bare target uri. A row with no effective scope has no cluster (5.4 P5), so the fallback was
+   *   reporting a container the read path could never draw.
+   * - a `PART_OF` pointing inside the asking cluster contributes nothing, because `attachmentsOf`
+   *   drops `from === to` at the source. The hand walk filtered the same case afterwards, so the
+   *   answer is unchanged and the filter now lives in one place.
+   * - several `PART_OF` between one pair of clusters are ONE attachment, so the answer no longer
+   *   depends on how many members carried the link.
    */
   containersOf: async uri => {
-    const inside = new Set(await clusterMembers(uri))
-    if (!inside.size) return []
     const rows = await query(
-      `MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster)<-[:MEMBER_OF]-(member:Media),
-             (member)-[l:LINK {kind: 'PART_OF', status: 'active'}]->(target:Media)
-       RETURN DISTINCT target.uri AS uri ORDER BY uri`,
+      `MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster)-[:ATTACHED_TO]->(whole:Cluster)<-[:MEMBER_OF]-(other:Media)
+       RETURN DISTINCT other.uri AS uri ORDER BY uri`,
       { uri }
     )
-    const targets = rows.map(row => String(row.uri)).filter(target => !inside.has(target))
-    const expanded = new Set<string>()
-    for (const target of targets) {
-      const members = await clusterMembers(target)
-      for (const member of members.length ? members : [target]) {
-        if (!inside.has(member)) expanded.add(member)
-      }
-    }
-    return [...expanded].sort()
+    return rows.map(row => String(row.uri)).sort()
   },
 
   /**
    * Every active `INCLUDES` naming this uri, with the range when the edge carries one (3.4).
    *
-   * `plugin:range` is step 2e, so the graph holds none yet and this answers empty: an unanswerable
-   * expectation, which a case marks `pending`, rather than a wrong one. `plugin:direct` writes a
-   * REFUSED `INCLUDES` for a claim across two id spaces (`foreign-includes`) and that is not an edge:
-   * the status filter is what keeps a refusal from reading as a containment.
+   * `plugin:range` writes them (5.4 P4) and runs here since step 2g-c, so this is now a real answer
+   * rather than the empty one a `pending` case was marked against. The range fields are read off the
+   * edge and a row with a NULL `fromStart` is a rangeless containment, which is a different statement
+   * from a range and never collapsed into one (3.1).
+   *
+   * `plugin:direct` writes a REFUSED `INCLUDES` for a claim across two id spaces (`foreign-includes`)
+   * and that is not an edge: the status filter is what keeps a refusal from reading as a containment.
    */
   includesOf: async uri => {
     const rows = await query(
@@ -301,8 +298,14 @@ export const graphStore: CorpusStore = {
    * any `EPISODE_LINK` partner.
    *
    * A slot is the grouping (5.4 P5), so two rows pair when a member hung both on one number inside one
-   * cluster, and never across a cluster boundary. The `EPISODE_LINK` half is `plugin:range`'s and is
-   * empty until step 2e, which is what a renumbering (Crunchyroll's 13..20 for a run's 1..8) needs.
+   * cluster. The `EPISODE_LINK` half is `plugin:range`'s and is what carries a pair ACROSS a cluster
+   * boundary, which a renumbering (Crunchyroll's 13..20 for a run's 1..8) is made of; it runs here
+   * since step 2g-c.
+   *
+   * BOTH DIRECTIONS, as two directed statements rather than one undirected pattern. `EPISODE_LINK` is
+   * written from the container's row toward the run's (3.4), so the run's own episode is only ever the
+   * TO side and an outgoing-only read would answer half the pairs the corpus names. A refused pair is
+   * excluded by the status filter, the same way a refused `LINK` is.
    */
   episodePairsOf: async episodeUri => {
     const rows = await query(
@@ -311,13 +314,17 @@ export const graphStore: CorpusStore = {
       { uri: episodeUri }
     )
     const paired = new Set(rows.map(row => String(row.uri)))
-    const links = await query(
-      `MATCH (a:Episode)-[l:EPISODE_LINK {status: 'active'}]-(b:Episode)
-       WHERE a.uri = $uri
+    const outgoing = await query(
+      `MATCH (a:Episode {uri: $uri})-[l:EPISODE_LINK {status: 'active'}]->(b:Episode)
        RETURN DISTINCT b.uri AS uri ORDER BY uri`,
       { uri: episodeUri }
     )
-    for (const row of links) paired.add(String(row.uri))
+    const incoming = await query(
+      `MATCH (a:Episode)-[l:EPISODE_LINK {status: 'active'}]->(b:Episode {uri: $uri})
+       RETURN DISTINCT a.uri AS uri ORDER BY uri`,
+      { uri: episodeUri }
+    )
+    for (const row of [...outgoing, ...incoming]) paired.add(String(row.uri))
     paired.delete(episodeUri)
     return [...paired].sort()
   },

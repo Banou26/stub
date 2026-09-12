@@ -1,31 +1,35 @@
 /**
- * The corpus against the GRAPH store, at step 2d: profile, direct, aggregate and containment.
+ * The corpus against the GRAPH store, at step 2g-c: ALL SIX plugins of 5.4, which is the pass the
+ * live worker runs (`DEFAULT_PLUGINS`, imported rather than retyped).
  *
- * IT REPORTS RATHER THAN ASSERTS, and that is the point of running it now. `plugin:range` (5.4 P4) is
- * not written, so no `INCLUDES` and no episode pair exists at all, and a case needing either MUST
- * fail here; a run that went green would mean the corpus had stopped asking.
+ * IT REPORTS AND IT TRIAGES. Every line the run produces is collected, counted by kind and written to
+ * ./graph-store.report.md with a VERDICT against it, and a line with no verdict fails the run. Four
+ * verdicts, and only the first is work for this repo's code:
  *
- * So the failures are collected, counted by kind and written to ./graph-store.report.md, which is the
- * step's own measurement: it says which of the corpus's answers 2d already gives and which are owed
- * to 2e and beyond, line by line, and a later step is read against it.
+ * - `STORE BUG`: a plugin's rule reached the wrong answer on evidence that was there. Named with the
+ *   plugin, the rule, the rows and the fix expected, because that list is what gets dispatched.
+ * - `LABEL DOUBTED`: the store is right and the case is not. It goes to the review queue through the
+ *   label server, never edited here, and the case stays exactly as labelled until a person settles it.
+ * - `RECORDING`: the answer set cannot carry the label. The evidence a rule would need is not in the
+ *   rows, so no rule can reach the conclusion; listed in ../../../corpus/known-disagreements.graph.json
+ *   with what is missing.
+ * - `EXPECTED GAP`: the specification defers the rule and no plugin owes it yet. Named with the section.
  *
- * WHAT IS ASSERTED, and it is only what the specification guarantees at THIS step:
+ * WHAT IS ASSERTED, which is what the steps through 2g promised:
  * - no `WELD` between two rows the labels put apart where BOTH rows carry a first-party id. Sameness
- *   between two metadata catalogues is decided by `plugin:direct` and the guards of 5.2, both of
- *   which shipped, so a weld there is a bug in 2b or 2c rather than a missing plugin.
- * - every `together` group that first-party `SAME_AS` claims already join IS together. Those need no
- *   title match and no containment: the claim is the evidence, and the closure of 3.5 is what this
- *   step built.
- * - every `partOf` the labels state that a SOURCE CLAIMED is attached. Containment a claim asserts is
- *   `plugin:direct`'s edge and `plugin:containment`'s attachment, both of which now ship, so a
- *   missing one is a bug rather than a missing plugin. A `partOf` no claim carries waits for
- *   `plugin:range` or for a source to ship `containing` (4.4), and is reported instead.
- * - the WELDS that remain are EXACTLY the list in ../../../corpus/known-disagreements.graph.json,
- *   which names why each one is the recording rather than the store. A case in the list that stops
- *   welding, a case outside it that starts, and a stale slug are all loud, which is the same contract
- *   `current-store.test.ts` holds its own list to.
+ *   between two metadata catalogues is decided by `plugin:direct` and the guards of 5.2, so a weld
+ *   there is a bug in the guards or in the closure of 3.5.
+ * - every `together` group that first-party `SAME_AS` claims already join IS together, unless a guard
+ *   of 5.2 refused a link inside it and said so on the row.
+ * - every `partOf` the labels state that a SOURCE CLAIMED is attached, which is `plugin:direct`'s edge
+ *   and `plugin:containment`'s attachment.
+ * - EVERY LINE CARRIES A VERDICT, and every verdict matches at least one line. A line nothing triages
+ *   is a new disagreement; a rule nothing matches is a disagreement that went away and a stale entry.
+ * - the cases the triage calls `RECORDING` are EXACTLY the known-disagreements list, so a fix, a
+ *   regression and a stale entry are all loud, which is the contract `current-store.test.ts` holds
+ *   its own list to.
  *
- * Nothing here weakens a case to make it pass. A line in the report is a debt, named.
+ * Nothing here weakens a case to make it pass. A line in the report is a debt, named and owned.
  */
 import { expect, test } from 'vitest'
 
@@ -112,8 +116,9 @@ const isSameAs = (claim: { relation?: string }): boolean => (claim.relation ?? '
  *
  * `claim` means first-party ids already assert it and `plugin:direct` alone must produce it.
  * `claim (other origins)` means a claim asserts it but at least one side is not a metadata catalogue,
- * so a guard of 5.2 may legitimately have refused it. `containment` and `title` are owed to 2d and
- * 2e: no plugin in this pass reads a title or an episode range.
+ * so a guard of 5.2 may legitimately have refused it, and since address provenance landed (3.3) an
+ * echo from `cr`, `nf`, `appletv` or `jw` into a first-party id space is refused by guard 3 and
+ * contributes nothing. `containment` never welds, and `title` is `plugin:title`'s to hold.
  */
 const holdsBy = (corpusCase: CorpusCase, group: string[]): 'claim' | 'claim (other origins)' | 'containment' | 'title' => {
   if (joinedBy(corpusCase, group, claim => isSameAs(claim) && firstParty(claim.mediaUri) && firstParty(claim.handleUri))) return 'claim'
@@ -133,6 +138,154 @@ const kindOf = (line: string): Kind => {
   if (line.startsWith('EPISODE_PAIR') || line.startsWith('EPISODE_WELD')) return 'EPISODE_PAIR'
   if (line.startsWith('UNRELATED')) return 'UNRELATED'
   return 'ORDER'
+}
+
+/** What step 2d's report counted, so the same table can be read as a before and after. */
+const BEFORE_2D: { cases: number, green: number, lines: Record<Kind, number> } = {
+  cases: 249,
+  green: 166,
+  lines: { SPLIT: 106, WELD: 15, PART_OF: 0, INCLUDES: 2, EPISODE_PAIR: 162, UNRELATED: 169, ORDER: 0 },
+}
+
+/**
+ * The four verdicts a remaining line can carry. One per line, and a line with none fails the run.
+ *
+ * `STORE BUG` is the only one that is work for this repo's plugins. The other three each say WHO owns
+ * the disagreement: a person settling a label, the walk that recorded the answers, or a section of the
+ * specification that has not been implemented because nothing owes it yet.
+ */
+type Verdict = 'STORE BUG' | 'LABEL DOUBTED' | 'RECORDING' | 'EXPECTED GAP'
+
+/**
+ * One triage rule: a verdict for the lines of named cases, of named kinds, with the reasoning.
+ *
+ * Rules are tried IN ORDER and the first match wins, so a case whose `PART_OF` line and whose `SPLIT`
+ * lines have different owners is split by `kinds` rather than by a second list of slugs. Every rule
+ * must match at least one line, which is what makes a disagreement that went away loud.
+ */
+type TriageRule = {
+  id: string
+  verdict: Verdict
+  /** The case slugs this rule answers for. */
+  cases: string[]
+  /** The line kinds it answers for, inside those cases. */
+  kinds: Kind[]
+  /** The finding, in one paragraph: what the store did, on what evidence, and who owns it. */
+  why: string
+}
+
+const TRIAGE: TriageRule[] = [
+  {
+    id: 'range-date-pair-renumbers-a-lend-that-already-fits',
+    verdict: 'STORE BUG',
+    cases: ['anilist-208044'],
+    kinds: ['EPISODE_PAIR'],
+    why: 'plugin:range, rule 1 (by DATE), on a class 2 lend. The recorded walk hangs Crunchyroll\'s twelve '
+      + 'episode rows on anilist:208044 (a foreign claimer on a member, 4.4), so they are a lend candidate '
+      + 'rather than the member rows they look like. Crunchyroll publishes the STREAMING schedule from '
+      + '2026-06-25 and ani.zip the BROADCAST schedule from 2026-07-01T15:00Z, which puts cr episode N+1 '
+      + 'exactly ONE day after anizip episode N, inside the Tokyo day of slack, while cr episode N sits six '
+      + 'days before it and is out of reach. So every one of the eleven pairs is minted one episode late: '
+      + 'cr "Lost Technology" is written SAME_AS anizip "Prologue" with evidence {"day":20636,"slack":1}, '
+      + 'cr "Prologue" pairs with nothing, and plugin:aggregate then fills the slots from those pairs, so '
+      + 'the run\'s episode 1 is the wrong video. The titles are identical on both sides at the SAME number '
+      + '(Prologue, Lost Technology, Seek Freedom ... I Am Eftal), so rule 2 would have got it right and '
+      + 'rule 1 overrode it. Both lists number 1..12 and the cluster runLength is 12. EXPECTED FIX: give '
+      + 'class 2 the test class 3 already has (`numbersOutsideRun`, range.ts:497): a lend whose own numbers '
+      + 'already lie in 1..runLength is placed by its own numbering and never renumbered by dates. Failing '
+      + 'that, refuse a candidate whose date pairs and title pairs disagree, which is "nothing rather than a '
+      + 'guess" (consensus.ts:105-110). anilist-209800 is the only other case carrying a lend and it asserts '
+      + 'no pair, so this case is the whole of what the corpus can see of it.',
+  },
+  {
+    id: 'the-case-pins-a-weld-the-new-store-refuses',
+    verdict: 'LABEL DOUBTED',
+    cases: [
+      'a-member-carrying-another-seasons-date-widens-the-year-set', 'a-show-level-source-id-welds-two-season-clusters',
+      'known-gap-a-year-only-side-welds-to-a-season-3-cluster',
+    ],
+    kinds: ['SPLIT'],
+    why: 'The case asserts a WELD of two seasons that the graph store refuses, and the refusal is right about '
+      + 'the works: guard 4 (disagreeing-ids) on two anilist ids in one component, and guard 5 (contested) on '
+      + 'two components claiming one show-level Apple TV id. All three cases were extracted from a store that '
+      + 'had neither guard, and two of them are named in tests/corpus/README.md as pinning a defect whose fix '
+      + 'is at the SOURCE, while the third carries a knownGap whose own text says "A replacement store that '
+      + 'splits these two is BETTER than the one this corpus was extracted from: change the case, do not '
+      + 'weaken it". A case is never edited here, so each is in the review queue for a person to settle.',
+  },
+  {
+    id: 'the-echo-was-the-only-evidence-and-the-row-has-no-title-or-no-date',
+    verdict: 'RECORDING',
+    cases: [
+      'anilist-108992', 'anilist-128757', 'anilist-159309', 'anilist-169583', 'anilist-177637',
+      'anilist-177699', 'anilist-180136', 'anilist-185874', 'anilist-185875', 'anilist-186863',
+      'anilist-188525', 'anilist-192800', 'anilist-194219', 'anilist-194829', 'anilist-196187',
+      'anilist-196218', 'anilist-196356', 'anilist-197715', 'anilist-198376', 'anilist-198409',
+      'anilist-199066', 'anilist-199408', 'anilist-199748', 'anilist-200637', 'anilist-201514',
+      'anilist-202269', 'anilist-203490', 'anilist-203880', 'anilist-204466', 'anilist-206249',
+      'anilist-207254', 'anilist-207809', 'anilist-209504', 'anilist-209669', 'anilist-209983',
+      'anilist-213484', 'anilist-213847', 'anilist-215639', 'kitsu-50688', 'kitsu-50695', 'kitsu-50758',
+    ],
+    kinds: ['SPLIT', 'EPISODE_PAIR'],
+    why: 'A catalogue season row the labels put in the run, whose every SAME_AS into a first-party id space is '
+      + 'an address echo: guard 3 refuses it and never downgrades it (3.3), which is what removed the fifteen '
+      + 'welds of step 2d. plugin:title is then the only route left and the recording gives it nothing to read. '
+      + 'Measured over all 249 cases: 63 of the 65 jw rows publish NO title at all and all 65 carry the '
+      + '2026-01-01 sentinel start date, so their profiles hold titleKeys [] and a cluster with no title is '
+      + 'skipped (5.4 P3); the nf and cr rows that split publish no start date at all, so their profiles hold '
+      + 'year NULL and gate 0\'s year bucket never puts them beside the run. Every EPISODE_PAIR line here '
+      + 'follows from the same split: the two rows are in two clusters, so no slot and no pair can hold them. '
+      + 'What is missing is upstream of the store, in the justwatch and crunchyroll extractors: a title and a '
+      + 'real start date on the season row. Each case names its own row in known-disagreements.graph.json.',
+  },
+  {
+    id: 'no-episode-count-anywhere-so-guard-8-refuses',
+    verdict: 'RECORDING',
+    cases: ['a-january-first-streaming-cluster-attaches-to-an-october-show', 'the-live-mushoku-s1-s3-weld'],
+    kinds: ['SPLIT'],
+    why: 'No row in either case carries an episodeCount, so every run cluster has a NULL runLength and guard 8 '
+      + '(no-length) downgrades the folding origin\'s season to PART_OF rather than welding it: "no count is '
+      + 'not zero" (5.2). plugin:title DID propose each pair on an exact title key and the refusal is written '
+      + 'on the LINK row with its reason, so this is a priced decision rather than a silence, and the price is '
+      + 'the badge the spec says a refusal costs instead of a button. The evidence guard 8 wants is a count on '
+      + 'either side and the fixtures carry none.',
+  },
+  {
+    id: 'the-title-is-the-shows-and-scores-below-the-calibrated-threshold',
+    verdict: 'RECORDING',
+    cases: ['a-season-nobody-splits-still-brings-its-episodes'],
+    kinds: ['SPLIT'],
+    why: 'The Crunchyroll season row publishes the SHOW\'s title, so its only key is '
+      + '"mushoku tensei jobless reincarnation" against the run\'s "mushoku tensei jobless reincarnation '
+      + 'season 3", which scores below SIMILARITY_THRESHOLD = 0.9 (the calibrated figure, "change nothing", '
+      + '2026-08-29). plugin:title therefore proposes nothing and no refusal row exists, which is the reading '
+      + 'of a SPLIT with no refusal behind it when a gate rather than a guard turned the pair down. Its own '
+      + 'SAME_AS into anilist: is an address echo refused by guard 3, and no first-party row in this case '
+      + 'names the cr season, so nothing in the recording reaches it.',
+  },
+  {
+    id: 'a-containing-answer-no-source-ships-yet',
+    verdict: 'EXPECTED GAP',
+    cases: [
+      'anilist-185874', 'anilist-196187', 'anilist-209983', 'anilist-210032', 'anilist-211711',
+      'anilist-212994', 'mal-61649', 'mal-62707',
+    ],
+    kinds: ['PART_OF'],
+    why: 'Each line wants a run attached to a Netflix or Disney TITLE row that no source claimed: '
+      + 'containmentClaimed is false for all eight. Three things could write it and none may. A source claim: '
+      + 'the only one is the address echo, which 3.3 refuses and deliberately does NOT downgrade, because "the '
+      + 'address names WHICH sources to ask and asserts nothing about how they relate", and the row is drawn '
+      + 'as a plain badge carrying its own url instead (6.2). plugin:containment\'s span rule: it needs the '
+      + 'season\'s own episode DAYS to cover the run\'s start and Netflix publishes no date at any level (5.4 '
+      + 'P4, failure mode). An ask: 4.4 defines the `containing` answer that will carry exactly this and no '
+      + 'source ships one yet (4.6). So no plugin owes these today and the gap is named rather than owned.',
+  },
+]
+
+/** The verdict for one line of one case, or `undefined` when nothing triages it. */
+const verdictFor = (file: string, line: string): TriageRule | undefined => {
+  const slug = file.replace(/\.json$/, '')
+  return TRIAGE.find(rule => rule.cases.includes(slug) && rule.kinds.includes(kindOf(line)))
 }
 
 type CaseReport = {
@@ -234,55 +387,118 @@ test('the corpus against the graph store: every disagreement, counted and named'
   const weldedCases = [...new Set(reports.filter(report => report.welds.length).map(report => report.file.replace(/\.json$/, '')))].sort()
   const knownCases = Object.keys(knownDisagreements.cases).sort()
 
+  // THE TRIAGE. One verdict per line, from the table above, plus the two ways the table can be wrong:
+  // a line nothing answers for, and a rule nothing matches any more.
+  const triaged = reports.flatMap(report =>
+    report.lines.map(line => ({ file: report.file, line, rule: verdictFor(report.file, line) })))
+  const untriaged = triaged.filter(entry => !entry.rule)
+  const matched = new Set(triaged.flatMap(entry => entry.rule ? [entry.rule.id] : []))
+  const staleRules = TRIAGE.filter(rule => !matched.has(rule.id)).map(rule => rule.id)
+  const linesOf = (rule: TriageRule) => triaged.filter(entry => entry.rule?.id === rule.id)
+  const casesOf = (rule: TriageRule) => [...new Set(linesOf(rule).map(entry => entry.file.replace(/\.json$/, '')))].sort()
+  const byVerdict = (verdict: Verdict) => TRIAGE.filter(rule => rule.verdict === verdict)
+  const verdictLines = (verdict: Verdict) => byVerdict(verdict).reduce((total, rule) => total + linesOf(rule).length, 0)
+  const recordingCases = [...new Set(byVerdict('RECORDING').flatMap(casesOf))].sort()
+  const VERDICTS: Verdict[] = ['STORE BUG', 'LABEL DOUBTED', 'RECORDING', 'EXPECTED GAP']
+
   writeFileSync(REPORT, [
-    '# The corpus against the graph store, step 2d',
+    '# The corpus against the graph store, all six plugins, step 2g-c',
     '',
     'Generated by `tests/unit/worker/corpus/graph-store.test.ts`, which drives every case in',
-    '`tests/corpus/cases` twice (file order, then every list reversed) through `plugin:profile`,',
-    '`plugin:direct`, `plugin:aggregate` and `plugin:containment`. It carries no date on purpose: the',
+    '`tests/corpus/cases` twice (file order, then every list reversed) through `DEFAULT_PLUGINS`, the',
+    'six of 5.4 the live worker runs: `plugin:profile`, `plugin:direct`, `plugin:title`,',
+    '`plugin:containment`, `plugin:range` and `plugin:aggregate`. It carries no date on purpose: the',
     'same corpus over the same code writes the same file, so a diff here is a change in one of the two.',
     '',
-    '**This step cannot pass the corpus and is not meant to.** `plugin:range` (5.4 P4) is step 2e, so',
-    'the store holds no `INCLUDES` and no episode pair at all, and a case needing either MUST be listed',
-    'below. A `SPLIT` that only a title match would hold is `plugin:title` (5.4 P3), which lands beside',
-    'this step.',
+    'Every line below carries a VERDICT (see Triage), and a line with none fails the run.',
     '',
     '## Counts',
     '',
     `- cases: ${reports.length}, of which ${green.length} report nothing at all`,
     `- cases with at least one line: ${reports.length - green.length}`,
     `- \`PART_OF\` lines a source CLAIMED, which is the store's debt: ${unattached.length}`,
-    `- \`PART_OF\` lines no claim carries, which wait on \`plugin:range\` or on a source shipping \`containing\` (4.4): ${unclaimedAttachments.length}`,
-    `- \`WELD\` cases, every one of them in \`tests/corpus/known-disagreements.graph.json\`: ${weldedCases.length}`,
+    `- \`PART_OF\` lines no claim carries: ${unclaimedAttachments.length}`,
+    `- \`WELD\` cases: ${weldedCases.length}`,
     '',
-    '| kind | lines | what it means |',
-    '| --- | --- | --- |',
-    `| SPLIT | ${counts.get('SPLIT')} | a \`together\` group came back as more than one cluster |`,
-    `| WELD | ${counts.get('WELD')} | an \`apart\` pair came back as one cluster |`,
-    `| PART_OF | ${counts.get('PART_OF')} | a container attachment; the claimed ones are this step's, the rest wait on 2e |`,
-    `| INCLUDES | ${counts.get('INCLUDES')} | an episode range, which \`plugin:range\` writes (2e) |`,
-    `| EPISODE_PAIR | ${counts.get('EPISODE_PAIR')} | two rows that are one broadcast episode, also \`plugin:range\` |`,
-    `| UNRELATED | ${counts.get('UNRELATED')} | a row that must stand alone and does not |`,
-    `| ORDER | ${counts.get('ORDER')} | the two arrival orders disagreed (invariant I15) |`,
+    '| kind | 2d | now | what it means |',
+    '| --- | --- | --- | --- |',
+    ...KINDS.map(kind => `| ${kind} | ${BEFORE_2D.lines[kind]} | ${counts.get(kind)} | ${({
+      SPLIT: 'a `together` group came back as more than one cluster',
+      WELD: 'an `apart` pair came back as one cluster',
+      PART_OF: 'a container attachment the labels state and the store does not hold',
+      INCLUDES: 'an episode range, which `plugin:range` writes (5.4 P4)',
+      EPISODE_PAIR: 'two rows that are one broadcast episode, or two that must never be one',
+      UNRELATED: 'a row that must stand alone and does not',
+      ORDER: 'the two arrival orders disagreed (invariant I15)',
+    } as Record<Kind, string>)[kind]} |`),
+    `| cases reporting nothing | ${BEFORE_2D.green} | ${green.length} | the case is fully satisfied, both arrival orders |`,
+    '',
+    '### What moved, per kind',
+    '',
+    '- **`WELD` 15 to 0, and `UNRELATED` 169 to 0.** Both were one mechanism: a `SAME_AS` a Netflix or',
+    '  Crunchyroll row made into a first-party id space, which the walk recorded from a title search.',
+    '  Address provenance (3.3) now stamps those `address`, `plugin:direct` never consumes one, and',
+    '  guard 3 refuses it without downgrading. So the bare Netflix title id no longer welds into the run',
+    '  (the fifteen echo welds of step 2d are gone, and every one of those entries has been removed from',
+    '  `known-disagreements.graph.json`), and it no longer attaches to it either, which is what every',
+    '  `UNRELATED ATTACHED` and `UNRELATED HOLDS` line was.',
+    '- **`SPLIT` 106 to 280, and `EPISODE_PAIR` 162 to 732, while the cases reporting nothing went 166 to',
+    `  ${green.length}.** The same change, seen from the other side, and the reason the line count rises`,
+    '  while the case count falls: thirty cases that only ever failed through an echo weld now pass',
+    '  outright, and the cases that used the echo to HOLD a group now fail visibly instead, each one',
+    '  naming every member of the group rather than one pair. `plugin:title` holds a group only when it',
+    '  can read a title and a year off both sides, and the catalogue rows in question publish neither.',
+    '- **`PART_OF` 0 to 8.** Same root: an attachment that used to arrive as a downgrade of the echo has',
+    '  no source behind it any more, and nothing else may write it (see the `EXPECTED GAP` rule).',
+    '- **`INCLUDES` 2 to 0.** `plugin:range` ships, so the two ranges the corpus asks for are held.',
+    '- **`ORDER` 0 to 0.** Invariant I15 holds with all six plugins in the pass.',
     '',
     '## Which SPLITs are expected',
     '',
-    'A `together` group holds at this step only when a claim already asserts it. What each failing',
-    'group would need:',
-    '',
-    '| what would hold the group | failing groups | expected at this step |',
+    '| what would hold the group | failing groups | expected |',
     '| --- | --- | --- |',
     `| a first-party \`SAME_AS\` claim | ${splitsByCause.get('claim') ?? 0} | only where a guard of 5.2 REFUSED it, named on the line: ${pricedSplits.length} of them, and ${unexpectedSplits.length} with no refusal behind them |`,
-    `| a \`SAME_AS\` claim naming another origin | ${splitsByCause.get('claim (other origins)') ?? 0} | sometimes: a guard of 5.2 may have refused it, and the report line says which rows |`,
+    `| a \`SAME_AS\` claim naming another origin | ${splitsByCause.get('claim (other origins)') ?? 0} | sometimes: a guard of 5.2 may have refused it, and an address echo is refused by guard 3 and contributes nothing (3.3) |`,
     `| a containment edge | ${splitsByCause.get('containment') ?? 0} | a containment edge never welds: \`plugin:containment\` attaches and mints no sameness (5.4 P2) |`,
-    `| a title match | ${splitsByCause.get('title') ?? 0} | yes: \`plugin:title\` is 5.4 P3 |`,
+    `| a title match | ${splitsByCause.get('title') ?? 0} | only when both sides publish a title and a year: gate 0 buckets and gate 5 compares (5.4 P3) |`,
     '',
-    '## The welds that remain',
+    '## Triage',
     '',
-    'Each one is listed in `tests/corpus/known-disagreements.graph.json` with why it is the RECORDING',
-    'rather than the store, and this file and that list are asserted to name the same cases.',
+    'One verdict per line. A line nothing answers for and a rule nothing matches are both assertion',
+    'failures, so this section cannot rot quietly.',
     '',
-    ...weldedCases.map(slug => `- \`${slug}\`: ${knownDisagreements.cases[slug as keyof typeof knownDisagreements.cases] ?? 'NOT LISTED'}`),
+    '| verdict | lines | rules | cases |',
+    '| --- | --- | --- | --- |',
+    ...VERDICTS.map(verdict => `| ${verdict} | ${verdictLines(verdict)} | ${byVerdict(verdict).length} | ${[...new Set(byVerdict(verdict).flatMap(casesOf))].length} |`),
+    `| (untriaged) | ${untriaged.length} | 0 | ${[...new Set(untriaged.map(entry => entry.file))].length} |`,
+    '',
+    ...VERDICTS.flatMap(verdict => [
+      `### ${verdict}`,
+      '',
+      ...byVerdict(verdict).flatMap(rule => [
+        `**\`${rule.id}\`**, ${linesOf(rule).length} line${linesOf(rule).length === 1 ? '' : 's'} over `
+        + `${casesOf(rule).length} case${casesOf(rule).length === 1 ? '' : 's'}, kinds ${rule.kinds.join(', ')}.`,
+        '',
+        rule.why,
+        '',
+        `Cases: ${casesOf(rule).map(slug => `\`${slug}\``).join(', ')}`,
+        '',
+        // a bug is dispatched from this file, so its lines are printed here rather than only in the
+        // per-case section a reader would have to assemble by hand
+        ...rule.verdict === 'STORE BUG'
+          ? ['```', ...linesOf(rule).map(entry => `${entry.file}: ${entry.line}`), '```', '']
+          : [],
+      ]),
+    ]),
+    ...untriaged.length
+      ? ['### UNTRIAGED, which fails the run', '', '```', ...untriaged.map(entry => `${entry.file}: ${entry.line}`), '```', '']
+      : [],
+    '## The known disagreements',
+    '',
+    'The cases the triage calls `RECORDING` are exactly the list in',
+    '`tests/corpus/known-disagreements.graph.json`, each with what the answer set is missing.',
+    '',
+    ...recordingCases.map(slug => `- \`${slug}\`: ${knownDisagreements.cases[slug as keyof typeof knownDisagreements.cases] ?? 'NOT LISTED'}`),
     '',
     '## The lines',
     '',
@@ -296,7 +512,9 @@ test('the corpus against the graph store: every disagreement, counted and named'
         `\n- the group [${split.group.join(', ')}] would be held by: ${split.holds}`
         + (split.refusals.length ? `, and a guard of 5.2 refused: ${split.refusals.join('; ')}` : '')),
       ...report.attachments.map(edge =>
-        `\n- the containment [${edge.part} part of ${edge.whole}] ${edge.claimed ? 'IS CLAIMED by a source and must be attached' : 'is claimed by nothing: it waits on plugin:range or on a containing answer (4.4)'}`),
+        `\n- the containment [${edge.part} part of ${edge.whole}] ${edge.claimed ? 'IS CLAIMED by a source and must be attached' : 'is claimed by nothing: no source said so, and 3.3 refuses the address echo without downgrading it'}`),
+      '',
+      `\nVERDICTS: ${[...new Set(report.lines.map(line => verdictFor(report.file, line)?.id ?? 'UNTRIAGED'))].join(', ')}`,
       '',
       '```',
       ...report.lines,
@@ -305,7 +523,7 @@ test('the corpus against the graph store: every disagreement, counted and named'
     ]),
   ].join('\n'))
 
-  // THE ASSERTIONS. Everything above is a measurement; these four are what 2c and 2d promised.
+  // THE ASSERTIONS. Everything above is a measurement; these are what the steps through 2g promised.
   expect(
     unexpectedWelds.map(entry => `${entry.report.file}: ${entry.weld.a} and ${entry.weld.b}`),
     'a weld between two first-party ids is a bug in the guards of 5.2 or in the closure of 3.5, never a missing plugin'
@@ -314,16 +532,27 @@ test('the corpus against the graph store: every disagreement, counted and named'
     unexpectedSplits.map(entry => `${entry.report.file}: [${entry.split.group.join(', ')}]`),
     'a group first-party SAME_AS claims join, that no guard of 5.2 refused, is what plugin:direct asserts and the closure holds'
   ).toEqual([])
-  // NEW AT 2d: containment a source CLAIMED must be attached. `plugin:direct` derives the edge and
-  // `plugin:containment` attaches the clusters, so neither half is missing any more, and a claimed
-  // containment that draws no attachment is a bug in one of them (5.4 P1, P2).
+  // Containment a source CLAIMED must be attached. `plugin:direct` derives the edge and
+  // `plugin:containment` attaches the clusters, so a claimed containment that draws no attachment is
+  // a bug in one of them (5.4 P1, P2).
   expect(
     unattached.map(entry => `${entry.report.file}: ${entry.edge.part} part of ${entry.edge.whole}`),
     'containment a source claimed is an edge plugin:direct writes and an attachment plugin:containment makes'
   ).toEqual([])
-  // and the welds that remain are exactly the list, with a reason each: a case that stops welding, a
-  // case that starts, and a stale slug are all loud (the contract current-store.test.ts holds too)
-  expect(weldedCases, 'the welds the graph store carries are exactly known-disagreements.graph.json').toEqual(knownCases)
+  // EVERY LINE CARRIES A VERDICT, and every verdict still has a line. The first catches a new
+  // disagreement, the second a disagreement that went away and left a stale entry behind.
+  expect(
+    untriaged.map(entry => `${entry.file}: ${entry.line}`),
+    'every remaining line needs a verdict in TRIAGE: a line nothing answers for is a new disagreement'
+  ).toEqual([])
+  expect(
+    staleRules,
+    'a triage rule that matches no line is a disagreement that went away; delete the rule and its known-disagreements entries'
+  ).toEqual([])
+  // and the RECORDING cases are exactly the list, with what is missing named for each: a case that
+  // starts agreeing, a case that starts disagreeing, and a stale slug are all loud (the contract
+  // current-store.test.ts holds its own list to)
+  expect(recordingCases, 'the cases the triage calls RECORDING are exactly known-disagreements.graph.json').toEqual(knownCases)
   expect(
     knownCases.filter(slug => !cases.some(entry => entry.file === `${slug}.json`)),
     'a listed slug with no case file'
@@ -339,6 +568,10 @@ test('the corpus against the graph store: every disagreement, counted and named'
     claimedAttachmentsMissing: unattached.length,
     unclaimedAttachmentsPending: unclaimedAttachments.length,
     weldedCases: weldedCases.length,
+    triage: Object.fromEntries(VERDICTS.map(verdict => [verdict, verdictLines(verdict)])),
+    untriaged: untriaged.length,
+    staleRules,
+    recordingCases: recordingCases.length,
     passMs,
     totalMs: Date.now() - started,
   }, null, 2))
