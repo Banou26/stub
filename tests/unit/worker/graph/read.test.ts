@@ -11,14 +11,28 @@
  *
  * Every case names the mutation that reddens it.
  */
-import { afterAll, beforeAll, expect, test } from 'vitest'
+import { afterAll, beforeAll, expect, test, vi } from 'vitest'
 
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 
 import type { AnswerRow } from '../../../../src/worker/graph/answers'
 
 import { createSchema, createYoga } from 'graphql-yoga'
 
+// THE ONE STUB IN THIS FILE, and it buys the app's own resolver map below. `resolvers/media/index.ts`
+// reaches `worker/extractor.ts` and, through urql's CJS bundle, a bare `require('react')` that no
+// vite alias can intercept, which is the measurement `vitest.config.ts` records and the whole reason
+// `read.ts` exists as its own module. urql is the only module on that path that cannot load here, and
+// nothing the maps below call touches it, so stubbing it changes nothing about what runs.
+vi.mock('urql', () => ({
+  Client: class {},
+  fetchExchange: {},
+  mapExchange: () => ({}),
+  getOperationName: () => undefined,
+}))
+
+import { resolvers as episodeResolvers } from '../../../../src/worker/resolvers/episode/index'
+import { resolvers as mediaResolvers } from '../../../../src/worker/resolvers/media/index'
 import { typeDefs } from '../../../../src/generated/schema/typeDefs.generated'
 import { enableGraph } from '../../../../src/worker/graph'
 import { closeGraph } from '../../../../src/worker/graph/engine'
@@ -61,6 +75,21 @@ const documentNamed = (file: string, name: string): string => {
   return block
 }
 
+/** Every client document that selects `mediaPage`, by name, so a third one cannot arrive unchecked. */
+const mediaPageDocuments = (sources: readonly string[]): string[] =>
+  sources
+    .flatMap(gqlBlocks)
+    .filter(block => /\bmediaPage\s*\(/.test(block))
+    .map(block => /\b(?:subscription|query)\s+(\w+)\s*[({]/.exec(block)?.[1] ?? '(unnamed)')
+    .sort()
+
+const CLIENT_SRC = new URL('../../../../src/', import.meta.url).pathname
+
+const clientSources = (): string[] =>
+  readdirSync(CLIENT_SRC, { recursive: true, encoding: 'utf-8' })
+    .filter(entry => (entry.endsWith('.ts') || entry.endsWith('.tsx')) && !entry.startsWith('generated/'))
+    .map(entry => readFileSync(`${CLIENT_SRC}${entry}`, 'utf-8'))
+
 const MEDIA_FRAGMENT = documentNamed('../../../../src/worker/resolvers/media/fragment.ts', 'MediaFragment')
 const EPISODE_FRAGMENT = documentNamed('../../../../src/worker/resolvers/episode/fragment.ts', 'EpisodeFragment')
 const HOME_PAGE = documentNamed('../../../../src/router/home/index.tsx', 'GetReleasingMediaPage')
@@ -68,13 +97,18 @@ const SEARCH_PAGE = documentNamed('../../../../src/router/search/index.tsx', 'Se
 const MEDIA_MODAL = documentNamed('../../../../src/router/home/media-modal.tsx', 'GetMediaModal')
 
 // ---------------------------------------------------------------------------------------------
-// One yoga over the REAL generated schema, whose resolvers are read.ts and nothing else. It is the
-// only way to prove the closed set: a field missing from a card is not an absent key here, it is a
-// null on a non-null field, which nulls its parent and, through `MediaPage.nodes: [Media!]!`, the
-// whole page. `vitest.config.ts` inlines yoga so one graphql realm exists.
-
-const sliced = (values: unknown[] | undefined, count?: number | null): unknown[] =>
-  (values ?? []).slice(0, count ?? undefined)
+// One yoga over the REAL generated schema, whose `Media` and `Episode` maps are THE APP'S OWN and
+// whose data comes from read.ts and nothing else. It is the only way to prove the closed set: a
+// field missing from a card is not an absent key here, it is a null on a non-null field, which nulls
+// its parent and, through `MediaPage.nodes: [Media!]!`, the whole page. `vitest.config.ts` inlines
+// yoga so one graphql realm exists.
+//
+// THE MAPS ARE IMPORTED RATHER THAN RETYPED, for the same reason the documents below are read out of
+// the client: a friendlier copy proves the closed set against a shape the worker does not run. The
+// copy this file carried until 2026-09-12 had a `Media.relations` resolver the app has no equivalent
+// of, so a view whose `relations` the plugin never materialized would have nulled the modal in
+// production and passed here. Only `Subscription` is this file's: the app's subscribe runs the whole
+// source fan-out, where the two below are the read under test.
 
 const server = createYoga({
   schema: createSchema({
@@ -95,42 +129,39 @@ const server = createYoga({
           },
         },
       },
-      Media: {
-        categories: (parent: { categories?: string[] }) => parent.categories ?? [],
-        handles: (parent: { handles?: unknown[] }) => parent.handles ?? [],
-        relations: (parent: { relations?: unknown[] }) => parent.relations ?? [],
-        episodes: (parent: { _id: string }) => episodesOf(parent._id),
-        descriptions: (parent: { descriptions?: unknown[] }, args: { input?: { count?: number | null } }) =>
-          sliced(parent.descriptions, args.input?.count),
-        shortDescriptions: (parent: { shortDescriptions?: unknown[] }, args: { input?: { count?: number | null } }) =>
-          sliced(parent.shortDescriptions, args.input?.count),
-      },
-      Episode: {
-        handles: (parent: { handles?: unknown[] }) => parent.handles ?? [],
-        shortDescriptions: (parent: { shortDescriptions?: unknown[] }) => parent.shortDescriptions ?? [],
-        descriptions: (parent: { descriptions?: unknown[] }) => parent.descriptions ?? [],
-      },
+      Media: mediaResolvers.Media,
+      Episode: episodeResolvers.Episode,
     } as never,
   }),
   maskedErrors: false,
 })
 
-/** Drives one subscription document and returns its single payload, refusing any error it carried. */
+/**
+ * Drives one subscription document and returns its single payload, refusing any error it carried.
+ *
+ * The read store is moved for the call because the app's `Media.episodes` branches on it: on
+ * `legacy` that resolver walks the old store's handles, which is not the read under test.
+ */
 const execute = async (document: string, variables: Record<string, unknown>) => {
-  const response = await server.handleRequest(
-    new Request('http://d/graphql', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', accept: 'text/event-stream' },
-      body: JSON.stringify({ query: document, variables }),
-    }),
-    {}
-  )
-  const text = await response.text()
-  const payloads = [...text.matchAll(/^data: (.+)$/gm)].map(match => JSON.parse(match[1]!))
-  for (const entry of payloads) {
-    if (entry.errors) throw new Error(`the document answered errors: ${JSON.stringify(entry.errors)}`)
+  setReadStore('graph')
+  try {
+    const response = await server.handleRequest(
+      new Request('http://d/graphql', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'text/event-stream' },
+        body: JSON.stringify({ query: document, variables }),
+      }),
+      {}
+    )
+    const text = await response.text()
+    const payloads = [...text.matchAll(/^data: (.+)$/gm)].map(match => JSON.parse(match[1]!))
+    for (const entry of payloads) {
+      if (entry.errors) throw new Error(`the document answered errors: ${JSON.stringify(entry.errors)}`)
+    }
+    return payloads[0]?.data
+  } finally {
+    setReadStore('legacy')
   }
-  return payloads[0]?.data
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -234,6 +265,40 @@ const clusterIdOf = async (uri: string): Promise<string> => {
   return String(row!.id)
 }
 
+/**
+ * A synthetic `Cluster` row, so a case can put a fold somewhere ELSE in the store and take it away.
+ *
+ * The card is the run's with its identity replaced, since admission reads `_id` and `members` and
+ * nothing else. A visible row's `hiddenBy` is never read, so it is filled rather than left empty:
+ * an empty `STRING[]` param is a shape this engine has no type for.
+ */
+const writeCluster = async (id: string, members: string[], hiddenBy?: string[]): Promise<void> => {
+  const { query } = await graphReady()
+  const [run] = await rowsOf('MATCH (c:Cluster {id: $id}) RETURN c.card AS card', { id: RUN_ID })
+  const card = JSON.stringify({ ...JSON.parse(String(run!.card)) as object, _id: id, members })
+  await query(
+    'CREATE (c:Cluster {id: $id, hidden: $hidden, hiddenBy: $hiddenBy, card: $card})',
+    { id, hidden: hiddenBy !== undefined, hiddenBy: hiddenBy ?? [id], card }
+  )
+}
+
+const dropClusters = async (...ids: string[]): Promise<void> => {
+  const { query } = await graphReady()
+  for (const id of ids) await query('MATCH (c:Cluster {id: $id}) DETACH DELETE c', { id })
+}
+
+/** Edits a card UNDER a reader, which is the only way to tell a re-read from a cached row. */
+const retitle = async (id: string, titleText: string): Promise<void> => {
+  const { query } = await graphReady()
+  const [row] = await query('MATCH (c:Cluster {id: $id}) RETURN c.card AS card', { id })
+  const card = JSON.parse(String(row!.card)) as { titles: { title: string }[] }
+  card.titles = [{ title: titleText, language: 'en', score: 1 } as never]
+  await query('MATCH (c:Cluster {id: $id}) SET c.card = $card', { id, card: JSON.stringify(card) })
+}
+
+const titleOf = (cards: readonly { _id: string, titles: unknown[] }[], id: string): string | undefined =>
+  ((cards.find(card => card._id === id)?.titles ?? []) as { title: string }[])[0]?.title
+
 let RUN_ID = ''
 let CONTROL_ID = ''
 let SEASON_ID = ''
@@ -294,33 +359,44 @@ test('an empty uri list is answered without running a statement', async () => {
   expect(await pageClusters([])).toEqual([])
 })
 
+// Mutation: `WHERE NOT c.hidden` in place of `coalesce(c.hidden, false) = false`. `NOT NULL` is NULL
+// on this engine and a NULL `WHERE` drops the row, so such a cluster is in NEITHER bucket: not drawn
+// and not hidden behind anything either, which is a card silently missing from every listing.
+test('a cluster whose hidden was never written is drawn, not lost between the two buckets', async () => {
+  const { query } = await graphReady()
+  const [run] = await rowsOf('MATCH (c:Cluster {id: $id}) RETURN c.card AS card', { id: RUN_ID })
+  const card = JSON.stringify({ ...JSON.parse(String(run!.card)) as object, _id: 'cl:with-hidden', members: [] })
+  // the column is simply not written, which is the one thing `schema.ts` says never happens
+  await query('CREATE (c:Cluster {id: $id, card: $card})', { id: 'cl:with-hidden', card })
+
+  // the control, so the case is known to be about a NULL rather than about a missing row
+  const [row] = await rowsOf('MATCH (c:Cluster {id: $id}) RETURN c.id AS id, c.hidden AS hidden', { id: 'cl:with-hidden' })
+  expect(row?.id, 'the row is there').toBe('cl:with-hidden')
+  expect(row!.hidden ?? null, 'and its hidden is NULL').toBeNull()
+  const hidden = await rowsOf('MATCH (c:Cluster) WHERE c.hidden RETURN c.id AS id')
+  expect(hidden.map(entry => String(entry.id)), 'the hidden bucket does not hold it either').not.toContain('cl:with-hidden')
+
+  expect((await pageClusters(undefined)).map(card => card._id)).toContain('cl:with-hidden')
+
+  await dropClusters('cl:with-hidden')
+})
+
 // ---------------------------------------------------------------------------------------------
 // 6.1, the incremental re-read and its removal rule.
 
 // Mutation: make `apply` re-read the whole store (call `read` instead) and the control assertion
 // below goes green while the scoping is gone; make it ignore the removal rule and the third does.
 test('a view:changed re-reads the clusters it names, and only those', async () => {
-  const { query } = await graphReady()
   const page = createPageReader()
   const before = await page.read([])
   expect(before.map(card => card._id)).toContain(RUN_ID)
 
-  // both cards are edited UNDER the reader, which is the only way to tell a re-read from a cached row
-  const retitle = async (id: string, titleText: string) => {
-    const [row] = await query('MATCH (c:Cluster {id: $id}) RETURN c.card AS card', { id })
-    const card = JSON.parse(String(row!.card)) as { titles: { title: string }[] }
-    card.titles = [{ title: titleText, language: 'en', score: 1 } as never]
-    await query('MATCH (c:Cluster {id: $id}) SET c.card = $card', { id, card: JSON.stringify(card) })
-  }
   await retitle(RUN_ID, 'RE-READ')
   await retitle(CONTROL_ID, 'NOT RE-READ')
 
   const after = await page.apply([RUN_ID], [])
-  const titleOf = (id: string) =>
-    ((after.find(card => card._id === id)?.titles ?? []) as { title: string }[])[0]?.title
-
-  expect(titleOf(RUN_ID), 'the named cluster is re-read').toBe('RE-READ')
-  expect(titleOf(CONTROL_ID), 'and the one nobody named is not').not.toBe('NOT RE-READ')
+  expect(titleOf(after, RUN_ID), 'the named cluster is re-read').toBe('RE-READ')
+  expect(titleOf(after, CONTROL_ID), 'and the one nobody named is not').not.toBe('NOT RE-READ')
 })
 
 // Mutation: drop the `cards.delete(row.id)` on a hidden row and a cluster that has just been folded
@@ -349,6 +425,88 @@ test('and a named cluster that comes back hidden or absent is REMOVED from the p
   expect((await stale.read([])).map(entry => entry._id)).toContain('cl:temporary')
   await query('MATCH (c:Cluster {id: $id}) DETACH DELETE c', { id: 'cl:temporary' })
   expect((await stale.apply(['cl:temporary'], [])).map(entry => entry._id)).not.toContain('cl:temporary')
+})
+
+// ---------------------------------------------------------------------------------------------
+// 6.1, ADMISSION: which named cluster belongs on THIS page.
+//
+// Every `apply` above passes `[]` for `uris`, where `admits` short circuits on its first clause, so
+// until 2026-09-12 a copy of read.ts with `admits` replaced by `() => true` left the whole file green
+// (22 of 22). The three cases below are the ones that mutation has to redden.
+
+// Mutation: `admits` to `() => true`. Also reddened by dropping its `card.members.some` clause, which
+// is the opposite mistake: a search whose fan-out answered a uri then draws nothing for it.
+test('a seeded page admits a named cluster whose members meet its uris', async () => {
+  const page = createPageReader()
+  const after = await page.apply([CONTROL_ID], ['mal:60059'])
+  expect(after.map(card => card._id), 'the map never held it, and one of its members is a uri the fan-out answered')
+    .toEqual([CONTROL_ID])
+})
+
+// Mutation: `admits` to `() => true`, which admits the control onto a page that never asked for it.
+test('and refuses one whose members meet none of them', async () => {
+  const page = createPageReader()
+  expect((await page.read(['mal:39535'])).map(card => card._id)).toEqual([RUN_ID])
+
+  expect((await page.apply([CONTROL_ID], ['mal:39535'])).map(card => card._id)).toEqual([RUN_ID])
+  // the seed is the authority on what belongs on this page, so it is what the apply is measured
+  // against: `read` and `apply` answering differently for the same uris is the G3 failure of 6.6
+  expect((await pageClusters(['mal:39535'])).map(card => card._id)).toEqual([RUN_ID])
+})
+
+// Mutation: drop the `cards.has(card._id)` clause from `admits` and a card the page IS drawing stops
+// being re-read as soon as the event that names it carries other uris, which is a stale card that
+// nothing will ever refresh.
+test('and keeps re-reading one the map already holds, whatever the uris say', async () => {
+  const page = createPageReader()
+  expect((await page.read(['mal:39535'])).map(card => card._id)).toEqual([RUN_ID])
+
+  await retitle(RUN_ID, 'STILL MINE')
+  const after = await page.apply([RUN_ID], ['mal:60059'])
+  expect(titleOf(after, RUN_ID), 'held by the page, so named means re-read').toBe('STILL MINE')
+})
+
+// Mutation: `rows.filter(row => row.hidden)` in place of `displaced`, which is what this file shipped
+// until 2026-09-12. `view:changed` names every cluster that MOVED, store-wide, so that filter follows
+// the `hiddenBy` of folds this page never saw and the run joins it forever: nothing names that run
+// again, and the page only re-seeds when `insertedUris.length` changes.
+test('a fold somewhere else in the store does not push its run onto a seeded page', async () => {
+  const page = createPageReader()
+  const uris = ['mal:39535']
+  expect((await page.read(uris)).map(card => card._id)).toEqual([RUN_ID])
+
+  // a run and the row that folds behind it: neither is on this page and neither holds a uri this
+  // fan-out answered
+  await writeCluster('cl:elsewhere-run', ['tvdb:9001'])
+  await writeCluster('cl:elsewhere-season', ['tvdb:9001-1'], ['cl:elsewhere-run'])
+
+  expect((await page.apply(['cl:elsewhere-season'], uris)).map(card => card._id)).toEqual([RUN_ID])
+  expect(
+    (await page.apply(['cl:elsewhere-run', 'cl:elsewhere-season'], uris)).map(card => card._id),
+    'and naming the run itself changes nothing either'
+  ).toEqual([RUN_ID])
+  expect((await pageClusters(uris)).map(card => card._id), 'the re-seed agrees').toEqual([RUN_ID])
+
+  await dropClusters('cl:elsewhere-run', 'cl:elsewhere-season')
+})
+
+// Mutation: narrow `displaced` to `cards.has(row.id)` alone, which is the mirror mistake and the one
+// a fix for the case above lands in: this page never DREW the season, it drew the run behind it, so
+// the row it has to follow is one its map has never held.
+test('and a page seeded on a hidden row follows that row to its new run', async () => {
+  const { query } = await graphReady()
+  const page = createPageReader()
+  const uris = ['nf:80987039-1']
+  expect((await page.read(uris)).map(card => card._id)).toEqual([RUN_ID])
+
+  await writeCluster('cl:other-run', ['tvdb:9002'])
+  await query('MATCH (c:Cluster {id: $id}) SET c.hiddenBy = $by', { id: SEASON_ID, by: ['cl:other-run'] })
+
+  expect((await page.apply([SEASON_ID], uris)).map(card => card._id)).toContain('cl:other-run')
+  expect((await pageClusters(uris)).map(card => card._id), 'the re-seed agrees').toEqual(['cl:other-run'])
+
+  await query('MATCH (c:Cluster {id: $id}) SET c.hiddenBy = $by', { id: SEASON_ID, by: [RUN_ID] })
+  await dropClusters('cl:other-run')
 })
 
 // ---------------------------------------------------------------------------------------------
@@ -393,12 +551,28 @@ test('a container with a preferredRun follows to that run', async () => {
 
 // Mutation: drop the `holds` check in `resolveMedia` and `/media/:uri/:mediaUri` silently opens the
 // cluster the first segment names even when the row the second names has left it.
+//
+// NO ROUTE REACHES THIS TODAY: `router/index.tsx` registers no `WRoute` for `Route.MEDIA_EPISODE`.
+// It is pinned because 6.2 states the rule and because the surface is exported, so the day the route
+// is wired the behaviour is already the documented one rather than whatever survived unexercised.
 test('the /media/:uri/:mediaUri fallthrough resolves the member when the cluster does not hold it', async () => {
   expect(await resolveMedia(CONTROL_ID)).toBeDefined()
   const through = await resolveMedia(CONTROL_ID, 'mal:39535')
   expect(through?._id, 'the control does not hold the run\'s member, so the member decides').toBe(RUN_ID)
   // and the control: a member the named cluster DOES hold leaves the resolve where it was
   expect((await resolveMedia(CONTROL_ID, 'mal:60059'))?._id).toBe(CONTROL_ID)
+})
+
+// Mutation: match the raw `member` string in `holds` (`MATCH (m:Media {uri: $uri})`) instead of the
+// address's uris. An `ag:(...)` second segment then matches no `Media` row whatever the cluster
+// holds, so the check is false for every aggregated spelling, the fallthrough fires unconditionally
+// and the first segment is discarded: here that hands the page to the run, since `resolveByUris`
+// ranks the two clusters by key and the run's sorts first.
+test('and the fallthrough reads the second segment as an ADDRESS, not as a raw uri', async () => {
+  const held = await resolveMedia(CONTROL_ID, 'ag:(mal:60059,mal:39535)')
+  expect(held?._id, 'the control holds one of the address\'s uris, so it keeps the page').toBe(CONTROL_ID)
+  // the control: an address it holds NONE of does fall through, and to the cluster that holds them
+  expect((await resolveMedia(CONTROL_ID, 'ag:(mal:39535)'))?._id).toBe(RUN_ID)
 })
 
 test('a uri nothing in the store names resolves to nothing, rather than to an empty row', async () => {
@@ -410,7 +584,9 @@ test('a uri nothing in the store names resolves to nothing, rather than to an em
 // 6.4, the episode list.
 
 // Mutation: remove the `episodeNumber != null` filter and the special is listed, which is the change
-// decision 7 prices; remove the ordering assumption and the rows arrive unordered.
+// decision 7 prices. The ORDER is `plugin:aggregate`'s and not this read's: `episodesOf` sorts
+// nothing, so the order below is an assertion about the materialized list, and the mutation that
+// reddens it lives in that plugin (reverse its slot order).
 test('the episode list is ordered, and a special is dropped for parity with today', async () => {
   const episodes = await episodesOf(RUN_ID)
   expect(episodes.map(entry => entry.episodeNumber)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
@@ -456,6 +632,20 @@ test('and an EMPTY cluster waits on its requested uris until one exists', async 
   expect(reader.wakes({ clusters: ['cl:anything'], uris: ['mal:39535'] })).toBe(false)
 })
 
+// Mutation: drop the `detail.clusters.some(named => requested.has(named))` clause from `wakes`. The
+// address 6.2 allows may BE a cluster id, `clusterId` is only set by a successful read and a read
+// only runs on a wake, so a reader on an id whose cluster does not exist yet compares that id
+// against `detail.uris` alone and waits forever on the one event that names exactly it.
+test('a reader addressed by a cluster id that has no cluster yet wakes on its own id', async () => {
+  const reader = createMediaReader('cl:not-yet')
+  expect(await reader.read()).toBeUndefined()
+  expect(reader.clusterId()).toBeUndefined()
+
+  expect(reader.wakes({ clusters: ['cl:not-yet'], uris: [] })).toBe(true)
+  // and the control that must NOT wake
+  expect(reader.wakes({ clusters: ['cl:someone-else'], uris: ['mal:39535'] })).toBe(false)
+})
+
 test('memberUrisOf names every member of the clusters asked about, and nothing for none', async () => {
   expect(await memberUrisOf([RUN_ID])).toEqual(
     ['anilist:108465', 'anizip:14758', 'kitsu:42323', 'mal:39535'].sort()
@@ -485,6 +675,18 @@ const nonNull = (row: Record<string, unknown>, fields: readonly string[], where:
 }
 
 const HANDLE_NODE_FIELDS = ['_id', 'uri', 'origin', 'id', 'url'] as const
+
+// The card is a CLOSED SET, which means a new selection has to extend it: the two cases below
+// execute the two listing documents by name, so a THIRD `mediaPage` document added anywhere in the
+// client would be checked by nothing at all. This is the case that notices.
+test('the client has exactly the two mediaPage documents the closed set executes', () => {
+  expect(mediaPageDocuments(clientSources())).toEqual(['GetReleasingMediaPage', 'SearchMediaPage'])
+  // the control, so a scan that reports absence is known to be able to report a presence
+  expect(mediaPageDocuments([
+    'const a = gql(`subscription ThirdPage($input: MediaPageInput!) { mediaPage(input: $input) { nodes { _id } } }`)',
+    'const b = gql(`subscription NotAPage { media(input: $input) { _id } }`)',
+  ])).toEqual(['ThirdPage'])
+})
 
 // Mutation: delete `handles` from `cardOf` in plugins/fields.ts. `Media.handles` is `[MediaHandle!]!`
 // inside `MediaPage.nodes: [Media!]!`, so the WHOLE PAGE comes back null and this throws on the
@@ -560,6 +762,93 @@ test('the modal document executes over the detail view, relations and episodes i
     nonNull(handle.node, HANDLE_NODE_FIELDS, String(handle.node.uri))
   }
   nonNull(media, ['_id', 'uri', 'origin', 'id', 'url', 'episodeCount'], 'media')
+})
+
+// THE MAP IS THE APP'S, and these two cases are what that buys. Both strip a field the materialized
+// JSON is supposed to carry and both must take the WHOLE payload down, because the app's map has no
+// `?? []` over either: `Media.relations` has no resolver at all and `Episode.shortDescriptions`
+// answers `undefined` for an absent parent field. Under the friendlier map this file carried until
+// 2026-09-12 each returned `[]` and both cases passed, which is exactly the regression a closed-set
+// case exists to catch.
+//
+// Mutation: put `relations: parent => parent.relations ?? []` back into the map above.
+test('a view with no relations nulls the modal, since the app has no resolver to cover for it', async () => {
+  const { query } = await graphReady()
+  const [row] = await query('MATCH (c:Cluster {id: $id}) RETURN c.media AS media', { id: RUN_ID })
+  const media = JSON.parse(String(row!.media)) as Record<string, unknown>
+  expect(media.relations, 'the control: the plugin DOES materialize it').toBeDefined()
+
+  const { relations: _relations, ...thinned } = media
+  await query('MATCH (c:Cluster {id: $id}) SET c.media = $media', { id: RUN_ID, media: JSON.stringify(thinned) })
+  await expect(execute(`${MEDIA_MODAL}\n${MEDIA_FRAGMENT}\n${EPISODE_FRAGMENT}`, {
+    input: { uri: 'ag:(mal:39535)' },
+    descriptionInput: { type: 'HTML' },
+  })).rejects.toThrow(/relations/)
+  await query('MATCH (c:Cluster {id: $id}) SET c.media = $media', { id: RUN_ID, media: JSON.stringify(media) })
+})
+
+// Mutation: put `shortDescriptions: parent => parent.shortDescriptions ?? []` back into the `Episode`
+// map above.
+test('and an episode with no shortDescriptions does too, through [Episode!]!', async () => {
+  const { query } = await graphReady()
+  const [row] = await query('MATCH (c:Cluster {id: $id}) RETURN c.episodes AS episodes', { id: RUN_ID })
+  const episodes = JSON.parse(String(row!.episodes)) as Record<string, unknown>[]
+  expect(episodes[0]!.shortDescriptions, 'the control: the plugin DOES materialize it').toBeDefined()
+
+  const { shortDescriptions: _short, ...first } = episodes[0]!
+  await query(
+    'MATCH (c:Cluster {id: $id}) SET c.episodes = $episodes',
+    { id: RUN_ID, episodes: JSON.stringify([first, ...episodes.slice(1)]) }
+  )
+  await expect(execute(`${MEDIA_MODAL}\n${MEDIA_FRAGMENT}\n${EPISODE_FRAGMENT}`, {
+    input: { uri: 'ag:(mal:39535)' },
+    descriptionInput: { type: 'HTML' },
+  })).rejects.toThrow(/shortDescriptions/)
+  await query('MATCH (c:Cluster {id: $id}) SET c.episodes = $episodes', { id: RUN_ID, episodes: JSON.stringify(episodes) })
+})
+
+// ---------------------------------------------------------------------------------------------
+// G5, the statement budget, counted rather than claimed. `read.ts`'s own header states these numbers
+// and the file had them wrong until 2026-09-12 ("a detail view at most four", where the worst
+// reachable resolve is five and a live reader costs six).
+
+/** Counts the statements one read runs, by swapping the shared connection's `query` for the call. */
+const statements = async (work: () => Promise<unknown>): Promise<number> => {
+  const graph = await graphReady()
+  const real = graph.query
+  let count = 0
+  graph.query = (cypher, params) => {
+    count += 1
+    return real(cypher, params)
+  }
+  try {
+    await work()
+  } finally {
+    graph.query = real
+  }
+  return count
+}
+
+// Mutation: run `resolveById` unconditionally in `resolveMedia` (drop the `!resolved &&` guard) and
+// the retired-id count goes to six, which is the shape a page that recurses would have.
+test('the statement budget: a page two, an episode list one, a detail view five, a reader six', async () => {
+  expect(await statements(() => pageClusters(undefined)), 'the whole store').toBe(1)
+  expect(await statements(() => pageClusters(['nf:80987039-1'])), 'seeded, with the hidden hop').toBe(2)
+  expect(await statements(() => episodesOf(RUN_ID)), 'one lookup of the materialized list').toBe(1)
+  expect(await statements(() => resolveMedia('mal:39535')), 'a member uri: statement 1, then the view').toBe(2)
+  // the worst reachable resolve: no member, nothing published, no current cluster, an alias, the view
+  expect(await statements(() => resolveMedia(STRAY_ID)), 'a retired cluster id').toBe(5)
+  expect(await statements(() => createMediaReader(STRAY_ID).read()), 'and its member uris').toBe(6)
+
+  const page = createPageReader()
+  await page.read(['mal:39535'])
+  await writeCluster('cl:budget-run', ['tvdb:9004'])
+  await writeCluster('cl:budget-season', ['tvdb:9004-1'], ['cl:budget-run'])
+  expect(
+    await statements(() => page.apply(['cl:budget-season'], ['tvdb:9004-1'])),
+    'the named clusters, then the runs the displaced ones hide behind'
+  ).toBe(2)
+  await dropClusters('cl:budget-run', 'cl:budget-season')
 })
 
 // ---------------------------------------------------------------------------------------------

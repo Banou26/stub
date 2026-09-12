@@ -13,7 +13,11 @@
  * against a real engine. The resolvers become thin switches on the read store.
  *
  * WHAT IT PROMISES.
- * - A page is at most two statements, a detail view at most four, an episode list exactly one.
+ * - A page is at most two statements, an episode list exactly one, and a detail view five: a member
+ *   resolve, a `published` scan, a `Cluster` id lookup, an `Alias` lookup, then the view. A live one
+ *   costs a sixth for its member uris. Those figures are asserted rather than claimed
+ *   (`read.test.ts`, "the statement budget"); the two-segment resolve below is the one caller that
+ *   can exceed them, and no route reaches it.
  * - A statement never runs with an empty `UNWIND` list, which dies at runtime on this engine rather
  *   than returning nothing (the engine facts of 2026-09-12).
  * - Nothing it returns has been merged, filtered or sorted: `applyMediaFilters`, `searchRelevance`
@@ -84,6 +88,19 @@ const pageRowOf = (row: Record<string, unknown>): PageRow => ({
   card: parse<ClusterCard>(row.card),
 })
 
+// The two statements that select `id` and `card` alone: `pageRowOf` over those would manufacture a
+// `hidden` and a `hiddenBy` out of columns nobody asked for, which is a type claiming more than the
+// row carries.
+const cardsOf = (rows: readonly Record<string, unknown>[]): ClusterCard[] =>
+  rows.map(row => parse<ClusterCard>(row.card)).filter((card): card is ClusterCard => card !== null)
+
+// `NOT c.hidden` is NULL for a row whose `hidden` was never written, and a NULL `WHERE` drops the
+// row, so such a cluster would be in NEITHER bucket: not drawn by this and not hidden behind
+// anything either, simply absent from every listing with no error anywhere. `schema.ts` says the
+// column is written false explicitly, and 0 of 330 clusters carried a NULL over 3,000 recorded rows
+// (2026-09-12), so this is the one line standing between the read and a plugin's habit.
+const NOT_HIDDEN = 'coalesce(c.hidden, false) = false'
+
 /**
  * The uris statement 1 of 6.2 asks about: an aggregated address is every member it names, and a bare
  * uri is itself.
@@ -111,8 +128,10 @@ export const addressUris = (uri: string): string[] => {
 export const pageClusters = async (uris?: readonly string[]): Promise<ClusterCard[]> => {
   const { query } = await graphReady()
   if (!uris) {
-    const rows = await query('MATCH (c:Cluster) WHERE NOT c.hidden RETURN c.id AS id, c.card AS card')
-    return rows.map(pageRowOf).map(row => row.card).filter((card): card is ClusterCard => card !== null)
+    const rows = await query(
+      `MATCH (c:Cluster) WHERE ${NOT_HIDDEN} RETURN c.id AS id, c.card AS card`
+    )
+    return cardsOf(rows)
   }
   if (!uris.length) return []
 
@@ -145,10 +164,10 @@ const withHiddenRuns = async (
   for (const id of drawn.keys()) wanted.delete(id)
   if (wanted.size) {
     const rows = await query(
-      'UNWIND $ids AS hid MATCH (c:Cluster {id: hid}) WHERE NOT c.hidden RETURN c.id AS id, c.card AS card',
+      `UNWIND $ids AS hid MATCH (c:Cluster {id: hid}) WHERE ${NOT_HIDDEN} RETURN c.id AS id, c.card AS card`,
       { ids: [...wanted].sort() }
     )
-    for (const row of rows.map(pageRowOf)) if (row.card) drawn.set(row.id, row.card)
+    for (const card of cardsOf(rows)) drawn.set(card._id, card)
   }
   return [...drawn.values()]
 }
@@ -192,17 +211,23 @@ export const createPageReader = () => {
       // absent: retired into another cluster, or never existed. Either way it is not on the page.
       for (const id of ids) if (!seen.has(id)) cards.delete(id)
 
+      // WHICH HIDDEN ROWS ARE THIS PAGE'S, read before the removal loop takes them out of the map.
+      // A row the page was drawing, or one whose members meet the uris this fan-out answered: the
+      // two ways the seed read would have returned it. An event names every cluster that MOVED,
+      // store-wide, so any other hidden row is a fold somewhere else entirely, and following its
+      // `hiddenBy` would put a card on this page that no state justifies and that nothing will ever
+      // name again.
+      const displaced = rows.filter(row =>
+        row.hidden && (cards.has(row.id) || (row.card !== null && admits(row.card, uris))))
+
       for (const row of rows) {
         if (row.hidden || !row.card) cards.delete(row.id)
         else if (admits(row.card, uris)) cards.set(row.id, row.card)
       }
-      // a row that JUST became hidden takes its run's place, so the run has to be drawn in its place
-      // here exactly as the seed read draws it
-      for (const card of await withHiddenRuns(rows.filter(row => row.hidden), query)) {
-        if (admits(card, uris) || rows.some(row => row.hidden && row.hiddenBy.includes(card._id))) {
-          cards.set(card._id, card)
-        }
-      }
+      // a row that JUST became hidden takes its run's place, so the run is drawn here exactly as the
+      // seed read draws it. Every card this hop answers is the `hiddenBy` target of a displaced row,
+      // so `displaced` IS the admission test and there is nothing left for a second one to say.
+      for (const card of await withHiddenRuns(displaced, query)) cards.set(card._id, card)
       return [...cards.values()]
     },
     /** The page as it stands, for a caller that wants it without a read. */
@@ -264,12 +289,19 @@ const resolveById = async (id: string): Promise<ResolvedCluster | undefined> => 
   return clusterOf(aliased)
 }
 
-/** Whether one cluster actually holds one member uri, which is what the fallthrough of 6.2 asks. */
-const holds = async (id: string, uri: string): Promise<boolean> => {
+/**
+ * Whether one cluster holds any uri of an address, which is what the fallthrough of 6.2 asks.
+ *
+ * The ADDRESS and not the raw string: a second segment is spelled `ag:(...)` as often as it is
+ * spelled bare, and matching the whole aggregated string against `Media.uri` matches nothing, so the
+ * fallthrough below would fire unconditionally and discard the first segment.
+ */
+const holds = async (id: string, uris: readonly string[]): Promise<boolean> => {
+  if (!uris.length) return false
   const { query } = await graphReady()
   const rows = await query(
-    'MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster {id: $id}) RETURN c.id AS id',
-    { id, uri }
+    'UNWIND $uris AS u MATCH (m:Media {uri: u})-[:MEMBER_OF]->(c:Cluster {id: $id}) RETURN c.id AS id',
+    { id, uris: [...uris] }
   )
   return rows.length > 0
 }
@@ -278,9 +310,17 @@ const holds = async (id: string, uri: string): Promise<boolean> => {
  * A detail view (6.2): resolve, then one lookup.
  *
  * `uri` is the decoded route uri, an aggregated address, or a cluster id, current or retired.
- * `member` is the second segment of `/media/:uri/:mediaUri`: when the first resolves to a cluster
- * that does NOT hold it, the member is resolved on its own instead, so a client holding an old `_id`
- * or an old address never silently opens a cluster its row has left.
+ *
+ * `member` IS THE ONE ARGUMENT NOTHING PASSES YET, and it is here rather than later on purpose. It is
+ * the second segment of `/media/:uri/:mediaUri` (`Route.MEDIA_EPISODE`), for which `router/index.tsx`
+ * registers no `WRoute`: `Route.MEDIA` is `/media/:uri`, which wouter will not match against
+ * `/media/a/b`, so every caller today passes one argument. 6.2 states the rule it implements ("a
+ * resolve by `_id`, or through `published`, that lands on a cluster not holding the member the route
+ * names falls through to resolving that member uri"), and the reason to keep it is that the rule is
+ * about an address a client may ALREADY hold: a bookmark on a retired `_id` is exactly what statement
+ * 1b answers, and the day the route is wired the fallthrough has to exist or a stale first segment
+ * silently wins over the row the user asked for. When the first resolves to a cluster that does NOT
+ * hold it, the member is resolved on its own instead.
  *
  * A CONTAINER with a `preferredRun` follows to that run, which is "a show page follows to its
  * attached run, earliest first". A REQUESTED URI IS NEVER HIDDEN: the hide rule is a listing rule and
@@ -290,15 +330,16 @@ const holds = async (id: string, uri: string): Promise<boolean> => {
  * rather than on a null while the sources are still answering.
  */
 export const resolveMedia = async (uri: string, member?: string): Promise<AggregatedMedia | undefined> => {
+  const memberUris = member ? addressUris(member) : []
   // statement 1 then 1a over the address's members, then 1b over the same string read as a cluster
   // id: a value that is neither matches nothing in either, at the cost of two key lookups
   let resolved = await resolveByUris(addressUris(uri))
   if (!resolved && uri) resolved = await resolveById(uri)
-  if (!resolved && member) resolved = await resolveByUris(addressUris(member))
+  if (!resolved) resolved = await resolveByUris(memberUris)
   if (!resolved) return undefined
 
-  if (member && !(await holds(resolved.id, member))) {
-    const fallthrough = await resolveByUris(addressUris(member))
+  if (memberUris.length && !(await holds(resolved.id, memberUris))) {
+    const fallthrough = await resolveByUris(memberUris)
     if (fallthrough) resolved = fallthrough
   }
 
@@ -326,6 +367,8 @@ const viewOfCluster = async (id: string): Promise<AggregatedMedia | undefined> =
  * exists for the requested uri there is no id to wake on, so the subscription wakes on its REQUESTED
  * URIS until one resolves. After that it wakes on its cluster id, or on any member uri, which is how
  * a retirement reaches it: the surviving cluster's event names members the retired one held.
+ *
+ * `member` is the second segment of the route `resolveMedia` documents, and nothing passes it yet.
  */
 export const createMediaReader = (uri: string, member?: string) => {
   const requested = new Set([...addressUris(uri), ...(member ? addressUris(member) : [])])
@@ -341,8 +384,13 @@ export const createMediaReader = (uri: string, member?: string) => {
       }
       return media
     },
+    // The middle clause is the one an id-shaped address needs: 6.2 lets the route uri BE a cluster
+    // id, `clusterId` is only set by a successful read, and a read only runs on a wake, so a reader
+    // addressed by an id that has no cluster yet would compare its id against `detail.uris` alone
+    // and wait forever on the event that names exactly it.
     wakes: (detail: { clusters: readonly string[], uris: readonly string[] }): boolean =>
       (clusterId !== undefined && detail.clusters.includes(clusterId)) ||
+      detail.clusters.some(named => requested.has(named)) ||
       detail.uris.some(named => wakeUris.has(named)),
     /** The cluster this reader last resolved to, for a caller that logs or keys on it. */
     clusterId: (): string | undefined => clusterId,
