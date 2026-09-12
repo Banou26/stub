@@ -132,3 +132,18 @@ Every spelling the nine guards of 5.2 needed, each exercised by
 Costs, on the same 800 recorded rows the ingest and the profile were measured on: a pass of
 `plugin:profile` then `plugin:direct` is **1,880 ms over 2 iterations** (the audit 178 ms of it), and
 the second pass over the same graph is **560 ms in 1 iteration and writes nothing**.
+
+## Measured on 2026-09-12 while building plugin:aggregate (step 2c)
+
+- **The engine cannot be closed and reopened in one process**: `closeGraph()` resolves and the next
+  `openGraph()` never settles (20 s timeout, node, 0.20.4). A harness resets by truncation:
+  `MATCH (n:T) DETACH DELETE n` over the node tables empties the rel tables with them, 9 ms on a
+  case-sized graph (245 ms on a process's first call, engine warm-up).
+- **`ingestAnswers` has no dedupe of its own**: two byte-identical answers in one batch die with
+  `Found duplicated primary key value` and take the batch with them; `answers.ts` dedupes in the flush
+  window, so any caller bypassing the log owes the same.
+- A row with no cluster must come back ABSENT, not as a null row: `UNWIND $uris AS u MATCH (m:Media
+  {uri: u})-[:MEMBER_OF]->(c:Cluster)` as its own statement is the working spelling.
+- A full pass over 800 recorded rows with profile, direct and aggregate: 3,212 ms, three iterations,
+  audit about 190 ms of it; the second pass 856 ms writing nothing. The corpus (249 cases, both
+  orders, 16,926 answers) replays through the new store in 354 s.

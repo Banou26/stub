@@ -30,9 +30,10 @@
  * proposal (6.8 ms each on a session sized graph, 2026-09-11). One read of the active `SAME_AS`
  * edges plus a union-find in JS is the same relation for the whole batch.
  *
- * THE 2C HOOKS, both marked where they sit: the component read is whole-graph and becomes a
- * delta-scoped read when `delta` arrives, and guard 7 reads the run side's own profile count because
- * `Cluster.runLength` (the witnessed figure of 5.4 P5) does not exist until `plugin:aggregate` lands.
+ * THE REMAINING 2C HOOK: the component read is whole-graph and becomes a delta-scoped read when
+ * `delta` arrives. Guard 7 now reads `Cluster.runLength`, the witnessed figure of 5.4 P5, wherever a
+ * cluster holds the run side, and falls back to that row's own profile count where none does yet,
+ * which is every row on the first iteration of a pass.
  */
 import type { Refusal } from './contract'
 
@@ -74,6 +75,12 @@ export type ProfileFacts = {
   showLevelOrigin: boolean
   /** `Media.status`, which is what the FINISHED gate of guard 7 reads. Not a profile column (2.2). */
   status: string | null
+  /**
+   * `Cluster.runLength` of the cluster this row is in, when one exists: the WITNESSED figure of
+   * 5.4 P5, which is what guard 7 weighs a folding season against. NULL before `plugin:aggregate`
+   * has run over this row, and the row's own profile count then stands in for it.
+   */
+  clusterRunLength: number | null
 }
 
 /** The guards in the order 5.2 states them. Exported so a test walks the rule rather than a list. */
@@ -113,6 +120,7 @@ const unknownProfile = (uri: string): ProfileFacts => ({
   format: null,
   showLevelOrigin: false,
   status: null,
+  clusterRunLength: null,
 })
 
 /**
@@ -335,7 +343,25 @@ export const prepareGuards = async (
         format: asText(row.format),
         showLevelOrigin: asBoolean(row.showLevelOrigin),
         status: asText(row.status),
+        clusterRunLength: null,
       })
+    }
+  }
+
+  // (7) the witnessed length of the cluster each subject is in, where one exists. Its own statement
+  // rather than an `OPTIONAL MATCH` beside the profile read: the two comma-separated patterns above
+  // are the exercised spelling (2026-09-12), and a row with no cluster must come back as a row with
+  // no length rather than not come back at all.
+  for (const chunk of chunked([...profileSubjects], CHUNK)) {
+    if (!chunk.length) continue
+    const rows = await query(
+      `UNWIND $uris AS u MATCH (m:Media {uri: u})-[:MEMBER_OF]->(c:Cluster)
+       RETURN u AS uri, c.runLength AS runLength`,
+      { uris: chunk }
+    )
+    for (const row of rows) {
+      const facts = profiles.get(String(row.uri))
+      if (facts) facts.clusterRunLength = asNumber(row.runLength)
     }
   }
 
@@ -411,6 +437,17 @@ type Facts = {
 
 /** The episode figure a count guard reads: what the graph holds, else what the source stated (5.2). */
 export const countOf = (facts: ProfileFacts): number | null => facts.countDistinct ?? facts.countStated
+
+/**
+ * How long the RUN side is, as guard 7 weighs it: the cluster's witnessed length, else its own count.
+ *
+ * `Cluster.runLength` is a vote of the whole cluster's members with the provenance classes read first
+ * (5.4 P5), so it is the better figure wherever it exists: one row's `episodes.length` is not a claim
+ * about the run, and a cluster that holds the metadata catalogues has already weighed those. The
+ * fallback is what 2b shipped, and it is still what a row with no cluster yet is weighed on, which is
+ * every row on the FIRST iteration of a pass, before `plugin:aggregate` has run at all.
+ */
+export const runSideLength = (facts: ProfileFacts): number | null => facts.clusterRunLength ?? countOf(facts)
 
 /**
  * Which endpoint a downgrade points AT when the rule itself does not name one.
@@ -549,14 +586,15 @@ const sameAsVerdict = (subject: SameAsSubject, facts: Facts): SameAsVerdict => {
     return { ok: false, reason: 'contained', write: true, evidence: { theirs: b.uri, ours: a.uri } }
   }
 
-  // 7. count-mismatch (foldVetoed, similar.ts:147-150). THE 2C HOOK: the run side's length is its own
-  // profile count here, because `Cluster.runLength` and its witnesses are `plugin:aggregate`'s (5.4
-  // P5) and land in step 2c. The rule and its two directions do not change when the figure improves.
+  // 7. count-mismatch (foldVetoed, similar.ts:147-150). The run side's length is `Cluster.runLength`,
+  // the witnessed figure of 5.4 P5, and its own profile count only where no cluster holds it yet
+  // (`runSideLength`). The folding side is weighed on its OWN count, because the whole question is
+  // what that one packaging claims.
   const folding = a.folding && b.folding ? containerSideOf(a, b) : a.folding ? a : b.folding ? b : null
   if (folding) {
     const run = folding === a ? b : a
     const theirs = countOf(folding)
-    const ours = countOf(run)
+    const ours = runSideLength(run)
     if (theirs !== null && ours !== null && theirs !== ours) {
       // LONGER always, zero tolerance; SHORTER only on a FINISHED run, because twelve sources set
       // `episodeCount = episodes.length` and a short fetched list on a RELEASING run is not evidence

@@ -204,10 +204,22 @@ export const dateReadingOf = (startDate: unknown, declaredPrecision?: string, de
  * A one-off special straddles the boundary and stays format-neutral. A row whose own categories and
  * type disagree (MOVIE beside SERIES) is silent rather than picking one: the disagreement is the
  * `kind-disagrees` anomaly of 5.5, and a guess here would hide it.
+ *
+ * A ROW THAT NAMES NO `type` OF ITS OWN NAMES NO FORMAT, whatever its categories say, and that is the
+ * one place this differs from `profileCluster`. `categories` is the shelf a source files its rows
+ * under, and at least one extractor stamps a CONSTANT on every row it mints: `anizip/extractor.ts:20`
+ * puts `['ANIME', 'SERIES']` on a film as readily as on a series, and ani.zip publishes no `type` at
+ * all. Read as a format, that constant is the source's default asserted as a fact about the work, and
+ * guard 9 (`kind-mismatch`, 5.2) then refuses a first-party id claim on it: measured over the corpus
+ * on 2026-09-12, EIGHT film clusters that mal, AniList, kitsu and offline all agree about lost their
+ * anizip row to exactly that. The shipped store never saw it, because its format veto reads a whole
+ * cluster the claims have already joined (`fuzzy-merge.ts:305-316`) and only ever blocks a candidate
+ * from entering; the guard weighs the claim itself.
  */
 export const formatOf = (type: unknown, categories: unknown): 'MOVIE' | 'SERIES' | null => {
   const kind = mergeType(typeof type === 'string' ? type as MediaType : null)
   if (kind === 'SPECIAL' || kind === 'OVA' || kind === 'ONA') return null
+  if (!kind) return null
   const formats = new Set<string>()
   for (const category of Array.isArray(categories) ? categories : []) {
     if (category === 'MOVIE' || category === 'SERIES') formats.add(category)

@@ -18,7 +18,7 @@ import { enableGraph } from '../../../../../src/worker/graph'
 import { closeGraph } from '../../../../../src/worker/graph/engine'
 import { ingestAnswers, replayAnswers } from '../../../../../src/worker/graph/ingest'
 import { resetPassState, runPlugins } from '../../../../../src/worker/graph/plugins/runner'
-import { profilePlugin } from '../../../../../src/worker/graph/plugins/profile'
+import { formatOf, profilePlugin } from '../../../../../src/worker/graph/plugins/profile'
 import { COERCING_ORIGINS } from '../../../../../src/worker/graph/plugins/origins'
 import { answer, episode, media, partOf, rowsOf, sameAs, title } from './fixtures'
 
@@ -257,6 +257,23 @@ test('a season and a part are read separately, and a silent title says nothing',
 // with TV_SHORT folded back to TV (`:58,74`) and one-off specials left format-neutral (`:309`).
 // Mutation: read `type` without `mergeType` and mal:1's TV_SHORT leaves `workKind` empty, so the
 // companion veto stops firing on every cluster AniList alone types.
+// A ROW THAT NAMES NO `type` NAMES NO FORMAT, which is the one place this differs from
+// `profileCluster` (`fuzzy-merge.ts:305-316`). `categories` is the shelf a source files its rows
+// under: `anizip/extractor.ts:20` stamps `['ANIME', 'SERIES']` on every row it mints, film or series,
+// and ani.zip publishes no `type`, so a format read off categories alone hands guard 9 a constant to
+// refuse a first-party id claim on. Measured over the corpus 2026-09-12: eight film clusters that
+// mal, AniList, kitsu and offline all agree about lost their anizip row to it.
+// Mutation: drop the `if (!kind) return null` and the third row below reads SERIES, which is
+// `kind-mismatch` against every one of that film's other members.
+test('a row with categories and no type of its own names no format', () => {
+  expect(formatOf('MOVIE', ['ANIME', 'MOVIE']), 'the control: a row that names its own type').toBe('MOVIE')
+  expect(formatOf('TV', ['ANIME', 'SERIES'])).toBe('SERIES')
+  expect(formatOf(null, ['ANIME', 'SERIES']), "ani.zip's constant, on a film").toBe(null)
+  expect(formatOf(null, ['MOVIE']), 'and the same for a row that only shelves itself under MOVIE').toBe(null)
+  expect(formatOf('MOVIE', ['SERIES']), 'a row that disagrees with itself is silent').toBe(null)
+  expect(formatOf('SPECIAL', ['ANIME', 'SERIES']), 'a one-off special straddles the boundary').toBe(null)
+})
+
 test('format and work kind follow the merge profile, and a companion marker is recorded', async () => {
   const series = (await profileOf('anilist:1'))!
   expect([series.format, series.workKind]).toEqual(['SERIES', 'TV'])

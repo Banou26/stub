@@ -1,0 +1,466 @@
+/**
+ * The field policy of 6.3 and 6.4: which member supplies each field of an aggregated row, what the
+ * card carries, and what is recorded about every choice.
+ *
+ * POLICY, THEREFORE A PLUGIN'S (6.3). `aggregateFields` and `aggregateEpisodeFields` are pure
+ * functions of the rows handed to them, versioned with `plugin:aggregate`, executed at WRITE time
+ * into `Cluster.card`, `Cluster.media`, `Cluster.episodes` and `Slot.episode`. No read chooses a
+ * field value; a read is a lookup of what these wrote.
+ *
+ * WHAT THEY PROMISE. Same rows, same output, whatever order the rows arrived in. The members are
+ * sorted once, by score descending and then by uri, and every rule below reads that one order:
+ * `aggregate.ts:379-381` records today's reduce as "non-deterministic between loads" because a tie
+ * inside one score tier fell to arrival order, and that is the one behaviour change 6.3 asks for.
+ *
+ * TWO DIFFERENCES FROM `src/worker/store/aggregate.ts`, both named in 6.3:
+ * - ties inside a score tier are broken by uri, never by arrival order,
+ * - the SINGLETON PATH IS GONE (`aggregate.ts:308-317` returned the member's own uri, origin and url
+ *   with no normalization). One rule for every cluster size, so a cluster of one is a cluster.
+ *
+ * WHY NOT THE GENERATED `Media`. 6.3 adds four fields the schema does not carry yet (`kind`,
+ * `scope`, `provenance`, `anomalies`) and an `INCLUDES` value of `MediaHandleRelation`, so the
+ * materialized row is deliberately typed here rather than as `src/generated/schema`'s `Media`. The
+ * field NAMES are the schema's, so the read path of step 3 selects them unchanged.
+ */
+import { getRoutePath, Route } from '../../../router/path'
+import { isRoutableUri } from '../../../utils/uri'
+
+/** Where one field's value came from, and under which rule (6.3's third column). */
+export type FieldProvenance = {
+  field: string
+  /** The member that supplied it, for a per-field rule. */
+  uri?: string
+  /** Every member that backed it, for a vote. */
+  uris?: string[]
+  /** `Media.fieldSeq[field]` of the supplying member: the exact answer behind the value. */
+  answerSeq?: number | null
+  /** The deciding score tier, for a vote. */
+  tier?: number | null
+  /** How many members backed the value, for a vote. */
+  witnesses?: number
+  rule: 'first-non-null' | 'tiered' | 'season-pair' | 'best-score' | 'concat' | 'dedupe' | 'first-supplier'
+}
+
+/**
+ * One member of a cluster as the policy reads it.
+ *
+ * `raw` is the owner's field-merged row (2.1), which every typed column on `Media` is a projection
+ * of, so it is the ONE place a field is read from and the two can never disagree here. A placeholder
+ * has none and contributes no field, which is what "a placeholder cluster is never a card" means one
+ * row at a time.
+ */
+export type MemberRow = {
+  uri: string
+  origin: string
+  id: string
+  owned: boolean
+  score: number | null
+  raw: Record<string, unknown>
+  fieldSeq: Record<string, number>
+}
+
+/** One container or part the cluster reaches in ONE hop of `PART_OF` or `INCLUDES` (3.5). */
+export type RelatedRow = {
+  uri: string
+  origin: string
+  id: string
+  /** The target's own url, or the best claimer's `node.url` when the target is a placeholder (6.3). */
+  url: string | null
+  relation: 'PART_OF' | 'INCLUDES'
+  /** The link's reason, carried onto the handle so the modal can say why the badge is there. */
+  via: string
+  by: string
+}
+
+/** One narrative edge of `RELATED`, as 2.1 stored it. */
+export type RelationRow = {
+  fromUri: string
+  toUri: string
+  relation: string
+  format: string | null
+  claimer: string
+  node: Record<string, unknown>
+}
+
+/** Everything about the cluster itself that a field rule reads. */
+export type ClusterFacts = {
+  id: string
+  aggUri: string
+  scope: 'RUN' | 'CONTAINER'
+  runLength: number | null
+  runLengthTier: number | null
+  runLengthWitnesses: number
+  runLengthFrom: string[]
+  anomalies: { rule: string, detail: string }[]
+}
+
+/** One handle of the aggregated row: a member, a container, or a proven range (6.3). */
+export type AggregatedHandle = {
+  relation: 'SAME_AS' | 'PART_OF' | 'INCLUDES'
+  /** Why this handle is here, so the trace panel can print it beside the badge (7.5). */
+  via: string
+  by: string
+  node: Record<string, unknown>
+}
+
+/** The aggregated Media of 6.3: the schema's field names plus the four 6.3 adds. */
+export type AggregatedMedia = Record<string, unknown> & {
+  _id: string
+  uri: string
+  handles: AggregatedHandle[]
+  provenance: FieldProvenance[]
+}
+
+/** The aggregated Episode of 6.4. */
+export type AggregatedEpisode = Record<string, unknown> & {
+  _id: string
+  uri: string
+  handles: { relation: 'SAME_AS', via: string, node: Record<string, unknown> }[]
+  provenance: FieldProvenance[]
+}
+
+/**
+ * The listing's CLOSED field set (6.1).
+ *
+ * A listing document selecting a field outside this set is a schema change that adds it here, which
+ * is what keeps a page read to one lookup: nothing about a card is computed at read time.
+ */
+export type ClusterCard = {
+  _id: string
+  uri: string
+  titles: unknown[]
+  covers: unknown[]
+  popularity: number | null
+  episodeCount: number | null
+  type: string | null
+  status: string | null
+  season: string | null
+  seasonYear: number | null
+  genres: string[]
+  tags: string[]
+  categories: string[]
+  startDate: string | null
+  /** Every member uri, so a listing can map an inserted uri to the card without a second read. */
+  members: string[]
+}
+
+const compare = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0)
+
+/**
+ * The one member order every rule below reads: score descending, ties by uri.
+ *
+ * An unscored row sorts last, which is where anizip's media row sits for scalars until its extractor
+ * passes a score to `makeMedia` (`consensus.ts:38-40`, and 6.3's "at parity").
+ */
+export const byScoreThenUri = <T extends { score: number | null, uri: string }>(rows: readonly T[]): T[] =>
+  [...rows].sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || compare(a.uri, b.uri))
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+
+const listOf = (value: unknown): unknown[] => (Array.isArray(value) ? value : [])
+
+const scoreOf = (value: unknown): number => (isRecord(value) && typeof value.score === 'number' ? value.score : -1)
+
+/** Sorted by score descending, and STABLE within a score, which is the member order it arrived in. */
+const byScore = <T>(values: T[]): T[] => [...values].sort((a, b) => scoreOf(b) - scoreOf(a))
+
+/** ANIME if present plus exactly one of MOVIE / SERIES, first in score order (`aggregate.ts:8-15`). */
+const reconcileCategories = (categories: string[]): string[] => {
+  const out: string[] = []
+  if (categories.includes('ANIME')) out.push('ANIME')
+  const format = categories.find(category => category === 'MOVIE' || category === 'SERIES')
+  if (format) out.push(format)
+  return out
+}
+
+/**
+ * Case-insensitive dedupe keeping the best-scored spelling (`aggregate.ts:55-65`).
+ *
+ * The labels arrive best-scored member first, so the spelling kept is that member's: AniList's
+ * "Sci-Fi" survives and a lower-scored "sci-fi" folds into it.
+ */
+const dedupeLabels = (labels: string[]): string[] => {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const label of labels) {
+    const key = label.toLowerCase()
+    if (!label || seen.has(key)) continue
+    seen.add(key)
+    out.push(label)
+  }
+  return out
+}
+
+/** Keep the first entry per value of `field` (`aggregate.ts:67-76`), over an already sorted list. */
+const dedupeByField = (field: string, values: unknown[]): unknown[] => {
+  const seen = new Set<unknown>()
+  const out: unknown[] = []
+  for (const value of values) {
+    const key = isRecord(value) ? value[field] : value
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(value)
+  }
+  return out
+}
+
+const stringsOf = (value: unknown): string[] => listOf(value).filter((entry): entry is string => typeof entry === 'string')
+
+/** The parenthesized member list an `ag:(...)` address carries, and the address itself. */
+export const aggregatedIdentity = (uris: readonly string[]): { uri: string, id: string } => {
+  // one uri carrying a ',' or a '/' would split the list or the route path and make the whole watch
+  // page unreachable, so an unroutable uri is kept out of the address (`aggregate.ts:296-304`)
+  const routable = uris.filter(isRoutableUri)
+  const sorted = [...(routable.length ? routable : uris)].sort()
+  return { uri: `ag:(${sorted.join(',')})`, id: `(${sorted.join(',')})` }
+}
+
+/** The member row as a handle node: its own uri is its `_id`, never the cluster's (6.3). */
+const nodeOf = (member: MemberRow): Record<string, unknown> => ({
+  ...member.raw,
+  _id: member.uri,
+  uri: member.uri,
+  origin: member.origin,
+  id: member.id,
+  // a container reached through PART_OF contributes no claims of its own (4.2 step 6), and a node
+  // drawn inside a handle carries none either: the badge reader needs the address and the url
+  handles: [],
+  episodes: [],
+})
+
+const SCALARS = [
+  'url', 'type', 'status', 'averageScore', 'popularity', 'startDate', 'endDate', 'isAdult', 'nextAiringEpisode',
+] as const
+
+/**
+ * The aggregated Media of 6.3, field by field, with the provenance of every choice.
+ *
+ * `members` need not be sorted: the order every rule reads is computed here, once.
+ */
+export const aggregateFields = (options: {
+  cluster: ClusterFacts
+  members: readonly MemberRow[]
+  /** The containers and proven ranges of ONE hop (3.5), already resolved to their own rows. */
+  related: readonly RelatedRow[]
+  /** The narrative edges of `RELATED`, every member's. */
+  relations: readonly RelationRow[]
+  /** The app origin a media route is built against. Empty in a worker with no `location`. */
+  locationOrigin: string
+}): AggregatedMedia => {
+  const { cluster, locationOrigin } = options
+  const members = byScoreThenUri(options.members)
+  const owned = members.filter(member => member.owned)
+  const provenance: FieldProvenance[] = []
+  const identity = aggregatedIdentity(members.map(member => member.uri))
+
+  const row: AggregatedMedia = {
+    _id: cluster.id,
+    uri: cluster.aggUri,
+    id: identity.id,
+    origin: 'ag',
+    url: `${locationOrigin}/${getRoutePath(Route.MEDIA, { uri: cluster.aggUri }).replace(/^\//, '')}`,
+    scope: cluster.scope,
+    // `FOLD` needs the `INCLUDES` edges and the RUN / CONTAINER exchange of `plugin:containment`, so
+    // the third value of 6.3's `kind` is not minted here and the scope stands for it until it lands
+    kind: cluster.scope,
+    score: members.length ? Math.max(...members.map(member => member.score ?? 0)) : null,
+    handles: [],
+    episodes: [],
+    provenance,
+    anomalies: cluster.anomalies,
+  }
+
+  // the scalars: first non-null in score order, ties by uri (`aggregate.ts:328-337`)
+  for (const field of SCALARS) {
+    const supplier = owned.find(member => member.raw[field] !== null && member.raw[field] !== undefined)
+    row[field] = supplier ? supplier.raw[field] : null
+    if (supplier) {
+      provenance.push({ field, uri: supplier.uri, answerSeq: supplier.fieldSeq[field] ?? null, rule: 'first-non-null' })
+    }
+  }
+  // the route url is the cluster's own, never a member's: the address names every member, and a
+  // member's url is reachable through its handle
+  row.url = `${locationOrigin}/${getRoutePath(Route.MEDIA, { uri: cluster.aggUri }).replace(/^\//, '')}`
+
+  // the length is a VOTE, not a pick (5.4 P5): `Cluster.runLength`, with its tier and its witnesses
+  row.episodeCount = cluster.runLength
+  provenance.push({
+    field: 'episodeCount',
+    uris: cluster.runLengthFrom,
+    tier: cluster.runLengthTier,
+    witnesses: cluster.runLengthWitnesses,
+    rule: 'tiered',
+  })
+
+  // the season PAIR, from one member: `SUMMER` and `2026` only mean anything together
+  // (`aggregate.ts:34-53`)
+  const named = owned.find(member => typeof member.raw.season === 'string' && member.raw.season)
+  const yearOnly = owned.find(member => member.raw.seasonYear !== null && member.raw.seasonYear !== undefined)
+  row.season = named ? named.raw.season : null
+  row.seasonYear = (named ? named.raw.seasonYear : yearOnly?.raw.seasonYear) ?? null
+  if (named || yearOnly) provenance.push({ field: 'season', uri: (named ?? yearOnly)!.uri, rule: 'season-pair' })
+
+  const categories = owned.flatMap(member => stringsOf(member.raw.categories))
+  row.categories = reconcileCategories(categories)
+  if (owned.length) provenance.push({ field: 'categories', uri: owned[0]!.uri, rule: 'first-non-null' })
+
+  for (const field of ['genres', 'tags'] as const) {
+    row[field] = dedupeLabels(owned.flatMap(member => stringsOf(member.raw[field])))
+    for (const member of owned) {
+      if (stringsOf(member.raw[field]).length) provenance.push({ field, uri: member.uri, rule: 'best-score' })
+    }
+  }
+
+  row.titles = dedupeByField('title', byScore(owned.flatMap(member => listOf(member.raw.titles))))
+  for (const member of owned) {
+    if (listOf(member.raw.titles).length) {
+      provenance.push({ field: 'titles', uri: member.uri, answerSeq: member.fieldSeq.titles ?? null, rule: 'concat' })
+    }
+  }
+
+  // sorted by score and NOT deduped: two catalogues describing the same work in two languages are two
+  // descriptions, and two covers are two covers
+  for (const field of ['descriptions', 'shortDescriptions', 'covers', 'banners'] as const) {
+    row[field] = byScore(owned.flatMap(member => listOf(member.raw[field])))
+    for (const member of owned) {
+      if (listOf(member.raw[field]).length) {
+        provenance.push({ field, uri: member.uri, answerSeq: member.fieldSeq[field] ?? null, rule: 'concat' })
+      }
+    }
+  }
+
+  row.trailers = dedupeByField('uri', byScore(owned.flatMap(member => listOf(member.raw.trailers))))
+
+  // the first supplier's WHOLE graph, never spliced: a franchise is one source's account of a series
+  // and two of them spliced carry edges between nodes only one of them has (`aggregate.ts:348-350`)
+  const franchiseFrom = owned.find(member => member.raw.franchise !== null && member.raw.franchise !== undefined)
+  row.franchise = franchiseFrom ? franchiseFrom.raw.franchise : null
+  if (franchiseFrom) provenance.push({ field: 'franchise', uri: franchiseFrom.uri, rule: 'first-supplier' })
+
+  // the narrative axis: deduped on the pair, and every edge pointing back inside the cluster dropped,
+  // because a media drawn as its own alternative navigates to the page it is on (`aggregate.ts:243-247`)
+  const inside = new Set(members.map(member => member.uri))
+  const seenRelation = new Set<string>()
+  row.relations = options.relations
+    .filter(edge => {
+      if (inside.has(edge.toUri)) return false
+      const key = `${edge.relation} ${edge.toUri}`
+      if (seenRelation.has(key)) return false
+      seenRelation.add(key)
+      return true
+    })
+    .map(edge => ({
+      relation: edge.relation,
+      format: edge.format,
+      claimer: edge.claimer,
+      node: { ...edge.node, _id: edge.toUri, uri: edge.toUri },
+    }))
+
+  row.handles = [
+    ...members.map((member): AggregatedHandle => ({
+      relation: 'SAME_AS',
+      via: member.owned ? 'member' : 'placeholder',
+      by: 'plugin:aggregate',
+      node: nodeOf(member),
+    })),
+    ...options.related.map((entry): AggregatedHandle => ({
+      relation: entry.relation,
+      via: entry.via,
+      by: entry.by,
+      node: { _id: entry.uri, uri: entry.uri, origin: entry.origin, id: entry.id, url: entry.url, handles: [], episodes: [] },
+    })),
+  ]
+
+  return row
+}
+
+/** The listing's card (6.1), read off the aggregated row so the two can never disagree. */
+export const cardOf = (media: AggregatedMedia, members: readonly string[]): ClusterCard => ({
+  _id: media._id,
+  uri: media.uri,
+  titles: listOf(media.titles),
+  covers: listOf(media.covers),
+  popularity: (media.popularity as number | null) ?? null,
+  episodeCount: (media.episodeCount as number | null) ?? null,
+  type: (media.type as string | null) ?? null,
+  status: (media.status as string | null) ?? null,
+  season: (media.season as string | null) ?? null,
+  seasonYear: (media.seasonYear as number | null) ?? null,
+  genres: stringsOf(media.genres),
+  tags: stringsOf(media.tags),
+  categories: stringsOf(media.categories),
+  startDate: (media.startDate as string | null) ?? null,
+  members: [...members].sort(),
+})
+
+/** One episode row filling a slot, as the policy reads it. */
+export type EpisodeMemberRow = {
+  uri: string
+  origin: string
+  id: string
+  score: number | null
+  raw: Record<string, unknown>
+  fieldSeq: Record<string, number>
+  /** How this row reached the slot: `member` or `aligned` (5.4 P5). */
+  via: string
+}
+
+const EPISODE_SCALARS = [
+  'url', 'embedUrl', 'releaseDate', 'seasonNumber', 'absoluteEpisodeNumber', 'runtime',
+] as const
+
+/**
+ * The aggregated Episode of 6.4: `aggregate.ts:412-450` with the three corrections that section names.
+ *
+ * - `_id` is the SLOT's id and `episodeNumber` is the SLOT's number, which is the run's own numbering
+ *   (1 to 12 for a split cour, never 13 to 24, because showing 13 to 24 leaves 1 to 12 rendering as
+ *   empty rows),
+ * - `mediaUri` is the CLUSTER's address, where `aggregate.ts:439` set it to the aggregated episode's
+ *   own uri and lost the link back,
+ * - a one-row slot takes the same shape as any other, where `aggregate.ts:401-409` returned the
+ *   member's raw uri for a cluster of one.
+ */
+export const aggregateEpisodeFields = (options: {
+  slot: { id: string, number: number | null }
+  clusterUri: string
+  rows: readonly EpisodeMemberRow[]
+}): AggregatedEpisode => {
+  const rows = byScoreThenUri(options.rows)
+  const provenance: FieldProvenance[] = []
+  const identity = aggregatedIdentity(rows.map(row => row.uri))
+
+  const episode: AggregatedEpisode = {
+    _id: options.slot.id,
+    uri: identity.uri,
+    id: identity.id,
+    origin: 'ag',
+    mediaUri: options.clusterUri,
+    episodeNumber: options.slot.number,
+    score: rows.length ? Math.max(...rows.map(row => row.score ?? 0)) : null,
+    handles: rows.map(row => ({
+      relation: 'SAME_AS' as const,
+      via: row.via,
+      node: { ...row.raw, _id: row.uri, uri: row.uri, origin: row.origin, id: row.id, handles: [] },
+    })),
+    provenance,
+  }
+
+  for (const field of EPISODE_SCALARS) {
+    const supplier = rows.find(row => row.raw[field] !== null && row.raw[field] !== undefined)
+    episode[field] = supplier ? supplier.raw[field] : null
+    if (supplier) {
+      provenance.push({ field, uri: supplier.uri, answerSeq: supplier.fieldSeq[field] ?? null, rule: 'first-non-null' })
+    }
+  }
+
+  episode.titles = dedupeByField('title', byScore(rows.flatMap(row => listOf(row.raw.titles))))
+  for (const field of ['descriptions', 'shortDescriptions', 'thumbnails'] as const) {
+    episode[field] = byScore(rows.flatMap(row => listOf(row.raw[field])))
+  }
+  for (const row of rows) {
+    provenance.push({ field: 'titles', uri: row.uri, answerSeq: row.fieldSeq.titles ?? null, rule: 'concat' })
+  }
+
+  return episode
+}
