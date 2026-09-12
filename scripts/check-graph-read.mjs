@@ -39,7 +39,10 @@ const ROOT = new URL('../build/', import.meta.url).pathname
 // can answer about, so the fan-out is a real one and the cluster has more than one member.
 const URI = 'ag:(anilist:108465)'
 const ROUTE = `/media/${URI}`
-const SETTLE_MS = 25_000
+// how long each arm collects payloads before it reports what the page SETTLED on. Overridable
+// because the two stores converge at different speeds and telling "slower" from "never" is the
+// whole question when a member is missing: SETTLE_MS=60000 node scripts/check-graph-read.mjs
+const SETTLE_MS = Number(process.env.SETTLE_MS ?? 25_000)
 
 const TYPES = {
   '.css': 'text/css',
@@ -113,9 +116,16 @@ const arm = async (label, query) => {
     return { label, installed: false, errors, installedMs }
   }
 
+  // the variables the CLIENT passes for this document (`src/router/home/media-modal.tsx`), not a
+  // guess: `descriptionInput` is non-null, and omitting it fails the document before it reaches a
+  // resolver, which looks exactly like a store that answered nothing
   const result = await page.evaluate(async ([document, uri, settleMs]) => {
     try {
-      const answer = await window.__stubGraphQL(document, { input: { uri } }, { settleMs })
+      const answer = await window.__stubGraphQL(
+        document,
+        { input: { uri }, descriptionInput: { type: 'HTML' } },
+        { settleMs }
+      )
       return { answer }
     } catch (error) {
       return { failed: String(error?.message ?? error) }
@@ -138,6 +148,10 @@ const arm = async (label, query) => {
       uri: media.uri,
       origin: media.origin,
       title: media.titles?.[0]?.title,
+      members: (String(media.uri ?? '').match(/\(([^)]*)\)/)?.[1] ?? '').split(',').filter(Boolean),
+      // the handles are what `askUnasked` walks to decide which origins to re-ask (7.1), so a source
+      // missing from the page is often a source missing from HERE one step earlier
+      handleUris: (media.handles ?? []).map(handle => `${handle.relation}:${handle.node?.uri}`),
       handles: media.handles?.length ?? 0,
       episodes: media.episodes?.length ?? 0,
       episodeCount: media.episodeCount,
@@ -165,6 +179,8 @@ const report = (result) => {
     console.log(`  uri ${result.media.uri}  origin ${result.media.origin}`)
     console.log(`  title ${JSON.stringify(result.media.title)}`)
     console.log(`  handles ${result.media.handles}  episodes ${result.media.episodes}  episodeCount ${result.media.episodeCount}`)
+    console.log(`  members (${result.media.members.length}) ${result.media.members.join(' ')}`)
+    console.log(`  handles ${result.media.handleUris.join(' ')}`)
   } else {
     console.log('  media: NULL')
   }
@@ -175,12 +191,18 @@ report(graph)
 report(legacy)
 
 const failures = []
-const servedByGraph = (result) => Boolean(result.media?._id?.startsWith('cl:')) || result.media?.origin === 'ag'
+// ONLY the cluster id. `origin` is `ag` on BOTH stores (the old store's aggregate carries it too),
+// which the control caught on the first real run: a marker the control also carries proves nothing,
+// and the run said so rather than passing. A `cl:` `_id` is `Cluster.id` and the old store's is a uuid.
+const servedByGraph = (result) => Boolean(result.media?._id?.startsWith('cl:'))
 
 if (!graph.installed) failures.push('the store=graph load never installed window.__stubGraphQL')
 if (graph.failed) failures.push(`the store=graph probe threw: ${graph.failed}`)
 if (!graph.media) failures.push('the store=graph arm answered a NULL media, which is an empty page')
 if (graph.graphqlErrors) failures.push('the store=graph arm returned graphql errors')
+// a document both arms reject is a broken PROBE, and saying so is the difference between fixing the
+// check and hunting a store bug that does not exist
+if (graph.graphqlErrors && legacy.graphqlErrors) failures.push('BOTH arms returned graphql errors, so this is the probe and not the store')
 if (graph.media && !graph.media.title) failures.push('the store=graph arm answered a media with no title')
 
 // the control: the marker is only evidence if the arm WITHOUT the flag does not carry it
@@ -193,6 +215,12 @@ if (graph.media && legacy.media) {
   const ratio = legacy.media.episodes ? graph.media.episodes / legacy.media.episodes : 1
   if (ratio < 0.5) failures.push(`the store=graph arm listed ${graph.media.episodes} episodes against the legacy ${legacy.media.episodes}`)
   if (!graph.media.handles) failures.push('the store=graph arm carries no handles, so the page draws no source badge')
+  // membership is the whole point of a cluster, so a member the old store found and the new one did
+  // not is reported by NAME rather than as a count: it is the shape every merging bug takes
+  const missing = legacy.media.members.filter(member => !graph.media.members.includes(member))
+  const extra = graph.media.members.filter(member => !legacy.media.members.includes(member))
+  if (missing.length) console.log(`\nmembers the legacy store found and the graph did not: ${missing.join(' ')}`)
+  if (extra.length) console.log(`members the graph found and the legacy store did not: ${extra.join(' ')}`)
 }
 
 console.log('')
