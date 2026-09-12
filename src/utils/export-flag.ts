@@ -40,6 +40,25 @@ export const EXPORT_QUERY_VALUE = 'query'
  */
 export const readQueryProbeFlag = (url: string, base?: string): boolean => asks(url, EXPORT_QUERY_VALUE, base)
 
+export const TRACE_PARAM = 'trace'
+export const TRACE_VALUE = '1'
+
+/**
+ * Whether this url asks for the GRAPH TRACE link, exactly `?trace=1`.
+ *
+ * The trace page itself is a route and needs no flag: this is only about whether a media view puts a
+ * link to it on screen, which is section 7.5's "behind `?trace=1` on the modal". Its own param rather
+ * than a value on `export`, because the other three publish a window function to a walk while this
+ * one is a link a person clicks. Never throws: an unparseable url reads false.
+ */
+export const readTraceFlag = (url: string, base?: string): boolean => {
+  try {
+    return new URL(url, base).searchParams.getAll(TRACE_PARAM).includes(TRACE_VALUE)
+  } catch {
+    return false
+  }
+}
+
 export const NO_SEED_PARAM = 'seed'
 export const NO_SEED_VALUE = 'off'
 

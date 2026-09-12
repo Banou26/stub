@@ -29,7 +29,7 @@ expose<typeof resolvers>(
   }
 )
 
-const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease, exportStore, exportAnswers, exportAsks, graphCounts, setGraphEnabled, setReadStore } = await expose<WorkerResolvers>(
+const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease, exportStore, exportAnswers, exportAsks, graphCounts, traceGraph, traceAnswer, setGraphEnabled, setReadStore } = await expose<WorkerResolvers>(
   {},
   {
     transport: worker,
@@ -67,5 +67,12 @@ export {
   exportStore,
   exportAnswers,
   exportAsks,
-  graphCounts
+  graphCounts,
+  // Section 7.5, for the `/debug/trace` page (`?trace=1` on a media view puts the link to it on
+  // screen). It is NOT wired to a flag here: `traceGraph` answers `reason: 'not-enabled'` when the
+  // engine is off, which is the sentence the page prints beside a reload link carrying `?graph=1`,
+  // where implying the engine flag from `?trace` would warm one mid-session and show a graph built
+  // from whatever arrived after the switch rather than from the page under investigation.
+  traceGraph,
+  traceAnswer
 }

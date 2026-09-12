@@ -10,6 +10,7 @@ export enum Route {
   SETTINGS = 'SETTINGS',
   WATCH = 'WATCH',
   PARTY = 'PARTY',
+  DEBUG_TRACE = 'DEBUG_TRACE',
   LOGIN_CALLBACK = 'LOGIN_CALLBACK',
 }
 
@@ -30,6 +31,9 @@ const ROUTES = {
     `/watch/${mediaUri}/${episodeUri}${sourceUri ? `/${sourceUri}`: ''}`,
   // the invite rides in the FRAGMENT (see party/invite.ts), so the path itself names nothing
   [Route.PARTY]: () => '/party',
+  // the traced uri rides in the QUERY STRING, so the href is built by `debugTracePath` in
+  // ./debug/trace.ts, the same way the search page's filters are
+  [Route.DEBUG_TRACE]: () => '/debug/trace',
   [Route.LOGIN_CALLBACK]: () => '/login/callback',
 }
 
@@ -48,6 +52,7 @@ const RouterRoutes = {
   [Route.SETTINGS]: '/settings',
   [Route.WATCH]: '/watch/:mediaUri/:episodeUri/:sourceUri?',
   [Route.PARTY]: '/party',
+  [Route.DEBUG_TRACE]: '/debug/trace',
   [Route.LOGIN_CALLBACK]: '/login/callback',
 }
 

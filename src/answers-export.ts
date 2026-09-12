@@ -15,7 +15,10 @@
 // `__stubExportAsks` rides it too, and is the third: the `Ask` log says which questions the app's own
 // consumer put through `similarMedia` and what each came to, which is the only record of a source
 // that answered nothing at all (7.3).
+import type { GraphQLRequest } from './utils/graphql-stream'
+
 import { readAnswersExportFlag, readQueryProbeFlag } from './utils/export-flag'
+import { streamGraphQL } from './utils/graphql-stream'
 import { exportAnswers, exportAsks, graphCounts, handleRequest } from './worker'
 
 declare global {
@@ -40,45 +43,8 @@ declare global {
  * time the store moves. It collects payloads for `settleMs` and returns the LAST one, plus the count,
  * because the first payload of a cold page is routinely an empty list that a later one fills.
  */
-const probe = async (query: string, variables: Record<string, unknown> = {}, options: { settleMs?: number } = {}) => {
-  const settleMs = options.settleMs ?? 20_000
-  const response = await handleRequest('http://d/graphql', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
-    body: JSON.stringify({ query, variables })
-  })
-  if (!(response.headers.get('content-type') ?? '').includes('event-stream')) {
-    return { payloads: 1, last: await response.json() }
-  }
-  const reader = response.body!.getReader()
-  const decoder = new TextDecoder()
-  const deadline = Date.now() + settleMs
-  let buffer = ''
-  let payloads = 0
-  let last: unknown
-  while (Date.now() < deadline) {
-    const step = await Promise.race([
-      reader.read(),
-      new Promise<{ done: true, value: undefined }>(resolve =>
-        setTimeout(() => resolve({ done: true, value: undefined }), Math.max(0, deadline - Date.now())))
-    ])
-    if (step.done) break
-    buffer += decoder.decode(step.value, { stream: true })
-    // one SSE event per blank line, and only the `data:` lines carry the payload
-    const events = buffer.split('\n\n')
-    buffer = events.pop() ?? ''
-    for (const event of events) {
-      const data = event.split('\n').filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('')
-      if (!data) continue
-      try {
-        last = JSON.parse(data)
-        payloads += 1
-      } catch {}
-    }
-  }
-  void reader.cancel().catch(() => {})
-  return { payloads, last }
-}
+const probe = async (query: string, variables: Record<string, unknown> = {}, options: { settleMs?: number } = {}) =>
+  streamGraphQL(handleRequest as GraphQLRequest, query, variables, { settleMs: options.settleMs })
 
 if (readAnswersExportFlag(location.href)) {
   window.__stubExportAnswers = () => exportAnswers()

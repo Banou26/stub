@@ -58,6 +58,15 @@ export {
   pageClusters, placeholdersOf, readStore, resolveMedia, setReadStore,
 } from './read'
 export type { Placeholder, ReadStore } from './read'
+// Section 7.5: "why is this here", as one read-only bundle per cluster plus the one answer a reader
+// opens. Its own module for the same reason `./read` is one: it is a READ, it writes nothing, and the
+// `/debug/trace` page must be able to ask it about a graph whose plugins produced nothing.
+export { traceAnswer, traceGraph } from './trace'
+export type {
+  TraceAnomaly, TraceAnswerDetail, TraceAnswerMeta, TraceAsk, TraceAttachment, TraceBundle,
+  TraceClaim, TraceEpisode, TraceEpisodeClaim, TraceEpisodeLink, TraceEpisodeSource, TraceFill,
+  TraceLink, TraceMember, TraceReason, TraceResolved, TraceRunLength,
+} from './trace'
 // Section 5.3: when a pass runs, and the `view:changed` it ends in.
 export {
   AUDIT_EVERY, DEFAULT_PLUGINS, passSettled, schedulePass, schedulerStats, startScheduler,

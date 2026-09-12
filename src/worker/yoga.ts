@@ -9,7 +9,7 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 import { extractors, setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
 import { exportStore } from './store/export'
-import { enableGraph, exportAnswers, exportAsks, graphCounts, setReadStore } from './graph'
+import { enableGraph, exportAnswers, exportAsks, graphCounts, setReadStore, traceAnswer, traceGraph } from './graph'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -86,6 +86,13 @@ export const osraResolvers = {
   // log rather than derived from it by a caller: the two are read in one round trip from the same
   // flush, so a page cannot see answers the ingest has not written yet.
   graphCounts: () => graphCounts(),
+  // Section 7.5's panel, in ONE call per cluster. It answers a `reason` rather than throwing when the
+  // flag is down or the graph is empty, unlike the three exports above: those are a walk's only way
+  // to tell "off" from "empty", while the trace has a field for it and a panel that threw could not
+  // draw the sentence saying which of the four it is.
+  traceGraph: (uri: string) => traceGraph(uri),
+  // and the one row the bundle deliberately leaves out, on demand: an `Answer`'s raw bytes.
+  traceAnswer: (seq: number) => traceAnswer(seq),
   remotePicker: (origin: string) => remotePicker(origin),
   remotePlayer: (origin: string) => remotePlayer(origin),
   selectRemoteRelease: (origin: string, uris: string[]) => selectRemoteRelease(origin, uris)
