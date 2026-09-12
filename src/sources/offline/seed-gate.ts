@@ -19,7 +19,27 @@ import {
 export const SEED_MIN_RUNS = 40
 export const SEED_MIN_CURRENT_SEASON_RUNS = 30
 export const SEED_MIN_STREAMING_SHARE = 0.25
-export const SEED_MIN_MEDIAN_IDENTITY = 4
+/**
+ * The median identity a walk carries to be published, an identity being the distinct catalogue uris
+ * of one run with `offline` excluded, which is what the export excludes.
+ *
+ * MEASURED 3, on three sources that share no code path (`scripts/measure-seed-identity.mjs`):
+ *
+ *   walk 2026-09-05, 100 runs      1:4 2:6 3:48 4:21 5:10 6:6 7:5, median 3, quartiles 3 and 4
+ *   corpus 2026-09-11, 223 runs    1:29 2:69 3:42 4:18 5:24 6:31 7:10, median 3, quartiles 2 and 5
+ *   cases, 260 `together` sets     1:49 2:76 3:56 4:24 5:24 6:31, median 3, quartiles 2 and 4
+ *
+ * It was 4, guessed rather than measured, and no walk reaches it: the bundle bridges mal, anilist and
+ * kitsu, so 3 is the structural floor, and a fourth member is a streaming id, which 29% of a season
+ * carries. The 2026-09-05 walk measured 3 and this line alone refused it, which is a bar above a
+ * healthy median publishing nothing rather than a bar catching a broken walk. At 3 the `<` refuses a
+ * walk whose median has fallen to 2, half its runs holding less than the bundle mints locally.
+ *
+ * The corpus's most popular 100, which is the population a `--top 100` walk takes, measures median 5,
+ * so 3 is not the ceiling. It is taken because a bar has to pass the thinner of two real walks and
+ * the 2026-09-05 export is one.
+ */
+export const SEED_MIN_MEDIAN_IDENTITY = 3
 export const SEED_MAX_INDEX_BYTES = 2_000_000
 export const SEED_MAX_EPISODES_BYTES = 6_000_000
 export const SEED_MAX_REPORTED_FAILURES = 50
@@ -344,10 +364,10 @@ const median = (values: number[]): number => {
 /**
  * The measurements a walk has to clear to be published, and the failures where it does not.
  *
- * Two of these catch the relay answering nothing from a runner without knowing anything about the
- * relay: with every live source silent the offline bundle still mints mal, anilist and kitsu locally,
- * so `streamingShare` comes out exactly 0 and `medianIdentity` exactly 3. The floors are set to catch
- * that, not as targets.
+ * `streamingShare` catches the relay answering nothing from a runner without knowing anything about
+ * the relay: with every live source silent the offline bundle still mints mal, anilist and kitsu
+ * locally, so the share comes out exactly 0. `medianIdentity` comes out exactly 3 there, which is the
+ * healthy median as well, so it is the walk it measures and never the relay.
  */
 export const checkSeedCounts = (
   index: SeedIndex,

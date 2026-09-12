@@ -7,6 +7,7 @@ import {
   SEED_MAX_INDEX_BYTES, SEED_MIN_CURRENT_SEASON_RUNS, SEED_MIN_MEDIAN_IDENTITY, SEED_MIN_RUNS, SEED_MIN_STREAMING_SHARE,
   checkSeedCounts, checkSeedEpisodesSchema, checkSeedSchema, dropWeldedRuns, extendsId, findSeedWelds, gateSeed, isSeedIndex,
 } from '../../../../src/sources/offline/seed-gate'
+import { formatTable, summarise } from '../../../../scripts/measure-seed-identity.mjs'
 import type { SeedEpisode, SeedEpisodes, SeedHandle, SeedIndex, SeedRun } from '../../../../src/sources/offline/seed'
 
 const SEASON = '2026-SUMMER'
@@ -81,6 +82,43 @@ const manyRuns = (count: number, streamingOn: number, identitySize = 4): SeedInd
   })
   index.seasons = { [SEASON]: index.runs.map(r => r.key) }
   return index
+}
+
+/** every identity uri a run of `size` members can be built from, in the order they are taken */
+const IDENTITY_URIS = (n: number) =>
+  [`mal:${n}`, `anilist:${1000 + n}`, `kitsu:${2000 + n}`, `anizip:${3000 + n}`, `tvmaze:${4000 + n}`, `tmdb:${5000 + n}`, `tvdb:${6000 + n}`]
+
+/**
+ * One run per entry of `sizes`, of exactly that identity size, all under the season.
+ *
+ * Every uri is the run's own, so no pair of runs can report a shared uri, and the last member of any
+ * run over size one is a crunchyroll id, which keeps the streaming share clear of its own floor: the
+ * point of a distribution fixture is that the median is the only thing it can fail on.
+ */
+const runsOfSizes = (sizes: readonly number[]): SeedIndex => {
+  const index = validIndex()
+  index.runs = sizes.map((size, i) => {
+    const n = i + 1
+    const uris = IDENTITY_URIS(n).slice(0, size)
+    if (size > 1) uris[uris.length - 1] = `cr:G${n}`
+    return run(`mal-${n}`, uris, SEASON)
+  })
+  index.seasons = { [SEASON]: index.runs.map(r => r.key) }
+  return index
+}
+
+/** `{ identity size: runs at it }` flattened into the list `runsOfSizes` takes. */
+const sizesOf = (distribution: Record<number, number>): number[] =>
+  Object.entries(distribution).flatMap(([size, runs]) => Array.from({ length: runs }, () => Number(size)))
+
+/** Every run one member thinner, floored at one, which is what a walk looks like when a catalogue stops answering. */
+const oneThinner = (distribution: Record<number, number>): Record<number, number> => {
+  const thinner: Record<number, number> = {}
+  for (const [size, runs] of Object.entries(distribution)) {
+    const at = Math.max(1, Number(size) - 1)
+    thinner[at] = (thinner[at] ?? 0) + runs
+  }
+  return thinner
 }
 
 const mutate = (change: (index: SeedIndex) => void): SeedIndex => {
@@ -259,13 +297,13 @@ describe('counts', () => {
     expect(failures, failures.join('\n')).toEqual([])
   })
 
-  test('median identity 3 fails and 4 passes', () => {
+  test('median identity 2 fails and 3 passes', () => {
+    const two = manyRuns(300, 120, 2)
+    const { failures, stats } = checkSeedCounts(two, validEpisodes(two), options)
+    expect(stats.medianIdentity).toBe(2)
+    expect(failures.some(f => f.includes('median identity 2') && f.includes(String(SEED_MIN_MEDIAN_IDENTITY)))).toBe(true)
     const three = manyRuns(300, 120, 3)
-    const { failures, stats } = checkSeedCounts(three, validEpisodes(three), options)
-    expect(stats.medianIdentity).toBe(3)
-    expect(failures.some(f => f.includes('median identity 3') && f.includes(String(SEED_MIN_MEDIAN_IDENTITY)))).toBe(true)
-    const four = manyRuns(300, 120, 4)
-    expect(checkSeedCounts(four, validEpisodes(four), options).failures).toEqual([])
+    expect(checkSeedCounts(three, validEpisodes(three), options).failures).toEqual([])
   })
 
   test('the current season below its floor fails even when the total passes', () => {
@@ -316,6 +354,49 @@ describe('gateSeed', () => {
     const result = gateSeed(index, episodes, { currentSeasonKey: SEASON })
     expect(result.ok).toBe(false)
     expect(result.failures.some(f => f.includes('commit'))).toBe(true)
+  })
+})
+
+// `SEED_MIN_MEDIAN_IDENTITY` was 4, guessed, and a walk cannot reach it: the bundle bridges mal,
+// anilist and kitsu, so 3 is the structural floor and a fourth member is a streaming id. The two
+// distributions below are measured, not invented (`scripts/measure-seed-identity.mjs`), and the bar
+// has to publish both of them: the walk of 2026-09-05 is the one the old bar refused on this line
+// alone, and the corpus of 2026-09-11 is a later, larger walk of the same season.
+describe('the median identity bar is the measured healthy median', () => {
+  const options = { currentSeasonKey: SEASON }
+
+  /** the walk of 2026-09-05, 100 runs, run for run */
+  const WALK = { 1: 4, 2: 6, 3: 48, 4: 21, 5: 10, 6: 6, 7: 5 }
+  /** the corpus of 2026-09-11, 223 runs, identities rebuilt from the recorded SAME_AS claims */
+  const CORPUS = { 1: 29, 2: 69, 3: 42, 4: 18, 5: 24, 6: 31, 7: 10 }
+
+  for (const [name, distribution] of [['walk 2026-09-05', WALK], ['corpus 2026-09-11', CORPUS]] as const) {
+    test(`${name} publishes, and the same walk one member thinner does not`, () => {
+      const healthy = runsOfSizes(sizesOf(distribution))
+      const measured = checkSeedCounts(healthy, validEpisodes(healthy), options)
+      expect(measured.stats.medianIdentity, 'the measured median is what the bar is set to').toBe(SEED_MIN_MEDIAN_IDENTITY)
+      expect(measured.failures, measured.failures.join('\n')).toEqual([])
+
+      const degraded = runsOfSizes(sizesOf(oneThinner(distribution)))
+      const refused = checkSeedCounts(degraded, validEpisodes(degraded), options)
+      expect(refused.stats.medianIdentity).toBe(SEED_MIN_MEDIAN_IDENTITY - 1)
+      expect(refused.failures).toEqual([`median identity 2, expected at least ${SEED_MIN_MEDIAN_IDENTITY}`])
+    })
+  }
+
+  test('the measurement script reports the median the gate reads', () => {
+    expect(summarise('odd', [1, 2, 3, 4, 5]).median).toBe(3)
+    expect(summarise('even', [1, 2, 3, 4]).median, 'the two middle values are averaged, as checkSeedCounts averages them').toBe(2.5)
+    expect(summarise('empty', []).median).toBe(0)
+
+    const summary = summarise('known', [3, 3, 3, 4, 9])
+    expect(summary).toMatchObject({ n: 5, min: 3, q1: 3, median: 3, q3: 4, max: 9 })
+    expect(summary.buckets).toEqual([
+      { count: 3, runs: 3, share: 0.6 },
+      { count: 4, runs: 1, share: 0.2 },
+      { count: 9, runs: 1, share: 0.2 },
+    ])
+    expect(formatTable([summary])).toContain('identity  3      3   60.0%')
   })
 })
 
