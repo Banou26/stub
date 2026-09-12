@@ -1377,7 +1377,7 @@ RETURN c.id AS runCluster, h.claimer AS claimer,
 | --- | --- | --- | --- |
 | 1 | by DATE | reference episodes are those of members whose count equals `runLength`, grouped by origin, never by which row an episode hangs off (`alignRunEpisodes`, `consensus.ts:265-273`); `runByDay` holds DISTINCT numbers per UTC day; for each of theirs, look at day-1, day, day+1 and pair only when exactly one reference number is reachable; a day naming two reference numbers disqualifies that day. The day of slack is the Tokyo boundary: ani.zip stamps `2021-01-10T15:00:00Z`, the 11th in Tokyo, and Crunchyroll publishes the Tokyo date (`consensus.ts:136-140`). Each pair is an `EPISODE_LINK` with `evidence: {day, slack}`. Minimum `MIN_ALIGNED = 2` pairs (`consensus.ts:111`) or nothing | `consensus.ts:113-155` |
 | 2 | by TITLE | refused outright when `retranslates` (Netflix, 4 exact of 25, the best wrong pair outscoring the true one). Otherwise exact key equality after `stripTitle`, both non-generic, a key present more than once on either side skipped; the bar to mint anything is `MIN_EPISODE_TITLE_MATCHES = 3` and coverage `>= EPISODE_TITLE_COVERAGE = 0.6` of the candidate's non-generic titles (`similar.ts:67,69`), so a fold of two equal cours at 12/24 mints no title pairs and only the date rule can prove a fold | `similar.ts:59-69`; episode titles are decisive between two metadata catalogues and nowhere else (2026-09-10) |
-| 3 | by SEQUENCE | **ALLOWED where rule 2 is refused**, including a `retranslates` origin, and 3.4a says why. A monotone alignment (longest common subsequence) over exact `stripTitle` keys, both non-generic and unique on each side, gives ANCHORS; a row strictly between two anchors whose gap length is EQUAL on both sides is then FORCED, because order permits exactly one bijection and no title evidence is consulted for it. Two anchors minimum, since one brackets nothing. An unequal gap refuses its own region and keeps its anchors. Nothing outside the outermost anchors is paired unless 3.4a's closure applies | measured 2026-09-12 on Mushoku Tensei's Netflix season 2, 25 rows against 24 canonical: 4 anchors, 3 forced, 0 refused, and the forced three are `Unwilling to Die` onto `I Don't Want to Die`, `This Feeling` onto `These Feelings` and one accent difference, none of which any title rule could reach |
+| 3 | by SEQUENCE | **ALLOWED where rule 2 is refused**, including a `retranslates` origin, and 3.4a says why. **THE GATE, added 2026-09-12 after implementation showed the rule as first written contradicted 8.3:** rule 3 mints only when ORDER places at least one row, that is at least one bracket-forced or closure pair. Anchors alone mint NOTHING, because an anchor is an exact title match and that is rule 2's evidence, which rule 2 admits only above its own count and coverage bar. Without the gate a candidate handing us our own exact titles pairs on titles alone through rule 3 and walks straight past that bar, which is measurable: 8.3's Netflix fixture carries our exact titles deliberately, and an ungated rule 3 pairs 25 of its 26 rows where 8.3 requires nothing. A monotone alignment (longest common subsequence) over exact `stripTitle` keys, both non-generic and unique on each side, gives ANCHORS; a row strictly between two anchors whose gap length is EQUAL on both sides is then FORCED, because order permits exactly one bijection and no title evidence is consulted for it. Two anchors minimum, since one brackets nothing. An unequal gap refuses its own region and keeps its anchors. Nothing outside the outermost anchors is paired unless 3.4a's closure applies | measured 2026-09-12 on Mushoku Tensei's Netflix season 2, 25 rows against 24 canonical: 4 anchors, 3 forced, 0 refused, and the forced three are `Unwilling to Die` onto `I Don't Want to Die`, `This Feeling` onto `These Feelings` and one accent difference, none of which any title rule could reach |
 
 #### 3.4a Closing an alignment with the specials list
 
@@ -1401,10 +1401,34 @@ alignment into a total one, and refuses rather than extrapolating when it cannot
    Measured on the same season: locating one special at row 1 forces rows 2 to 25 onto canonical 1 to
    24, and the four anchors then sit where the closure predicts, which is the alignment proving
    itself rather than being trusted.
-4. **What is refused.** Zero anchors mints nothing at all, which is Netflix's season 1 of the same
+4. **A surplus of ZERO closes nothing**, which the rule as first written left open. With no insertion
+   to locate, the only thing asserting that the two ends line up is that the counts agree, and there is
+   no rule by COUNT anywhere in this plugin (the Demon Slayer shape below). Admitting it would also
+   repeal rule 2's fold bar, since a fold of two equal cours has equal counts on both sides by
+   construction. So a candidate whose count merely agrees pairs only inside its outermost anchors.
+5. **What is refused.** Zero anchors mints nothing at all, which is Netflix's season 1 of the same
    show: every one of its 24 titles is the placeholder `Episode N`, so no anchor exists, nothing is
    forced, and the season yields no pair. That is the correct outcome and the reason no positional
    fallback is admitted anywhere in this rule.
+
+**A second, independent derivation of the surplus, from counts alone** (2026-09-12, the owner's
+reading). A catalogue that lists only canonical episodes and a provider that also lists specials
+differ in LENGTH by the number of specials the provider included, so `|theirs| - |canonical|` is the
+surplus with no title matching involved at all. Measured: JustWatch lists 24 episodes of Mushoku
+Tensei season 2 and Netflix lists 25, and the one extra is the special. That number and the one the
+anchors derive are reached by different routes, so when they agree the alignment has independent
+corroboration, and when they disagree the candidate is refused. It does NOT locate the insertion:
+counts say how many, never where, which is why the located-special step above is still required.
+
+**The corollary for a provider deep link, and why one is never an identity** (2026-09-12, measured).
+A catalogue that publishes a provider url per episode assigns it BY POSITION against the provider's
+own list, so where the two lists differ in what they include, every url from that point on names a
+different asset. Verified on this exact season: JustWatch's episode 1 carries `netflix.com/watch/81705186`,
+which Netflix calls "Fitz the Guardian", the special; 24 of 24 are one episode late, and four further
+shows measured the same way. Season 3, whose lists start together, is clean, which is why a spot check
+on it passed. **So a provider episode url is a LINK and never a claim**, it never becomes an
+`EPISODE_CLAIMS` row, and its only sound use is the corroboration above: a url whose offset matches
+the derived surplus confirms an alignment, and one that does not contradicts it.
 
 **Why an anchor is safe from an origin whose titles rule 2 refuses.** Rule 2 is refused for
 `retranslates` because it mints on a COVERAGE SCORE, and a score can be wrong while looking strong (4
