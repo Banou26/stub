@@ -147,6 +147,7 @@ export const PLUGIN_NODE_TABLES = [
     aliases STRING[],              // ids retired into this cluster
     hidden BOOLEAN,                // the listing hide rule (6.1), written false explicitly, never left unset
     hiddenBy STRING[],             // the run cluster ids the hide rule found
+    kind STRING,                   // 'RUN' | 'CONTAINER' | 'FOLD' (6.5): which page is drawn, never the visibility
     runLength INT64, runLengthTier DOUBLE, runLengthWitnesses INT64, runLengthFrom STRING[],
     preferredRun STRING,           // a container cluster's earliest attached run cluster id
     card JSON,                     // the listing's fields (6.1)

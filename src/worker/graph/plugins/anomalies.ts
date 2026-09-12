@@ -1,15 +1,18 @@
 /**
- * Four of the anomaly rules of 5.5, as rules and nothing else.
+ * Six of the anomaly rules of 5.5, as rules and nothing else.
  *
  * A rule here needs NO EXPECTED ANSWER: it reads the graph after a pass and says what disagrees with
  * itself. `disagreeing-ids` and `contested` read what the guards of 5.2 already decided, so the two
  * cannot drift apart; `kind-disagrees` and `constant-id` read the source tables directly, because
- * both are properties of what the sources said rather than of what a rule concluded.
+ * both are properties of what the sources said rather than of what a rule concluded. `over-length` and
+ * `count-disagrees` are the two that read a COUNT: the first weighs what a page would draw against
+ * what the sources voted, the second is one source disagreeing with its own list.
  *
- * THE REPORTING SURFACE IS NOT HERE. 5.5 writes these to `Cluster.anomalies` with `anomalyCount` and
- * the trace panel prints them (7.5); `Cluster` is `plugin:aggregate`'s and lands later. What ships
- * now is the rule, its evidence and a test that fires each one AND a control fixture that must report
- * zero, so a rule that cannot fire in its failure state is caught by its own test (5.5's own words).
+ * THE REPORTING SURFACE. 5.5 writes these to `Cluster.anomalies` with `anomalyCount` and the trace
+ * panel prints them (7.5); `plugin:aggregate` reads every rule here once per pass and files each
+ * finding under the clusters holding the uris it names. Every rule ships with a control fixture that
+ * must report zero, so a rule that cannot fire in its failure state is caught by its own test (5.5's
+ * own words).
  */
 import type { GuardQuery } from './guards'
 
@@ -170,10 +173,87 @@ export const constantId = async (query: GuardQuery): Promise<Anomaly[]> => {
     }))
 }
 
+/**
+ * `over-length`: a cluster draws more slots than its own `runLength`, with the witnesses recounted
+ * (`anomalies.ts:49-59`, the detail line kept word for word).
+ *
+ * It is read off the SLOTS rather than off the member rows, because a slot is what a page renders
+ * (6.4) and the trim of 5.4 P5 sits between the two: a member numbered beyond the length that the
+ * trim spared is exactly what this has to report. Unnumbered slots (anizip's `S1`) are not beyond
+ * anything and are not counted, which is the same rule `trimsRow` keeps for them.
+ *
+ * The count it reads is the previous iteration's, since `plugin:aggregate` calls this before it
+ * writes the slots of this one. That costs the rule one iteration on a first pass and nothing after,
+ * and the pass's own fixed point is what carries it (5.3).
+ */
+export const overLength = async (query: GuardQuery): Promise<Anomaly[]> => {
+  // the numbered slots per cluster, counted in JS: `listed` is the whole list and the test is on its
+  // HIGHEST number, which is two aggregations over one group that no measured spelling covers
+  const rows = await query(
+    `MATCH (s:Slot)-[:SLOT_OF]->(c:Cluster)
+     WHERE s.number IS NOT NULL AND c.runLength IS NOT NULL
+     RETURN c.id AS cluster, c.runLength AS runLength, c.runLengthWitnesses AS witnesses,
+       s.number AS number ORDER BY cluster, number`
+  )
+  const counted = new Map<string, { length: number, witnesses: number, listed: number, highest: number }>()
+  for (const row of rows) {
+    const cluster = String(row.cluster)
+    const number = Number(row.number)
+    const entry = counted.get(cluster)
+      ?? { length: Number(row.runLength), witnesses: Number(row.witnesses ?? 0), listed: 0, highest: 0 }
+    entry.listed += 1
+    entry.highest = Math.max(entry.highest, number)
+    counted.set(cluster, entry)
+  }
+
+  const found: Anomaly[] = []
+  for (const [cluster, entry] of counted) {
+    if (entry.highest <= entry.length) continue
+    const members = await query(
+      'MATCH (m:Media)-[:MEMBER_OF]->(c:Cluster {id: $id}) RETURN m.uri AS uri ORDER BY uri',
+      { id: cluster }
+    )
+    found.push({
+      rule: 'over-length',
+      detail: `${entry.listed} listed against a length of ${entry.length} that ${entry.witnesses} of its sources agree on`,
+      uris: members.map(member => String(member.uri)),
+    })
+  }
+  return found
+}
+
+/**
+ * `count-disagrees`: a row whose own list contradicts its own figure (netflixid 80198505 season 3,
+ * 14 rows over 10 epids, 2026-09-10).
+ *
+ * `countDistinct` is `count(DISTINCT HAS_EPISODE targets)` and `countStated` is the source's own
+ * number (2.2), so a difference between them is the source disagreeing with itself rather than two
+ * sources disagreeing. It is what withholds a `position` row's button in 5.4 P5, and the rule is here
+ * so the withholding is visible as a reason rather than as a missing button.
+ *
+ * `distinct` is a RESERVED WORD as a column alias on this engine (0.20.4, 2026-09-12): `AS distinct`
+ * dies with a parser exception naming every keyword it expected instead, which reads as a broken
+ * statement rather than as a name collision.
+ */
+export const countDisagrees = async (query: GuardQuery): Promise<Anomaly[]> => {
+  const rows = await query(
+    `MATCH (p:MediaProfile)
+     WHERE p.countStated IS NOT NULL AND p.countDistinct IS NOT NULL AND p.countStated <> p.countDistinct
+     RETURN p.uri AS uri, p.countStated AS stated, p.countDistinct AS listed ORDER BY uri`
+  )
+  return rows.map(row => ({
+    rule: 'count-disagrees',
+    detail: `${String(row.uri)} states ${Number(row.stated)} episodes and lists ${Number(row.listed)} distinct ones`,
+    uris: [String(row.uri)],
+  }))
+}
+
 /** Every rule in this file, run in one go. */
 export const readAnomalies = async (query: GuardQuery): Promise<Anomaly[]> => [
   ...await disagreeingIds(query),
   ...await contested(query),
   ...await kindDisagrees(query),
   ...await constantId(query),
+  ...await overLength(query),
+  ...await countDisagrees(query),
 ]

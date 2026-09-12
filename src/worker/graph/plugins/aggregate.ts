@@ -24,23 +24,26 @@
  * already say. A row it cannot scope has no cluster, which is the same silence `plugin:direct` keeps
  * for an unknown scope (5.2 guard 1).
  *
- * THE 2C AND 2D HOOKS, marked where they sit:
+ * THE 2C HOOK, and where the 2D rules sit:
  * - `scope.full` every pass. 5.4 P5 splits the declaration in two (membership global, the slots and
  *   the JSON per dirty cluster); the dirty set is `delta`, which arrives with the scheduler.
- * - `Cluster.hidden` is written on every cluster because the column may never be unset (2.2), and it
- *   is the half of 6.1's rule that needs no `ATTACHED_TO`: a cluster with no owned member is hidden.
- *   The rest of the rule reads the container attachment `plugin:containment` writes.
- * - `preferredRun` and the `FOLD` kind are `plugin:containment`'s (5.4 P2).
+ * - `Cluster.hidden`, `hiddenBy`, `kind` and `preferredRun` are columns of THIS plugin's row, because
+ *   the writer diffs a table per plugin and a second writer would be a second row for one primary key
+ *   (5.2). The RULES are `plugin:containment`'s and are imported from it (6.1, 6.5, 5.4 P2), computed
+ *   over the same active containment edges that plugin turns into `ATTACHED_TO`, so the two cannot
+ *   disagree about an attachment and the verdict needs no round trip and no second iteration.
  * - `via: 'aligned'` fills arrive with `plugin:range`'s `EPISODE_LINK` rows (5.4 P4). The renumbering
  *   is read here already, so a pair changes the numbering of an existing slot rather than the code.
  */
 import type { Anomaly } from './anomalies'
+import type { ClusterFacts } from './containment'
 import type { EpisodeMemberRow, RelatedRow, RelationRow } from './fields'
 import type { Plugin, PluginContext, PluginOutput, PluginRow } from './contract'
 
 import { isRoutableUri } from '../../../utils/uri'
 import { tieredConsensus } from '../../store/consensus'
 import { readAnomalies } from './anomalies'
+import { attachmentsOf, listingIndexOf, listingVerdict, preferredRunOf } from './containment'
 import { aggregateEpisodeFields, aggregateFields, byScoreThenUri, cardOf } from './fields'
 import { readComponents } from './guards'
 
@@ -62,6 +65,8 @@ type Subject = {
   countKind: string
   countStated: number | null
   countDistinct: number | null
+  /** The UTC day of a day-precise start, which is what `preferredRun` orders by (5.4 P2). */
+  startDay: number | null
 }
 
 type EpisodeRow = {
@@ -78,7 +83,15 @@ type EpisodeRow = {
   hasEpisodeKey: string
 }
 
-type ContainmentRow = { fromUri: string, toUri: string, kind: 'PART_OF' | 'INCLUDES', reason: string, by: string }
+type ContainmentRow = {
+  fromUri: string
+  toUri: string
+  kind: 'PART_OF' | 'INCLUDES'
+  reason: string
+  by: string
+  /** The `LINK.key`, which is what an `ATTACHED_TO` row carries as its `supports` (5.4 P2). */
+  key: string
+}
 
 const asText = (value: unknown): string | null => (typeof value === 'string' && value ? value : null)
 const asNumber = (value: unknown): number | null =>
@@ -118,7 +131,7 @@ const readSubjects = async (ctx: PluginContext): Promise<Subject[]> => {
     `MATCH (p:MediaProfile)-[:PROFILE_OF]->(m:Media)
      RETURN m.uri AS uri, m.origin AS origin, m.id AS id, m.owned AS owned, m.score AS score,
        m.raw AS raw, m.fieldSeq AS fieldSeq, p.scope AS scope, p.countKind AS countKind,
-       p.countStated AS countStated, p.countDistinct AS countDistinct
+       p.countStated AS countStated, p.countDistinct AS countDistinct, p.startDay AS startDay
      ORDER BY uri`
   )
   const subjects: Subject[] = []
@@ -139,6 +152,7 @@ const readSubjects = async (ctx: PluginContext): Promise<Subject[]> => {
       countKind: asText(row.countKind) ?? 'none',
       countStated: asNumber(row.countStated),
       countDistinct: asNumber(row.countDistinct),
+      startDay: asNumber(row.startDay),
     })
   }
   return subjects
@@ -148,7 +162,8 @@ const readContainment = async (ctx: PluginContext): Promise<ContainmentRow[]> =>
   const rows = await ctx.query<Record<string, unknown>>(
     `MATCH (a:Media)-[l:LINK]->(b:Media)
      WHERE l.status = 'active' AND l.kind IN ['PART_OF', 'INCLUDES']
-     RETURN a.uri AS fromUri, b.uri AS toUri, l.kind AS kind, l.reason AS reason, l.by AS by
+     RETURN a.uri AS fromUri, b.uri AS toUri, l.kind AS kind, l.reason AS reason, l.by AS by,
+       l.key AS linkKey
      ORDER BY fromUri, toUri, kind`
   )
   return rows.map(row => ({
@@ -157,6 +172,7 @@ const readContainment = async (ctx: PluginContext): Promise<ContainmentRow[]> =>
     kind: String(row.kind) === 'INCLUDES' ? 'INCLUDES' : 'PART_OF',
     reason: asText(row.reason) ?? '',
     by: asText(row.by) ?? '',
+    key: asText(row.linkKey) ?? '',
   }))
 }
 
@@ -422,7 +438,11 @@ export type RunLength = { length: number, tier: number, witnesses: number, from:
  * 13 and anizip 12, kitsu's 22 is a list length and is never consulted, the top tier is mal alone, so
  * the length is 12 and its witnesses are mal and anizip.
  */
-export const runLengthOf = (members: readonly Subject[]): RunLength | null => {
+export const runLengthOf = (
+  // the four columns the vote reads, rather than a whole `Subject`: a caller holding the count and
+  // the score can ask, and a column added for another rule cannot change what the length is
+  members: readonly Pick<Subject, 'uri' | 'score' | 'countKind' | 'countStated'>[]
+): RunLength | null => {
   const stated = members.filter(member => member.countKind !== 'none' && member.countStated !== null)
   const declared = stated.filter(member => member.countKind === 'declared')
   const pool = declared.length ? declared : stated.filter(member => member.countKind === 'listLength')
@@ -618,7 +638,9 @@ export const aggregatePlugin: Plugin = {
   id: 'plugin:aggregate',
   consumes: {
     nodes: ['Media', 'Episode', 'MediaProfile', 'EpisodeProfile'],
-    edges: ['LINK', 'EPISODE_LINK', 'HAS_EPISODE', 'CLAIMS', 'RELATED'],
+    // `ATTACHED_TO` is consumed so the scheduler re-runs this plugin when an attachment moves (5.4
+    // P5): a season row's hide verdict changes when its container gains or loses a run
+    edges: ['LINK', 'EPISODE_LINK', 'HAS_EPISODE', 'CLAIMS', 'RELATED', 'ATTACHED_TO'],
     kinds: ['SAME_AS', 'PART_OF', 'INCLUDES'],
   },
   produces: { nodes: ['Cluster', 'Alias', 'Slot'], edges: ['MEMBER_OF', 'SLOT_OF', 'FILLS'] },
@@ -651,6 +673,36 @@ export const aggregatePlugin: Plugin = {
       .map(([key, members]) => ({ key, members: members.map(member => member.uri).sort(compare) }))
       .sort((a, b) => compare(a.key, b.key))
     const carried = carryIds(componentList, previous)
+
+    // THE CLUSTER FACTS the listing rules of 6.1 and 6.5 read, built before the row loop because every
+    // one of them is about a cluster's RELATION to other clusters: which runs hold this season, which
+    // runs a container is attached from. The attachments are computed here rather than read back from
+    // `ATTACHED_TO`, over the same active `PART_OF` list `plugin:containment` turns into that table
+    // (5.4 P2), so the verdict costs no round trip, needs no second iteration and cannot drift from
+    // the edges the read path walks.
+    const clusterFacts = new Map<string, ClusterFacts>()
+    const memberCluster = new Map<string, string>()
+    const runLengths = new Map<string, RunLength | null>()
+    for (const component of componentList) {
+      const members = component.members.map(uri => byUri.get(uri)!)
+      const id = carried.get(component.key)!.id
+      const run = runLengthOf(members)
+      runLengths.set(component.key, run)
+      const days = members.map(member => member.startDay).filter((day): day is number => day !== null)
+      clusterFacts.set(id, {
+        id,
+        scope: members.every(member => member.scope === 'CONTAINER') ? 'CONTAINER' : 'RUN',
+        key: component.key,
+        members: [...component.members],
+        owned: members.some(member => member.owned),
+        startDay: days.length ? Math.min(...days) : null,
+        runLength: run?.length ?? null,
+      })
+      for (const uri of component.members) memberCluster.set(uri, id)
+    }
+    const clusterOf = (uri: string): string | undefined => memberCluster.get(uri)
+    const attachments = attachmentsOf({ links: containment, clusterOf, clusters: clusterFacts })
+    const listing = listingIndexOf({ clusters: clusterFacts, clusterOf, links: containment, attachments })
 
     const anomalies = await readAnomalies(ctx.query)
     const anomaliesByUri = new Map<string, Anomaly[]>()
@@ -685,7 +737,8 @@ export const aggregatePlugin: Plugin = {
       const members = byScoreThenUri(component.members.map(uri => byUri.get(uri)!))
       const entry = carried.get(component.key)!
       const id = entry.id
-      const scope = members.every(member => member.scope === 'CONTAINER') ? 'CONTAINER' : 'RUN'
+      const facts = clusterFacts.get(id)!
+      const scope = facts.scope
       const previousCluster = previous.clusters.get(id)
 
       // APPEND ONLY, so `ag:(...)` never shrinks and a departed member keeps resolving (6.2)
@@ -700,7 +753,7 @@ export const aggregatePlugin: Plugin = {
         ...entry.retired.flatMap(retired => previous.clusters.get(retired)?.aliases ?? []),
       ])
       const aggUri = `ag:(${published.join(',')})`
-      const run = runLengthOf(members)
+      const run = runLengths.get(component.key) ?? null
       const length = {
         runLength: run?.length ?? null,
         runLengthTier: run?.tier ?? null,
@@ -708,9 +761,21 @@ export const aggregatePlugin: Plugin = {
         runLengthFrom: run?.from ?? [],
       }
 
+      // THE LISTING RULES OF 6.1 AND 6.5, whose columns are this row's and whose rules are P2's. A
+      // REQUESTED URI IS NEVER HIDDEN and that is the read path's job (6.2): this flag is the
+      // store-wide truth about a LISTING, and the resolve answers with the cluster holding the asked
+      // row whatever it says, so the column never depends on who is looking.
+      const verdict = listingVerdict(facts, listing)
+      const preferredRun = scope === 'CONTAINER'
+        ? preferredRunOf({ container: id, attachments, clusters: clusterFacts })
+        : null
+
       // THE SLOTS. The member episodes of this cluster, trimmed, grouped, and materialized.
       const own = members.flatMap(member => episodesByMedia.get(member.uri) ?? [])
-      const fenced = scope === 'RUN' || containerMayMintSlots(own)
+      // the one exception of 5.4 P5, complete now that `preferredRun` exists: a container with a run
+      // attached anywhere FOLLOWS to it (6.2) and mints none, and only a container with no run at all
+      // keeps the live-action show page that "lost every episode and offer" once (`db.ts:319-323`)
+      const fenced = scope === 'RUN' || (preferredRun === null && containerMayMintSlots(own))
       const reference = new Set(run ? members.filter(member => member.countStated === run.length).map(member => member.origin) : [])
       const equals = new Set(run ? members.filter(member => (member.score ?? 0) >= run.tier).map(member => member.origin) : [])
       const backingWeight = run
@@ -817,13 +882,11 @@ export const aggregatePlugin: Plugin = {
         published,
         aggUri,
         aliases,
-        // the half of 6.1's rule that needs no attachment: a cluster none of whose members is owned is
-        // hidden whatever its links, which is what "a placeholder cluster is never a card" means. The
-        // rest of the rule reads `ATTACHED_TO`, which `plugin:containment` writes (5.4 P2)
-        hidden: !owns,
-        hiddenBy: [],
+        hidden: verdict.hidden,
+        hiddenBy: verdict.hiddenBy,
+        kind: verdict.kind,
         ...length,
-        preferredRun: null,
+        preferredRun,
         card: owns ? cardOf(media, component.members) : null,
         media,
         episodes: episodeJson,

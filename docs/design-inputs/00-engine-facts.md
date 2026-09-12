@@ -148,6 +148,25 @@ the second pass over the same graph is **560 ms in 1 iteration and writes nothin
   audit about 190 ms of it; the second pass 856 ms writing nothing. The corpus (249 cases, both
   orders, 16,926 answers) replays through the new store in 354 s.
 
+## Measured on 2026-09-12 while building plugin:containment (step 2d)
+
+- **`distinct` is a RESERVED WORD as a column alias.** `RETURN p.countDistinct AS distinct` dies with
+  `Parser exception: mismatched input 'distinct' expecting {ADD, ALTER, ...}` listing every keyword it
+  wanted instead, which reads as a broken statement rather than as a name collision.
+- **Two aggregations over one group are UNMEASURED** (`count(s)` beside `max(s.number)` under one
+  `RETURN`), so `over-length` returns one row per slot and counts in JS. Same reasoning as the JSON
+  struct above: a spelling the binder accepts and the runtime refuses costs a whole statement.
+- **A rel row whose endpoint names a row that is not of the declared label writes NOTHING and reports
+  nothing.** The writer's `CREATE` matches `(b:Cluster {id: $to})`, so an `ATTACHED_TO` built with a
+  `Media.uri` in place of a `Cluster.id` matches no pattern, creates no edge and raises no error; the
+  desired row is still missing on the next pass, so the plugin rewrites it forever and the ONLY
+  symptom is `fixed-point-cap` at the end of the pass (5.3). A test that asserts the pass carries no
+  `fixed-point-cap` anomaly is what catches this class.
+- Costs, 800 recorded rows, profile then direct, aggregate and containment: a pass is **4,832 ms over
+  4 iterations** (the fourth applying nothing, so no cap is reported), `plugin:containment` 159 to
+  199 ms of each; the second pass **975 ms in 1 iteration writing nothing**. The corpus (249 cases,
+  both orders) replays through the four plugins in **391 s**.
+
 ## Measured on 2026-09-12 while building plugin:range (step 2f)
 
 - **Row order inside an `ORDER BY` tie is NOT stable between two passes in one process.** Two

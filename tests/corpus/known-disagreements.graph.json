@@ -1,0 +1,21 @@
+{
+  "store": "graph",
+  "note": "Welds the GRAPH store still carries at step 2d, with why each one is the RECORDING rather than the store. Asserted exactly by graph-store.test.ts: a case here must still weld, a case not here must not, and a slug with no case file fails the run, so a fix, a regression and a stale entry are all loud. Every one of them is a bare Netflix title id that unogs's title search attached to a run by name alone, and the claim is in the recording because the walk predates the fix.",
+  "cases": {
+    "anilist-202717": "recorded claim predates the source fix: nf:80179904 is Chinyuki the Movie (2016) taken for a 2026 film, and `filmDatedAnotherYear` (src/sources/unogs/extractor.ts:476) now refuses it before the ranking",
+    "anilist-206521": "recorded claim predates the source fix, and that fix cannot reach this one: nf:82010449-1 is a SEASON pick on a SERIES, which the year gate does not judge (extractor.ts:450-451). The store declines it too, by the rule: guard 7 downgrades a folding origin's SHORTER count only on a FINISHED run, and anilist:206521 is RELEASING in the recorded answer, so 3 against 13 is a partly fetched list rather than evidence (5.2, consensus.ts:164-168)",
+    "anilist-206682": "recorded claim predates the source fix: nf:81719606 is the 1993 Anpanman dinosaur film taken for the 2026 one",
+    "anilist-208754": "recorded claim predates the source fix: nf:80091938 is The Angry Birds Movie (2016) taken for a 2026 Sword Art Online film",
+    "anilist-208829": "recorded claim predates the source fix: nf:80243204 is the 1995 Crayon Shin-chan film taken for the 2026 one",
+    "anilist-211232": "recorded claim predates the source fix: nf:70019062 is Nausicaa of the Valley of the Wind (1984), attached by the word Valley",
+    "anilist-214070": "recorded claim predates the source fix: nf:81635510 is Dust of Empire (1983) taken for Dust of the Simulacrum",
+    "kitsu-50666": "recorded claim predates the source fix: nf:60010487 is Indiana Jones and the Last Crusade (1989), attached by the words Last and Airbender",
+    "mal-48832": "recorded claim predates the source fix: nf:70028904 is The 40-Year-Old Virgin (2005), attached by the word Virgin",
+    "mal-63903": "recorded claim predates the source fix: nf:18021979 is The Rugrats Movie (1998) taken for a 2026 Precure film",
+    "mal-64674": "recorded claim predates the source fix: nf:80237245 is The Monkey King (2023), which scores 0.7164 against Monkey King and no title threshold can separate",
+    "mal-64675": "recorded claim predates the source fix: nf:81321341 is Stamped from the Beginning (2023), attached by the word Beginning",
+    "mal-64682": "recorded claim predates the source fix: nf:81653503 is The Legend of Al, John and Jack (2002) taken for a 2026 Teenieping film",
+    "mal-64863": "recorded claim predates the source fix: nf:60000893 is Hollow Man (2000), attached by the word Man",
+    "mal-64867": "recorded claim predates the source fix, and that fix cannot reach this one: nf:82085211-1 is a SEASON pick on a SERIES, which the year gate does not judge (extractor.ts:450-451). The store declines it too, by the rule: mal:64867 publishes no status at all, so guard 7's FINISHED gate never opens and 10 against 26 reads as a partly fetched list (5.2)"
+  }
+}

@@ -38,12 +38,13 @@ import { contentHash } from '../../../src/worker/graph/hash'
 import { ingestAnswers } from '../../../src/worker/graph/ingest'
 import { GRAPH_NODE_TABLES, graphReady } from '../../../src/worker/graph/schema'
 import { aggregatePlugin } from '../../../src/worker/graph/plugins/aggregate'
+import { containmentPlugin } from '../../../src/worker/graph/plugins/containment'
 import { directPlugin } from '../../../src/worker/graph/plugins/direct'
 import { profilePlugin } from '../../../src/worker/graph/plugins/profile'
 import { resetPassState, runPlugins } from '../../../src/worker/graph/plugins/runner'
 
-/** The pass this adapter runs, in `after` order. `plugin:title`, containment and range are later steps. */
-export const CORPUS_PLUGINS = [profilePlugin, directPlugin, aggregatePlugin]
+/** The pass this adapter runs, in `after` order. `plugin:title` and `plugin:range` are later steps. */
+export const CORPUS_PLUGINS = [profilePlugin, directPlugin, aggregatePlugin, containmentPlugin]
 
 /** What the last `upsert` cost, so a caller can report the pass rather than guess at it. */
 export type UpsertCost = { answers: number, ingestMs: number, passMs: number, iterations: number }
@@ -155,6 +156,28 @@ export const refusalsWithin = async (uris: readonly string[]): Promise<{ pair: s
   return rows
     .filter(row => inside.has(String(row.toUri)))
     .map(row => ({ pair: `${String(row.fromUri)} ${String(row.toUri)}`, reason: String(row.reason ?? '') }))
+}
+
+/**
+ * Whether a SOURCE claimed containment between these two rows, in either direction.
+ *
+ * The report's second diagnostic, and the same kind of thing `refusalsWithin` is: not a `CorpusStore`
+ * method, because the corpus asks who holds whom and never what was claimed. It is what separates a
+ * `PART_OF` line the store OWES (a source said so and no edge came of it) from one that waits on a
+ * plugin nobody has written: an `ask` claim reaches the graph only once a source ships `containing`
+ * (4.4), and a title or a date match is `plugin:title` and `plugin:range`.
+ *
+ * An `address` claim is excluded, because a pointer asserts nothing about how its uris relate (3.3).
+ */
+export const containmentClaimed = async (part: string, whole: string): Promise<boolean> => {
+  const rows = await query(
+    `MATCH (a:Media)-[c:CLAIMS]->(b:Media)
+     WHERE c.kind IN ['PART_OF', 'INCLUDES'] AND c.provenance <> 'address'
+       AND ((a.uri = $part AND b.uri = $whole) OR (a.uri = $whole AND b.uri = $part))
+     RETURN count(c) AS total`,
+    { part, whole }
+  )
+  return Number(rows[0]?.total ?? 0) > 0
 }
 
 export const graphStore: CorpusStore = {

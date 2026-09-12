@@ -36,8 +36,12 @@ export { prepareGuards, readComponents } from './plugins/guards'
 export type { GuardPass, SameAsVerdict } from './plugins/guards'
 export { orderLinkProposals, precedenceClassOf } from './plugins/sameness'
 export { directPlugin } from './plugins/direct'
+// Section 5.4 P3: the fuzzy title pass, as a plugin whose verdict is a row.
+export { titlePlugin } from './plugins/title'
 // Section 5.4 P5: the materialized view, and the field policy of 6.3 and 6.4 it writes.
 export { aggregatePlugin } from './plugins/aggregate'
+// Section 5.4 P2: the RUN versus CONTAINER exchange, plus the listing rules of 6.1 and 6.5 it owns.
+export { containmentPlugin } from './plugins/containment'
 export { aggregateEpisodeFields, aggregateFields } from './plugins/fields'
 export type { AggregatedEpisode, AggregatedMedia, ClusterCard } from './plugins/fields'
 export { checkInvariants, INVARIANTS } from './plugins/invariants'

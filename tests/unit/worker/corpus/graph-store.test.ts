@@ -1,15 +1,13 @@
 /**
- * The corpus against the GRAPH store, at step 2c: profile, direct and aggregate, and nothing else.
+ * The corpus against the GRAPH store, at step 2d: profile, direct, aggregate and containment.
  *
- * IT REPORTS RATHER THAN ASSERTS, and that is the point of running it now. Three of the five plugins
- * of 5.4 are not written yet: no `plugin:title`, so a pair two catalogues describe and neither links
- * stays two clusters; no `plugin:containment`, so a season is attached to nothing; no `plugin:range`,
- * so no `INCLUDES` and no episode pair exists at all. A case that needs one of those MUST fail here,
- * and a run that went green would mean the corpus had stopped asking.
+ * IT REPORTS RATHER THAN ASSERTS, and that is the point of running it now. `plugin:range` (5.4 P4) is
+ * not written, so no `INCLUDES` and no episode pair exists at all, and a case needing either MUST
+ * fail here; a run that went green would mean the corpus had stopped asking.
  *
  * So the failures are collected, counted by kind and written to ./graph-store.report.md, which is the
- * step's own measurement: it says which of the corpus's answers 2c already gives and which are owed
- * to 2d and beyond, line by line, and a later step is read against it.
+ * step's own measurement: it says which of the corpus's answers 2d already gives and which are owed
+ * to 2e and beyond, line by line, and a later step is read against it.
  *
  * WHAT IS ASSERTED, and it is only what the specification guarantees at THIS step:
  * - no `WELD` between two rows the labels put apart where BOTH rows carry a first-party id. Sameness
@@ -18,6 +16,14 @@
  * - every `together` group that first-party `SAME_AS` claims already join IS together. Those need no
  *   title match and no containment: the claim is the evidence, and the closure of 3.5 is what this
  *   step built.
+ * - every `partOf` the labels state that a SOURCE CLAIMED is attached. Containment a claim asserts is
+ *   `plugin:direct`'s edge and `plugin:containment`'s attachment, both of which now ship, so a
+ *   missing one is a bug rather than a missing plugin. A `partOf` no claim carries waits for
+ *   `plugin:range` or for a source to ship `containing` (4.4), and is reported instead.
+ * - the WELDS that remain are EXACTLY the list in ../../../corpus/known-disagreements.graph.json,
+ *   which names why each one is the recording rather than the store. A case in the list that stops
+ *   welding, a case outside it that starts, and a stale slug are all loud, which is the same contract
+ *   `current-store.test.ts` holds its own list to.
  *
  * Nothing here weakens a case to make it pass. A line in the report is a debt, named.
  */
@@ -27,8 +33,9 @@ import { writeFileSync } from 'node:fs'
 
 import type { CorpusCase } from '../../../corpus/types'
 
-import { graphStore, lastUpsertCost, refusalsWithin } from '../../../corpus/adapters/graph-store'
+import { containmentClaimed, graphStore, lastUpsertCost, refusalsWithin } from '../../../corpus/adapters/graph-store'
 import { checkRelations, loadCases } from '../../../corpus/run'
+import knownDisagreements from '../../../corpus/known-disagreements.graph.json'
 import { PER_RUN_ORIGINS } from '../../../../src/worker/graph/plugins/sameness'
 
 const REPORT = new URL('./graph-store.report.md', import.meta.url).pathname
@@ -137,6 +144,8 @@ type CaseReport = {
   /** Per `together` group, what would have to hold it: the expected / unexpected split. */
   splits: { group: string[], holds: string, failed: boolean, refusals: string[] }[]
   welds: { a: string, b: string, firstParty: boolean }[]
+  /** Per failing `PART_OF` line, whether a source CLAIMED the containment the labels state. */
+  attachments: { part: string, whole: string, claimed: boolean }[]
 }
 
 const drive = async (corpusCase: CorpusCase, reversed: boolean): Promise<string[][]> => {
@@ -190,6 +199,11 @@ test('the corpus against the graph store: every disagreement, counted and named'
         group.slice(index + 1)
           .filter(b => holding(a).includes(b))
           .map(b => ({ a, b, firstParty: firstParty(a) && firstParty(b) })))),
+      // a `PART_OF` line a CLAIM backs is the store's debt; one nothing claimed waits on a plugin or
+      // on a source shipping `containing` (4.4), and the report says which of the two it is
+      attachments: await Promise.all((corpusCase.expect.partOf ?? [])
+        .filter(edge => lines.some(line => line.startsWith(`PART_OF: ${edge.part} must be attached to ${edge.whole}`)))
+        .map(async edge => ({ ...edge, claimed: await containmentClaimed(edge.part, edge.whole) }))),
     })
   }
 
@@ -213,29 +227,39 @@ test('the corpus against the graph store: every disagreement, counted and named'
     report.splits.filter(split => split.failed && split.holds === 'claim' && !split.refusals.length).map(split => ({ report, split })))
   const pricedSplits = reports.flatMap(report =>
     report.splits.filter(split => split.failed && split.holds === 'claim' && split.refusals.length).map(split => ({ report, split })))
+  const unattached = reports.flatMap(report =>
+    report.attachments.filter(edge => edge.claimed).map(edge => ({ report, edge })))
+  const unclaimedAttachments = reports.flatMap(report =>
+    report.attachments.filter(edge => !edge.claimed).map(edge => ({ report, edge })))
+  const weldedCases = [...new Set(reports.filter(report => report.welds.length).map(report => report.file.replace(/\.json$/, '')))].sort()
+  const knownCases = Object.keys(knownDisagreements.cases).sort()
 
   writeFileSync(REPORT, [
-    '# The corpus against the graph store, step 2c',
+    '# The corpus against the graph store, step 2d',
     '',
     'Generated by `tests/unit/worker/corpus/graph-store.test.ts`, which drives every case in',
     '`tests/corpus/cases` twice (file order, then every list reversed) through `plugin:profile`,',
-    '`plugin:direct` and `plugin:aggregate`. It carries no date on purpose: the same corpus over the',
-    'same code writes the same file, so a diff here is a change in one of the two.',
+    '`plugin:direct`, `plugin:aggregate` and `plugin:containment`. It carries no date on purpose: the',
+    'same corpus over the same code writes the same file, so a diff here is a change in one of the two.',
     '',
-    '**This step cannot pass the corpus and is not meant to.** `plugin:title` (5.4 P3),',
-    '`plugin:containment` (5.4 P2) and `plugin:range` (5.4 P4) are steps 2d and 2e. A case needing a',
-    'title match, a container attachment or an episode range MUST be listed below.',
+    '**This step cannot pass the corpus and is not meant to.** `plugin:range` (5.4 P4) is step 2e, so',
+    'the store holds no `INCLUDES` and no episode pair at all, and a case needing either MUST be listed',
+    'below. A `SPLIT` that only a title match would hold is `plugin:title` (5.4 P3), which lands beside',
+    'this step.',
     '',
     '## Counts',
     '',
     `- cases: ${reports.length}, of which ${green.length} report nothing at all`,
     `- cases with at least one line: ${reports.length - green.length}`,
+    `- \`PART_OF\` lines a source CLAIMED, which is the store's debt: ${unattached.length}`,
+    `- \`PART_OF\` lines no claim carries, which wait on \`plugin:range\` or on a source shipping \`containing\` (4.4): ${unclaimedAttachments.length}`,
+    `- \`WELD\` cases, every one of them in \`tests/corpus/known-disagreements.graph.json\`: ${weldedCases.length}`,
     '',
     '| kind | lines | what it means |',
     '| --- | --- | --- |',
     `| SPLIT | ${counts.get('SPLIT')} | a \`together\` group came back as more than one cluster |`,
     `| WELD | ${counts.get('WELD')} | an \`apart\` pair came back as one cluster |`,
-    `| PART_OF | ${counts.get('PART_OF')} | a container attachment, which \`plugin:containment\` writes (2d) |`,
+    `| PART_OF | ${counts.get('PART_OF')} | a container attachment; the claimed ones are this step's, the rest wait on 2e |`,
     `| INCLUDES | ${counts.get('INCLUDES')} | an episode range, which \`plugin:range\` writes (2e) |`,
     `| EPISODE_PAIR | ${counts.get('EPISODE_PAIR')} | two rows that are one broadcast episode, also \`plugin:range\` |`,
     `| UNRELATED | ${counts.get('UNRELATED')} | a row that must stand alone and does not |`,
@@ -246,12 +270,19 @@ test('the corpus against the graph store: every disagreement, counted and named'
     'A `together` group holds at this step only when a claim already asserts it. What each failing',
     'group would need:',
     '',
-    '| what would hold the group | failing groups | expected at 2c |',
+    '| what would hold the group | failing groups | expected at this step |',
     '| --- | --- | --- |',
     `| a first-party \`SAME_AS\` claim | ${splitsByCause.get('claim') ?? 0} | only where a guard of 5.2 REFUSED it, named on the line: ${pricedSplits.length} of them, and ${unexpectedSplits.length} with no refusal behind them |`,
     `| a \`SAME_AS\` claim naming another origin | ${splitsByCause.get('claim (other origins)') ?? 0} | sometimes: a guard of 5.2 may have refused it, and the report line says which rows |`,
-    `| a containment edge | ${splitsByCause.get('containment') ?? 0} | yes: \`plugin:containment\` is 2d |`,
-    `| a title match | ${splitsByCause.get('title') ?? 0} | yes: \`plugin:title\` is 2e |`,
+    `| a containment edge | ${splitsByCause.get('containment') ?? 0} | a containment edge never welds: \`plugin:containment\` attaches and mints no sameness (5.4 P2) |`,
+    `| a title match | ${splitsByCause.get('title') ?? 0} | yes: \`plugin:title\` is 5.4 P3 |`,
+    '',
+    '## The welds that remain',
+    '',
+    'Each one is listed in `tests/corpus/known-disagreements.graph.json` with why it is the RECORDING',
+    'rather than the store, and this file and that list are asserted to name the same cases.',
+    '',
+    ...weldedCases.map(slug => `- \`${slug}\`: ${knownDisagreements.cases[slug as keyof typeof knownDisagreements.cases] ?? 'NOT LISTED'}`),
     '',
     '## The lines',
     '',
@@ -264,6 +295,8 @@ test('the corpus against the graph store: every disagreement, counted and named'
       ...report.splits.filter(split => split.failed).map(split =>
         `\n- the group [${split.group.join(', ')}] would be held by: ${split.holds}`
         + (split.refusals.length ? `, and a guard of 5.2 refused: ${split.refusals.join('; ')}` : '')),
+      ...report.attachments.map(edge =>
+        `\n- the containment [${edge.part} part of ${edge.whole}] ${edge.claimed ? 'IS CLAIMED by a source and must be attached' : 'is claimed by nothing: it waits on plugin:range or on a containing answer (4.4)'}`),
       '',
       '```',
       ...report.lines,
@@ -272,7 +305,7 @@ test('the corpus against the graph store: every disagreement, counted and named'
     ]),
   ].join('\n'))
 
-  // THE TWO ASSERTIONS. Everything above is a measurement; these two are what 2c promised.
+  // THE ASSERTIONS. Everything above is a measurement; these four are what 2c and 2d promised.
   expect(
     unexpectedWelds.map(entry => `${entry.report.file}: ${entry.weld.a} and ${entry.weld.b}`),
     'a weld between two first-party ids is a bug in the guards of 5.2 or in the closure of 3.5, never a missing plugin'
@@ -280,6 +313,20 @@ test('the corpus against the graph store: every disagreement, counted and named'
   expect(
     unexpectedSplits.map(entry => `${entry.report.file}: [${entry.split.group.join(', ')}]`),
     'a group first-party SAME_AS claims join, that no guard of 5.2 refused, is what plugin:direct asserts and the closure holds'
+  ).toEqual([])
+  // NEW AT 2d: containment a source CLAIMED must be attached. `plugin:direct` derives the edge and
+  // `plugin:containment` attaches the clusters, so neither half is missing any more, and a claimed
+  // containment that draws no attachment is a bug in one of them (5.4 P1, P2).
+  expect(
+    unattached.map(entry => `${entry.report.file}: ${entry.edge.part} part of ${entry.edge.whole}`),
+    'containment a source claimed is an edge plugin:direct writes and an attachment plugin:containment makes'
+  ).toEqual([])
+  // and the welds that remain are exactly the list, with a reason each: a case that stops welding, a
+  // case that starts, and a stale slug are all loud (the contract current-store.test.ts holds too)
+  expect(weldedCases, 'the welds the graph store carries are exactly known-disagreements.graph.json').toEqual(knownCases)
+  expect(
+    knownCases.filter(slug => !cases.some(entry => entry.file === `${slug}.json`)),
+    'a listed slug with no case file'
   ).toEqual([])
 
   console.info('the corpus against the graph store:', JSON.stringify({
@@ -289,6 +336,9 @@ test('the corpus against the graph store: every disagreement, counted and named'
     lines: Object.fromEntries([...counts].filter(([, total]) => total)),
     splitsByCause: Object.fromEntries(splitsByCause),
     pricedSplits: pricedSplits.map(entry => `${entry.report.file}: ${entry.split.refusals.join('; ')}`),
+    claimedAttachmentsMissing: unattached.length,
+    unclaimedAttachmentsPending: unclaimedAttachments.length,
+    weldedCases: weldedCases.length,
     passMs,
     totalMs: Date.now() - started,
   }, null, 2))
