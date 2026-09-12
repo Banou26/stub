@@ -454,18 +454,23 @@ export const simplifyTitle = (title: string): string[] => {
 }
 
 /**
- * Every handle an aggregated uri names, as SAME_AS, minus the caller's own origin.
+ * Every handle an aggregated uri names, as SAME_AS, minus the caller's own origin, each stamped
+ * `provenance: 'address'`.
  *
- * SAME_AS PRESERVES TODAY'S BEHAVIOUR and is not an endorsement of it. The uri is user input: a stale
- * bookmark re-injects whatever claims it carries, and `graph.link` has no inverse. What makes that
- * worth keeping for now is the shared-link case, where the uri is the only evidence those siblings
- * exist until their own sources answer.
+ * THE STAMP IS THE WHOLE POINT, and it is what a relation used to be asked to carry. The address
+ * names WHICH sources to ask and asserts nothing about how their rows relate (the owner's decision,
+ * 2026-09-12). So a handle from here is a POINTER: it routes a re-ask, the row it names still renders
+ * as a badge carrying that row's own url, and it enters no cluster, whatever the claimer. Every
+ * relation between the rows an address names is re-derived from what those sources answer.
  *
- * The awkward part, and the reason this wants its own measurement rather than a guess: `makeMedia`
- * defaults `url: undefined`, so a handle rebuilt here carries NO url at all. It contributes the
- * identity claim and nothing else, which is precisely the half that can go wrong. Demoting it to
- * PART_OF would therefore make it contribute nothing, so the honest options are "keep asserting" or
- * "delete the function", not a middle one.
+ * SAME_AS therefore stays, and is now honest rather than tolerated. It used to be the only relation
+ * that contributed anything at all: `makeMedia` defaults `url: undefined`, so a handle rebuilt here
+ * carries NO url, and demoting it to PART_OF would have left it contributing nothing. The stamp is
+ * the third option that reading said did not exist, and it is the one the store reads.
+ *
+ * WHAT IT COSTS WITHOUT THE STAMP, measured on the recorded season corpus (2026-09-12): of the `media`
+ * answers carrying handles, 89 of Netflix's 156 and 31 of Crunchyroll's 52 were pure echoes of the
+ * asked address, and 184 of 454 corpus lines were a run welded with or attached to such a row.
  *
  * A rebuilt sibling is a BARE node, and carries no scope of the caller's. The caller has read nothing
  * about those ids, so a stamp here was a claim about rows it never saw, written onto them: a CONTAINER
@@ -497,7 +502,7 @@ export const buildHandlesFromUri = (aggregatedUri: string, excludeOrigin: string
     // manifest addresses carrying two mal ids (2026-09-12).
     const [id, ...rest] = [...new Set(ids)].filter(id => !ids.some(other => extendsId(other, id) && other.startsWith(`${id}-`)))
     if (!id || rest.length) continue
-    handles.push(sameAs(makeMedia({ origin, id })))
+    handles.push({ ...sameAs(makeMedia({ origin, id })), provenance: 'address' })
   }
   return handles
 }
@@ -508,6 +513,11 @@ export const buildHandlesFromUri = (aggregatedUri: string, excludeOrigin: string
  * Dedupes by ORIGIN and by RELATION together. Origin alone was enough while every handle meant the
  * same thing; it is not now. A media already carrying `partOf(imdb:tt123)` would otherwise block the
  * uri from contributing a SAME_AS for imdb, or the reverse, depending only on which arrived first.
+ *
+ * Every handle it adds carries `provenance: 'address'` from `buildHandlesFromUri`, unchanged: what it
+ * appends is a pointer at a source to ask, never a claim that the caller's row and that row are the
+ * same. The source's OWN handles are left exactly as the source built them, stamp-free, so this is
+ * the merge that keeps the two kinds apart rather than the one that flattens them.
  */
 export const mergeHandles = (media: GQLMedia, aggregatedUri: string) => {
   const extra = buildHandlesFromUri(aggregatedUri, media.origin)

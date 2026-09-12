@@ -57,13 +57,17 @@ beforeAll(async () => {
     // the control: two answers that agree
     await answer('media', { ...media('tmdb:551', { titles: [title('en', 'Agreed')] }), type: 'TV', categories: ['SERIES'] }),
     await answer('media', { ...media('tmdb:551', { titles: [title('en', 'Agreed again')] }), type: 'TV', categories: ['SERIES'] }),
-    // constant-id: three distinct rows claiming one uri, which is never right (threshold 3)
-    await answer('media', media('nf:1', { titles: [title('en', 'One')], handles: [sameAs(media('hbo:watch'))] })),
-    await answer('media', media('nf:2', { titles: [title('en', 'Two')], handles: [sameAs(media('hbo:watch'))] })),
-    await answer('media', media('nf:3', { titles: [title('en', 'Three')], handles: [sameAs(media('hbo:watch'))] })),
+    // constant-id: three distinct rows claiming one uri, which is never right (threshold 3). The
+    // claimants are JustWatch rows because `hbo:watch` is JustWatch's own constant: `parts[1]` of an
+    // HBO series url is the literal string "watch" (`justwatch/id.ts:91-93`), and hbo is one of the
+    // origins its offers name natively, so these are `source` claims. A `nf` row claiming another
+    // provider is an echo of the asked address and would be `provenance: 'address'` (3.3)
+    await answer('media', media('jw:1', { titles: [title('en', 'One')], handles: [sameAs(media('hbo:watch'))] })),
+    await answer('media', media('jw:2', { titles: [title('en', 'Two')], handles: [sameAs(media('hbo:watch'))] })),
+    await answer('media', media('jw:3', { titles: [title('en', 'Three')], handles: [sameAs(media('hbo:watch'))] })),
     // the control: two claimants is a contest, not a constant
-    await answer('media', media('nf:4', { titles: [title('en', 'Four')], handles: [sameAs(media('hbo:pair'))] })),
-    await answer('media', media('nf:5', { titles: [title('en', 'Five')], handles: [sameAs(media('hbo:pair'))] })),
+    await answer('media', media('jw:4', { titles: [title('en', 'Four')], handles: [sameAs(media('hbo:pair'))] })),
+    await answer('media', media('jw:5', { titles: [title('en', 'Five')], handles: [sameAs(media('hbo:pair'))] })),
     // disagreeing-ids: two anilist ids a weld would put in one component, and a prefix pair that is
     // one id at two precisions and therefore no disagreement at all
     await answer('media', media('anilist:20', { titles: [title('en', 'Twenty')] })),
@@ -89,7 +93,7 @@ test('contested reports the shared row and both of its claimants, and stays sile
   const { query } = await graphReady()
   const found = await contested(query)
 
-  // the `hbo:watch` fixture below is a contest too, and reports as one: three nf rows whose ids
+  // the `hbo:watch` fixture below is a contest too, and reports as one: three jw rows whose ids
   // disagree all claim it, which is what makes it a constant as well
   const aot = found.find(anomaly => anomaly.uris[0] === 'mal:51535')
   expect(aot!.uris).toEqual(['mal:51535', 'anilist:10', 'anilist:11'])

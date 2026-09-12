@@ -411,8 +411,10 @@ Not added, deliberately:
   schema (`MediaHandle.provenance`, optional; unset means the source's own statement). For a handle
   with no stamp, a recording that predates it or a remote source that never sets it, the ingest reads a
   per-origin table of what each first-party origin's OWN data can carry (`origins.ts`, cited line by
-  line): a claimer naming an id space it cannot know is echoing the ask, and the claim is `address`. An
-  origin absent from the table is trusted, so the fallback narrows only what has been read. The
+  line), and applies it ONLY to the four origins that rebuild handles from the address (`cr`, `nf`,
+  `appletv`, `jw`) and only to `SAME_AS`, the one kind `buildHandlesFromUri` mints: for those a claim
+  into a space they cannot know is an echo of the ask, and the claim is `address`. Anywhere else a
+  claim into an unlisted space is a mapping path nobody read, not a rebroadcast, and stays `source`. The
   `Answer` row is never touched; provenance is a column on the claim edge (3.2).
 
 ### 3.4 The episode range form, literally
@@ -790,7 +792,7 @@ Each is a migration item (section 10) and none is a store rule.
 | the four extractors that fetch and drop episode air dates emit them. **DONE** 2026-09-12 (`b84a403`): a day stays `YYYY-MM-DD`, an instant stays ISO, nothing invented; 11 mutation-verified tests | before it, only anizip, crunchyroll, appletv and the seed emitted `Episode.releaseDate`; tvmaze (`airdate`), trakt (`first_aired`), simkl (`date`) and tvdb (`aired`) fetch one and drop it, so the date rule cannot see them | `tvmaze:54`, `trakt:49`, `simkl:66`, `tvdb:50` |
 | optional evidence fields on the source schema | `startDatePrecision`, `startDateSubject`, `startDateDerivation`, `episodeCountKind`, `episodeNumberSpace`, `MediaTitle.class`, `MediaHandle.provenance`; kitsu and jikan first for precision, whose `YYYY-MM-01` is the measured 30.65 day error (2026-08-29); tvmaze and tmdb first for the subject, the two sources that stamped a show premiere on a season row (2026-08-29, 912227f). The owner's call, section 11 | the schema and one extractor at a time |
 | `PluginSourceMeta` gains `countKind`, `folding`, `retranslates`, `showLevel` | a remote source declares rather than inherits a guess; today it carries none of these (`plugin-sources.ts:18-26`) and the nyaa plugin counted releases as episodes, up to 120 for a twelve episode run (2026-09-09) | `src/worker/plugin-sources.ts`, `src/plugin-api.ts` |
-| `buildHandlesFromUri` stamps `provenance: 'address'` | so the store can tell a rebroadcast from a source's own statement | `src/sources/utils.ts:465-471` |
+| `buildHandlesFromUri` stamps `provenance: 'address'`. **DONE** 2026-09-12 (step 2g-b): the stamp on every rebuilt handle, `MediaHandle.provenance` on the source schema, and the ingest fallback for an unstamped handle (`NATIVE_ID_SPACES` in `origins.ts`, gated on `ADDRESS_ECHOING_ORIGINS`, `SAME_AS` only); 57 of the recorded page's claims flip to `address`, every `nf`, `cr` and `jw` claim into a metadata id space among them | so the store can tell a rebroadcast from a source's own statement | `src/sources/utils.ts`, `src/worker/graph/ingest.ts` |
 | unogs's show answer carries its seasons as fenced `INCLUDES` handles | so a show whose seasons are all refused as runs still lists them, and a container page can list seasons | `unogs/extractor.ts` |
 
 ## 5. Plugins

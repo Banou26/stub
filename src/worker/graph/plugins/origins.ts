@@ -92,3 +92,96 @@ export const NUMBER_SPACE_ORIGINS: Record<string, 'entry' | 'position'> = { aniz
  * rule is proven to fire for each of them rather than for the one origin a fixture happened to use.
  */
 export const COERCING_ORIGINS = new Set(['jw', 'omdb', 'tmdb', 'tvdb', 'nf', 'cr', 'kitsu', 'mal'])
+
+/**
+ * What each first-party origin's OWN payload can name, as the origins of the ids it builds handles
+ * from. The ingest's provenance fallback reads it (`../ingest.ts`, `provenanceOf`).
+ *
+ * WHY IT EXISTS. `buildHandlesFromUri` stamps `provenance: 'address'` from 2026-09-12, but every
+ * recording made before that carries no stamp, and so does any remote plugin source that never
+ * learns to send one. A claimer whose own data cannot carry the target's id space is echoing the
+ * address back: Netflix publishes no AniList id anywhere, so `nf` naming `anilist:X` came from the
+ * uri it was asked about and nowhere else. That is the fallback, and this table is its premise.
+ *
+ * WHAT COUNTS AS NATIVE: a handle built from a field of the source's own response, or from a url that
+ * response carried. A handle from `buildHandlesFromUri` or added by `mergeHandles` never counts, which
+ * is the whole distinction being drawn.
+ *
+ * AN ORIGIN ABSENT FROM THIS TABLE IS TRUSTED, and that is the safe direction: the fallback can only
+ * narrow origins whose extractor was read line by line, so a remote plugin source, a new first-party
+ * source, or anything else unread keeps `source` and is decided by the guards as before. Adding a
+ * wrong entry costs a real claim, so an origin goes in only with the line that builds the handle.
+ *
+ * DELIBERATELY ABSENT, each for its own reason rather than by omission:
+ * - `offline`: the seed's identity handles are an export of a real cluster and can name ANY origin
+ *   (`sources/offline/seed.ts:108`), so it has no bounded id space to test against. Its SAME_AS is
+ *   `seed` before the fallback is reached anyway, and `offline/extractor.ts:163-166` is the narrower
+ *   of its two paths, not the whole of it.
+ * - `imdb`, `anidb`, `amazon`, `disney`, `hbo`, `hulu`, `peacock`, `fubo`, `paramount`: read, and each
+ *   builds no handle at all, so no claim of theirs ever reaches the lookup.
+ *
+ * Every entry was read off the extractor on 2026-09-12; the citation is the line that mints the handle.
+ */
+export const NATIVE_ID_SPACES: Record<string, Set<string>> = {
+  // jikan: the AniDB id off `external`, and anizip keyed on that same anidb id (`jikan:87,98`)
+  mal: new Set(['anidb', 'anizip']),
+  // `idMal` (`anilist:586`), and the Crunchyroll series its own externalLinks name (`anilist:227-251`)
+  anilist: new Set(['mal', 'cr']),
+  // `mappings.mal_id` and `mappings.anilist_id` (`anizip:23,28`)
+  anizip: new Set(['mal', 'anilist']),
+  // the `mappings` relationship (`kitsu:70,71`) and the streaming links of `kitsu/stream-id.ts:22-29`
+  kitsu: new Set(['anilist', 'mal', 'cr', 'nf', 'hulu', 'disney', 'amazon', 'hbo']),
+  // `ids.imdb`, `ids.mal`, `ids.anilist`, `ids.kitsu` (`simkl:123-126`)
+  simkl: new Set(['imdb', 'mal', 'anilist', 'kitsu']),
+  // `ids.imdb` only; tmdb is refused at the source because it cannot scope one (`trakt:110-121`)
+  trakt: new Set(['imdb']),
+  // `remoteIds`, mapped by `HANDLE_ORIGINS` (`tvdb:25,41`)
+  tvdb: new Set(['imdb', 'tmdb']),
+  // `externals.imdb` (`tvmaze:74`)
+  tvmaze: new Set(['imdb']),
+  // the row IS an imdb id, minted beside itself (`omdb:53`)
+  omdb: new Set(['imdb']),
+  // `imdb_id` and `tmdb_id` (`watchmode:155,162`) plus the stream hosts of `watchmode:66-71`
+  watchmode: new Set(['imdb', 'tmdb', 'cr', 'nf', 'hulu', 'disney', 'amazon', 'hbo']),
+  // the offer deep links through `PACKAGE_ORIGIN_MAP` (`justwatch/id.ts:75-79`, minted at
+  // `justwatch:400`), plus its own show container (`justwatch:510`). It FETCHES `externalIds.imdbId`
+  // (`justwatch:86,148`) and builds no handle from it, so imdb is not native here
+  jw: new Set(['cr', 'nf', 'disney', 'amazon', 'appletv', 'hulu', 'hbo', 'peacock', 'paramount', 'fubo', 'jw']),
+  // the four that build no handle from their own payload. Empty rather than absent because each one
+  // DOES emit handles, every one of them rebuilt from the asked uri: `cr:527`, `unogs:518,536`,
+  // `appletv:380,393`. tmdb mints none by either route and is here as the read control
+  cr: new Set(),
+  nf: new Set(),
+  appletv: new Set(),
+  tmdb: new Set(),
+}
+
+/**
+ * The origins whose extractor REBUILDS handles out of the asked aggregated uri, so an unstamped claim
+ * of theirs can be an echo of the address at all.
+ *
+ * The gate on the ingest's provenance fallback, and it is what makes that inference valid rather than
+ * merely usual. "This claimer cannot carry that id space, so it came from the address" only follows
+ * for a claimer that reads the address; for anything else the honest conclusion is a mapping path
+ * nobody read, and the claim keeps `source`. The table above stays complete so this set can grow the
+ * day another extractor starts rebuilding.
+ *
+ * The four, each at the line that rebuilds: `appletv/extractor.ts:380,393` and
+ * `unogs/extractor.ts:518,536` and `crunchyroll/extractor.ts:527` replace the handle list wholesale,
+ * `justwatch/extractor.ts:711,738` appends through `mergeHandles`.
+ *
+ * IT COSTS NOTHING ON REAL DATA, measured over all 8556 rows of the recorded season (2026-09-12):
+ * every claim a non-echoing origin makes is already inside its own set, and the echoing four are
+ * exactly where the outsiders are.
+ *
+ *     anilist -> mal 255, cr 37          kitsu -> anilist 214, mal 202, cr 44, nf 4, hulu 2
+ *     anizip  -> mal 79, anilist 78      offline -> mal 158, anilist 133, kitsu 107, anidb 1
+ *     jw      -> nf 74, disney 46, cr 20, hulu 10, amazon 7, paramount 1, hbo 1, fubo 1, jw 123
+ *     jw      -> offline 143, kitsu 130, mal 128, anilist 125, anizip 66   ECHOES
+ *     nf      -> mal 144, offline 132, kitsu 131, anilist 118, anizip 57, jw 34, cr 22, paramount 1
+ *     cr      -> offline 55, mal 53, anilist 52, kitsu 52, anizip 21, jw 11, nf 9
+ *
+ * jikan (`mal`) emits no handle at all in that recording, and neither does tmdb, tvmaze, trakt,
+ * simkl, tvdb, omdb or watchmode: they answered nothing that carried one.
+ */
+export const ADDRESS_ECHOING_ORIGINS = new Set(['cr', 'nf', 'appletv', 'jw'])

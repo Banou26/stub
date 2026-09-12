@@ -161,6 +161,43 @@ describe('scope stamps', () => {
     expect(show.handles.map(handle => handle.node.uri).sort()).toEqual(['anilist:108465', 'kitsu:42323'])
     expect(show.handles.map(handle => handle.node.scope), 'the siblings are not the container\'s to scope').not.toContain('CONTAINER')
   })
+
+  // The address names WHICH sources to ask and asserts nothing about how their rows relate (the
+  // owner's decision, 2026-09-12), so every handle rebuilt from it carries the stamp that says so.
+  // The ingest reads it into `CLAIMS.provenance` and `plugin:direct` consumes no claim that has it.
+  // Mutation: drop `provenance: 'address'` from the push in `buildHandlesFromUri` and this goes red
+  // on the first handle.
+  test('buildHandlesFromUri stamps every handle it mints as an address pointer', () => {
+    const handles = buildHandlesFromUri('ag:(anilist:108465,cr:G24H1N3MP,kitsu:42323,tvmaze:52279)', 'cr')
+
+    expect(handles.map(handle => handle.node.uri).sort()).toEqual(['anilist:108465', 'kitsu:42323', 'tvmaze:52279'])
+    expect(handles.map(handle => handle.provenance), 'every one, not the first').toEqual(['address', 'address', 'address'])
+  })
+
+  // Two rules in one case because they are the pair that can break each other: keeping the stamp is
+  // new, deduping by origin AND relation is the rule that was already there, and a merge that took
+  // either half of the key would silently drop one of these handles.
+  // Mutation: strip the stamp in `mergeHandles` (the first expectation goes red) or key the dedupe on
+  // the origin alone (the imdb SAME_AS is refused and the second goes red).
+  test('mergeHandles keeps the stamp and still dedupes by origin and relation', () => {
+    const season = makeMedia({
+      origin: 'tvmaze',
+      id: '52279',
+      handles: [partOf(makeMedia({ origin: 'imdb', id: 'tt10005350' }))],
+    })
+    mergeHandles(season, 'ag:(anilist:108465,imdb:tt10005350,tvmaze:52279)')
+
+    expect(season.handles.filter(handle => handle.provenance === 'address').map(handle => handle.node.uri).sort())
+      .toEqual(['anilist:108465', 'imdb:tt10005350'])
+    expect(
+      season.handles.map(handle => `${handle.node.origin} ${handle.relation}`).sort(),
+      'imdb PART_OF does not block imdb SAME_AS'
+    ).toEqual(['anilist SAME_AS', 'imdb PART_OF', 'imdb SAME_AS'])
+    expect(
+      season.handles.find(handle => handle.relation === 'PART_OF')!.provenance,
+      'the source\'s own handle is never stamped'
+    ).toBeUndefined()
+  })
 })
 
 // An address names the sources a cluster was built from, and asserts nothing about how they relate.

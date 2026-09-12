@@ -134,31 +134,34 @@ test('a sequence of answers for one uri rebuilds exactly the row lastWriteLonges
 // (b) THE PLACEHOLDER RULE. A nested node of another origin is a description, not a row, until its
 // own origin answers; the claim that named it does not wait and does not move when it does (4.3).
 // Mutation: give the placeholder branch an `ON MATCH SET` that writes `raw` and `owned`, and the
-// kitsu row loses its own answer to the next anilist mention of it.
+// mal row loses its own answer to the next anilist mention of it.
+// The target is a mal id because AniList publishes `idMal` and nothing else of another catalogue
+// (`anilist/extractor.ts:586`), so the claim is `source` under `NATIVE_ID_SPACES` and this case stays
+// about placeholders. Provenance has its own suite in ./provenance.test.ts.
 test('a nested handle node lands as a placeholder, and its own answer flips it without losing the claim', async () => {
-  const claimed = media('kitsu:42323', { url: 'https://kitsu.app/anime/42323' })
+  const claimed = media('mal:42323', { url: 'https://myanimelist.net/anime/42323' })
   await ingestAnswers([await answer('media', media('anilist:108465', { handles: [sameAs(claimed)] }))])
 
-  const placeholder = await mediaRow('kitsu:42323')
-  expect(placeholder!.owned, 'nobody from kitsu has spoken yet').toBe(false)
+  const placeholder = await mediaRow('mal:42323')
+  expect(placeholder!.owned, 'nobody from mal has spoken yet').toBe(false)
   expect(placeholder!.raw, 'a node contributing no field may not take one').toBe(null)
-  expect(placeholder!.origin).toBe('kitsu')
+  expect(placeholder!.origin).toBe('mal')
   const claims = await claimsFrom('anilist:108465')
   expect(claims.map(claim => [claim.toUri, claim.kind, claim.claimer, claim.provenance]))
-    .toEqual([['kitsu:42323', 'SAME_AS', 'anilist', 'source']])
-  expect(JSON.parse(claims[0]!.node as string).url, 'the claimer\'s description rides the claim').toBe('https://kitsu.app/anime/42323')
+    .toEqual([['mal:42323', 'SAME_AS', 'anilist', 'source']])
+  expect(JSON.parse(claims[0]!.node as string).url, 'the claimer\'s description rides the claim').toBe('https://myanimelist.net/anime/42323')
 
-  await ingestAnswers([await answer('media', media('kitsu:42323', { titles: [{ language: 'en', title: 'Mushoku Tensei', score: 1 }], episodeCount: 11 }))])
+  await ingestAnswers([await answer('media', media('mal:42323', { titles: [{ language: 'en', title: 'Mushoku Tensei', score: 1 }], episodeCount: 11 }))])
 
-  const owned = await mediaRow('kitsu:42323')
+  const owned = await mediaRow('mal:42323')
   expect(owned!.owned).toBe(true)
   expect(JSON.parse(owned!.raw as string).episodeCount).toBe(11)
   expect(await claimsFrom('anilist:108465'), 'the claim that named it is untouched').toHaveLength(1)
 
   // and a later placeholder never takes the owned row back
-  await ingestAnswers([await answer('media', media('anilist:178789', { handles: [sameAs(media('kitsu:42323'))] }))])
-  expect((await mediaRow('kitsu:42323'))!.owned).toBe(true)
-  expect(JSON.parse((await mediaRow('kitsu:42323'))!.raw as string).episodeCount).toBe(11)
+  await ingestAnswers([await answer('media', media('anilist:178789', { handles: [sameAs(media('mal:42323'))] }))])
+  expect((await mediaRow('mal:42323'))!.owned).toBe(true)
+  expect(JSON.parse((await mediaRow('mal:42323'))!.raw as string).episodeCount).toBe(11)
 })
 
 // (c) THE WALK STOPS AT A PART_OF NODE, with the control that a SAME_AS subtree is still walked to the

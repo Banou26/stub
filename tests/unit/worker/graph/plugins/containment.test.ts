@@ -582,16 +582,20 @@ test('the 800 recorded rows attach, hide and hold the invariants', async () => {
 // back as two clusters with seven `inside` edges between them.
 test('a downgrade PART_OF inside one cluster is never read as a containment fact', async () => {
   await ingestAnswers([
+    // The two identity claims into the metadata row sit ON the metadata row: a folding origin's
+    // SAME_AS into an id space its own data cannot carry is an `address` pointer now and enters no
+    // cluster (3.3), so the weld this case is about has to be stated by a claimer that could state
+    // it. `jw` naming `nf` stays where it is, because a JustWatch offer IS a Netflix id it read.
     await answer('media', media('anilist:990', {
       score: 0.8, type: 'TV', episodeCount: 13, startDate: '2026-07-14', titles: [title('en', 'Downgraded inside')],
+      handles: [sameAs(media('nf:990-1', { score: 0.2 })), sameAs(media('jw:990-1', { score: 0.2 }))],
     })),
     await answer('media', media('nf:990-1', {
       score: 0.2, type: 'TV', episodeCount: 3, titles: [title('en', 'Downgraded inside')],
-      handles: [sameAs(media('anilist:990', { score: 0.8 }))],
     })),
     await answer('media', media('jw:990-1', {
       score: 0.2, type: 'TV', episodeCount: 11, titles: [title('en', 'Downgraded inside')],
-      handles: [sameAs(media('anilist:990', { score: 0.8 })), sameAs(media('nf:990-1', { score: 0.2 }))],
+      handles: [sameAs(media('nf:990-1', { score: 0.2 }))],
     })),
   ])
   await runPass()
@@ -603,7 +607,7 @@ test('a downgrade PART_OF inside one cluster is never read as a containment fact
   expect(await clusterIdOf('nf:990-1'), 'the three rows are one cluster').toBe(await clusterIdOf('anilist:990'))
   expect(await clusterIdOf('jw:990-1')).toBe(await clusterIdOf('anilist:990'))
   expect(
-    (await linksBetween('nf:990-1', 'anilist:990')).find(link => link.kind === 'SAME_AS')?.status,
+    (await linksBetween('anilist:990', 'nf:990-1')).find(link => link.kind === 'SAME_AS')?.status,
     'and the weld the transient downgrade would have cost is still active'
   ).toBe('active')
 

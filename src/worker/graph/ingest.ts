@@ -19,10 +19,10 @@
  *   mention of it is a placeholder plus a claim carrying the claimer's own description (4.3).
  *
  * WHAT IT REFUSES.
- * - `provenance: 'ask'` and `provenance: 'address'`. An `ask` claim is the app consumer's, not a
- *   resolver's: it goes through `upsertMedia([], [claim])` with no row and therefore no `Answer`, so
- *   nothing in the log expresses it and step 4 writes it with the `Ask` row it belongs to.
- *   `address` is step 6a, where `buildHandlesFromUri` starts stamping it.
+ * - `provenance: 'ask'`. An `ask` claim is the app consumer's, not a resolver's: it goes through
+ *   `upsertMedia([], [claim])` with no row and therefore no `Answer`, so nothing in the log expresses
+ *   it and step 4 writes it with the `Ask` row it belongs to. `address` IS written here, from the
+ *   handle's own stamp or from `NATIVE_ID_SPACES` when a recording predates it (`provenanceOf`).
  * - Everything a plugin writes (2.2). The tables exist and this file never touches them.
  *
  * THE ENGINE FACTS THAT SHAPE EVERY WRITE, all measured on 0.20.4, 2026-09-12. Three of them, and
@@ -48,6 +48,7 @@ import type { AnswerRow } from './answers'
 
 import { emit } from '../store/events'
 import { contentHash, sha256Hex } from './hash'
+import { ADDRESS_ECHOING_ORIGINS, NATIVE_ID_SPACES } from './plugins/origins'
 import { graphReady } from './schema'
 
 /** A row the decomposition could not express, kept with the reason rather than dropped in silence. */
@@ -183,17 +184,63 @@ const addressOf = (value: Record<string, unknown>): { uri: string, origin: strin
 const scopeStampOf = (value: Record<string, unknown>): string | null =>
   typeof value.scope === 'string' && value.scope ? value.scope : null
 
+// The seed's IDENTITY handles, and only those: its container handles claim containment rather than
+// identity, assert nothing the export could ratify, and stay `source` (`offline/seed-source.ts:206-207`).
+const isSeedIdentity = (claimer: string, kind: string): boolean => claimer === SEED_ORIGIN && kind === 'SAME_AS'
+
 /**
- * The provenance of a claim, from what the log can see (3.3).
+ * The provenance of a media claim, from what the log can see (3.3).
  *
- * `seed` is the offline seed's IDENTITY handles, which is what it emits as SAME_AS
- * (`offline/seed-source.ts:206-207`); its container handles claim containment rather than identity,
- * assert nothing the export could ratify, and stay `source`. `ask` and `address` are later steps and
- * are never stamped here: stamping one early would put a claim in the closure that the writer's
- * guards were not yet written to weigh.
+ * THREE RULES, applied in this order.
+ *
+ * 1. `seed`, unchanged, so the seed's placeholders keep the class the precedence order gives them.
+ * 2. `address` from the handle's OWN STAMP. `buildHandlesFromUri` writes it on every handle it mints
+ *    (`sources/utils.ts`): the address names WHICH sources to ask and asserts nothing about how their
+ *    rows relate, so the claim is a pointer. `plugin:direct` returns nothing for it and guard 3
+ *    refuses any proposal it supports (3.3, 5.2).
+ * 3. `address` DERIVED, for a claim carrying no stamp from a claimer that REBUILDS handles out of the
+ *    asked uri (`ADDRESS_ECHOING_ORIGINS`), when the target's origin is outside the claimer's own set
+ *    (`NATIVE_ID_SPACES`): a source whose own data cannot carry that id space, asked about an address
+ *    that names it, is echoing the address back. Netflix publishes no AniList id anywhere, so `nf`
+ *    naming `anilist:X` came from the uri it was asked about and nowhere else.
+ *
+ * THREE EXEMPTIONS inside rule 3, and each is a claim that CANNOT be an echo however unfamiliar the
+ * target looks. A claimer that never reads the address: the premise does not hold, so the honest
+ * reading is a mapping path nobody read rather than a rebroadcast, and `source` stands. A claim into
+ * the claimer's OWN origin, since `buildHandlesFromUri` skips the caller's origin outright. And any
+ * kind but `SAME_AS`, since that is the only relation it mints: JustWatch's `PART_OF` offers are its
+ * own reading of a deep link (`justwatch/extractor.ts:400`), and unogs listing its own seasons as
+ * `INCLUDES` (4.6) is a statement too.
+ *
+ * RULE 3 IS NOT BELT AND BRACES. Every recorded answer predates the stamp and a remote plugin source
+ * may never send one, so without it the rule would apply to nothing already on disk: 89 of Netflix's
+ * 156 handle-carrying `media` answers on the recorded season corpus are pure echoes, and 31 of
+ * Crunchyroll's 52 (2026-09-12). It narrows only origins whose extractor was read line by line, and
+ * an origin missing from either table is trusted.
+ *
+ * `ask` is still a later step and is never stamped here: it goes through `upsertMedia([], [claim])`
+ * with no row and therefore no `Answer`, so nothing in the log expresses it.
  */
-const provenanceOf = (claimer: string, kind: string): string =>
-  claimer === SEED_ORIGIN && kind === 'SAME_AS' ? 'seed' : 'source'
+const provenanceOf = (claimer: string, kind: string, handle: Record<string, unknown>, targetOrigin: string): string => {
+  if (isSeedIdentity(claimer, kind)) return 'seed'
+  if (textOf(handle.provenance) === 'address') return 'address'
+  if (kind !== 'SAME_AS' || targetOrigin === claimer || !ADDRESS_ECHOING_ORIGINS.has(claimer)) return 'source'
+  const native = NATIVE_ID_SPACES[claimer]
+  return native && !native.has(targetOrigin) ? 'address' : 'source'
+}
+
+/**
+ * The provenance of an EPISODE claim: the seed rule, and nothing else.
+ *
+ * Neither of the other two rules can fire here, which is why this is a second function rather than
+ * the same one called with an episode. `buildHandlesFromUri` mints MEDIA handles only, so no episode
+ * handle can carry the stamp; and `NATIVE_ID_SPACES` records which MEDIA id spaces a source
+ * republishes, which says nothing about whose episode rows it may name. No first-party extractor
+ * emits an episode handle at all today (the only builders are `store/aggregate.ts:408,441`, at read
+ * time), so every episode claim comes from a remote plugin's payload and is trusted exactly as before.
+ */
+const episodeProvenanceOf = (claimer: string, kind: string): string =>
+  isSeedIdentity(claimer, kind) ? 'seed' : 'source'
 
 /**
  * The field merge of 4.3, the rule `lastWriteLongestArray` states (`store/graph.ts:388-399`).
@@ -413,7 +460,7 @@ const visitEpisode = (batch: Batch, answer: AnswerRow, value: unknown, owned: bo
       fromUri: address.uri,
       toUri: target.uri,
       kind,
-      provenance: provenanceOf(answer.origin, kind),
+      provenance: episodeProvenanceOf(answer.origin, kind),
       claimer: answer.origin,
       targetScope: scopeStampOf(handle.node),
       answerSeq: answer.seq,
@@ -505,7 +552,7 @@ const visitMedia = (
       fromUri: address.uri,
       toUri,
       kind,
-      provenance: provenanceOf(answer.origin, kind),
+      provenance: provenanceOf(answer.origin, kind, handle, originOfUri(toUri)),
       claimer: answer.origin,
       targetScope: scopeStampOf(handle.node),
       answerSeq: answer.seq,

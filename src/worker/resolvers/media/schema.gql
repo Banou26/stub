@@ -228,6 +228,16 @@ type MediaHandle {
   node: Media!
   """What this edge asserts. Only SAME_AS unions clusters."""
   relation: MediaHandleRelation!
+  """
+  Where this handle came from, when it did not come from the source's own data.
+
+  Unset, which is every handle a resolver builds out of its own payload, means the source's own
+  statement and the store consumes it. `address` means the handle was rebuilt from the asked
+  aggregated uri by `buildHandlesFromUri` (`src/sources/utils.ts`): the address names WHICH sources to
+  ask and asserts nothing about how the rows relate, so such a claim routes a re-ask and enters no
+  cluster. No other value is defined; an unknown one reads as unset.
+  """
+  provenance: String
 }
 
 type Media {
