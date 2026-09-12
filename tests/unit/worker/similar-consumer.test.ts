@@ -3,13 +3,15 @@
 // run once its title names our show, while the container edge stays. Fixtures in the shape of
 // container-page.test.ts; the ask is recorded so the exact input the answering source would read can
 // be asserted.
-import { afterEach, beforeEach, expect, test, vi } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { SimilarOutcome } from '../../../src/sources/similar'
 
 import { closeRoot, openRoot, type RequestContext } from '../../../src/worker/request-context'
 import { MAX_ASKS_PER_PAIR, planSimilarAsks, resetSimilarAsks, resolveSimilarRuns, runEvidence } from '../../../src/worker/similar-consumer'
 import { findAggregatedMedia, findPartOfMedia, resetStore, upsertEpisodes, upsertMedia } from '../../../src/worker/store/db'
+import { closeGraph, setGraphEnabled } from '../../../src/worker/graph/engine'
+import { exportAsks } from '../../../src/worker/graph/asks'
 
 const media = (
   uri: string,
@@ -454,4 +456,116 @@ test('a listing root never asks', async () => {
   await resolveSimilarRuns(cluster, root, { ask, implemented })
   expect(ask, 'and the refused listing did not count as asked').toHaveBeenCalledTimes(1)
   closeRoot(listing.rootId)
+})
+
+// THE ASK LOG (7.3). One row per question the consumer SENT, carrying what that question came to, so
+// a page with no Crunchyroll button can tell "never asked" from "asked and refused" from "asked and
+// declined". The flag goes up only here, at the end of the file: every test above runs with the graph
+// down and is therefore also the control that the consumer's behaviour does not depend on it.
+describe('the Ask log', () => {
+  beforeAll(() => { setGraphEnabled(true) })
+  afterAll(async () => {
+    setGraphEnabled(false)
+    await closeGraph()
+  })
+
+  const keysOf = (rows: { key: string }[]) => new Set(rows.map(row => row.key))
+  const added = async (before: Set<string>) => (await exportAsks()).filter(row => !before.has(row.key))
+
+  test('an answered question is one row naming the answer', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+
+    await resolveSimilarRuns(cluster, root, { ask: recorder(), implemented })
+
+    const rows = await added(before)
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toMatchObject({
+      clusterId: 'ag:(anilist:1,kitsu:2)',
+      origin: 'cr',
+      showId: 'X',
+      outcome: 'answered',
+      reason: 'cr:X-S3',
+      answerUri: 'cr:X-S3',
+    })
+  })
+
+  test('a decline from the funnel is recorded with the funnel\'s own reason', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+
+    await resolveSimilarRuns(cluster, root, { ask: decliner('ceiling'), implemented })
+
+    const rows = await added(before)
+    expect(rows.map(row => [row.outcome, row.reason])).toEqual([['declined', 'ceiling']])
+    expect(rows[0]!.answerUri, 'a decline named no row').toBeNull()
+  })
+
+  test('the consumer\'s own refusal by title is recorded as its own reason', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+    const ask = vi.fn(async (): Promise<SimilarOutcome> => answered({ ...ANSWER, titles: [{ title: 'Grand Blue Dreaming' }] }))
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    await resolveSimilarRuns(cluster, root, { ask, implemented })
+
+    expect(await added(before)).toMatchObject([{ outcome: 'refused', reason: 'by-title', answerUri: null }])
+    warn.mockRestore()
+  })
+
+  // The other half of the design's `refused-other-run`: an answer that arrives after another run of
+  // its origin joined the cluster is the weld the ask exists to avoid, and the log says so.
+  test('an answer refused because the origin already has a run in the cluster says which', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+    let settle!: (outcome: SimilarOutcome) => void
+    const pending = new Promise<SimilarOutcome>(resolve => { settle = resolve })
+    const ask = vi.fn((): Promise<SimilarOutcome> => pending)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const first = resolveSimilarRuns(cluster, root, { ask, implemented })
+    await vi.waitFor(() => expect(ask).toHaveBeenCalledTimes(1))
+    await upsertMedia([media('cr:X-S1', 'RUN', { titles: ['Show'] })], [{ mediaUri: 'anilist:1', handleUri: 'cr:X-S1' }])
+    settle(answered())
+    await first
+
+    expect(await added(before)).toMatchObject([{ outcome: 'refused', reason: 'other-run' }])
+    warn.mockRestore()
+  })
+
+  // THE LOG IS A HISTORY, NOT A DEDUPE. A decline never reached the source, so the consumer retries
+  // the identical question; four of those are the whole of the pair's cap, and a log that folded them
+  // into one row would report one question where four were spent.
+  test('the same question asked again is a second row, and new evidence a third', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+    const ask = decliner('ceiling')
+
+    await resolveSimilarRuns(cluster, root, { ask, implemented })
+    await resolveSimilarRuns(await findAggregatedMedia('anilist:1'), root, { ask, implemented })
+    await addEpisodeTitles()
+    await resolveSimilarRuns(await findAggregatedMedia('anilist:1'), root, { ask, implemented })
+
+    const rows = await added(before)
+    expect(rows).toHaveLength(3)
+    expect(rows[0]!.questionHash, 'the identical question, asked twice').toBe(rows[1]!.questionHash)
+    expect(rows[0]!.key, 'and two rows, never one').not.toBe(rows[1]!.key)
+    expect(rows[2]!.questionHash, 'five episode titles is a different question').not.toBe(rows[0]!.questionHash)
+    expect(rows.map(row => row.seq)).toEqual([...rows.map(row => row.seq)].sort((a, b) => a - b))
+  })
+
+  // THE CONTROL. The consumer runs exactly as it does above, an answer and all, and writes nothing:
+  // the log is a record of a session that asked for one, never a cost every session pays.
+  test('a session with the graph off records nothing', async () => {
+    const cluster = await storeRun()
+    const before = await exportAsks()
+    setGraphEnabled(false)
+
+    await resolveSimilarRuns(cluster, root, { ask: recorder(), implemented })
+    await upsertMedia([media('cr:X-S3', 'RUN', { startDate: '2026-07-04', episodeCount: 14 })], [])
+    expect(uris(await findAggregatedMedia('anilist:1')), 'the consumer did its whole job').toEqual(['anilist:1', 'cr:X-S3', 'kitsu:2'])
+
+    setGraphEnabled(true)
+    expect(await exportAsks(), 'and the log is untouched').toEqual(before)
+  })
 })

@@ -11,17 +11,23 @@
 // `__stubGraphCounts` rides the same flag and the same rule. It is the other half of one question:
 // the log says what the sources answered, the counts say what the ingest made of it, and a walk that
 // reads only the first cannot tell a working tee from one that quarantined every row.
+//
+// `__stubExportAsks` rides it too, and is the third: the `Ask` log says which questions the app's own
+// consumer put through `similarMedia` and what each came to, which is the only record of a source
+// that answered nothing at all (7.3).
 import { readAnswersExportFlag } from './utils/export-flag'
-import { exportAnswers, graphCounts } from './worker'
+import { exportAnswers, exportAsks, graphCounts } from './worker'
 
 declare global {
   interface Window {
     __stubExportAnswers?: () => Promise<unknown>
+    __stubExportAsks?: () => Promise<unknown>
     __stubGraphCounts?: () => Promise<unknown>
   }
 }
 
 if (readAnswersExportFlag(location.href)) {
   window.__stubExportAnswers = () => exportAnswers()
+  window.__stubExportAsks = () => exportAsks()
   window.__stubGraphCounts = () => graphCounts()
 }

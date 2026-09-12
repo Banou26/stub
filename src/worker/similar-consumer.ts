@@ -11,11 +11,20 @@
 //
 // Pure of the extractor on purpose: worker/extractor.ts cannot load under vitest, so the asking and
 // the claiming are here and the resolver only wires them.
+//
+// Every question that is SENT, and what it came to, goes into the `Ask` log (`./graph/asks.ts`,
+// section 7.3) behind the `?graph` flag, so a page with no Crunchyroll button can say whether the
+// origin was never asked, asked and refused, or asked and declined. The log is fire and forget and
+// changes nothing the consumer does: see `note`.
 import type { SimilarMediaInput } from '../generated/schema/types.generated'
+import type { AskOutcome } from './graph/asks'
 import type { Media } from './store/types'
 import type { RequestContext } from './request-context'
 
 import { findAggregatedEpisodesForMedia, findAggregatedMedia, findPartOfMedia, upsertMedia } from './store/db'
+import { graphEnabled } from './graph/engine'
+import { recordAsk } from './graph/asks'
+import { toAggregatedUri } from '../utils/uri'
 import { runLength } from './store/consensus'
 import {
   answerNamesOurShow,
@@ -45,6 +54,8 @@ type Question = {
   fingerprint: string
   /** the run's titles as one key, which only the which-show check reads */
   titles: string
+  /** the cluster this question was built from, as its aggregated uri; the `Ask` log's `clusterId` */
+  clusterId: string
   evidence: RunEvidence
   ask: SimilarAsk
 }
@@ -126,12 +137,43 @@ const recordFor = (containerUri: string, cluster: Media[]): AskRecord => {
 
 const dedupe = <T>(values: readonly T[]): T[] => [...new Set(values)]
 
-const questionFor = (ask: SimilarAsk, evidence: RunEvidence): Question => ({
+const questionFor = (ask: SimilarAsk, evidence: RunEvidence, clusterId: string): Question => ({
   fingerprint: similarAskKey(ask.origin, ask.showId, evidence),
+  clusterId,
   titles: [...(evidence.titles ?? [])].sort().join('\u0001'),
   evidence,
   ask,
 })
+
+/**
+ * Write one question and what it came to into the `Ask` log, and never make the consumer wait on it
+ * or answer for it.
+ *
+ * Section 7.3: the log is what tells "never asked" apart from "asked and refused" on a page with no
+ * Netflix button, and nothing else in the store records that. Fire and forget on purpose, and behind
+ * `graphEnabled` so a session with the flag down does not even build a row. A throw is logged here:
+ * a graph that cannot take a row must not change which questions the consumer asks.
+ *
+ * One row per question, written once the outcome is known, so an ask still in flight has no row yet.
+ * A question the consumer never SENT (the cap, a pair that settled, a run with no titles) writes
+ * nothing at all, which is what keeps "never asked" honest.
+ */
+const note = (question: Question, outcome: AskOutcome, reason: string): void => {
+  if (!graphEnabled()) return
+  const failed = (cause: unknown) => console.error(new Error('similarMedia consumer could not record an ask', { cause }))
+  try {
+    void recordAsk({
+      clusterId: question.clusterId,
+      origin: question.ask.origin,
+      showId: question.ask.showId,
+      question: question.fingerprint,
+      outcome,
+      reason,
+    })?.catch(failed)
+  } catch (cause) {
+    failed(cause)
+  }
+}
 
 const isAsked = (record: AskRecord, question: Question): boolean =>
   record.fingerprints.has(question.fingerprint) || record.refusedTitles.has(question.titles)
@@ -194,6 +236,9 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
   const driver = Symbol('similarMedia consumer driver')
   start.driver = driver
   let record = start
+  // the question `deps.ask` is answering right now, so a throw anywhere on the asking path is
+  // recorded against the question that was in flight rather than lost
+  let asked: Question | undefined
   try {
     for (;;) {
       // the record may have been folded into another since the last iteration: follow it, and take
@@ -210,6 +255,7 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
         return
       }
       record.asks += 1
+      asked = question
       console.warn(`similarMedia: consumer asked ${ask.origin} ${ask.showId} for ${ask.runUri} (ask ${record.asks} of ${MAX_ASKS_PER_PAIR}) with ${describeEvidence(evidence)}`)
       const result = await deps.ask(ask.origin, {
         showId: ask.showId,
@@ -222,15 +268,19 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
       record = ownerOf(record)
       if (record.settled) {
         console.warn(`similarMedia: consumer dropped ${ask.origin} ${ask.showId} for ${ask.runUri} (the pair settled while the ask was in flight)`)
+        // whatever the source said, the pair had settled and the answer was never considered
+        note(question, 'refused', 'dropped')
         return
       }
       if (result.outcome === 'declined') {
         console.warn(`similarMedia: consumer declined ${ask.origin} ${ask.showId} for ${ask.runUri} (${result.reason}); retries on the next read`)
+        note(question, 'declined', result.reason)
         return
       }
       if (result.outcome === 'refused') {
         record.fingerprints.add(question.fingerprint)
         console.warn(`similarMedia: consumer refused ${ask.origin} ${ask.showId} for ${ask.runUri} (${result.reason}); re-asks on new evidence`)
+        note(question, 'refused', result.reason)
         continue
       }
       // another caller (anilist's own mapping, or a merged record's ask) may have named this origin's
@@ -239,8 +289,16 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
       const present = (await findAggregatedMedia(ask.runUri)).find(media => media.origin === ask.origin && media.scope !== 'CONTAINER')
       if (present) {
         record.settled = true
-        if (present.uri === result.media.uri) console.warn(`similarMedia: consumer settled ${ask.origin} ${ask.showId} for ${ask.runUri} (${present.uri} is already the cluster's ${ask.origin} run)`)
-        else console.warn(`similarMedia: consumer refused-by-origin ${result.media.uri} for ${ask.runUri} (${present.uri} is already the cluster's ${ask.origin} run)`)
+        // the two spellings of the design's `refused-other-run` (7.3): the answer either names the
+        // run the cluster already holds, which is an answer and claims nothing new, or names a
+        // second run of one origin, which is the weld the ask exists to avoid
+        if (present.uri === result.media.uri) {
+          console.warn(`similarMedia: consumer settled ${ask.origin} ${ask.showId} for ${ask.runUri} (${present.uri} is already the cluster's ${ask.origin} run)`)
+          note(question, 'answered', result.media.uri)
+        } else {
+          console.warn(`similarMedia: consumer refused-by-origin ${result.media.uri} for ${ask.runUri} (${present.uri} is already the cluster's ${ask.origin} run)`)
+          note(question, 'refused', 'other-run')
+        }
         return
       }
       const runTitles = evidence.titles ?? []
@@ -249,15 +307,18 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
       if (!verdict.ok) {
         record.refusedTitles.add(question.titles)
         console.warn(`similarMedia: consumer refused-by-title ${result.media.uri} for ${ask.runUri} (best ${verdict.score.toFixed(3)} of ${runTitles.length} run titles against ${answerTitles.length} answer titles, threshold ${SHOW_TITLE_THRESHOLD}); re-asks on a new title`)
+        note(question, 'refused', 'by-title')
         continue
       }
       record.settled = true
       await upsertMedia([], [{ mediaUri: ask.runUri, handleUri: result.media.uri, relation: 'SAME_AS' }])
       console.warn(`similarMedia: consumer claimed ${result.media.uri} as SAME_AS of ${ask.runUri}`)
+      note(question, 'answered', result.media.uri)
       return
     }
   } catch (cause) {
     console.error(new Error('similarMedia consumer failed', { cause }))
+    if (asked) note(asked, 'error', cause instanceof Error ? cause.message : String(cause))
   } finally {
     for (let held: AskRecord | undefined = start; held; held = held.mergedInto) {
       if (held.driver === driver) held.driver = undefined
@@ -284,6 +345,10 @@ export const resolveSimilarRuns = async (cluster: Media[], context: RequestConte
     const episodes = await findAggregatedEpisodesForMedia(cluster.map(media => media.uri))
     const evidence = runEvidence(cluster, episodes.flat().flatMap(episode => (episode.titles ?? []).map(title => title.title)))
     if (!hasEvidence(evidence)) return
+    // The cluster as ONE id, for the `Ask` log alone: the aggregated uri is the address this page
+    // carries and the only cluster id that exists today. The `Cluster` table's minted ids arrive
+    // with `plugin:aggregate` (5.4 P5), and `Ask.clusterId` takes them when they do.
+    const clusterId = toAggregatedUri(cluster.map(media => media.uri))
     await Promise.all(asks.map(ask => {
       const record = recordFor(ask.containerUri, cluster)
       if (record.settled) return
@@ -294,7 +359,7 @@ export const resolveSimilarRuns = async (cluster: Media[], context: RequestConte
         }
         return
       }
-      record.latest = questionFor(ask, evidence)
+      record.latest = questionFor(ask, evidence, clusterId)
       return drive(record, context, deps)
     }))
   } catch (cause) {

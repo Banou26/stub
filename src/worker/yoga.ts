@@ -9,7 +9,7 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 import { extractors, setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
 import { exportStore } from './store/export'
-import { enableGraph, exportAnswers, graphCounts } from './graph'
+import { enableGraph, exportAnswers, exportAsks, graphCounts } from './graph'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -67,6 +67,11 @@ export const osraResolvers = {
   // subset filters it. Unlike `exportStore` there is nothing to exclude, because a plugin source's
   // answers are rows about that user's own plugin and the export is the user's own.
   exportAnswers: () => exportAnswers(),
+  // The questions the app's own consumer asked through `similarMedia`, ordered by seq. Beside the
+  // answer log because they answer opposite halves of one question: the answers say what a source
+  // returned, the asks say what was asked and refused, which is the only record of a source that
+  // returned nothing (7.3).
+  exportAsks: () => exportAsks(),
   // The row count of every table, which is what the ingest of 4.2 produced from that log. Beside the
   // log rather than derived from it by a caller: the two are read in one round trip from the same
   // flush, so a page cannot see answers the ingest has not written yet.
