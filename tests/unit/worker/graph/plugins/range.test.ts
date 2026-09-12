@@ -28,7 +28,7 @@ import { directPlugin } from '../../../../../src/worker/graph/plugins/direct'
 import { aggregatePlugin } from '../../../../../src/worker/graph/plugins/aggregate'
 import { containmentPlugin } from '../../../../../src/worker/graph/plugins/containment'
 import {
-  decideCandidate, hullOf, MIN_ALIGNED, numbersOutsideRun, pairsByDay, pairsByTitle, rangePlugin,
+  decideCandidate, hullOf, MIN_ALIGNED, numbersOutsideRun, pairsByDay, pairsByTitle, placesClaim, rangePlugin,
 } from '../../../../../src/worker/graph/plugins/range'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
 import { alignmentOffset } from '../../../../../src/worker/store/consensus'
@@ -92,6 +92,43 @@ const linksBetween = async (fromUri: string, toUri: string) => rowsOf(
    RETURN l.kind AS kind, l.status AS status, l.reason AS reason, l.by AS by
    ORDER BY by, kind, reason`,
   { fromUri, toUri }
+)
+
+/** Every slot the episodes of one uri space fill, which is what a pair is FOR (5.4 P5, 8.1). */
+const fillsFrom = async (prefix: string) => {
+  const rows = await rowsOf(
+    `MATCH (e:Episode)-[f:FILLS]->(s:Slot)
+     WHERE e.uri STARTS WITH $prefix
+     RETURN e.uri AS uri, s.id AS slot, s.number AS slotNumber, f.number AS number, f.via AS via,
+       f.supports AS supports
+     ORDER BY uri, slot`,
+    { prefix }
+  )
+  return rows.map(row => ({
+    uri: String(row.uri),
+    slot: String(row.slot),
+    slotNumber: row.slotNumber === null ? null : Number(row.slotNumber),
+    number: row.number === null ? null : Number(row.number),
+    via: String(row.via),
+    supports: row.supports as string[],
+  }))
+}
+
+/** The cluster one uri sits in, which is what a slot id is prefixed with. */
+const clusterIdOf = async (uri: string): Promise<string> => {
+  const [row] = await rowsOf('MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster) RETURN c.id AS id', { uri })
+  return String(row!.id)
+}
+
+/** Every episode pair between two uri spaces, refused ones included: the row a refusal lives on. */
+const pairsBetween = async (fromPrefix: string, toPrefix: string) => rowsOf(
+  `MATCH (a:Episode)-[l:EPISODE_LINK]->(b:Episode)
+   WHERE a.uri STARTS WITH $fromPrefix AND b.uri STARTS WITH $toPrefix
+   RETURN a.uri AS fromUri, b.uri AS toUri, l.status AS status, l.reason AS reason, l.by AS by,
+     l.key AS key, l.fromNumber AS fromNumber, l.toNumber AS toNumber, l.confidence AS confidence,
+     l.supports AS supports
+   ORDER BY fromUri, toUri`,
+  { fromPrefix, toPrefix }
 )
 
 const evidenceOf = (row: Record<string, unknown>): Record<string, unknown> =>
@@ -318,6 +355,44 @@ const lendAnswers = async () => [
   })),
 ]
 
+// THE FOURTH INPUT of 5.4 P4: an episode `SAME_AS` a source stated. Two shapes, and the whole rule
+// is which of the two it is: both rows inside one run cluster, or two runs nothing joins.
+const CLAIMED = weekly('2026-01-06', 2)
+const claimAnswers = async () => [
+  await answer('media', media('anilist:950', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 2, startDate: CLAIMED[0],
+    titles: [title('en', 'Asserted')],
+    handles: [sameAs(media('mal:950', { score: 0.9 }))],
+    episodes: [
+      episode('anilist:950-1', 'anilist:950', {
+        episodeNumber: 1, releaseDate: CLAIMED[0], titles: [title('en', 'Asserted One')],
+        handles: [sameAs(episode('mal:950-1', 'mal:950', { episodeNumber: 1 }))],
+      }),
+    ],
+  })),
+  await answer('media', media('mal:950', {
+    score: 0.9, type: 'TV', status: 'FINISHED', episodeCount: 2, titles: [title('en', 'Asserted')],
+    episodes: [episode('mal:950-1', 'mal:950', { episodeNumber: 1, titles: [title('en', 'Asserted One')] })],
+  })),
+  // and the same claim across two runs nothing joins. Two ORIGINS, because two ids of one origin in
+  // one component is guard 4's refusal (5.2) and this pair has to be weldable later
+  await answer('media', media('anilist:960', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 2, startDate: CLAIMED[0],
+    titles: [title('en', 'Foreign Left')],
+    episodes: [
+      episode('anilist:960-1', 'anilist:960', {
+        episodeNumber: 1, releaseDate: CLAIMED[0], titles: [title('en', 'Foreign One')],
+        handles: [sameAs(episode('kitsu:970-1', 'kitsu:970', { episodeNumber: 1 }))],
+      }),
+    ],
+  })),
+  await answer('media', media('kitsu:970', {
+    score: 0.3, type: 'TV', status: 'FINISHED', episodeCount: 2, startDate: CLAIMED[0],
+    titles: [title('en', 'Foreign Right')],
+    episodes: [episode('kitsu:970-1', 'kitsu:970', { episodeNumber: 1, titles: [title('en', 'Foreign One')] })],
+  })),
+]
+
 beforeAll(async () => {
   await enableGraph(true)
   await ingestAnswers([
@@ -327,6 +402,7 @@ beforeAll(async () => {
     ...await fmaAnswers(),
     ...await windowAnswers(),
     ...await lendAnswers(),
+    ...await claimAnswers(),
   ])
   resetPassState()
   await runPass()
@@ -445,6 +521,94 @@ test('8.2 Crunchyroll 13 to 20 pairs with the run 1 to 8, and no range is drawn'
   expect(links.filter(row => row.fromUri === 'cr:GQWH0M19X-GS00366034'), 'a member is given no range').toEqual([])
 })
 
+// WHAT THE PAIRS ARE FOR (5.4 P5): a season row is in NO cluster, so its episodes reach the page
+// only through them, at the pair's `toNumber` and marked `aligned by dates` in the trace. Eleven rows
+// on cour 1 and twelve on cour 2, each naming its own hang and the pair beside it.
+// Mutation: return an empty list from `alignedFillsOf` and 8.1's page loses every play button while
+// the twenty-three pairs still sit in the graph proving nothing, which is what the store did before
+// this step: a pair with no fill behind it is a measurement nobody reads.
+test('8.1 the Crunchyroll rows fill both cours by their pairs, and the special fills nothing', async () => {
+  const own = (uri: string): number => Number(uri.slice(uri.lastIndexOf('-') + 1))
+  const all = (await fillsFrom('cr:G609CX3J4-')).sort((a, b) => own(a.uri) - own(b.uri))
+  // the season row is a RUN cluster of its own and draws its own 24 rows there, which is the page a
+  // season uri resolves to; the two cours are the clusters a pair had to reach
+  const inCluster = (id: string) => all.filter(fill => fill.slot.startsWith(`${id}#`))
+  const cour1 = inCluster(await clusterIdOf('anilist:108465'))
+  const cour2 = inCluster(await clusterIdOf('anilist:127720'))
+  expect([...cour1, ...cour2].every(fill => fill.via === 'aligned'), 'no member of either cour hung one of these')
+    .toBe(true)
+
+  expect(cour1.map(fill => [own(fill.uri), fill.number]), 'their 1 to 11 onto the run 1 to 11').toEqual(
+    Array.from({ length: 11 }, (_, index) => [index + 1, index + 1])
+  )
+  // cour 2: their 12 to 23 land on slots 1 to 12, which is the renumbering the user sees
+  expect(cour2.map(fill => [own(fill.uri), fill.number])).toEqual(
+    Array.from({ length: 12 }, (_, index) => [index + 12, index + 1])
+  )
+  expect(new Set(cour1.map(fill => fill.slot)).size, 'eleven distinct slots').toBe(11)
+  expect(new Set(cour2.map(fill => fill.slot)).size, 'and twelve more, in the other cluster').toBe(12)
+  expect([...cour1, ...cour2].some(fill => fill.uri === 'cr:G609CX3J4-24'),
+    'the special pairs with nothing and reaches neither cour').toBe(false)
+
+  // A TRACE DESCENDS FROM THE BUTTON TO THE CLAIM (3.2): the row's own hang and the pair that placed it
+  const [pair] = await rowsOf(
+    `MATCH (a:Episode {uri: 'cr:G609CX3J4-1'})-[l:EPISODE_LINK]->(b:Episode {uri: 'anizip:14758-1'})
+     RETURN l.key AS key`
+  )
+  const first = cour1.find(fill => fill.uri === 'cr:G609CX3J4-1')!
+  expect(first.supports, 'the hang and the pair, and nothing invented').toHaveLength(2)
+  expect(first.supports, 'the pair is named by its key').toContain(String(pair!.key))
+
+  // AND THE VIEW SAYS SO (6.4): the materialized row carries `via` per handle, which is what draws
+  // "aligned by dates" under the play button rather than a badge nobody can explain
+  const [cluster] = await rowsOf(
+    "MATCH (m:Media {uri: 'anilist:108465'})-[:MEMBER_OF]->(c:Cluster) RETURN c.episodes AS episodes"
+  )
+  const episodes = JSON.parse(String(cluster!.episodes)) as { handles: { via: string, node: { uri: string } }[] }[]
+  const handles = episodes[0]!.handles
+  expect(handles.find(handle => handle.node.uri === 'cr:G609CX3J4-1')?.via).toBe('aligned')
+  expect(handles.find(handle => handle.node.uri === 'anizip:14758-1')?.via).toBe('member')
+})
+
+// A FOREIGN ROW WITH NO PAIR FILLS NOTHING (4.4, 5.4 P5). The lent season's first twelve rows are the
+// PREVIOUS cour's: they are hung on this run's member, they carry dates and numbers, and the only
+// thing that keeps them off the page is that no day of theirs met a reference day.
+// Mutation: pair every episode with every row carrying the same number (drop the `EPISODE_LINK` join
+// from `readAlignedRows` and take `b.episodeNumber` as the target) and all twenty-four land on cour
+// 2's twelve rows, which is the positional loan verbatim: cour 1's episodes under cour 2's urls.
+test('a lent row that pairs with nothing reaches no slot, while its paired neighbours do', async () => {
+  const fills = await fillsFrom('cr:GSP1-')
+  const numbered = fills.map(fill => Number(fill.uri.split('-')[1])).sort((a, b) => a - b)
+  expect(numbered, 'only the twelve that paired').toEqual(Array.from({ length: 12 }, (_, index) => index + 13))
+  expect(fills.every(fill => fill.via === 'aligned')).toBe(true)
+  expect(fills.map(fill => fill.number).sort((a, b) => (a ?? 0) - (b ?? 0)))
+    .toEqual(Array.from({ length: 12 }, (_, index) => index + 1))
+  expect(fills.every(fill => fill.supports.length === 2), 'the hang and the pair').toBe(true)
+})
+
+// 8.2 THROUGH THE VIEW: the Crunchyroll rows are MEMBERS here, so they fill by the member rule, and
+// the number they fill at is the pair's (`consensus.ts:247-251`, "the stored node keeps Crunchyroll's
+// own number"). `via` says where the number came from (3.2), which is the pair and not the row.
+// Mutation: drop the `renumber` lookup in `slotsOf`'s `numberOf` and the eight rows sit at 13 to 20,
+// which is the twenty-row page; keep the renumbering and stamp `member` and the trace claims
+// Crunchyroll numbered them 1 to 8 itself.
+test('8.2 the renumbered member rows fill 1 to 8, and say a pair put them there', async () => {
+  const fills = await fillsFrom('cr:GS00366034-')
+  expect(fills.map(fill => [Number(fill.uri.split('-')[1]), fill.number])).toEqual(
+    Array.from({ length: 8 }, (_, index) => [index + 13, index + 1])
+  )
+  expect(fills.every(fill => fill.via === 'aligned')).toBe(true)
+  expect(fills.every(fill => fill.slotNumber === fill.number), 'each shares the slot it renumbered onto').toBe(true)
+  expect(fills.every(fill => fill.supports.length === 2), 'its own hang and the pair').toBe(true)
+
+  // and the slot it joined is anizip's, which is what makes it one row rather than twenty
+  const [slot] = await rowsOf(
+    `MATCH (e:Episode {uri: 'cr:GS00366034-13'})-[:FILLS]->(s:Slot)<-[:FILLS]-(o:Episode)
+     RETURN collect(o.uri) AS uris`
+  )
+  expect((slot!.uris as string[]).sort()).toEqual(['anizip:18903-1', 'cr:GS00366034-13', 'kitsu:49265-1'])
+})
+
 // ---------------------------------------------------------------------------------------------
 // 8.3, the special that broke the offset vote.
 
@@ -555,6 +719,83 @@ test('a second pass over the same graph writes nothing', async () => {
     'includes-inside': 0, 'part-of-inside': 0, 'cross-scope-link': 0, 'double-membership': 0,
   })
 })
+
+// ---------------------------------------------------------------------------------------------
+// The fourth input: `EPISODE_CLAIMS`, placed rather than proven.
+
+// A CLAIM INSIDE ONE RUN IS A PAIR, AND A CLAIM ACROSS TWO RUNS IS A REFUSAL WRITTEN DOWN. That is
+// `db.ts:410`'s union with the guards it never had ("accepts a uri that was never set"), and the
+// refused row is what makes "why is there no button here" a query rather than a silence.
+// Mutation: return true from `placesClaim` and the foreign claim welds two runs' episodes, which is
+// the union that had no guard; drop `status` from the writer's `EPISODE_LINK` row and the refusal is
+// written ACTIVE, so a source's word alone places a play button.
+test('an episode claim inside one cluster is asserted, and one across two runs is refused', async () => {
+  const [asserted] = await pairsBetween('anilist:950-1', 'mal:950-1')
+  expect({ status: asserted?.status, reason: asserted?.reason, by: asserted?.by }).toEqual({
+    status: 'active', reason: 'asserted', by: 'plugin:range',
+  })
+  expect(Number(asserted?.confidence)).toBe(1)
+  expect([Number(asserted?.fromNumber), Number(asserted?.toNumber)], "the two rows' own numbers").toEqual([1, 1])
+
+  // `supports` names the claim, which is what a trace descends to the Answer through (3.2)
+  const [claim] = await rowsOf(
+    `MATCH (a:Episode {uri: 'anilist:950-1'})-[c:EPISODE_CLAIMS]->(b:Episode {uri: 'mal:950-1'})
+     RETURN c.key AS key, c.kind AS kind, c.claimer AS claimer`
+  )
+  expect(claim!.kind).toBe('SAME_AS')
+  expect(asserted?.supports).toEqual([String(claim!.key)])
+
+  const [foreign] = await pairsBetween('anilist:960-1', 'kitsu:970-1')
+  expect({ status: foreign?.status, reason: foreign?.reason }).toEqual({
+    status: 'refused', reason: 'foreign-episode',
+  })
+
+  // and the refusal places nothing: a refused pair is not read by the view (5.4 P5)
+  const fills = await fillsFrom('anilist:960-1')
+  expect(fills.map(fill => fill.via), 'its own slot as a member, and no slot of the other run').toEqual(['member'])
+})
+
+// THE REFUSAL IS RE-DECIDED EVERY PASS, because its premise is the membership and nothing else: the
+// two rows becoming one cluster flips it to active, and the cluster splitting flips it back. The row
+// is UPDATED in place rather than deleted and re-created, which is the writer's diff on a property
+// that moved (5.2) and what keeps a trace's key stable across the flip.
+// Mutation: place a claimed row by the MEDIA it hangs on rather than by that media's CLUSTER (return
+// `m.uri` from `MEMBER_EPISODE_SCAN`) and the weld places nothing, because two members of one cluster
+// are then two different places, which is the union-by-uri this rule replaces.
+test('a refused episode claim flips to active when the two rows become one cluster, and back', async () => {
+  const statusOf = async () => (await pairsBetween('anilist:960-1', 'kitsu:970-1'))[0]
+  const before = await statusOf()
+  expect(before?.status).toBe('refused')
+
+  // the weld: a source claim joining the two runs, which is `plugin:direct`'s class 0
+  await ingestAnswers([
+    await answer('media', media('anilist:960', {
+      score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 2, startDate: CLAIMED[0],
+      titles: [title('en', 'Foreign Left')],
+      handles: [sameAs(media('kitsu:970', { score: 0.3 }))],
+    })),
+  ])
+  await runPass()
+  const welded = await statusOf()
+  expect({ status: welded?.status, reason: welded?.reason }).toEqual({ status: 'active', reason: 'asserted' })
+  expect(welded?.key, 'the same edge, updated in place').toBe(before?.key)
+
+  // and the split, with only the two plugins that read membership: `plugin:direct` re-proposes from
+  // the claim every pass, which is the sticky rule doing its job (5.2)
+  const { query } = await graphReady()
+  await query(
+    `MATCH (a:Media {uri: 'anilist:960'})-[l:LINK]->(b:Media {uri: 'kitsu:970'})
+     WHERE l.kind = 'SAME_AS' AND l.status = 'active' DELETE l`
+  )
+  await runPlugins([aggregatePlugin, rangePlugin], { reason: 'manual' })
+  const split = await statusOf()
+  expect({ status: split?.status, reason: split?.reason }).toEqual({ status: 'refused', reason: 'foreign-episode' })
+
+  // back to the fixed point the cases after this one read
+  await runPass()
+  expect((await statusOf())?.status).toBe('active')
+  // three full passes, which is over the 5 s default when the suites run side by side
+}, 300_000)
 
 // ---------------------------------------------------------------------------------------------
 // The rules themselves, without an engine: every refusal `consensus.ts:105-110` records, and the two
@@ -729,6 +970,23 @@ test('the hull reports a gap rather than smoothing it', () => {
     .toMatchObject({ fromStart: 1, fromEnd: 13, toStart: 1, toEnd: 13, contiguous: true })
 })
 
+// PLACING A CLAIM IS THREE CASES AND A REFUSAL, and the refusal is the interesting one: two rows that
+// only share an ATTACHMENT are two seasons hanging off one run, which is the fold this file proves
+// episode by episode. A source asserting across it is asserting the thing a pair demonstrates.
+// Mutation: admit two attached rows as well and a Crunchyroll season's episode pairs with a Netflix
+// season's on nothing but both being `PART_OF` the same run; drop the member-to-attached case and
+// 8.1's season rows can never be claimed onto the run at all.
+test('a claim is placed inside one cluster, or across one attachment, and nowhere else', () => {
+  const place = (members: string[], attached: string[] = []) => ({ members, attached })
+  expect(placesClaim(place(['cl:a']), place(['cl:a'])), 'both rows on members of one cluster').toBe(true)
+  expect(placesClaim(place(['cl:a']), place([], ['cl:a'])), 'a member and a season attached to it').toBe(true)
+  expect(placesClaim(place([], ['cl:a']), place(['cl:a'])), 'and the same the other way round').toBe(true)
+  expect(placesClaim(place([], ['cl:a']), place([], ['cl:a'])), 'two seasons attached to one run').toBe(false)
+  expect(placesClaim(place(['cl:a']), place(['cl:b'])), 'two runs nothing joins').toBe(false)
+  expect(placesClaim(place([]), place([])), 'a row in no cluster at all').toBe(false)
+  expect(placesClaim(place(['cl:a', 'cl:b']), place(['cl:b'])), 'one shared cluster is enough').toBe(true)
+})
+
 // CLASS 3 IS SELECTED BY NUMBER, and an origin that already fits has nothing to renumber.
 // Mutation: make `numbersOutsideRun` true for everything and every member is paired against every
 // other, which is a cartesian product over a cluster rather than a repair.
@@ -764,10 +1022,18 @@ test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
   // cases above built by hand, which is the shape of a number that proves nothing
   const countOf = async (cypher: string) => Number((await rowsOf(cypher))[0]!.total)
   const PAIRS = "MATCH ()-[l:EPISODE_LINK]->() WHERE l.by = 'plugin:range' RETURN count(l) AS total"
+  const ACTIVE_PAIRS =
+    "MATCH ()-[l:EPISODE_LINK]->() WHERE l.by = 'plugin:range' AND l.status = 'active' RETURN count(l) AS total"
+  const REFUSED_PAIRS =
+    "MATCH ()-[l:EPISODE_LINK]->() WHERE l.by = 'plugin:range' AND l.status = 'refused' RETURN count(l) AS total"
+  // what the pairs are FOR: the rows they place on a slot a member already fills (5.4 P5)
+  const ALIGNED = "MATCH ()-[f:FILLS]->() WHERE f.via = 'aligned' RETURN count(f) AS total"
   const RANGES = "MATCH ()-[l:LINK]->() WHERE l.by = 'plugin:range' AND l.status = 'active' RETURN count(l) AS total"
   const REFUSED = "MATCH ()-[l:LINK]->() WHERE l.by = 'plugin:range' AND l.status = 'refused' RETURN count(l) AS total"
   const seeded = {
-    pairs: await countOf(PAIRS), ranges: await countOf(RANGES), refusals: await countOf(REFUSED),
+    pairs: await countOf(PAIRS), activePairs: await countOf(ACTIVE_PAIRS),
+    refusedPairs: await countOf(REFUSED_PAIRS), alignedFills: await countOf(ALIGNED),
+    ranges: await countOf(RANGES), refusals: await countOf(REFUSED),
   }
 
   const ingested = await replayAnswers(rows)
@@ -784,7 +1050,7 @@ test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
 
   const byRule = await rowsOf(
     `MATCH ()-[l:EPISODE_LINK]->() WHERE l.by = 'plugin:range'
-     RETURN l.reason AS reason, count(l) AS total ORDER BY reason`
+     RETURN l.reason AS reason, l.status AS status, count(l) AS total ORDER BY reason, status`
   )
   const ranges = await rowsOf(
     `MATCH ()-[l:LINK]->() WHERE l.by = 'plugin:range' AND l.status = 'active'
@@ -811,7 +1077,7 @@ test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
   expect(outside).toEqual([])
 
   console.info('plugin:range over 800 corpus rows:', JSON.stringify({
-    pairsByRule: Object.fromEntries(byRule.map(row => [String(row.reason), Number(row.total)])),
+    pairsByRule: Object.fromEntries(byRule.map(row => [`${String(row.reason)} ${String(row.status)}`, Number(row.total)])),
     ranges: Object.fromEntries(ranges.map(row => [String(row.kind), Number(row.total)])),
     refusals: Object.fromEntries(refusals.map(row => [String(row.reason), Number(row.total)])),
     seeded,
@@ -824,11 +1090,29 @@ test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
     )).map(row => `${row.fromOrigin} to ${row.toOrigin}: ${Number(row.total)}`),
     fromTheRecordedPage: {
       pairs: await countOf(PAIRS) - seeded.pairs,
+      activePairs: await countOf(ACTIVE_PAIRS) - seeded.activePairs,
+      refusedPairs: await countOf(REFUSED_PAIRS) - seeded.refusedPairs,
+      alignedFills: await countOf(ALIGNED) - seeded.alignedFills,
       ranges: await countOf(RANGES) - seeded.ranges,
       refusals: await countOf(REFUSED) - seeded.refusals,
     },
     // what the plugin itself said it did, which is the only place a refused candidate with no `LINK`
     // to write on (a lend, a member) is counted at all
+    // what the page GIVES the three classes, since a plugin that finds nothing and a page that
+    // carries nothing look identical in a count of pairs
+    material: {
+      hasEpisode: await countOf('MATCH ()-[h:HAS_EPISODE]->() RETURN count(h) AS total'),
+      // the lend measured WITHOUT the membership join, so a count of zero is a fact about what the
+      // ingest wrote rather than about what the aggregate clustered
+      lentAnywhere: await countOf(
+        "MATCH (m:Media)-[h:HAS_EPISODE]->(:Episode) WHERE h.claimer <> m.origin RETURN count(h) AS total"
+      ),
+      lentOntoMembers: await countOf(
+        `MATCH (c:Cluster)<-[:MEMBER_OF]-(m:Media)-[h:HAS_EPISODE]->(:Episode)
+         WHERE c.scope = 'RUN' AND h.claimer <> m.origin RETURN count(h) AS total`
+      ),
+      episodeClaims: await countOf('MATCH ()-[c:EPISODE_CLAIMS]->() RETURN count(c) AS total'),
+    },
     log: pass.logs.filter(event => event.rule === 'range').map(event => event.detail),
     iterations: pass.iterations,
     passMs,

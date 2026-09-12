@@ -43,19 +43,14 @@
  *   lands as `asserted` (`plugin:direct`'s table), and 8.1 is exactly that row until a source ships
  *   `containing` (4.4).
  *
- * WHAT IS NOT HERE, and is not this step's:
- * - `EPISODE_CLAIMS`, the fourth input of 5.4 P4. A `SAME_AS` there becomes an `EPISODE_LINK` reason
- *   `asserted` or a refused `foreign-episode` row, and the writer has no way to express the refused
- *   half today: it stamps `status: 'active'` on every `EPISODE_LINK` it writes (`writer.ts:598`).
- * - `plugin:aggregate` placing `FILLS {via: 'aligned'}` from these rows, which is a FOLLOW-UP in that
- *   file and not this step's: it already reads active `EPISODE_LINK`s and renumbers a MEMBER row by a
- *   pair's `toNumber`, and three things are still missing. Its `readEpisodes` keeps only
- *   `HAS_EPISODE` rows whose claimer is the member's own origin (5.4 P5's fence), so a season's own
- *   episode and a lent one never reach `own` and cannot fill a slot however well proven; a filled row
- *   carries `via: 'member'` unconditionally, where a row placed by a pair is `via: 'aligned'`; and
- *   `FILLS.supports` should name the pair beside the `HAS_EPISODE` key. The fence stays for
- *   everything else: a foreign row reaches a slot ONLY through a pair written here, onto a reference
- *   member episode of that same cluster, at the pair's `toNumber` (4.4, 8.1's play buttons).
+ * THE FOURTH INPUT, `EPISODE_CLAIMS`, is the one rule here that weighs no evidence of its own: a
+ * source said two episodes are the same, and all this plugin decides is whether the two rows are
+ * anywhere near each other in the graph. Inside one RUN cluster, or across an active attachment, it
+ * is an `asserted` pair; anywhere else it is written REFUSED `foreign-episode`, which is
+ * `db.ts:410`'s union with the guards it never had ("accepts a uri that was never set"). It is the
+ * only reader that table has. The refusal is a row rather than a silence because the claim edge is
+ * already there to hang it off, which is the same test the lend and member classes fail below: a
+ * plugin may not invent an edge to carry its own silence.
  */
 import type { EpisodeLinkProposal, LinkProposal, Plugin, PluginContext, PluginOutput } from './contract'
 
@@ -406,6 +401,41 @@ const LEND_SCAN =
      e.episodeNumber AS number, pe.day AS day, pe.titleKeys AS keys, h.key AS hung
    ORDER BY runCluster, claimer, uri, hung`
 
+/** The fourth input: every episode `SAME_AS` a source stated, which is the only reader that table has. */
+const EPISODE_CLAIM_SCAN =
+  `MATCH (a:Episode)-[c:EPISODE_CLAIMS]->(b:Episode)
+   WHERE c.kind = 'SAME_AS'
+   RETURN a.uri AS fromUri, b.uri AS toUri, c.key AS claimKey,
+     a.episodeNumber AS fromNumber, b.episodeNumber AS toNumber
+   ORDER BY fromUri, toUri, claimKey`
+
+/**
+ * Where a claimed episode SITS: the run clusters whose members hang it, by whatever claimer (4.4).
+ *
+ * Unlike `OURS_SCAN` this asks nothing about the claimer, because the question here is not whose
+ * numbering to trust but whether the two rows of a claim are describing one run at all.
+ */
+const MEMBER_EPISODE_SCAN =
+  `MATCH (c:Cluster)<-[:MEMBER_OF]-(m:Media)-[:HAS_EPISODE]->(e:Episode)
+   WHERE c.scope = 'RUN'
+   RETURN c.id AS clusterId, e.uri AS uri
+   ORDER BY clusterId, uri`
+
+/**
+ * The other side of the same question: episodes of a season ATTACHED to a run by an active
+ * `PART_OF`, which is the one hop a claim may cross (5.4 P4).
+ *
+ * Undirected for `SEASON_SCAN`'s reason: a downgrade points from the shorter side to the longer, so a
+ * directed scan sees one of the two directions a containment can take. Any reason counts here, where
+ * the candidate scan takes only the uncertain ones: a claim is not being PROVEN, it is being placed.
+ */
+const ATTACHED_EPISODE_SCAN =
+  `MATCH (c:Cluster)<-[:MEMBER_OF]-(r:Media)-[l:LINK]-(s:Media)-[h:HAS_EPISODE]->(e:Episode)
+   WHERE c.scope = 'RUN' AND l.kind = 'PART_OF' AND l.status = 'active' AND s.uri <> r.uri
+     AND h.claimer = s.origin
+   RETURN c.id AS clusterId, e.uri AS uri
+   ORDER BY clusterId, uri`
+
 const asText = (value: unknown): string | null => (typeof value === 'string' && value ? value : null)
 const asNumber = (value: unknown): number | null =>
   value === null || value === undefined ? null : Number.isFinite(Number(value)) ? Number(value) : null
@@ -439,6 +469,23 @@ const episodeOf = (row: Record<string, unknown>): SideEpisode => ({
   hung: String(row.hung ?? ''),
 })
 
+/** Where one claimed episode sits: the run clusters that hold it, as a member's row or as a season's. */
+export type Placement = { members: readonly string[], attached: readonly string[] }
+
+/**
+ * Whether an `EPISODE_CLAIMS` row may become an `asserted` pair (5.4 P4).
+ *
+ * The claim is admitted when both rows hang on members of ONE run cluster, or when one hangs on a
+ * member and the other on a season attached to that same cluster by an active `PART_OF`. Two rows
+ * that only share an ATTACHMENT are refused: two seasons hanging off one run is exactly the fold
+ * this file exists to prove episode by episode, and a source asserting across it is asserting the
+ * thing a pair is supposed to demonstrate.
+ */
+export const placesClaim = (from: Placement, to: Placement): boolean => {
+  const shares = (a: readonly string[], b: readonly string[]): boolean => a.some(id => b.includes(id))
+  return shares(from.members, to.members) || shares(from.members, to.attached) || shares(from.attached, to.members)
+}
+
 /**
  * Class 3, in JS: a member ORIGIN whose own numbering does not fit `1..runLength`.
  *
@@ -465,7 +512,7 @@ export const rangePlugin: Plugin = {
   id: 'plugin:range',
   consumes: {
     nodes: ['Cluster', 'Episode', 'EpisodeProfile', 'MediaProfile'],
-    edges: ['MEMBER_OF', 'LINK', 'HAS_EPISODE'],
+    edges: ['MEMBER_OF', 'LINK', 'HAS_EPISODE', 'EPISODE_CLAIMS'],
     kinds: ['PART_OF'],
   },
   produces: { nodes: [], edges: ['LINK', 'EPISODE_LINK'], kinds: ['INCLUDES'] },
@@ -473,12 +520,15 @@ export const rangePlugin: Plugin = {
   version: RANGE_VERSION,
   run: async (ctx: PluginContext): Promise<PluginOutput> => {
     type Row = Record<string, unknown>
-    const [clusterRows, memberRows, ourRows, seasonRows, lendRows] = await Promise.all([
+    const [clusterRows, memberRows, ourRows, seasonRows, lendRows, claimRows, placedRows, attachedRows] = await Promise.all([
       ctx.query<Row>(CLUSTER_SCAN),
       ctx.query<Row>(MEMBER_SCAN),
       ctx.query<Row>(OURS_SCAN),
       ctx.query<Row>(SEASON_SCAN),
       ctx.query<Row>(LEND_SCAN),
+      ctx.query<Row>(EPISODE_CLAIM_SCAN),
+      ctx.query<Row>(MEMBER_EPISODE_SCAN),
+      ctx.query<Row>(ATTACHED_EPISODE_SCAN),
     ])
 
     const members = new Map<string, Set<string>>()
@@ -497,7 +547,7 @@ export const rangePlugin: Plugin = {
     // candidate reached twice, and the `INCLUDES` it may mint is one edge whatever the claims say
     const seasons = new Map<string, Candidate>()
     for (const row of seasonRows) {
-      const key = `${String(row.runCluster)} ${String(row.seasonUri)}`
+      const key = `${String(row.runCluster)}\u0000${String(row.seasonUri)}`
       const candidate = seasons.get(key) ?? {
         clusterId: String(row.runCluster),
         kind: 'season' as const,
@@ -526,7 +576,7 @@ export const rangePlugin: Plugin = {
     // CLASS 2, grouped by (cluster, claimer): a lend has no row of its own to key on
     const lends = new Map<string, Candidate>()
     for (const row of lendRows) {
-      const key = `${String(row.runCluster)} ${String(row.claimer)}`
+      const key = `${String(row.runCluster)}\u0000${String(row.claimer)}`
       const candidate = lends.get(key) ?? {
         clusterId: String(row.runCluster),
         kind: 'lend' as const,
@@ -655,11 +705,66 @@ export const rangePlugin: Plugin = {
       }
     }
 
-    if (dated || titled || refused) {
+    // THE FOURTH INPUT (5.4 P4): a source's own episode `SAME_AS`, PLACED rather than proven. It runs
+    // after the rules because a pair the dates or the titles demonstrated is the stronger row and
+    // keys identically (`from`, `to`, `by`): an assertion may not overwrite a proof.
+    const placementOf = (rows: Row[]): Map<string, string[]> => {
+      const places = new Map<string, string[]>()
+      for (const row of rows) {
+        const uri = String(row.uri)
+        const clusterId = String(row.clusterId)
+        const held = places.get(uri) ?? []
+        if (!held.includes(clusterId)) places.set(uri, [...held, clusterId])
+      }
+      return places
+    }
+    const placed = placementOf(placedRows)
+    const attached = placementOf(attachedRows)
+    const placeOf = (uri: string): Placement => ({ members: placed.get(uri) ?? [], attached: attached.get(uri) ?? [] })
+
+    // grouped by PAIR, because two sources can claim one pair of rows and the edge is one edge; its
+    // `supports` then names both claims, sorted for the reason the candidate scan sorts its own
+    const claims = new Map<string, { fromUri: string, toUri: string, fromNumber: number | null, toNumber: number | null, keys: string[] }>()
+    const proven = new Set(episodeLinks.map(link => `${link.fromUri} ${link.toUri}`))
+    for (const row of claimRows) {
+      const fromUri = String(row.fromUri)
+      const toUri = String(row.toUri)
+      // a row is not a pair with itself, which is guard `self` of 5.2 at episode scale (`db.ts:283-286`)
+      if (fromUri === toUri) continue
+      const key = `${fromUri} ${toUri}`
+      if (proven.has(key)) continue
+      const claim = claims.get(key) ?? {
+        fromUri, toUri, fromNumber: asNumber(row.fromNumber), toNumber: asNumber(row.toNumber), keys: [],
+      }
+      const claimKey = asText(row.claimKey)
+      if (claimKey && !claim.keys.includes(claimKey)) claim.keys.push(claimKey)
+      claims.set(key, claim)
+    }
+
+    let asserted = 0
+    let foreign = 0
+    for (const claim of [...claims.values()].sort((a, b) => compare(a.fromUri, b.fromUri) || compare(a.toUri, b.toUri))) {
+      const ok = placesClaim(placeOf(claim.fromUri), placeOf(claim.toUri))
+      if (ok) asserted += 1
+      else foreign += 1
+      episodeLinks.push({
+        fromUri: claim.fromUri,
+        toUri: claim.toUri,
+        status: ok ? 'active' : 'refused',
+        reason: ok ? 'asserted' : 'foreign-episode',
+        confidence: 1,
+        fromNumber: claim.fromNumber,
+        toNumber: claim.toNumber,
+        supports: [...claim.keys].sort(compare),
+      })
+    }
+
+    if (dated || titled || refused || asserted || foreign) {
       ctx.log({
         level: 'info',
         rule: 'range',
-        detail: `${dated} pairs by date, ${titled} by title, ${refused} candidates refused`,
+        detail: `${dated} pairs by date, ${titled} by title, ${refused} candidates refused, `
+          + `${asserted} claims asserted, ${foreign} refused as foreign`,
       })
     }
 

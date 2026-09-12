@@ -87,11 +87,24 @@ export type LinkProposal = {
 export type EpisodeLinkProposal = {
   fromUri: string
   toUri: string
+  /**
+   * `refused` for a pair the PLUGIN weighed and turned down, which is the only way the fourth input
+   * of 5.4 P4 can say so: an `EPISODE_CLAIMS` row whose two episodes sit in no common cluster is
+   * written `refused` with reason `foreign-episode` rather than dropped, so "why is there no button"
+   * is a query. Absent means `active`. No guard is asked: the nine of 5.2 weigh media sameness, and
+   * an episode pair is proven by the rule that proposed it.
+   */
+  status?: 'active' | 'refused'
   reason: string
   confidence: number
   evidence?: unknown
-  fromNumber: number
-  toNumber: number
+  /**
+   * The two rows' own numbers, so a renumbering is readable off the edge. NULL where a side carries
+   * none: an asserted claim between two specials is a pair whatever either side is numbered, and
+   * `plugin:aggregate` fills a slot from `toNumber` only when it is a positive whole number.
+   */
+  fromNumber: number | null
+  toNumber: number | null
   supports: string[]
 }
 

@@ -26,7 +26,9 @@ import { graphReady } from '../../../../../src/worker/graph/schema'
 import { resetPassState, runPlugins } from '../../../../../src/worker/graph/plugins/runner'
 import { profilePlugin } from '../../../../../src/worker/graph/plugins/profile'
 import { directPlugin } from '../../../../../src/worker/graph/plugins/direct'
-import { aggregatePlugin, carryIds, containerMayMintSlots, runLengthOf, trimsRow } from '../../../../../src/worker/graph/plugins/aggregate'
+import {
+  aggregatePlugin, alignedFillsOf, carryIds, containerMayMintSlots, runLengthOf, trimsRow,
+} from '../../../../../src/worker/graph/plugins/aggregate'
 import { aggregateFields } from '../../../../../src/worker/graph/plugins/fields'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
 import { runEpisodes, runLength } from '../../../../../src/worker/store/consensus'
@@ -228,6 +230,21 @@ beforeAll(async () => {
     })),
     await answer('media', media('nf:80000-1', { score: 0.2, type: 'TV', titles: [title('en', 'Netflix two')] })),
 
+    // I. THE FENCE ON `own` (5.4 P5): a foreign claimer hangs ITS OWN episode on a member's uri,
+    // which is the transitional lend of 4.4. The claimer is the answering origin, so Crunchyroll's
+    // answer carrying a row addressed to the AniList uri is exactly that shape
+    await answer('media', media('anilist:800', {
+      score: 0.8, type: 'TV', episodeCount: 2, titles: [title('en', 'Lent')],
+      episodes: [
+        episode('anilist:800-1', 'anilist:800', { episodeNumber: 1, titles: [title('en', 'One')] }),
+        episode('anilist:800-2', 'anilist:800', { episodeNumber: 2, titles: [title('en', 'Two')] }),
+      ],
+    })),
+    await answer('media', media('cr:800', {
+      score: 0.5, type: 'TV', titles: [title('en', 'Lent on 800')],
+      episodes: [episode('cr:800-1', 'anilist:800', { episodeNumber: 1, titles: [title('en', 'Stream One')] })],
+    })),
+
     // H. THE CARRY: two clusters that a later answer merges, and a later pass splits again
     await answer('media', media('anilist:700', {
       score: 0.8, type: 'TV', titles: [title('en', 'Carried')],
@@ -352,6 +369,59 @@ test('two sources over one run give one list, and a special takes no numbered sl
   expect(episodes.map(row => row.episodeNumber)).toEqual([1, 2, null])
   expect(episodes[0]!.mediaUri, 'every row links back to the cluster, never to its own uri').toBe(cluster!.aggUri)
   expect((episodes[0]!.handles as unknown[]).length, 'three rows are one episode').toBe(3)
+})
+
+// A MEMBER'S EPISODES ARE THE ONES ITS OWN ORIGIN HUNG (5.4 P5's fence). A season that contains this
+// run, and a lend, both arrive as `HAS_EPISODE` rows on a member's uri, and neither is this run's
+// numbering: the row stays in the graph as evidence and reaches a slot only through a proven pair.
+// Mutation: drop `WHERE h.claimer = m.origin` from `readEpisodes` and `cr:800-1` joins slot 1 with no
+// pair behind it, which is a play button placed by a number, the loan 5.4 P5 exists to refuse.
+test('a HAS_EPISODE row a foreign claimer hung on a member never reaches its slots', async () => {
+  const slots = await slotsOf('anilist:800')
+  expect(slots.map(slot => slot.number)).toEqual([1, 2])
+  expect(slots[0]!.fills, "the member's own row, and only it").toEqual(['anilist:800-1'])
+
+  const [lent] = await rowsOf(
+    `MATCH (m:Media {uri: 'anilist:800'})-[h:HAS_EPISODE]->(e:Episode {uri: 'cr:800-1'})
+     OPTIONAL MATCH (e)-[f:FILLS]->(s:Slot)
+     RETURN h.claimer AS claimer, count(f) AS fills`
+  )
+  expect(lent!.claimer, 'the row is hung on the member, by Crunchyroll').toBe('cr')
+  expect(Number(lent!.fills), 'and it fills nothing at all').toBe(0)
+})
+
+// THE ALIGNED FILL AS A RULE (5.4 P5), which the graph cannot show once it has decided: a row placed
+// by a pair looks exactly like a row that was never offered. Every bar is here with the control that
+// must still fill, and the window bar is the one the graph cannot reach at all, since `plugin:range`
+// drops an out-of-window pair before it is ever written.
+// Mutation: drop the `runLength` test and the row at 12 lands on an eleven episode run; drop the
+// `slot.filled.includes` test and a lent season ADDS a row no member lists; drop the `own` test and a
+// member's own row is drawn twice, once by each rule.
+test('an aligned fill needs a pair, the window, and a slot a member already fills', () => {
+  const slots = [
+    { id: 'cl:x#1', number: 1, filled: ['anizip:x-1'] },
+    { id: 'cl:x#12', number: 12, filled: ['anizip:x-12'] },
+    { id: 'cl:x#s:anizip:x-S1', number: null, filled: ['anizip:x-S1'] },
+  ]
+  const pair = (uri: string, toUri: string, toNumber: number | null) =>
+    ({ uri, toUri, toNumber, supports: [`h:${uri}`, `l:${uri}`] })
+  const fills = (pairs: ReturnType<typeof pair>[], runLength: number | null = 12, own = new Set<string>()) =>
+    alignedFillsOf({ slots, runLength, own, pairs })
+
+  expect(fills([pair('cr:x-13', 'anizip:x-1', 1)]), 'the control: a pair onto a filled slot, in the window')
+    .toEqual([{ uri: 'cr:x-13', slotId: 'cl:x#1', number: 1, supports: ['h:cr:x-13', 'l:cr:x-13'] }])
+
+  expect(fills([pair('cr:x-24', 'anizip:x-12', 12)], 11), 'the window is the run length, not the slot list').toEqual([])
+  expect(fills([pair('cr:x-13', 'anizip:x-1', 1)], null), 'with no length, the slots are the only bound').toHaveLength(1)
+  expect(fills([pair('cr:x-13', 'anizip:x-1', null)]), 'a pair with no number places nothing').toEqual([])
+  expect(fills([pair('cr:x-13', 'anizip:x-1', 2)]), 'no slot at the pair number').toEqual([])
+  expect(fills([pair('cr:x-13', 'cr:x-99', 1)]), 'the slot at that number holds somebody else').toEqual([])
+  expect(fills([pair('anizip:x-1', 'anizip:x-1', 1)], 12, new Set(['anizip:x-1'])), 'a member fills by the member rule')
+    .toEqual([])
+
+  // two hangs of one row onto one slot is one fill, and the lowest target decides which keys it names
+  const twice = fills([pair('cr:x-13', 'anizip:x-1', 1), pair('cr:x-13', 'anizip:x-1', 1)])
+  expect(twice).toHaveLength(1)
 })
 
 // THE TRIM, through the graph: two witnesses at 12, tmdb at 0.4 in a strictly lower tier than 0.9,

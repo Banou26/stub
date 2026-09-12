@@ -15,7 +15,7 @@ import { ingestAnswers } from '../../../../../src/worker/graph/ingest'
 import { SOURCE_NODE_TABLES } from '../../../../../src/worker/graph/schema'
 import { acceptEveryPair } from '../../../../../src/worker/graph/plugins/guards'
 import { applyPluginOutput, columnsOf, retractPlugin } from '../../../../../src/worker/graph/plugins/writer'
-import { answer, media, rowsOf, title } from './fixtures'
+import { answer, episode, media, rowsOf, title } from './fixtures'
 
 const PLUGIN = {
   id: 'plugin:test' as PluginId,
@@ -24,6 +24,13 @@ const PLUGIN = {
     nodes: ['MediaProfile' as const, 'TitleKey' as const],
     edges: ['PROFILE_OF' as const, 'HAS_KEY' as const, 'LINK' as const],
   },
+}
+
+/** A second plugin, because `EPISODE_LINK` is a table the one above does not declare (case e). */
+const EPISODES = {
+  id: 'plugin:episodes' as PluginId,
+  version: 1,
+  produces: { nodes: [], edges: ['EPISODE_LINK' as const] },
 }
 
 const output = (scope: Scope, parts: Partial<PluginOutput> = {}): PluginOutput =>
@@ -46,8 +53,22 @@ beforeAll(async () => {
   await enableGraph(true)
   await ingestAnswers([
     await answer('media', media('mal:1', { titles: [title('en', 'Frieren')] })),
-    await answer('media', media('mal:2', { titles: [title('en', 'Ranking of Kings')] })),
-    await answer('media', media('mal:3')),
+    // the episodes hang off rows that already exist, so the media count the retract case reads is
+    // still three: what this file needs from them is two `Episode` endpoints an `EPISODE_LINK` can
+    // name, since a rel row whose endpoint matches no node writes nothing and reports nothing
+    await answer('media', media('mal:2', {
+      titles: [title('en', 'Ranking of Kings')],
+      episodes: [
+        episode('mal:2-1', 'mal:2', { episodeNumber: 1 }),
+        episode('mal:2-2', 'mal:2', { episodeNumber: 2 }),
+      ],
+    })),
+    await answer('media', media('mal:3', {
+      episodes: [
+        episode('mal:3-1', 'mal:3', { episodeNumber: 1 }),
+        episode('mal:3-2', 'mal:3', { episodeNumber: 2 }),
+      ],
+    })),
   ])
 })
 
@@ -219,6 +240,64 @@ test('a row naming a source table, or a table outside produces, is refused with 
 
   expect((await rowsOf('MATCH (m:Media {uri: "mal:1"}) RETURN m.scope AS scope'))[0]!.scope, 'nothing landed')
     .toBe('RUN')
+})
+
+// (g) AN EPISODE PAIR CARRIES THE PROPOSAL'S OWN VERDICT (5.4 P4's fourth input). A rule that turned
+// a claimed pair down has to be able to SAY so, the way a `LINK` says it, or the only two outcomes
+// available are an active pair and a silence, and a silence is not queryable.
+// Mutation: stamp `status: 'active'` on every `EPISODE_LINK` the writer builds (which is what it did
+// until this step) and the refused row below reads active, so a claim nothing placed puts a play
+// button on a row of another run.
+test('an episode pair is written with its own status, and a flip to active is an update', async () => {
+  const pair = (fromUri: string, toUri: string, extra: Record<string, unknown> = {}) => ({
+    fromUri, toUri, reason: 'dates', confidence: 1, fromNumber: 1, toNumber: 1, supports: ['claim'], ...extra,
+  })
+  const episodes = (parts: Record<string, unknown>[]) => applyPluginOutput({
+    ...EPISODES,
+    output: output({ full: true }, { episodeLinks: parts as PluginOutput['episodeLinks'] }),
+    prepare: acceptEveryPair,
+  })
+  const written = async () => rowsOf(
+    `MATCH (a:Episode)-[e:EPISODE_LINK]->(b:Episode)
+     RETURN a.uri AS from, b.uri AS to, e.status AS status, e.reason AS reason, e.kind AS kind,
+       e.fromNumber AS fromNumber, e.toNumber AS toNumber, e.supports AS supports
+     ORDER BY from, to`
+  )
+
+  const first = await episodes([
+    pair('mal:3-1', 'mal:2-1', { status: 'refused', reason: 'foreign-episode' }),
+    pair('mal:3-2', 'mal:2-2', { fromNumber: 2, toNumber: null, supports: ['claim', 'hang'] }),
+  ])
+  expect(first.counts.EPISODE_LINK).toEqual({ created: 2, updated: 0, deleted: 0 })
+  expect(await written()).toEqual([
+    {
+      from: 'mal:3-1', to: 'mal:2-1', kind: 'SAME_AS', status: 'refused', reason: 'foreign-episode',
+      fromNumber: 1, toNumber: 1, supports: ['claim'],
+    },
+    {
+      from: 'mal:3-2', to: 'mal:2-2', kind: 'SAME_AS', status: 'active', reason: 'dates',
+      // a side that carries no number of its own is NULL rather than a made-up one
+      fromNumber: 2, toNumber: null, supports: ['claim', 'hang'],
+    },
+  ])
+
+  const again = await episodes([
+    pair('mal:3-1', 'mal:2-1', { status: 'refused', reason: 'foreign-episode' }),
+    pair('mal:3-2', 'mal:2-2', { fromNumber: 2, toNumber: null, supports: ['claim', 'hang'] }),
+  ])
+  expect(again.changes, 'the same verdict twice is the same row').toEqual([])
+
+  // THE FLIP: the premise moved, so the verdict moved, and the row is SET rather than replaced, which
+  // is what keeps the key a trace descends by stable across it
+  const flipped = await episodes([
+    pair('mal:3-1', 'mal:2-1', { reason: 'asserted' }),
+    pair('mal:3-2', 'mal:2-2', { fromNumber: 2, toNumber: null, supports: ['claim', 'hang'] }),
+  ])
+  expect(flipped.counts.EPISODE_LINK).toEqual({ created: 0, updated: 1, deleted: 0 })
+  expect((await written())[0]).toMatchObject({ status: 'active', reason: 'asserted' })
+
+  await retractPlugin(EPISODES)
+  expect(await written(), 'and the plugin owns both of them, refused included').toEqual([])
 })
 
 // (f) THE COLUMN PARSER, which is why the writer cannot disagree with the DDL about a type. `Media`

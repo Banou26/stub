@@ -32,8 +32,10 @@
  *   (5.2). The RULES are `plugin:containment`'s and are imported from it (6.1, 6.5, 5.4 P2), computed
  *   over the same active containment edges that plugin turns into `ATTACHED_TO`, so the two cannot
  *   disagree about an attachment and the verdict needs no round trip and no second iteration.
- * - `via: 'aligned'` fills arrive with `plugin:range`'s `EPISODE_LINK` rows (5.4 P4). The renumbering
- *   is read here already, so a pair changes the numbering of an existing slot rather than the code.
+ * - `via: 'aligned'` fills are the pairs `plugin:range` proved (5.4 P4), and they are the ONLY way a
+ *   row that is not a member's own reaches a slot: at the pair's `toNumber`, inside `1..runLength`,
+ *   onto a slot a member already fills. A member row a pair renumbered is `aligned` too, because
+ *   `via` says where the NUMBER came from (3.2), which for those rows is the pair and not the row.
  */
 import type { Anomaly } from './anomalies'
 import type { ClusterFacts } from './containment'
@@ -52,6 +54,15 @@ export const AGGREGATE_VERSION = 1
 
 /** The id every minted cluster carries, so an id is readable as one at a glance in a trace. */
 const ID_PREFIX = 'cl:'
+
+/**
+ * `plugin:range`'s id, written out rather than imported.
+ *
+ * A pair that places a NON-member row has to be one a rule proved (5.4 P4, P5), so the aligned scan
+ * names its author; importing the plugin for its id would pull the whole rule module, its scorers and
+ * its constants into the view for one string.
+ */
+const RANGE = 'plugin:range'
 
 type Subject = {
   uri: string
@@ -176,6 +187,24 @@ const readContainment = async (ctx: PluginContext): Promise<ContainmentRow[]> =>
   }))
 }
 
+/** One episode row of either scan, with its own numbering and the key it hangs by. */
+const episodeRowOf = (row: Record<string, unknown>): EpisodeRow => {
+  const raw = parseRecord(row.raw)
+  return {
+    mediaUri: String(row.mediaUri),
+    uri: String(row.uri),
+    origin: String(row.origin ?? ''),
+    id: String(row.id ?? ''),
+    number: asNumber(row.episodeNumber),
+    seasonNumber: asNumber(row.seasonNumber),
+    numberSpace: asText(row.numberSpace) ?? 'season',
+    score: asNumber(raw.score),
+    raw,
+    fieldSeq: numbersOf(row.fieldSeq),
+    hasEpisodeKey: String(row.hasEpisodeKey ?? ''),
+  }
+}
+
 /**
  * The member episodes of 5.4 P5: `HAS_EPISODE` targets whose claimer is the member's OWN origin.
  *
@@ -193,32 +222,57 @@ const readEpisodes = async (ctx: PluginContext): Promise<EpisodeRow[]> => {
        e.fieldSeq AS fieldSeq, p.numberSpace AS numberSpace, h.key AS hasEpisodeKey
      ORDER BY mediaUri, uri`
   )
-  return rows.map(row => {
-    const raw = parseRecord(row.raw)
-    return {
-      mediaUri: String(row.mediaUri),
-      uri: String(row.uri),
-      origin: String(row.origin ?? ''),
-      id: String(row.id ?? ''),
-      number: asNumber(row.episodeNumber),
-      seasonNumber: asNumber(row.seasonNumber),
-      numberSpace: asText(row.numberSpace) ?? 'season',
-      score: asNumber(raw.score),
-      raw,
-      fieldSeq: numbersOf(row.fieldSeq),
-      hasEpisodeKey: String(row.hasEpisodeKey ?? ''),
-    }
-  })
+  return rows.map(episodeRowOf)
 }
 
-const readEpisodeLinks = async (ctx: PluginContext): Promise<{ fromUri: string, toUri: string, toNumber: number | null }[]> => {
+/** One active pair as the view reads it: which row, onto which row, at which number, by which key. */
+type EpisodeLinkRow = { fromUri: string, toUri: string, toNumber: number | null, key: string }
+
+const readEpisodeLinks = async (ctx: PluginContext): Promise<EpisodeLinkRow[]> => {
   const rows = await ctx.query<Record<string, unknown>>(
     `MATCH (a:Episode)-[l:EPISODE_LINK]->(b:Episode)
      WHERE l.status = 'active'
-     RETURN a.uri AS fromUri, b.uri AS toUri, l.toNumber AS toNumber
+     RETURN a.uri AS fromUri, b.uri AS toUri, l.toNumber AS toNumber, l.key AS linkKey
      ORDER BY fromUri, toUri`
   )
-  return rows.map(row => ({ fromUri: String(row.fromUri), toUri: String(row.toUri), toNumber: asNumber(row.toNumber) }))
+  return rows.map(row => ({
+    fromUri: String(row.fromUri),
+    toUri: String(row.toUri),
+    toNumber: asNumber(row.toNumber),
+    key: asText(row.linkKey) ?? '',
+  }))
+}
+
+/** A row a proven pair may place: the episode, the row it was paired onto, and the two keys it names. */
+type AlignedRow = { row: EpisodeRow, toUri: string, toNumber: number | null, linkKey: string }
+
+/**
+ * Every `HAS_EPISODE` row whose episode is the FROM side of an active `plugin:range` pair (5.4 P5).
+ *
+ * These are the rows `readEpisodes` fences out and the ONLY ones that can come back: a season's own
+ * episode, and an episode a foreign claimer hung on a member (the transitional lend of 4.4). The
+ * claimer is not tested here, because it is not what admits the row: the pair is, and a row hung on a
+ * member by the member's own origin is already in `own` and never reaches a slot twice.
+ */
+const readAlignedRows = async (ctx: PluginContext): Promise<AlignedRow[]> => {
+  const rows = await ctx.query<Record<string, unknown>>(
+    `MATCH (a:Episode)-[l:EPISODE_LINK]->(b:Episode)
+     WHERE l.status = 'active' AND l.by = $by
+     MATCH (m:Media)-[h:HAS_EPISODE]->(a)
+     MATCH (p:EpisodeProfile)-[:PROFILE_OF]->(a)
+     RETURN m.uri AS mediaUri, a.uri AS uri, a.origin AS origin, a.id AS id,
+       a.episodeNumber AS episodeNumber, a.seasonNumber AS seasonNumber, a.raw AS raw,
+       a.fieldSeq AS fieldSeq, p.numberSpace AS numberSpace, h.key AS hasEpisodeKey,
+       b.uri AS toUri, l.toNumber AS toNumber, l.key AS linkKey
+     ORDER BY uri, toUri, mediaUri`,
+    { by: RANGE }
+  )
+  return rows.map(row => ({
+    row: episodeRowOf(row),
+    toUri: String(row.toUri),
+    toNumber: asNumber(row.toNumber),
+    linkKey: asText(row.linkKey) ?? '',
+  }))
 }
 
 const readRelations = async (ctx: PluginContext): Promise<RelationRow[]> => {
@@ -538,12 +592,18 @@ const grouping = () => {
 
 const isPositiveWhole = (value: number | null): value is number => value !== null && Number.isInteger(value) && value >= 1
 
+/** One row filling a slot: how it got there, at what number, and the keys that prove it (3.2). */
+type Filled = { row: EpisodeRow, number: number | null, via: 'member' | 'aligned', supports: string[] }
+
 /** One slot as this pass computed it, with the rows that fill it. */
 type BuiltSlot = {
   id: string
   number: number | null
-  rows: { row: EpisodeRow, number: number | null, via: string }[]
+  rows: Filled[]
 }
+
+/** The numbering a proven pair gives one row for one cluster, and the pair that gave it. */
+type Renumbering = { number: number, key: string }
 
 /**
  * The slots of one cluster: its member episodes grouped by `EPISODE_LINK` component and then by
@@ -561,7 +621,7 @@ const slotsOf = (options: {
   clusterId: string
   episodes: EpisodeRow[]
   /** The numbering a proven pair gives a row for THIS cluster, when one exists (`FILLS.number`). */
-  renumber: Map<string, number>
+  renumber: Map<string, Renumbering>
   links: { fromUri: string, toUri: string }[]
 }): BuiltSlot[] => {
   const { clusterId, episodes } = options
@@ -573,7 +633,7 @@ const slotsOf = (options: {
   for (const link of options.links) {
     if (inCluster.has(link.fromUri) && inCluster.has(link.toUri)) groups.union(link.fromUri, link.toUri)
   }
-  const numberOf = (episode: EpisodeRow): number | null => options.renumber.get(episode.uri) ?? episode.number
+  const numberOf = (episode: EpisodeRow): number | null => options.renumber.get(episode.uri)?.number ?? episode.number
   const byNumber = new Map<number, string>()
   for (const episode of episodes) {
     const number = numberOf(episode)
@@ -598,13 +658,75 @@ const slotsOf = (options: {
     slots.push({
       id: number === null ? `${clusterId}#s:${root}` : `${clusterId}#${number}`,
       number,
-      rows: rows.map(row => ({ row, number: numberOf(row), via: 'member' })),
+      rows: rows.map(row => {
+        // `via` says where the NUMBER came from (3.2): a member row a pair renumbered is `aligned`
+        // and names that pair beside its own hang, which is 8.2's Crunchyroll 13 to 20 onto 1 to 8
+        const pair = options.renumber.get(row.uri)
+        return {
+          row,
+          number: numberOf(row),
+          via: pair ? 'aligned' as const : 'member' as const,
+          supports: [row.hasEpisodeKey, ...pair ? [pair.key] : []].filter(Boolean),
+        }
+      }),
     })
   }
   return slots.sort((a, b) =>
     (a.number === null ? 1 : 0) - (b.number === null ? 1 : 0)
     || (a.number ?? 0) - (b.number ?? 0)
     || compare(a.id, b.id))
+}
+
+/** One fill a proven pair placed: which row, which slot, and the number the pair gave it. */
+export type AlignedFill = { uri: string, slotId: string, number: number, supports: string[] }
+
+/**
+ * The `via: 'aligned'` fills of one cluster (5.4 P5): every row a proven pair places on a slot.
+ *
+ * A NON-MEMBER ROW REACHES A SLOT HERE AND NOWHERE ELSE, and three bars stand in front of it, each
+ * of them the difference between a play button and a wrong play button:
+ *
+ * - THE PAIR. Only an active `EPISODE_LINK` a rule wrote, never a number: "no positional loan
+ *   exists" (5.4 P5), because the loan was placed BY NUMBER onto a row that might not exist while a
+ *   pair is placed by shared evidence onto a row the run's own sources already list.
+ * - THE WINDOW `1..runLength`. A season that contains this run brings episodes on both sides of it
+ *   (`consensus.ts:185-191`), and a member row beyond the length that escaped the trim would
+ *   otherwise let a neighbouring cour's row in behind it.
+ * - A SLOT A MEMBER ALREADY FILLS, at the pair's own `toNumber`. So a lent season can never ADD a
+ *   row, and a pair whose target was trimmed out places nothing, since the row it would have joined
+ *   is not on the page either.
+ *
+ * A row of the cluster's own members is refused here whatever a pair says about it: it fills by the
+ * member rule, and admitting it twice would draw it twice.
+ */
+export const alignedFillsOf = (options: {
+  slots: readonly { id: string, number: number | null, filled: readonly string[] }[]
+  /** The cluster's agreed length, or NULL when its members state none: then only the slots bound it. */
+  runLength: number | null
+  /** The member episodes of this cluster, which fill by their own numbering (`via: 'member'`). */
+  own: ReadonlySet<string>
+  pairs: readonly { uri: string, toUri: string, toNumber: number | null, supports: string[] }[]
+}): AlignedFill[] => {
+  const byNumber = new Map<number, { id: string, filled: readonly string[] }>()
+  for (const slot of options.slots) {
+    if (slot.number !== null && !byNumber.has(slot.number)) byNumber.set(slot.number, slot)
+  }
+
+  const fills: AlignedFill[] = []
+  const placed = new Set<string>()
+  for (const pair of [...options.pairs].sort((a, b) => compare(a.uri, b.uri) || compare(a.toUri, b.toUri))) {
+    const number = pair.toNumber
+    if (!isPositiveWhole(number)) continue
+    if (options.own.has(pair.uri)) continue
+    if (options.runLength !== null && number > options.runLength) continue
+    const slot = byNumber.get(number)
+    if (!slot || !slot.filled.includes(pair.toUri)) continue
+    const key = `${pair.uri} ${slot.id}`
+    if (placed.has(key)) continue
+    placed.add(key)
+    fills.push({ uri: pair.uri, slotId: slot.id, number, supports: pair.supports })
+  }
+  return fills
 }
 
 /**
@@ -648,11 +770,12 @@ export const aggregatePlugin: Plugin = {
   version: AGGREGATE_VERSION,
   run: async (ctx: PluginContext): Promise<PluginOutput> => {
     const locationOrigin = typeof globalThis.location === 'undefined' ? '' : globalThis.location.origin
-    const [subjects, containment, episodeRows, episodeLinks, relations, components, previous] = await Promise.all([
+    const [subjects, containment, episodeRows, episodeLinks, alignedRows, relations, components, previous] = await Promise.all([
       readSubjects(ctx),
       readContainment(ctx),
       readEpisodes(ctx),
       readEpisodeLinks(ctx),
+      readAlignedRows(ctx),
       readRelations(ctx),
       // ONE closure for the whole store, shared with the guards so the two can never disagree about
       // what a component is (3.5). The harness asserts it equals a breadth-first search over the same
@@ -721,9 +844,15 @@ export const aggregatePlugin: Plugin = {
     for (const episode of episodeRows) {
       episodesByMedia.set(episode.mediaUri, [...episodesByMedia.get(episode.mediaUri) ?? [], episode])
     }
-    const renumberOnto = new Map<string, { toUri: string, number: number }>()
+    const renumberOnto = new Map<string, { toUri: string, number: number, key: string }>()
     for (const link of episodeLinks) {
-      if (link.toNumber !== null) renumberOnto.set(link.fromUri, { toUri: link.toUri, number: link.toNumber })
+      if (link.toNumber !== null) renumberOnto.set(link.fromUri, { toUri: link.toUri, number: link.toNumber, key: link.key })
+    }
+    // the pairs indexed by the row they point AT, so a cluster asks only about the rows it already
+    // fills rather than scanning every pair in the store per cluster
+    const alignedByTarget = new Map<string, AlignedRow[]>()
+    for (const aligned of alignedRows) {
+      alignedByTarget.set(aligned.toUri, [...alignedByTarget.get(aligned.toUri) ?? [], aligned])
     }
 
     const clusterRows: PluginRow[] = []
@@ -781,39 +910,74 @@ export const aggregatePlugin: Plugin = {
       const backingWeight = run
         ? members.filter(member => member.countStated === run.length).reduce((total, member) => total + (member.score ?? 0), 0)
         : 0
-      const renumber = new Map<string, number>()
+      const renumber = new Map<string, Renumbering>()
       for (const episode of own) {
         const onto = renumberOnto.get(episode.uri)
         // a renumbering counts only onto a REFERENCE member's row: the source that agrees about the
         // length is the one to measure another source's numbering against (`consensus.ts:247-251`)
         if (onto && own.some(other => other.uri === onto.toUri && reference.has(other.origin))) {
-          renumber.set(episode.uri, onto.number)
+          renumber.set(episode.uri, { number: onto.number, key: onto.key })
         }
       }
 
-      const fillable = fenced
-        ? own.filter(episode => {
-          const member = byUri.get(episode.mediaUri)
-          if (!member) return false
-          // a list the source itself duplicated numbers every later position wrong, and no exchange
-          // rate defends a button the source's own list contradicts (netflixid 80198505 season 3,
-          // 14 rows over 10 epids, 2026-09-10). The rows stay; the count disagreement is an anomaly
-          if (episode.numberSpace === 'position'
-            && member.countDistinct !== null && member.countStated !== null
-            && member.countDistinct !== member.countStated) return false
-          if (!run) return true
-          return !trimsRow({
-            run,
-            reference,
-            equals,
-            backingWeight,
-            member: { origin: member.origin, score: member.score },
-            number: renumber.get(episode.uri) ?? episode.number,
-          })
+      // THE TWO BARS EVERY FILL MEETS, member and aligned alike (5.4 P5): the source's own list may
+      // not contradict itself, and the row has to sit inside the window the cluster's length sets
+      const admits = (episode: EpisodeRow, number: number | null): boolean => {
+        const member = byUri.get(episode.mediaUri)
+        // a list the source itself duplicated numbers every later position wrong, and no exchange
+        // rate defends a button the source's own list contradicts (netflixid 80198505 season 3,
+        // 14 rows over 10 epids, 2026-09-10). The rows stay; the count disagreement is an anomaly
+        if (member && episode.numberSpace === 'position'
+          && member.countDistinct !== null && member.countStated !== null
+          && member.countDistinct !== member.countStated) return false
+        if (!run) return true
+        return !trimsRow({
+          run,
+          reference,
+          equals,
+          backingWeight,
+          member: { origin: member?.origin ?? episode.origin, score: member?.score ?? episode.score },
+          number,
         })
+      }
+
+      const fillable = fenced
+        ? own.filter(episode => byUri.has(episode.mediaUri)
+          && admits(episode, renumber.get(episode.uri)?.number ?? episode.number))
         : []
 
       const slots = slotsOf({ clusterId: id, episodes: fillable, renumber, links: episodeLinks })
+
+      // THE ALIGNED FILLS (5.4 P5, 8.1's play buttons): the rows a proven pair places on a slot a
+      // member already fills. `own` is the fence they are the one exception to, so a member's own
+      // row is never offered here even when a pair also names it.
+      const ownUris = new Set(own.map(episode => episode.uri))
+      const candidates = fillable
+        .flatMap(episode => alignedByTarget.get(episode.uri) ?? [])
+        .filter(aligned => !ownUris.has(aligned.row.uri) && admits(aligned.row, aligned.toNumber))
+      const alignedRowsByUri = new Map(candidates.map(aligned => [aligned.row.uri, aligned.row]))
+      const fills = alignedFillsOf({
+        slots: slots.map(slot => ({ id: slot.id, number: slot.number, filled: slot.rows.map(filled => filled.row.uri) })),
+        runLength: run?.length ?? null,
+        own: ownUris,
+        pairs: candidates.map(aligned => ({
+          uri: aligned.row.uri,
+          toUri: aligned.toUri,
+          toNumber: aligned.toNumber,
+          // their hang and the pair, which is what a trace descends from a button by (3.2)
+          supports: [aligned.row.hasEpisodeKey, aligned.linkKey].filter(Boolean),
+        })),
+      })
+      const slotsById = new Map(slots.map(slot => [slot.id, slot]))
+      for (const fill of fills) {
+        slotsById.get(fill.slotId)?.rows.push({
+          row: alignedRowsByUri.get(fill.uri)!,
+          number: fill.number,
+          via: 'aligned',
+          supports: fill.supports,
+        })
+      }
+
       const episodeJson: unknown[] = []
       for (const slot of slots) {
         const rows: EpisodeMemberRow[] = slot.rows.map(filled => ({
@@ -835,7 +999,7 @@ export const aggregatePlugin: Plugin = {
             to: slot.id,
             via: filled.via,
             number: filled.number,
-            supports: filled.row.hasEpisodeKey ? [filled.row.hasEpisodeKey] : [],
+            supports: filled.supports,
           })
         }
       }
@@ -857,8 +1021,8 @@ export const aggregatePlugin: Plugin = {
           }
         })
       const clusterAnomalies = sortedUnique(
-        component.members.flatMap(uri => (anomaliesByUri.get(uri) ?? []).map(anomaly => `${anomaly.rule} ${anomaly.detail}`))
-      ).map(entry => ({ rule: entry.slice(0, entry.indexOf(' ')), detail: entry.slice(entry.indexOf(' ') + 1) }))
+        component.members.flatMap(uri => (anomaliesByUri.get(uri) ?? []).map(anomaly => `${anomaly.rule}\u0000${anomaly.detail}`))
+      ).map(entry => ({ rule: entry.slice(0, entry.indexOf('\u0000')), detail: entry.slice(entry.indexOf('\u0000') + 1) }))
 
       const media = aggregateFields({
         cluster: {

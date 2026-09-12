@@ -595,7 +595,11 @@ export const applyPluginOutput = async (options: {
       from: proposal.fromUri,
       to: proposal.toUri,
       row: {
-        key, kind: 'SAME_AS', by: id, version, status: 'active', reason: proposal.reason,
+        // the proposal's own verdict, the way a `LINK` carries a refusal the plugin already decided:
+        // an episode pair asks no guard (the nine of 5.2 weigh media sameness), so a rule that turned
+        // a pair down writes the refusal here and the row stays queryable (5.4 P4's fourth input)
+        key, kind: 'SAME_AS', by: id, version,
+        status: proposal.status === 'refused' ? 'refused' : 'active', reason: proposal.reason,
         confidence: proposal.confidence, evidence: proposal.evidence ?? null,
         fromNumber: proposal.fromNumber, toNumber: proposal.toNumber, supports: proposal.supports,
       },
