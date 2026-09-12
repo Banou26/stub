@@ -3,6 +3,7 @@ import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope, S
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch, declaredEpisodeCount } from '../utils'
 import { pickSimilarSeason, type SeasonCandidate } from '../similar'
+import { yearAppearsInShow } from '../catalogue-gate'
 import { percentScore } from '../average-score'
 
 const SCORE = 0.2
@@ -410,11 +411,89 @@ export const linkNetflix = async (
   return title
 }
 
+/**
+ * One year of slack, and it is the CATALOGUE's year that gets it.
+ *
+ * The record's own season-level year axis is exact on both of the places it is written down:
+ * `yearAppearsInShow` asks for membership and `similar.ts`'s `yearVetoed` for equality. The slack is
+ * here because unOGS publishes a LISTING year rather than a premiere, and a film released late in one
+ * year is routinely listed under the next. It buys that one case and nothing else: measured over the
+ * recorded season corpus it changes no row, since the nearest refused weld is three years out (The
+ * Monkey King 2023 against a 2026 run) and both correct film matches are exact.
+ */
+const LISTING_YEAR_TOLERANCE = 1
+
+/**
+ * The year the cluster asking is FROM, as a date the shared year axis reads, or nothing.
+ *
+ * `seasonYear` first because it survives a coerced date: a source that knows only the broadcast season
+ * carries its year there and leaves `startDate` empty, and `mal:64867` in the corpus is exactly that,
+ * a run whose only year anywhere is a seasonYear. Nothing at all is undefined, never a guess.
+ *
+ * Exported for tests/unit/sources/unogs/search-year.test.ts, which measures the gate below over the
+ * recorded corpus and has to read a run's year the same way this file does.
+ */
+export const runYearDate = (
+  known: { seasonYear?: number | null, startDate?: string | null } | null | undefined
+): string | undefined =>
+  known?.seasonYear ? `${known.seasonYear}-01-01` : known?.startDate ?? undefined
+
+/**
+ * The DATE half of the search gate: a film whose own year is not the asking run's is a different work.
+ *
+ * Measured on the recorded summer-2026 season corpus (223 runs, `tests/corpus/`): the search welds a
+ * bare Netflix title id into 16 runs whose hand-checked labels say the two are different works. Every
+ * one of them clears the title axis and clears the category veto, both of which are about the title
+ * and nothing else, and what the sixteen share is a year nobody read. Hollow Man (2000) taken for
+ * Potato Man, Indiana Jones and the Last Crusade (1989) for a 2026 Avatar film, The Monkey King (2023)
+ * for the 2026 anime of that name, The 40-Year-Old Virgin (2005) for Cherry and Virgin, the two 2012
+ * Madoka compilation films for the 2026 fourth one. Fourteen of the sixteen are films carrying their
+ * own year and are refused here, 3 to 43 years out. The other two are season picks on a SERIES, which
+ * this gate does not judge and cannot: see below.
+ *
+ * TITLE PICKS THE SHOW, DATE PICKS THE RUN, the rule every other catalogue gate in this tree already
+ * runs on (../catalogue-gate.ts). Nothing about the title axis moved to make room for this:
+ * TITLE_MATCH_THRESHOLD stays 0.44, calibrated over 243194 correct pairs against 139507 wrong ones,
+ * and no threshold could have caught these anyway. Scored with the runs' own recorded titles, The
+ * Monkey King reaches 0.7164 against Monkey King and the Madoka compilation 0.7021 against the fourth
+ * film, both of them ABOVE the 0.505 that "Cowboy Bebop" scores against "Cowboy Bebop: The Movie",
+ * the correct match the threshold is pinned on. There is no number on this axis that separates them.
+ *
+ * FILMS ONLY, and that is what the payload MEANS rather than caution. unOGS publishes one year per
+ * title. On a film that year is the work's. On a series it is the whole TITLE's, which is its first
+ * season's, so read as this run's year it would veto the very season that holds the run:
+ * `netflixCandidates` below offers it to season 1 alone for exactly that reason, and
+ * `yearAppearsInShow` carries what a show-level year does to season-to-parent links (admits 16.543%
+ * where season-level membership admits 93.221%).
+ *
+ * REFUSED BEFORE THE RANKING, never after. `pickTitleMatch` keeps the best scorer, so a wrongly dated
+ * candidate left in the list can outscore the right one and take the link with it.
+ *
+ * SILENCE NEVER BLOCKS. A candidate with no year, or a run whose cluster names no year yet, passes
+ * exactly as before: a refusal on absent evidence would drop the link for every run whose date has not
+ * landed on the tick its title did, and `graph.link` has no inverse in either direction.
+ */
+export const filmDatedAnotherYear = (
+  result: Pick<UnogsSearchResult, 'vtype' | 'year'>,
+  runDate: string | null | undefined
+): boolean => {
+  if (result.vtype !== 'movie' || !runDate) return false
+  // the detail endpoint serves this year as a string where the search payload types it as a number,
+  // which is why `netflixCandidates` coerces it too
+  const listed = Number(result.year)
+  if (!listed) return false
+  return !yearAppearsInShow(
+    runDate,
+    Array.from({ length: LISTING_YEAR_TOLERANCE * 2 + 1 }, (_, index) => listed - LISTING_YEAR_TOLERANCE + index)
+  )
+}
+
 const searchAndLinkMedia = async (
   title: string,
   aggregatedUri: string,
   ctx: ExtractorServerContext,
-  categories?: readonly string[] | null
+  categories?: readonly string[] | null,
+  runDate?: string
 ): Promise<GQLMedia | null> => {
   for (const query of [title, ...simplifyTitle(title)]) {
     const { results = [] } = await searchApi(query, ctx)
@@ -423,7 +502,7 @@ const searchAndLinkMedia = async (
     // name nothing we asked for. The search response already carries everything the gate reads.
     const match = await pickTitleMatch(
       query,
-      results.map(result => ({
+      results.filter(result => !filmDatedAnotherYear(result, runDate)).map(result => ({
         result,
         // the search payload leaves the title html-escaped, and normalizeSearchResult is the only place
         // that decoded it, so a raw compare would put `&amp;` against `&`
@@ -458,12 +537,15 @@ const resolveMedia = async (uri: string, ctx: ExtractorServerContext): Promise<G
     return media
   }
   if (!isAggregatedUri(uri)) return null
-  // the whole media, not just its title, because the format gate needs its categories and a second
-  // waitForMedia would race the first
+  // the whole media, not just its title, because the format gate needs its categories, the date gate
+  // its year, and a second waitForMedia would race the first
   const known = await waitForMedia(uri, ctx, m => (getFirstTitle(m) ? m : undefined), 30_000)
   const title = getFirstTitle(known)
   if (!title) return null
-  return searchAndLinkMedia(title, uri, ctx, known?.categories)
+  // the wait is still on the TITLE alone, because the year is read as evidence and never as a
+  // requirement: a cluster that publishes its year a tick later loses the date axis for this call, and
+  // a wait that demanded one would lose the link outright for every run that never carries one
+  return searchAndLinkMedia(title, uri, ctx, known?.categories, runYearDate(known))
 }
 
 export const resolvers: Resolvers = {
