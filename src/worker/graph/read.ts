@@ -17,7 +17,8 @@
  *   resolve, a `published` scan, a `Cluster` id lookup, an `Alias` lookup, then the view. A live one
  *   costs a sixth for its member uris. Those figures are asserted rather than claimed
  *   (`read.test.ts`, "the statement budget"); the two-segment resolve below is the one caller that
- *   can exceed them, and no route reaches it.
+ *   can exceed them, and no route reaches it. `placeholdersOf` is off that budget: it feeds the ask
+ *   of 7.1 step 3, not the draw, and a page that never asks anything still costs what is stated.
  * - A statement never runs with an empty `UNWIND` list, which dies at runtime on this engine rather
  *   than returning nothing (the engine facts of 2026-09-12).
  * - Nothing it returns has been merged, filtered or sorted: `applyMediaFilters`, `searchRelevance`
@@ -25,7 +26,10 @@
  */
 import type { AggregatedEpisode, AggregatedMedia, ClusterCard } from './plugins/fields'
 
-import { isAggregatedUri, fromAggregatedUri, type AggregatedUri } from '../../utils/uri'
+import {
+  isAggregatedUri, isRoutableUri, isUri, fromAggregatedUri, toAggregatedUri,
+  type AggregatedUri, type Uri,
+} from '../../utils/uri'
 import { graphReady } from './schema'
 
 /**
@@ -418,6 +422,82 @@ export const episodesOf = async (clusterId: string): Promise<AggregatedEpisode[]
   const episodes = parse<AggregatedEpisode[]>(row.episodes)
   if (!Array.isArray(episodes)) return []
   return episodes.filter(episode => episode.episodeNumber !== null && episode.episodeNumber !== undefined)
+}
+
+/**
+ * One uri a member's claim NAMED and no source has described (4.3), with the provenance of the claim
+ * that named it.
+ *
+ * `provenance` is carried rather than filtered on, which is the whole of 3.3 as the ask sees it: an
+ * `address` claim asserts nothing and never enters the closure, so its target can stay a placeholder
+ * forever, and it still names a source to ask. A caller that wants to tell an echo of the address bar
+ * from a source's own statement reads this column; a caller that only wants the origins ignores it.
+ */
+export type Placeholder = {
+  uri: string
+  origin: string
+  provenance: string
+}
+
+/**
+ * The cluster's placeholders and `address` pointers, verbatim from 7.1 step 3.
+ *
+ * WHAT THIS IS FOR, and why the aggregated view cannot answer it. A placeholder is a `Media` row with
+ * `owned: false`: a uri a claim named that no source has described. It is not a member and it carries
+ * no field, so it appears in NEITHER the cluster's members nor its `handles`, which is exactly why a
+ * read that walked those asked nobody about it. That is self-reinforcing, because the origin is never
+ * asked, so its row never arrives, so it never becomes a member: measured 2026-09-12 on
+ * `ag:(anilist:108465)`, where `kitsu:42323` was answered once on the old store and 0 times on the
+ * graph path, so the page drew four members against the old store's six.
+ *
+ * `owned: false` is the whole filter and it is a PROPERTY MATCH rather than a `coalesce`, because
+ * `Media.owned` is written by the ingest on both of its branches (`ingest.ts`: `false` on the
+ * placeholder `MERGE`, `cast(r.owned AS BOOLEAN)` on the owner's) and no plugin writes the `Media`
+ * table at all, so the column is never NULL.
+ *
+ * One uri may come back more than once, once per provenance a claim gave it, which is what the
+ * spec's `RETURN DISTINCT` over three columns says. The order is this function's, not the engine's,
+ * since row order inside a tie is not stable between two passes in one process.
+ */
+export const placeholdersOf = async (clusterId: string): Promise<Placeholder[]> => {
+  if (!clusterId) return []
+  const { query } = await graphReady()
+  const rows = await query(
+    `MATCH (c:Cluster {id: $id})<-[:MEMBER_OF]-(:Media)-[cl:CLAIMS]->(t:Media {owned: false})
+     RETURN DISTINCT t.uri AS uri, t.origin AS origin, cl.provenance AS provenance`,
+    { id: clusterId }
+  )
+  return rows
+    .map(row => ({
+      uri: String(row.uri),
+      origin: String(row.origin ?? ''),
+      provenance: String(row.provenance ?? ''),
+    }))
+    .sort((a, b) => a.uri.localeCompare(b.uri) || a.provenance.localeCompare(b.provenance))
+}
+
+/**
+ * The address 7.1 step 3 re-asks with: the cluster's members BESIDE the placeholders they name.
+ *
+ * Here rather than in the resolver because it is the one thing a caller cannot build from the view:
+ * the view holds members, and a placeholder is by definition not one. A source recognises itself by
+ * finding its own handle in the uri it is handed (`extractAggregatedUriOrigin`), so an address of the
+ * placeholders alone would ask a source addressable by two origins with only one of them, and an
+ * address of the members alone is the defect this exists to close.
+ *
+ * A uri a claim named is only proven to PARSE, so anything that could not survive a route segment is
+ * dropped: inside `ag:(...)` a comma or a bracket splits the list and addresses a page that is not
+ * this one. Empty when the cluster names no placeholder, which is what tells the caller to ask
+ * nothing rather than to ask about the members again.
+ */
+export const askAddressOf = async (clusterId: string, mediaUri: string): Promise<string> => {
+  const placeholders = await placeholdersOf(clusterId)
+  if (!placeholders.length) return ''
+  const named = [...addressUris(mediaUri), ...placeholders.map(placeholder => placeholder.uri)]
+  // `isRoutableUri` goes FIRST because `isUri` THROWS on a comma in the id rather than answering
+  // false, and this list is the one place a uri nobody validated arrives
+  const uris = [...new Set(named.filter(uri => isRoutableUri(uri) && isUri(uri)))] as Uri[]
+  return uris.length ? toAggregatedUri(uris) : ''
 }
 
 /** Every member uri of the named clusters, sorted and deduplicated. Empty in, empty out. */

@@ -217,9 +217,19 @@ beforeAll(async () => {
       ],
     })),
 
-    // F. A PLACEHOLDER nobody answered about, reached by a PART_OF: a cluster that is never a card
+    // F. A PLACEHOLDER nobody answered about, reached by a PART_OF: a cluster that is never a card.
+    // TWO MEMBERS REACH IT, which is one hop of `PART_OF` arriving as two LINK rows: the handle list
+    // drew the same badge twice until `dedupeRelated` (measured on `ag:(anilist:108465)`, whose graph
+    // arm listed `PART_OF:jw:222366` twice, 2026-09-12)
     await answer('media', media('anilist:600', {
       score: 0.8, type: 'TV', titles: [title('en', 'Attached')],
+      handles: [
+        sameAs(media('kitsu:600', { score: 0.3 })),
+        partOf({ uri: 'tvdb:55', origin: 'tvdb', id: '55', scope: 'CONTAINER', url: 'https://thetvdb.com/series/55' }),
+      ],
+    })),
+    await answer('media', media('kitsu:600', {
+      score: 0.3, type: 'TV', titles: [title('en', 'Attached')],
       handles: [partOf({ uri: 'tvdb:55', origin: 'tvdb', id: '55', scope: 'CONTAINER', url: 'https://thetvdb.com/series/55' })],
     })),
 
@@ -546,6 +556,25 @@ test('a placeholder is a cluster of one, with no card, and its url comes from th
   const badge = handles.find(handle => handle.node.uri === 'tvdb:55')
   expect(badge!.relation).toBe('PART_OF')
   expect(badge!.node.url, 'the claimer described it, and that is where the url is').toBe('https://thetvdb.com/series/55')
+})
+
+// ONE BADGE PER RELATION AND TARGET (6.3), which the narrative axis already did and this side did
+// not: one hop of `PART_OF` reaches a container once per LINK, and a link is keyed on (from, to,
+// kind, by), so two members claiming one show are two rows of the same badge.
+// Mutation: hand `options.related` to the handle map instead of `dedupeRelated(options.related)` in
+// plugins/fields.ts and `tvdb:55` is listed twice, on the card as well as on the view.
+test('two members reaching one container draw ONE badge, not one per link', async () => {
+  const cluster = (await clusterOf('anilist:600'))!
+  const members = json(cluster.card).members as string[]
+  expect(members, 'both members claim tvdb:55, which is what makes this two links').toEqual(['anilist:600', 'kitsu:600'])
+
+  const handles = json(cluster.media).handles as { relation: string, node: Record<string, unknown> }[]
+  expect(
+    handles.filter(handle => handle.node.uri === 'tvdb:55').length,
+    'one hop, one badge, however many links proved it'
+  ).toBe(1)
+  const cardHandles = json(cluster.card).handles as { relation: string, node: Record<string, unknown> }[]
+  expect(cardHandles.filter(handle => handle.node.uri === 'tvdb:55').length, 'and the card reads off the view').toBe(1)
 })
 
 // THE FIELD POLICY OF 6.3: the season PAIR from one member, every other scalar first-non-null in

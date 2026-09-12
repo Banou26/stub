@@ -278,6 +278,32 @@ const SCALARS = [
 ] as const
 
 /**
+ * ONE HANDLE PER RELATION AND TARGET, which the narrative axis already does and this side did not.
+ *
+ * A `RelatedRow` is one LINK, and one hop of `PART_OF` reaches a container once per link rather than
+ * once per target: two members of a cluster claiming the same show are two rows, and so are the
+ * `asserted` link `plugin:direct` derives from a claim and the `span` link `plugin:containment`
+ * derives from the same containment (the engine facts record both reaching one season). Both drew the
+ * badge twice, measured 2026-09-12 on `ag:(anilist:108465)`, whose handle list carried
+ * `PART_OF:jw:222366` twice.
+ *
+ * THE SURVIVOR IS CHOSEN BY SORT, never by arrival: the scan's row order inside a tie is not stable
+ * between two passes in one process (the engine facts of step 2f), so picking the first row as it
+ * arrives would rewrite the view on a pass that changed nothing. `by` then `via` orders it, which
+ * keeps one plugin's reason for a badge stable while the other plugin's link comes and goes.
+ */
+const dedupeRelated = (related: readonly RelatedRow[]): RelatedRow[] => {
+  const best = new Map<string, RelatedRow>()
+  for (const entry of [...related].sort((a, b) =>
+    a.relation.localeCompare(b.relation) || a.uri.localeCompare(b.uri)
+    || a.by.localeCompare(b.by) || a.via.localeCompare(b.via))) {
+    const key = `${entry.relation} ${entry.uri}`
+    if (!best.has(key)) best.set(key, entry)
+  }
+  return [...best.values()]
+}
+
+/**
  * The aggregated Media of 6.3, field by field, with the provenance of every choice.
  *
  * `members` need not be sorted: the order every rule reads is computed here, once.
@@ -411,7 +437,7 @@ export const aggregateFields = (options: {
       by: 'plugin:aggregate',
       node: nodeOf(member),
     })),
-    ...options.related.map((entry): AggregatedHandle => ({
+    ...dedupeRelated(options.related).map((entry): AggregatedHandle => ({
       relation: entry.relation,
       via: entry.via,
       by: entry.by,

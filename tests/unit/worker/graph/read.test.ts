@@ -41,9 +41,11 @@ import { graphReady } from '../../../../src/worker/graph/schema'
 import { resetPassState, runPlugins } from '../../../../src/worker/graph/plugins/runner'
 import { DEFAULT_PLUGINS } from '../../../../src/worker/graph/scheduler'
 import {
-  addressUris, createMediaReader, createPageReader, episodesOf, memberUrisOf, pageClusters, readStore,
-  resolveMedia, setReadStore,
+  addressUris, askAddressOf, createMediaReader, createPageReader, episodesOf, memberUrisOf,
+  pageClusters, placeholdersOf, readStore, resolveMedia, setReadStore,
 } from '../../../../src/worker/graph/read'
+import { answersForOrigins } from '../../../../src/sources/supported'
+import { originsOfUri } from '../../../../src/utils/uri'
 import { answer, episode, media, rowsOf, title } from './plugins/fixtures'
 
 const CORPUS = new URL('../../../../corpus/season/summer-2026/answers.jsonl', import.meta.url).pathname
@@ -188,6 +190,15 @@ const mushokuAnswers = async () => [
       sameAs(media('mal:39535', { score: 0.9 })),
       sameAs(media('anizip:14758', {})),
       partOf(media('nf:80987039-1', { score: 0.2 })),
+      // THE TWO PLACEHOLDERS of 7.1 step 3: a uri a claim NAMES and no source describes. Neither is
+      // a member, which is exactly why the aggregated view cannot report them. The first carries no
+      // scope stamp, so 5.4 P0 reads NULL for it and `plugin:direct` never evaluates the claim; a
+      // stamped one would be a member with no field, which is the other half of the real page
+      // (`mal:39535` was a member and was answered 0 times, 2026-09-12) and needs no fixture of its
+      // own here, since `placeholdersOf` reads `owned` and never membership.
+      sameAs(media('anidb:14758', { scope: null })),
+      // and one stamped by the address bar (3.3): it asserts nothing and still names a source to ask
+      { ...sameAs(media('tmdb:1399', {})), provenance: 'address' },
     ],
   })),
   await answer('media', media('mal:39535', {
@@ -651,6 +662,66 @@ test('memberUrisOf names every member of the clusters asked about, and nothing f
     ['anilist:108465', 'anizip:14758', 'kitsu:42323', 'mal:39535'].sort()
   )
   expect(await memberUrisOf([])).toEqual([])
+})
+
+// ---------------------------------------------------------------------------------------------
+// 7.1 step 3, THE PLACEHOLDER RE-ASK, which is the whole reason a cluster grows past its first
+// answer. The defect this pins is self-reinforcing and therefore silent: a placeholder is not a
+// member, so it is in neither `members` nor `handles`; a read that walked those asked nobody about
+// it; the row never arrived, so it never became a member. Measured 2026-09-12 on
+// `ag:(anilist:108465)`, where `mal:39535` and `kitsu:42323` were answered 0 times on the graph path
+// and the page drew four members against the old store's six.
+
+// Mutation: drop `{owned: false}` from the pattern in `placeholdersOf` and every described member of
+// the cluster comes back as a placeholder, `mal:39535` and `nf:80987039-1` among them.
+test('the cluster reports the uris its members named and nobody described', async () => {
+  const placeholders = await placeholdersOf(RUN_ID)
+  expect(placeholders.map(placeholder => placeholder.uri), 'both, and only these two').toEqual([
+    'anidb:14758', 'tmdb:1399',
+  ])
+  expect(placeholders[0], 'the origin is what selects the source to ask').toEqual({
+    uri: 'anidb:14758', origin: 'anidb', provenance: 'source',
+  })
+})
+
+// Mutation: add `WHERE cl.provenance <> 'address'` to `placeholdersOf` and the pointer of 3.3 is
+// never asked, which is the case that CANNOT recover on its own: an `address` claim never enters the
+// closure, so its target stays a placeholder however many passes run.
+test('an address pointer is reported too, carrying the provenance that says what it is', async () => {
+  const placeholders = await placeholdersOf(RUN_ID)
+  expect(placeholders.find(placeholder => placeholder.uri === 'tmdb:1399')).toEqual({
+    uri: 'tmdb:1399', origin: 'tmdb', provenance: 'address',
+  })
+})
+
+test('and a described member is never one, whichever way its claim pointed', async () => {
+  const uris = (await placeholdersOf(RUN_ID)).map(placeholder => placeholder.uri)
+  for (const described of ['mal:39535', 'anizip:14758', 'kitsu:42323', 'anilist:108465', 'nf:80987039-1']) {
+    expect(uris, `${described} answered for itself`).not.toContain(described)
+  }
+  expect(await placeholdersOf('cl:nothing'), 'and a cluster that does not exist names none').toEqual([])
+})
+
+// THE ADDRESS THE ASK IS MADE WITH, which is the half a placeholder read alone does not give: a
+// source finds its own handle in the uri it is handed, so the members travel with the placeholders.
+// Mutation: return `toAggregatedUri(addressUris(mediaUri))` from `askAddressOf` (the pre-fix
+// behaviour, members only) and `anidb` and `tmdb` vanish from the origins asked.
+test('the ask address names the members AND the placeholders, so every origin is addressable', async () => {
+  const view = await resolveMedia(RUN_ID)
+  const address = await askAddressOf(RUN_ID, String(view!.uri))
+  expect(originsOfUri(address).sort(), 'the four members and the two placeholders').toEqual(
+    ['anidb', 'anilist', 'anizip', 'kitsu', 'mal', 'tmdb']
+  )
+  expect(addressUris(address), 'and each origin travels with the id that addresses it').toContain('anidb:14758')
+  // the origins of the placeholders are what `askOrigins` matches a source on (7.1 step 3), and a
+  // source addressable by a foreign id is the class this whole mechanism exists for
+  expect(answersForOrigins({ origin: 'anizip', supportedUris: ['anidb', 'mal'] }, originsOfUri(address)))
+    .toBe(true)
+})
+
+test('and a cluster that names no placeholder is asked nothing at all', async () => {
+  const view = await resolveMedia(CONTROL_ID)
+  expect(await askAddressOf(CONTROL_ID, String(view!.uri)), 'an empty address is "ask nobody"').toBe('')
 })
 
 // ---------------------------------------------------------------------------------------------

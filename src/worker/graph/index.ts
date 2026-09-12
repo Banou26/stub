@@ -54,10 +54,10 @@ export { seedOrigins } from './seed-origins'
 // Section 6: the read path, and the flag that switches the three reads onto it. It lives in `./read`
 // rather than here so `../extractor.ts` can read the flag without importing every plugin.
 export {
-  addressUris, createMediaReader, createPageReader, episodesOf, memberUrisOf, pageClusters, readStore,
-  resolveMedia, setReadStore,
+  addressUris, askAddressOf, createMediaReader, createPageReader, episodesOf, memberUrisOf,
+  pageClusters, placeholdersOf, readStore, resolveMedia, setReadStore,
 } from './read'
-export type { ReadStore } from './read'
+export type { Placeholder, ReadStore } from './read'
 // Section 5.3: when a pass runs, and the `view:changed` it ends in.
 export {
   AUDIT_EVERY, DEFAULT_PLUGINS, passSettled, schedulePass, schedulerStats, startScheduler,

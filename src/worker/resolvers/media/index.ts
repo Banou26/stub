@@ -9,7 +9,7 @@ import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForM
 import { applyMediaFilters, applyMediaSorts } from '../../store/filter'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
-import { createMediaReader, createPageReader, episodesOf, readStore } from '../../graph'
+import { askAddressOf, createMediaReader, createPageReader, episodesOf, readStore } from '../../graph'
 import { listen, listenIterator, listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { searchRelevance } from '../../../sources/utils'
@@ -72,6 +72,34 @@ export const resolvers = {
           askOrigins(unasked, { ...variables, input: { ...variables?.input, uri: mediaUri } })
         }
 
+        /**
+         * 7.1 step 3, and the GRAPH PATH ONLY: the cluster's placeholders and `address` pointers are
+         * re-asked beside its members.
+         *
+         * A placeholder is a uri a member's claim named that no source has described, so it is not a
+         * member and it is in neither `media.uri` nor `handles`. Walking those alone therefore asks
+         * nobody about it, its row never arrives, and it never becomes a member: measured 2026-09-12
+         * on `ag:(anilist:108465)`, where `kitsu:42323` was answered ONCE on the old store and 0
+         * TIMES here, so the page drew four members against the old store's six. The old store had no
+         * such gap for the wrong reason: its union-find made every uri a claim named a member, so the
+         * aggregated uri carried them whether or not anything had described them.
+         *
+         * The uri handed over names the MEMBERS AND THE PLACEHOLDERS, because a source recognises
+         * itself by finding its own handle in the uri it is asked with: handing over the placeholders
+         * alone would ask jikan about `mal:39535` and leave a source addressable by two origins with
+         * only one of them. `askUnasked` still keys on origins, so an origin enters the asked set
+         * once and never leaves, which is what makes the loop terminate.
+         */
+        const askPlaceholders = async (clusterId: string, mediaUri: string) => {
+          const address = await askAddressOf(clusterId, mediaUri).catch(error => {
+            // an ask that failed must not take the page down: the row it would have fetched is
+            // missing, which is the state the read already renders
+            console.error(new Error('media: the placeholder ask failed', { cause: error }))
+            return ''
+          })
+          if (address) askUnasked(address)
+        }
+
         // a MEDIA root by construction: only this resolver runs it, so a listing never asks. The
         // consumer still reads the OLD store's cluster, which is what spec step 4 rewires; skipping
         // it here would take the `containing` asks the fold depends on down for a whole step.
@@ -86,6 +114,9 @@ export const resolvers = {
             const media = await reader.read()
             if (!media) return undefined
             askUnasked(String(media.uri))
+            // the placeholders of the cluster this read landed on, which is the one the page draws:
+            // `resolveMedia` follows a container's `preferredRun`, so `_id` is not always the uri's
+            void askPlaceholders(String(media._id ?? ''), String(media.uri))
             void findMediaForPage(requestedUri).then(askSimilarRuns)
             return media as unknown as Media
           }
