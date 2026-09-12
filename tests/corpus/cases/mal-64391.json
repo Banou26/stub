@@ -1,0 +1,211 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The Netflix row claims SAME_AS to both members and its scope would otherwise make it a container holding the run; the descriptions (a 1980s Amsterdam phone line drama against two Vocaloid song videos), the 2022 against 2026 dates and the near-miss title Dirty Lines against Dirty Look put it down as a different work, so it is marked unrelated. refuted: 0 marks overturned. repair 2026-09-12: removed from together, no source answered about them: mal:64391"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64391",
+      "mediaUri": "kitsu:50950",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50950",
+      "mediaUri": "nf:81149112",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64391",
+      "mediaUri": "nf:81149112",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407281",
+      "mediaUri": "kitsu:50950",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407281"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407282",
+      "mediaUri": "kitsu:50950",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407282"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81294920",
+      "mediaUri": "nf:81149112",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81294920"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81294921",
+      "mediaUri": "nf:81149112",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81294921"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81294922",
+      "mediaUri": "nf:81149112",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81294922"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81294923",
+      "mediaUri": "nf:81149112",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81294923"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81294924",
+      "mediaUri": "nf:81149112",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81294924"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81294925",
+      "mediaUri": "nf:81149112",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81294925"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64391",
+        "nf:81149112"
+      ]
+    ],
+    "together": [],
+    "unrelated": [
+      "nf:81149112"
+    ]
+  },
+  "name": "Dirty Look",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "50950",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-13",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Dirty Look"
+        }
+      ],
+      "uri": "kitsu:50950"
+    },
+    {
+      "id": "64391",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64391"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81149112",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dirty Lines"
+        }
+      ],
+      "uri": "nf:81149112"
+    }
+  ],
+  "source": {
+    "answers": [
+      "1385fbe23abeb616c9389162fc54e4ba4426ed5cc0cf96cce6db368e12b4da41",
+      "a37fb8b9c2cf6ae47161f63645a9283dd4a7f53eb18c4a11ad48cae4ecbc9ecf",
+      "274d374be5f433d16c77cc89608ecfd51408a2dbc2725e6ca413337bcf54b75d",
+      "2bc157f857f20819bb7f1db3718664df2a5a3e04cb9affd49ac016f6fc2815c7",
+      "95f04030ce4b2eac9fb5ee40529a0226e0803af07c2aadb89d7e19ac581b9967",
+      "822a14a9001b8867cd4fd2b008f6e1f4e86cb7fe3fe6601a5fbd6fe0b7cc465f",
+      "b810ce959178d7c3b2581ac792df8f89e2097a64554cedfe182c0be7327add2c",
+      "5bf0771bea9f5ea99a206bd9c50831f09ffe8be2d232e3e58689a7477ede63b2",
+      "0d5b7d685afa9291babc5182aff131e95ccab5b0e2771bfa6437b720c03e12a6"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50950,mal:64391)"
+  },
+  "why": "Dirty Look is a pair of music videos for the song Dirty Look by picco and Hachioji P, one version featuring Darknesss La+ and one featuring Hatsune Miku, two episodes both dated 2026-06-13 on Kitsu. kitsu:50950 and mal:64391 are one run: Kitsu carries a first-party SAME_AS mapping to MyAnimeList id 64391 and both are the run's own members. nf:81149112 is a different work despite its SAME_AS claim on both members: it is the Netflix series Dirty Lines, described as a college student joining a phone sex line business in 1980s Amsterdam, dated 2022-01-01, which is not a 2026 pair of Vocaloid music videos, and even its title (Dirty Lines) is not the run's title (Dirty Look). No episode is paired with anything: the run's two episodes carry no titles or release dates, and the Netflix episodes carry only placeholder titles (Episode 1 to Episode 6) and no dates."
+}

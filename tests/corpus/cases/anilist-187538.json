@@ -1,0 +1,1549 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll and anizip disagree on the wording of episodes 7 and 9 (3 ON THREE against On Three, ONE against One), so those two pairs rest on the dates alone like the rest. kitsu has no episode titles or dates. The JustWatch episodes match Crunchyroll's titles exactly but carry no dates and were left unpaired. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00377907-GS00377908",
+      "mediaUri": "anilist:187538",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "anilist:187538",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187538",
+      "mediaUri": "kitsu:49656",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "kitsu:49656",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00377907",
+      "mediaUri": "kitsu:49656",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "offline:mal-61169",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187538",
+      "mediaUri": "offline:mal-61169",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49656",
+      "mediaUri": "offline:mal-61169",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "anizip:19203",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187538",
+      "mediaUri": "anizip:19203",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187538",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49656",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61169",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187538",
+      "mediaUri": "jw:472682-496533",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19203",
+      "mediaUri": "jw:472682-496533",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00377907-GS00377908",
+      "mediaUri": "jw:472682-496533",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49656",
+      "mediaUri": "jw:472682-496533",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "jw:472682-496533",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61169",
+      "mediaUri": "jw:472682-496533",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187538",
+      "mediaUri": "nf:70264888",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49656",
+      "mediaUri": "nf:70264888",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61169",
+      "mediaUri": "nf:70264888",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61169",
+      "mediaUri": "nf:70264888",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "378992",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378992"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "378993",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378993"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "378994",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378994"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "378995",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378995"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "378996",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378996"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "378997",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378997"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "378998",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378998"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "378999",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378999"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "379000",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379000"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "379001",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379001"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "379002",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379002"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "379003",
+      "mediaUri": "kitsu:49656",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379003"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19203-1",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Future Is in Our Hands"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "未来は俺等の手の中"
+        }
+      ],
+      "uri": "anizip:19203-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19203-2",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Choice Is Yours"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "The Choice Is Yours"
+        }
+      ],
+      "uri": "anizip:19203-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19203-3",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "What`s My Name?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "WHAT`S MY NAME?"
+        }
+      ],
+      "uri": "anizip:19203-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19203-4",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Two Is Not Enough"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "たりないふたり"
+        }
+      ],
+      "uri": "anizip:19203-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19203-5",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Young Gunz"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "Young Gunz"
+        }
+      ],
+      "uri": "anizip:19203-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19203-6",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Turn Up"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "Turn Up"
+        }
+      ],
+      "uri": "anizip:19203-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19203-7",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "On Three"
+        }
+      ],
+      "uri": "anizip:19203-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19203-8",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Underdog"
+        }
+      ],
+      "uri": "anizip:19203-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19203-9",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "One"
+        }
+      ],
+      "uri": "anizip:19203-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19203-10",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Deadly Skillz"
+        }
+      ],
+      "uri": "anizip:19203-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19203-11",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19203-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19203-12",
+      "mediaUri": "anizip:19203",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19203-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00377907-GS00377908-GE00377909JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Future Is in Our Hands"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377909JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00377907-GS00377908-GE00377910JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-07-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Choice Is Yours"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377910JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00377907-GS00377908-GE00377911JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-07-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "WHAT'S MY NAME?"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377911JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00377907-GS00377908-GE00377912JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-07-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Two Is Not Enough"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377912JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00377907-GS00377908-GE00377913JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-08-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Young Gunz"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377913JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00377907-GS00377908-GE00377914JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-08-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Turn Up"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377914JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00377907-GS00377908-GE00377915JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-08-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "3 ON THREE"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377915JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00377907-GS00377908-GE00377916JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-08-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Underdog"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377916JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00377907-GS00377908-GE00377917JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-08-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "ONE"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377917JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00377907-GS00377908-GE00377918JAJP",
+      "mediaUri": "cr:GT00377907-GS00377908",
+      "origin": "cr",
+      "releaseDate": "2026-09-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Deadly Skillz"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908-GE00377918JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9157060",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Future Is in Our Hands"
+        }
+      ],
+      "uri": "jw:9157060"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10574659",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Choice Is Yours"
+        }
+      ],
+      "uri": "jw:10574659"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10574660",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "WHAT'S MY NAME?"
+        }
+      ],
+      "uri": "jw:10574660"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10574661",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Two Is Not Enough"
+        }
+      ],
+      "uri": "jw:10574661"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10574662",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Young Gunz"
+        }
+      ],
+      "uri": "jw:10574662"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10574663",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Turn Up"
+        }
+      ],
+      "uri": "jw:10574663"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10574664",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "3 ON THREE"
+        }
+      ],
+      "uri": "jw:10574664"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10574665",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Underdog"
+        }
+      ],
+      "uri": "jw:10574665"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10574666",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "ONE"
+        }
+      ],
+      "uri": "jw:10574666"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10574667",
+      "mediaUri": "jw:472682-496533",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Deadly Skillz"
+        }
+      ],
+      "uri": "jw:10574667"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "70264857",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The National Anthem"
+        }
+      ],
+      "uri": "nf:70264857"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "70279173",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Be Right Back"
+        }
+      ],
+      "uri": "nf:70279173"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80104627",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nosedive"
+        }
+      ],
+      "uri": "nf:80104627"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80131567",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "USS Callister"
+        }
+      ],
+      "uri": "nf:80131567"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80186674",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Striking Vipers"
+        }
+      ],
+      "uri": "nf:80186674"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80195733",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Joan Is Awful"
+        }
+      ],
+      "uri": "nf:80195733"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81716301",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Common People"
+        }
+      ],
+      "uri": "nf:81716301"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "70264858",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fifteen Million Merits"
+        }
+      ],
+      "uri": "nf:70264858"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "70279174",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White Bear"
+        }
+      ],
+      "uri": "nf:70279174"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80073158",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White Christmas"
+        }
+      ],
+      "uri": "nf:80073158"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80131566",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Arkangel"
+        }
+      ],
+      "uri": "nf:80131566"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80195724",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smithereens"
+        }
+      ],
+      "uri": "nf:80195724"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80195732",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Loch Henry"
+        }
+      ],
+      "uri": "nf:80195732"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81716297",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bête Noire"
+        }
+      ],
+      "uri": "nf:81716297"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "70264856",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Entire History of You"
+        }
+      ],
+      "uri": "nf:70264856"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80104630",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Playtest"
+        }
+      ],
+      "uri": "nf:80104630"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80131568",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crocodile"
+        }
+      ],
+      "uri": "nf:80131568"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80195725",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rachel, Jack and Ashley Too"
+        }
+      ],
+      "uri": "nf:80195725"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80195731",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Beyond The Sea"
+        }
+      ],
+      "uri": "nf:80195731"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81716299",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hotel Reverie"
+        }
+      ],
+      "uri": "nf:81716299"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "70279175",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Waldo Moment"
+        }
+      ],
+      "uri": "nf:70279175"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80104626",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shut Up and Dance"
+        }
+      ],
+      "uri": "nf:80104626"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80131569",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hang the DJ"
+        }
+      ],
+      "uri": "nf:80131569"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80195730",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mazey Day"
+        }
+      ],
+      "uri": "nf:80195730"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81716298",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Plaything"
+        }
+      ],
+      "uri": "nf:81716298"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80104625",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "San Junipero"
+        }
+      ],
+      "uri": "nf:80104625"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80131570",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Metalhead"
+        }
+      ],
+      "uri": "nf:80131570"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80195729",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Demon 79"
+        }
+      ],
+      "uri": "nf:80195729"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81716300",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Eulogy"
+        }
+      ],
+      "uri": "nf:81716300"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80104628",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Men Against Fire"
+        }
+      ],
+      "uri": "nf:80104628"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80131571",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black Museum"
+        }
+      ],
+      "uri": "nf:80131571"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81749421",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "USS Callister: Into Infinity"
+        }
+      ],
+      "uri": "nf:81749421"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80104629",
+      "mediaUri": "nf:70264888",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hated in the Nation"
+        }
+      ],
+      "uri": "nf:80104629"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:187538",
+        "nf:70264888"
+      ]
+    ],
+    "episodePairs": [
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377909JAJP",
+        "b": "anizip:19203-1"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377910JAJP",
+        "b": "anizip:19203-2"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377911JAJP",
+        "b": "anizip:19203-3"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377912JAJP",
+        "b": "anizip:19203-4"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377913JAJP",
+        "b": "anizip:19203-5"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377914JAJP",
+        "b": "anizip:19203-6"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377915JAJP",
+        "b": "anizip:19203-7"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377916JAJP",
+        "b": "anizip:19203-8"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377917JAJP",
+        "b": "anizip:19203-9"
+      },
+      {
+        "a": "cr:GT00377907-GS00377908-GE00377918JAJP",
+        "b": "anizip:19203-10"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:187538",
+        "whole": "cr:GT00377907"
+      }
+    ],
+    "together": [
+      [
+        "anilist:187538",
+        "kitsu:49656",
+        "mal:61169",
+        "offline:mal-61169",
+        "anizip:19203",
+        "cr:GT00377907-GS00377908",
+        "jw:472682-496533"
+      ]
+    ],
+    "unrelated": [
+      "nf:70264888"
+    ]
+  },
+  "name": "BLACK TORCH",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "187538",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "BLACK TORCH"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "BLACK TORCH"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "BLACK TORCH"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:187538"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49656",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "BLACK TORCH"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49656"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "61169",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Black Torch"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61169"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61169",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black Torch"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61169"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19203",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Black Torch"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "BLACK TORCH"
+        }
+      ],
+      "uri": "anizip:19203"
+    },
+    {
+      "id": "GT00377907",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00377907"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00377907-GS00377908",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "BLACK TORCH"
+        }
+      ],
+      "uri": "cr:GT00377907-GS00377908"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "472682-496533",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:472682-496533"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "70264888",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2011-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black Mirror"
+        }
+      ],
+      "uri": "nf:70264888"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ff45413d671629b0849746fcbcf334dd72cf719497f2ed4c499d075b49060347",
+      "70e07fa49840a12a18f79ccc109f2b13e2530889721f542130647746652f4491",
+      "c4c4b3b4169356bf716ad4d4484cdc371ec096ae04be0541157ec1171fa7e7cf",
+      "a850ad9d20c1f12b7f6d50580a9dfd95ba7771c923cfbd66a1414a18c92898ae",
+      "90595aee2f37b1eec6b8afed34506d6f7bd2ecf80b13683a92828daea7c6cf17",
+      "b67ffdcf6469811dcb77b7d20a17eda607cd448d78999373a172c006f39c32b3",
+      "f1285d871965ef4e074c9b94700d8b0345b64ffc6969a4697ba7cfae04e0383c",
+      "ccc85ea688a36434e6e89977a8954632dec7e5d7ed073da1c423cabd7e8d4097",
+      "1cb0e7bc5f648914ff3f806ef6a0860e7912da59007d27de3fddcd86e26a4cdb",
+      "fadd61b69b61421a2af1dfcc43efe11ac90d77f3127ca27c994c1de55fe0f011",
+      "958ba7599dea6fbd258d8946d01973381107cde131557ba5e10b2b50e89bc40f",
+      "0102d539d45c9669b873c4867edaf37a11029285312f8b568f4395cddb912c00",
+      "d6ab141faee61a2f01d61b22f97a421dc6f78cc4fd979c2a3be3e0e13a2e6cc5",
+      "49ff54252d43a6d874c4f6deea3d76907b615b63ff0f685db75228a3cca0a505",
+      "d424fc024857f9f01890ecdc2457e50d79879f1bb3315119b3843259e5f0d544",
+      "8de219ccef2490f2fbf67fbbc2a7da4065dd2f93f8f52f8eaf2daa097099c2a1",
+      "b21b33b51d19c2e45019220cb255fa375e6d1b69dadd9561f9600d3caf27e93f",
+      "98938f312c5bfe9dcf3e958cb4e98fd32de243a1a6b10e7508aa1be1226499ac",
+      "47ea006e8a8e81036d6c9c2bae50409dd3555b95dfb0b16cd5bc713389769419",
+      "69c5bc3b16c1a33b822dc3433ca66c21a5ccabc772ffc721c8a8ae0d01f22c73",
+      "810882557e54b9e744cb2b8668eb1029652601b4f6ad1c3eff1543dac6e5c186",
+      "e199be0adddadc24aeccb808cdf748a7cdcb0db39faa4ef5815ae51670e37c3f",
+      "816218baa4a3e095ad249a9c7cd221f8ed5df1030fa02a883c6f89cebb5b574f",
+      "875c30aa32ccfd98f173abbad3a1dd963f016641bfd6f12404bec374ce1bd56f",
+      "88649917f9390e9c6c9a51980ede5e60f241664029986a102e51f9d7bb9fcb9b",
+      "433658fc64074174330bf56bdb6d0a3c8f0634d275848bc61aae543d9977d405",
+      "c4f3e93eae505199e7722fa18557e1fe572a5aa344c0febe03fe3832e76345e8",
+      "14af44ca62d7ebeb1f4e42f4e16b8e1da69dfb2dc2952f133ed78ab844c87c4d",
+      "ede1f64e997b0d188ea30b6b27ef3ce37ea48db48e3995aef6fa4400901231d0",
+      "24cee48ef4ce26bf30f25783c433b1b84891e354332b96c073b71ed83d83fa9f",
+      "29b5ed589834f51f35c72ac55d7c9dc485fe6e2190a485f56095d2a91c5cbec9",
+      "1e0f1a8cdb5bf0e1ef301a822a773d3a66cbeb40b08a221b700b009eef18545b",
+      "89495ed378fa9c78f8c6837fba03f20350e667e6133530056c452eea5e365d1b",
+      "43ad3a287e926ad7348047bc4125cc13018cf7a8100d7d12fc4858de8c63d45e",
+      "97e0bc71ada09302f465c64ae39cad8a960ffaeef00715769f46ff07a5079fe4",
+      "7f74863e5fc38cbf079f4334e808a02bdfcd3f69d0a8edb8cffc32aaa4fcff3a",
+      "0e769df9b24cf854392471f6369c70d6e9b750786f2f3fd8cef9689630326cf8",
+      "6f3d7b0eadd6c752d5db58aba1d46aefaeb6d79255978492136c7b205cc802f4",
+      "0d11206dfc3f498ddf54c8c2a92a18ae81ab43b18f5f4a616aa12ca52938d4fc",
+      "ecc2ad7dbd656e565d7e4ec7c1749ba6e7a53078379a1b505cea8b522e2df5d8",
+      "bff5a3a037c29de1c210c88d04d46017d0f25fc6bb728bfda5435b77acd45261",
+      "a00957ba02d334d3331fb601c3589bca7e8599b288dc35d7f88d2e5ced833f2c",
+      "d5818b4ce2a16216725d5deacace687078260f55c9c15031de70bb471e38a0ed"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:187538,kitsu:49656,mal:61169,offline:mal-61169)"
+  },
+  "why": "BLACK TORCH is the twelve episode summer 2026 cour on a weekly 13:00 slot, 2026-07-04 to 2026-09-19, with ten episodes aired so far.\nanizip:19203 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:61169 and anilist:187538, both members.\ncr:GT00377907-GS00377908 is the same run: anilist:187538 maps to it SAME_AS, it maps back to all four members, and its ten episodes sit on the run's own weekly dates, 2026-07-04 through 2026-09-05.\njw:472682-496533 is the same run: it maps SAME_AS to all four members, to anizip:19203 and to the Crunchyroll season, and its ten episode titles are the run's first ten in order; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GT00377907 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:49656 as PART_OF.\nnf:70264888 is a different work: it is Black Mirror, the British anthology series starting 2011, and its listed episodes are that show's (The National Anthem, Fifteen Million Merits, San Junipero and the rest), so its SAME_AS claims against the four members are a title collision with BLACK TORCH.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19203 episodes 1 to 10 on identical release dates week by week, 2026-07-04 through 2026-09-05."
+}

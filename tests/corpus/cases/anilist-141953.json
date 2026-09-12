@@ -1,0 +1,233 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was hard here: the view holds only the run's four members, all agreeing on the 7 episode count and, where they carry dates, on 2026-08-02 to 2026-08-30, and the kitsu episode rows carry no titles or dates, so no episode pair is claimed. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:60568",
+      "mediaUri": "anilist:141953",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:141953",
+      "mediaUri": "kitsu:49803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60568",
+      "mediaUri": "kitsu:49803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60568",
+      "mediaUri": "offline:mal-60568",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:141953",
+      "mediaUri": "offline:mal-60568",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49803",
+      "mediaUri": "offline:mal-60568",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "389010",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:389010"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "389011",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:389011"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406371",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406371"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406372",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406372"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406864",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406864"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406926",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406926"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406930",
+      "mediaUri": "kitsu:49803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406930"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:141953",
+        "kitsu:49803",
+        "mal:60568",
+        "offline:mal-60568"
+      ]
+    ]
+  },
+  "name": "False Memory (2026)",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "141953",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 02 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "False Memory (2026)"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Jiyi Guanli Ju (2026)"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "记忆管理局 (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:141953"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "49803",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "False Memory (2026)"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Jiyi Guanli Ju (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:49803"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "60568",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "False Memory (2026)"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Jiyi Guanli Ju (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:60568"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "mal-60568",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jiyi Guanli Ju (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-60568"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8d1d366178daf2718da85f88692083049a1c29766689da0d99b7e390f4d81658",
+      "42916be7b59bdc1a191992576721c89d857ec7cb6891c1f6600e1636c09bdcef",
+      "b40a91b1cd0f00c7692a785a1343ed31aa2a21821a4fa3a433d25881fcc94a6a",
+      "0c72cdfca9cee23a6d11f60391c09a32b809ceaecfc2e472475682bbd239a658"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:141953,kitsu:49803,mal:60568,offline:mal-60568)"
+  },
+  "why": "False Memory (2026), the Chinese ONA also listed as Jiyi Guanli Ju (2026), is a 7 episode run from 2026-08-02 to 2026-08-30: anilist and kitsu both carry those two dates and 7 episodes, mal the same start and count, and offline the same count. Only the four members of the run's own address were returned, so there is nothing outside it to judge: no catalogue mapping, no streaming season and no container."
+}

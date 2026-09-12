@@ -1,0 +1,744 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "anizip lists a Pre-Broadcast Special dated 2026-07-11 ahead of episode 1, which a naive offset would have pushed onto the Crunchyroll numbering, but it carries no episode row here so it was left out entirely rather than paired or split off. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00371881-GS00371882",
+      "mediaUri": "anilist:188139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61240",
+      "mediaUri": "anilist:188139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188139",
+      "mediaUri": "kitsu:49689",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61240",
+      "mediaUri": "kitsu:49689",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00371881",
+      "mediaUri": "kitsu:49689",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61240",
+      "mediaUri": "offline:mal-61240",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188139",
+      "mediaUri": "offline:mal-61240",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49689",
+      "mediaUri": "offline:mal-61240",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61240",
+      "mediaUri": "anizip:19226",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188139",
+      "mediaUri": "anizip:19226",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "379429",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379429"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "379430",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379430"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "379431",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379431"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "379432",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379432"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "379433",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379433"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "379434",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379434"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "379435",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379435"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "379436",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379436"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "379437",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379437"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "379438",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379438"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "379439",
+      "mediaUri": "kitsu:49689",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:379439"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19226-1",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Though I Am an Inept Villainess"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ふつつかな悪女ではございますが"
+        }
+      ],
+      "uri": "anizip:19226-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19226-2",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Will I Be Living Here?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ここで, 暮らすのですか?"
+        }
+      ],
+      "uri": "anizip:19226-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19226-3",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Shoulders Back, Look Forward"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "胸を広げ, 視線は前に"
+        }
+      ],
+      "uri": "anizip:19226-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19226-4",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Miracle Comet"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "わたくしの, ほうき星"
+        }
+      ],
+      "uri": "anizip:19226-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19226-5",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Who Is That Girl?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "あの女は誰だ"
+        }
+      ],
+      "uri": "anizip:19226-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19226-6",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Won`t Let You Die"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "死なせたりしない"
+        }
+      ],
+      "uri": "anizip:19226-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19226-7",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Meaning of Entrusting a Weapon"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "武器を授けることの意味"
+        }
+      ],
+      "uri": "anizip:19226-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19226-8",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Like a Villainess, Like a Villainess"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "悪女らしく悪女らしく"
+        }
+      ],
+      "uri": "anizip:19226-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19226-9",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Will Make Sure to Save You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "必ずお助けいたします"
+        }
+      ],
+      "uri": "anizip:19226-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19226-10",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T14:45:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19226-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19226-11",
+      "mediaUri": "anizip:19226",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T14:45:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19226-11"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00371881-GS00371882-GE00378869JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Though I Am an Inept Villainess"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378869JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00371881-GS00371882-GE00378870JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Will I Be Living Here?"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378870JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00371881-GS00371882-GE00378871JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Shoulders Back, Look Forward"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378871JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00371881-GS00371882-GE00378872JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "My Miracle Comet"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378872JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00371881-GS00371882-GE00378873JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Who Is That Girl?"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378873JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00371881-GS00371882-GE00378874JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Won't Let You Die"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378874JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00371881-GS00371882-GE00378875JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Meaning of Entrusting a Weapon"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378875JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00371881-GS00371882-GE00378876JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Like a Villainess, Like a Villainess"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378876JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00371881-GS00371882-GE00378877JAJP",
+      "mediaUri": "cr:GT00371881-GS00371882",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Will Make Sure to Save You"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882-GE00378877JAJP"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19226-1",
+        "b": "cr:GT00371881-GS00371882-GE00378869JAJP"
+      },
+      {
+        "a": "anizip:19226-2",
+        "b": "cr:GT00371881-GS00371882-GE00378870JAJP"
+      },
+      {
+        "a": "anizip:19226-3",
+        "b": "cr:GT00371881-GS00371882-GE00378871JAJP"
+      },
+      {
+        "a": "anizip:19226-4",
+        "b": "cr:GT00371881-GS00371882-GE00378872JAJP"
+      },
+      {
+        "a": "anizip:19226-5",
+        "b": "cr:GT00371881-GS00371882-GE00378873JAJP"
+      },
+      {
+        "a": "anizip:19226-6",
+        "b": "cr:GT00371881-GS00371882-GE00378874JAJP"
+      },
+      {
+        "a": "anizip:19226-7",
+        "b": "cr:GT00371881-GS00371882-GE00378875JAJP"
+      },
+      {
+        "a": "anizip:19226-8",
+        "b": "cr:GT00371881-GS00371882-GE00378876JAJP"
+      },
+      {
+        "a": "anizip:19226-9",
+        "b": "cr:GT00371881-GS00371882-GE00378877JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:188139",
+        "whole": "cr:GT00371881"
+      }
+    ],
+    "together": [
+      [
+        "anilist:188139",
+        "kitsu:49689",
+        "mal:61240",
+        "offline:mal-61240",
+        "anizip:19226",
+        "cr:GT00371881-GS00371882"
+      ]
+    ]
+  },
+  "name": "Though I Am an Inept Villainess",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "188139",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 12 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Though I Am an Inept Villainess"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Futsutsuka na Akujo de wa Gozaimasu ga: Suuguu Chouso Torikae Den"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ふつつかな悪女ではございますが ~雛宮蝶鼠とりかえ伝~"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:188139"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "49689",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Though I Am an Inept Villainess: Tale of the Butterfly-Rat Body Swap in the Maiden Court"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Futsutsuka na Akujo de wa Gozaimasu ga Hinamiya Chou Nezumi Torikae Den"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ふつつかな悪女ではございますが ~雛宮蝶鼠とりかえ伝~"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49689"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "61240",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Though I Am an Inept Villainess"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Futsutsuka na Akujo dewa Gozaimasu ga: Suuguu Chouso Torikae Den"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61240"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61240",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Futsutsuka na Akujo dewa Gozaimasu ga: Suuguu Chouso Torikae Den"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61240"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "19226",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Though I Am an Inept Villainess: Tale of the Butterfly-Rat Body Swap in the Maiden Court"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ふつつかな悪女ではございますが ~雛宮蝶鼠とりかえ伝~"
+        }
+      ],
+      "uri": "anizip:19226"
+    },
+    {
+      "id": "GT00371881",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00371881"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "GT00371881-GS00371882",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Though I Am an Inept Villainess"
+        }
+      ],
+      "uri": "cr:GT00371881-GS00371882"
+    }
+  ],
+  "source": {
+    "answers": [
+      "65a0715819be5e5ae72b8b94384840b4350cd7b0b2149e1a10b947ee8cda0b44",
+      "e28f5ffa34eb75f3bbb7da2a29136e07c1957f5ad7e244bec5c447f6cb7bb097",
+      "3d8abeac36ec6a6ce77ddd23c2dd6bde5a002fdb836329278f96e53bce63333d",
+      "63a29f3ca7477d866f8b8027841c2ef8dedab6cf1f1324a8fa8842b5fa14f4ad",
+      "c7674680333b8d2b2f6c23d9135da67f56868faf904017b9721979e507ce11d8",
+      "4e8737123dea2182acd7c41127f3ded74ebfbf4ace23f18186ef50410503f901"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:188139,kitsu:49689,mal:61240,offline:mal-61240)"
+  },
+  "why": "Though I Am an Inept Villainess (Futsutsuka na Akujo de wa Gozaimasu ga: Suuguu Chouso Torikae Den) is an 11 episode Summer 2026 run that began 2026-07-12 and runs to late September, nine episodes out by the time of labelling. anilist:188139, kitsu:49689, mal:61240 and offline:mal-61240 are one run: anilist gives mal:61240, kitsu gives anilist:188139 and mal:61240, offline gives all three, and anilist, kitsu and mal carry the same 2026-07-12 start with 11 episodes. anizip:19226 is the same run: it maps to mal:61240 and anilist:188139, lists 11 episodes, and its episode 1 falls on 2026-07-12, the run's start, on the same weekly Sunday slot. The Crunchyroll season cr:GT00371881-GS00371882 is the same run: anilist gives it as SAME_AS, and its nine episodes sit on 2026-07-12 through 2026-09-06, the same days anizip gives episodes 1 to 9, with nothing past the run's dates. cr:GT00371881 is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Episodes 1 to 9 pair anizip to Crunchyroll on matching release days and identical titles (episode 6 differs only by anizip writing I Won`t Let You Die with a backtick); the kitsu episode rows carry no title or date and place nothing, and anizip's Pre-Broadcast Special of 2026-07-11 has no episode number and no episode row here, so nothing is asserted about it."
+}

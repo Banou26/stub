@@ -1,0 +1,277 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The members themselves disagree on shape (kitsu lists 8 undated episodes and a 2026-12-31 start against mal and offline calling it a 1 episode movie on 2026-09-04), but they are members of the run's own address and needed no judgement. The single outside row was settled by the anizip id mapping plus the 2026-09-04 date. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62312",
+      "mediaUri": "anilist:197620",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197620",
+      "mediaUri": "kitsu:50104",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62312",
+      "mediaUri": "offline:mal-62312",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197620",
+      "mediaUri": "offline:mal-62312",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50104",
+      "mediaUri": "offline:mal-62312",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62312",
+      "mediaUri": "anizip:19532",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197620",
+      "mediaUri": "anizip:19532",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "386540",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386540"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "386541",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386541"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "386542",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386542"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "386543",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386543"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "386544",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386544"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "386545",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386545"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "386546",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386546"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "386547",
+      "mediaUri": "kitsu:50104",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386547"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19532-1",
+      "mediaUri": "anizip:19532",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:19532-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:197620",
+        "kitsu:50104",
+        "mal:62312",
+        "offline:mal-62312",
+        "anizip:19532"
+      ]
+    ]
+  },
+  "name": "Sekiro: No Defeat",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "197620",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 01 Jan 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Sekiro: No Defeat"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "SEKIRO: NO DEFEAT"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "SEKIRO: NO DEFEAT"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:197620"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "50104",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-12-31",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Sekiro: No Defeat"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50104"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "62312",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-04",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sekiro: No Defeat"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:62312"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-62312",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sekiro: No Defeat"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-62312"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "19532",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sekiro: No Defeat"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "SEKIRO: NO DEFEAT"
+        }
+      ],
+      "uri": "anizip:19532"
+    }
+  ],
+  "source": {
+    "answers": [
+      "041ecabfd0043dfe8251574e8fd5cd56bd8b94f7c6b6597094c2887c7887d0b9",
+      "f168b914ae132c84c7db54cb4e3c6632a8f29f04a7af26f6aa178f574153e74e",
+      "225415ef2df0dc4b9bbf8539f3ec207fc0c0c9285b94e2378f0f4c72382ecfc8",
+      "3c38e90598be05dee0059f6291f0d661510e08c676da0dadfdc6b63413b93969",
+      "cfa57775c7ee8034d2cb5a257536f5c0631a35e533fe962571bfa42d50416d5a"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:197620,kitsu:50104,mal:62312,offline:mal-62312)"
+  },
+  "why": "Sekiro: No Defeat is a single feature: mal calls it a MOVIE of 1 episode starting 2026-09-04 in summer 2026 and offline agrees on MOVIE and 1, while anilist carries no count and the placeholder start 2026-01-01 and kitsu carries 8 undated episodes and the start 2026-12-31. anizip:19532 is the same run: it carries SAME_AS ids to both mal:62312 and anilist:197620, a count of 1 matching mal and offline, and its one episode, Complete Movie, is dated 2026-09-04, exactly mal's start date. Nothing else was returned for this run, so there is no container to attach and nothing to mark apart."
+}

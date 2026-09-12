@@ -1,0 +1,59 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to weigh: a single row with no handles and no neighbouring rows from any other source. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64710"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Primeval Overlord",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 40,
+      "id": "64710",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-30",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Primeval Overlord"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Taigu Shen Zun"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64710"
+    }
+  ],
+  "source": {
+    "answers": [
+      "3f6b7c8f529f5d001ca7c1cd7627d365dd4722ba4684ab24dfb76cf168f339c4"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64710)"
+  },
+  "why": "Primeval Overlord (Taigu Shen Zun) is a 40-episode Chinese ONA that started on 2026-07-30. MyAnimeList is the only source that returned anything for it: mal:64710 carries the start date, the count of 40 and both titles, and it names no handles, so the run stands alone with nothing to merge, hold or separate."
+}

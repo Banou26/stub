@@ -1,0 +1,58 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to weigh: the run view returned the MyAnimeList member alone, with no episode count and no other catalogue or streaming row. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64724"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "1999! Arcane Incident Department",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64724",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "1999! Arcane Incident Department"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "1999! Shenmi Xue Duice Bu"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64724"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d1fd3185163febc8839f47e68b43d892fd4022dffabc6520d15395cf7b817bb2"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64724)"
+  },
+  "why": "1999! Arcane Incident Department (1999! Shenmi Xue Duice Bu) is a Chinese ONA listed for 2026-08-02, and MyAnimeList is the only source that returned a row for it. With no second row there is nothing to match, hold or separate."
+}

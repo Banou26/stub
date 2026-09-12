@@ -1,0 +1,890 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch season had to be judged on romanized episode titles alone, since it carries no episode dates, so it is marked same as a run while no episode pairs are asserted. The Netflix row claims SAME_AS to every member of the run yet agrees with it on no title, count or date. refuted: 1 mark overturned. jw:532448-577569 was removed from the together set: the row carries no title of its own, its start of 2026-01-01 is a placeholder against the run's 2026-06-29 and 2026-07-02, its count of 11 does not meet the run's 13, and it carries no episode release date, so the merge rested only on reading 11 romanized episode titles as the anizip English ones, which is not an id agreement between catalogues nor a date and title match. It is left unknown rather than merged."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63347",
+      "mediaUri": "anilist:206521",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206521",
+      "mediaUri": "kitsu:50690",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63347",
+      "mediaUri": "kitsu:50690",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206521",
+      "mediaUri": "offline:anilist-206521",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50690",
+      "mediaUri": "offline:kitsu-50690",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63347",
+      "mediaUri": "offline:mal-63347",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63347",
+      "mediaUri": "anizip:19849",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206521",
+      "mediaUri": "anizip:19849",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206521",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19849",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50690",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63347",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-206521",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50690",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63347",
+      "mediaUri": "jw:532448-577569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206521",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19849",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:532448-577569",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50690",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63347",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-206521",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50690",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63347",
+      "mediaUri": "nf:82010449-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "402935",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402935"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "402936",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402936"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "402937",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402937"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "402938",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402938"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "402939",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402939"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "402940",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402940"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "402941",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402941"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "402942",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402942"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "402943",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402943"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "402944",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402944"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "402945",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402945"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "402946",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402946"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "402947",
+      "mediaUri": "kitsu:50690",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402947"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19849-1",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Why Do People Dance?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "人はなぜ舞うのか"
+        }
+      ],
+      "uri": "anizip:19849-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19849-2",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You Have a Body"
+        }
+      ],
+      "uri": "anizip:19849-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19849-3",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You Have Your Own Sense of \"Good\""
+        }
+      ],
+      "uri": "anizip:19849-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19849-4",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Differing Scales of Progress"
+        }
+      ],
+      "uri": "anizip:19849-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19849-5",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Budding Throb"
+        }
+      ],
+      "uri": "anizip:19849-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19849-6",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Connection"
+        }
+      ],
+      "uri": "anizip:19849-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19849-7",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "In Between"
+        }
+      ],
+      "uri": "anizip:19849-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19849-8",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "To the Other Side of the Bridge"
+        }
+      ],
+      "uri": "anizip:19849-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19849-9",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Concealed Feelings"
+        }
+      ],
+      "uri": "anizip:19849-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19849-10",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A World Overflowing"
+        }
+      ],
+      "uri": "anizip:19849-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19849-11",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Moon Before It`s Full"
+        }
+      ],
+      "uri": "anizip:19849-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19849-12",
+      "mediaUri": "anizip:19849",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19849-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10593434",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hito wa Naze Mau no ka"
+        }
+      ],
+      "uri": "jw:10593434"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10600191",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Anta ni wa Karada ga Aru ja Nai ka"
+        }
+      ],
+      "uri": "jw:10600191"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10609187",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kimi ni wa Kimi no Yosa ga Aru"
+        }
+      ],
+      "uri": "jw:10609187"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10616427",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hakobi no Ôkisa wa Chigaedo"
+        }
+      ],
+      "uri": "jw:10616427"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10631873",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Moederu Kodô"
+        }
+      ],
+      "uri": "jw:10631873"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10644503",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Musubitsuki"
+        }
+      ],
+      "uri": "jw:10644503"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10658304",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hazama nite"
+        }
+      ],
+      "uri": "jw:10658304"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10727545",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hashi no Mukou e"
+        }
+      ],
+      "uri": "jw:10727545"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10796680",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Himetaru Omoi"
+        }
+      ],
+      "uri": "jw:10796680"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10842072",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Afureta Sekai"
+        }
+      ],
+      "uri": "jw:10842072"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10885945",
+      "mediaUri": "jw:532448-577569",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Komochizuki"
+        }
+      ],
+      "uri": "jw:10885945"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82040157",
+      "mediaUri": "nf:82010449-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82040157"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82040158",
+      "mediaUri": "nf:82010449-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82040158"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82040159",
+      "mediaUri": "nf:82010449-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82040159"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:82010449-1",
+        "anilist:206521"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:206521",
+        "kitsu:50690",
+        "mal:63347",
+        "offline:anilist-206521",
+        "offline:kitsu-50690",
+        "offline:mal-63347",
+        "anizip:19849"
+      ]
+    ],
+    "unrelated": [
+      "nf:82010449-1"
+    ]
+  },
+  "name": "The World Is Dancing",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "206521",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 29 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The World Is Dancing"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "World Is Dancing"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ワールド イズ ダンシング"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:206521"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "50690",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-29",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The World Is Dancing"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "World Is Dancing"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ワールド イズ ダンシング"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50690"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "63347",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The World Is Dancing"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "World Is Dancing"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63347"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "anilist-206521",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "World Is Dancing"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:anilist-206521"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "kitsu-50690",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "World Is Dancing"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:kitsu-50690"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63347",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "World Is Dancing"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63347"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19849",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The World Is Dancing"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ワールド イズ ダンシング"
+        }
+      ],
+      "uri": "anizip:19849"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "532448-577569",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:532448-577569"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "82010449-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Glitter & Gold: Ice Dancing"
+        }
+      ],
+      "uri": "nf:82010449-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4becf08aa1350f5a1ceecef78bfc73bf7b3e02dfc5c662d1fe45e33a3141d480",
+      "97f5f6fac133aa2747d6cdcf0c6b00edb799d7144d73d97fb2c156df73977fad",
+      "02ca7302655c94b871fcd5460e06d488648a40ae9d37ffa542769987d58c7618",
+      "99484987208250ff714cc55ff3e38c5e58056862ea984964c66e45eb39ba9ad3",
+      "07aca36a5b57ab59db203658de872a266d93f74c379953fa6eae53d695e8eb82",
+      "8b274184648aef41b84754dc0dcbd9f927dc7ec6184960aa7072ee0a733ade4a",
+      "a43128010c7b736ca0e1bc02b8e67b21c71b8cb8f6f6401aed50f63fa8370a63",
+      "a63cf541f96c1bbdba373a1390c682de64db6c775c310690382a2a1e45c1f6ec",
+      "a3f55feec1f854d2e04ed4569ad648ee06bb35eb4878a9d805626e05932739d9",
+      "a0939da331d213b821f12db553dcbe8156d62e577b34a1ce466eecbf468879c6",
+      "27d6cf0ddc0959516ef082c6558377dfb6886cb0ddb56e44e7c8f5bb672ba32d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:206521,kitsu:50690,mal:63347,offline:anilist-206521,offline:kitsu-50690,offline:mal-63347)"
+  },
+  "why": "The World Is Dancing is a 13 episode summer 2026 run that is still airing: anilist starts it 2026-06-29 with 13 episodes, mal 2026-07-02 with 13, and anizip still lists episode 12 for 2026-09-17. anizip:19849 is the same run: it carries SAME_AS ids to both mal:63347 and anilist:206521 and the same 13 episode count. jw:532448-577569 is left unsettled: the row itself carries no title, a placeholder start of 2026-01-01 and 11 episodes against the run's 13, and its episode titles (Hito wa Naze Mau no ka, Afureta Sekai, Komochizuki) are romanizations rather than the run's own text, so nothing on it agrees with the run field for field. nf:82010449-1 is a different work: the title Glitter & Gold: Ice Dancing matches none of the run's titles (The World Is Dancing, World Is Dancing, ワールド イズ ダンシング), it carries 3 episodes against 13, it has no dates, and its episode titles are the placeholders Episode 1 to Episode 3. No episode pairs are asserted, because the JustWatch episodes carry no release dates and their romanized titles are not exact matches of the anizip ones."
+}

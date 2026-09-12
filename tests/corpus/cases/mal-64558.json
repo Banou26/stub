@@ -1,0 +1,130 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Straightforward: the AniList row was not a member of the address but carries the same MyAnimeList id, the same single date and the same two titles. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64558"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64558",
+      "mediaUri": "kitsu:50839",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64558",
+      "mediaUri": "anilist:214866",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64558",
+      "mediaUri": "offline:mal-64558",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214866",
+      "mediaUri": "offline:mal-64558",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405812",
+      "mediaUri": "kitsu:50839",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405812"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50839",
+        "anilist:214866",
+        "offline:mal-64558"
+      ]
+    ]
+  },
+  "name": "Orion",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50839",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Orion"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "オリオン"
+        }
+      ],
+      "uri": "kitsu:50839"
+    },
+    {
+      "id": "64558",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64558"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "214866",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Orion"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "オリオン"
+        }
+      ],
+      "uri": "anilist:214866"
+    },
+    {
+      "id": "mal-64558",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64558"
+    }
+  ],
+  "source": {
+    "answers": [
+      "74c4c37c5fb57f9496f1018374ffb062cb589147c4ff04743b0842d385947aa0",
+      "4a6af13125a909b2beff8d3c67f8b6a763b474b636317769a070ab982bf41fbe",
+      "2bb08d90254b6e157c65ad76973df9cb0f83c3e657d6edfae89c1339b2e45dea",
+      "3fe7f02023fd2735f23862192e0bde863f2f472dd49c28612c55f14dc029f758"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50839,mal:64558)"
+  },
+  "why": "Orion is a one episode work dated 2026-07-04, held on Kitsu and MyAnimeList. anilist:214866 is the same run: it claims SAME_AS to mal:64558, its start and end date 2026-07-04 are the same day as Kitsu's, its count of 1 matches and its titles Orion and オリオン are Kitsu's two titles. offline:mal-64558 is the same run: it claims SAME_AS to both mal:64558 and anilist:214866."
+}

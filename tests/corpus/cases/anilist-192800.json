@@ -1,0 +1,1099 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The dates split the sources again: anilist, kitsu and Crunchyroll start the run on 2026-06-24 while mal and anizip start it on 2026-07-01, so every anizip date sits a week after the Crunchyroll date for the same titled episode and the pairing rests on titles. Crunchyroll prefixes each title with its own episode number, which lines up with the anizip number in every case, and JustWatch carries the same titles without the prefix. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378069-GS00378070",
+      "mediaUri": "anilist:192800",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61686",
+      "mediaUri": "anilist:192800",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:192800",
+      "mediaUri": "kitsu:49913",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61686",
+      "mediaUri": "kitsu:49913",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378069",
+      "mediaUri": "kitsu:49913",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61686",
+      "mediaUri": "offline:mal-61686",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:192800",
+      "mediaUri": "offline:mal-61686",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49913",
+      "mediaUri": "offline:mal-61686",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61686",
+      "mediaUri": "anizip:19327",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:192800",
+      "mediaUri": "anizip:19327",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:192800",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49913",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61686",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61686",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:192800",
+      "mediaUri": "jw:473647-498413",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19327",
+      "mediaUri": "jw:473647-498413",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49913",
+      "mediaUri": "jw:473647-498413",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61686",
+      "mediaUri": "jw:473647-498413",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61686",
+      "mediaUri": "jw:473647-498413",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "382677",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382677"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "382678",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382678"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "382679",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382679"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "382680",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382680"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "382681",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382681"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "382682",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382682"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "382683",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382683"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "382684",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382684"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "382685",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382685"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "382686",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382686"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "382687",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382687"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "382688",
+      "mediaUri": "kitsu:49913",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382688"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19327-1",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-07-01T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Girl Who Wanted to Be a Maid"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "メイドになりたかった少女"
+        }
+      ],
+      "uri": "anizip:19327-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19327-2",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "At This Moment, a Maid`s Superiority Is About to Unfold"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "今ここにメイドの無双が始まります"
+        }
+      ],
+      "uri": "anizip:19327-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19327-3",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Two Girls Proceed to the Royal Castle"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "二人の少女は王城へ赴く"
+        }
+      ],
+      "uri": "anizip:19327-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19327-4",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Truth Beneath the Moonlight"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "月下の真実"
+        }
+      ],
+      "uri": "anizip:19327-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19327-5",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sudden Seriousness"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "シリアスは突然に"
+        }
+      ],
+      "uri": "anizip:19327-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19327-6",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The House of Rudleberg`s All-Works Maid"
+        }
+      ],
+      "uri": "anizip:19327-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19327-7",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Anna-Marie`s Exciting Day-Off Date"
+        }
+      ],
+      "uri": "anizip:19327-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19327-8",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A New Encounter at the Royal Academy"
+        }
+      ],
+      "uri": "anizip:19327-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19327-9",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Knight`s Reunion and the Wavering Pride of a Maid"
+        }
+      ],
+      "uri": "anizip:19327-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19327-10",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Jealous Witch Incident"
+        }
+      ],
+      "uri": "anizip:19327-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19327-11",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Choice the Ladies Make"
+        }
+      ],
+      "uri": "anizip:19327-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19327-12",
+      "mediaUri": "anizip:19327",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19327-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378069-GS00378070-GE00378623JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-06-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 1: The Girl Who Wanted to Be a Maid"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378623JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378069-GS00378070-GE00378624JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-07-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 2: At This Moment, a Maid's Superiority Is About to Unfold"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378624JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378069-GS00378070-GE00378625JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-07-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 3: Two Girls Proceed to the Royal Castle"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378625JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378069-GS00378070-GE00378626JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-07-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 4: The Truth Beneath the Moonlight"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378626JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378069-GS00378070-GE00378627JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-07-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 5: Sudden Seriousness"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378627JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378069-GS00378070-GE00378628JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-07-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 6: The House of Rudleberg's All-Works Maid"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378628JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378069-GS00378070-GE00378629JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-08-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 7: Anna-Marie's Exciting Day-Off Date"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378629JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378069-GS00378070-GE00378630JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-08-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 8: A New Encounter at the Royal Academy"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378630JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378069-GS00378070-GE00378631JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-08-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 9: A Knight's Reunion and the Wavering Pride of a Maid"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378631JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378069-GS00378070-GE00378632JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-08-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 10: The Jealous Witch Incident"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378632JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00378069-GS00378070-GE00378633JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-09-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 11: The Choice the Ladies Make"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378633JAJP"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "GT00378069-GS00378070-GE00378634JAJP",
+      "mediaUri": "cr:GT00378069-GS00378070",
+      "origin": "cr",
+      "releaseDate": "2026-09-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 12: The World's Most Wonderful Maid"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070-GE00378634JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9188486",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Girl Who Wanted to Be a Maid"
+        }
+      ],
+      "uri": "jw:9188486"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10581067",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "At This Moment, a Maid's Superiority Is About to Unfold"
+        }
+      ],
+      "uri": "jw:10581067"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10581068",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Two Girls Proceed to the Royal Castle"
+        }
+      ],
+      "uri": "jw:10581068"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10581069",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Truth Beneath the Moonlight"
+        }
+      ],
+      "uri": "jw:10581069"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10581070",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sudden Seriousness"
+        }
+      ],
+      "uri": "jw:10581070"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10581071",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The House of Rudleberg's All-Works Maid"
+        }
+      ],
+      "uri": "jw:10581071"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10581072",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Anna-Marie's Exciting Day-Off Date"
+        }
+      ],
+      "uri": "jw:10581072"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10581073",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A New Encounter at the Royal Academy"
+        }
+      ],
+      "uri": "jw:10581073"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10581074",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Knight's Reunion and the Wavering Pride of a Maid"
+        }
+      ],
+      "uri": "jw:10581074"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10581075",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Jealous Witch Incident"
+        }
+      ],
+      "uri": "jw:10581075"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10581076",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Choice the Ladies Make"
+        }
+      ],
+      "uri": "jw:10581076"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10581077",
+      "mediaUri": "jw:473647-498413",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The World's Most Wonderful Maid"
+        }
+      ],
+      "uri": "jw:10581077"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19327-1",
+        "b": "cr:GT00378069-GS00378070-GE00378623JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378623JAJP",
+        "b": "jw:9188486"
+      },
+      {
+        "a": "anizip:19327-2",
+        "b": "cr:GT00378069-GS00378070-GE00378624JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378624JAJP",
+        "b": "jw:10581067"
+      },
+      {
+        "a": "anizip:19327-3",
+        "b": "cr:GT00378069-GS00378070-GE00378625JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378625JAJP",
+        "b": "jw:10581068"
+      },
+      {
+        "a": "anizip:19327-4",
+        "b": "cr:GT00378069-GS00378070-GE00378626JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378626JAJP",
+        "b": "jw:10581069"
+      },
+      {
+        "a": "anizip:19327-5",
+        "b": "cr:GT00378069-GS00378070-GE00378627JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378627JAJP",
+        "b": "jw:10581070"
+      },
+      {
+        "a": "anizip:19327-6",
+        "b": "cr:GT00378069-GS00378070-GE00378628JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378628JAJP",
+        "b": "jw:10581071"
+      },
+      {
+        "a": "anizip:19327-7",
+        "b": "cr:GT00378069-GS00378070-GE00378629JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378629JAJP",
+        "b": "jw:10581072"
+      },
+      {
+        "a": "anizip:19327-8",
+        "b": "cr:GT00378069-GS00378070-GE00378630JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378630JAJP",
+        "b": "jw:10581073"
+      },
+      {
+        "a": "anizip:19327-9",
+        "b": "cr:GT00378069-GS00378070-GE00378631JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378631JAJP",
+        "b": "jw:10581074"
+      },
+      {
+        "a": "anizip:19327-10",
+        "b": "cr:GT00378069-GS00378070-GE00378632JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378632JAJP",
+        "b": "jw:10581075"
+      },
+      {
+        "a": "anizip:19327-11",
+        "b": "cr:GT00378069-GS00378070-GE00378633JAJP"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378633JAJP",
+        "b": "jw:10581076"
+      },
+      {
+        "a": "cr:GT00378069-GS00378070-GE00378634JAJP",
+        "b": "jw:10581077"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:192800",
+        "whole": "cr:GT00378069"
+      }
+    ],
+    "together": [
+      [
+        "anilist:192800",
+        "kitsu:49913",
+        "mal:61686",
+        "offline:mal-61686",
+        "anizip:19327",
+        "cr:GT00378069-GS00378070",
+        "jw:473647-498413"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Heroine? Saint? No, I’m an All-Works Maid (And Proud of It)!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "192800",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 24 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Heroine? Saint? No, I’m an All-Works Maid (And Proud of It)!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Heroine? Seijo? Iie, All Works Maid desu (Ko)!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ヒロイン？聖女？いいえ、オールワークスメイドです（誇）！"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:192800"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49913",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Heroine? Seijo? Iie, All Works Maid desu (Ko)!"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ヒロイン？聖女？いいえ、オールワークスメイドです（誇）！"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:49913"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61686",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Heroine? Saint? No, I'm an All-Works Maid (And Proud of It)!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Heroine? Seijo? Iie, All Works Maid desu (Hokori)!"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61686"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-61686",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Heroine? Seijo? Iie, All Works Maid desu (Hokori)!"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61686"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19327",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Heroine? Saint? No, I`m an All-Works Maid (And Proud of It)!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ヒロイン? 聖女? いいえ, オールワークスメイドです (誇)!"
+        }
+      ],
+      "uri": "anizip:19327"
+    },
+    {
+      "id": "GT00378069",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378069"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "GT00378069-GS00378070",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Heroine? Saint? No, I'm an All-Works Maid (And Proud of It)!"
+        }
+      ],
+      "uri": "cr:GT00378069-GS00378070"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "473647-498413",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:473647-498413"
+    }
+  ],
+  "source": {
+    "answers": [
+      "df59e3b3b9ec18f9ecb7cd01b8afabedfde5fa1812c7665e2ff598c6ed78ab48",
+      "c54462c9135d577643343a6e32ea908a94af3685726fd44d19cf43d07543f2a5",
+      "93df49feb477c62a4163b5e19bb5801fe9ca8ffaf59775470b6f32afa97d8bdb",
+      "ecc3ee315adc3e64e504fca58a484447abc51c2cbbff9fda8b2179460121ffb8",
+      "245277ed7187d4f9b0a6b94a3af14929a3e2aadef4405954b26fe9f443007bbe",
+      "a1ba00c3165a01e17b3464d6c736563cd97129e15579bcd1cd2c26e4221385ce",
+      "a4121cc8d93e1b08d6d62ed8e572700340addbca6f25424a9a12ccf5e2fa0084",
+      "d20f93833d877e9d1ae5829b11840bd09f8fba2288d5a76157c369d0a8c9da5a",
+      "0fa97909aafddc489a0dbb9b461f444539be983f29e88be1b621a85009791ace"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:192800,kitsu:49913,mal:61686,offline:mal-61686)"
+  },
+  "why": "Heroine? Saint? No, I'm an All-Works Maid (And Proud of It)! is a finished 12 episode summer 2026 run, weekly from 2026-06-24 to 2026-09-09 on anilist. anizip:19327 is the same run: it carries SAME_AS ids to anilist:192800 and mal:61686 and lists the same 12 episodes under the run's own titles. cr:GT00378069-GS00378070 is the same run: it carries SAME_AS ids to all four members, lists 12 episodes, and its first and last dates (2026-06-24 and 2026-09-09) are the run's start and end day for day. jw:473647-498413 is the same run: it carries SAME_AS ids to all four members and to anizip:19327, lists 12 episodes, and its titles are the Crunchyroll titles with the episode number prefix dropped. cr:GT00378069 is the bare Crunchyroll series container for the show, with no dates and no episodes of its own, so it holds the run. Episodes 1 to 12 are paired between Crunchyroll and JustWatch on identical titles, and 1 to 11 between anizip and Crunchyroll on the same titles carrying the same episode number in the Crunchyroll prefix (\"Episode 5: Sudden Seriousness\" against \"Sudden Seriousness\" at 5, and so on through \"The Choice the Ladies Make\" at 11). anizip's episode 12 has no title and kitsu's twelve episode rows carry neither titles nor dates, so neither is paired."
+}

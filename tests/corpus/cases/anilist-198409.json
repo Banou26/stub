@@ -1,0 +1,1358 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row claims SAME_AS against every member yet is titled The Strongest Hearts VS, dated 2023, and carries 18 episodes whose titles are 2023 to 2024 air dates, so it is marked unrelated. The Crunchyroll season row itself carries no handles, so it rests on the run's own SAME_AS handle to it plus ten episode dates that match the run day for day. JustWatch episode 10 is the romaji title again and is left unpaired. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378122-GS00378140",
+      "mediaUri": "anilist:198409",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62435",
+      "mediaUri": "anilist:198409",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198409",
+      "mediaUri": "kitsu:50139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62435",
+      "mediaUri": "kitsu:50139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378122",
+      "mediaUri": "kitsu:50139",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62435",
+      "mediaUri": "offline:mal-62435",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198409",
+      "mediaUri": "offline:mal-62435",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50139",
+      "mediaUri": "offline:mal-62435",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62435",
+      "mediaUri": "anizip:19569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198409",
+      "mediaUri": "anizip:19569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198409",
+      "mediaUri": "jw:496636-525942",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19569",
+      "mediaUri": "jw:496636-525942",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50139",
+      "mediaUri": "jw:496636-525942",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62435",
+      "mediaUri": "jw:496636-525942",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62435",
+      "mediaUri": "jw:496636-525942",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198409",
+      "mediaUri": "nf:81981336",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50139",
+      "mediaUri": "nf:81981336",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62435",
+      "mediaUri": "nf:81981336",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62435",
+      "mediaUri": "nf:81981336",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "387033",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387033"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "387034",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387034"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "387035",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387035"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "387036",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387036"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "387037",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387037"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "387038",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387038"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "387039",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387039"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "387040",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387040"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "387041",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387041"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "387042",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387042"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "387043",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387043"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "387044",
+      "mediaUri": "kitsu:50139",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387044"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19569-1",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Novice Seeker in Labyrinth Country"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "迷宮国の新人探索者"
+        }
+      ],
+      "uri": "anizip:19569-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19569-2",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The First Hurdle"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "最初の難関"
+        }
+      ],
+      "uri": "anizip:19569-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19569-3",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Little Tyrant Girl"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "暴君の少女"
+        }
+      ],
+      "uri": "anizip:19569-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19569-4",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Life-or-Death Mixed Bath"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "危急存亡の混浴"
+        }
+      ],
+      "uri": "anizip:19569-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19569-5",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Black Treasure Chest and the Young Wife`s Secret"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黒箱と若奥様の秘密"
+        }
+      ],
+      "uri": "anizip:19569-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19569-6",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Mechanical Ariadne"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "機械仕掛けのアリアドネ"
+        }
+      ],
+      "uri": "anizip:19569-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19569-7",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Hope of Demi-humans"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "亜人の希望"
+        }
+      ],
+      "uri": "anizip:19569-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19569-8",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A City in Turmoil"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "狂奔騒然の街"
+        }
+      ],
+      "uri": "anizip:19569-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19569-9",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hidden Wounds and a Warrior`s Confession"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "秘められた傷と戦士の告白"
+        }
+      ],
+      "uri": "anizip:19569-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19569-10",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Beautiful Girl in the Maddening Forest"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "狂える森の美女"
+        }
+      ],
+      "uri": "anizip:19569-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19569-11",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19569-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19569-12",
+      "mediaUri": "anizip:19569",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19569-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378122-GS00378140-GE00378216JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-07-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Novice Seeker in Labyrinth Country"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378216JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378122-GS00378140-GE00378217JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The First Hurdle"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378217JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378122-GS00378140-GE00378218JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Little Tyrant Girl"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378218JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378122-GS00378140-GE00378219JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Life-or-Death Mixed Bath"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378219JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378122-GS00378140-GE00378220JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Black Treasure Chest and the Young Wife's Secret"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378220JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378122-GS00378140-GE00378221JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Mechanical Ariadne"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378221JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378122-GS00378140-GE00378222JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Hope of Demi-humans"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378222JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378122-GS00378140-GE00378223JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A City in Turmoil"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378223JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378122-GS00378140-GE00378224JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Hidden Wounds and a Warrior's Confession"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378224JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378122-GS00378140-GE00378225JAJP",
+      "mediaUri": "cr:GT00378122-GS00378140",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Beautiful Girl in the Maddening Forest"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140-GE00378225JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9675894",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Novice Seeker in Labyrinth Country"
+        }
+      ],
+      "uri": "jw:9675894"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10575441",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The First Hurdle"
+        }
+      ],
+      "uri": "jw:10575441"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10612836",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Little Tyrant Girl"
+        }
+      ],
+      "uri": "jw:10612836"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10629102",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Life-or-Death Mixed Bath"
+        }
+      ],
+      "uri": "jw:10629102"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10642197",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Black Treasure Chest and the Young Wife's Secret"
+        }
+      ],
+      "uri": "jw:10642197"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10656585",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Mechanical Ariadne"
+        }
+      ],
+      "uri": "jw:10656585"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10706559",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Hope of Demi-Humans"
+        }
+      ],
+      "uri": "jw:10706559"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10786392",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A City in Turmoil"
+        }
+      ],
+      "uri": "jw:10786392"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10837009",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hidden Wounds and a Warrior's Confession"
+        }
+      ],
+      "uri": "jw:10837009"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10880098",
+      "mediaUri": "jw:496636-525942",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kurueru Mori no Bijo"
+        }
+      ],
+      "uri": "jw:10880098"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81981342",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2023-12-05"
+        }
+      ],
+      "uri": "nf:81981342"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81981343",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2023-12-12"
+        }
+      ],
+      "uri": "nf:81981343"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81981344",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2023-12-19"
+        }
+      ],
+      "uri": "nf:81981344"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81981345",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2023-12-26"
+        }
+      ],
+      "uri": "nf:81981345"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81981346",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-01-02"
+        }
+      ],
+      "uri": "nf:81981346"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81981347",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-01-09"
+        }
+      ],
+      "uri": "nf:81981347"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81981348",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-01-16"
+        }
+      ],
+      "uri": "nf:81981348"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81981349",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-01-23"
+        }
+      ],
+      "uri": "nf:81981349"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81981350",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-01-30"
+        }
+      ],
+      "uri": "nf:81981350"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81981351",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-02-06"
+        }
+      ],
+      "uri": "nf:81981351"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81981352",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-02-13"
+        }
+      ],
+      "uri": "nf:81981352"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81981353",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-02-20"
+        }
+      ],
+      "uri": "nf:81981353"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81981355",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-02-27"
+        }
+      ],
+      "uri": "nf:81981355"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81981356",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-03-05"
+        }
+      ],
+      "uri": "nf:81981356"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81981357",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-03-12"
+        }
+      ],
+      "uri": "nf:81981357"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81981358",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-03-19"
+        }
+      ],
+      "uri": "nf:81981358"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81981359",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-04-09"
+        }
+      ],
+      "uri": "nf:81981359"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81981360",
+      "mediaUri": "nf:81981336",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024-04-16"
+        }
+      ],
+      "uri": "nf:81981360"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:198409",
+        "nf:81981336"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19569-1",
+        "b": "cr:GT00378122-GS00378140-GE00378216JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378216JAJP",
+        "b": "jw:9675894"
+      },
+      {
+        "a": "anizip:19569-2",
+        "b": "cr:GT00378122-GS00378140-GE00378217JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378217JAJP",
+        "b": "jw:10575441"
+      },
+      {
+        "a": "anizip:19569-3",
+        "b": "cr:GT00378122-GS00378140-GE00378218JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378218JAJP",
+        "b": "jw:10612836"
+      },
+      {
+        "a": "anizip:19569-4",
+        "b": "cr:GT00378122-GS00378140-GE00378219JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378219JAJP",
+        "b": "jw:10629102"
+      },
+      {
+        "a": "anizip:19569-5",
+        "b": "cr:GT00378122-GS00378140-GE00378220JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378220JAJP",
+        "b": "jw:10642197"
+      },
+      {
+        "a": "anizip:19569-6",
+        "b": "cr:GT00378122-GS00378140-GE00378221JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378221JAJP",
+        "b": "jw:10656585"
+      },
+      {
+        "a": "anizip:19569-7",
+        "b": "cr:GT00378122-GS00378140-GE00378222JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378222JAJP",
+        "b": "jw:10706559"
+      },
+      {
+        "a": "anizip:19569-8",
+        "b": "cr:GT00378122-GS00378140-GE00378223JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378223JAJP",
+        "b": "jw:10786392"
+      },
+      {
+        "a": "anizip:19569-9",
+        "b": "cr:GT00378122-GS00378140-GE00378224JAJP"
+      },
+      {
+        "a": "cr:GT00378122-GS00378140-GE00378224JAJP",
+        "b": "jw:10837009"
+      },
+      {
+        "a": "anizip:19569-10",
+        "b": "cr:GT00378122-GS00378140-GE00378225JAJP"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:198409",
+        "whole": "cr:GT00378122"
+      }
+    ],
+    "together": [
+      [
+        "anilist:198409",
+        "kitsu:50139",
+        "mal:62435",
+        "offline:mal-62435",
+        "anizip:19569",
+        "cr:GT00378122-GS00378140",
+        "jw:496636-525942"
+      ]
+    ],
+    "unrelated": [
+      "nf:81981336"
+    ]
+  },
+  "name": "The World's Strongest Rearguard",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "198409",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The World's Strongest Rearguard"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Sekai Saikyou no Kouei: Meikyuukoku no Shinjin Tansakusha"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "世界最強の後衛 ～迷宮国の新人探索者～"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:198409"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50139",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The World's Strongest Rearguard: Labyrinth Country's Novice Seeker"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Sekai Saikyou no Kouei: Meikyuukoku no Shinjin Tansakusha"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "世界最強の後衛 ～迷宮国の新人探索者～"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50139"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62435",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The World's Strongest Rearguard"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sekai Saikyou no Kouei: Meikyuukoku no Shinjin Tansakusha"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62435"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62435",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sekai Saikyou no Kouei: Meikyuukoku no Shinjin Tansakusha"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62435"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19569",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The World`s Strongest Rearguard: Labyrinth Country`s Novice Seeker"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "世界最強の後衛 ~迷宮国の新人探索者~"
+        }
+      ],
+      "uri": "anizip:19569"
+    },
+    {
+      "id": "GT00378122",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378122"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378122-GS00378140",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The World's Strongest Rearguard"
+        }
+      ],
+      "uri": "cr:GT00378122-GS00378140"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "496636-525942",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:496636-525942"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81981336",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Strongest Hearts VS"
+        }
+      ],
+      "uri": "nf:81981336"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7eef9029ec346778cd7245d5ea7ec3856d12793946c4621e45e183e02bd888f1",
+      "ee11dc865b59ef0a77bb2bed1fa9068ebef904ef2701b1390d94c52644356f38",
+      "938f595e708d7b05bb26b09c5163f8f2206f4d04cac401cee062b8d44d625175",
+      "de560301a41e5caf5af17211a81f6983eeea53b7df5d43f88d2156d35e2d477d",
+      "bbaa9592aab3165f53ac3d2151e5ba1ddddd5d288ac9b71df24987255571d22a",
+      "4f24138c3f0bcf78bcce883dc13e171411bd949212659d525a54e3a5a734d6b2",
+      "4d75259f40fbe3a0902a59af1277bdd8e3aa7a4ab00cc5b3b7a27da28fcd791b",
+      "5a830db6dd75963d0cf2509fed2ecc1cc0400978e6769889dec23505f4cf9407",
+      "b02059968049bf08a07f4fe0731c182d6923a829eceec2a454ecc95a0aa7e648",
+      "fad3bcdd5d22d80f93fc80d6e9a6ab2b88b2c5ed3c0d9c91f346bad116536dca",
+      "1f8dd4aad7acd2740eeb293653afbb937cea46c065c60d376c99ebf3906241a2",
+      "4909637978cceaa92ef12d0d2ff7c333c7c7983630cbaa0309bc3a79353179aa",
+      "ea2db4291b1c2bbb561d92eae7ba43a88aca316fee436f82685433df39a35798",
+      "d08a224f881b0849437dcba63dc5263ec7503759e802f00e2fb2f2904def7d8e",
+      "af97fbf56ef1d99cd6c835c1947136372b1c480c64d463192eb4bc02449c6301",
+      "66f5639f922e2d6dd97d7c82e26f63f94ef5380ae21ee147c3a4754ff253721d",
+      "bc01329877b0d62796ba519fe8fd2158c9608797f536074cc9e25d9f3c0dcb86",
+      "71c7ca780471f28a6003e3be61434fc69fd75ca530c8417f8c84cc88cd310555",
+      "1260912aac7e1ddf8acdf8e852de674fd2c180382ee2e345969c14d61777728c",
+      "a4f824ab1debd2316da11e69bd660d45edac03793d7289e785699fd740c549b5",
+      "2233b71f5ec29363b1bcc14518ac69c43d5267447f6e4d3a3f4527614da55229",
+      "3eeba3c7cd28c0fcddff4663bd6f0e2fed80807782c3030ec4329bdc9cd7afb7",
+      "9d974d7c86d82891c59bb48f4eca16c079238031fc6ed6714deabb04c237ff7a",
+      "e3f7c1ce469a844e0192f76fe3e970c0f07099dddce4fae454ed2366ea09ee5b",
+      "f56cd3f3a3a20e261ba17265658f601d2c88172c1b23e487d7001c8d63b63b7a",
+      "f3c0af4b3e675fb471b8286af8a5c352fbf09d9043be4a235ef94d5e0fbc5f9d",
+      "4c7bdd87c7c9940a1a3157ed51d1c8bba239633d2ffde544a24b0943da656a82"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:198409,kitsu:50139,mal:62435,offline:mal-62435)"
+  },
+  "why": "The World's Strongest Rearguard (Sekai Saikyou no Kouei: Meikyuukoku no Shinjin Tansakusha) is a 12 episode summer 2026 TV run that started 2026-07-05 and is still airing, with anilist giving an end of 2026-09-20. anizip:19569 is the same run: it carries SAME_AS ids to anilist:198409 and mal:62435, lists the same 12 episodes, and its weekly 13:00 dates fall on the run's own days. cr:GT00378122-GS00378140 is the same run: anilist:198409 carries a SAME_AS handle to it, and its 10 listed episodes share the run's dates day for day (2026-07-05 through 2026-09-06) under the same titles, with none past the run's end. jw:496636-525942 is the same run: it carries SAME_AS ids to all four members and to anizip:19569, and its first 9 episode titles match the Crunchyroll ones. cr:GT00378122 is the bare Crunchyroll series container for the show, with no dates and no episodes of its own, so it holds the run. nf:81981336 is a different work despite its SAME_AS claims: it is titled The Strongest Hearts VS, dated 2023-01-01, and its 18 episodes are labelled with 2023 and 2024 air dates, so it is another series entirely. Episodes 1 to 10 are paired between anizip and Crunchyroll on identical release days and identical titles, and 1 to 9 between Crunchyroll and JustWatch on the same titles (episode 7 differs only in the capital H of Demi-Humans). JustWatch episode 10 is left unpaired: it reads \"Kurueru Mori no Bijo\" where Crunchyroll and anizip both say \"The Beautiful Girl in the Maddening Forest\", and JustWatch carries no dates. anizip's episodes 11 and 12 have no titles and kitsu's twelve episode rows carry neither titles nor dates, so neither is paired."
+}

@@ -1,0 +1,803 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The 52 Kitsu episode rows carry no title and no date while the 16 AniZip episode rows carry dates only, so there was nothing to pair on and no episode pairs were asserted. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64398"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64398",
+      "mediaUri": "anilist:213356",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64398",
+      "mediaUri": "kitsu:50835",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213356",
+      "mediaUri": "kitsu:50835",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64398",
+      "mediaUri": "anizip:20115",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213356",
+      "mediaUri": "anizip:20115",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64398",
+      "mediaUri": "offline:mal-64398",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213356",
+      "mediaUri": "offline:mal-64398",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405704",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405704"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405705",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405705"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405706",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405706"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405707",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405707"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405708",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405708"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405709",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405709"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405710",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405710"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405711",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405711"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405712",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405712"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405713",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405713"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405714",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405714"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405715",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405715"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405716",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405716"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "405717",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405717"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "405718",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405718"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "405719",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405719"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "405720",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405720"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "405721",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405721"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "405722",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405722"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "405723",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405723"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "405724",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405724"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "405725",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405725"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "405726",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405726"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "405727",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405727"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "405728",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405728"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "405729",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405729"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "405730",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405730"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "405731",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405731"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "405732",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405732"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "405733",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405733"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "405734",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405734"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "405735",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405735"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "405736",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405736"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "405737",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405737"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "405738",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405738"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "405739",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405739"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "405740",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405740"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "405741",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405741"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "405742",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405742"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "405743",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405743"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "405744",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405744"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "405745",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405745"
+    },
+    {
+      "episodeNumber": 43,
+      "id": "405746",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405746"
+    },
+    {
+      "episodeNumber": 44,
+      "id": "405747",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405747"
+    },
+    {
+      "episodeNumber": 45,
+      "id": "405748",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405748"
+    },
+    {
+      "episodeNumber": 46,
+      "id": "405749",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405749"
+    },
+    {
+      "episodeNumber": 47,
+      "id": "405750",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405750"
+    },
+    {
+      "episodeNumber": 48,
+      "id": "405751",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405751"
+    },
+    {
+      "episodeNumber": 49,
+      "id": "405752",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405752"
+    },
+    {
+      "episodeNumber": 50,
+      "id": "405753",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405753"
+    },
+    {
+      "episodeNumber": 51,
+      "id": "405754",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405754"
+    },
+    {
+      "episodeNumber": 52,
+      "id": "405755",
+      "mediaUri": "kitsu:50835",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405755"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "20115-1",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-06-20",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "20115-2",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-06-27",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "20115-3",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "20115-4",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "20115-5",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "20115-6",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "20115-7",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "20115-8",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "20115-9",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "20115-10",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "20115-11",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "20115-12",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "20115-13",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-13"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "20115-14",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-14"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "20115-15",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-09-26",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-15"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "20115-16",
+      "mediaUri": "anizip:20115",
+      "origin": "anizip",
+      "releaseDate": "2026-10-03",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20115-16"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213356",
+        "kitsu:50835",
+        "anizip:20115",
+        "offline:mal-64398"
+      ]
+    ]
+  },
+  "name": "Beyond Time's Gaze 2nd Season",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "213356",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 20 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Beyond Time's Gaze 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Guangyin Zhi Wai 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "光阴之外2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213356"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "50835",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-20",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Beyond Time's Gaze 2nd Season"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Guangyin Zhi Wai 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50835"
+    },
+    {
+      "id": "64398",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64398"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "20115",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Beyond Time`s Gaze 2"
+        }
+      ],
+      "uri": "anizip:20115"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "mal-64398",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Guangyin Zhi Wai 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64398"
+    }
+  ],
+  "source": {
+    "answers": [
+      "fd558ebdb24b3149b981434f7f1b232539e3a3d58c40034d69b6be2cabbaa80d",
+      "17b51fd9a768ff93afc6eacbe71b1844a315489d5a411576bcef6cdd36971f03",
+      "8f298edb3b5043fbad3cf83fbedca583254d8e284a98ff20ea737efbf0c2ca80",
+      "e8edf2b5a383d96cbd77b59a3a9da9dbca40fde8a680b3dcc49326562be690ae",
+      "606c3398f719591fb271a001cf9d1811c2ad07553b463cd356966bd99f010f67"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213356,kitsu:50835,mal:64398)"
+  },
+  "why": "Beyond Time's Gaze 2nd Season is a 52 episode Chinese ONA that began 2026-06-20 and is still releasing, held on AniList, Kitsu and MyAnimeList. anizip:20115 is the same run: it claims SAME_AS to both mal:64398 and anilist:213356, its count of 52 matches, its title Beyond Time`s Gaze 2 matches the AniList title, and its first episode date 2026-06-20 is the run's start date. offline:mal-64398 is the same run: it claims SAME_AS to both mal:64398 and anilist:213356, its count of 52 matches and its title Guangyin Zhi Wai 2 is the run's romanised title."
+}

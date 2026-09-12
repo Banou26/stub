@@ -1,0 +1,165 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: four catalogue rows for a single film, all joined by first-party SAME_AS ids, with no streaming, container or dated episode rows to place. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:59878",
+      "mediaUri": "anilist:183418",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:183418",
+      "mediaUri": "kitsu:50763",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59878",
+      "mediaUri": "kitsu:50763",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59878",
+      "mediaUri": "offline:mal-59878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:183418",
+      "mediaUri": "offline:mal-59878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50763",
+      "mediaUri": "offline:mal-59878",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404079",
+      "mediaUri": "kitsu:50763",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404079"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:59878",
+        "anilist:183418",
+        "kitsu:50763",
+        "offline:mal-59878"
+      ]
+    ]
+  },
+  "name": "Gill",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "59878",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Gill"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Agami"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:59878"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "183418",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Gill"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Agami"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "아가미"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:183418"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50763",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Gill"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Agami"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50763"
+    },
+    {
+      "id": "mal-59878",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-59878"
+    }
+  ],
+  "source": {
+    "answers": [
+      "c4995582b08e647fa24d7538f580f702378ad2091ae354967231854d5461a80d",
+      "cee75b9b6174bf77bdfa2ec6871c01a9af5262d9b03439f5d3a1a2a4a05ecfbe",
+      "234f5790c75b43e9b6fc6b7af4d0f0cd4ce61e2b66d26bd3fdf7f3761853ae0f",
+      "f24b6de3dbd351ed9556702b9aa0236cf2aa1d7edb3c0f5862f24423a6d98dac"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:59878)"
+  },
+  "why": "Gill (Agami), a one episode animated film dated 2026-09-09 by MyAnimeList, the only row carrying a date. anilist:183418 is the same run: it maps SAME_AS to mal:59878 and repeats both titles, Gill and Agami, with the same count of 1. kitsu:50763 is the same run: it maps SAME_AS to both mal:59878 and anilist:183418 and gives the same titles and the same single episode. offline:mal-59878 is the same run: it maps SAME_AS to mal:59878, anilist:183418 and kitsu:50763."
+}

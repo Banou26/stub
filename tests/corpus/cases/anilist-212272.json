@@ -1,0 +1,329 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only judgement was the Netflix row, which claims SAME_AS to every member but is the 2014 Ping Pong the Animation at eleven episodes against a two episode 2026 OVA, so it is marked unrelated rather than held. Its episode titles are placeholders with no dates, so nothing was paired. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64250",
+      "mediaUri": "anilist:212272",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64250",
+      "mediaUri": "offline:mal-64250",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:212272",
+      "mediaUri": "nf:80169477",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64250",
+      "mediaUri": "nf:80169477",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64250",
+      "mediaUri": "nf:80169477",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "80169639",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:80169639"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80169640",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:80169640"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80169641",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:80169641"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80169642",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:80169642"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80169643",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:80169643"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80169644",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:80169644"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80169645",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:80169645"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80169646",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:80169646"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80169647",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:80169647"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80169648",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:80169648"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80169649",
+      "mediaUri": "nf:80169477",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode11"
+        }
+      ],
+      "uri": "nf:80169649"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:212272",
+        "nf:80169477"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:212272",
+        "mal:64250",
+        "offline:mal-64250"
+      ]
+    ],
+    "unrelated": [
+      "nf:80169477"
+    ]
+  },
+  "name": "Deco x Deco THE ANIMATION",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "212272",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 31 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Deco x Deco THE ANIMATION"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "デコ×デコ THE ANIMATION"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:212272"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "64250",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-31",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Deco x Deco The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64250"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-64250",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Deco x Deco The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64250"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80169477",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2014-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ping Pong the Animation"
+        }
+      ],
+      "uri": "nf:80169477"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7f94539e58213a4b473d7d73ce35d08bff7082de16d2cb38e206a8b8947abe25",
+      "60b9dfc1e7b6f284a519afda41353e8e22efbbd9c612578fb45b1cf210a6f89e",
+      "8db2109b8ce6461d0dd14ce373f6b67a927d43d5f21355faa464fa2006a16c75",
+      "026fd6190bc91bb1729726229158f6890133f71a86e386f9b7a964dddad0c9b6",
+      "c2756889a9327a88ea429444e41046244c5348ea4075c5ad196615ceef44ddf9",
+      "e8c7e2dd65f275d4e0557d98bc5ca7e2b146df6f695924ddf60ad61d5cab1714",
+      "e40aa5abbebb01146b08da8b7d583d88af0117b585a03648da3fc8626590d7e4",
+      "b2755abb125d8690502d8f95647540d885ea4e7054f44335d02b8d2c90246053",
+      "a44b72b548e9396626ce9c6c458f52bd792f6bf73a8356e17a9661631bd0ba87",
+      "2f941a44e1ad73bee1bcee5c4599de6077df73ad5b514f2b06c3333b177e725c",
+      "61130d7fa36350143ab60e7f53aeb68bc2e83e5b9e7d2b2ddb4d9361a19bffdb",
+      "5763112c326f5e9634aff577338f4e548b8451707405adcfb627d744fa53d392",
+      "e85fe0f7dc9a6ee8028d2e5db40bb987c53d5aff6f97f067b25e1ebe0bebc87b",
+      "737ee16f7c1702f9947712aea2a3428eafb9a637fd61ad0e4801e19676cf3fb8",
+      "8c2c54dcf69a35c68c7c26a593813e1564f8933779e86a700b6a27944ecbffa2"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:212272,mal:64250,offline:mal-64250)"
+  },
+  "why": "Deco x Deco THE ANIMATION (デコ×デコ THE ANIMATION) is a summer 2026 OVA of two episodes dated 2026-07-31. All three catalogue rows are one run: anilist:212272 carries a first-party SAME_AS to mal:64250 with the same title and the same 2026-07-31 date, and offline:mal-64250 is keyed on the mal id with a SAME_AS to it and the same two episode count. nf:80169477 Ping Pong the Animation is unrelated: it is the 2014 television series of eleven episodes, a different work that collides only on the words the Animation, and its placeholder episode titles (Episode 1 to Episode11) carry no dates that could tie it to a two episode 2026 OVA."
+}

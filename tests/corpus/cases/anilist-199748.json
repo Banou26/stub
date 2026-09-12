@@ -1,0 +1,1373 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll's schedule runs three days ahead of AniZip's so no date match was available, and JustWatch spells three numbers differently; the Netflix row has only placeholder episode titles and was left out of the cluster entirely. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00371671-GS00371672",
+      "mediaUri": "anilist:199748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62617",
+      "mediaUri": "anilist:199748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199748",
+      "mediaUri": "kitsu:50555",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62617",
+      "mediaUri": "offline:mal-62617",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199748",
+      "mediaUri": "offline:mal-62617",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50555",
+      "mediaUri": "offline:mal-62617",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62617",
+      "mediaUri": "anizip:19635",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199748",
+      "mediaUri": "anizip:19635",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199748",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50555",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62617",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62617",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199748",
+      "mediaUri": "jw:502870-532462",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19635",
+      "mediaUri": "jw:502870-532462",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50555",
+      "mediaUri": "jw:502870-532462",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62617",
+      "mediaUri": "jw:502870-532462",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62617",
+      "mediaUri": "jw:502870-532462",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199748",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19635",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00371671-GS00371672",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:502870-532462",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50555",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62617",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62617",
+      "mediaUri": "nf:82941433-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "394644",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394644"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "394645",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394645"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "394646",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394646"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "394647",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394647"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "394648",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394648"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "394649",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394649"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "394650",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394650"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "394651",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394651"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "394652",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394652"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "394653",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394653"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "394654",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394654"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "394655",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394655"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "394656",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394656"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "394657",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394657"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "394658",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394658"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "394659",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394659"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "394660",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394660"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "394661",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394661"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "394662",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394662"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "394663",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394663"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "394664",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394664"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "394665",
+      "mediaUri": "kitsu:50555",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394665"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19635-1",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "When I Returned Home, I`d Become a Hero"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "帰ったら英雄になっていた"
+        }
+      ],
+      "uri": "anizip:19635-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19635-2",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "There Was a Formidable Foe Deep Inside the Den"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "巣穴の奥にとんでもない敵がいた"
+        }
+      ],
+      "uri": "anizip:19635-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19635-3",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "She Suspects I`m Her Bastard Brother, and Now We`re Going on Her First Adventure"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "隠し子疑惑を向けられた上, 初冒険に付き合うことになった"
+        }
+      ],
+      "uri": "anizip:19635-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19635-4",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "After Ten Years, I`m Even in a Picture Book"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "10年たったら絵本にまでなっていた"
+        }
+      ],
+      "uri": "anizip:19635-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19635-5",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "After Ten Years, I Was Told to Get Lost"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "10年たって先に行けと言われた"
+        }
+      ],
+      "uri": "anizip:19635-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19635-6",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "After Ten Years, I Started a Family"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "10年たったら家族ができた"
+        }
+      ],
+      "uri": "anizip:19635-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19635-7",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Trespasser and the Secret Passageway"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "侵入者と秘密の通路"
+        }
+      ],
+      "uri": "anizip:19635-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19635-8",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Party Is Complete for the First Time in 10 Years"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "10年ぶりにパーティが揃った"
+        }
+      ],
+      "uri": "anizip:19635-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19635-9",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mythical Beasts That Lurk in the Darkness"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "闇に潜む魔獣たち"
+        }
+      ],
+      "uri": "anizip:19635-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19635-10",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Storming the Enemy Position"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "敵陣突入"
+        }
+      ],
+      "uri": "anizip:19635-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19635-11",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "10年戦ったから魔神は余裕で倒せる"
+        }
+      ],
+      "uri": "anizip:19635-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19635-12",
+      "mediaUri": "anizip:19635",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19635-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00371671-GS00371672-GE00378338JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-07-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "When I Returned Home, I'd Become a Hero"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378338JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00371671-GS00371672-GE00378339JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-07-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "There Was a Formidable Foe Deep inside the Den"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378339JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00371671-GS00371672-GE00378340JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "She Suspects I'm Her Bastard Brother, and Now We're Going on Her First Adventure"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378340JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00371671-GS00371672-GE00378341JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "After Ten Years, I'm Even in a Picture Book"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378341JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00371671-GS00371672-GE00378342JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "After Ten Years, I Was Told to Get Lost"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378342JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00371671-GS00371672-GE00378343JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "After Ten Years, I Started a Family"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378343JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00371671-GS00371672-GE00378344JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Trespasser and the Secret Passageway"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378344JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00371671-GS00371672-GE00378345JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Party Is Complete for the First Time in 10 Years"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378345JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00371671-GS00371672-GE00378346JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mythical Beasts That Lurk in the Darkness"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378346JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00371671-GS00371672-GE00378347JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Storming the Enemy Position"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378347JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00371671-GS00371672-GE00378348JAJP",
+      "mediaUri": "cr:GT00371671-GS00371672",
+      "origin": "cr",
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Fought for Ten Years, so I Can Easily Defeat Demons"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672-GE00378348JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9816787",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "When I Returned Home, I'd Become a Hero"
+        }
+      ],
+      "uri": "jw:9816787"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10561378",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "There Was a Formidable Foe Deep Inside the Den"
+        }
+      ],
+      "uri": "jw:10561378"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10589341",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "She Suspects I'm Her Bastard Brother, and Now We're Going on Her First Adventure"
+        }
+      ],
+      "uri": "jw:10589341"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10589342",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "After 10 Years, I'm Even in a Picture Book"
+        }
+      ],
+      "uri": "jw:10589342"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10589343",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "After 10 Years, I Was Told to Get Lost"
+        }
+      ],
+      "uri": "jw:10589343"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10589344",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "After 10 Years, I Started a Family"
+        }
+      ],
+      "uri": "jw:10589344"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10589345",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Trespasser and the Secret Passageway"
+        }
+      ],
+      "uri": "jw:10589345"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10589346",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Party Is Complete for the First Time in 10 Years"
+        }
+      ],
+      "uri": "jw:10589346"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10589347",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mythical Beasts That Lurk in the Darkness"
+        }
+      ],
+      "uri": "jw:10589347"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10589348",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Storming the Enemy Position"
+        }
+      ],
+      "uri": "jw:10589348"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10589349",
+      "mediaUri": "jw:502870-532462",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Fought for 10 Years, so I Can Easily Defeat Demons"
+        }
+      ],
+      "uri": "jw:10589349"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82941444",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82941444"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82941445",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82941445"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82941446",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82941446"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82941447",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82941447"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82941448",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82941448"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82941449",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82941449"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82941450",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82941450"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82941451",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82941451"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82941452",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82941452"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82941453",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82941453"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82941454",
+      "mediaUri": "nf:82941433-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82941454"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19635-1",
+        "b": "cr:GT00371671-GS00371672-GE00378338JAJP"
+      },
+      {
+        "a": "anizip:19635-2",
+        "b": "cr:GT00371671-GS00371672-GE00378339JAJP"
+      },
+      {
+        "a": "anizip:19635-3",
+        "b": "cr:GT00371671-GS00371672-GE00378340JAJP"
+      },
+      {
+        "a": "anizip:19635-4",
+        "b": "cr:GT00371671-GS00371672-GE00378341JAJP"
+      },
+      {
+        "a": "anizip:19635-5",
+        "b": "cr:GT00371671-GS00371672-GE00378342JAJP"
+      },
+      {
+        "a": "anizip:19635-6",
+        "b": "cr:GT00371671-GS00371672-GE00378343JAJP"
+      },
+      {
+        "a": "anizip:19635-7",
+        "b": "cr:GT00371671-GS00371672-GE00378344JAJP"
+      },
+      {
+        "a": "anizip:19635-8",
+        "b": "cr:GT00371671-GS00371672-GE00378345JAJP"
+      },
+      {
+        "a": "anizip:19635-9",
+        "b": "cr:GT00371671-GS00371672-GE00378346JAJP"
+      },
+      {
+        "a": "anizip:19635-10",
+        "b": "cr:GT00371671-GS00371672-GE00378347JAJP"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378338JAJP",
+        "b": "jw:9816787"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378339JAJP",
+        "b": "jw:10561378"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378340JAJP",
+        "b": "jw:10589341"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378341JAJP",
+        "b": "jw:10589342"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378342JAJP",
+        "b": "jw:10589343"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378343JAJP",
+        "b": "jw:10589344"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378344JAJP",
+        "b": "jw:10589345"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378345JAJP",
+        "b": "jw:10589346"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378346JAJP",
+        "b": "jw:10589347"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378347JAJP",
+        "b": "jw:10589348"
+      },
+      {
+        "a": "cr:GT00371671-GS00371672-GE00378348JAJP",
+        "b": "jw:10589349"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:199748",
+        "kitsu:50555",
+        "mal:62617",
+        "offline:mal-62617",
+        "anizip:19635",
+        "cr:GT00371671-GS00371672",
+        "jw:502870-532462"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "I Became a Legend After My 10 Year-Long Last Stand",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "199748",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "I Became a Legend After My 10 Year-Long Last Stand"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Koko wa Ore ni Makasete Saki ni Ike to Ittekara 10-nen ga Tattara Densetsu ni Natteita."
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ここは俺に任せて先に行けと言ってから１０年がたったら伝説になっていた。"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:199748"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50555",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Koko wa Ore ni Makasete Saki ni Ike to Ittekara 10-nen ga Tattara Densetsu ni Natteita."
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ここは俺に任せて先に行けと言ってから１０年がたったら伝説になっていた。"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50555"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62617",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Became a Legend After My 10 Year-Long Last Stand."
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita."
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62617"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62617",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita."
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62617"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19635",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Became a Legend After My 10 Year-Long Last Stand"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ここは俺に任せて先に行けと言ってから10年がたったら伝説になっていた."
+        }
+      ],
+      "uri": "anizip:19635"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00371671-GS00371672",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Became a Legend after My 10 Year-Long Last Stand"
+        }
+      ],
+      "uri": "cr:GT00371671-GS00371672"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "502870-532462",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:502870-532462"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82941433-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Became a Legend After My 10 Year-Long Last Stand"
+        }
+      ],
+      "uri": "nf:82941433-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "65c5d68cffd1f6d1e6bf51bd9d680188cec9eb462b4a38e23f81a24b258aee61",
+      "1dbe8dc87d1e44f2e6b6a5c7851783ad8c88bc0f1b858236fad6bc1fd064a1d0",
+      "5526b00ce5d5e3e68d2d15044a5bfb019ce47b1bea001db5d4c791a79ce9817d",
+      "f7f5b60fa73d2a170077e6540f9db26e91a34c2d17ab807397c1a9c932e797a7",
+      "c9ba03f13c8fe6a458da2b18c3aabcccf86d9fdf6381b4abaf09928d3c9cacec",
+      "b0f1547edfb411958340efa843cfa27e20366828307a85648e07b7625e5c0820",
+      "20e639e1f79cf900f0db4770b445869cad585ab813fd82c2d281a1662136f96e",
+      "490838ce42c5a4b33c994dd8bbb63573166caa90b5d60ff2da63db6e5f72a4af",
+      "614e0b6cb21b621302e13b075409bb6277b78479c6ebde94ddd34eacc78bf551",
+      "fffc662d8803da7bdcc656ea835730073bdce6fb63d4592f4614ef58f1ca6628",
+      "fa59e1cb267e3229bb89d547809a623f7909c959beefe33bef19af689fb49c85"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:199748,kitsu:50555,mal:62617,offline:mal-62617)"
+  },
+  "why": "I Became a Legend After My 10 Year-Long Last Stand, a 12 episode summer 2026 run airing 2026-07-03 to 2026-09-18 and still on air at labelling time. AniZip 19635 is the same run: SAME_AS ids to mal:62617 and anilist:199748 and the same episodeCount of 12. The Crunchyroll season GT00371671-GS00371672 is the same run: it maps SAME_AS onto all four members and its 11 episodes carry AniZip's episode titles in the same order, and its first episode on 2026-07-03 is the run's own start date. The JustWatch season 502870-532462 is the same run: it maps SAME_AS onto all four members and onto anizip:19635 and repeats the same 11 titles in order. AniZip episodes 1 to 10 pair with the Crunchyroll episodes on those exact non generic titles, from When I Returned Home, I'd Become a Hero to Storming the Enemy Position; the pairs rest on the titles, not the dates, because AniZip's slots run three days after Crunchyroll's (2026-07-06 against 2026-07-03 and so on), which is past a day of slack. All 11 Crunchyroll episodes pair with the JustWatch ones on the same titles, three of which JustWatch writes with a numeral (After 10 Years rather than After Ten Years) but is otherwise word for word. AniZip episode 11 (2026-09-14) carries only a Japanese title and episode 12 (2026-09-21) none at all, so neither is paired. Kitsu lists 22 untitled, undated episode rows against a 12 episode run, so nothing is asserted about them. The Netflix season 82941433-1 is left unsettled: its 11 episodes are titled Episode 1 to Episode 11, it carries no dates, and its count does not match the run's 12, so nothing but its own claim links it here."
+}

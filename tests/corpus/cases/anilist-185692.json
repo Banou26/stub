@@ -1,0 +1,553 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard here: the only non-member row is anizip, which maps by id and agrees on the count and the start. Note anizip skips the week of 2026-08-29 between episodes 8 and 9, so a positional date offset would not hold, but no second episode list exists to pair against anyway. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:60552",
+      "mediaUri": "anilist:185692",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185692",
+      "mediaUri": "kitsu:49427",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60552",
+      "mediaUri": "kitsu:49427",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60552",
+      "mediaUri": "offline:mal-60552",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185692",
+      "mediaUri": "offline:mal-60552",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49427",
+      "mediaUri": "offline:mal-60552",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60552",
+      "mediaUri": "anizip:19063",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185692",
+      "mediaUri": "anizip:19063",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "376629",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376629"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "376630",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376630"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "376631",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376631"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "376632",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376632"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "376633",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376633"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "376634",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376634"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "376635",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376635"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "376636",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376636"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "376637",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376637"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "376638",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376638"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "376639",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376639"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "376640",
+      "mediaUri": "kitsu:49427",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376640"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19063-1",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Legitimate Job Admired by Everyone"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "誰もが憧れる立派なひとつの職業"
+        }
+      ],
+      "uri": "anizip:19063-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19063-2",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "No Logical Means of Exterminating This Kaii"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "この怪異に退治方法はございませんの"
+        }
+      ],
+      "uri": "anizip:19063-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19063-3",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Haven`t Seen Delusion Like This in Ages"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "こういうイチャモンは久々だな"
+        }
+      ],
+      "uri": "anizip:19063-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19063-4",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "How Exceptional His Magical Girls Are"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "よっぽどいい魔法少女と働いてるんですよ"
+        }
+      ],
+      "uri": "anizip:19063-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19063-5",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Can`t Keep Acting Like a Rookie"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "いつまでも新人気分じゃいられない"
+        }
+      ],
+      "uri": "anizip:19063-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19063-6",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You`re Not Fit for This Job"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "あなた, この仕事向いてないわよ"
+        }
+      ],
+      "uri": "anizip:19063-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19063-7",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Battle`s Already Over"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "どう考えてもゲームセットでしょ"
+        }
+      ],
+      "uri": "anizip:19063-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19063-8",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You Can Choose Where to Grow Up"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "一人前になる場所は選べるんや"
+        }
+      ],
+      "uri": "anizip:19063-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19063-9",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Are You Expecting Us to Sugarcoat This?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "きれい事が聞きたくて来たんですか?"
+        }
+      ],
+      "uri": "anizip:19063-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19063-10",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Do You Like Barley Spice?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "プリハト...... 好きなんですか?"
+        }
+      ],
+      "uri": "anizip:19063-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19063-11",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T16:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19063-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19063-12",
+      "mediaUri": "anizip:19063",
+      "origin": "anizip",
+      "releaseDate": "2026-09-26T16:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19063-12"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:185692",
+        "kitsu:49427",
+        "mal:60552",
+        "offline:mal-60552",
+        "anizip:19063"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Magilumiere Magical Girls Inc. Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "185692",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Magilumiere Magical Girls Inc. Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kabushiki Gaisha Magi Lumiere 2nd Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "株式会社マジルミエ 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:185692"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49427",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Magilumiere Magical Girls Inc. Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kabushiki Gaisha Magi Lumiere 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "株式会社マジルミエ 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49427"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "60552",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Magilumiere Magical Girls Inc. Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kabushikigaisha Magi-Lumière 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:60552"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-60552",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kabushikigaisha Magi-Lumière 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-60552"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19063",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Magilumiere Magical Girls Inc. (2026)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "株式会社マジルミエ (2026)"
+        }
+      ],
+      "uri": "anizip:19063"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d162c797bc84ddd44c0a11f574c38d739a83b09f42c8bda35f2d86c1b8fa61dd",
+      "b068d289942cc126df2ba9b35e03447fe36f3cfeb1dbec4ae2dbc3874c0852cf",
+      "5bc4f9ba4fbc60d532187484022e1d3c6c7454548299ca3414e140c02d5de30a",
+      "8b967d00de6b8bd55050d89b120d6290b645169ca365bed134b56b2582802305",
+      "ee00c2d7dabc68401d55d1f7ab3c82901a9105949c2ced3058db5b81d561ff6d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:185692,kitsu:49427,mal:60552,offline:mal-60552)"
+  },
+  "why": "The run is the second season of Magilumiere Magical Girls Inc., 12 episodes that started 2026-07-05 and are still airing (anilist gives an end of 2026-09-27 and anizip still lists episodes 11 and 12 as unaired). anizip:19063 is the same run: it carries first-party SAME_AS ids to both mal:60552 and anilist:185692, gives the same count of 12, and its first episode goes out 2026-07-04T16:00Z, which is the 2026-07-05 Japanese broadcast the members date it to. No streaming or aggregator row came back for this run, and the kitsu member lists 12 numbered episodes with no titles or dates, so there is nothing to pair episode by episode."
+}

@@ -1,0 +1,727 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "anizip also carries an unnumbered entry, Past and Future dated 2026-09-09, which is not among the case episode rows, so nothing is asserted about it; it is later than the run's last episode and has no counterpart on the Crunchyroll side. The offline member claims 12 episodes against the 9 everything else agrees on, but it is a member and needed no judgement. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378126-GS00378142",
+      "mediaUri": "anilist:198709",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62476",
+      "mediaUri": "anilist:198709",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198709",
+      "mediaUri": "kitsu:50805",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62476",
+      "mediaUri": "kitsu:50805",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378126",
+      "mediaUri": "kitsu:50805",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62476",
+      "mediaUri": "offline:mal-62476",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198709",
+      "mediaUri": "offline:mal-62476",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50805",
+      "mediaUri": "offline:mal-62476",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62476",
+      "mediaUri": "anizip:19573",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198709",
+      "mediaUri": "anizip:19573",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198709",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50805",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62476",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62476",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404987",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404987"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404988",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404988"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404989",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404989"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404990",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404990"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404991",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404991"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404992",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404992"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404993",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404993"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404994",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404994"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404995",
+      "mediaUri": "kitsu:50805",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404995"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19573-1",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Free, Unbound by Anyone"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "誰にも縛られず自由に"
+        }
+      ],
+      "uri": "anizip:19573-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19573-2",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "No One Should Feel Sorry for Me"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "可哀想じゃないのよ"
+        }
+      ],
+      "uri": "anizip:19573-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19573-3",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Couldn`t Become Someone to Be Depended Upon"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "頼られる存在になれなかった"
+        }
+      ],
+      "uri": "anizip:19573-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19573-4",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Are You Going to Arrest Me?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "私のことを捕まえますか?"
+        }
+      ],
+      "uri": "anizip:19573-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19573-5",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Prepared to Pay for What I`ve Done"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "いつかこの身にバチが当たることを"
+        }
+      ],
+      "uri": "anizip:19573-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19573-6",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Think About This Child`s Happiness"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "この子の幸せを考えてやらないと"
+        }
+      ],
+      "uri": "anizip:19573-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19573-7",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Made Great Memories"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "素敵な思い出ができたのは"
+        }
+      ],
+      "uri": "anizip:19573-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19573-8",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I`m Truly Thankful"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "本当にありがとうって思うのよ"
+        }
+      ],
+      "uri": "anizip:19573-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19573-9",
+      "mediaUri": "anizip:19573",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "No Matter What Happens in the Future"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "この先何があっても"
+        }
+      ],
+      "uri": "anizip:19573-9"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378126-GS00378142-GE00378927JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-07-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Free, Unbound by Anyone"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378927JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378126-GS00378142-GE00378928JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-07-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "No One Should Feel Sorry for Me"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378928JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378126-GS00378142-GE00378929JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-07-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Couldn't Become Someone to Be Depended Upon"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378929JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378126-GS00378142-GE00378930JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-07-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Are You Going to Arrest Me?"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378930JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378126-GS00378142-GE00378931JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-08-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Prepared to Pay for What I've Done"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378931JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378126-GS00378142-GE00378932JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-08-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Think About This Child's Happiness"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378932JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378126-GS00378142-GE00378933JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-08-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Made Great Memories"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378933JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378126-GS00378142-GE00378934JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-08-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Am Truly Thankful"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378934JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378126-GS00378142-GE00378935JAJP",
+      "mediaUri": "cr:GT00378126-GS00378142",
+      "origin": "cr",
+      "releaseDate": "2026-09-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "No Matter What Happens in the Future"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142-GE00378935JAJP"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19573-1",
+        "b": "cr:GT00378126-GS00378142-GE00378927JAJP"
+      },
+      {
+        "a": "anizip:19573-2",
+        "b": "cr:GT00378126-GS00378142-GE00378928JAJP"
+      },
+      {
+        "a": "anizip:19573-3",
+        "b": "cr:GT00378126-GS00378142-GE00378929JAJP"
+      },
+      {
+        "a": "anizip:19573-4",
+        "b": "cr:GT00378126-GS00378142-GE00378930JAJP"
+      },
+      {
+        "a": "anizip:19573-5",
+        "b": "cr:GT00378126-GS00378142-GE00378931JAJP"
+      },
+      {
+        "a": "anizip:19573-6",
+        "b": "cr:GT00378126-GS00378142-GE00378932JAJP"
+      },
+      {
+        "a": "anizip:19573-7",
+        "b": "cr:GT00378126-GS00378142-GE00378933JAJP"
+      },
+      {
+        "a": "anizip:19573-8",
+        "b": "cr:GT00378126-GS00378142-GE00378934JAJP"
+      },
+      {
+        "a": "anizip:19573-9",
+        "b": "cr:GT00378126-GS00378142-GE00378935JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:198709",
+        "whole": "cr:GT00378126"
+      }
+    ],
+    "together": [
+      [
+        "anilist:198709",
+        "kitsu:50805",
+        "mal:62476",
+        "offline:mal-62476",
+        "anizip:19573",
+        "cr:GT00378126-GS00378142"
+      ]
+    ]
+  },
+  "name": "Victoria of Many Faces",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "198709",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Victoria of Many Faces"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Tefuda ga Oome no Victoria"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "手札が多めのビクトリア"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:198709"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "50805",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Victoria of Many Faces"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tefuda ga Oome no Victoria"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "手札が多めのビクトリア"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50805"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "62476",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Victoria of Many Faces"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tefuda ga Oome no Victoria"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62476"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62476",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tefuda ga Oome no Victoria"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62476"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "19573",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Victoria of Many Faces"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "手札が多めのビクトリア"
+        }
+      ],
+      "uri": "anizip:19573"
+    },
+    {
+      "id": "GT00378126",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378126"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "GT00378126-GS00378142",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Victoria of Many Faces"
+        }
+      ],
+      "uri": "cr:GT00378126-GS00378142"
+    }
+  ],
+  "source": {
+    "answers": [
+      "89b8058c9c8f9f5fe9f7c83c823a0efdfc102da61d0180f3f74abd3ced580bb2",
+      "aa6416a25ab6edd9d83c43347c7632964b463a68290ac92cd7138bfb0404d2cc",
+      "c5584fee8ddda85baa0c8aaf2f2e489038b171f83acbc4e0081b29f145ea16e1",
+      "ccb36ba2936baa5c33fe8cff3c3fe7b4953465ea9fa042f3995349214e59490b",
+      "9e8c602a456bc7456fd1eefb15213d99a6c27598859cd3dc99ef77c8b76b583e",
+      "daeb020e8f7455c076afb50d955abc8e7d24dd1a9f918de75e523f5f344221c3",
+      "04ca0d2ad9b5eb7351ebcdc1e1926c47fde93716024f4a198840b26cdb211a83"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:198709,kitsu:50805,mal:62476,offline:mal-62476)"
+  },
+  "why": "Victoria of Many Faces is a 9 episode summer 2026 TV run: anilist gives 2026-07-08 to 2026-09-02 with 9 episodes, kitsu 2026-07-08 to 2026-09-01 with 9, and mal 2026-07-08 with 9. anizip:19573 is the same run: it carries SAME_AS ids to both mal:62476 and anilist:198709, a count of 9, and weekly episodes from 2026-07-07T15:00:00Z to 2026-09-01T15:00:00Z. cr:GT00378126-GS00378142 is the same run: anilist:198709 names it SAME_AS, it lists the same 9 episodes on the same days (2026-07-07, 2026-07-14 and so on to 2026-09-01) under the same titles (Free, Unbound by Anyone; Are You Going to Arrest Me?; No Matter What Happens in the Future), and its count of 9 matches. cr:GT00378126 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50805 declares the run PART_OF it. The nine episode pairs rest on the release dates agreeing to the day between anizip and Crunchyroll and on the episode titles being the same text, episode 8 aside, where the only difference is I`m Truly Thankful against I Am Truly Thankful on the same date 2026-08-25."
+}

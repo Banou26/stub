@@ -1,0 +1,59 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to weigh: the run view returned one row, the MyAnimeList member itself, so there was no cross-catalogue evidence to judge. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:61569"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Cup of Snow",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "61569",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-25",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Cup of Snow"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Bei Xue"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:61569"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2820bc57f8815ba9596e6836ab253f0b38d1a7eac0bcfb98fcd3e8345e1e9383"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:61569)"
+  },
+  "why": "Cup of Snow (Bei Xue) is a single-episode Chinese ONA listed for 2026-08-25, and MyAnimeList is the only catalogue that returned anything for it. No other row exists to compare, so the case asserts nothing beyond the run itself."
+}

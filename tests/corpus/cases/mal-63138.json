@@ -1,0 +1,80 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The offline row places the work in FALL 2026 where mal says SUMMER 2026 and carries no episode count, so the merge rests on the first-party id mapping offline:mal-63138 to mal:63138 and the exact title match rather than on the season fields. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63138",
+      "mediaUri": "offline:mal-63138",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:63138",
+        "offline:mal-63138"
+      ]
+    ]
+  },
+  "name": "Kaiju No. 8: Narumi's Week at Work",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 4,
+      "id": "63138",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kaiju No. 8: Narumi's Week at Work"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kaijuu 8-gou: Narumi no Heijitsu"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:63138"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-63138",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kaijuu 8-gou: Narumi no Heijitsu"
+        }
+      ],
+      "uri": "offline:mal-63138"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a7081c973c0af8ecc58bba302a9c1735f4fa0e4c468c3fed6b757ce7e13ebee4",
+      "6628647e493ef8a242ae48b5621976ae1600a5107806e489aeafbe1021387f60"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:63138)"
+  },
+  "why": "Kaiju No. 8: Narumi's Week at Work is a 4 episode ONA that mal starts on 2026-09-05 and places in summer 2026. offline:mal-63138 is the same run: it is keyed on the mal id and declares SAME_AS mal:63138, and its title Kaijuu 8-gou: Narumi no Heijitsu is exactly the mal jp-en title. Nothing else was returned for this run, so there is no container to attach and no episode to pair."
+}

@@ -1,0 +1,291 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The catalogue rows agree on date, count and title, so the merge is easy; the work was in rejecting the Netflix row, which asserts SAME_AS on both members but is an eight-episode 2023 series with an unrelated title. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64769"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64769",
+      "mediaUri": "kitsu:50891",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64769",
+      "mediaUri": "anilist:214894",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50891",
+      "mediaUri": "nf:81438166",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64769",
+      "mediaUri": "nf:81438166",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64769",
+      "mediaUri": "offline:mal-64769",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214894",
+      "mediaUri": "offline:mal-64769",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406900",
+      "mediaUri": "kitsu:50891",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406900"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81500081",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Meet cute"
+        }
+      ],
+      "uri": "nf:81500081"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81500082",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sleepwalking"
+        }
+      ],
+      "uri": "nf:81500082"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81500083",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Talent"
+        }
+      ],
+      "uri": "nf:81500083"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81500084",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Forgot I Had Forgotten About You"
+        }
+      ],
+      "uri": "nf:81500084"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81500085",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Never, Always, Not Ever"
+        }
+      ],
+      "uri": "nf:81500085"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81500086",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Summer Camp"
+        }
+      ],
+      "uri": "nf:81500086"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81500087",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Intern"
+        }
+      ],
+      "uri": "nf:81500087"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81500088",
+      "mediaUri": "nf:81438166",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Power Of Words"
+        }
+      ],
+      "uri": "nf:81500088"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81438166",
+        "mal:64769"
+      ]
+    ],
+    "together": [
+      [
+        "kitsu:50891",
+        "anilist:214894",
+        "offline:mal-64769"
+      ]
+    ],
+    "unrelated": [
+      "nf:81438166"
+    ]
+  },
+  "name": "We Will Rise Again",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50891",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "We Will Rise Again"
+        }
+      ],
+      "uri": "kitsu:50891"
+    },
+    {
+      "id": "64769",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64769"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "214894",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 09 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "We Will Rise Again"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "We Will Rise Again"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:214894"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81438166",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "In Love All Over Again"
+        }
+      ],
+      "uri": "nf:81438166"
+    },
+    {
+      "id": "mal-64769",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64769"
+    }
+  ],
+  "source": {
+    "answers": [
+      "eb12d4aef90dca5ec47c2b7102c084178cf12908d1fc55380607e00655d5a162",
+      "605f226a895f946a6f2366f6cedaf9e195fd1136b5762832edfbd427dfbcc6c9",
+      "97950b93d0e6a43d06079e53105689626c00ad45ddeb5785ce2d06808b2ce161",
+      "a3cd20be4244ef91130c52a4e37622ae5b4559730e8b9c6d5448c5f7817ac5ce",
+      "3e43da32eda3da36e9f9f898d7654a82d40982dda0506d0e9e9e01df209fa832",
+      "2e8db59e23ed61c78715044e29823cc8ebc151b8c11cebdb406d42ae69ab6962",
+      "a3bf560883929a6ca3740968555026aa43afe2231a19f5b61c5418631a210c74",
+      "432cae34a1da0b542c3896a92a2645272e46af66c686c915bdb21184f30a1f4e",
+      "8a1459a813ddf774ea99d7c022e615401eab7014c42d32e400c3fd06390e766e",
+      "de04182c2eb7e94c85b9523e63a88b2d29a6755f4f148d3beed5f47aa723eeec",
+      "14806c04d18c663797a3405125dc38b14302457be54d895f89dc293e260c6474",
+      "74664a3d51a310efe824ca3cf145e83e21eac703aefcab662a085ebfcdba2569",
+      "2e7d04a4f0758233cead6912f3dcf12a6324668a7268262715d777c36e831ba0"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50891,mal:64769)"
+  },
+  "why": "We Will Rise Again is a one-episode special that aired 2026-08-09, kitsu:50891 mapping SAME_AS to its fellow member mal:64769. anilist:214894 is the same run: it maps SAME_AS to mal:64769 and carries the same title, the same 2026-08-09 start and end date and the same episodeCount of 1. offline:mal-64769 is the same run as well, holding SAME_AS handles to both mal:64769 and anilist:214894 with no field that disagrees. nf:81438166 is unrelated: it is Netflix's In Love All Over Again, an eight-episode series from 2023-01-01 with its own episode titles (Meet cute, Sleepwalking, Talent), matched to the run only by the words in its name."
+}

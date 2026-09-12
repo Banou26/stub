@@ -1,0 +1,283 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Four rows, all members, with every id mapping agreeing; the twelve Kitsu episodes stand alone so no episode pairing was possible, and no row for the earlier five seasons came back to be held apart. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64461",
+      "mediaUri": "anilist:213486",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213486",
+      "mediaUri": "kitsu:50815",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64461",
+      "mediaUri": "kitsu:50815",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64461",
+      "mediaUri": "offline:mal-64461",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213486",
+      "mediaUri": "offline:mal-64461",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50815",
+      "mediaUri": "offline:mal-64461",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405209",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405209"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405210",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405210"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405211",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405211"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405212",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405212"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405213",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405213"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405214",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405214"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405215",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405215"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405216",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405216"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405217",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405217"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405218",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405218"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405219",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405219"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405220",
+      "mediaUri": "kitsu:50815",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405220"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213486",
+        "kitsu:50815",
+        "mal:64461",
+        "offline:mal-64461"
+      ]
+    ]
+  },
+  "name": "Fabulous Beasts 6",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "213486",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 05 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Fabulous Beasts 6"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "You Shou Yan 6th Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "有兽焉 第六季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213486"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50815",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Fabulous Beasts 6"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "You Shou Yan 6th Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "有兽焉 第六季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50815"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "64461",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fabulous Beasts 6th Season"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "You Shou Yan 6th Season"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64461"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-64461",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You Shou Yan 6th Season"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64461"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7465fc1def41bf49610ee03ef9c92d14de810a7c60ec84fc1f5be67ae733cc50",
+      "22ad34f39faae992548b0f55ba79b387822c78fbe65dbb4fa2ebfbffb0c9a195",
+      "d49cd280a9518c9af495635205436150e43b340b3d2201ef156f7e86df25fcd6",
+      "4a4c7bd3953b48b7fcd25c259b44a207bf91bb1027e58d00367d0b028fc7120d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213486,kitsu:50815,mal:64461,offline:mal-64461)"
+  },
+  "why": "Fabulous Beasts 6 (You Shou Yan 6th Season) is the sixth season of the Chinese ONA, twelve episodes from 2026-08-05, running to 2026-10-14 on AniList, and every row returned for the address is already a member. AniList 213486, Kitsu 50815 and MyAnimeList 64461 agree on episodeCount 12, on the 2026-08-05 start and on the title, and are tied together by the AniList and Kitsu SAME_AS handles on mal:64461; the offline database row offline:mal-64461 is keyed on the MyAnimeList id and carries SAME_AS handles to all three. Only Kitsu lists episodes, so there is no second episode list to pair against, and no container, earlier season or unrelated row was returned."
+}

@@ -1,0 +1,1055 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch season carries the right episode titles but no release dates, and it is not a metadata catalogue, so its episodes are left unpaired even though the titles line up one for one with Crunchyroll; only the anizip to Crunchyroll pairs, which have day matching dates on both sides, are asserted. anizip episode 11 has no title, so that pair rests on the 2026-09-10 date alone. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00377933-GS00377934",
+      "mediaUri": "anilist:203880",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63082",
+      "mediaUri": "anilist:203880",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203880",
+      "mediaUri": "kitsu:50751",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00377933",
+      "mediaUri": "kitsu:50751",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63082",
+      "mediaUri": "offline:mal-63082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203880",
+      "mediaUri": "offline:mal-63082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50751",
+      "mediaUri": "offline:mal-63082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63082",
+      "mediaUri": "anizip:19764",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203880",
+      "mediaUri": "anizip:19764",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203880",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50751",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63082",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63082",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203880",
+      "mediaUri": "jw:517665-551904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19764",
+      "mediaUri": "jw:517665-551904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50751",
+      "mediaUri": "jw:517665-551904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63082",
+      "mediaUri": "jw:517665-551904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63082",
+      "mediaUri": "jw:517665-551904",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403860",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403860"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403861",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403861"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "403862",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403862"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "403863",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403863"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "403864",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403864"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "403865",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403865"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "403866",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403866"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "403867",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403867"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "403868",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403868"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "403869",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403869"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "403870",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403870"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "403871",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403871"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "403872",
+      "mediaUri": "kitsu:50751",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403872"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19764-1",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Yamatagi-Madara of the Accursed Land"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "忌み地の屋跨斑"
+        }
+      ],
+      "uri": "anizip:19764-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19764-2",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Visiting the School for the First Time"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "初めての学校訪問"
+        }
+      ],
+      "uri": "anizip:19764-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19764-3",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Laws of Forbidden Ground"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "禁足地の掟"
+        }
+      ],
+      "uri": "anizip:19764-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19764-4",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Return of Yamatagi-Madara"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "復活の谷跨斑"
+        }
+      ],
+      "uri": "anizip:19764-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19764-5",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Genealogy of Mountain Stewards"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "山守の系譜"
+        }
+      ],
+      "uri": "anizip:19764-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19764-6",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Phantom Water God"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "幻影の水神様"
+        }
+      ],
+      "uri": "anizip:19764-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19764-7",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Picture Show of Bygone Days"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "在りし日の紙芝居"
+        }
+      ],
+      "uri": "anizip:19764-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19764-8",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Serpent`s Struggles"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "奮闘のおろち"
+        }
+      ],
+      "uri": "anizip:19764-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19764-9",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Seven Wonders of the School"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "学校の七不思議"
+        }
+      ],
+      "uri": "anizip:19764-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19764-10",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Culture Festival for Two"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "二人だけの文化祭"
+        }
+      ],
+      "uri": "anizip:19764-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19764-11",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19764-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19764-12",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19764-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "19764-13",
+      "mediaUri": "anizip:19764",
+      "origin": "anizip",
+      "releaseDate": "2026-09-24T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19764-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00377933-GS00377934-GE00377935JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-07-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Yamatagi-Madara of the Accursed Land"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377935JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00377933-GS00377934-GE00377936JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-07-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Visiting the School for the First Time"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377936JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00377933-GS00377934-GE00377937JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-07-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Laws of Forbidden Ground"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377937JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00377933-GS00377934-GE00377938JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-07-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Return of Yamatagi-Madara"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377938JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00377933-GS00377934-GE00377939JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-07-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Genealogy of Mountain Stewards"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377939JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00377933-GS00377934-GE00377940JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-08-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Phantom Water God"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377940JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00377933-GS00377934-GE00377941JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-08-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Picture Show of Bygone Days"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377941JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00377933-GS00377934-GE00377942JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-08-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Serpent's Struggles"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377942JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00377933-GS00377934-GE00377943JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-08-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Seven Wonders of the School"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377943JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00377933-GS00377934-GE00377944JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-09-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Culture Festival for Two"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377944JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00377933-GS00377934-GE00377945JAJP",
+      "mediaUri": "cr:GT00377933-GS00377934",
+      "origin": "cr",
+      "releaseDate": "2026-09-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Taboo Test of Courage"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934-GE00377945JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10136059",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yamatagi-Madara of the Accursed Land"
+        }
+      ],
+      "uri": "jw:10136059"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10582881",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Visiting the School for the First Time"
+        }
+      ],
+      "uri": "jw:10582881"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10582884",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Laws of Forbidden Ground"
+        }
+      ],
+      "uri": "jw:10582884"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10582888",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Return of Yamatagi-Madara"
+        }
+      ],
+      "uri": "jw:10582888"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10582944",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Genealogy of Mountain Stewards"
+        }
+      ],
+      "uri": "jw:10582944"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10582945",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Phantom Water God"
+        }
+      ],
+      "uri": "jw:10582945"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10582946",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Picture Show of Bygone Days"
+        }
+      ],
+      "uri": "jw:10582946"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10582947",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Serpent's Struggles"
+        }
+      ],
+      "uri": "jw:10582947"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10582948",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Seven Wonders of the School"
+        }
+      ],
+      "uri": "jw:10582948"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10582949",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Culture Festival for Two"
+        }
+      ],
+      "uri": "jw:10582949"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10582950",
+      "mediaUri": "jw:517665-551904",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Taboo Test of Courage"
+        }
+      ],
+      "uri": "jw:10582950"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19764-1",
+        "b": "cr:GT00377933-GS00377934-GE00377935JAJP"
+      },
+      {
+        "a": "anizip:19764-2",
+        "b": "cr:GT00377933-GS00377934-GE00377936JAJP"
+      },
+      {
+        "a": "anizip:19764-3",
+        "b": "cr:GT00377933-GS00377934-GE00377937JAJP"
+      },
+      {
+        "a": "anizip:19764-4",
+        "b": "cr:GT00377933-GS00377934-GE00377938JAJP"
+      },
+      {
+        "a": "anizip:19764-5",
+        "b": "cr:GT00377933-GS00377934-GE00377939JAJP"
+      },
+      {
+        "a": "anizip:19764-6",
+        "b": "cr:GT00377933-GS00377934-GE00377940JAJP"
+      },
+      {
+        "a": "anizip:19764-7",
+        "b": "cr:GT00377933-GS00377934-GE00377941JAJP"
+      },
+      {
+        "a": "anizip:19764-8",
+        "b": "cr:GT00377933-GS00377934-GE00377942JAJP"
+      },
+      {
+        "a": "anizip:19764-9",
+        "b": "cr:GT00377933-GS00377934-GE00377943JAJP"
+      },
+      {
+        "a": "anizip:19764-10",
+        "b": "cr:GT00377933-GS00377934-GE00377944JAJP"
+      },
+      {
+        "a": "anizip:19764-11",
+        "b": "cr:GT00377933-GS00377934-GE00377945JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:203880",
+        "whole": "cr:GT00377933"
+      }
+    ],
+    "together": [
+      [
+        "anilist:203880",
+        "kitsu:50751",
+        "mal:63082",
+        "offline:mal-63082",
+        "anizip:19764",
+        "cr:GT00377933-GS00377934",
+        "jw:517665-551904"
+      ]
+    ]
+  },
+  "name": "Dara-san of the Reiwa Era",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "203880",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 02 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Dara-san of the Reiwa Era"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Reiwa no Dara-san"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "令和のダラさん"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:203880"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "50751",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Dara-san of Reiwa"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Reiwa no Dara-san"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "令和のダラさん"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50751"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "63082",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dara-san of Reiwa"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Reiwa no Dara-san"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63082"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "mal-63082",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Reiwa no Dara-san"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63082"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19764",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dara-san of the Reiwa Era"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "令和のダラさん"
+        }
+      ],
+      "uri": "anizip:19764"
+    },
+    {
+      "id": "GT00377933",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00377933"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00377933-GS00377934",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Dara-san of the Reiwa Era"
+        }
+      ],
+      "uri": "cr:GT00377933-GS00377934"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "517665-551904",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:517665-551904"
+    }
+  ],
+  "source": {
+    "answers": [
+      "28f5ddb8862d95471dd2ca8bcdc3ea9793866c420dddc643bceaad50429f3962",
+      "5604d342247e420f78b3105a06cc3b687a8ef1f75c9ce524b446f9402a6bd186",
+      "a75f7541356a06a27c9ddc866111b85dad76d7e9b31968fe48b52f88663082ab",
+      "16d6e16037bec0ac1178f66c45070e1ea4f95a37afc6718b5838475f4852264f",
+      "1832f90066a5733c3962f462f2ca357a88432240b2d8ce42dd848cb1db972613",
+      "fe8b624e579492ca56da1a7aa0a12010f05c2a772de3a7f7679a4e468eb279c8",
+      "d9015f6d270f9a805a6335d9a47480a434eeeae1afa728778f4d781c60bbb9a1",
+      "f7e42dfebe272b4bed72a962311fb8b7e3321b6ef169bdc148e0f9b3a632b986",
+      "8534632328740b61ab38a20f4bba33480f315e87d6f690ba640e66cd97e0d433"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:203880,kitsu:50751,mal:63082,offline:mal-63082)"
+  },
+  "why": "Dara-san of the Reiwa Era is a 13 episode summer 2026 TV run that is still airing: anilist gives 2026-07-02 to 2026-09-24 with 13 episodes, kitsu and mal the same 2026-07-02 start and 13, and anizip still lists episodes 12 and 13 for 2026-09-17 and 2026-09-24. anizip:19764 is the same run: it carries SAME_AS ids to both mal:63082 and anilist:203880, the same count of 13, and weekly episodes from 2026-07-02T12:30:00Z to 2026-09-24T12:30:00Z. cr:GT00377933-GS00377934 is the same run: anilist:203880 names it SAME_AS, and its 11 episodes are the run's first 11 on the same days (2026-07-02 through 2026-09-10) under the same titles, 11 being what had aired. jw:517665-551904 is the same run: its 11 episodes carry the same titles in the same order (Yamatagi-Madara of the Accursed Land, Genealogy of Mountain Stewards, The Taboo Test of Courage), the same count of 11 as Crunchyroll, and it names anilist:203880, anizip:19764, kitsu:50751, mal:63082 and offline:mal-63082 as the same run. cr:GT00377933 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50751 declares the run PART_OF it. The eleven episode pairs are between anizip and Crunchyroll only, where the release dates agree to the day (2026-07-02, 2026-07-09 and so on to 2026-09-10) and the titles are the same text."
+}

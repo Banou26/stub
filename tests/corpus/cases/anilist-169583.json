@@ -1,0 +1,1000 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "JustWatch episode 10 carries the romanised Japanese title Tomodachi, da yo ne where every other source has We Are Friends, Right?, and JustWatch publishes no episode dates, so that one position was left unpaired rather than placed by its number. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378120-GS00378137",
+      "mediaUri": "anilist:169583",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56735",
+      "mediaUri": "anilist:169583",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169583",
+      "mediaUri": "kitsu:47988",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56735",
+      "mediaUri": "kitsu:47988",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378120",
+      "mediaUri": "kitsu:47988",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:56735",
+      "mediaUri": "offline:mal-56735",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169583",
+      "mediaUri": "offline:mal-56735",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47988",
+      "mediaUri": "offline:mal-56735",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56735",
+      "mediaUri": "anizip:18211",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169583",
+      "mediaUri": "anizip:18211",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169583",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47988",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56735",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-56735",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169583",
+      "mediaUri": "jw:427612-447638",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18211",
+      "mediaUri": "jw:427612-447638",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47988",
+      "mediaUri": "jw:427612-447638",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56735",
+      "mediaUri": "jw:427612-447638",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-56735",
+      "mediaUri": "jw:427612-447638",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "357132",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357132"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "357133",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357133"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "357134",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357134"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "357135",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357135"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "357136",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357136"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "357137",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357137"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "357138",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357138"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "357139",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357139"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "357140",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357140"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "357141",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357141"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "357142",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357142"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "357143",
+      "mediaUri": "kitsu:47988",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357143"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18211-1",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Beginning with a Summer Day"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "始まりの, 夏の日"
+        }
+      ],
+      "uri": "anizip:18211-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18211-2",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Really Suck at Girl Talk"
+        }
+      ],
+      "uri": "anizip:18211-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18211-3",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Produced by Himeko"
+        }
+      ],
+      "uri": "anizip:18211-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18211-4",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Small Hands, Broad Shoulders"
+        }
+      ],
+      "uri": "anizip:18211-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18211-5",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Discipline, Young Maiden"
+        }
+      ],
+      "uri": "anizip:18211-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18211-6",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "What About Your Camouflage?!"
+        }
+      ],
+      "uri": "anizip:18211-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18211-7",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You`re Special"
+        }
+      ],
+      "uri": "anizip:18211-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18211-8",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Where the Heart Is"
+        }
+      ],
+      "uri": "anizip:18211-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18211-9",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Truly Special"
+        }
+      ],
+      "uri": "anizip:18211-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18211-10",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "We Are Friends, Right?"
+        }
+      ],
+      "uri": "anizip:18211-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18211-11",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18211-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18211-12",
+      "mediaUri": "anizip:18211",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18211-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378120-GS00378137-GE00378715JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-07-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Beginning with a Summer Day"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378715JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378120-GS00378137-GE00378716JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-07-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Really Suck at Girl Talk"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378716JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378120-GS00378137-GE00378717JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-07-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Produced by Himeko"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378717JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378120-GS00378137-GE00378718JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-07-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Small Hands, Broad Shoulders"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378718JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378120-GS00378137-GE00378719JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-08-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Discipline, Young Maiden"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378719JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378120-GS00378137-GE00378720JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-08-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "What about Your Camouflage!?"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378720JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378120-GS00378137-GE00378721JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-08-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "You're Special"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378721JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378120-GS00378137-GE00378722JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-08-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Where the Heart Is"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378722JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378120-GS00378137-GE00378723JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-08-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Truly Special"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378723JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378120-GS00378137-GE00378724JAJP",
+      "mediaUri": "cr:GT00378120-GS00378137",
+      "origin": "cr",
+      "releaseDate": "2026-09-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "We Are Friends, Right?"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137-GE00378724JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "8310403",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Beginning with a Summer Day"
+        }
+      ],
+      "uri": "jw:8310403"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10585530",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Really Suck at Girl Talk"
+        }
+      ],
+      "uri": "jw:10585530"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10585531",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Produced by Himeko"
+        }
+      ],
+      "uri": "jw:10585531"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10585532",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Small Hands, Broad Shoulders"
+        }
+      ],
+      "uri": "jw:10585532"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10585533",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Discipline, Young Maiden"
+        }
+      ],
+      "uri": "jw:10585533"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10585534",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "What About Your Camouflage!?"
+        }
+      ],
+      "uri": "jw:10585534"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10585535",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You're Special"
+        }
+      ],
+      "uri": "jw:10585535"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10585536",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Where the Heart Is"
+        }
+      ],
+      "uri": "jw:10585536"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10585537",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Truly Special"
+        }
+      ],
+      "uri": "jw:10585537"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10585538",
+      "mediaUri": "jw:427612-447638",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tomodachi, da yo ne"
+        }
+      ],
+      "uri": "jw:10585538"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:18211-1",
+        "b": "cr:GT00378120-GS00378137-GE00378715JAJP"
+      },
+      {
+        "a": "anizip:18211-2",
+        "b": "cr:GT00378120-GS00378137-GE00378716JAJP"
+      },
+      {
+        "a": "anizip:18211-3",
+        "b": "cr:GT00378120-GS00378137-GE00378717JAJP"
+      },
+      {
+        "a": "anizip:18211-4",
+        "b": "cr:GT00378120-GS00378137-GE00378718JAJP"
+      },
+      {
+        "a": "anizip:18211-5",
+        "b": "cr:GT00378120-GS00378137-GE00378719JAJP"
+      },
+      {
+        "a": "anizip:18211-6",
+        "b": "cr:GT00378120-GS00378137-GE00378720JAJP"
+      },
+      {
+        "a": "anizip:18211-7",
+        "b": "cr:GT00378120-GS00378137-GE00378721JAJP"
+      },
+      {
+        "a": "anizip:18211-8",
+        "b": "cr:GT00378120-GS00378137-GE00378722JAJP"
+      },
+      {
+        "a": "anizip:18211-9",
+        "b": "cr:GT00378120-GS00378137-GE00378723JAJP"
+      },
+      {
+        "a": "anizip:18211-10",
+        "b": "cr:GT00378120-GS00378137-GE00378724JAJP"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378715JAJP",
+        "b": "jw:8310403"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378716JAJP",
+        "b": "jw:10585530"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378717JAJP",
+        "b": "jw:10585531"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378718JAJP",
+        "b": "jw:10585532"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378719JAJP",
+        "b": "jw:10585533"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378720JAJP",
+        "b": "jw:10585534"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378721JAJP",
+        "b": "jw:10585535"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378722JAJP",
+        "b": "jw:10585536"
+      },
+      {
+        "a": "cr:GT00378120-GS00378137-GE00378723JAJP",
+        "b": "jw:10585537"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:169583",
+        "whole": "cr:GT00378120"
+      }
+    ],
+    "together": [
+      [
+        "anilist:169583",
+        "kitsu:47988",
+        "mal:56735",
+        "offline:mal-56735",
+        "anizip:18211",
+        "cr:GT00378120-GS00378137",
+        "jw:427612-447638"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Oh Boy, Was I Wrong About Her",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "169583",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Oh Boy, Was I Wrong About Her"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Tenkousaki no Seiso Karen na Bishoujo ga, Mukashi Danshi to Omotte Issho ni Asonda Osananajimi datta Ken"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "転校先の清楚可憐な美少女が、昔男子と思って一緒に遊んだ幼馴染だった件"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:169583"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "47988",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Oh Boy, Was I Wrong About Her"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tenkousaki no Seiso Karen na Bishoujo ga, Mukashi Danshi to Omotte Issho ni Asonda Osananajimi datta Ken"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "転校先の清楚可憐な美少女が、昔男子と思って一緒に遊んだ幼馴染だった件"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:47988"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "56735",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Oh Boy, Was I Wrong About Her"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tenkou-saki no Seiso Karen na Bishoujo ga, Mukashi Danshi to Omotte Issho ni Asonda Osananajimi Datta Ken"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:56735"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-56735",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tenkou-saki no Seiso Karen na Bishoujo ga, Mukashi Danshi to Omotte Issho ni Asonda Osananajimi Datta Ken"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-56735"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "18211",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Oh Boy, Was I Wrong About Her"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "転校先の清楚可憐な美少女が, 昔男子と思って一緒に遊んだ幼馴染だった件"
+        }
+      ],
+      "uri": "anizip:18211"
+    },
+    {
+      "id": "GT00378120",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378120"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378120-GS00378137",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Oh Boy, Was I Wrong About Her"
+        }
+      ],
+      "uri": "cr:GT00378120-GS00378137"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "427612-447638",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:427612-447638"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ec2d390782c93e39ca3822ae387f785ae15d935235ddb74963bc0ba5c598b5d5",
+      "f309851d38302f4a9650a353d564816aaec3a5e5790d8150ec0f49d3f1c1ede6",
+      "0a0441904f0514c8f30dabedde263300a08e7b7680c3c13db2173da922a733db",
+      "99f8363457e4aa9942aa13f52ed0c8c3535ee82782c1ab6e18e9d76a1919ea7e",
+      "305143ffbfed5ec58a15359d0e0a63c0b290e6d3c9288a811c0bec86bafe28df",
+      "52b172df257b9d28fbf6326cd0ee0087d33b941a0637f444b1d70588b466cbe8",
+      "d6886d2ce3377750440685a8c29576179095f37b45170c3a66ca2a7dcecaa653",
+      "d84833864f35c92a33cee5a54faf5d32662aa9bf98d2fac75ae5ab1999faa473",
+      "0feee0c45c759431c9da458851478c8210a2ff85d17eaadb7da7a77ad464c973"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:169583,kitsu:47988,mal:56735,offline:mal-56735)"
+  },
+  "why": "Oh Boy, Was I Wrong About Her, a 12 episode summer 2026 TV run airing 2026-07-06 to 2026-09-21 and still on air at labelling time. AniZip 18211 is the same run: SAME_AS ids to mal:56735 and anilist:169583 and the same episodeCount of 12. The Crunchyroll season GT00378120-GS00378137 is the same run: it maps SAME_AS onto all four members and its 10 episodes fall on the same Mondays as AniZip's first 10 (2026-07-06 through 2026-09-07) under the same titles, so it is the aired part of the cour rather than a folded season (10 is fewer than 12). The JustWatch season 427612-447638 is the same run: it maps SAME_AS onto all four members and onto anizip:18211 and lists nine of the same episode titles in the same order. The bare Crunchyroll series GT00378120 has no dates, count or episodes of its own, so it holds the run instead of merging with it. AniZip episodes 1 to 10 pair with the Crunchyroll episodes on matching broadcast days and identical titles (Beginning with a Summer Day through We Are Friends, Right?), and Crunchyroll episodes 1 to 9 pair with the JustWatch ones on those exact titles. JustWatch episode 10 is listed as Tomodachi, da yo ne, a romanised Japanese title that matches neither the English title nor any date, so it is left unpaired, and AniZip episodes 11 and 12 (2026-09-14 and 2026-09-21) have no titles and no counterpart anywhere. Kitsu's 12 episode rows carry neither titles nor dates, so nothing is asserted about them."
+}

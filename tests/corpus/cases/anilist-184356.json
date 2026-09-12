@@ -1,0 +1,464 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Crunchyroll season lists 10 of the 12 episodes because the run is still airing; the count gap is not a fold, since no Crunchyroll episode date runs past the run's end. Episode level pairing was impossible: kitsu's episode rows are bare numbers with no dates or titles. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378123-GS00383360",
+      "mediaUri": "anilist:184356",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63316",
+      "mediaUri": "anilist:184356",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:184356",
+      "mediaUri": "kitsu:50480",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63316",
+      "mediaUri": "kitsu:50480",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63316",
+      "mediaUri": "offline:mal-63316",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:184356",
+      "mediaUri": "offline:mal-63316",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50480",
+      "mediaUri": "offline:mal-63316",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "393069",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393069"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "393070",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393070"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "393071",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393071"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "393072",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393072"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "393073",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393073"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "393074",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393074"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "393075",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393075"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "393076",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393076"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "393077",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393077"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "393078",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393078"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "393079",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393079"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405989",
+      "mediaUri": "kitsu:50480",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405989"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378123-GS00383360-GE00383361JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-07-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Once Again from the End"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383361JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378123-GS00383360-GE00383362JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-07-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Those Who Seek to Own Relics"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383362JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378123-GS00383360-GE00383363JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-07-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "One Suited for Domination"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383363JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378123-GS00383360-GE00383364JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-07-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The One Who Stole the Future"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383364JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378123-GS00383360-GE00383365JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-08-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Owner of the Tree of Life"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383365JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378123-GS00383360-GE00383366JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-08-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Great Tombification"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383366JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378123-GS00383360-GE00383367JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-08-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Restoration of Relics"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383367JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378123-GS00383360-GE00383368JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-08-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Secret of the Crow"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383368JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378123-GS00383360-GE00383369JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-09-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Ruler of Relics"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383369JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378123-GS00383360-GE00383370JAJP",
+      "mediaUri": "cr:GT00378123-GS00383360",
+      "origin": "cr",
+      "releaseDate": "2026-09-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Curse of Relics"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360-GE00383370JAJP"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:184356",
+        "kitsu:50480",
+        "mal:63316",
+        "offline:mal-63316",
+        "cr:GT00378123-GS00383360"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Dogul Wang",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "184356",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 09 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Tomb Raider King"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Dogul Wang"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "도굴왕"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:184356"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50480",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Dogul Wang"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50480"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63316",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tomb Raider King"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Dogulwang"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63316"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "mal-63316",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dogulwang"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63316"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378123-GS00383360",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Season 1 (Japanese)"
+        }
+      ],
+      "uri": "cr:GT00378123-GS00383360"
+    }
+  ],
+  "source": {
+    "answers": [
+      "cb401db61ceaa3cf8ac0eb8300389a9b1b9073cd3f3446bb0a74754c807beaf5",
+      "14510d774b7c9eb04d1a2b40181a5d0074665b04032c7638b109678eface89fe",
+      "980f56f170cb88e7120e22f85fd9da55fe89a8a2691cd535fbc2be4d7c987581",
+      "733222110b1b276570ac217a113d766ea871641435e3a5c74ebc75b7c5f40a2f",
+      "99fb29b15cc1d98257b0094586b8b9b65e38a5a2e617de3243c2c48c625cb757"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:184356,kitsu:50480,mal:63316,offline:mal-63316)"
+  },
+  "why": "Dogul Wang (Tomb Raider King) is a 12 episode summer 2026 TV run that started 2026-07-09 and is still airing, with anilist giving an end of 2026-09-23. The Crunchyroll row \"Season 1 (Japanese)\" is the same run: anilist:184356 carries a SAME_AS handle to cr:GT00378123-GS00383360, and its 10 weekly episodes (2026-07-08 through 2026-09-09) all fall inside the run's window with none past it, so it is a partial listing of a still airing run rather than a season that folds two cours. No episode pairs are asserted because the only other episode rows, the 12 from kitsu:50480, carry no titles and no release dates, so there is nothing to match the Crunchyroll dates or titles against."
+}

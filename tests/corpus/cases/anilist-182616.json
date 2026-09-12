@@ -1,0 +1,859 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll numbers this cour 13 to 21 on the first season's scale, so the pairs had to come from the matching broadcast dates rather than the episode numbers; Kitsu has titles but no dates and its episode 3 translation differs by a word, so that one was left alone. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GQWH0M19X-GS00366034",
+      "mediaUri": "anilist:182616",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60059",
+      "mediaUri": "anilist:182616",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:182616",
+      "mediaUri": "kitsu:49265",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GQWH0M19X",
+      "mediaUri": "kitsu:49265",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:60059",
+      "mediaUri": "offline:mal-60059",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:182616",
+      "mediaUri": "offline:mal-60059",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49265",
+      "mediaUri": "offline:mal-60059",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60059",
+      "mediaUri": "anizip:18903",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:182616",
+      "mediaUri": "anizip:18903",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:182616",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49265",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60059",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-60059",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "373722",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Longing for a Sea Bream!"
+        }
+      ],
+      "uri": "kitsu:373722"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "373723",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Ayako's Heart-Pounding Operation!"
+        }
+      ],
+      "uri": "kitsu:373723"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "373724",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tokiyuki and the Three Generals"
+        }
+      ],
+      "uri": "kitsu:373724"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "373725",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Warrior of Love: Shinano Mask!"
+        }
+      ],
+      "uri": "kitsu:373725"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "373726",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Unyielding"
+        }
+      ],
+      "uri": "kitsu:373726"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "373727",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Boy Who Became a God"
+        }
+      ],
+      "uri": "kitsu:373727"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "373728",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "My Uncle"
+        }
+      ],
+      "uri": "kitsu:373728"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "373729",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:373729"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "373730",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:373730"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "373731",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:373731"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "373732",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:373732"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "373733",
+      "mediaUri": "kitsu:49265",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:373733"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18903-1",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Longing for Sea Bream!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "もう一度, 食べタイ!"
+        }
+      ],
+      "uri": "anizip:18903-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18903-2",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Ayako`s Heart-Pounding Operation!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "亜也子のドキドキ❤︎大作戦!"
+        }
+      ],
+      "uri": "anizip:18903-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18903-3",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tokiyuki and Three Great Generals"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "時行と三大将"
+        }
+      ],
+      "uri": "anizip:18903-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18903-4",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Warrior of Love: Shinano Mask!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "愛の戦士! 信濃仮面"
+        }
+      ],
+      "uri": "anizip:18903-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18903-5",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Unyielding"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "負けざる者たち"
+        }
+      ],
+      "uri": "anizip:18903-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18903-6",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Boy Who Became a God"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "神になった少年"
+        }
+      ],
+      "uri": "anizip:18903-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18903-7",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Uncle"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ぼくのおじさん"
+        }
+      ],
+      "uri": "anizip:18903-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18903-8",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Irreplaceable"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "かけがえがないもの"
+        }
+      ],
+      "uri": "anizip:18903-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18903-9",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Man Called Masashige Kusunoki"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "その男, 楠木正成"
+        }
+      ],
+      "uri": "anizip:18903-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18903-10",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Night of the Assassination"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "暗殺の夜"
+        }
+      ],
+      "uri": "anizip:18903-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18903-11",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-09-25T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18903-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18903-12",
+      "mediaUri": "anizip:18903",
+      "origin": "anizip",
+      "releaseDate": "2026-10-02T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18903-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "GQWH0M19X-GS00366034-GE00343594JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Longing for Sea Bream!"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343594JAJP"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "GQWH0M19X-GS00366034-GE00343595JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Ayako's Heart-Pounding Operation!"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343595JAJP"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "GQWH0M19X-GS00366034-GE00343596JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Tokiyuki and Three Great Generals"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343596JAJP"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "GQWH0M19X-GS00366034-GE00343597JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Warrior of Love: Shinano Mask!"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343597JAJP"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "GQWH0M19X-GS00366034-GE00343598JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Unyielding"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343598JAJP"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "GQWH0M19X-GS00366034-GE00343599JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Boy Who Became a God"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343599JAJP"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "GQWH0M19X-GS00366034-GE00343600JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "My Uncle"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343600JAJP"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "GQWH0M19X-GS00366034-GE00343601JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Irreplaceable"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343601JAJP"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "GQWH0M19X-GS00366034-GE00343602JAJP",
+      "mediaUri": "cr:GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Man Called Masashige Kusunoki"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034-GE00343602JAJP"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:18903-1",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343594JAJP"
+      },
+      {
+        "a": "anizip:18903-2",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343595JAJP"
+      },
+      {
+        "a": "anizip:18903-3",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343596JAJP"
+      },
+      {
+        "a": "anizip:18903-4",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343597JAJP"
+      },
+      {
+        "a": "anizip:18903-5",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343598JAJP"
+      },
+      {
+        "a": "anizip:18903-6",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343599JAJP"
+      },
+      {
+        "a": "anizip:18903-7",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343600JAJP"
+      },
+      {
+        "a": "anizip:18903-8",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343601JAJP"
+      },
+      {
+        "a": "anizip:18903-9",
+        "b": "cr:GQWH0M19X-GS00366034-GE00343602JAJP"
+      },
+      {
+        "a": "anizip:18903-1",
+        "b": "kitsu:373722"
+      },
+      {
+        "a": "anizip:18903-2",
+        "b": "kitsu:373723"
+      },
+      {
+        "a": "anizip:18903-4",
+        "b": "kitsu:373725"
+      },
+      {
+        "a": "anizip:18903-5",
+        "b": "kitsu:373726"
+      },
+      {
+        "a": "anizip:18903-6",
+        "b": "kitsu:373727"
+      },
+      {
+        "a": "anizip:18903-7",
+        "b": "kitsu:373728"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:182616",
+        "whole": "cr:GQWH0M19X"
+      }
+    ],
+    "together": [
+      [
+        "anilist:182616",
+        "kitsu:49265",
+        "mal:60059",
+        "offline:mal-60059",
+        "anizip:18903",
+        "cr:GQWH0M19X-GS00366034"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "The Elusive Samurai Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "182616",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 17 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Elusive Samurai Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Nige Jouzu no Wakagimi 2nd Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "逃げ上手の若君 第二期"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:182616"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49265",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-17",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Elusive Samurai Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Nige Jouzu no Wakagimi 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "逃げ上手の若君 第二期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49265"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "60059",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-17",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Elusive Samurai Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Nige Jouzu no Wakagimi 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:60059"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-60059",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nige Jouzu no Wakagimi 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-60059"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "18903",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Elusive Samurai (2026)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "逃げ上手の若君 (2026)"
+        }
+      ],
+      "uri": "anizip:18903"
+    },
+    {
+      "id": "GQWH0M19X",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GQWH0M19X"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "GQWH0M19X-GS00366034",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Elusive Samurai"
+        }
+      ],
+      "uri": "cr:GQWH0M19X-GS00366034"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8258f0a2fd5ba781af4195e685728ee7399e0ec8208152bc651f0947ef1f4442",
+      "4b0d15d48129d51e124905f6547973e476a295dd3b7d8ad21502e691c6ba7a98",
+      "60ec136c8d35e4060af111f13bcc75d03ca2dfb185f9b3869c89a9798ecab163",
+      "7d1a21ed247b8e7d879c8afd1d6cff00e01de8c24e8480e4b9c60511d603884c",
+      "c16e566251fba680ca46ecad8acbfd54877b31e41702205a134c5153a26e2b45",
+      "53f8225092f6b1ec0bc85e3cb279b2f3f5034613e771b2c2f3b3cea5e73c2110",
+      "c648d1e229d005e1bf745e0c563895dfa467c34dc46cb7077e1076c3fa2d02fd"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:182616,kitsu:49265,mal:60059,offline:mal-60059)"
+  },
+  "why": "The Elusive Samurai second season, a 12 episode summer 2026 TV run airing 2026-07-17 to 2026-10-02 and still on air at labelling time. AniZip 18903 is the same run: SAME_AS ids to mal:60059 and anilist:182616, the same episodeCount of 12, and a first episode dated 2026-07-17, the run's own start date. The Crunchyroll season GQWH0M19X-GS00366034 is the same run: it maps SAME_AS onto all four members, and although it numbers its episodes 13 to 21 continuing on from the first season, those nine fall on exactly the AniZip dates 2026-07-17 through 2026-09-11 with the same titles, so it is the aired part of this cour rather than a wider season (nine is fewer than twelve). The bare Crunchyroll series GQWH0M19X has no dates, count or episodes of its own, and Kitsu records it as a PART_OF container for this run, so it holds the run. AniZip episodes 1 to 9 pair with Crunchyroll 13 to 21 on identical release days and matching titles, from Longing for Sea Bream! to The Man Called Masashige Kusunoki, which is also what fixes the offset of twelve between the two numberings. Kitsu's episodes 1, 2, 4, 5, 6 and 7 pair with the same AniZip positions on exact titles (Ayako's Heart-Pounding Operation!, The Warrior of Love: Shinano Mask!, The Unyielding, The Boy Who Became a God, My Uncle, and Longing for a Sea Bream! which differs from AniZip only by an article). Kitsu episode 3 is titled Tokiyuki and the Three Generals where AniZip and Crunchyroll both have Tokiyuki and Three Great Generals, and Kitsu carries no dates, so that position is left unpaired, as are Kitsu's untitled episodes 8 to 12 and AniZip's untitled episodes 10, 11 and 12."
+}

@@ -1,0 +1,849 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "JustWatch carries no dates, so the pairing is by title alone; episode 8 differs only in the case of the word the and episode 10 only in writing one ampersand as and, with the other eight identical, so the alignment is not in question. Kitsu's member row claims 22 episodes against 12 everywhere else, but it is a member of the run's own address. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63324",
+      "mediaUri": "anilist:206249",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206249",
+      "mediaUri": "kitsu:50483",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63324",
+      "mediaUri": "offline:mal-63324",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206249",
+      "mediaUri": "offline:mal-63324",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50483",
+      "mediaUri": "offline:mal-63324",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63324",
+      "mediaUri": "anizip:19837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206249",
+      "mediaUri": "anizip:19837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206249",
+      "mediaUri": "jw:530864-570018",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19837",
+      "mediaUri": "jw:530864-570018",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50483",
+      "mediaUri": "jw:530864-570018",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63324",
+      "mediaUri": "jw:530864-570018",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63324",
+      "mediaUri": "jw:530864-570018",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "393110",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393110"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "393111",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393111"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "393112",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393112"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "393113",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393113"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "393114",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393114"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "393115",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393115"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "393116",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393116"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "393117",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393117"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "393118",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393118"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "393119",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393119"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "393120",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393120"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "393121",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393121"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "393122",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393122"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "393123",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393123"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "393124",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393124"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "393125",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393125"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "393126",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393126"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "393127",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393127"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "393128",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393128"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "393129",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393129"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "393130",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393130"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "393131",
+      "mediaUri": "kitsu:50483",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:393131"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19837-1",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Black Snow"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黒イ雪"
+        }
+      ],
+      "uri": "anizip:19837-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19837-2",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Bond-Severing Sickles"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "縁切リノ鎌"
+        }
+      ],
+      "uri": "anizip:19837-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19837-3",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Lad Who Loved Insects"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "蟲愛ヅル君"
+        }
+      ],
+      "uri": "anizip:19837-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19837-4",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Legend of the Dead and the Gas Refinery"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "屍人伝説ト瓦斯工場"
+        }
+      ],
+      "uri": "anizip:19837-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19837-5",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Deicidal Flame"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "神殺シノ炎"
+        }
+      ],
+      "uri": "anizip:19837-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19837-6",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Invasion of the Witches"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔女ノ侵攻"
+        }
+      ],
+      "uri": "anizip:19837-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19837-7",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Echoes of Destruction"
+        }
+      ],
+      "uri": "anizip:19837-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19837-8",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "AKA the Box Man"
+        }
+      ],
+      "uri": "anizip:19837-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19837-9",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Gap Man and the Box Man"
+        }
+      ],
+      "uri": "anizip:19837-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19837-10",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Simultaneous Shooting Stars & The Signal Man & The Spirit Photo Man"
+        }
+      ],
+      "uri": "anizip:19837-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19837-11",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19837-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19837-12",
+      "mediaUri": "anizip:19837",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19837-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10465951",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black Snow"
+        }
+      ],
+      "uri": "jw:10465951"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10580889",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Bond-Severing Sickles"
+        }
+      ],
+      "uri": "jw:10580889"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10580890",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Lad Who Loved Insects"
+        }
+      ],
+      "uri": "jw:10580890"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10580891",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Legend of the Dead and the Gas Refinery"
+        }
+      ],
+      "uri": "jw:10580891"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10580892",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Deicidal Flame"
+        }
+      ],
+      "uri": "jw:10580892"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10580893",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Invasion of the Witches"
+        }
+      ],
+      "uri": "jw:10580893"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10580894",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Echoes of Destruction"
+        }
+      ],
+      "uri": "jw:10580894"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10580895",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "AKA The Box Man"
+        }
+      ],
+      "uri": "jw:10580895"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10580896",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Gap Man and the Box Man"
+        }
+      ],
+      "uri": "jw:10580896"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10580897",
+      "mediaUri": "jw:530864-570018",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Simultaneous Shooting Stars & the Signal Man and the Spirit Photo Man"
+        }
+      ],
+      "uri": "jw:10580897"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19837-1",
+        "b": "jw:10465951"
+      },
+      {
+        "a": "anizip:19837-2",
+        "b": "jw:10580889"
+      },
+      {
+        "a": "anizip:19837-3",
+        "b": "jw:10580890"
+      },
+      {
+        "a": "anizip:19837-4",
+        "b": "jw:10580891"
+      },
+      {
+        "a": "anizip:19837-5",
+        "b": "jw:10580892"
+      },
+      {
+        "a": "anizip:19837-6",
+        "b": "jw:10580893"
+      },
+      {
+        "a": "anizip:19837-7",
+        "b": "jw:10580894"
+      },
+      {
+        "a": "anizip:19837-8",
+        "b": "jw:10580895"
+      },
+      {
+        "a": "anizip:19837-9",
+        "b": "jw:10580896"
+      },
+      {
+        "a": "anizip:19837-10",
+        "b": "jw:10580897"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:206249",
+        "kitsu:50483",
+        "mal:63324",
+        "offline:mal-63324",
+        "anizip:19837",
+        "jw:530864-570018"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Recommendations from Iwamoto-Senpai",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "206249",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Recommendations from Iwamoto-Senpai"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Iwamoto-senpai no Suisen"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "岩元先輩ノ推薦"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:206249"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50483",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Recommendations from Iwamoto-Senpai"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Iwamoto-senpai no Suisen"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "岩元先輩ノ推薦"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50483"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63324",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Recommendations from Iwamoto-Senpai"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Iwamoto-senpai no Suisen"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63324"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63324",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Iwamoto-senpai no Suisen"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63324"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19837",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Recommendations from Iwamoto-senpai"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "岩元先輩ノ推薦"
+        }
+      ],
+      "uri": "anizip:19837"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "530864-570018",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:530864-570018"
+    }
+  ],
+  "source": {
+    "answers": [
+      "723719ed99dbf7e95a019c4bcadb9fab1ef0d00ec7ca57201a0f5fa140fa7492",
+      "f933edbfc054cb6bb7d22dfec70b0809298adb0a8634f55ffa5bd09de3264f2f",
+      "a5abcd3e8054da0feecbb6e7eb6f91bcd314c8e6044b54a4c8829bfd6c448fa5",
+      "13dda8bdc5620379debc0f6befa7b367fb6a65257e2c8a1ebfaef1eac5c12b8a",
+      "8ac2a5238686db985960446d5a11017e379bd96555c45ada45d606949e63d586",
+      "23f52092b94a3f5f692f8e868a919cdab53af91a63ead2ceba24a311d197180f",
+      "dd82c6d58a1b5f052ce147d4cf0724e5b77d5781ec6dc6eb4ef9712b8c22410a"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:206249,kitsu:50483,mal:63324,offline:mal-63324)"
+  },
+  "why": "The run is Recommendations from Iwamoto-Senpai, a 12 episode summer 2026 series that started 2026-07-04 and is still airing (anilist gives an end of 2026-09-19 and anizip still lists episodes 11 and 12 without titles). anizip:19837 is the same run: it carries first-party SAME_AS ids to both mal:63324 and anilist:206249, gives the same count of 12 that mal and the offline row give, and its episode 1 goes out 2026-07-04, the members' start date. jw:530864-570018 is the same run: it points SAME_AS at anilist, anizip, kitsu, mal and offline and its 10 episodes are anizip's first 10 in order with the same titles (Black Snow, The Bond-Severing Sickles, The Lad Who Loved Insects, Deicidal Flame and four more are identical), the two remaining episodes simply not having aired; its 2026-01-01 start is a JustWatch placeholder rather than an air date. The 10 JustWatch episodes are paired to anizip's on those titles, eight of them identical character for character, which fixes the alignment with no offset."
+}

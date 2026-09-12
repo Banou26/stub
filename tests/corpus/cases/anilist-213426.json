@@ -1,0 +1,115 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was in dispute: every row returned is a member of the run's own address and the id mappings and counts line up, with no outside row to place. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64578",
+      "mediaUri": "anilist:213426",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213426",
+      "mediaUri": "offline:anilist-213426",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:213426",
+        "mal:64578",
+        "offline:anilist-213426"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Chikyuu Daisuki! Kikkun",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "213426",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 01 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Chikyuu Daisuki! Kikkun"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "地球大好き！きっくん"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:213426"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "64578",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-01",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Chikyuu Daisuki! Kikkun"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:64578"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "anilist-213426",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chikyuu Daisuki! Kikkun"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-213426"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e36cd807323c8916254b10817c33518a5b983e04e65928ef56652977dbf7b70b",
+      "6120423f5874afffa0b234aa934ed2d506c82025d4a53ceebd24cac6dfe4f30c",
+      "bf954b46022e083a8d1f4fe6141e158b62dc95cda35ad9978ef6a915bd9c5553"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213426,mal:64578,offline:anilist-213426)"
+  },
+  "why": "Chikyuu Daisuki! Kikkun is a 52 episode summer 2026 TV short starting 2026-07-01, and the only rows returned are the three catalogue entries already in the run's own address: AniList 213426, MyAnimeList 64578 and the offline entry keyed anilist-213426, which agree on the count of 52, the SUMMER 2026 placement and the title, with AniList mapping SAME_AS to mal:64578 and the offline entry SAME_AS to AniList. No streaming or container row came back, so nothing else is asserted."
+}

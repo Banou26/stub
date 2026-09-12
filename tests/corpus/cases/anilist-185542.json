@@ -1,0 +1,1218 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The run skips a beat between episode 1 on 2026-07-04 and episode 2 on 2026-07-13, and Crunchyroll carries the same two dates, so the date alignment holds through the gap. kitsu has no episode titles or dates. JustWatch misreads episode 2 as Elvish Blade and gives episode 10 a different title altogether, and it has no dates, so its episodes were left unpaired. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:G8DHV7WJP-GS00377992",
+      "mediaUri": "anilist:185542",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "anilist:185542",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185542",
+      "mediaUri": "kitsu:49410",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "kitsu:49410",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "offline:mal-60522",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185542",
+      "mediaUri": "offline:mal-60522",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49410",
+      "mediaUri": "offline:mal-60522",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "anizip:19053",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185542",
+      "mediaUri": "anizip:19053",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185542",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19053",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:292827-483261",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49410",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81597507-2",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-60522",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185542",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19053",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:G8DHV7WJP-GS00377992",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49410",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81597507-2",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-60522",
+      "mediaUri": "jw:292827-483261",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185542",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19053",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:G8DHV7WJP-GS00377992",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:292827-483261",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49410",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60522",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-60522",
+      "mediaUri": "nf:81597507-2",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "376334",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376334"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "376335",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376335"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "376336",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376336"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "376337",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376337"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "376338",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376338"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "376339",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376339"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "376340",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376340"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "376341",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376341"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "376342",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376342"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "376343",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376343"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "376344",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376344"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "376345",
+      "mediaUri": "kitsu:49410",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376345"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19053-1",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Duel to the Death? Silver Knight vs Silver Knight!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "死闘? 白銀の騎士対白銀の騎士!"
+        }
+      ],
+      "uri": "anizip:19053-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19053-2",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Toxic Fangs of Assassination Target the Elvish Bride"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "エルフの花嫁に迫りし, 暗殺の毒牙"
+        }
+      ],
+      "uri": "anizip:19053-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19053-3",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Fall of Villains and the Dance of Sibling Love"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "悪党散華と兄妹絆の舞"
+        }
+      ],
+      "uri": "anizip:19053-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19053-4",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Saint`s Spirit Wanders the Cursed Sanctuary"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "呪いの里に聖女の霊が彷徨う"
+        }
+      ],
+      "uri": "anizip:19053-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19053-5",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Terror! Shadows of Undeath Lurking Down Below"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "恐怖! 地底に蠢く死霊の影"
+        }
+      ],
+      "uri": "anizip:19053-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19053-6",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Nature of This World Floats Upon the Dragon Lord`s Spring"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "龍王の泉に浮かぶは異世界[このよ]の理"
+        }
+      ],
+      "uri": "anizip:19053-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19053-7",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Spirit of Chivalry Blooms at the Shinobi Village!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "忍び里に咲くは, 漢魂!"
+        }
+      ],
+      "uri": "anizip:19053-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19053-8",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Sea Hears the Tale of the Tragic Kunoichi`s Past"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "潮騒よ聞け, 哀しきくノ一の想い"
+        }
+      ],
+      "uri": "anizip:19053-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19053-9",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Reunited to the Sound of a Dark Beast`s Howl"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "再会は黒き獣の咆哮と共に"
+        }
+      ],
+      "uri": "anizip:19053-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19053-10",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Cold-Blooded Code! Hunting a Brother with Tears in Her Eyes"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "非常の掟! 涙を抱きて義兄[あに]を追う"
+        }
+      ],
+      "uri": "anizip:19053-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19053-11",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19053-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19053-12",
+      "mediaUri": "anizip:19053",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19053-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "G8DHV7WJP-GS00377992-GE00377993JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Duel to the Death? Silver Knight VS Silver Knight!"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377993JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "G8DHV7WJP-GS00377992-GE00377994JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-07-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Toxic Fangs of Assassination Target the Elvish Bride"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377994JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "G8DHV7WJP-GS00377992-GE00377995JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-07-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Fall of Villains and the Dance of Sibling Love"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377995JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "G8DHV7WJP-GS00377992-GE00377996JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-07-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Saint's Spirit Wanders the Cursed Sanctuary"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377996JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "G8DHV7WJP-GS00377992-GE00377997JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-08-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Terror! Shadows of Undeath Lurking Down Below"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377997JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "G8DHV7WJP-GS00377992-GE00377998JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-08-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Nature of This World Floats Upon the Dragon Lord's Spring"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377998JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "G8DHV7WJP-GS00377992-GE00377999JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-08-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Spirit of Chivalry Blooms at the Shinobi Village!"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00377999JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "G8DHV7WJP-GS00377992-GE00378000JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-08-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Sea Hears the Tale of the Tragic Kunoichi's Past"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00378000JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "G8DHV7WJP-GS00377992-GE00378001JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-08-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Reunited to the Sound of a Dark Beast's Howl"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00378001JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "G8DHV7WJP-GS00377992-GE00378002JAJP",
+      "mediaUri": "cr:G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "releaseDate": "2026-09-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Cold-Blooded Code! Hunting a Brother With Tears in Her Eyes"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992-GE00378002JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "8938858",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Duel to the Death? Silver Knight VS Silver Knight!"
+        }
+      ],
+      "uri": "jw:8938858"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10600948",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Toxic Fangs of Assassination Target the Elvish Blade"
+        }
+      ],
+      "uri": "jw:10600948"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10614088",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Fall of Villains and the Dance of Sibling Love"
+        }
+      ],
+      "uri": "jw:10614088"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10633779",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Saint's Spirit Wanders the Cursed Sanctuary"
+        }
+      ],
+      "uri": "jw:10633779"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10644612",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Terror! Shadows of Undeath Lurking Down Below"
+        }
+      ],
+      "uri": "jw:10644612"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10654447",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Nature of This World Floats Upon the Dragon Lord's Spring"
+        }
+      ],
+      "uri": "jw:10654447"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10696793",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Spirit of Chivalry Blooms at the Shinobi Village!"
+        }
+      ],
+      "uri": "jw:10696793"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10796751",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Sea Hears the Tale of the Tragic Kunoichi's Past"
+        }
+      ],
+      "uri": "jw:10796751"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10842174",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Reunited to the Sound of a Dark Beast’s Howl"
+        }
+      ],
+      "uri": "jw:10842174"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10885909",
+      "mediaUri": "jw:292827-483261",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cruel Fate! Tearfully Chasing Her Brother"
+        }
+      ],
+      "uri": "jw:10885909"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82947870",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82947870"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82947871",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82947871"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82947872",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82947872"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82947873",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82947873"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82947874",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82947874"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82947875",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82947875"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82947876",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82947876"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82947877",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82947877"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82947878",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82947878"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82947879",
+      "mediaUri": "nf:81597507-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82947879"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377993JAJP",
+        "b": "anizip:19053-1"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377994JAJP",
+        "b": "anizip:19053-2"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377995JAJP",
+        "b": "anizip:19053-3"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377996JAJP",
+        "b": "anizip:19053-4"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377997JAJP",
+        "b": "anizip:19053-5"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377998JAJP",
+        "b": "anizip:19053-6"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00377999JAJP",
+        "b": "anizip:19053-7"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00378000JAJP",
+        "b": "anizip:19053-8"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00378001JAJP",
+        "b": "anizip:19053-9"
+      },
+      {
+        "a": "cr:G8DHV7WJP-GS00377992-GE00378002JAJP",
+        "b": "anizip:19053-10"
+      }
+    ],
+    "together": [
+      [
+        "anilist:185542",
+        "kitsu:49410",
+        "mal:60522",
+        "offline:mal-60522",
+        "anizip:19053",
+        "cr:G8DHV7WJP-GS00377992",
+        "jw:292827-483261"
+      ]
+    ]
+  },
+  "name": "Skeleton Knight in Another World Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "185542",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Skeleton Knight in Another World Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu II"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "骸骨騎士様、只今異世界へお出掛け中Ⅱ"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:185542"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49410",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Skeleton Knight in Another World Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "骸骨騎士様、只今異世界へお出掛け中 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49410"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "60522",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Skeleton Knight in Another World II"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu II"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:60522"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-60522",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu II"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-60522"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19053",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Skeleton Knight in Another World II"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "骸骨騎士様, 只今異世界へお出掛け中II"
+        }
+      ],
+      "uri": "anizip:19053"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "G8DHV7WJP-GS00377992",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Skeleton Knight in Another World"
+        }
+      ],
+      "uri": "cr:G8DHV7WJP-GS00377992"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "292827-483261",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:292827-483261"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "81597507-2",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Skeleton Knight in Another World"
+        }
+      ],
+      "uri": "nf:81597507-2"
+    }
+  ],
+  "source": {
+    "answers": [
+      "886c1732e970e5c46dfd1e09be4035d9214ee1fff53add123924719569ea92e6",
+      "1212de37eb7e713548fbf98ce81328c9a284f6c2e3545dd3a6e81fc7dfacf544",
+      "ce4ecb28e689502158c9933f20b200483f450564ae6baaae2c2ea9018c887bbb",
+      "3229becf522a8bda80554db9b6ecd4f9968972c45f26654c948ca9f0c094eeea",
+      "65f80b8dcf9ca9f1f7393a75fb3a62d6760e65e666660b4869ba380ab7708b5f",
+      "497d1c0596a3ad1b9898b8b94e5585c2ba406beda8bcc7762ee9dfcca312fcdb",
+      "7e53896acc3abe179b5a473dc954f1504e2a846b210bef0549ebb8b2cd6e2122",
+      "2789cf8bde0772b28bd80880c965798e769edfb1bb979a66a7c065591343f9ff",
+      "21d5a811a454c06ac20c48d2c4ef6d81fbd92886833879667697489f1311fccf",
+      "b6ddabc21c1de587a43e7a8afce680853e38a01ce2676b39d0e01f8ab6bbf783",
+      "f6c871fc7d43f08901f50c226aba97fce68865530d63ddaf670d45cbd46d0092"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:185542,kitsu:49410,mal:60522,offline:mal-60522)"
+  },
+  "why": "Skeleton Knight in Another World Season 2 is the twelve episode summer 2026 cour, episode 1 on 2026-07-04 and then weekly at 13:00 from 2026-07-13 to 2026-09-21, with ten episodes aired so far.\nanizip:19053 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:60522 and anilist:185542, both members.\ncr:G8DHV7WJP-GS00377992 is the same run: anilist:185542 maps to it SAME_AS, it maps back to all four members and to anizip:19053, and its ten episodes sit on the run's own dates including the irregular 2026-07-04 then 2026-07-13 opening, with the same titles.\njw:292827-483261 is the same run: it maps SAME_AS to all four members, to anizip:19053 and to the Crunchyroll season, and its ten listed episodes are the ten aired, carrying the run's titles; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19053 episodes 1 to 10 on identical release dates, 2026-07-04, 2026-07-13 and then weekly through 2026-09-07."
+}

@@ -1,0 +1,444 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64537"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64537",
+      "mediaUri": "anilist:213861",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213861",
+      "mediaUri": "kitsu:50833",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64537",
+      "mediaUri": "kitsu:50833",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213861",
+      "mediaUri": "offline:anilist-213861",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405578",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405578"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405579",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405579"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405580",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405580"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405581",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405581"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405582",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405582"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405583",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405583"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405584",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405584"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405585",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405585"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405586",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405586"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405587",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405587"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405588",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405588"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405589",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405589"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405590",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405590"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "405591",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405591"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "405592",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405592"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "405593",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405593"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "405594",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405594"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "405595",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405595"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "405596",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405596"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "405597",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405597"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "405598",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405598"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "405599",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405599"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "405600",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405600"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "405601",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405601"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "405602",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405602"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "405603",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405603"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "405604",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405604"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "405605",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405605"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "405606",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405606"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "405607",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405607"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "405608",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405608"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "405609",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405609"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "405610",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405610"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "405611",
+      "mediaUri": "kitsu:50833",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405611"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213861",
+        "kitsu:50833",
+        "offline:anilist-213861"
+      ]
+    ]
+  },
+  "name": "Let's Roll, Cinnamoroll! 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213861",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 02 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Let's Roll, Cinnamoroll! 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Let's Roll, Cinnamoroll! 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "レッツロールシナモロール"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213861"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 34,
+      "id": "50833",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Let's Roll, Cinnamoroll! 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "レッツロールシナモロール"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50833"
+    },
+    {
+      "id": "64537",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64537"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "anilist-213861",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Let's Roll, Cinnamoroll! 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:anilist-213861"
+    }
+  ],
+  "source": {
+    "answers": [
+      "0f6ad7df1277244df5e1731c01be935061c27048024a07fc0344f481e80329a7",
+      "345c986cf3beeabddc7c778b15a57570a8ad4e2d580b0bb16b2b784933daa6e1",
+      "e3eabbf3492668cff9fadc59f3c9d233102c07ff4c2a3c5d463b9fc7d9ceabb9",
+      "f1f516eddd3d6525a52725c3db2a7be0a869041c41dcaddf06d062c7eab0bd12"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213861,kitsu:50833,mal:64537,offline:anilist-213861)"
+  },
+  "why": "Let's Roll, Cinnamoroll! 2 is the second run of the Sanrio Cinnamoroll ONA shorts, starting 2026-07-02 and running 34 episodes on Kitsu. The four member rows are one run: anilist:213861 and kitsu:50833 both map SAME_AS to mal:64537, AniList and Kitsu agree on the 2026-07-02 start and on both titles (Let's Roll, Cinnamoroll! 2 and the Japanese form), and offline:anilist-213861 is the AniList id mirrored in the offline database. No other source returned a row for this run, so there is nothing to hold it, span it or keep apart from it."
+}

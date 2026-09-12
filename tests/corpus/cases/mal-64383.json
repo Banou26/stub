@@ -1,0 +1,132 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Simple: three catalogue rows joined by MAL id 64383, with the day-precise 2026-08-22 date and the count of 1 agreeing where both are present. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64383",
+      "mediaUri": "kitsu:50925",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64383",
+      "mediaUri": "offline:mal-64383",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407182",
+      "mediaUri": "kitsu:50925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407182"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "kitsu:50925",
+        "mal:64383",
+        "offline:mal-64383"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Mystery of Chang'an",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50925",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-22",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mystery of Chang'an"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Da Tang Yao Tan"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50925"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64383",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-22",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mystery of Chang'an"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Da Tang Yao Tan"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64383"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64383",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Da Tang Yao Tan"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-64383"
+    }
+  ],
+  "source": {
+    "answers": [
+      "888ff4584c38150ff2a6e59adf479b91676da2d02a6889a0db602b25fabfe281",
+      "599d69120ceb3590810242a42903e77aa65d21219648fe839f41dd49cf32eedb",
+      "d09a54bcf07fb156e32f7b26c00064f2c0af783e57c8853b786cf3e6ff3e7430",
+      "8cdc5112e8357646f60a634808135e95fd0fa68f4eac33abe73ab8f93d016a34"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50925,mal:64383,offline:mal-64383)"
+  },
+  "why": "Mystery of Chang'an (Da Tang Yao Tan) is a single-episode Chinese animated film dated 2026-08-22. The three rows are one run: kitsu:50925 names mal:64383 SAME_AS and offline:mal-64383 names mal:64383 too, kitsu and mal both give 2026-08-22 with a count of 1 and type MOVIE, and all three carry the title Da Tang Yao Tan. No other source returned a row for this run."
+}

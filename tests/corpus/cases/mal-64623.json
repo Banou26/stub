@@ -1,0 +1,276 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The hard part was the Netflix row: it claims SAME_AS to both members and would read as a title container holding the run, but its description (a 2008 series about grifting siblings and a murder) against the Kitsu description (a Rokudenashi song video) shows a different work reached by a shared title word, so it is marked unrelated rather than holding. refuted: 0 marks overturned. repair 2026-09-12: removed from together, no source answered about them: mal:64623"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64623",
+      "mediaUri": "kitsu:50921",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50921",
+      "mediaUri": "nf:81781638",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64623",
+      "mediaUri": "nf:81781638",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407087",
+      "mediaUri": "kitsu:50921",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407087"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81781640",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81781640"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81781641",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81781641"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81781642",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81781642"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81781643",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81781643"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81781644",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81781644"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81781645",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81781645"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81781646",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81781646"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81781647",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81781647"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81781648",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81781648"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81781649",
+      "mediaUri": "nf:81781638",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81781649"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64623",
+        "nf:81781638"
+      ]
+    ],
+    "together": [],
+    "unrelated": [
+      "nf:81781638"
+    ]
+  },
+  "name": "Shooting Star",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50921",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-15",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Shooting Star"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Houkiboshi"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ホウキボシ"
+        }
+      ],
+      "uri": "kitsu:50921"
+    },
+    {
+      "id": "64623",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64623"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81781638",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2008-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ties of Shooting Stars"
+        }
+      ],
+      "uri": "nf:81781638"
+    }
+  ],
+  "source": {
+    "answers": [
+      "98911c5d680b4190c1923ce51cad6a6f595ddf80b41a8d5220d3929d4f705bce",
+      "fa22a7221379685bb2957294be7ba475ebc5eff3b945851f2afd4ce2e60af64f",
+      "831ae495f71eb99397f54876384f3d9a8d49ff3e0235764290d30a5ecac23780",
+      "e10b97e944517d50d1aef3045f687a44635dc112b622663f0e946a1edd2c5a28",
+      "b371678222d9ced719a88e92da324653ddae40dec644391bec74c85c3b12ab30",
+      "7e2f3be26b94f28ef2f2d25c0b1ec4511be192330a327cf3762e5ce6e3f1053d",
+      "22ee58f338d7e48a17d83f3784d7ded51e2c254b9040329ede7bec1ebaa9926d",
+      "902906cb3dc2bc8496a06cea1cb5484020788682b8a7837acc6b6e8ec7fe4593",
+      "238473125d9327925e3f10f80e37603f4b744a74a8b65c17afa24c0a5e377bb7",
+      "0738facf12a3957611b1711f3c317868d7e52ce7177963812947a93711e6d569",
+      "a3c605574dd22d10b1dcd87b8deb176860c333bf9426fd9aa09fbcf0310f01a1",
+      "e93fa4a1fffcf3c9e40dcac20cc356469fa1e8962078fbc30e7d70dc9d97dd48",
+      "6934852e0012c6e264c8b7cca50c9692f2b989ea521a2185690792ea233abbb2"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50921,mal:64623)"
+  },
+  "why": "Shooting Star is the music video for Rokudenashi's song Houkiboshi (ホウキボシ), used as an ending theme, a single episode dated 2026-07-15 in summer 2026. kitsu:50921 and mal:64623 are one run: Kitsu carries a first-party SAME_AS mapping to MyAnimeList id 64623 and both are the run's own members. nf:81781638 is a different work despite its SAME_AS claim on both members: it is the Netflix series Ties of Shooting Stars, described as three grifting siblings solving their parents' murder before the statute of limitations runs out, dated 2008-01-01 with 10 episodes, which is not a 2026 one-episode music video, so the shared word in the title is the only thing the two have in common. No episode is paired with anything: the run's single episode has no release date or title, and the Netflix episodes carry only placeholder titles (Episode 1 to Episode 10) and no dates."
+}

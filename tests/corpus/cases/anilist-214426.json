@@ -1,0 +1,132 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Nothing from the Kabaneri parent series came back, so there was no container to attach this one episode special to; the MyAnimeList and offline rows carry no fields and rest on their id claims alone. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64672"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64672",
+      "mediaUri": "anilist:214426",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214426",
+      "mediaUri": "kitsu:50862",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64672",
+      "mediaUri": "offline:mal-64672",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214426",
+      "mediaUri": "offline:mal-64672",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406333",
+      "mediaUri": "kitsu:50862",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406333"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:214426",
+        "kitsu:50862",
+        "offline:mal-64672"
+      ]
+    ]
+  },
+  "name": "Koutetsujou no Kabaneri: Mumei Ranman",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "214426",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 24 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Koutetsujou no Kabaneri: Mumei Ranman"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "甲鉄城のカバネリ 無名爛漫"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:214426"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50862",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Koutetsujou no Kabaneri: Mumei Ranman"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "甲鉄城のカバネリ 無名爛漫"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50862"
+    },
+    {
+      "id": "64672",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64672"
+    },
+    {
+      "id": "mal-64672",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64672"
+    }
+  ],
+  "source": {
+    "answers": [
+      "eb95639a3e9c7ce1bcb25e99b5ef49c6820cbbb85282354d4d0587b0ec616a82",
+      "aae9dfe6e75476ecf31583069448e107d9a81ae2515acb49a39fcdd0c09d9a36",
+      "907ebd5fc60e551ecb4e45dad997d22e24d7c7714fe52d1778a32e5f9d604e8b",
+      "d0e33cc9721a54febfb89681574f725ccb1c4e8ded36df2c072b88692977f63c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214426,kitsu:50862)"
+  },
+  "why": "Koutetsujou no Kabaneri: Mumei Ranman is a single episode Kabaneri special that aired 2026-07-24 on AniList and Kitsu. mal:64672 is the same run: anilist:214426 claims SAME_AS to it and no other MyAnimeList row was returned. offline:mal-64672 is the same run: it claims SAME_AS to both mal:64672 and anilist:214426."
+}

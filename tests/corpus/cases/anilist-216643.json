@@ -1,0 +1,86 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64873",
+      "mediaUri": "anilist:216643",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:216643",
+        "mal:64873"
+      ]
+    ]
+  },
+  "name": "Matsuken Anime: Kore Seibaishite mo Ii desu ka?",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "216643",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 29 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Matsuken Anime: Kore Seibaishite mo Ii desu ka?"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "マツケンアニメ~コレ成敗してもいいですか？～"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:216643"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64873",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-29",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Matsuken Anime: Can I Pass Judgment on This?"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Matsuken Anime: Kore Seibaishite mo Ii desu ka?"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64873"
+    }
+  ],
+  "source": {
+    "answers": [
+      "06365783193bb6a28a662f1cda02a7905838000c68d91ccd933a411bb7103496",
+      "1a58fb34e804401d69f3b44516e4ecaf850fd8a8e8094127cae19405fb7d5b50"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:216643,mal:64873)"
+  },
+  "why": "Matsuken Anime: Kore Seibaishite mo Ii desu ka? is a summer 2026 ONA starting 2026-08-29 with no announced episode count, carried by anilist:216643 and mal:64873, which agree on that start date and on the romanised title while MyAnimeList also carries the English Matsuken Anime: Can I Pass Judgment on This?. No other source returned a row for it."
+}

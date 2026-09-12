@@ -1,0 +1,235 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only wrinkle is that MyAnimeList dates the film 2026-07-04 in summer 2026 where anilist, kitsu and anizip all say 2026-10-09; the id mappings settle identity regardless, and no row outside the catalogues turned up. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63423",
+      "mediaUri": "anilist:207327",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207327",
+      "mediaUri": "kitsu:50652",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63423",
+      "mediaUri": "offline:mal-63423",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207327",
+      "mediaUri": "offline:mal-63423",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50652",
+      "mediaUri": "offline:mal-63423",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63423",
+      "mediaUri": "anizip:19890",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207327",
+      "mediaUri": "anizip:19890",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "396799",
+      "mediaUri": "kitsu:50652",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396799"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19890-1",
+      "mediaUri": "anizip:19890",
+      "origin": "anizip",
+      "releaseDate": "2026-10-09",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:19890-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:207327",
+        "kitsu:50652",
+        "mal:63423",
+        "offline:mal-63423",
+        "anizip:19890"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "To You in the Beyond",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "207327",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 09 Oct 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "To You in the Beyond"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Doko yori mo Tooi Basho ni Iru Kimi e"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "どこよりも遠い場所にいる君へ"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:207327"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50652",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-10-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "To You in the Beyond"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Doko yori mo Tooi Basho ni Iru Kimi e"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "どこよりも遠い場所にいる君へ"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50652"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63423",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "To You in the Beyond"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Doko yori mo Tooi Basho ni Iru Kimi e"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63423"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63423",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Doko yori mo Tooi Basho ni Iru Kimi e"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63423"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "19890",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "To You in the Beyond"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "どこよりも遠い場所にいる君へ"
+        }
+      ],
+      "uri": "anizip:19890"
+    }
+  ],
+  "source": {
+    "answers": [
+      "56a1e51d299015bbaaf5a2556e7c03ad15b4e12efa4b73ec297713001199d0b1",
+      "e22332d178e40142de63c6aec6e5bdf3291bbdef7099fce4e863015198de6b55",
+      "8d8c58bf61be0e5e5f43d99099bde4ab3ca8b20d9d172f7ae9401da9c38edf3a",
+      "0525c0cc292802027e314735d07265e3b6b19d55c792e44587d0b3348ea0a7be",
+      "52746fe6cdbd00040e3ee8e170ddd4035408c2a1957d6ef19891370b27e70d74"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:207327,kitsu:50652,mal:63423,offline:mal-63423)"
+  },
+  "why": "The run is the anime film To You in the Beyond (Doko yori mo Tooi Basho ni Iru Kimi e), a single part MOVIE that anilist and kitsu both open on 2026-10-09 while MyAnimeList files it as summer 2026 with a 2026-07-04 date. anizip:19890 is the same work: it carries first-party SAME_AS ids to both mal:63423 and anilist:207327, gives the same title and a count of 1, and its one entry, Complete Movie, is dated 2026-10-09, the release anilist and kitsu give. No streaming or aggregator row came back for this film, and the kitsu member's single episode has neither title nor date, so there is nothing to pair it against."
+}

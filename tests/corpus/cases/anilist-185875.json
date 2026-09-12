@@ -1,0 +1,803 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch episodes carry no dates, so the pairing rests on titles, six of them exact and the rest differing only in the casing of EXCEEDS or in punctuation. AniZip also lists an unnumbered Final Episode Pre-Broadcast Special dated 2026-09-14 which is not one of the twelve; it does not appear among the case's episode rows, so nothing could be said about it either way. AniList's end date of 2026-09-26 sits a week past AniZip's last episode at 2026-09-19T16:00Z, which is noted but changes no mark. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:60637",
+      "mediaUri": "anilist:185875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185875",
+      "mediaUri": "kitsu:49449",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378090",
+      "mediaUri": "kitsu:49449",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:60637",
+      "mediaUri": "offline:mal-60637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185875",
+      "mediaUri": "offline:mal-60637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49449",
+      "mediaUri": "offline:mal-60637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60637",
+      "mediaUri": "anizip:19080",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185875",
+      "mediaUri": "anizip:19080",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:185875",
+      "mediaUri": "jw:547557-587077",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19080",
+      "mediaUri": "jw:547557-587077",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49449",
+      "mediaUri": "jw:547557-587077",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60637",
+      "mediaUri": "jw:547557-587077",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-60637",
+      "mediaUri": "jw:547557-587077",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "376953",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376953"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "376954",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376954"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "376955",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376955"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "376956",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376956"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "376957",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376957"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "376958",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376958"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "376959",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376959"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "376960",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376960"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "376961",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376961"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "376962",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376962"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "376963",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376963"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "376964",
+      "mediaUri": "kitsu:49449",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:376964"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19080-1",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kuze Shiina Origin"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "久瀬シイナ Origin"
+        }
+      ],
+      "uri": "anizip:19080-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19080-2",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "UN Investigation Agency Exceeds / Diaboli Slayers"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "国連調査機関EXCEEDS / 魔人狩り"
+        }
+      ],
+      "uri": "anizip:19080-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19080-3",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kuze Shiina & Yorumi Towa"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "久瀬シイナと夜海トワ"
+        }
+      ],
+      "uri": "anizip:19080-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19080-4",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Yorumi Towa Origin"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "夜海トワ Origin"
+        }
+      ],
+      "uri": "anizip:19080-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19080-5",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Chance Encounter"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "遭遇"
+        }
+      ],
+      "uri": "anizip:19080-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19080-6",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kuragi Eiji and Shinomiya Mana / Sunlight"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "蔵木エイジと篠宮マナ / 陽光"
+        }
+      ],
+      "uri": "anizip:19080-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19080-7",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jurisdiction 4`s Subway Running Extermination Battle"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "第四管区地下鉄道追跡駆除戦"
+        }
+      ],
+      "uri": "anizip:19080-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19080-8",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Yorumi Towa Descent"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "夜海トワ Descent"
+        }
+      ],
+      "uri": "anizip:19080-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19080-9",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Exceeds"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "『EXCEEDS』"
+        }
+      ],
+      "uri": "anizip:19080-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19080-10",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "South Pole Underground Research Lab & Search and Destroy Mission"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "南極地下研究所捜索殲滅戦"
+        }
+      ],
+      "uri": "anizip:19080-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19080-11",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Diaboli, Shinomiya Mana"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔人・篠宮マナ"
+        }
+      ],
+      "uri": "anizip:19080-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19080-12",
+      "mediaUri": "anizip:19080",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T16:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19080-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10738852",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kuze Shiina Origin"
+        }
+      ],
+      "uri": "jw:10738852"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10738853",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "UN Investigation Agency EXCEEDS / Diaboli Slayers"
+        }
+      ],
+      "uri": "jw:10738853"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10738854",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kuze Shiina & Yorumi Towa"
+        }
+      ],
+      "uri": "jw:10738854"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10738855",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yorumi Towa Origin"
+        }
+      ],
+      "uri": "jw:10738855"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10738856",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chance Encounter"
+        }
+      ],
+      "uri": "jw:10738856"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10738857",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kuragi Eiji and Shinomiya Mana / Sunlight"
+        }
+      ],
+      "uri": "jw:10738857"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10738858",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jurisdiction #4's Subway: Running Extermination Battle"
+        }
+      ],
+      "uri": "jw:10738858"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10738859",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yorumi Towa Descent"
+        }
+      ],
+      "uri": "jw:10738859"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10738860",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "EXCEEDS"
+        }
+      ],
+      "uri": "jw:10738860"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10738861",
+      "mediaUri": "jw:547557-587077",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "South Pole Underground Research Lab: Search and Destroy Mission"
+        }
+      ],
+      "uri": "jw:10738861"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "jw:10738852",
+        "b": "anizip:19080-1"
+      },
+      {
+        "a": "jw:10738853",
+        "b": "anizip:19080-2"
+      },
+      {
+        "a": "jw:10738854",
+        "b": "anizip:19080-3"
+      },
+      {
+        "a": "jw:10738855",
+        "b": "anizip:19080-4"
+      },
+      {
+        "a": "jw:10738856",
+        "b": "anizip:19080-5"
+      },
+      {
+        "a": "jw:10738857",
+        "b": "anizip:19080-6"
+      },
+      {
+        "a": "jw:10738858",
+        "b": "anizip:19080-7"
+      },
+      {
+        "a": "jw:10738859",
+        "b": "anizip:19080-8"
+      },
+      {
+        "a": "jw:10738860",
+        "b": "anizip:19080-9"
+      },
+      {
+        "a": "jw:10738861",
+        "b": "anizip:19080-10"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:185875",
+        "whole": "cr:GT00378090"
+      }
+    ],
+    "together": [
+      [
+        "anilist:185875",
+        "kitsu:49449",
+        "mal:60637",
+        "offline:mal-60637",
+        "anizip:19080",
+        "jw:547557-587077"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Magical Girl Lyrical Nanoha EXCEEDS Gun Blaze Vengeance",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "185875",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Magical Girl Lyrical Nanoha EXCEEDS Gun Blaze Vengeance"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mahou Shoujo Lyrical Nanoha EXCEEDS Gun Blaze Vengeance"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "魔法少女リリカルなのは EXCEEDS Gun Blaze Vengeance"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:185875"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49449",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Magical Girl Lyrical Nanoha EXCEEDS Gun Blaze Vengeance"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "魔法少女リリカルなのは EXCEEDS Gun Blaze Vengeance"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49449"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "60637",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Magical Girl Lyrical Nanoha EXCEEDS Gun Blaze Vengeance"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mahou Shoujo Lyrical Nanoha EXCEEDS: Gun Blaze Vengeance"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:60637"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-60637",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mahou Shoujo Lyrical Nanoha EXCEEDS: Gun Blaze Vengeance"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-60637"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19080",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Magical Girl Lyrical Nanoha Exceeds: Gun Blaze Vengeance"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔法少女リリカルなのは EXCEEDS Gun Blaze Vengeance"
+        }
+      ],
+      "uri": "anizip:19080"
+    },
+    {
+      "id": "GT00378090",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378090"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "547557-587077",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:547557-587077"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4c491b6ee24a29306e6784bbeeecc6cc2f46522810f2529d81e3681637d3fa0d",
+      "00c93d692ea8adf2bfe15ec27d1822e1d53d5ec565b17bf234b2cf02c643ae98",
+      "e2ee66cf65e241ebdff7c930279353d7e358b0e86e214d25d4625f0e1a267d86",
+      "9453d5a0de5af5f3ceeab3f82fee89f99061acd0033252c94b3c81d365a4d2e9",
+      "5a338ba7eb868f864cce908b9c6600ff07e48145719c2d10421ebbb57cac9712",
+      "39827d5669ce598ab7f324a8a92ea88a4306157301e867475dd26b565f7e9ed0",
+      "ef79c712698276c725565b73dddc7229bbc9c26aa2730df29184c8df9c971f03"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:185875,kitsu:49449,mal:60637,offline:mal-60637)"
+  },
+  "why": "Magical Girl Lyrical Nanoha EXCEEDS Gun Blaze Vengeance is a 12 episode summer 2026 run that began 2026-07-05 and is still airing, with AniList, Kitsu, MyAnimeList and the offline row all giving episodeCount 12 and a 2026-07-05 start. anizip:19080 is the same run: it carries first-party SAME_AS handles to mal:60637 and anilist:185875, its episodeCount is 12 like every member's, and its episode 1 releases 2026-07-04T16:00Z, the 2026-07-05 premiere in Japan time. jw:547557-587077 is the same run: it is the JustWatch season at the slug magical-girl-lyrical-nanoha-exceeds-gun-blaze-vengeance, it carries first-party SAME_AS handles to anilist:185875, anizip:19080, kitsu:49449, mal:60637 and offline:mal-60637, its ten episodes are a partial listing of the twelve rather than a fold, and six of its titles (1, 3, 4, 5, 6 and 8, including the character names Kuze Shiina, Yorumi Towa, Kuragi Eiji and Shinomiya Mana) are character for character the AniZip titles at the same numbers. Its ten episodes pair one to one with AniZip episodes 1 to 10 on those titles, the other four differing only in the capitalisation of EXCEEDS and in punctuation (a hash and a colon where AniZip has neither), so the alignment has no offset. cr:GT00378090 holds the run: it is the bare Crunchyroll series container (scope CONTAINER, no dates, no episodes, no count) and kitsu:49449 declares PART_OF against it, with no includes range since it lists nothing to align."
+}

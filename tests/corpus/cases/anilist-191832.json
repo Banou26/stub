@@ -1,0 +1,576 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "kitsu lists 24 episodes where mal, offline and anizip all say 12, and anilist gives no count at all; kitsu is a member of the run's own address so it stays in the cluster, but its bare episode rows are paired with nothing. anizip's episodes 1 and 2 share the date 2026-08-14, which reads as a two episode premiere rather than a conflict. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61607",
+      "mediaUri": "anilist:191832",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61607",
+      "mediaUri": "kitsu:49889",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:191832",
+      "mediaUri": "kitsu:49889",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61607",
+      "mediaUri": "offline:mal-61607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:191832",
+      "mediaUri": "offline:mal-61607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49889",
+      "mediaUri": "offline:mal-61607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61607",
+      "mediaUri": "anizip:19882",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:191832",
+      "mediaUri": "anizip:19882",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "382287",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382287"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "382288",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382288"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "382289",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382289"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "382290",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382290"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "382291",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382291"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "382292",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382292"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "382293",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382293"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "382294",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382294"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "382295",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382295"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "382296",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382296"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "382297",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382297"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "382298",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382298"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "382299",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382299"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "382300",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382300"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "382301",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382301"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "382302",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382302"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "382303",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382303"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "382304",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382304"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "382305",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382305"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "382306",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382306"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "382307",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382307"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "382308",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382308"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "382309",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382309"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "382310",
+      "mediaUri": "kitsu:49889",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:382310"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19882-1",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T03:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Forgotten Past"
+        }
+      ],
+      "uri": "anizip:19882-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19882-2",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T03:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Caged Beast"
+        }
+      ],
+      "uri": "anizip:19882-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19882-3",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T03:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bloodbath in Laos"
+        }
+      ],
+      "uri": "anizip:19882-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19882-4",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T03:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jae"
+        }
+      ],
+      "uri": "anizip:19882-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19882-5",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T03:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Welcome Banquet"
+        }
+      ],
+      "uri": "anizip:19882-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19882-6",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T03:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Testing the Waters"
+        }
+      ],
+      "uri": "anizip:19882-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19882-7",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T03:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19882-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19882-8",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-09-25T03:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19882-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19882-9",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-10-02T03:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19882-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19882-10",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-10-09T03:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19882-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19882-11",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-10-16T03:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19882-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19882-12",
+      "mediaUri": "anizip:19882",
+      "origin": "anizip",
+      "releaseDate": "2026-10-23T03:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19882-12"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:191832",
+        "kitsu:49889",
+        "mal:61607",
+        "offline:mal-61607",
+        "anizip:19882"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Link Click Season 3",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "191832",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 14 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Link Click Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Shiguang Dailiren III"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "时光代理人 第三季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:191832"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "49889",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-14",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Link Click Season 3"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Shiguang Dailiren III"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:49889"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61607",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-14",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Link Click Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Shiguang Dailiren III"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:61607"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61607",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shiguang Dailiren III"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-61607"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19882",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Link Click (2026)"
+        }
+      ],
+      "uri": "anizip:19882"
+    }
+  ],
+  "source": {
+    "answers": [
+      "575b653b3d889d036b86456890c298173c4ab3f88bb11647b7c4a6284ae89cea",
+      "810ad7d74ceba755dc4d3f38b3fd9fd949128fe4ffbf1ee8af7813d7f6c9f60b",
+      "a3f3461b9e90c5d316f91efe6d9786e2d1c819b890d23ec5489fbd3e6cb3075e",
+      "2da5cf6185eb656232568a6e32a34d0a69d021d9218332497e71cbce56000673",
+      "a70005fbc8b26ef60967d756b0a93bd7170f8cb650cd6a7801c34116ec649c3e"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:191832,kitsu:49889,mal:61607,offline:mal-61607)"
+  },
+  "why": "Link Click Season 3 (Shiguang Dailiren III) is the third run of the Chinese series, starting 2026-08-14 and still airing, with anilist giving an end of 2026-10-23 and mal and offline listing 12 episodes. anizip:19882 is the same run: it carries SAME_AS ids to anilist:191832 and mal:61607, lists 12 episodes, and its weekly dates run from 2026-08-14 to 2026-10-23, matching the run's own window at both ends. No episode pairs are asserted: the only other episode rows are kitsu's 24 bare numbers, which carry neither titles nor dates, so there is nothing to match the anizip titles or dates against."
+}

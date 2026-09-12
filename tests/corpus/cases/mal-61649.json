@@ -1,0 +1,1293 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row lists far more episodes than the run's 16 and none of them carry dates or real titles, so it was attached as a holder only and no range and no episode pair was asserted. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61649",
+      "mediaUri": "kitsu:50977",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50977",
+      "mediaUri": "nf:82001578",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61649",
+      "mediaUri": "nf:82001578",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407520",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407520"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407521",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407521"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407522",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407522"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "407523",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407523"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "407524",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407524"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "407525",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407525"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "407526",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407526"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "407527",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407527"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "407528",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407528"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "407529",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407529"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "407530",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407530"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "407531",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407531"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "407532",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407532"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "407533",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407533"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "407534",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407534"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "407535",
+      "mediaUri": "kitsu:50977",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407535"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82001580",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82001580"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82001581",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82001581"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82001582",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82001582"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82001583",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82001583"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82001584",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82001584"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82001585",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82001585"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82001586",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82001586"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82001587",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82001587"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82001588",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82001588"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82001589",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82001589"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82001590",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82001590"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82001591",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82001591"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "82001592",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:82001592"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "82001593",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:82001593"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "82001594",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:82001594"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "82001595",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:82001595"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "82001596",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:82001596"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "82001597",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:82001597"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "82001598",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:82001598"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "82001599",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:82001599"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "82001600",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:82001600"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "82001601",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:82001601"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "82001602",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:82001602"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "82001603",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "nf:82001603"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "82001604",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 25"
+        }
+      ],
+      "uri": "nf:82001604"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "82001605",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 26"
+        }
+      ],
+      "uri": "nf:82001605"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "82001606",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 27"
+        }
+      ],
+      "uri": "nf:82001606"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "82001607",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 28"
+        }
+      ],
+      "uri": "nf:82001607"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "82001608",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 29"
+        }
+      ],
+      "uri": "nf:82001608"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "82001609",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 30"
+        }
+      ],
+      "uri": "nf:82001609"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "82001610",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 31"
+        }
+      ],
+      "uri": "nf:82001610"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "82001611",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 32"
+        }
+      ],
+      "uri": "nf:82001611"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "82001612",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 33"
+        }
+      ],
+      "uri": "nf:82001612"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "82001613",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 34"
+        }
+      ],
+      "uri": "nf:82001613"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "82001614",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 35"
+        }
+      ],
+      "uri": "nf:82001614"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "82001615",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 36"
+        }
+      ],
+      "uri": "nf:82001615"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "82001616",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 37"
+        }
+      ],
+      "uri": "nf:82001616"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "82001617",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 38"
+        }
+      ],
+      "uri": "nf:82001617"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "82001618",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 39"
+        }
+      ],
+      "uri": "nf:82001618"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "82001619",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 40"
+        }
+      ],
+      "uri": "nf:82001619"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "82001620",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 41"
+        }
+      ],
+      "uri": "nf:82001620"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "82001621",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 42"
+        }
+      ],
+      "uri": "nf:82001621"
+    },
+    {
+      "episodeNumber": 43,
+      "id": "82001622",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 43"
+        }
+      ],
+      "uri": "nf:82001622"
+    },
+    {
+      "episodeNumber": 44,
+      "id": "82001623",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 44"
+        }
+      ],
+      "uri": "nf:82001623"
+    },
+    {
+      "episodeNumber": 45,
+      "id": "82001624",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 45"
+        }
+      ],
+      "uri": "nf:82001624"
+    },
+    {
+      "episodeNumber": 46,
+      "id": "82001625",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 46"
+        }
+      ],
+      "uri": "nf:82001625"
+    },
+    {
+      "episodeNumber": 47,
+      "id": "82001626",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 47"
+        }
+      ],
+      "uri": "nf:82001626"
+    },
+    {
+      "episodeNumber": 48,
+      "id": "82001627",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 48"
+        }
+      ],
+      "uri": "nf:82001627"
+    },
+    {
+      "episodeNumber": 49,
+      "id": "82001628",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 49"
+        }
+      ],
+      "uri": "nf:82001628"
+    },
+    {
+      "episodeNumber": 50,
+      "id": "82001629",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 50"
+        }
+      ],
+      "uri": "nf:82001629"
+    },
+    {
+      "episodeNumber": 51,
+      "id": "82001630",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 51"
+        }
+      ],
+      "uri": "nf:82001630"
+    },
+    {
+      "episodeNumber": 52,
+      "id": "82001631",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 52"
+        }
+      ],
+      "uri": "nf:82001631"
+    },
+    {
+      "episodeNumber": 53,
+      "id": "82001632",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 53"
+        }
+      ],
+      "uri": "nf:82001632"
+    },
+    {
+      "episodeNumber": 54,
+      "id": "82001633",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 54"
+        }
+      ],
+      "uri": "nf:82001633"
+    },
+    {
+      "episodeNumber": 55,
+      "id": "82001634",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 55"
+        }
+      ],
+      "uri": "nf:82001634"
+    },
+    {
+      "episodeNumber": 56,
+      "id": "82001635",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 56"
+        }
+      ],
+      "uri": "nf:82001635"
+    },
+    {
+      "episodeNumber": 57,
+      "id": "82001636",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 57"
+        }
+      ],
+      "uri": "nf:82001636"
+    },
+    {
+      "episodeNumber": 58,
+      "id": "82001637",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 58"
+        }
+      ],
+      "uri": "nf:82001637"
+    },
+    {
+      "episodeNumber": 59,
+      "id": "82001638",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 59"
+        }
+      ],
+      "uri": "nf:82001638"
+    },
+    {
+      "episodeNumber": 60,
+      "id": "82001639",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 60"
+        }
+      ],
+      "uri": "nf:82001639"
+    },
+    {
+      "episodeNumber": 61,
+      "id": "82001640",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 61"
+        }
+      ],
+      "uri": "nf:82001640"
+    },
+    {
+      "episodeNumber": 62,
+      "id": "82001641",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 62"
+        }
+      ],
+      "uri": "nf:82001641"
+    },
+    {
+      "episodeNumber": 63,
+      "id": "82001642",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 63"
+        }
+      ],
+      "uri": "nf:82001642"
+    },
+    {
+      "episodeNumber": 64,
+      "id": "82001643",
+      "mediaUri": "nf:82001578",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 64"
+        }
+      ],
+      "uri": "nf:82001643"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "mal:61649",
+        "whole": "nf:82001578"
+      }
+    ],
+    "together": [
+      [
+        "kitsu:50977",
+        "mal:61649"
+      ]
+    ]
+  },
+  "name": "Golden Curse",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "50977",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-16",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Golden Curse"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Caishen Dou Zhanlong"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50977"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "61649",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-16",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Golden Curse"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Caishen Dou Zhanlong"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:61649"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82001578",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2007-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Golden Bride"
+        }
+      ],
+      "uri": "nf:82001578"
+    }
+  ],
+  "source": {
+    "answers": [
+      "439a5d0b772262a6433d339a2c9c4a5580ab750b818f59215bb3cf5e57d28c55",
+      "3489281813230582b17e078ccc82db6be1e45e7491eab05f181612b607ee4c18",
+      "e9a3cc765b9e07a62d0e514148e4167f2017b49e2878fb67bd5f60c7388a15bf",
+      "8e8b5e55740eed80140d55675d14315bb7e6e9408253de8680dba63d31274e12",
+      "7387fdc802ae42eed24014fe94b11c514d27f2b8bd261dadc0e1197ea66cd675",
+      "9c2d17267d2310f0eb209781853a666d1b98dc5d53223fede491bcb9cd259691",
+      "2ed9795a734a7724d954ec0f0109b8eb3a97b9fe66a5a073da4a44f76a706020",
+      "fdfb1abdadcb5ae4bc61bbfb99ef0f6753007f8a7c80c1d2a889cff4b8a03721",
+      "5ec4ebcf52df907ec028c7d1d39e3830ccd65362fbf5bb2accea86ae8535f373",
+      "fa07890afc7b57c69b5417ee11e4d113a5db92b9abfcaace6efe9021110c8ef4",
+      "186fcc48c4effcf9acb5fde24839f20d843b2d1fb9955d8be5f4569b04ac2e58",
+      "0f559907c685851e6333bc57cf52dcd0184e52409b2f618b2ef1aefa1e903dee",
+      "b08b36f2a4f8e778dc11b8c8746ac5a40e0859e4dd5ee0ea8b5d451036eeaa9d",
+      "b995c5a7d21e347cde8fa980d2a169a27fcebdb3e2227be252cfa9a97952df8f",
+      "30769283f065e4d189d0c7293a7e391b06bdc84a6268e82c9a4f0fc0dfddd728",
+      "39e86b0bd565c756ebea9d6fdca193a9290e51799acc3fa192e2ad9d826a8116",
+      "b929b4ee9a02cf13b9f816d50f52956368a3c9dc8d9963bd2f554a4150dd92f2",
+      "c91fb79b132bd256115acd4251ecf754e609ffe5cbe5e258f0b339c3037104a5",
+      "44aaeb3c220fe0e856ac0617e6497e1f69cd40bf4ffe105223e131444c767c15",
+      "6a5087533200ff6f6b3e6465c135a39a324101778601f14d58ee93afc9b2817b",
+      "9cfac1e386a650f07708b679159a9c0173fddd34099c41ac3f1dd0ebe71d8a6a",
+      "2bf02cc0479c399bc45431f3f99b7f28f0642ccec70fe9829bc2b597e1e4198e",
+      "dc93a463019ec5b35f3797575d4806d726cff4c476c48ec76d6e5bc997567e58",
+      "919e8145749b15f0e35762c5362138ed23d4505bc57846212b8e952de5f88003",
+      "79de5cdc312c761198b2f13137ee6d4b90150f3f5810c0f341b777356e2fd74d",
+      "9a77df8622dab89fcf43b798a5581307d794a28c9524ce0a5256cd61b9ccbeed",
+      "c73515accc9ea2d2a9db24b8dca844e6f75c8026d8858b8cf796784fde8a08be",
+      "95214118cbe5b2f1b1f51cd9405c526a813997681ab7ad0d8436868aa33e411f",
+      "47c37ca5b4e40861a79b2e55d893ac7ad39f0e0bd7a86a712deb4fec7e5f0ee0",
+      "a744ea1c5cce17e245f1421ae13be66345fb8cbc38b089e514aeb1808283dadc",
+      "5b50e1caa2b277c549db2737a85de5261f9a0e0a5aa901059ff1fdaddcf94439",
+      "db966e8a83f791385590e6614157a844e2b9312c1231a3b30f19eea2c619e77b",
+      "576f4a4be3aa3d6d490130ae94a8c7786406716e76ee88b905f4359b807322db",
+      "f2bf7453d00e44799d85f1f4e59cd227443b3ed1b4aa4b660d2bc2c295352be9",
+      "b29f3bdcdc1ffde695e82a6c6880a34ccef0bd0c7ec464297945250de8613e37",
+      "58117c18c4d43f4cfb3ed1fcc81323ddb3b2e9d2a09bd7f10118ec50257dc8c5",
+      "b320ddd7f22814b400bd19608cfc3dbcc410847e02d11145276a29c5655ecab5",
+      "65c46d808471b6fe500e80b202e16a1d84a7cf459854da860f3f15b4edc4c0a7",
+      "2bbaef95f41bd282f68e05460e2d14a6340d0d73faae4768d8fd6993a9232a53",
+      "a61c6aea9454faa97b40a5206db7d3a082449a19eb981de4ae6c949ce388eccb",
+      "89f2cff5050d3727505e3848d7968e2b71c63c9cb4a047aae70897aaec3a80f5",
+      "02a63db8d6787d38e3dc4e418ee8d311e7651e8dddbe07c3eff87ca8a5ddb501",
+      "cf0bfbe119a6c4da0925c68f8ff0ccdb6a7e90a38c470691848b0bab1b0e0475",
+      "3e519e83758fde554dd7c5d997f9027d1092dee2e27ba9e4700dbde88762d1f3",
+      "7b9f946e864007307a35887e68a989e6fc5009c45d50a513126680358febcb4e",
+      "49592039ab0e76f9e5b16f8b2cef678608a38b527aa6ec08c6b89126d7d93934",
+      "c23e2d639d13b43c96d73fdbbd461f193ec96123f018f1e1e14baa893c71c28d",
+      "40c63d7d51898706606f74a5f9abdacd1c03139f97a55a17d0f493a2ec282d6e",
+      "d6280a8d688879ad29d9416cf61a6a395137a0601ddaadf324993dad5bb92a66",
+      "764ae7fb9060c16ea625071089e0e4eff9c09da1ebf4bdcdb3068d2257a0d806",
+      "6844c7752adcfd2780aa359f1979b0ad4cae267d6f7e7b3309a154d641d82ce9",
+      "184c3a5375bdc1b415c328d62dc67715d21206274c41ece684be11250623b3ce",
+      "b5679a8cd9ac369ba44afd451079506af591f2250119626f86344166c190cd48",
+      "28ecc1bb1c5e4da3f37793486be7474b34f54a394f297a581d649396dfdbe167",
+      "b8b7972dbbcda94832d6212ece21739e17612dca9700a86d152f4116642c704a",
+      "3dbdbb7182b39d4f8c6f612d4e017facf7478440ae9cd0bcdd1e9b47545b8db3",
+      "fafc8023bc7435080fc18684209ee7ecf496a8ce9d7aa37e0d14d046bc6d48cf",
+      "2469cc478613c41b9488b0a56186d44649046d44e8b643969cb277a01cd27f00",
+      "5e0253914f498dd9592438e168355ee533e2511a822d655fb21e6e911850f91f",
+      "eb4aa38165c7475110074a6c38d7e3f133b42b5efd940794de6ebfb1e5f04156",
+      "781cd3d8e1e345a37aad9e4a6b808fdd788e7073b243a2833e86bbc224478a72",
+      "fc057dd8a83c95f9bbff6174e7d4c4b01bb625f7f3bc307465160f3e63eacf45",
+      "e931c88e5f6aba62ce2e34060c1f4035526a2e820e380b71efc6d779d15add67",
+      "2f115969758491040623f401b0adaed52f2893f4d2380594b386d4667e328618",
+      "c577d459482cd4649ed9e27e4fb71b512d881e6ce0cccfafb6da7a20c30dd54a",
+      "cc59bbc19099b607606a57bd4ef3ac23985c144ced8e8879396f78839760c4fd",
+      "c35f89ea1aeec76f78da7ac32e6917a09fb7aa64778e8a01bb716408ed1bc9a6"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50977,mal:61649)"
+  },
+  "why": "Golden Curse (Caishen Dou Zhanlong) is a 16 episode Chinese ONA that began on 2026-08-16 and is still releasing. Kitsu 50977 and MyAnimeList 61649 are one run: Kitsu maps SAME_AS to mal:61649 and the two agree on the title, the 2026-08-16 start date and the 16 episode count. The Netflix row nf:82001578 is a bare series container (scope CONTAINER, no episode count, a 2007 catalogue date and more than sixty placeholder entries titled Episode 1 upward) mapped SAME_AS to both members, so it holds the run; its episodes carry no dates and only Netflix's own placeholder titles under a different English name, Golden Bride, so no episode range could be aligned."
+}

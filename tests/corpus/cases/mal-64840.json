@@ -1,0 +1,1843 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row is scope CONTAINER and claims SAME_AS to both members, which reads as a holder at first glance, but its title, its 2012 start and its Beatrix Potter episode titles put it on another work entirely, so it is marked unrelated rather than holding the run. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64840",
+      "mediaUri": "kitsu:50919",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50919",
+      "mediaUri": "nf:81006960",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64840",
+      "mediaUri": "nf:81006960",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407084",
+      "mediaUri": "kitsu:50919",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407084"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81203602",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Peter Rabbit's Christmas Tale"
+        }
+      ],
+      "uri": "nf:81203602"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81332656",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Puddle-duck Disaster"
+        }
+      ],
+      "uri": "nf:81332656"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81006964",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Radish Robber"
+        }
+      ],
+      "uri": "nf:81006964"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81332657",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Squirrel Hotpot"
+        }
+      ],
+      "uri": "nf:81332657"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81006965",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Greedy Fox"
+        }
+      ],
+      "uri": "nf:81006965"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81332658",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Scare Owl"
+        }
+      ],
+      "uri": "nf:81332658"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81006966",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of Two Enemies"
+        }
+      ],
+      "uri": "nf:81006966"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81332659",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Old Brown's Roost"
+        }
+      ],
+      "uri": "nf:81332659"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81006967",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Secret Treehouse"
+        }
+      ],
+      "uri": "nf:81006967"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81332660",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Tunnel Rumbler"
+        }
+      ],
+      "uri": "nf:81332660"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81006968",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Angry Cat"
+        }
+      ],
+      "uri": "nf:81006968"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81332661",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Frightened Fox"
+        }
+      ],
+      "uri": "nf:81332661"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81006969",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of Mr. Tod's Trap"
+        }
+      ],
+      "uri": "nf:81006969"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81332662",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Best Bowler"
+        }
+      ],
+      "uri": "nf:81332662"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81006970",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of Benjamin's Strawberry Raid"
+        }
+      ],
+      "uri": "nf:81006970"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81332663",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Great Potato Plunder"
+        }
+      ],
+      "uri": "nf:81332663"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81006971",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Lying Fox"
+        }
+      ],
+      "uri": "nf:81006971"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81332664",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Tiny Terror"
+        }
+      ],
+      "uri": "nf:81332664"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81006972",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of Nutkin On The Run"
+        }
+      ],
+      "uri": "nf:81006972"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81332665",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Treehouse Rescue"
+        }
+      ],
+      "uri": "nf:81332665"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81006973",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Wriggly Worms"
+        }
+      ],
+      "uri": "nf:81006973"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81332666",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Bird Trap"
+        }
+      ],
+      "uri": "nf:81332666"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81006974",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of Jemima's Egg"
+        }
+      ],
+      "uri": "nf:81006974"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81332667",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Heroic Hedgehog"
+        }
+      ],
+      "uri": "nf:81332667"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81203603",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Start of Spring"
+        }
+      ],
+      "uri": "nf:81203603"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81332668",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the High-flying Badger"
+        }
+      ],
+      "uri": "nf:81332668"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81006975",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Lucky Four Leaf Clover"
+        }
+      ],
+      "uri": "nf:81006975"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81332669",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Cotton-tail's Treetop Tumble"
+        }
+      ],
+      "uri": "nf:81332669"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81006976",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Unguarded Garden"
+        }
+      ],
+      "uri": "nf:81006976"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81332670",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Perilous Party"
+        }
+      ],
+      "uri": "nf:81332670"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81006977",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Great Breakout"
+        }
+      ],
+      "uri": "nf:81006977"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81332671",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Benjamin's Blunder"
+        }
+      ],
+      "uri": "nf:81332671"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81006978",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Mother's Day Pie"
+        }
+      ],
+      "uri": "nf:81006978"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81332672",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Lost Journal"
+        }
+      ],
+      "uri": "nf:81332672"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81006979",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Mystery Plum Thief"
+        }
+      ],
+      "uri": "nf:81006979"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81332673",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Missing Ducklings"
+        }
+      ],
+      "uri": "nf:81332673"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81006980",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Grumpy Owl"
+        }
+      ],
+      "uri": "nf:81006980"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81332674",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Hungry Thieves"
+        }
+      ],
+      "uri": "nf:81332674"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81006981",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Big Move"
+        }
+      ],
+      "uri": "nf:81006981"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81332675",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Seed Snatch"
+        }
+      ],
+      "uri": "nf:81332675"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81006982",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Dash In The Dark"
+        }
+      ],
+      "uri": "nf:81006982"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81332676",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Dr. Bobtail's Adventure"
+        }
+      ],
+      "uri": "nf:81332676"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81006983",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale Of The Downhill Escape"
+        }
+      ],
+      "uri": "nf:81006983"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81332677",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Locked Cage"
+        }
+      ],
+      "uri": "nf:81332677"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81203604",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Cat and the Rat"
+        }
+      ],
+      "uri": "nf:81203604"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81332678",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Nutkin's Rabbity Day"
+        }
+      ],
+      "uri": "nf:81332678"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81203605",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Lost Tunnels"
+        }
+      ],
+      "uri": "nf:81203605"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81332679",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Unexpected Hero"
+        }
+      ],
+      "uri": "nf:81332679"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81203606",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Rabbit and Squirrel Great Adventure"
+        }
+      ],
+      "uri": "nf:81203606"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81332680",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Amazing Mum"
+        }
+      ],
+      "uri": "nf:81332680"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "81203607",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Hazelnut Raid"
+        }
+      ],
+      "uri": "nf:81203607"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "81332681",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Mum's Precious Things"
+        }
+      ],
+      "uri": "nf:81332681"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "81203608",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Broken Bed"
+        }
+      ],
+      "uri": "nf:81203608"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "81332682",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Racing Rabbit"
+        }
+      ],
+      "uri": "nf:81332682"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "81203609",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the One Who Got Away"
+        }
+      ],
+      "uri": "nf:81203609"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "81332683",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Fred Snail"
+        }
+      ],
+      "uri": "nf:81332683"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "81203610",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Runaway Kites"
+        }
+      ],
+      "uri": "nf:81203610"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "81332684",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Fish Out of the Water"
+        }
+      ],
+      "uri": "nf:81332684"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "81203611",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Hero Rabbit"
+        }
+      ],
+      "uri": "nf:81203611"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "81332685",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Saving of the Shrew"
+        }
+      ],
+      "uri": "nf:81332685"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "81203612",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Falling Rock"
+        }
+      ],
+      "uri": "nf:81203612"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "81332686",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Kitten and Pig Adventure"
+        }
+      ],
+      "uri": "nf:81332686"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "81203613",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Benjamin's New Map"
+        }
+      ],
+      "uri": "nf:81203613"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "81332687",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Cotton-tail's Party"
+        }
+      ],
+      "uri": "nf:81332687"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "81203614",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Cotton-tail's New Friend"
+        }
+      ],
+      "uri": "nf:81203614"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "81332688",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Thing-a-ma-Jig"
+        }
+      ],
+      "uri": "nf:81332688"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "81203615",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Lost Ladybird"
+        }
+      ],
+      "uri": "nf:81203615"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "81332689",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Spectacular Sledge"
+        }
+      ],
+      "uri": "nf:81332689"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "81203616",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Old Rusty"
+        }
+      ],
+      "uri": "nf:81203616"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "81332690",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Cotton-tail's Tooth"
+        }
+      ],
+      "uri": "nf:81332690"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "81203617",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Surprising Sisters"
+        }
+      ],
+      "uri": "nf:81203617"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "81332691",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Big Badger Blunder"
+        }
+      ],
+      "uri": "nf:81332691"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "81203618",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Wrecked Treehouse"
+        }
+      ],
+      "uri": "nf:81203618"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "81332692",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Squabbling Squirrels"
+        }
+      ],
+      "uri": "nf:81332692"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "81203619",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Stolen Firewood"
+        }
+      ],
+      "uri": "nf:81203619"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "81332693",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Peter's Great Escape"
+        }
+      ],
+      "uri": "nf:81332693"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "81203620",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Jeremy Fisher's Recital"
+        }
+      ],
+      "uri": "nf:81203620"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "81332694",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Great Cake Chase"
+        }
+      ],
+      "uri": "nf:81332694"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "81203621",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Runaway Rabbit"
+        }
+      ],
+      "uri": "nf:81203621"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "81332695",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Go-kart Getaway"
+        }
+      ],
+      "uri": "nf:81332695"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "81203622",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Cotton-tail's Cake"
+        }
+      ],
+      "uri": "nf:81203622"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "81332696",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the New Hideout"
+        }
+      ],
+      "uri": "nf:81332696"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "81203623",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Terrible Trap"
+        }
+      ],
+      "uri": "nf:81203623"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "81332697",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Tricky Tortoise"
+        }
+      ],
+      "uri": "nf:81332697"
+    },
+    {
+      "episodeNumber": 43,
+      "id": "81203624",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Flying Fox"
+        }
+      ],
+      "uri": "nf:81203624"
+    },
+    {
+      "episodeNumber": 43,
+      "id": "81332698",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Mice on the Move"
+        }
+      ],
+      "uri": "nf:81332698"
+    },
+    {
+      "episodeNumber": 44,
+      "id": "81203625",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of True Friends"
+        }
+      ],
+      "uri": "nf:81203625"
+    },
+    {
+      "episodeNumber": 44,
+      "id": "81332699",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Flooded Burrow"
+        }
+      ],
+      "uri": "nf:81332699"
+    },
+    {
+      "episodeNumber": 45,
+      "id": "81203626",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Giant Pumpkin"
+        }
+      ],
+      "uri": "nf:81203626"
+    },
+    {
+      "episodeNumber": 45,
+      "id": "81332700",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Mittens' New Friend"
+        }
+      ],
+      "uri": "nf:81332700"
+    },
+    {
+      "episodeNumber": 46,
+      "id": "81203627",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Peekaboo Rabbits"
+        }
+      ],
+      "uri": "nf:81203627"
+    },
+    {
+      "episodeNumber": 46,
+      "id": "81332701",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Spilled Milk"
+        }
+      ],
+      "uri": "nf:81332701"
+    },
+    {
+      "episodeNumber": 47,
+      "id": "81203628",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Fierce Bad Rabbit"
+        }
+      ],
+      "uri": "nf:81203628"
+    },
+    {
+      "episodeNumber": 47,
+      "id": "81332702",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the First Bluebell"
+        }
+      ],
+      "uri": "nf:81332702"
+    },
+    {
+      "episodeNumber": 48,
+      "id": "81203629",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Old Brown's Feather"
+        }
+      ],
+      "uri": "nf:81203629"
+    },
+    {
+      "episodeNumber": 48,
+      "id": "81332703",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Unexpected Discovery"
+        }
+      ],
+      "uri": "nf:81332703"
+    },
+    {
+      "episodeNumber": 49,
+      "id": "81203630",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of Jeremy Fisher's Musical Adventure"
+        }
+      ],
+      "uri": "nf:81203630"
+    },
+    {
+      "episodeNumber": 49,
+      "id": "81332704",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Great Tortoise Rescue"
+        }
+      ],
+      "uri": "nf:81332704"
+    },
+    {
+      "episodeNumber": 50,
+      "id": "81203631",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Squeaky Toy"
+        }
+      ],
+      "uri": "nf:81203631"
+    },
+    {
+      "episodeNumber": 50,
+      "id": "81332705",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the King of the Woods"
+        }
+      ],
+      "uri": "nf:81332705"
+    },
+    {
+      "episodeNumber": 51,
+      "id": "81203632",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Uninvited Badger"
+        }
+      ],
+      "uri": "nf:81203632"
+    },
+    {
+      "episodeNumber": 51,
+      "id": "81332706",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Sleepy Hedgehog"
+        }
+      ],
+      "uri": "nf:81332706"
+    },
+    {
+      "episodeNumber": 52,
+      "id": "81203633",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Brewing Storm"
+        }
+      ],
+      "uri": "nf:81203633"
+    },
+    {
+      "episodeNumber": 52,
+      "id": "81332707",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Christmas Star"
+        }
+      ],
+      "uri": "nf:81332707"
+    },
+    {
+      "episodeNumber": 53,
+      "id": "81203634",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Flying Rabbits"
+        }
+      ],
+      "uri": "nf:81203634"
+    },
+    {
+      "episodeNumber": 53,
+      "id": "81383041",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Musical Mayhem"
+        }
+      ],
+      "uri": "nf:81383041"
+    },
+    {
+      "episodeNumber": 54,
+      "id": "81383042",
+      "mediaUri": "nf:81006960",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tale of the Missing Journal"
+        }
+      ],
+      "uri": "nf:81383042"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64840",
+        "nf:81006960"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64840",
+        "kitsu:50919"
+      ]
+    ],
+    "unrelated": [
+      "nf:81006960"
+    ]
+  },
+  "name": "Angry Rabbit",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50919",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Angry Rabbit"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50919"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64840",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Angry Rabbit"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64840"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81006960",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2012-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Peter Rabbit"
+        }
+      ],
+      "uri": "nf:81006960"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b3229415217b3f76f7ff14c6328f11b439bcce7657830f4d6c3214051556b32d",
+      "c452ab2cf28c84fa2f0a18065f43f7e626d80ed7e51d6cff406eb6d2e03bee5a",
+      "fc8f86b14339d07dfea41e78036b45528221e5d61a507e96039bfc10c919601e",
+      "41fdfab8061a2ad53b0ddae18295bab31384e65e435ff3b91ef6da7d0d8ccd54",
+      "56ea1802a515c5c8c911a7dfe21202f9ab240eeba73aad0aaefd967042f88556",
+      "43d4341d9e3c40b706c9470f6dd9ecd5c8ca10faeae69d0bce04460d7ed9eccc",
+      "ec3203452de095f838726d6ea52df50efbea6b32e6d75934deb57ed1cb867592",
+      "2beb49d6d4853dc58d649fdc99b0a22e57446e603a79f3b3cf7f7fc680f42cb3",
+      "2caf0e75ced7e46a8aa0eff3c7dbb360fb6e14c403b5c01b5b8a499e69aa33b2",
+      "e17c5aa7981718b00e1099e692d121fbbeeec29f30210b3b2c11aec33d8ad0bb",
+      "1c9adad6dcbbb38c6feb11b61474674552cd507f75a033983792316e760a84d3",
+      "4cb6a63ab533eef25b25ac7fe5895b8010edfa4d71a30019d5e002b62bbbd340",
+      "9932a1a96b43c8b69793a62e0e7674300016ad2f01b4262ce80eda991365bfac",
+      "bb38014c56d60e8e4cce7160b5d41d766d9222766a7c8d31662ce64bff87c155",
+      "276c187bb3c466e110e390c1540c491a4b0b08e91d90449a97c74e59b1438180",
+      "17f8490157bd95ac418cbb6c82259f687207571809a57b0b78484efd259a6946",
+      "f0dbaeae879237ca0ea00e3bc275d4b2f989bd38d86bf8ffb263d0e37e1cd609",
+      "910c100ed2029daf6e69d7d2ad8684c9c8d8c90fa454a7cf8c7725d0d9b18ea5",
+      "bfe2c448fdbbb622803a866632de100cfc443aba06352b0647c78e152d09f8d6",
+      "8c4835e01a853d7eb0358871651fd375bb85d874e225507ec9baa831aa8a8595",
+      "7c120335e9b2e7d2fb8a8fb6c2bebb6193985a9416a09701352df5d9ddb4900e",
+      "c26f0c21b6c1416277f0ac95ece93d19cec57e4f3f1e5e0ccaf52bcd778be6d7",
+      "b00e91a0184fcaab09cc9f1e37278c722ca074781d752826049846abc4cea233",
+      "b73d626aec841c267398ac1cf1fdbf569a0b26bad7d8d599cc77c409bd857498",
+      "faf44541819a0dba1395bc026cf923a5d93b0ae15e8b63e887f5f442492fbb98",
+      "427968580b3db55240b2c42962fc7d3d9d2a3907eddb2bd2bef7f31be7ef84cc",
+      "12bac2c6c332c7b3bca94c80ed442f0e468561b1745e493a6bc7580dc1842bfa",
+      "f1216c1c79691f73eb3734df1fb2962bc0db051b546d85b397a4c7d0f9c5cc7f",
+      "506d294c4444bf39bfc0c5e3b1898962b2b05da16f40352c8a5802fd4b590d7e",
+      "ae7034f5654c51a050e24b644edf2bac797864d93fe425e9a773b55f8a7155e4",
+      "9149553605f9f183e4191f22a96d17213ff7e81675fa0335f136aebb7a4c9840",
+      "9ad9521bc0f3a5216f3d6f9df7f9c58ba3e8299539809fff4c142bc9ad45f40c",
+      "e5b82213384447c4d9e5e31905d629ff79e4675efd2bae05f0988355c51c5061",
+      "3c4fd3dde98fe10e31f62b6c6688afc3694bb69a9bd31a55b0d96fa56bc4807d",
+      "7364587b01872a9595abfee3596acb77c59f2d716a02ad1ba5b82132d6e186e4",
+      "e7e61d51207e38febf7ce8c4c95c86356986786bcc93c713dae16d0551c39a31",
+      "bb21b00637604bdcaea12017ecdec44a327736e54e2152342566a8e7fd8ea3ef",
+      "c1f9b7e8bb788404e51ef26a0b3481d20230e8f9347601aea6373116a74dc973",
+      "4bf2503f73d3250353a05f49362f118f7c593ad060fdb044ee4048069f968e69",
+      "b471a035303b7f11fa73cfa9713219d524b5b492cdbfed65e25ecbe0afebfa6b",
+      "90a4429c20484886db942a119ed1c077ffca94bc4e227f9ac2b64d9b18880f57",
+      "17c9929b33a89f0f5584d77a93a8899ef87c0f157dbf1f7027a547958f0d38c9",
+      "7bb45ff1aea9ed2feb667988deaa9907dd8c8d32f8bac5c90d391e018aeb4370",
+      "b3eed9877657a59652c98695a99393a6897c9e5e86460220d2d6b2dda3f66d4a",
+      "25590b80e9a28ce081d90e165678710de25c87be39b99d1d01f6ee680294a2fc",
+      "ed9fddf82c445b268d5f52e81ccd0ffd6a48a87bbbd619a0ecf8d4c6b872833d",
+      "af66db3aa11801022022368e79e1479fe755ccee21b0073a31436d5d7941e2b2",
+      "cc8c1c387b33d7b9edfd1e737559867493606fcabda7c40f263843c9a3b21f86",
+      "a007ad0819cfdc70a98fdb6084955f17ce9f97951865f1a10c86b6b144244289",
+      "275b0bfa031486a168b920a45323ae621f4869c87d3a2c8e1ae3c65769d70926",
+      "dd6aaa3b6d58eb7a49e919004c706bf72d7dccc5d92cc3d3fadbb5db758894b1",
+      "46f123d1257de0c38009803d1a5d4ec5353ef850494298328c155a86111cd7d2",
+      "7468f3820e768ac7769f4328afacd371f6501327eaf4c2046f6de993f222a42d",
+      "a44137560d57e79100326f4a90a243337a722ea748e0da93d9ff78da98ceb536",
+      "75b246a610f79824e29e55d40025ef8283a5b735f6c63b53545697c36bacd5ed",
+      "d45e1aa71546253c157914580112407af93982ce33ef583889c9eb8a1e47a107",
+      "24fa0d6cca682015733f05bc80c97ddc40042c60e1e94c0e9d3853f6195a4dc7",
+      "82f7957e5eb99fcda6220a5377bfab22522303d82c816167ef10858bb0081f77",
+      "2839717d293ba19cd8761c5bd4158e1a7f0cf06ac5794b36cd47648625037128",
+      "4b4024b2fc1779448b7fcde6030cb9158fef6b90a811d46f7452c59bad815e0d",
+      "b896add17de37ed57f417b884751af644f3e3f3f308d0c32885508c0d1468524",
+      "b385c7580e593822d5f2802e49154cf27bc5ffa3b0bfb89a19da34c90951544f",
+      "bf5a5281f77c353e9623c0aca6c950c7cdf098b2dd8f4d5010d41bfa7ca58c08",
+      "3996f31e364fe2c817a3c4aefad1878b10669173069efe6f459822401a294627",
+      "95b736f1d3a2f40c53218b86e7fb07fcb378bbc03d8b366b85b954c4489376bb",
+      "43dd4909aa759b3051209205acd67cba23f2823321a1762992443f783708fa87",
+      "4c21929e2e19657ce90fb15f173881d372b7a603861fa92602548295fc99669b",
+      "4781f9176eb9897c709ae6eab84c1f38dbed8fd659f1a42bba194f340fb69f9f",
+      "cf7eea47c7a908f8c8c2f1298fd31ff39fbd8b480146f97b01f3ca46161d33e1",
+      "3cb0c88364a9b9133138927120b4004b830d494d9427d65df172f3def8b6d427",
+      "3cb5f6206e2c6a200f73cdd74c271b944cab1517b42d1721972f94b879aa1c52",
+      "5ae559480a1fc627c5d4cdd45471412c7e7b0dd3089436259a75a21a87671016",
+      "7cd6161c337e911077106d958e5fa109844307df0f56922c192a976f0f194258",
+      "87429239c7e8efcdd4d6f8d1b23ad130f73907177a3fac13421cd6f123fbdbfb",
+      "d570bf999cf66aca24bced35e27ff96e756d3135a04027580085e5753c963b8a",
+      "fcaddbbc8e8a56ca1178cbcb153c67c8ebc340e0f5337a2286658a97ae1659eb",
+      "d65ae8ce709ab1bf9f1df651b6d32fcc0eb78a3a9222871d2a13ae09f72c3d17",
+      "27302512fc1995265e15e4a33bf99ea1031b55876b133af4ced171c0088c27c9",
+      "6bb748f17ae589259b87c84516f6a96fc1fd2c6a7a2633a98b6886f15426a3aa",
+      "29e5f48bc94afd7ce9ee15510977a67c481bda9df87106bcf4e5b4cce27cbefd",
+      "2670cb94505da0c88a0076df4eaf38ca3cd47758c7f6e8a212ec94bcf5760be2",
+      "7a1889f7b656ab2c54e7798a7a280b676ca7ffcfb1581ab1142a1c23001ab7c2",
+      "da4a621f74c0d74ed4ec270bd2b2c4ee65562ff6939194f825c2a9c16df0d509",
+      "d06cc438a13a142cfe28876738ce52b91b7cc878af260ff3dfb8899d1cb54947",
+      "64bb1e8f7ba25628c8862f2c6e887bd7a409477a01baf5f303919103d249588c",
+      "229f54f15efc905ade2a74fb7299ab5d3e9933e2d473e832dd64385060652407",
+      "c8a320b93927a1835a5a62813aa112b6824d94ad9fbfac2cf9404a0c711dc6d6",
+      "5210ee7fb73465b05f91d1676b3fa34d5fa34ff12e4fd69a79feceb87867fa62",
+      "935a7fdefeffe4fcba1c9739825e3457a9bd5b762f7c7ffbbdaceac3ec6982bd",
+      "39c9823f488d023c6d878aa27274a7a117c133f8d70a72515d62b8d38a9fb532",
+      "f4aabf6d20427fd662e5590a4a1bb97b4e6d07663893cefbd7925fa31f527f3d",
+      "23d69f8f4dbadc01d0fefb1e15b368fef10836f372dc1466c1539d0821ffcb81",
+      "25f889e4e00becb08508f0fa78c020629ad43b0a87f7430ce1b9aa6931355565",
+      "3a819e19fba2ffd54fd7079a228662faf81530e71e605003729e2a0694175ef9",
+      "a54f37d7dde0c04f2979fc92d0401e2e203df2acda21178f22ec5a13341bbdb1",
+      "6270b718396e4ef88b8d12fd1f18eec01695d8cd8cb0295331db36ce3902bb35",
+      "da1084d6e6e343b8f90386646bc2a2d02c5b065d064a914c2d6977ce246e968f",
+      "5bf2d08954ae962fa2d489792671c68c8008c6f57f8fdb1983dafb68a7596fe9",
+      "5c89d2354f18833fd9c51a63622b46839c75fb4f4fc037fdda60579b4f3d6aea",
+      "65ae2aed235f1848be95b8f1301d4e00812f85ddee26b3981db64851ef1b6256",
+      "93311989ceee95f2e018a6c41d75fde47ebbe3fa03c10e0de6e8a8e60c1355a1",
+      "2c8b52736bcbf611a8f457b1c01891a46ddcf3d72b5e4945fa61403566c8c39a",
+      "1282f560af15a275db9a75afc9949330e88b62e910e760550ca2819958845398",
+      "7ccd42b6a55cfe5ef539b4cfb251352f697a6032bc8025554fbc4146d2c9fcb1",
+      "5e885e9dcfafbe657f613b31909ebd53fc1c7871b77600e736903e75cc8068ec",
+      "d03e261cbd608e9183ef467cb0667eada9e311db657ed7402b4706bb9a0c5afb",
+      "cef90f77927ac530295c933302a17eeee5e40051c941d18985427288536b87e4",
+      "874d8e1af1983b7235a0f474ca9b1880c2b0d000d46cf6461a54079a0c1df603",
+      "208443964385ccb407b376f99722538b06fe34d500c394ee3a780a0f52849b89",
+      "04a53e39b30cc5d9ad97328edd7c3e18252cc339bc8c83cb5fdeb61e25e8fc19",
+      "c7771ab23dd43758d7d4610e122f4d87104d9358a291a5007eec6a8d38d3a994"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50919,mal:64840)"
+  },
+  "why": "Angry Rabbit is a one-episode summer 2026 ONA, and MyAnimeList 64840 and Kitsu 50919 are the same run: Kitsu maps SAME_AS to mal:64840 and both carry the start date 2026-08-21, the count of 1 and the title Angry Rabbit. The Netflix row nf:81006960 is Peter Rabbit, the Beatrix Potter series starting 2012 with more than sixty episodes titled The Tale of the Radish Robber, The Tale of the Greedy Fox and the like, so it is a different work and its SAME_AS handles to both members are wrong."
+}

@@ -1,0 +1,233 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The one call to make: a Netflix row asserting SAME_AS against the run while naming a different franchise. The run row carries no dates and no episodes, so the decision rests on the title, the count (10 against 26) and the karuta poem episode titles, all of which point at Chihayafuru rather than at Umayuru. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64867",
+      "mediaUri": "nf:82085211-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "82085213",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Poem One: A Chance Encounter"
+        }
+      ],
+      "uri": "nf:82085213"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82085214",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82085214"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82085215",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82085215"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82085216",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82085216"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82085217",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82085217"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82085218",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Poem Six: Parted We May Be"
+        }
+      ],
+      "uri": "nf:82085218"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82085219",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82085219"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82085220",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82085220"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82085221",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82085221"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82085222",
+      "mediaUri": "nf:82085211-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Poem Ten: In Naniwa Bay"
+        }
+      ],
+      "uri": "nf:82085222"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64867",
+        "nf:82085211-1"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64867"
+      ]
+    ],
+    "unrelated": [
+      "nf:82085211-1"
+    ]
+  },
+  "name": "Umayuru: Full Gate!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "64867",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Umayuru: Full Gate!"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64867"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "82085211-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chihayafuru: Full Circle"
+        }
+      ],
+      "uri": "nf:82085211-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9a43962c23f95202dac79519657729bbf6198fa3c2349bc546e31415c26d6900",
+      "2449c8b870a9fdf5757a61e64ae9f097e6e8bc226784648fa01214e189285712"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64867)"
+  },
+  "why": "Umayuru: Full Gate!, a 26 episode summer 2026 ONA short series, returned by MyAnimeList alone with no dates and no episode list. nf:82085211-1 is unrelated: it is titled Chihayafuru: Full Circle, lists 10 episodes against the 26 of mal:64867, and its episode titles (Poem One: A Chance Encounter, Poem Six: Parted We May Be, Poem Ten: In Naniwa Bay) name the competitive karuta poems of Chihayafuru, a different show, so the SAME_AS id it asserts against mal:64867 is not believable."
+}

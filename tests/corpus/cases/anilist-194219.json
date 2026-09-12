@@ -1,0 +1,1309 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix season row is the one that could not be settled: it claims SAME_AS against every member and against the Crunchyroll and JustWatch seasons, but it has no dates, a count (11) that matches nothing else in the run, and generic episode titles after the first, so it is left out of every expectation and flagged. Everything else lines up: anizip and Crunchyroll agree day for day even though anilist dates the start a day later (2026-07-05 against 2026-07-04). refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378121-GS00378139",
+      "mediaUri": "anilist:194219",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "anilist:194219",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194219",
+      "mediaUri": "kitsu:49978",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "kitsu:49978",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378121",
+      "mediaUri": "kitsu:49978",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "offline:mal-61814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194219",
+      "mediaUri": "offline:mal-61814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49978",
+      "mediaUri": "offline:mal-61814",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "anizip:19378",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194219",
+      "mediaUri": "anizip:19378",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194219",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49978",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61814",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194219",
+      "mediaUri": "jw:487224-513048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19378",
+      "mediaUri": "jw:487224-513048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49978",
+      "mediaUri": "jw:487224-513048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "jw:487224-513048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61814",
+      "mediaUri": "jw:487224-513048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194219",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19378",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378121-GS00378139",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:487224-513048",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49978",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61814",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61814",
+      "mediaUri": "nf:82941666-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "383791",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383791"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "383792",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383792"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "383793",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383793"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "383794",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383794"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "383795",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383795"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "383796",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383796"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "383797",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383797"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "383798",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383798"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "383799",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383799"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "383800",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383800"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "383801",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383801"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "383802",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383802"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "383803",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383803"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "383804",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383804"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "383805",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383805"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "383806",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383806"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "383807",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383807"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "383808",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383808"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "383809",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383809"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "383810",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383810"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "383811",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383811"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "383812",
+      "mediaUri": "kitsu:49978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:383812"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19378-1",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Destiny"
+        }
+      ],
+      "uri": "anizip:19378-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19378-2",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Special Someone"
+        }
+      ],
+      "uri": "anizip:19378-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19378-3",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Decision"
+        }
+      ],
+      "uri": "anizip:19378-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19378-4",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Is Their Love for Their Brides Eternal?"
+        }
+      ],
+      "uri": "anizip:19378-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19378-5",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Rival Is a Capable Secretary"
+        }
+      ],
+      "uri": "anizip:19378-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19378-6",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Touko and Nyankichi"
+        }
+      ],
+      "uri": "anizip:19378-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19378-7",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Reiya`s Secret Lover"
+        }
+      ],
+      "uri": "anizip:19378-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19378-8",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Bewitching Visitor"
+        }
+      ],
+      "uri": "anizip:19378-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19378-9",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Self-Awareness"
+        }
+      ],
+      "uri": "anizip:19378-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19378-10",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Demon Banquet"
+        }
+      ],
+      "uri": "anizip:19378-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19378-11",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19378-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19378-12",
+      "mediaUri": "anizip:19378",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19378-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378121-GS00378139-GE00378819JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Destiny"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378819JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378121-GS00378139-GE00378820JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-07-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Special Someone"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378820JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378121-GS00378139-GE00378821JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-07-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Decision"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378821JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378121-GS00378139-GE00378822JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-07-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Is Their Love For Their Brides Eternal?"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378822JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378121-GS00378139-GE00378823JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-08-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "My Rival is a Capable Secretary"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378823JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378121-GS00378139-GE00378824JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-08-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Touko and Nyankichi"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378824JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378121-GS00378139-GE00378825JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-08-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Reiya's Secret Lover"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378825JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378121-GS00378139-GE00378826JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-08-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Bewitching Visitor"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378826JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378121-GS00378139-GE00378827JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-08-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Self-Awareness"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378827JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378121-GS00378139-GE00378828JAJP",
+      "mediaUri": "cr:GT00378121-GS00378139",
+      "origin": "cr",
+      "releaseDate": "2026-09-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Demon Banquet"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139-GE00378828JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9451936",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Destiny"
+        }
+      ],
+      "uri": "jw:9451936"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10634899",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Special Someone"
+        }
+      ],
+      "uri": "jw:10634899"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10634901",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Decision"
+        }
+      ],
+      "uri": "jw:10634901"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10634904",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Is Their Love for Their Brides Eternal?"
+        }
+      ],
+      "uri": "jw:10634904"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10634906",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Rival is a Capable Secretary"
+        }
+      ],
+      "uri": "jw:10634906"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10634907",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Touko and Nyankichi"
+        }
+      ],
+      "uri": "jw:10634907"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10634909",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Reiya's Secret Lover"
+        }
+      ],
+      "uri": "jw:10634909"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10634910",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Bewitching Visitor"
+        }
+      ],
+      "uri": "jw:10634910"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10634911",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Self-Awareness"
+        }
+      ],
+      "uri": "jw:10634911"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10634912",
+      "mediaUri": "jw:487224-513048",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Demon Banquet"
+        }
+      ],
+      "uri": "jw:10634912"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82941669",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Destiny"
+        }
+      ],
+      "uri": "nf:82941669"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82941670",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82941670"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82941673",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82941673"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82941675",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82941675"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82941677",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82941677"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82941679",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82941679"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82941681",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82941681"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82941682",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82941682"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82941685",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82941685"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82941686",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82941686"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82941689",
+      "mediaUri": "nf:82941666-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82941689"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19378-1",
+        "b": "cr:GT00378121-GS00378139-GE00378819JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378819JAJP",
+        "b": "jw:9451936"
+      },
+      {
+        "a": "anizip:19378-2",
+        "b": "cr:GT00378121-GS00378139-GE00378820JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378820JAJP",
+        "b": "jw:10634899"
+      },
+      {
+        "a": "anizip:19378-3",
+        "b": "cr:GT00378121-GS00378139-GE00378821JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378821JAJP",
+        "b": "jw:10634901"
+      },
+      {
+        "a": "anizip:19378-4",
+        "b": "cr:GT00378121-GS00378139-GE00378822JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378822JAJP",
+        "b": "jw:10634904"
+      },
+      {
+        "a": "anizip:19378-5",
+        "b": "cr:GT00378121-GS00378139-GE00378823JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378823JAJP",
+        "b": "jw:10634906"
+      },
+      {
+        "a": "anizip:19378-6",
+        "b": "cr:GT00378121-GS00378139-GE00378824JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378824JAJP",
+        "b": "jw:10634907"
+      },
+      {
+        "a": "anizip:19378-7",
+        "b": "cr:GT00378121-GS00378139-GE00378825JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378825JAJP",
+        "b": "jw:10634909"
+      },
+      {
+        "a": "anizip:19378-8",
+        "b": "cr:GT00378121-GS00378139-GE00378826JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378826JAJP",
+        "b": "jw:10634910"
+      },
+      {
+        "a": "anizip:19378-9",
+        "b": "cr:GT00378121-GS00378139-GE00378827JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378827JAJP",
+        "b": "jw:10634911"
+      },
+      {
+        "a": "anizip:19378-10",
+        "b": "cr:GT00378121-GS00378139-GE00378828JAJP"
+      },
+      {
+        "a": "cr:GT00378121-GS00378139-GE00378828JAJP",
+        "b": "jw:10634912"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:194219",
+        "whole": "cr:GT00378121"
+      }
+    ],
+    "together": [
+      [
+        "anilist:194219",
+        "kitsu:49978",
+        "mal:61814",
+        "offline:mal-61814",
+        "anizip:19378",
+        "cr:GT00378121-GS00378139",
+        "jw:487224-513048"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "The Ogre's Bride",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "194219",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Ogre's Bride"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Oni no Hanayome"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "鬼の花嫁"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:194219"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "49978",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Ogre's Bride"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Oni no Hanayome"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "鬼の花嫁"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49978"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61814",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Ogre's Bride"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Oni no Hanayome"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61814"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61814",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Oni no Hanayome"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61814"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19378",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Ogre`s Bride"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "鬼の花嫁"
+        }
+      ],
+      "uri": "anizip:19378"
+    },
+    {
+      "id": "GT00378121",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378121"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378121-GS00378139",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Ogre's Bride"
+        }
+      ],
+      "uri": "cr:GT00378121-GS00378139"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "487224-513048",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:487224-513048"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82941666-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ogre’s Bride"
+        }
+      ],
+      "uri": "nf:82941666-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2be5d84a7aa06a8803db9a5668ff8d51285b812a85d95805982b6a36178b390d",
+      "691f9f215d8c1d843d81a49c2cb67892b115b7eca847c3fa38f9bb1f25bdf9da",
+      "96e84f524449aa6844ef3dc60fcd437beff553986f103fd2e37449c732240bc4",
+      "8789d56f4b277df165542ede164415ba6bcbee8a5ddb3d349c6e83b9ae1d655a",
+      "43b00b2445fd66647f6bb0d1d79a42f5a952de25721df41a6f1c8448cdc2aed7",
+      "cb0bfcda1d35dad5b3b07d20c37a434ccba43243ca30366494ec6cf4ec2783d3",
+      "2811aee7f30412591b9326215904a9365c1e77babd3900bef50a90ae71abd4d5",
+      "c3c00e5bf762cad6f70d0173585b57b99d6f49815c12094428b742d8c92eebd3",
+      "6d8345f1ebc38aedc1f184b3c7e49c2b9f230bb5894a369011fc2d26aaee106a",
+      "2c59eb7ef49c5cce9df072efa1a666f2ff6729462e6fd912a679aec78d8ad78e",
+      "a86afbc6d3d65160383f5dd11f23393e4ec051b28067f811a59c856e16be5289"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:194219,kitsu:49978,mal:61814,offline:mal-61814)"
+  },
+  "why": "The Ogre's Bride (Oni no Hanayome) is a 12 episode summer 2026 TV run, weekly from early July 2026, with anilist giving an end of 2026-09-20 and the last two episodes still to come. anizip:19378 is the same run: it carries SAME_AS ids to anilist:194219 and mal:61814 and lists the same 12 episodes on the run's weekly slot. cr:GT00378121-GS00378139 is the same run: it carries SAME_AS ids to all four members and its 10 listed episodes share the anizip release days exactly (2026-07-04 through 2026-09-05) under the same titles. jw:487224-513048 is the same run: it carries SAME_AS ids to all four members and to anizip:19378, and its 10 episode titles match the Crunchyroll ones one for one. cr:GT00378121 is the bare Crunchyroll series container for the show, with no dates and no episodes of its own, so it holds the run. Episodes 1 to 10 are paired between anizip, Crunchyroll and JustWatch on matching release days and distinctive titles (\"Touko and Nyankichi\" at 6, \"The Bewitching Visitor\" at 8, \"The Demon Banquet\" at 10), with only capitalisation and an apostrophe differing. anizip's episodes 11 and 12 have no titles and kitsu's episode rows carry neither titles nor dates, so neither is paired. Nothing is asserted about nf:82941666-1: the Netflix season carries no dates at all, lists 11 episodes against the run's 12 and the 10 that Crunchyroll and JustWatch each show, and names only its first episode (\"Destiny\"), the rest being \"Episode 2\" through \"Episode 11\", so there is no way to tell a partial listing of this run from a differently cut one."
+}

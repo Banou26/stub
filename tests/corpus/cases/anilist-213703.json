@@ -1,0 +1,125 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Straightforward: only the three members were returned, and the SAME_AS ids, the count of 8 and the start date all line up, so there was nothing to leave unknown. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62948",
+      "mediaUri": "anilist:213703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62948",
+      "mediaUri": "offline:mal-62948",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213703",
+      "mediaUri": "offline:mal-62948",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:213703",
+        "mal:62948",
+        "offline:mal-62948"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Capsules: Miracle",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "213703",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Jiaonang Jihua: Qiji"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "胶囊计划 奇迹"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213703"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "62948",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Capsules: Miracle"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Jiaonang Jihua: Qiji"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62948"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "mal-62948",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jiaonang Jihua: Qiji"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62948"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b35272516dfaf075ba40d46676313aa6916bd9806d86a052dd98b543aaff6b2f",
+      "b5e09f8bb8ca4d7b859be8079837d5b5c960b0d2f99b72bd43e104f255109c96",
+      "0cfba799dde4c591465485dd9c5e55cff615ff0754a6167922e28a5065350429"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213703,mal:62948,offline:mal-62948)"
+  },
+  "why": "Capsules: Miracle (Jiaonang Jihua: Qiji) is an eight-part Chinese ONA anthology that began on 2026-07-08. The three rows are one run: anilist:213703 names mal:62948 SAME_AS and offline:mal-62948 names both of them, all three give an episode count of 8, anilist and mal agree on the 2026-07-08 start, and all three carry the title Jiaonang Jihua: Qiji. No other source returned a row for this run."
+}

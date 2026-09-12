@@ -1,0 +1,59 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "One row and no handles; no game-series or franchise container was returned, so nothing was attached even though this is a tie-in trailer. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64876"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Fatal Fury: City of the Wolves - Rick Strowd & Duck King Trailer",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64876",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-27",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fatal Fury: City of the Wolves - Rick Strowd & Duck King Trailer"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Garou Densetsu: CotW - Rick Strowd & Duck King"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64876"
+    }
+  ],
+  "source": {
+    "answers": [
+      "82af7e118689dab049eb3f271d78d9efd37bf6eea8824a50866a25e833be44cc"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64876)"
+  },
+  "why": "Fatal Fury: City of the Wolves - Rick Strowd & Duck King Trailer (Garou Densetsu: CotW - Rick Strowd & Duck King) is a one-episode promotional ONA dated 2026-08-27. MyAnimeList is the only source that returned anything for it: mal:64876 carries the date, the count of 1 and both titles and names no handles, so there is nothing to merge, hold or separate."
+}

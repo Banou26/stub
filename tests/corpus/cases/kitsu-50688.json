@@ -1,0 +1,867 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "No episode dates anywhere in this run, so the JustWatch match rests on the equal count of 12 and on the episode titles; its 2026-01-01 start is a year placeholder and was not used. The Netflix row claims SAME_AS to both members while naming The Legend of the Blue Sea, which is why it is marked unrelated rather than left unknown. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50688",
+      "mediaUri": "offline:kitsu-50688",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50688",
+      "mediaUri": "jw:230063-470763",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50688",
+      "mediaUri": "jw:230063-470763",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50688",
+      "mediaUri": "nf:81012551",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50688",
+      "mediaUri": "nf:81012551",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "402801",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "One Year Later..."
+        }
+      ],
+      "uri": "kitsu:402801"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "402802",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Trial by Water"
+        }
+      ],
+      "uri": "kitsu:402802"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "402803",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Coronation"
+        }
+      ],
+      "uri": "kitsu:402803"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "402804",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Taryon, My Wayward Son"
+        }
+      ],
+      "uri": "kitsu:402804"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "402805",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "De Rolo's Eleven"
+        }
+      ],
+      "uri": "kitsu:402805"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "402806",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "We Are His Blood"
+        }
+      ],
+      "uri": "kitsu:402806"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "402807",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Ghosts of Whitestone"
+        }
+      ],
+      "uri": "kitsu:402807"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "402808",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Bard's Lament"
+        }
+      ],
+      "uri": "kitsu:402808"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "402809",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Temple of Truth"
+        }
+      ],
+      "uri": "kitsu:402809"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "402810",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Poisoned Ear"
+        }
+      ],
+      "uri": "kitsu:402810"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "402811",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Let The End Begin"
+        }
+      ],
+      "uri": "kitsu:402811"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "402812",
+      "mediaUri": "kitsu:50688",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Ascension"
+        }
+      ],
+      "uri": "kitsu:402812"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "8748191",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "One Year Later…"
+        }
+      ],
+      "uri": "jw:8748191"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10229400",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trial by Water"
+        }
+      ],
+      "uri": "jw:10229400"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10229401",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Coronation"
+        }
+      ],
+      "uri": "jw:10229401"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10229402",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Taryon, My Wayward Son"
+        }
+      ],
+      "uri": "jw:10229402"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10229403",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "De Rolo's Eleven"
+        }
+      ],
+      "uri": "jw:10229403"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10229404",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "We Are His Blood"
+        }
+      ],
+      "uri": "jw:10229404"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10229405",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ghosts of Whitestone"
+        }
+      ],
+      "uri": "jw:10229405"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10229406",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Bard's Lament"
+        }
+      ],
+      "uri": "jw:10229406"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10229407",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Temple of Truth"
+        }
+      ],
+      "uri": "jw:10229407"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10229408",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Poisoned Ear"
+        }
+      ],
+      "uri": "jw:10229408"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10229409",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Let the End Begin"
+        }
+      ],
+      "uri": "jw:10229409"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10229410",
+      "mediaUri": "jw:230063-470763",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ascension"
+        }
+      ],
+      "uri": "jw:10229410"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81012553",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81012553"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81012554",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81012554"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81012555",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81012555"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81012556",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81012556"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81012557",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81012557"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81012558",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81012558"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81012559",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81012559"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81012560",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81012560"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81012561",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81012561"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81012562",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81012562"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81012563",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81012563"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81012564",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81012564"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81012565",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:81012565"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81012566",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:81012566"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81012567",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:81012567"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81012568",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:81012568"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81012569",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:81012569"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81012570",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:81012570"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81012571",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:81012571"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81012572",
+      "mediaUri": "nf:81012551",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:81012572"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "kitsu:50688",
+        "nf:81012551"
+      ]
+    ],
+    "episodePairs": [
+      {
+        "a": "kitsu:402801",
+        "b": "jw:8748191"
+      },
+      {
+        "a": "kitsu:402802",
+        "b": "jw:10229400"
+      },
+      {
+        "a": "kitsu:402803",
+        "b": "jw:10229401"
+      },
+      {
+        "a": "kitsu:402804",
+        "b": "jw:10229402"
+      },
+      {
+        "a": "kitsu:402805",
+        "b": "jw:10229403"
+      },
+      {
+        "a": "kitsu:402806",
+        "b": "jw:10229404"
+      },
+      {
+        "a": "kitsu:402807",
+        "b": "jw:10229405"
+      },
+      {
+        "a": "kitsu:402808",
+        "b": "jw:10229406"
+      },
+      {
+        "a": "kitsu:402809",
+        "b": "jw:10229407"
+      },
+      {
+        "a": "kitsu:402810",
+        "b": "jw:10229408"
+      },
+      {
+        "a": "kitsu:402811",
+        "b": "jw:10229409"
+      }
+    ],
+    "together": [
+      [
+        "kitsu:50688",
+        "offline:kitsu-50688",
+        "jw:230063-470763"
+      ]
+    ],
+    "unrelated": [
+      "nf:81012551"
+    ]
+  },
+  "name": "The Legend of Vox Machina Season 4",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50688",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Legend of Vox Machina Season 4"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50688"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "kitsu-50688",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Legend of Vox Machina Season 4"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:kitsu-50688"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "230063-470763",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:230063-470763"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81012551",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2016-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Legend of the Blue Sea"
+        }
+      ],
+      "uri": "nf:81012551"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e9a89649650d46057d9694ba5abcc3fa62e0a9cc242125d24bb17473cad996d9",
+      "46f39f5b7648202d33e754e95d40245fde5099a8da73429d2488097baf3c54e0",
+      "8635a946dc92976a3b06143968531ed265ebf9eae9544eb9ff4ba5fb088480a9",
+      "2480795aa542f42ba99c990d0233b808d0708f1fe14893cfec5a1f0e43481caa",
+      "28f8e46ce552d1e6ffce05e24abf25476d86d31dcecab3607a4360777f72dc6b",
+      "5903b881f21c5b4defc42702d322cb642bc5fe40be9dd714205f0bc072b9201b",
+      "34e1f45907a95292d188be82c8264cc59805143c5d5a18cd119ad54d48f78add",
+      "2023cc8b1899d57163b2c47ace8c06312dcc7edac334919788dc9f858e3d6de2",
+      "9c05ad93b7f6908b635b9cb44cb879a11deed4ea7f837d31defd73161a7738d2",
+      "17c5b1f9b2e66e9335065f126f9328dfd1cd27714ddbfe32b4d5943ae0fdd5ea",
+      "2632fc9b049d9b23a4fae58d0578a61c364cf1dc5be28b3fc8b24c7a444566e8",
+      "f7a66eb79533eac1e3744ea2700372828132cedd52faa05bdbf72387d74669ce",
+      "06cd00a4be3841a49b5787abaa928d73e01c62818e569576d4f30f132cb3ca23",
+      "901a135be60bc078f86af7ceccf22677dd64a5ca03e893786fd3e0d112f1c4b8",
+      "8d25abd16a5faa1093194234ea8db4637ca29eff011ed8a421eff9c14a57e441",
+      "7d76791ae0b073e278d9423aa399a298c1c520cb3f60c2cd3c4b9780b23a3166",
+      "158a1db3de492663319f8e5d201320a4a853e0d3e88ccb2269fb6a5cd16730db",
+      "f46d09625b1184b8bce238897775014e76b6afc02b3608f6784ab8949549a6af",
+      "eb846a0418cfccffa8c0340778bde57fe405d1a70eb0f63a2a2a402c11534903",
+      "a6a04f9ccb999b0a1afaa7d974723319b0cbdfd9cdc01ea2fbbfe7264be35566",
+      "0535a6f832c2d9ccb520ffe38b260dd6ba9a89513576f9003de008679db30560",
+      "c408b4dc6100345af40f945c9088014ca6b672822927ce36a772e7a3240d5b37",
+      "4c29a6685061a47e9ebf540b3e9b6740c37686e248f2df19d3c93b93f4a686dd",
+      "87f9bed13da95a145fa6c4b38f082fce6b01496480a0986d40a22770ab00d3c5"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50688,offline:kitsu-50688)"
+  },
+  "why": "The Legend of Vox Machina Season 4 is a 12 episode ONA run running 2026-06-03 to 2026-06-24, carried by kitsu:50688 and offline:kitsu-50688. jw:230063-470763 is the same run: it carries the same 12 episodes with the same titles (Trial by Water, The Coronation, Taryon, My Wayward Son, De Rolo's Eleven, We Are His Blood, The Ghosts of Whitestone, The Bard's Lament, The Temple of Truth, The Poisoned Ear all byte for byte), the same episodeCount of 12, and its own handle names kitsu:50688. Its episodes 1 to 11 pair with the Kitsu episodes of the same title; episode 12 is left unpaired because Kitsu says Ascension where JustWatch says The Ascension. nf:81012551 is The Legend of the Blue Sea, a 2016 title with 20 plain numbered episodes and a different name, so it is a different work whatever its SAME_AS claim says."
+}

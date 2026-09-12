@@ -1,0 +1,371 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part is nf:81728202: it is scope CONTAINER and claims SAME_AS to mal:61619, which is the shape a holds relation would take, but it is A Good Day to Be a Dog from 2023 with 14 episodes against a 30 episode 2026 Chinese ONA, so it is a different work and gets unrelated rather than partOf. Its episode titles are placeholders with no dates, so no episode pairing was available in either direction. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61619",
+      "mediaUri": "anilist:214260",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61619",
+      "mediaUri": "nf:81728202",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61619",
+      "mediaUri": "offline:mal-61619",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214260",
+      "mediaUri": "offline:mal-61619",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81728204",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81728204"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81728205",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81728205"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81728206",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81728206"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81728207",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81728207"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81728208",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81728208"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81728209",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81728209"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81728210",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81728210"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81728211",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81728211"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81728212",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81728212"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81728213",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81728213"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81728214",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81728214"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81728215",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81728215"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81728216",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:81728216"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81728217",
+      "mediaUri": "nf:81728202",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:81728217"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:61619",
+        "nf:81728202"
+      ]
+    ],
+    "together": [
+      [
+        "mal:61619",
+        "anilist:214260",
+        "offline:mal-61619"
+      ]
+    ],
+    "unrelated": [
+      "nf:81728202"
+    ]
+  },
+  "name": "A Good Day to Ascend",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 30,
+      "id": "61619",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Good Day to Ascend"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Zeri Feisheng"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:61619"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 30,
+      "id": "214260",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 18 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "A Good Day to Ascend"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Zeri Feisheng"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "择日飞升"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:214260"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81728202",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Good Day to Be a Dog"
+        }
+      ],
+      "uri": "nf:81728202"
+    },
+    {
+      "id": "mal-61619",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-61619"
+    }
+  ],
+  "source": {
+    "answers": [
+      "3f40fb60658ee6680865c084db0f2639979966341a178a9fca72093c44630977",
+      "53f690f06219c51a10a7577bc57e66b8a165f2e22d10579cad5223e7b6973fb2",
+      "47054928501dc05dc3af7eab6ac2ca8814e9dc8467191c18e388fd750536b151",
+      "6da91838fbe4fa0b86c8fb5c7dc1127eb73ec00750f0f9a8760ff6f51b65aebe",
+      "3acf8a085069eab25d23fa6aec73fa858fce39fdd8c76953b9b10781dac1f1dc",
+      "db5619abf056724b103bdbf9954128f75dffa5bd52566233e2f07c15227d65f5",
+      "c4200055e55366e869dd01f8854c12359e2fc507a9b4d67abb873f57e0167e45",
+      "39b5dcdaae2c410f2c72120961be043e4c7a380451106b6cde36d83eedec284d",
+      "438190d237a133db1e059343970db2355706c561198622b3e7f3e4ecc85af8eb",
+      "fb2f341205550537b2bcb630ea15cc1b7bbf793c55bd6aaa4bfab5a23fdec0c3",
+      "98b6c876f850e15bdc05186e9ef4d1220b45b86e459900c07b9ffac74be09300",
+      "72edfbea08ebe59a9af30baf1965a07e32c94fe6e0b55709862a7fc42159eed6",
+      "ad1e3c1b916234d0264c369a4001efc904b28afa22b925796650d8b383e228c8",
+      "02c1da72a30b25576224612c77e71c12f25bd419bfbab428da6da9cc56b83e4a",
+      "3212addce096fe5e248ead1fb191e517ea32e588b24c433e7d53e54f65b776e4",
+      "555626495921a324e744060b8a05c05b1ccc29ce1fc9311e084654349c940f3f",
+      "edd3298a1e9e54cdc093159b8ef4235bd116e11f6951c4ed820b41c782346d8a",
+      "71ad3c3e9c12d780723011fb1432a5dc30ce3cfdfb9b4b3babbc51721ad1b49b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:61619)"
+  },
+  "why": "A Good Day to Ascend (Zeri Feisheng), a 30 episode Chinese ONA that began 2026-07-18 and is still releasing, running to 2027-01-09 on anilist. anilist:214260 is the same run: it carries a first-party SAME_AS handle to mal:61619 and matches on the same day-precise start 18 Jul 2026, on episodeCount 30, on the ONA type and on both the English title A Good Day to Ascend and the romanised Zeri Feisheng. offline:mal-61619 is the same run: its id is derived from mal 61619 and it carries SAME_AS handles to both mal:61619 and anilist:214260. nf:81728202 is a different work: it is A Good Day to Be a Dog, a 14 episode 2023 series with startDate 2023-01-01, so it shares only the words A Good Day with this show, and its SAME_AS handle to mal:61619 is wrong; it is kept apart from mal:61619 and neither merged nor attached as a container. Its 14 episodes are placeholder titles Episode 1 to Episode 14 with no release dates, so they pair with nothing on either count."
+}

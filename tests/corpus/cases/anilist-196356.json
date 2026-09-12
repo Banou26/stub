@@ -1,0 +1,859 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch season could not be checked on titles because it lists them in romaji against AniZip's English, and it carries no episode dates, so the row was accepted as the same run on its slug, its six first-party SAME_AS handles and the proper nouns Kounokura and Miya landing at the same positions, while every per-episode pair was refused. Kitsu's episodeCount of 34 against the run's 12 is left alone since Kitsu is a member of the run's own address. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62102",
+      "mediaUri": "anilist:196356",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62102",
+      "mediaUri": "kitsu:50055",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196356",
+      "mediaUri": "kitsu:50055",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62102",
+      "mediaUri": "offline:mal-62102",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196356",
+      "mediaUri": "offline:mal-62102",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50055",
+      "mediaUri": "offline:mal-62102",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62102",
+      "mediaUri": "anizip:19492",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196356",
+      "mediaUri": "anizip:19492",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196356",
+      "mediaUri": "jw:489623-516911",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19492",
+      "mediaUri": "jw:489623-516911",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50055",
+      "mediaUri": "jw:489623-516911",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62102",
+      "mediaUri": "jw:489623-516911",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62102",
+      "mediaUri": "jw:489623-516911",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404953",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404953"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404954",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404954"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404955",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404955"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404956",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404956"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404957",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404957"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404958",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404958"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404959",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404959"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404960",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404960"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404961",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404961"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404962",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404962"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404963",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404963"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404964",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404964"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404965",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404965"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404966",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404966"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404967",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404967"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404968",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404968"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404969",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404969"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404970",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404970"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404971",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404971"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404972",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404972"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404973",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404973"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404974",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404974"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "404975",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404975"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "404976",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404976"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "404977",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404977"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "404978",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404978"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "404979",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404979"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "404980",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404980"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "404981",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404981"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "404982",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404982"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "404983",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404983"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "404984",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404984"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "404985",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404985"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "404986",
+      "mediaUri": "kitsu:50055",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404986"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19492-1",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Stepmother and Stepsisters Aren`t Wicked"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "いびってこない義母と義姉"
+        }
+      ],
+      "uri": "anizip:19492-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19492-2",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Kounokura Family`s Guard"
+        }
+      ],
+      "uri": "anizip:19492-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19492-3",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Daughters of Distinguished Families"
+        }
+      ],
+      "uri": "anizip:19492-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19492-4",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Miya Returning a Favor"
+        }
+      ],
+      "uri": "anizip:19492-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19492-5",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19492-6",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19492-7",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19492-8",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19492-9",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19492-10",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19492-11",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19492-12",
+      "mediaUri": "anizip:19492",
+      "origin": "anizip",
+      "releaseDate": "2026-09-23T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19492-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9521674",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ibitte Konai Gibo to Gishi"
+        }
+      ],
+      "uri": "jw:9521674"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10609254",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kounokura no Goei"
+        }
+      ],
+      "uri": "jw:10609254"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10615892",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Meika no Musume-tachi"
+        }
+      ],
+      "uri": "jw:10615892"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10635889",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Miya no Ongaeshi"
+        }
+      ],
+      "uri": "jw:10635889"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10648241",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hajimete no Tomodachi"
+        }
+      ],
+      "uri": "jw:10648241"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10668255",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Inari-ke no Go Sokujo"
+        }
+      ],
+      "uri": "jw:10668255"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10747310",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kounokura no Zaihou"
+        }
+      ],
+      "uri": "jw:10747310"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10804868",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Inu no Onee-san"
+        }
+      ],
+      "uri": "jw:10804868"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10842449",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kiritsu to Dentou no Seitokai"
+        }
+      ],
+      "uri": "jw:10842449"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10894190",
+      "mediaUri": "jw:489623-516911",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Otometachi no Ikusa"
+        }
+      ],
+      "uri": "jw:10894190"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:196356",
+        "kitsu:50055",
+        "mal:62102",
+        "offline:mal-62102",
+        "anizip:19492",
+        "jw:489623-516911"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "My Stepmother and Stepsisters Aren’t Wicked",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "196356",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "My Stepmother and Stepsisters Aren’t Wicked"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Ibitte Konai Gibo to Gishi"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "いびってこない義母と義姉"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:196356"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 34,
+      "id": "50055",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "My Mother-in-Law and Sister-in-Law Who Don't Bully Me."
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Ibitte Konai Gibo to Gishi"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "いびってこない義母と義姉"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50055"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "62102",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Stepmother and Stepsisters Aren't Wicked"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Ibitte Konai Gibo to Gishi"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62102"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62102",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ibitte Konai Gibo to Gishi"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62102"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19492",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Stepmother and Stepsisters Aren`t Wicked"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "いびってこない義母と義姉"
+        }
+      ],
+      "uri": "anizip:19492"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "489623-516911",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:489623-516911"
+    }
+  ],
+  "source": {
+    "answers": [
+      "42dc956831eff65b448ea7c66df38e06bcc12c679b3b3da5e567fc3a22e4d54d",
+      "ff0ef088dd4cef984908222e025142d2d099674d4b2be41f95df33a22a19e68c",
+      "5efeb7e5345261f0d4432d7896f77d79b7ff9050ad5d9379ac4e30878c8db249",
+      "0e38ee04e0b506baa1bdf253479d21bcb7c4f2043df129dfd855e41afc4e91ea",
+      "494f856413fafb06a2ee175bba5041712e82988b75f4a6a78d80331a48c07763",
+      "34426487942640215b8e664eeb3a3dc0eb5575f0006661308514729eb4486ce8",
+      "ce0c27c6fd1aeef4f11ed3a834a8ed5424882c968b7edd4828aa2fe69b0a0f3e"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:196356,kitsu:50055,mal:62102,offline:mal-62102)"
+  },
+  "why": "My Stepmother and Stepsisters Aren't Wicked (Ibitte Konai Gibo to Gishi) is a 12 episode summer 2026 run airing 2026-07-08 to 2026-09-23, so it is still on air; AniList and MyAnimeList both give the 2026-07-08 start and the offline row gives episodeCount 12. anizip:19492 is the same run: it carries first-party SAME_AS handles to mal:62102 and anilist:196356, its episodeCount is 12, and its episodes run 2026-07-08T14:30Z to 2026-09-23T14:30Z, the run's own first and last broadcast dates to the day. jw:489623-516911 is the same run: it is the JustWatch season at the slug ibitte-konai-gibo-to-gishi, the run's romaji title, it carries first-party SAME_AS handles to anilist:196356, anizip:19492, kitsu:50055, mal:62102 and offline:mal-62102, its episodeCount of 10 is a partial listing of the 12 rather than a fold of two cours, and its episode 1 is titled with the show's own name just as AniZip's episode 1 is, with the family name Kounokura at position 2 and the character name Miya at position 4 in both. No episode pairs are asserted: JustWatch gives its episode titles in romaji (Kounokura no Goei, Meika no Musume-tachi) where AniZip gives English (The Kounokura Family`s Guard, Daughters of Distinguished Families), so no two titles are the same string, and the JustWatch episodes carry no dates."
+}

@@ -1,0 +1,1098 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Kitsu's member row claims 22 episodes and the offline row claims 1, against 13 on anilist and mal, but all four are members of the run's own address so the disagreement does not change the clustering. The Netflix season is left unsettled. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378063-GS00378064",
+      "mediaUri": "anilist:196017",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62051",
+      "mediaUri": "anilist:196017",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196017",
+      "mediaUri": "kitsu:50694",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62051",
+      "mediaUri": "kitsu:50694",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378063",
+      "mediaUri": "kitsu:50694",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62051",
+      "mediaUri": "offline:mal-62051",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196017",
+      "mediaUri": "offline:mal-62051",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62051",
+      "mediaUri": "anizip:19473",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196017",
+      "mediaUri": "anizip:19473",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196017",
+      "mediaUri": "nf:82941771-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19473",
+      "mediaUri": "nf:82941771-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50694",
+      "mediaUri": "nf:82941771-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62051",
+      "mediaUri": "nf:82941771-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62051",
+      "mediaUri": "nf:82941771-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403028",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403028"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403029",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403029"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "403030",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403030"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "403031",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403031"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "403032",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403032"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "403033",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403033"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "403034",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403034"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "403035",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403035"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "403036",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403036"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "403037",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403037"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "403038",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403038"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "403039",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403039"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "403040",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403040"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "403041",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403041"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "403042",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403042"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "403043",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403043"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "403044",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403044"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "403045",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403045"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "403046",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403046"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "403047",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403047"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "403048",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403048"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "403049",
+      "mediaUri": "kitsu:50694",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403049"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19473-1",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Welcome to the Sunflower Circus!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ようこそ, ひまわりサーカスへ!"
+        }
+      ],
+      "uri": "anizip:19473-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19473-2",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "That Was So Dazzling"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "それはとっても, 眩しくて"
+        }
+      ],
+      "uri": "anizip:19473-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19473-3",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Don`t Want to Show My Scars"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "傷跡なんか, 見せたくない"
+        }
+      ],
+      "uri": "anizip:19473-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19473-4",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Just Can`t Bring Myself to Be Honest"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "素直になんか, なれなくて"
+        }
+      ],
+      "uri": "anizip:19473-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19473-5",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "There Is Nowhere I Belong"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "居場所なんか, どこにもない"
+        }
+      ],
+      "uri": "anizip:19473-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19473-6",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Sinister Legend Summons a Storm"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "忌まわしき伝説, 嵐を呼んで"
+        }
+      ],
+      "uri": "anizip:19473-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19473-7",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Don`t Get the Circus"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サーカスが, わからない"
+        }
+      ],
+      "uri": "anizip:19473-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19473-8",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "This Is What I Always Wanted"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "それはずっと, ほしかったもの"
+        }
+      ],
+      "uri": "anizip:19473-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19473-9",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Is All That Kindness Just a Lie?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "その優しさは, ぜんぶ嘘?"
+        }
+      ],
+      "uri": "anizip:19473-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19473-10",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Beyond the Stage of Dreams"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "夢の舞台, その向こう側へ"
+        }
+      ],
+      "uri": "anizip:19473-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19473-11",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "見果てぬ夢は, 誰がために?"
+        }
+      ],
+      "uri": "anizip:19473-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19473-12",
+      "mediaUri": "anizip:19473",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19473-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378063-GS00378064-GE00378288JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Welcome to the Sunflower Circus!"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378288JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378063-GS00378064-GE00378289JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-07-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "That Was So Dazzling"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378289JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378063-GS00378064-GE00378290JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-07-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Don't Want To Show My Scars"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378290JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378063-GS00378064-GE00378291JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-07-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Just Can't Bring Myself To Be Honest"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378291JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378063-GS00378064-GE00378292JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-08-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "There Is Nowhere I Belong"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378292JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378063-GS00378064-GE00378293JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-08-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Sinister Legend Summons A Storm"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378293JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378063-GS00378064-GE00378294JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-08-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Don't Get The Circus"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378294JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378063-GS00378064-GE00378295JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-08-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "This Is What I Always Wanted"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378295JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378063-GS00378064-GE00378296JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-08-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Is All That Kindness Just A Lie?"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378296JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378063-GS00378064-GE00378297JAJP",
+      "mediaUri": "cr:GT00378063-GS00378064",
+      "origin": "cr",
+      "releaseDate": "2026-09-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Beyond The Stage Of Dreams"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064-GE00378297JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82941773",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Welcome to the Sunflower Circus!"
+        }
+      ],
+      "uri": "nf:82941773"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82941774",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82941774"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82941775",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82941775"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82941776",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82941776"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82941777",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82941777"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82941778",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82941778"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82941779",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82941779"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82941780",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82941780"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82941781",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82941781"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82941782",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82941782"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82941783",
+      "mediaUri": "nf:82941771-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82941783"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19473-1",
+        "b": "cr:GT00378063-GS00378064-GE00378288JAJP"
+      },
+      {
+        "a": "anizip:19473-2",
+        "b": "cr:GT00378063-GS00378064-GE00378289JAJP"
+      },
+      {
+        "a": "anizip:19473-3",
+        "b": "cr:GT00378063-GS00378064-GE00378290JAJP"
+      },
+      {
+        "a": "anizip:19473-4",
+        "b": "cr:GT00378063-GS00378064-GE00378291JAJP"
+      },
+      {
+        "a": "anizip:19473-5",
+        "b": "cr:GT00378063-GS00378064-GE00378292JAJP"
+      },
+      {
+        "a": "anizip:19473-6",
+        "b": "cr:GT00378063-GS00378064-GE00378293JAJP"
+      },
+      {
+        "a": "anizip:19473-7",
+        "b": "cr:GT00378063-GS00378064-GE00378294JAJP"
+      },
+      {
+        "a": "anizip:19473-8",
+        "b": "cr:GT00378063-GS00378064-GE00378295JAJP"
+      },
+      {
+        "a": "anizip:19473-9",
+        "b": "cr:GT00378063-GS00378064-GE00378296JAJP"
+      },
+      {
+        "a": "anizip:19473-10",
+        "b": "cr:GT00378063-GS00378064-GE00378297JAJP"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:196017",
+        "whole": "cr:GT00378063"
+      }
+    ],
+    "together": [
+      [
+        "anilist:196017",
+        "kitsu:50694",
+        "mal:62051",
+        "offline:mal-62051",
+        "anizip:19473",
+        "cr:GT00378063-GS00378064"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Grow Up Show",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "196017",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Grow Up Show"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Grow Up Show: Himawari no Circus-dan"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "グロウアップショウ ～ひまわりのサーカス団～"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:196017"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50694",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "GROW UP SHOW -Sunflower Circus-"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Grow Up Show: Himawari no Circus-dan"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "グロウアップショウ ～ひまわりのサーカス団～"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50694"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "62051",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Grow Up Show: Sunflower Circus"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Grow Up Show: Himawari no Circus-dan"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62051"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-62051",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Grow Up Show: Himawari no Circus-dan"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62051"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19473",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Grow Up Show: Sunflower Circus"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "グロウアップショウ ~ひまわりのサーカス団~"
+        }
+      ],
+      "uri": "anizip:19473"
+    },
+    {
+      "id": "GT00378063",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378063"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378063-GS00378064",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Grow Up Show"
+        }
+      ],
+      "uri": "cr:GT00378063-GS00378064"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82941771-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Grow Up Show"
+        }
+      ],
+      "uri": "nf:82941771-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "c40f2313c4d8c1c9e2235f5d43f81ffe3fbaa065dc4c6623adb6ccfc9c1b3c7f",
+      "e2502e67cd2972a1352eb446b96cf904a0cee4234dbff0e105d9afab9ece0711",
+      "2242747593739ccddd26702915068e041163ab7ba94860f0dfb2ef9e2eb47ec9",
+      "72f892cdec634d727a6aaca6990652a4e741e6395972238cbadeda1dc329eaca",
+      "bbc3307d187355a1f2275108f3c537507e4e22e48d95574d836f123d340b9aa2",
+      "8509a86a25a60a739a228d3b8ad160e3befcf725354c9b72387506166253839b",
+      "b936ec45f32659cdfd7520b4d9224f14cb3dbea9527880cb65a5e846586d5351",
+      "6fa3894b7432813791356599c2de3396bc3aee424f98e674126677ce72f08299"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:196017,kitsu:50694,mal:62051,offline:mal-62051)"
+  },
+  "why": "The run is Grow Up Show: Sunflower Circus, a 13 episode summer 2026 TV series that started 2026-07-05 and is still airing (anilist gives an end of 2026-09-27 and anizip still lists episodes 11 and 12 as unaired). anizip:19473 is the same run: it carries first-party SAME_AS ids to both mal:62051 and anilist:196017 and its 13 entries cover the same broadcast. cr:GT00378063-GS00378064 is the same run: anilist:196017 itself points at it with a SAME_AS handle, and its 10 listed episodes carry anizip's episode titles in the same order on exactly the same ten dates, 2026-07-04 through 2026-09-05, with the later episodes simply not aired yet. cr:GT00378063 is the bare Grow Up Show series page with no episode list, count or dates of its own, so it holds the run rather than being it. The ten Crunchyroll episodes pair to anizip's by release date, each on the same day, backed by the matching English titles (Welcome to the Sunflower Circus!, That Was So Dazzling, There Is Nowhere I Belong, This Is What I Always Wanted are identical). nf:82941771-1 is left unsettled: it lists 11 episodes against the run's 13, carries no dates, and every title after the first is the placeholder Episode N, so nothing places it or its episodes."
+}

@@ -1,0 +1,245 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The Netflix row asserts SAME_AS against every member yet names a different film (Chinyuki the Movie, 2016-01-01); the title and the ten year date gap were taken over the asserted ids. mal:202717 is a bare id row with no fields but is already a member of the run's own address. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:202717"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63011",
+      "mediaUri": "anilist:202717",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:202717",
+      "mediaUri": "kitsu:50806",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63011",
+      "mediaUri": "offline:mal-63011",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202717",
+      "mediaUri": "offline:mal-63011",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50806",
+      "mediaUri": "offline:mal-63011",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202717",
+      "mediaUri": "nf:80179904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50806",
+      "mediaUri": "nf:80179904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:202717",
+      "mediaUri": "nf:80179904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63011",
+      "mediaUri": "nf:80179904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63011",
+      "mediaUri": "nf:80179904",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405056",
+      "mediaUri": "kitsu:50806",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405056"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80179904-1",
+      "mediaUri": "nf:80179904",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chinyuki the Movie"
+        }
+      ],
+      "uri": "nf:80179904-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:202717",
+        "nf:80179904"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:202717",
+        "kitsu:50806",
+        "mal:63011",
+        "offline:mal-63011"
+      ]
+    ],
+    "unrelated": [
+      "nf:80179904"
+    ]
+  },
+  "name": "Chiikawa: Ningyo no Shima no Himitsu",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "202717",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 24 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Chiikawa: Ningyo no Shima no Himitsu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "映画ちいかわ 人魚の島のひみつ"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:202717"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50806",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Chiikawa: Ningyo no Shima no Himitsu"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "映画ちいかわ 人魚の島のひみつ"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50806"
+    },
+    {
+      "id": "202717",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:202717"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63011",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Chiikawa Movie: The Secret of the Mermaid Island"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Chiikawa Movie: Ningyo no Shima no Himitsu"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63011"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63011",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chiikawa Movie: Ningyo no Shima no Himitsu"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63011"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "80179904",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2016-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chinyuki the Movie"
+        }
+      ],
+      "uri": "nf:80179904"
+    }
+  ],
+  "source": {
+    "answers": [
+      "aacf4d9b6fdfb348776121f38030a2d51efd923a6cd4ae7edf1ce9c0ff0f4308",
+      "7b278ede77cc58f79ca10ff7d619eb7e84cb0435985145dc907cc9a9c65a56f7",
+      "b436bbc3660b377e572e1126e868e2723ac93ecaf3e464da83676e76d1aee508",
+      "09b17fd71b06e341e490fae6abc1121534463b8ade9fdbb016f73853966e9363",
+      "f728ee3161f143f1ecd82491ae80e3b1c758366aa895d46da1098c80aaad4e7d",
+      "e5e7cd9c545ec39ea26a43ebe13d8a16268ad1fccd8a5f42f0dbbfeccfa188bd"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:202717,kitsu:50806,mal:202717,mal:63011,offline:mal-63011)"
+  },
+  "why": "The 2026 Chiikawa theatrical film, Eiga Chiikawa: Ningyo no Shima no Himitsu, one episode, released 2026-07-24, keyed on anilist:202717 with kitsu, both MyAnimeList handles and offline as members. nf:80179904 is unrelated: it is titled Chinyuki the Movie, dated 2016-01-01 and its single episode carries that same title, so it is a different film a decade older than the 2026-07-24 Chiikawa movie the members agree on, despite the SAME_AS ids it asserts."
+}

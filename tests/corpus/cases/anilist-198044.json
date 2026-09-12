@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only wrinkle is the title: mal and offline carry the bare Juurin Oukoku against anilist's full Juurin Oukoku: Elf Oukoku wa Kyodai Naedoko ni, so the merge rests on the SAME_AS handles onto mal:64053 plus the shared 2026-07-03 start and OVA type rather than on the titles alone. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64053",
+      "mediaUri": "anilist:198044",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64053",
+      "mediaUri": "offline:mal-64053",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:198044",
+        "mal:64053",
+        "offline:mal-64053"
+      ]
+    ]
+  },
+  "name": "Juurin Oukoku: Elf Oukoku wa Kyodai Naedoko ni",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "198044",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Juurin Oukoku: Elf Oukoku wa Kyodai Naedoko ni"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "蹂躙王国 エルフ王国は巨大苗床に"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:198044"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64053",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Juurin Oukoku"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64053"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-64053",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Juurin Oukoku"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64053"
+    }
+  ],
+  "source": {
+    "answers": [
+      "88672c6cc9d4a902fc6e7c27e4db116aa10ed4df3eab8ec1247f15a9a8e0f7a9",
+      "67c694f2aad39ebee675e92f92240333893729196457a04bbab446b0bc6606d0",
+      "67027579b09661a02bc3d2265639ef9622f3de7ed90a9ce9db2ed11976ba4da6"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:198044,mal:64053,offline:mal-64053)"
+  },
+  "why": "Juurin Oukoku: Elf Oukoku wa Kyodai Naedoko ni, a two episode adult OVA whose first volume is dated 2026-07-03 and whose second runs to 2027-02-04 on anilist. The three catalogue rows are one run: anilist:198044 carries a SAME_AS handle to mal:64053 and offline:mal-64053 carries one too, anilist and mal agree on the day-precise start 03 Jul 2026 and on the OVA type, and anilist and offline agree on episodeCount 2 (mal lists no count yet). mal and offline give the short title Juurin Oukoku where anilist gives the full one, which is the same work truncated, not a second work. No streaming season, container or episode row came back for this run, so nothing is held, spanned or ruled out."
+}

@@ -1,0 +1,262 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row called The Party could be a short Netflix title for this special or a different work; with no episode dates, a 2025 start and three episodes against the run's one, it was left unplaced. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64519",
+      "mediaUri": "anilist:213750",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213750",
+      "mediaUri": "kitsu:50811",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64519",
+      "mediaUri": "offline:mal-64519",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213750",
+      "mediaUri": "offline:mal-64519",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50811",
+      "mediaUri": "offline:mal-64519",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213750",
+      "mediaUri": "nf:81940044",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50811",
+      "mediaUri": "nf:81940044",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64519",
+      "mediaUri": "nf:81940044",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64519",
+      "mediaUri": "nf:81940044",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405121",
+      "mediaUri": "kitsu:50811",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405121"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81940144",
+      "mediaUri": "nf:81940044",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81940144"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81940145",
+      "mediaUri": "nf:81940044",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81940145"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81940146",
+      "mediaUri": "nf:81940044",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81940146"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213750",
+        "kitsu:50811",
+        "mal:64519",
+        "offline:mal-64519"
+      ]
+    ]
+  },
+  "name": "Bananya 10th Anniversary Special",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "213750",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 10 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Bananya 10th Anniversary Special"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Bananya: At-Home Party"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ばなにゃ あっとほーむぱーてぃー"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:213750"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50811",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Bananya 10th Anniversary Special"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Bananya At-Home Party"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ばなにゃ あっとほーむぱーてぃー"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50811"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64519",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Bananya: At-Home Party"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64519"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64519",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bananya: At-Home Party"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64519"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81940044",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2025-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Party"
+        }
+      ],
+      "uri": "nf:81940044"
+    }
+  ],
+  "source": {
+    "answers": [
+      "254b18835724c79f0562049a5f1f8307ffcee9dbb4b7d166ffbbbde0bb5272a0",
+      "611ceb73bac529a6ab4a88a6c61a0120cbf35c3f94e7f2d14764b292788ea58b",
+      "6b4eec36f6edbcb1dd58d16f8849218edd72d3e336819a7e1281966a4ef44460",
+      "bbbd6ea67de097cf86b87c40743729391feade2c26731d6c13da83aed2077acb",
+      "96e2d2d58445939e2252ab2c64b9a723699d96a96eefb0ab194a614d4123cd25",
+      "497cb75db538a930c787b955a09e85029020740f41fb49ab43f5791fd88b2c83",
+      "da73351d0db3040edbe3d08f01e9faa29c2b7f1e85482ee377043e5993617024",
+      "85ef9a328479c4c89b503f57041b80b14871cc7ed79eda2d568886c6780e61e9",
+      "6774d134cfe18ad663e9e9873e9237838a9778e291f05f3e18d0655b4d83add8"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213750,kitsu:50811,mal:64519,offline:mal-64519)"
+  },
+  "why": "The run is the one-episode Bananya tenth anniversary special, Bananya: At-Home Party, dated 2026-07-10. The four rows anilist:213750, kitsu:50811, mal:64519 and offline:mal-64519 are one run: Kitsu and the offline entry carry SAME_AS handles to the AniList and MyAnimeList ids, AniList and Kitsu and MyAnimeList all give startDate 2026-07-10 with episodeCount 1, and Kitsu and AniList share the Japanese title. The Netflix row nf:81940044, The Party, is left unplaced: it has no episode dates to align against, its startDate is 2025-01-01, its three episodes exceed the run's one, and its title is Netflix's own wording, so nothing here settles whether it is this special, a container for it, or another work."
+}

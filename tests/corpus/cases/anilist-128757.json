@@ -1,0 +1,1095 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll episode ids step by two rather than one, so each pair was read off the listed episode rather than inferred; JustWatch position 10 carries the romanised Sou Omottan da and was left unpaired. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00362362-GS00362363",
+      "mediaUri": "anilist:128757",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:46488",
+      "mediaUri": "anilist:128757",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:46488",
+      "mediaUri": "kitsu:44021",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:128757",
+      "mediaUri": "kitsu:44021",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00362362",
+      "mediaUri": "kitsu:44021",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:46488",
+      "mediaUri": "offline:mal-46488",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:128757",
+      "mediaUri": "offline:mal-46488",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44021",
+      "mediaUri": "offline:mal-46488",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:46488",
+      "mediaUri": "anizip:16000",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:128757",
+      "mediaUri": "anizip:16000",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:128757",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44021",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:46488",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-46488",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:128757",
+      "mediaUri": "jw:271657-282883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:16000",
+      "mediaUri": "jw:271657-282883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44021",
+      "mediaUri": "jw:271657-282883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:46488",
+      "mediaUri": "jw:271657-282883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-46488",
+      "mediaUri": "jw:271657-282883",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403212",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "I'm Done With Fighting Games"
+        }
+      ],
+      "uri": "kitsu:403212"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403213",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Good Game"
+        }
+      ],
+      "uri": "kitsu:403213"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405061",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Late-Night Locals"
+        }
+      ],
+      "uri": "kitsu:405061"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405062",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Late-Night Study Sessions"
+        }
+      ],
+      "uri": "kitsu:405062"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405063",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Night Before"
+        }
+      ],
+      "uri": "kitsu:405063"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405064",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Noble Duel"
+        }
+      ],
+      "uri": "kitsu:405064"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405065",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Lesser Devil"
+        }
+      ],
+      "uri": "kitsu:405065"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405066",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Guaranteed to Lose"
+        }
+      ],
+      "uri": "kitsu:405066"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405067",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Playing for Fun"
+        }
+      ],
+      "uri": "kitsu:405067"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405068",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405068"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405069",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405069"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405070",
+      "mediaUri": "kitsu:44021",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405070"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "16000-1",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I`m Done with Fighting Games"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "格ゲーはもうやめる"
+        }
+      ],
+      "uri": "anizip:16000-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "16000-2",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Good Game"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "対ありでした"
+        }
+      ],
+      "uri": "anizip:16000-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "16000-3",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Late-Night Locals"
+        }
+      ],
+      "uri": "anizip:16000-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "16000-4",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Late-Night Study Sessions"
+        }
+      ],
+      "uri": "anizip:16000-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "16000-5",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Night Before"
+        }
+      ],
+      "uri": "anizip:16000-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "16000-6",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Noble Duel"
+        }
+      ],
+      "uri": "anizip:16000-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "16000-7",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Lesser Devil"
+        }
+      ],
+      "uri": "anizip:16000-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "16000-8",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Guaranteed to Lose"
+        }
+      ],
+      "uri": "anizip:16000-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "16000-9",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Playing for Fun"
+        }
+      ],
+      "uri": "anizip:16000-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "16000-10",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08T11:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "But I Did Think It"
+        }
+      ],
+      "uri": "anizip:16000-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "16000-11",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-09-15T11:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:16000-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "16000-12",
+      "mediaUri": "anizip:16000",
+      "origin": "anizip",
+      "releaseDate": "2026-09-22T11:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:16000-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00362362-GS00362363-GE00362364JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-07-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I'm Done With Fighting Games"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362364JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00362362-GS00362363-GE00362366JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-07-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Good Game"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362366JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00362362-GS00362363-GE00362368JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-07-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Late-Night Locals"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362368JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00362362-GS00362363-GE00362370JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-07-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Late-Night Study Sessions"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362370JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00362362-GS00362363-GE00362372JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-08-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Night Before"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362372JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00362362-GS00362363-GE00362374JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-08-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Noble Duel"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362374JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00362362-GS00362363-GE00362376JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-08-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Lesser Devil"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362376JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00362362-GS00362363-GE00362378JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-08-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Guaranteed to Lose"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362378JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00362362-GS00362363-GE00362380JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-09-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Playing for Fun"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362380JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00362362-GS00362363-GE00362382JAJP",
+      "mediaUri": "cr:GT00362362-GS00362363",
+      "origin": "cr",
+      "releaseDate": "2026-09-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "But I Did Think It"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363-GE00362382JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "5293992",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm Done with Fighting Games"
+        }
+      ],
+      "uri": "jw:5293992"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10560925",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Good Game"
+        }
+      ],
+      "uri": "jw:10560925"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10560926",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Late-Night Locals"
+        }
+      ],
+      "uri": "jw:10560926"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10560927",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Late-Night Study Sessions"
+        }
+      ],
+      "uri": "jw:10560927"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10560928",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Night Before"
+        }
+      ],
+      "uri": "jw:10560928"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10560929",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Noble Duel"
+        }
+      ],
+      "uri": "jw:10560929"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10560931",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Lesser Devil"
+        }
+      ],
+      "uri": "jw:10560931"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10560932",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Guaranteed to Lose"
+        }
+      ],
+      "uri": "jw:10560932"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10560933",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Playing for Fun"
+        }
+      ],
+      "uri": "jw:10560933"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10560934",
+      "mediaUri": "jw:271657-282883",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sou Omottan da"
+        }
+      ],
+      "uri": "jw:10560934"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:16000-1",
+        "b": "cr:GT00362362-GS00362363-GE00362364JAJP"
+      },
+      {
+        "a": "anizip:16000-2",
+        "b": "cr:GT00362362-GS00362363-GE00362366JAJP"
+      },
+      {
+        "a": "anizip:16000-3",
+        "b": "cr:GT00362362-GS00362363-GE00362368JAJP"
+      },
+      {
+        "a": "anizip:16000-4",
+        "b": "cr:GT00362362-GS00362363-GE00362370JAJP"
+      },
+      {
+        "a": "anizip:16000-5",
+        "b": "cr:GT00362362-GS00362363-GE00362372JAJP"
+      },
+      {
+        "a": "anizip:16000-6",
+        "b": "cr:GT00362362-GS00362363-GE00362374JAJP"
+      },
+      {
+        "a": "anizip:16000-7",
+        "b": "cr:GT00362362-GS00362363-GE00362376JAJP"
+      },
+      {
+        "a": "anizip:16000-8",
+        "b": "cr:GT00362362-GS00362363-GE00362378JAJP"
+      },
+      {
+        "a": "anizip:16000-9",
+        "b": "cr:GT00362362-GS00362363-GE00362380JAJP"
+      },
+      {
+        "a": "anizip:16000-10",
+        "b": "cr:GT00362362-GS00362363-GE00362382JAJP"
+      },
+      {
+        "a": "anizip:16000-1",
+        "b": "kitsu:403212"
+      },
+      {
+        "a": "anizip:16000-2",
+        "b": "kitsu:403213"
+      },
+      {
+        "a": "anizip:16000-3",
+        "b": "kitsu:405061"
+      },
+      {
+        "a": "anizip:16000-4",
+        "b": "kitsu:405062"
+      },
+      {
+        "a": "anizip:16000-5",
+        "b": "kitsu:405063"
+      },
+      {
+        "a": "anizip:16000-6",
+        "b": "kitsu:405064"
+      },
+      {
+        "a": "anizip:16000-7",
+        "b": "kitsu:405065"
+      },
+      {
+        "a": "anizip:16000-8",
+        "b": "kitsu:405066"
+      },
+      {
+        "a": "anizip:16000-9",
+        "b": "kitsu:405067"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362364JAJP",
+        "b": "jw:5293992"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362366JAJP",
+        "b": "jw:10560925"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362368JAJP",
+        "b": "jw:10560926"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362370JAJP",
+        "b": "jw:10560927"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362372JAJP",
+        "b": "jw:10560928"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362374JAJP",
+        "b": "jw:10560929"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362376JAJP",
+        "b": "jw:10560931"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362378JAJP",
+        "b": "jw:10560932"
+      },
+      {
+        "a": "cr:GT00362362-GS00362363-GE00362380JAJP",
+        "b": "jw:10560933"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:128757",
+        "whole": "cr:GT00362362"
+      }
+    ],
+    "together": [
+      [
+        "anilist:128757",
+        "kitsu:44021",
+        "mal:46488",
+        "offline:mal-46488",
+        "anizip:16000",
+        "cr:GT00362362-GS00362363",
+        "jw:271657-282883"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Young Ladies Don't Play Fighting Games",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "128757",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 07 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Young Ladies Don't Play Fighting Games"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Tai-Ari deshita.: Ojou-sama wa Kakutou Game nante Shinai"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "対ありでした。 ～お嬢さまは格闘ゲームなんてしない～"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:128757"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "44021",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Young Ladies Don’t Play Fighting Games"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tai-Ari deshita.: Ojou-sama wa Kakutou Game nante Shinai"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "対ありでした。 ～お嬢さまは格闘ゲームなんてしない～"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:44021"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "46488",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Young Ladies Don't Play Fighting Games"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tai-Ari deshita. Ojousama wa Kakutou Game nante Shinai"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:46488"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-46488",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tai-Ari deshita. Ojousama wa Kakutou Game nante Shinai"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-46488"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "16000",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Young Ladies Don`t Play Fighting Games"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "対ありでした. ~お嬢さまは格闘ゲームなんてしない~"
+        }
+      ],
+      "uri": "anizip:16000"
+    },
+    {
+      "id": "GT00362362",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00362362"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00362362-GS00362363",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Young Ladies Don't Play Fighting Games"
+        }
+      ],
+      "uri": "cr:GT00362362-GS00362363"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "271657-282883",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:271657-282883"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9fe9c8a14dad71a4c9e623bde9ae4d58a519709a8223ee5301abf6aba076d7e1",
+      "2bc0da538af292ac35ef05745bd00870c8678780176afc05bec70e228e043d21",
+      "56a74e0522864c6640acd35aae1aa529654ec2444e38863204059eb3649c352f",
+      "01772259b96b821cb8f63ccf6c9978936d66bc5f4b3697c8d5eca366891e8543",
+      "6733bbd79fd4aef78a63e0bfd4c020b4d1290bf92dae989e416c8633b844e234",
+      "b3acb3bf8ccfba28192066bad3d0e10189e3868c501a02c503d02c2e1b6be18b",
+      "5f32a0fb986436630377464d2979392189ecf47f88edbd018fad7b9ec70e0103",
+      "ca35ffb162028b81918fc4e9423cd68312d76aaf605d498c233268cac0be8cc6",
+      "bd1e4c995344ef180f1bb82ca7775348608bdf6a9bbbaff4dc55034f77f51f3f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:128757,kitsu:44021,mal:46488,offline:mal-46488)"
+  },
+  "why": "Young Ladies Don't Play Fighting Games, a 12 episode summer 2026 TV run airing 2026-07-07 to 2026-09-22 and still on air at labelling time. AniZip 16000 is the same run: SAME_AS ids to mal:46488 and anilist:128757, the same episodeCount of 12, and a first episode dated 2026-07-07, the run's own start date. The Crunchyroll season GT00362362-GS00362363 is the same run: it maps SAME_AS onto all four members and its 10 episodes fall on exactly AniZip's Tuesdays from 2026-07-07 to 2026-09-08 with the same titles, so it is the aired part of the cour and not a wider season (10 is fewer than 12). The JustWatch season 271657-282883 is the same run: it maps SAME_AS onto all four members and onto anizip:16000 and repeats nine of the same titles in order. The bare Crunchyroll series GT00362362 has no dates, count or episodes of its own, and Kitsu records it as a PART_OF container for this run, so it holds the run. AniZip episodes 1 to 10 pair with the Crunchyroll ones on identical broadcast days and titles, from I'm Done with Fighting Games to But I Did Think It, and AniZip episodes 1 to 9 pair with Kitsu's, which carry the same nine titles although Kitsu publishes no dates. Crunchyroll episodes 1 to 9 pair with the JustWatch ones on those same titles. JustWatch episode 10 is titled Sou Omottan da, the romanised Japanese rather than But I Did Think It, and JustWatch has no dates, so that position is left unpaired, as are AniZip's untitled episodes 11 and 12 (2026-09-15 and 2026-09-22) and Kitsu's untitled 10 to 12."
+}

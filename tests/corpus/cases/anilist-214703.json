@@ -1,0 +1,87 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Small run: three rows, all of them catalogue entries for the same title, joined by agreeing first-party id mappings; MAL and offline carry no titles, dates or counts of their own, so the handles are the whole of the evidence. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64718"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64718",
+      "mediaUri": "anilist:214703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64718",
+      "mediaUri": "offline:mal-64718",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214703",
+      "mediaUri": "offline:mal-64718",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:214703",
+        "offline:mal-64718"
+      ]
+    ]
+  },
+  "name": "Ghost Meets Gal!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "214703",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 05 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Ghost Meets Gal!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ごーすと・みーつ・ぎゃる！"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:214703"
+    },
+    {
+      "id": "64718",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64718"
+    },
+    {
+      "id": "mal-64718",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64718"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a4a77de83211ad01f17297d818d89714fc799cf01bd8c7f09cb534e33ce73833",
+      "c8153105894aa31e521e89826c0c4b8b3715f467ba6b26cbe56083e433098e51",
+      "8e1b9a7ba38b8297e13b8392ea3f925884622fc8ad3a6131ec56158d0b17633a"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214703,mal:64718)"
+  },
+  "why": "Ghost Meets Gal! is a summer 2026 TV short running from 2026-09-05 to 2026-11-20 on AniList, paired with its MyAnimeList entry mal:64718 by the AniList SAME_AS handle. The offline database row offline:mal-64718 is the same run: its id is built on the MyAnimeList id 64718 and it carries SAME_AS handles to both members, anilist:214703 and mal:64718, so all three id mappings agree. Nothing else was returned for this address."
+}

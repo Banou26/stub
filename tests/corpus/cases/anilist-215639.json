@@ -1,0 +1,220 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only judgement is the JustWatch row: it agrees on the count and on an exact film title and links to every member, but its start date is a bare 2026-01-01 against a July release, so the date was set aside and the title, the count and the handles carried the call. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64382",
+      "mediaUri": "anilist:215639",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64382",
+      "mediaUri": "kitsu:50873",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:215639",
+      "mediaUri": "kitsu:50873",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64382",
+      "mediaUri": "offline:mal-64382",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:215639",
+      "mediaUri": "jw:2893150",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50873",
+      "mediaUri": "jw:2893150",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64382",
+      "mediaUri": "jw:2893150",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64382",
+      "mediaUri": "jw:2893150",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406782",
+      "mediaUri": "kitsu:50873",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406782"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "2893150-1",
+      "mediaUri": "jw:2893150",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "All Wishes Come True!"
+        }
+      ],
+      "uri": "jw:2893150-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:215639",
+        "kitsu:50873",
+        "mal:64382",
+        "offline:mal-64382",
+        "jw:2893150"
+      ]
+    ]
+  },
+  "name": "All Wishes Come True",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "215639",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 18 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "All Wishes Come True!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Baxian!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "八仙！"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:215639"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50873",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "All Wishes Come True"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Baxian!"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50873"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64382",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "All Wishes Come True"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Baxian!"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64382"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64382",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Baxian!"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-64382"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "2893150",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:2893150"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4ee4da6aeb64a67fe674092a36e4c674c3a12f38dcea219ce88fb1ad56e89a0b",
+      "96d202c3552543bd46dbf7a5e531a6ce013d71cf74be715e24560e2d89bd8137",
+      "bc8c7b28f2a79e6b87b8b82753193a8c6f49e0100e14d15814b5df50c0537ed0",
+      "be89fea8a7cdaccb73f49559ab730576707bf5943758d373422c2af52b203eda",
+      "5f52887c98c5f745c6faba78ca166d558d27e7b52af0dcb9274fe7d9ff4e84d1",
+      "2b88b75b90652bccbd8834154964dbb9f14de1dcc1894f01cb27a9c8304448b1"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:215639,kitsu:50873,mal:64382,offline:mal-64382)"
+  },
+  "why": "All Wishes Come True! (Baxian!) is a single summer 2026 anime film, one episode long, and its AniList, Kitsu, MyAnimeList and offline database entries are already the run, agreeing on episodeCount 1 and on the titles All Wishes Come True and Baxian! with the AniList start 2026-07-18 and the Kitsu 2026-07-24. The JustWatch page jw:2893150 is the same film: it is a RUN row with episodeCount 1, its one episode is titled exactly All Wishes Come True!, its url is justwatch.com/us/movie/all-wishes-come-true, and it carries SAME_AS handles to all four members at once, while its 2026-01-01 start is a bare year with no day precision and settles nothing either way. No episode pair is asserted, because the Kitsu episode has neither a title nor a release date to match the JustWatch one against."
+}

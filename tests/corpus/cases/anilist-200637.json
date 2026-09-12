@@ -1,0 +1,1150 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll numbers this season 25 to 34, continuing from the first two seasons, so the episode pairing had to be done on dates and titles rather than on numbers. Several JustWatch and kitsu titles differ by a stray apostrophe, a hyphen or a typo, and those positions were left unpaired rather than matched approximately. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GNVHKN933-GS00378132",
+      "mediaUri": "anilist:200637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62811",
+      "mediaUri": "anilist:200637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200637",
+      "mediaUri": "kitsu:50272",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62811",
+      "mediaUri": "kitsu:50272",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GNVHKN933",
+      "mediaUri": "kitsu:50272",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:200637",
+      "mediaUri": "offline:anilist-200637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62811",
+      "mediaUri": "offline:mal-62811",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50272",
+      "mediaUri": "offline:mal-62811",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62811",
+      "mediaUri": "anizip:19663",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200637",
+      "mediaUri": "anizip:19663",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200637",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50272",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62811",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-200637",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62811",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200637",
+      "mediaUri": "jw:387480-530046",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19663",
+      "mediaUri": "jw:387480-530046",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50272",
+      "mediaUri": "jw:387480-530046",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62811",
+      "mediaUri": "jw:387480-530046",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-200637",
+      "mediaUri": "jw:387480-530046",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62811",
+      "mediaUri": "jw:387480-530046",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "389553",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Cousin and Girlfriend"
+        }
+      ],
+      "uri": "kitsu:389553"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "389554",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Chiyo's Family Coaching"
+        }
+      ],
+      "uri": "kitsu:389554"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "389555",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Japanese Teacher Has Blonde Hair"
+        }
+      ],
+      "uri": "kitsu:389555"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "389556",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Rentaro Family Idol Legend"
+        }
+      ],
+      "uri": "kitsu:389556"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "389557",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Yasashiki-san's Gardening Club Tour"
+        }
+      ],
+      "uri": "kitsu:389557"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "389558",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Momji-chan's Squishy Festival!"
+        }
+      ],
+      "uri": "kitsu:389558"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "389559",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Thumbelinano and the Kusurivanian Family"
+        }
+      ],
+      "uri": "kitsu:389559"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "389560",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kusuri-Senpai's Grandmother"
+        }
+      ],
+      "uri": "kitsu:389560"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "389561",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hardcore Hot Springs Hopping with a Chance of Heaven"
+        }
+      ],
+      "uri": "kitsu:389561"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "389562",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Rise and Fall of the Proud Girlfriend"
+        }
+      ],
+      "uri": "kitsu:389562"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "389563",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:389563"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "389564",
+      "mediaUri": "kitsu:50272",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:389564"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19663-1",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Cousin and Girlfriend"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "いとこの彼女"
+        }
+      ],
+      "uri": "anizip:19663-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19663-2",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Chiyo`s Family Coaching"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "知与ちゃんのファミリー指導"
+        }
+      ],
+      "uri": "anizip:19663-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19663-3",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Japanese Teacher Has Blonde Hair"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "国語教師はブロンドヘア"
+        }
+      ],
+      "uri": "anizip:19663-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19663-4",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Rentaro Family Idol Legend"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "アイドル伝説恋太郎ファミリー"
+        }
+      ],
+      "uri": "anizip:19663-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19663-5",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Yasashiki-san`s Gardening Club Tour"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "優敷さんの園芸部ツアー"
+        }
+      ],
+      "uri": "anizip:19663-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19663-6",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Momiji-chan`s Squishy Festival"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "紅葉ちゃんのもみもみフェスティバル"
+        }
+      ],
+      "uri": "anizip:19663-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19663-7",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Thumbelinano and the Kusurivanian Family"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "一寸凪乃師と楠莉バニアファミリー"
+        }
+      ],
+      "uri": "anizip:19663-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19663-8",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kusuri-senpai`s Grandmother"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "楠莉先輩のおばあさん"
+        }
+      ],
+      "uri": "anizip:19663-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19663-9",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hardcore Hot Springs Hopping with a Chance of Heaven"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "水着本気温泉地獄めぐりのち天国"
+        }
+      ],
+      "uri": "anizip:19663-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19663-10",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Rise and Fall of the Proud Girlfriend"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "くっころ彼女"
+        }
+      ],
+      "uri": "anizip:19663-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19663-11",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19663-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19663-12",
+      "mediaUri": "anizip:19663",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19663-12"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "GNVHKN933-GS00378132-GE00380155JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-07-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Cousin and Girlfriend"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380155JAJP"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "GNVHKN933-GS00378132-GE00380156JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Chiyo's Family Coaching"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380156JAJP"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "GNVHKN933-GS00378132-GE00380157JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Japanese Teacher Has Blonde Hair"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380157JAJP"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "GNVHKN933-GS00378132-GE00380158JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Rentaro Family Idol Legend"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380158JAJP"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "GNVHKN933-GS00378132-GE00380159JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Yasashiki-san's Gardening Club Tour"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380159JAJP"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "GNVHKN933-GS00378132-GE00380160JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Momiji-chan's Squishy Festival"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380160JAJP"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "GNVHKN933-GS00378132-GE00380161JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Thumbelinano and the Kusurivanian Family"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380161JAJP"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "GNVHKN933-GS00378132-GE00380162JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Kusuri-Senpai's Grandmother"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380162JAJP"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "GNVHKN933-GS00378132-GE00380163JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Hardcore Hot Springs Hopping with a Chance of Heaven"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380163JAJP"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "GNVHKN933-GS00378132-GE00380164JAJP",
+      "mediaUri": "cr:GNVHKN933-GS00378132",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Rise and Fall of the Proud Girlfriend"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132-GE00380164JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9767807",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Cousin Girlfriend"
+        }
+      ],
+      "uri": "jw:9767807"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10598941",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chiyos Family Coaching"
+        }
+      ],
+      "uri": "jw:10598941"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10598976",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Japanese Teacher Has Blonde Hair"
+        }
+      ],
+      "uri": "jw:10598976"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10629902",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Rentaro Family Idol Legend"
+        }
+      ],
+      "uri": "jw:10629902"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10644182",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yasashiki-san's Gardening Club Tour"
+        }
+      ],
+      "uri": "jw:10644182"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10654435",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Momiji Chan's Squishy Festival"
+        }
+      ],
+      "uri": "jw:10654435"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10706304",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Issun Nanoshi And The Kusurylvanian Family"
+        }
+      ],
+      "uri": "jw:10706304"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10727240",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kusuri-Senpai´s Grandmother"
+        }
+      ],
+      "uri": "jw:10727240"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10805121",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hardcore Hot Springs Hopping with a Chance of Heaven"
+        }
+      ],
+      "uri": "jw:10805121"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10880007",
+      "mediaUri": "jw:387480-530046",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode #3.10"
+        }
+      ],
+      "uri": "jw:10880007"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19663-1",
+        "b": "cr:GNVHKN933-GS00378132-GE00380155JAJP"
+      },
+      {
+        "a": "anizip:19663-2",
+        "b": "cr:GNVHKN933-GS00378132-GE00380156JAJP"
+      },
+      {
+        "a": "anizip:19663-3",
+        "b": "cr:GNVHKN933-GS00378132-GE00380157JAJP"
+      },
+      {
+        "a": "anizip:19663-4",
+        "b": "cr:GNVHKN933-GS00378132-GE00380158JAJP"
+      },
+      {
+        "a": "anizip:19663-5",
+        "b": "cr:GNVHKN933-GS00378132-GE00380159JAJP"
+      },
+      {
+        "a": "anizip:19663-6",
+        "b": "cr:GNVHKN933-GS00378132-GE00380160JAJP"
+      },
+      {
+        "a": "anizip:19663-7",
+        "b": "cr:GNVHKN933-GS00378132-GE00380161JAJP"
+      },
+      {
+        "a": "anizip:19663-8",
+        "b": "cr:GNVHKN933-GS00378132-GE00380162JAJP"
+      },
+      {
+        "a": "anizip:19663-9",
+        "b": "cr:GNVHKN933-GS00378132-GE00380163JAJP"
+      },
+      {
+        "a": "anizip:19663-10",
+        "b": "cr:GNVHKN933-GS00378132-GE00380164JAJP"
+      },
+      {
+        "a": "kitsu:389553",
+        "b": "cr:GNVHKN933-GS00378132-GE00380155JAJP"
+      },
+      {
+        "a": "kitsu:389554",
+        "b": "cr:GNVHKN933-GS00378132-GE00380156JAJP"
+      },
+      {
+        "a": "kitsu:389555",
+        "b": "cr:GNVHKN933-GS00378132-GE00380157JAJP"
+      },
+      {
+        "a": "kitsu:389556",
+        "b": "cr:GNVHKN933-GS00378132-GE00380158JAJP"
+      },
+      {
+        "a": "kitsu:389557",
+        "b": "cr:GNVHKN933-GS00378132-GE00380159JAJP"
+      },
+      {
+        "a": "kitsu:389559",
+        "b": "cr:GNVHKN933-GS00378132-GE00380161JAJP"
+      },
+      {
+        "a": "kitsu:389560",
+        "b": "cr:GNVHKN933-GS00378132-GE00380162JAJP"
+      },
+      {
+        "a": "kitsu:389561",
+        "b": "cr:GNVHKN933-GS00378132-GE00380163JAJP"
+      },
+      {
+        "a": "kitsu:389562",
+        "b": "cr:GNVHKN933-GS00378132-GE00380164JAJP"
+      },
+      {
+        "a": "jw:10598976",
+        "b": "cr:GNVHKN933-GS00378132-GE00380157JAJP"
+      },
+      {
+        "a": "jw:10629902",
+        "b": "cr:GNVHKN933-GS00378132-GE00380158JAJP"
+      },
+      {
+        "a": "jw:10644182",
+        "b": "cr:GNVHKN933-GS00378132-GE00380159JAJP"
+      },
+      {
+        "a": "jw:10805121",
+        "b": "cr:GNVHKN933-GS00378132-GE00380163JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:200637",
+        "whole": "cr:GNVHKN933"
+      }
+    ],
+    "together": [
+      [
+        "anilist:200637",
+        "kitsu:50272",
+        "mal:62811",
+        "offline:anilist-200637",
+        "offline:mal-62811",
+        "anizip:19663",
+        "cr:GNVHKN933-GS00378132",
+        "jw:387480-530046"
+      ]
+    ]
+  },
+  "name": "The 100 Girlfriends Who Really, Really, Really, Really, REALLY Love You Season 3",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "200637",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The 100 Girlfriends Who Really, Really, Really, Really, REALLY Love You Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kimi no Koto ga Dai Dai Dai Dai Daisuki na 100-nin no Kanojo 3rd Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "君のことが大大大大大好きな100人の彼女 第3期"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:200637"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50272",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The 100 Girlfriends Who Really, Really, Really, Really, REALLY Love You Season 3"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kimi no Koto ga Daidaidaidaidaisuki na 100-nin no Kanojo 3rd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "君のことが大大大大大好きな100人の彼女 3期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50272"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62811",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The 100 Girlfriends Who Really, Really, Really, Really, Really Love You Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kimi no Koto ga Daidaidaidaidaisuki na 100-nin no Kanojo 3rd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62811"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-200637",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kimi no Koto ga Dai Dai Dai Dai Daisuki na 100-nin no Kanojo 3rd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-200637"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62811",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kimi no Koto ga Daidaidaidaidaisuki na 100-nin no Kanojo 3rd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62811"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19663",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The 100 Girlfriends Who Really, Really, Really, Really, Really Love You (2026)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "君のことが大大大大大好きな100人の彼女 (2026)"
+        }
+      ],
+      "uri": "anizip:19663"
+    },
+    {
+      "id": "GNVHKN933",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GNVHKN933"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GNVHKN933-GS00378132",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The 100 Girlfriends Who Really, Really, Really, Really, REALLY Love You"
+        }
+      ],
+      "uri": "cr:GNVHKN933-GS00378132"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "387480-530046",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:387480-530046"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ac1113b0e25ca6d503eec7822c598e4c7bf0a6a689339f4e54180f1e291b64c4",
+      "fef7922463c11763f5cbfb3011df84068a52aa458a39fef5df366eb7088f74dd",
+      "af8f4e304a2a779c005a9634ad17757c3b83d97f15d593e033edc80b7d095657",
+      "9790d2f5da7f9e7c04e29201ce8c9433f46169c4f790cb0ecd7c252cb32362c3",
+      "8e6341423d46fdf20d74176bdd1a62f1b6f54d23eaccfa17b43b08f64a805437",
+      "db2184dd3fc134343ef8c7c7e6f0a24e8b30316b5416411e9bbeb757c746d761",
+      "693f11580e3a7732e7061acf296096327c66d35df8f797d3a08d72821c779cfe",
+      "3c7ef607d1dc88fa4abb584e448bb359aebabc8ff2df917b1e63eb7049bcf053",
+      "3dd8009bf56d574b440a2694c3e920c937685d23810e5202eb85f07c2ff5128a",
+      "fb483ebf3df49e77b1e599a3500d660ca3875bc8345f59103ba6a1027f02b0d0"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:200637,kitsu:50272,mal:62811,offline:anilist-200637,offline:mal-62811)"
+  },
+  "why": "The 100 Girlfriends Who Really, Really, Really, Really, REALLY Love You Season 3 is a 12 episode Summer 2026 run airing 2026-07-05 to 2026-09-20, ten episodes out by the time of labelling. anilist:200637, kitsu:50272, mal:62811, offline:anilist-200637 and offline:mal-62811 are one run: anilist and kitsu both give mal:62811, kitsu gives anilist:200637, the two offline rows are keyed on anilist-200637 and mal-62811, and anilist, kitsu and mal all carry the 2026-07-05 start with 12 episodes. anizip:19663 is the same run: it maps to mal:62811 and anilist:200637, lists 12 episodes, and its first and last fall on 2026-07-05 and 2026-09-20, the run's own dates. The Crunchyroll season cr:GNVHKN933-GS00378132 is the same run despite numbering its episodes 25 to 34 in series order: anilist gives it as SAME_AS, and those ten episodes sit on 2026-07-05 through 2026-09-06, the same days anizip gives episodes 1 to 10. The JustWatch season jw:387480-530046 is the same run as well: four of its episode titles (The Japanese Teacher Has Blonde Hair, The Rentaro Family Idol Legend, Yasashiki-san's Gardening Club Tour, Hardcore Hot Springs Hopping with a Chance of Heaven) are the exact non-generic titles Crunchyroll and kitsu give those positions. cr:GNVHKN933 is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Episodes pair anizip to Crunchyroll on matching release days for the first ten, kitsu to Crunchyroll on nine identical titles (episode 6 is spelled Momji-chan's Squishy Festival! on kitsu and is left unpaired), and JustWatch to Crunchyroll on its four identical titles; JustWatch's other entries are reworded (My Cousin Girlfriend, Issun Nanoshi And The Kusurylvanian Family) or a placeholder (Episode #3.10) and are not paired."
+}

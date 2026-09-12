@@ -1,0 +1,281 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only non-member row carries a SAME_AS claim that the fields contradict, so the claim was set aside on the title, date and count mismatch. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64913",
+      "mediaUri": "nf:81313291",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81313346",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81313346"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81313347",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81313347"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81313348",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81313348"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81313349",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81313349"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81313350",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81313350"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81313351",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81313351"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81313352",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81313352"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81313353",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81313353"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81313354",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81313354"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81313355",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81313355"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81313356",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81313356"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81313357",
+      "mediaUri": "nf:81313291",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81313357"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64913",
+        "nf:81313291"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64913"
+      ]
+    ],
+    "unrelated": [
+      "nf:81313291"
+    ]
+  },
+  "name": "Detective Conan: The Counterfeit Case of Ultra 30",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64913",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-25",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Detective Conan: The Counterfeit Case of Ultra 30"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Meitantei Conan: 30-gou Satsujin Jiken"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "mal:64913"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81313291",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Detective Conan: The Culprit Hanzawa"
+        }
+      ],
+      "uri": "nf:81313291"
+    }
+  ],
+  "source": {
+    "answers": [
+      "de49d5bf3ca523d85f4613bb7e6d8814260b3830328b9f6e3555b05fcd1bef05",
+      "86772c0a5a9b497a9ca8851a88113ff5e7870ab9147a22420f5b1e43be83d402",
+      "6f4461906dabb2ab1fec9c55e52a4246c262c2ebcede25bd34b35c5e631a7e83",
+      "660b5b0781dacb988a3679f9daeabcfa772e3060622efe4ecfbe212014a9634c",
+      "2ec25b153a6f0ce721d008efa956a42d081a05e28351b6072646a20c913979ff",
+      "b414332ce2700a0ac486f2a57f9615f1832b060d81f175e9d28d2ac78bb15d55",
+      "9b9b3cdac98b288cfe048707e7e0dd82a3199f22af19ce6292ef7c0d37f481e3",
+      "eec80a4e46ca7def1fef66aa38b824fcbede595112370210d7c0988f9722b18c",
+      "89bc97360eb61d9e959ac4ddf25eadddf8db5ef5d6c11f80491ef536edf12d3c",
+      "28fffa18a7e9419e9fb9440bbfb9f5570a8c233ff0cac8a724af8db09e0a9bd4",
+      "8c142252d2bb65e311d1d957255d36e0e8324e24116d1c444bcd2f29e2b93896",
+      "66714f96a98a89b3c66e0b61bbdd0ec671ce613e675b618071e43c06ad5d687a",
+      "3000f896879a1132d42a2691bbc293c14827eaa85673388711b1837fc7bdd923",
+      "c30dbbf522e1c899dddfee96b1cfd01ae89ee79a0a5b572ea9d681242030a252"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64913)"
+  },
+  "why": "The run is a single-episode Detective Conan television special, Meitantei Conan: 30-gou Satsujin Jiken, dated 2026-09-25 on MyAnimeList with episodeCount 1. The Netflix row nf:81313291 is marked unrelated and kept apart from mal:64913 because it is the separate Culprit Hanzawa spinoff series: a different title, startDate 2022-01-01 rather than 2026-09-25, and twelve episodes against the run's one, so its SAME_AS claim cannot hold."
+}

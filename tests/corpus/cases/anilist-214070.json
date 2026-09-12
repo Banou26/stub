@@ -1,0 +1,110 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Both rows are single-episode films, so the count agrees and decides nothing; the 1983 Netflix date against a 2026 release and the different title are what carry the unrelated mark, against a SAME_AS claim from the same row. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "anilist:214070",
+      "mediaUri": "nf:81635510",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81635510-1",
+      "mediaUri": "nf:81635510",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dust of Empire"
+        }
+      ],
+      "uri": "nf:81635510-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:214070",
+        "nf:81635510"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:214070"
+      ]
+    ],
+    "unrelated": [
+      "nf:81635510"
+    ]
+  },
+  "name": "Dust of the Simulacrum",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "214070",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 19 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Dust of the Simulacrum"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Sazin no Nakade"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "砂塵ノ中デ"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:214070"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "81635510",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "1983-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dust of Empire"
+        }
+      ],
+      "uri": "nf:81635510"
+    }
+  ],
+  "source": {
+    "answers": [
+      "802bfcff356ddd2c43e9ef55f2146447a983abae6999ac3b24084afc2e5ab249",
+      "815528eaea917827ab8e815491c79094551d05a1f9d491abe28deacf1f6664d9"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214070)"
+  },
+  "why": "Dust of the Simulacrum (Sazin no Nakade) is a summer 2026 anime film, one episode, released 2026-07-19, and AniList is the only catalogue that returned it. The Netflix title Dust of Empire (nf:81635510) is a different film despite its SAME_AS claim on anilist:214070: its own name differs after the first word, its single episode is titled Dust of Empire as well, and it is dated 1983-01-01, forty-three years before this release, so it is marked unrelated and held apart from anilist:214070."
+}

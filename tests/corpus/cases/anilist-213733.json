@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Only the three member rows exist; AniList's endDate of 2026-08-27 sits a day before its own start date, which is a source quirk and touches no mark. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64531",
+      "mediaUri": "anilist:213733",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64531",
+      "mediaUri": "offline:mal-64531",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213733",
+        "mal:64531",
+        "offline:mal-64531"
+      ]
+    ]
+  },
+  "name": "Kanojo Saimin",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213733",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 28 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kanojo Saimin"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "彼女催眠"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:213733"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "64531",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kanojo Saimin"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64531"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-64531",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kanojo Saimin"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64531"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b87a375eabc18c13cdb595ad86c06a162d6d3f9fb230e75361b98aa432c817ee",
+      "aaa9073fffa83cfd6cf525f794e21e85dbb77f2b04e00cdca0002b6fc057acb5",
+      "005ac698965280d9c7b5ae60d595bfdcd2a8e017f798587a335697a52a08a4aa"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213733,mal:64531,offline:mal-64531)"
+  },
+  "why": "The run is Kanojo Saimin, a two-episode adult OVA whose first volume is dated 2026-08-28 in summer 2026. The three rows anilist:213733, mal:64531 and offline:mal-64531 are one run: AniList and the offline entry both carry a SAME_AS handle to mal:64531, AniList and MyAnimeList agree on the 2026-08-28 start date, and MyAnimeList and the offline entry agree on episodeCount 2, with the same title, OVA type and summer 2026 season across all three. No other source returned a row for it."
+}

@@ -1,0 +1,97 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Only Anilist carries fields: the MAL row and the offline row are bare, so the grouping rests on the SAME_AS ids alone, which is enough because the offline id is derived from the MAL id it names. refuted: 0 marks overturned. repair 2026-09-12: removed from together, no source answered about them: mal:63739"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63739",
+      "mediaUri": "anilist:214068",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63739",
+      "mediaUri": "offline:mal-63739",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214068",
+      "mediaUri": "offline:mal-63739",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:214068",
+        "offline:mal-63739"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Echo",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "214068",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 19 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Echo"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Moshi, Korekara Umarerunonara"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "もし、これから生まれるのなら"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:214068"
+    },
+    {
+      "id": "63739",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:63739"
+    },
+    {
+      "id": "mal-63739",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-63739"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a83ddc70a45cd6d38913570bfa69bbbd2e41cb35e8b8c8e0e0d6ecd0a6542496",
+      "4c8b43aa73661c22aa74103444c7372b68e99e6063cd630c4db2866d5ffa4b07"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214068,mal:63739)"
+  },
+  "why": "Echo (Moshi, Korekara Umarerunonara, もし、これから生まれるのなら) is a single-episode summer 2026 anime film dated 2026-07-19 on Anilist. anilist:214068 and mal:63739 are one run: anilist names mal:63739 SAME_AS. offline:mal-63739 is the same film again, keyed on the MAL id 63739 and naming both mal:63739 and anilist:214068 SAME_AS, so the first-party id mappings agree. No other source returned a row for this run."
+}

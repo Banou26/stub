@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: three member rows with agreeing ids, title and start date, no episodes listed anywhere to pair. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64529",
+      "mediaUri": "anilist:213686",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64529",
+      "mediaUri": "offline:mal-64529",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213686",
+        "mal:64529",
+        "offline:mal-64529"
+      ]
+    ]
+  },
+  "name": "NTR Kishi",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213686",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 25 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "NTR Kishi"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "NTR騎士"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:213686"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64529",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-25",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "NTR Kishi"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64529"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64529",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "NTR Kishi"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64529"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ea4d7f800e63d05c2b0962c29c90ea8bff732449f9fdbe8211f0cf561b90760d",
+      "c06ce480985e7c4135fb62aa6b646b1edaf09c5d92e20547da7a8ca6f6a7c347",
+      "79374d5ecd6441b15610de93d665fae34739c9dcd30ce8de927aca89f550b890"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213686,mal:64529,offline:mal-64529)"
+  },
+  "why": "NTR Kishi (NTR騎士) is an adult OVA whose first part released on 2026-09-25, with Anilist carrying a later 2026-11-26 end date. Anilist 213686, MyAnimeList 64529 and the offline entry offline:mal-64529 are one run: Anilist and the offline row both map SAME_AS to mal:64529, all three carry the identical title, and Anilist and MyAnimeList agree on the 2026-09-25 start date. Only the run's own member rows were returned, so there was nothing to hold it or to set apart."
+}

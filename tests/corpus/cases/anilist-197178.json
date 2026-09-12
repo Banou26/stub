@@ -1,0 +1,486 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard row was nf:82757985, which claims SAME_AS to every member of the run and carries the CONTAINER scope that would normally mean it holds the run, but its five listed parts are live action making-of pieces and none of them is the special, so it is marked unrelated rather than attached. The Crunchyroll container has no episodes, so its hold carries no range. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "anilist:197178",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197178",
+      "mediaUri": "kitsu:50089",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "kitsu:50089",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GE00380778JAJP",
+      "mediaUri": "kitsu:50089",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "offline:mal-62233",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197178",
+      "mediaUri": "offline:mal-62233",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50089",
+      "mediaUri": "offline:mal-62233",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "anizip:19524",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197178",
+      "mediaUri": "anizip:19524",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82904737",
+      "mediaUri": "jw:2859972",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197178",
+      "mediaUri": "jw:2859972",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50089",
+      "mediaUri": "jw:2859972",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "jw:2859972",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62233",
+      "mediaUri": "jw:2859972",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197178",
+      "mediaUri": "nf:82757985",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50089",
+      "mediaUri": "nf:82757985",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "nf:82757985",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62233",
+      "mediaUri": "nf:82757985",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197178",
+      "mediaUri": "nf:82904737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19524",
+      "mediaUri": "nf:82904737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:2859972",
+      "mediaUri": "nf:82904737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50089",
+      "mediaUri": "nf:82904737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62233",
+      "mediaUri": "nf:82904737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62233",
+      "mediaUri": "nf:82904737",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "386368",
+      "mediaUri": "kitsu:50089",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386368"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19524-1",
+      "mediaUri": "anizip:19524",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T02:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "TV Special"
+        }
+      ],
+      "uri": "anizip:19524-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "2859972-1",
+      "mediaUri": "jw:2859972",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "One Piece Heroines"
+        }
+      ],
+      "uri": "jw:2859972-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82757987",
+      "mediaUri": "nf:82757985",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "EXPANDING THE WORLD"
+        }
+      ],
+      "uri": "nf:82757987"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82757988",
+      "mediaUri": "nf:82757985",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BRINGING CHOPPER TO LIFE"
+        }
+      ],
+      "uri": "nf:82757988"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82757989",
+      "mediaUri": "nf:82757985",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BAROQUE WORKS EXPLAINER"
+        }
+      ],
+      "uri": "nf:82757989"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82757990",
+      "mediaUri": "nf:82757985",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BEHIND THE STUNTS"
+        }
+      ],
+      "uri": "nf:82757990"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82771838",
+      "mediaUri": "nf:82757985",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "IÑAKI GODOY INTERVIEWS MR. ODA"
+        }
+      ],
+      "uri": "nf:82771838"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82904737-1",
+      "mediaUri": "nf:82904737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "One Piece: Heroines"
+        }
+      ],
+      "uri": "nf:82904737-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:82757985",
+        "anilist:197178"
+      ]
+    ],
+    "partOf": [
+      {
+        "part": "anilist:197178",
+        "whole": "cr:GE00380778JAJP"
+      }
+    ],
+    "together": [
+      [
+        "anilist:197178",
+        "kitsu:50089",
+        "mal:62233",
+        "offline:mal-62233",
+        "anizip:19524",
+        "jw:2859972",
+        "nf:82904737"
+      ]
+    ],
+    "unrelated": [
+      "nf:82757985"
+    ]
+  },
+  "name": "ONE PIECE HEROINES",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "197178",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "ONE PIECE HEROINES"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "ONE PIECE HEROINES"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ONE PIECE HEROINES"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:197178"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50089",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "ONE PIECE HEROINES"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50089"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "62233",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "One Piece: Heroines"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "mal:62233"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-62233",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "One Piece: Heroines"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "offline:mal-62233"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "19524",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "One Piece: Heroines"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ONE PIECE novel HEROINES"
+        }
+      ],
+      "uri": "anizip:19524"
+    },
+    {
+      "id": "GE00380778JAJP",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GE00380778JAJP"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "2859972",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:2859972"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82757985",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "ONE PIECE BONUS CONTENT"
+        }
+      ],
+      "uri": "nf:82757985"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "82904737",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "One Piece: Heroines"
+        }
+      ],
+      "uri": "nf:82904737"
+    }
+  ],
+  "source": {
+    "answers": [
+      "3767d6c5ea8e1849fa107bace49bcd0b8a97cc9b3a97628fbbf8f687a86bc969",
+      "fd49231bda56c15aa3616c0f252acfba836d9a79510917a0dd99c54f4ad4eac0",
+      "43dbc81b38b70af18a0f61d98ee77130311d4b3c2098467324beb35c651b44fc",
+      "ead49029a02ce7a80745ef86a5848a8a46e2a5b1afd72fef9cb675e83efad3bd",
+      "148a1322b4ea9b27038b2c9adbcb0b58ec4d892da207b97bb67aaee950dfab6a",
+      "3c16eaa45e06a1295bbf9060a1c0220053a4d181e217a0fe287e44ab4a517c78",
+      "335f5c319d64e192a9266c9ef0406049c3c2f4766cbf3c660c21b5f6f568d5df",
+      "98def3d97e3a588af319c7985914151e745dafe3d452d7c4de18357f2e961589",
+      "24fa3d9f5726c311c6ce68fb74b000e32c7d7971f05445dff623e3648edcbb59",
+      "2aa9024e94897f7a176bacd6932aa097eef816f0be2ac843fdf226cd2aa25d0b",
+      "654416eca68dd90ca69975edfdd4537a47bca8fc102815b5a627a4e08bdb1682",
+      "6b41cf1b8cc1f681e4afd5990cf66c0ad8f90b42adb3f48e6518b19a9a827b04",
+      "8808815bb6992bd0f91863b14a6d7ee9812f7a6c14c206cbb9b582c68e325a1f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:197178,kitsu:50089,mal:62233,offline:mal-62233)"
+  },
+  "why": "ONE PIECE HEROINES is a one episode summer 2026 special that aired 2026-07-05 (anilist start and end 2026-07-05, kitsu start and end 2026-07-05, mal start 2026-07-05, count 1 everywhere). anizip:19524 is the same run: it carries SAME_AS ids to both mal:62233 and anilist:197178, a count of 1, and its single episode is dated 2026-07-05T02:15:00Z, the run's own air date. jw:2859972 is the same run: a single entry of one episode titled One Piece Heroines against the mal title One Piece: Heroines and the same count of 1. nf:82904737 is the same run: its title One Piece: Heroines is exactly the mal and offline title and it carries the same single episode. cr:GE00380778JAJP holds the run: it is a Crunchyroll container row with no count and no dates of its own, and kitsu:50089 declares the special PART_OF it. nf:82757985 is a different work: it is titled ONE PIECE BONUS CONTENT and its five parts (EXPANDING THE WORLD, BRINGING CHOPPER TO LIFE, BAROQUE WORKS EXPLAINER, BEHIND THE STUNTS, IÑAKI GODOY INTERVIEWS MR. ODA) are making-of pieces for the live action series, none of them the Heroines special, and it carries neither a count nor a date that meets the run. No episode pairs are asserted: only the anizip episode carries a release date, and the JustWatch and Netflix episode titles (One Piece Heroines, One Piece: Heroines) do not match the anizip episode title TV Special."
+}

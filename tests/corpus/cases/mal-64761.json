@@ -1,0 +1,234 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Again a Netflix row asserting SAME_AS on both members while describing a different work; the 8 episodes against the run's 1, the 2025 start and the unrelated episode titles settle it as a title collision on the word Rabbit. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64761"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64761",
+      "mediaUri": "kitsu:50882",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50882",
+      "mediaUri": "nf:81630027",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64761",
+      "mediaUri": "nf:81630027",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406881",
+      "mediaUri": "kitsu:50882",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406881"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81650455",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Cyclone"
+        }
+      ],
+      "uri": "nf:81650455"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81650456",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Black Rabbits"
+        }
+      ],
+      "uri": "nf:81650456"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81650457",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Skin Contact"
+        }
+      ],
+      "uri": "nf:81650457"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81650458",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "No More F**k-Ups"
+        }
+      ],
+      "uri": "nf:81650458"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81650459",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trailblazer"
+        }
+      ],
+      "uri": "nf:81650459"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81650460",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Attaf**kinboy"
+        }
+      ],
+      "uri": "nf:81650460"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81650461",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "These Kids Nearly Got Munsoned"
+        }
+      ],
+      "uri": "nf:81650461"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81650462",
+      "mediaUri": "nf:81630027",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Isle of Joy"
+        }
+      ],
+      "uri": "nf:81650462"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81630027",
+        "mal:64761"
+      ]
+    ],
+    "together": [],
+    "unrelated": [
+      "nf:81630027"
+    ]
+  },
+  "name": "Lovin'♡Rabbit",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50882",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Lovin'♡Rabbit"
+        }
+      ],
+      "uri": "kitsu:50882"
+    },
+    {
+      "id": "64761",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64761"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81630027",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2025-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black Rabbit"
+        }
+      ],
+      "uri": "nf:81630027"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e6ab0b099b7e7b07a5b26412724630f0196e670b120bcc66d0fe6d3a6c081271",
+      "ebc0266c0a20be0e841a403559f473aa28ccca632dd582a313a9601338d1698b",
+      "eaf928b270221d02d2e85d3e683b17d198ddc553cde8e7e7db1e0ae2d6c62fa7",
+      "af3f2c51b6478d6dd5d3383427799f00ec8de4e16b75ec56d0b221bee4b2eaa4",
+      "a0ba13bca165f14143a7e56c1a82646ff16e2a5ea0b386c6760b999113974cf8",
+      "870b9abbf44e637791a2df0412e5f25ad8d8acad67b66a16828205395a8cf89c",
+      "b44d1a3fadc96fe518591ceca89ab062f722c08df478a4b868960a04db730a78",
+      "53053a7fc3cd6d234d79335273fcd0e6db99600192c41d5a8d92a126124ea7f1",
+      "6e45f46bea752c9354702bb90f21b173f12f47396992a779c74da7a59550e11f",
+      "458c5d3214e89ed99e5df622deec8b38e6fe847c043038847526465511d76668",
+      "f8a49e149e9d2d52ce06c851b2de8d362d90c46aa181972bad20ddd0f4095849"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50882,mal:64761)"
+  },
+  "why": "Lovin'♡Rabbit is a single-episode release dated 2026-08-06 (kitsu:50882, episodeCount 1) whose kitsu row maps SAME_AS to its other member mal:64761. nf:81630027 is unrelated: it is Netflix's Black Rabbit, an eight-episode series starting 2025-01-01 with its own episode titles (The Cyclone, The Black Rabbits, Skin Contact), so nothing but the word Rabbit is shared and its SAME_AS handles to both members are not followed."
+}

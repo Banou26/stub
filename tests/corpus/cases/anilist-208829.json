@@ -1,0 +1,201 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part is nf:80243204, which claims SAME_AS against all four catalogue rows while being the 1995 Crayon Shin-chan film Unkokusai's Ambition; a shared franchise name is the whole resemblance and the 1995-01-01 date against a 2026-07-31 release settles it. The run also carries two offline rows, one keyed off anilist and one off mal, and both belong to the same film. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63512",
+      "mediaUri": "anilist:208829",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208829",
+      "mediaUri": "offline:anilist-208829",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63512",
+      "mediaUri": "offline:mal-63512",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208829",
+      "mediaUri": "nf:80243204",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63512",
+      "mediaUri": "nf:80243204",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-208829",
+      "mediaUri": "nf:80243204",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63512",
+      "mediaUri": "nf:80243204",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "80243204-1",
+      "mediaUri": "nf:80243204",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crayon Shin-chan the Movie: Unkokusai's Ambition"
+        }
+      ],
+      "uri": "nf:80243204-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:208829",
+        "nf:80243204"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:208829",
+        "mal:63512",
+        "offline:anilist-208829",
+        "offline:mal-63512"
+      ]
+    ],
+    "unrelated": [
+      "nf:80243204"
+    ]
+  },
+  "name": "Crayon Shin-chan: Kikikaikai! Ora no Youkai Vacation",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "id": "208829",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 31 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Crayon Shin-chan: Kikikaikai! Ora no Youkai Vacation"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "クレヨンしんちゃん 奇々怪々! オラの妖怪バケ~ション"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:208829"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63512",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-31",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Crayon Shin-chan Movie 34: Kikikaikai! Ora no Youkai Bake-shon"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63512"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-208829",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crayon Shin-chan: Kikikaikai! Ora no Youkai Vacation"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:anilist-208829"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63512",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crayon Shin-chan Movie 34: Kikikaikai! Ora no Youkai Bake-shon"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63512"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "80243204",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "1995-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crayon Shin-chan the Movie: Unkokusai's Ambition"
+        }
+      ],
+      "uri": "nf:80243204"
+    }
+  ],
+  "source": {
+    "answers": [
+      "dfba0c5ce9fa9b2ee4751a91de4581dfde44a9c12a5a7d42438ccbfc6d8af051",
+      "905bcab930a91dd2518a60f5b14d5c87c6859dba25412fd8dd8cc9d80b6357dd",
+      "aebdd3a47698cbcd317eedc59445a47aa508d240b9ec19207f1eb859015f8483",
+      "29cbdddf01d816f2366ca5f3d7ead6ebd5ee5ae011ea218e6df87b50dd60a6fd",
+      "76c10c257f6cf6ca06ff4002c6317e5dce3f0d0eeb81ffd02f7892a31c8dd341"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:208829,mal:63512,offline:anilist-208829,offline:mal-63512)"
+  },
+  "why": "Crayon Shin-chan: Kikikaikai! Ora no Youkai Vacation, the 34th Crayon Shin-chan feature, released 2026-07-31. The four catalogue rows are one run: anilist:208829 carries a SAME_AS handle to mal:63512, offline:anilist-208829 carries one to anilist:208829 and offline:mal-63512 one to mal:63512, anilist and mal agree on the day-precise date 31 Jul 2026 and on the MOVIE type, and mal and both offline rows give episodeCount 1 (anilist carries no count). mal spells the subtitle Youkai Bake-shon where anilist translates it Youkai Vacation, which is the same subtitle romanised two ways. nf:80243204 is a different work: it is Crayon Shin-chan the Movie: Unkokusai's Ambition, the 1995 third film in the series, with startDate 1995-01-01 and a sole episode of that name, so its SAME_AS handles to all four rows are wrong and it is kept apart from anilist:208829 rather than merged. The Netflix episode pairs with nothing, because the row carrying it is a different film."
+}

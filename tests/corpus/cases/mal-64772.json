@@ -1,0 +1,473 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "AniList and offline matched cleanly on date, count and id; the Netflix row claims SAME_AS on a title that only rhymes with this one, and its 2018 date plus 21 named episodes running 1 to 8 twice over are what settled it as unrelated. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64772",
+      "mediaUri": "anilist:154122",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64772",
+      "mediaUri": "nf:80196382",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64772",
+      "mediaUri": "offline:mal-64772",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:154122",
+      "mediaUri": "offline:mal-64772",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81145611",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Here She Is at Last"
+        }
+      ],
+      "uri": "nf:81145611"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81283471",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Second Chance"
+        }
+      ],
+      "uri": "nf:81283471"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81145612",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Take Back Control"
+        }
+      ],
+      "uri": "nf:81145612"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81283472",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You Don't Remember Me"
+        }
+      ],
+      "uri": "nf:81283472"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81145613",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "To Become a Queen"
+        }
+      ],
+      "uri": "nf:81145613"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81283473",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Two Birds, One Stone"
+        }
+      ],
+      "uri": "nf:81283473"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81145614",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Capture the King"
+        }
+      ],
+      "uri": "nf:81145614"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81283474",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "We Were Never Friends"
+        }
+      ],
+      "uri": "nf:81283474"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81145615",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "In for the Kill"
+        }
+      ],
+      "uri": "nf:81145615"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81283475",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "We Deserve Each Other"
+        }
+      ],
+      "uri": "nf:81283475"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81145616",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Far From Home"
+        }
+      ],
+      "uri": "nf:81145616"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81283476",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Because of Who I Am"
+        }
+      ],
+      "uri": "nf:81283476"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81145617",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nothing Can Survive Alone"
+        }
+      ],
+      "uri": "nf:81145617"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81283477",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Save Them"
+        }
+      ],
+      "uri": "nf:81283477"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81145618",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "All That's Left of Us"
+        }
+      ],
+      "uri": "nf:81145618"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81283478",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Who We Really Are"
+        }
+      ],
+      "uri": "nf:81283478"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81145619",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Who You Used to Be"
+        }
+      ],
+      "uri": "nf:81145619"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81145620",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Poison"
+        }
+      ],
+      "uri": "nf:81145620"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81145621",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "What You Left Behind"
+        }
+      ],
+      "uri": "nf:81145621"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81145622",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Run, Mia, Run"
+        }
+      ],
+      "uri": "nf:81145622"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81145623",
+      "mediaUri": "nf:80196382",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Last Dove"
+        }
+      ],
+      "uri": "nf:81145623"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64772",
+        "nf:80196382"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64772",
+        "anilist:154122",
+        "offline:mal-64772"
+      ]
+    ],
+    "unrelated": [
+      "nf:80196382"
+    ]
+  },
+  "name": "Nano List",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "64772",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-17",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Nano List"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64772"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "154122",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 17 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Nano List"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "나노리스트"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:154122"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80196382",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2018-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The A List"
+        }
+      ],
+      "uri": "nf:80196382"
+    },
+    {
+      "id": "mal-64772",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64772"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8c17447dea6cd4a0aee6e939c522948ed363d7ad0116990cf71903d677a43a8b",
+      "138c261dbcd7cb4748cc34839063bc12e9c9d8eab11c4f97d1dcf76205ccb103",
+      "e1e08157f480bd7d348ef326366e1e47accea31bef4bf87dc0e7c0db8c021b42",
+      "8f006e1665663aec0659f3491a003ce0de4041aa27e26b3fe84b7fff7d81a2c8",
+      "576c7e8ccb73fdbbb6580b065184a519ea6711a9d0482ee747e21c0b151473d7",
+      "098ffb5a4729aeaaa8e4153bb353bce2f9dc88c9db953a7432e093aefb4510e2",
+      "b954b4e80294acb2410526b9c2bce39c129361893504aa0ba56985d8a147ebda",
+      "c1b6ea00f5253891f182aaf172d10ef7906d3dc86630d94be58db5002c9be92f",
+      "21e2ad1fa6d3eeae1e5483719ef8236f90980aed900483e394523ac4e94b7a23",
+      "3926342c902c02294e5bfd3b3254a653104b824786bc07d56a4503d6a5dd6de2",
+      "635668e146cd1483388d434fc9fb4f024bccfb9bac121b12d5df49b3606d2732",
+      "4a61d4e1bac5446e744881f245e0a4299d8ed1d1a938380f42de60780a178986",
+      "0e24c3824f1fc30a598e4f569ae331a4537371d3baad655f243d3b3f00170503",
+      "e330e3c03af191e73786b48736f19ba22fca38566dc293e293cfc25db5e3f2be",
+      "9c862003e55617420a310724bf9ab13ef156aec791c7223ddc609ae8268de406",
+      "b205a75d9d9460725c5c5f047570aa2039a5402d2a590e2bc1e326dfcc72d8a8",
+      "c8643f1ec90e68aafceaa70cc2119ce88ff00450bdc9f0d971da2050b7bc2b29",
+      "611781bf791dd21ece17ecee1a72ff816f1dd60d09e458f41938f295fc3a7d06",
+      "e8e0dcebc442037c7ddb57f849ecac9ef6b0827922bcbfb8e1a79beefd0d820a",
+      "d55ce519d660b27369b0bc9cf65b0d8834e386a9d2f47a3778636bd4f73a5bb9",
+      "5420c28512bf4381f2a10b65f97ddde6eaf17f39fe54f6b103575fb248dc2645",
+      "f598652e70a0c8ae71b1b67195f92c20e357671488fed0663d18801283a627c9",
+      "f792159742d6ee4cbc4abe8ed5b16867e112e196465c155ae7fc7d1b291149d0",
+      "2782f48b8db7f13ca48159c64dc70f037bec8670b74a18d1090b941ac4ecfe48",
+      "6e5917dc0dc98c9700893bb24b809ce7bd3672a0944a7471685f038a5d48e79b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64772)"
+  },
+  "why": "Nano List is a twelve-episode Korean ONA that started 2026-08-17, held on MyAnimeList as mal:64772. AniList 154122 is the same run: same title Nano List with the Korean 나노리스트 beside it, the same day-precise start 2026-08-17, the same episodeCount 12, and a SAME_AS handle to mal:64772. The offline database row offline:mal-64772 is the same run as well: its id is built on the MyAnimeList id 64772 and it carries SAME_AS handles to both mal:64772 and anilist:154122. The Netflix title The A List (nf:80196382) is a different work despite its SAME_AS claim: it is dated 2018-01-01, eight years before this run, and it lists 21 named episodes such as Here She Is at Last and Run, Mia, Run, numbered 1 to 8 twice over and then 9 to 13, which is two seasons of a live-action drama and not this ONA, so it is marked unrelated and held apart from mal:64772."
+}

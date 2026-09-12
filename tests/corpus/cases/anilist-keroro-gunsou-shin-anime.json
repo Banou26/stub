@@ -1,0 +1,106 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "refuted: 0 marks overturned. repair 2026-09-12: removed from together, no source answered about them: anilist:Keroro-Gunsou-Shin-Anime"
+  },
+  "claims": [
+    {
+      "handleUri": "anilist:Keroro-Gunsou-Shin-Anime",
+      "mediaUri": "kitsu:48693",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48693",
+      "mediaUri": "offline:mal-58773",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "384795",
+      "mediaUri": "kitsu:48693",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384795"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:48693",
+        "offline:mal-58773"
+      ]
+    ]
+  },
+  "name": "Shin Keroro Gunsou Movie: Fukkatsushite Sokkou Chikyuu Metsubou no Kiki de Arimasu!",
+  "pending": "new store",
+  "rows": [
+    {
+      "id": "Keroro-Gunsou-Shin-Anime",
+      "origin": "anilist",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "anilist:Keroro-Gunsou-Shin-Anime"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "48693",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-26",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Shin Keroro Gunsou Movie: Fukkatsushite Sokkou Chikyuu Metsubou no Kiki de Arimasu!"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "新劇場版 ケロロ軍曹 復活して速攻地球滅亡の危機であります！"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:48693"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-58773",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Keroro Gunsou Movie 6: Fukkatsu shite Sokkou Chikyuu Metsubou no Kiki de Arimasu!"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-58773"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f1c610a6159add7e8e276ef761ea4433ad00363b45593790f4689fb75b5ad08a",
+      "6cc1f2f46be2cdca4937b1ca53d15097f0a955131c33a267a7d62bf30724df0f",
+      "afdda1a7e55c232b1abffa222d122be441ff82c87301edadbe426aa6f932bdad"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:Keroro-Gunsou-Shin-Anime,kitsu:48693)"
+  },
+  "why": "Shin Keroro Gunsou Movie: Fukkatsushite Sokkou Chikyuu Metsubou no Kiki de Arimasu! is a single episode movie dated 2026-06-26, carried by kitsu:48693 and the Anilist slug row anilist:Keroro-Gunsou-Shin-Anime that Kitsu names as SAME_AS. offline:mal-58773 is the same film: it carries the identical distinctive subtitle (Fukkatsu shite Sokkou Chikyuu Metsubou no Kiki de Arimasu!, written as Keroro Gunsou Movie 6 rather than Shin Keroro Gunsou Movie), the same episodeCount of 1, and its own SAME_AS handle on kitsu:48693."
+}

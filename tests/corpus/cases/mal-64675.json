@@ -1,0 +1,145 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch row is the hard one and was deliberately left unmarked: the title and the url slug both point at this film, but its 2026-01-01 date is year granularity and does not agree with 2026-07-10, and JustWatch carries no catalogue id mapping, so nothing settles it. The Netflix row was straightforward, a 2023 documentary attached by a wrong SAME_AS. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64675",
+      "mediaUri": "jw:2867567",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:2867567",
+      "mediaUri": "nf:81321341",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64675",
+      "mediaUri": "nf:81321341",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "2867567-1",
+      "mediaUri": "jw:2867567",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Three Kingdoms: The Beginning"
+        }
+      ],
+      "uri": "jw:2867567-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81321341-1",
+      "mediaUri": "nf:81321341",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Stamped from the Beginning"
+        }
+      ],
+      "uri": "nf:81321341-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64675",
+        "nf:81321341"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64675"
+      ]
+    ],
+    "unrelated": [
+      "nf:81321341"
+    ]
+  },
+  "name": "Three Kingdoms: The Beginning",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64675",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Three Kingdoms: The Beginning"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sanguo Di Yi Bu: Zheng Luoyang"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64675"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "2867567",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:2867567"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "81321341",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Stamped from the Beginning"
+        }
+      ],
+      "uri": "nf:81321341"
+    }
+  ],
+  "source": {
+    "answers": [
+      "36e3b41fcf00a97c919d9efd5f8c1ea734c97786c836a157bf660b472fc2597d",
+      "d4b1ab8a7e3a9803eb516b269c806040729117d8f6534208cdf0536f1476356a",
+      "a8851fb966d9d86683a7c9bd8b5776fd2b502e3fbea12dab819be2d41e4fd77d",
+      "4d8b6fe052a5ed333607fb2fc2ac72f8611b4ef19b95c00906e5de10d29505a1"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64675)"
+  },
+  "why": "Three Kingdoms: The Beginning (Sanguo Di Yi Bu: Zheng Luoyang) is a single-episode Chinese animated feature dated 2026-07-10 on MyAnimeList, which is the run's only member. The Netflix row nf:81321341 Stamped from the Beginning is a different work despite claiming SAME_AS to both mal:64675 and the JustWatch row: it is dated 2023-01-01, its one episode carries its own title, and it shares only the word Beginning with this film, so it is kept apart and unattached. The JustWatch row jw:2867567 is left unsettled: its episode title Three Kingdoms: The Beginning matches the MyAnimeList English title and its url names part 1 and the battle for Luoyang, which fits the romanized title, but its date is 2026-01-01 against 2026-07-10, so the day-precise date agreement a same mark needs is missing."
+}

@@ -1,0 +1,54 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to weigh: the run view returned the MyAnimeList member alone, with no episode list and no other catalogue or streaming row. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64713"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Guyu Jie Hou Xiang",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 5,
+      "id": "64713",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-07",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Guyu Jie Hou Xiang"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64713"
+    }
+  ],
+  "source": {
+    "answers": [
+      "18486610a911acea1c908b82dd27ab86aa194caa9fe3fce18d5ac1313b385297"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64713)"
+  },
+  "why": "Guyu Jie Hou Xiang is a five episode Chinese ONA listed for 2026-08-07, and MyAnimeList is the only source that returned a row for it. With no second row there is nothing to match, hold or separate."
+}

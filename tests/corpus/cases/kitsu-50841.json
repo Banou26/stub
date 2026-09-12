@@ -1,0 +1,60 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Single source, single row: only decision was that no other origin returned anything comparable. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405838",
+      "mediaUri": "kitsu:50841",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405838"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50841"
+      ]
+    ]
+  },
+  "name": "MUSE",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50841",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-11",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "MUSE"
+        }
+      ],
+      "uri": "kitsu:50841"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8a645dc3d3e705a5a850272eb05451f5064741b1dcd5168df4fd78d1340705ac",
+      "b6b407128a51230c7f63e3f51fdcf262e8f60a4b945ece891446704509bc28b3"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50841)"
+  },
+  "why": "MUSE is a one-shot music video for the IRyS song, listed on Kitsu alone with a single episode dated 2026-07-11 as both start and end. No other catalogue or streaming source returned a row for it, so there is nothing to merge, attach or separate."
+}

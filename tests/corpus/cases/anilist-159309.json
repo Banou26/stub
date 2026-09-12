@@ -1,0 +1,1076 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "kitsu:46925 counts 42 untitled episodes where every other member counts 12, so nothing on the kitsu side could be placed. The JustWatch episodes carry the run's titles but no dates, so they were left unpaired. nf:81716837 claims SAME_AS to all four members yet is titled Trapped Lemming and dated 2021, which is why it was marked unrelated rather than treated as the show's Netflix container. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:54000",
+      "mediaUri": "anilist:159309",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:159309",
+      "mediaUri": "kitsu:46925",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:54000",
+      "mediaUri": "kitsu:46925",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:54000",
+      "mediaUri": "offline:mal-54000",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:159309",
+      "mediaUri": "offline:mal-54000",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:46925",
+      "mediaUri": "offline:mal-54000",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:54000",
+      "mediaUri": "anizip:17796",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:159309",
+      "mediaUri": "anizip:17796",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:159309",
+      "mediaUri": "jw:326566-479662",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:17796",
+      "mediaUri": "jw:326566-479662",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:46925",
+      "mediaUri": "jw:326566-479662",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:54000",
+      "mediaUri": "jw:326566-479662",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-54000",
+      "mediaUri": "jw:326566-479662",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:159309",
+      "mediaUri": "nf:81716837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:17796",
+      "mediaUri": "nf:81716837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:326566-479662",
+      "mediaUri": "nf:81716837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:46925",
+      "mediaUri": "nf:81716837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:54000",
+      "mediaUri": "nf:81716837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-54000",
+      "mediaUri": "nf:81716837",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "360421",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:360421"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "360422",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:360422"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "363132",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:363132"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "363133",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:363133"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "403792",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403792"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "403793",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403793"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "403794",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403794"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "403795",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403795"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "403796",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403796"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "403797",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403797"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "403798",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403798"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "403799",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403799"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "403800",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403800"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "403801",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403801"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "403802",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403802"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "403803",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403803"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "403804",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403804"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "403805",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403805"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "403806",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403806"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "403807",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403807"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "403808",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403808"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "403809",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403809"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "403810",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403810"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "403811",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403811"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "403812",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403812"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "403813",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403813"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "403814",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403814"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "403815",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403815"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "403816",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403816"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "403817",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403817"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "403818",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403818"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "403819",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403819"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "403820",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403820"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "403821",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403821"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "403822",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403822"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "403823",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403823"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "403824",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403824"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "403825",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403825"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "403826",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403826"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "403827",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403827"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "403828",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403828"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "403829",
+      "mediaUri": "kitsu:46925",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403829"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "17796-1",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "It`s Always Love That Saves the World"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "愛こそ, 世界を救うんだよなぁ"
+        }
+      ],
+      "uri": "anizip:17796-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "17796-2",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Do You Enjoy the Aesthetics of Destruction?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "滅びの美学がお好みですか?"
+        }
+      ],
+      "uri": "anizip:17796-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "17796-3",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hey, Brat"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "おい, クソガキ"
+        }
+      ],
+      "uri": "anizip:17796-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "17796-4",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "They`re Flip-Flopping Again?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "また手のひら返しかよ"
+        }
+      ],
+      "uri": "anizip:17796-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "17796-5",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Love Facades"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "建前が大好きでしてね"
+        }
+      ],
+      "uri": "anizip:17796-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "17796-6",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "If You Don`t Like It, I`ll Just Run"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "嫌なら俺は逃げるだけです"
+        }
+      ],
+      "uri": "anizip:17796-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "17796-7",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Shut Your Filthy Mouth, Scum"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "汚い口を閉じろ, ゴミが"
+        }
+      ],
+      "uri": "anizip:17796-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "17796-8",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You Can`t Quantify Love!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "愛を数値ではかるなんておかしいよ!"
+        }
+      ],
+      "uri": "anizip:17796-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "17796-9",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Livia......"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "リビア......"
+        }
+      ],
+      "uri": "anizip:17796-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "17796-10",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "They Hit Where It Hurts"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "痛いところを突きやがる"
+        }
+      ],
+      "uri": "anizip:17796-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "17796-11",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:17796-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "17796-12",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-09-23T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:17796-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "17796-13",
+      "mediaUri": "anizip:17796",
+      "origin": "anizip",
+      "releaseDate": "2026-09-30",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:17796-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "8882314",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "It's Always Love That Saves the World"
+        }
+      ],
+      "uri": "jw:8882314"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10637145",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Do You Enjoy the Aesthetics of Destruction?"
+        }
+      ],
+      "uri": "jw:10637145"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10637147",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hey, Brat"
+        }
+      ],
+      "uri": "jw:10637147"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10637146",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "They're Flip-Flopping Again?"
+        }
+      ],
+      "uri": "jw:10637146"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10637149",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Love Facades"
+        }
+      ],
+      "uri": "jw:10637149"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10637140",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "If I Don't Like It, I'll Just Run"
+        }
+      ],
+      "uri": "jw:10637140"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10637141",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shut Your Filthy Mouth, Scum"
+        }
+      ],
+      "uri": "jw:10637141"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10637144",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You Can't Quantify Love!"
+        }
+      ],
+      "uri": "jw:10637144"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10637142",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Livia..."
+        }
+      ],
+      "uri": "jw:10637142"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10637151",
+      "mediaUri": "jw:326566-479662",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "They Hit Where It Hurts"
+        }
+      ],
+      "uri": "jw:10637151"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:159309",
+        "nf:81716837"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:159309",
+        "kitsu:46925",
+        "mal:54000",
+        "offline:mal-54000",
+        "anizip:17796",
+        "jw:326566-479662"
+      ]
+    ],
+    "unrelated": [
+      "nf:81716837"
+    ]
+  },
+  "name": "Trapped in a Dating Sim: The World of Otome Games is Tough for Mobs Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "159309",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Trapped in a Dating Sim: The World of Otome Games is Tough for Mobs Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Otomege Sekai wa Mob ni Kibishii Sekai desu 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "乙女ゲー世界はモブに厳しい世界です2"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:159309"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 42,
+      "id": "46925",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Trapped in a Dating Sim: The World of Otome Games Is Tough for Mobs Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Otomege Sekai wa Mob ni Kibishii Sekai desu 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "乙女ゲー世界はモブに厳しい世界です 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:46925"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "54000",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Trapped in a Dating Sim: The World of Otome Games is Tough for Mobs 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Otome Game Sekai wa Mob ni Kibishii Sekai desu 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:54000"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-54000",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Otome Game Sekai wa Mob ni Kibishii Sekai desu 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-54000"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "17796",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Trapped in a Dating Sim: The World of Otome Games Is Tough for Mobs 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "乙女ゲー世界はモブに厳しい世界です2"
+        }
+      ],
+      "uri": "anizip:17796"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "326566-479662",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:326566-479662"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81716837",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trapped Lemming"
+        }
+      ],
+      "uri": "nf:81716837"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4d8587b3cfb9f1ad3dc3272c627a3c144e3e8d6860124c8982fe56c163ef6ab6",
+      "3ca9af992b406373d301f8139d106ca2e9683d652a50d6441187c40bdf7e0e6b",
+      "ba1e86db17c977933a7b3e0d533238afcbaf573feb93bc458e0c2976196827df",
+      "793d25c63e0a39acfce268ec196b9c36c4b4cf0cee94412dccf6eb328b834be6",
+      "f44118d08bc592f5774fd4615e390f889332a587c85019a02bd20bca93e62a18",
+      "dbe56af43f3fa85dad1791cda5ec4bb5e98eef7bb1ab5b6603a3ce0685721268",
+      "baa7b84462821c719a7bf9f14510b42980f2fb6439ad10b5724eaa7c9903a8e8",
+      "144e1e1c359d8bd63df08930b9ce9f557b0444a5fe6ae872b2c854df2bec226f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:159309,kitsu:46925,mal:54000,offline:mal-54000)"
+  },
+  "why": "Trapped in a Dating Sim: The World of Otome Games is Tough for Mobs Season 2 is the twelve episode summer 2026 cour on a weekly 14:30 slot, 2026-07-08 to 2026-09-23, with ten episodes aired so far.\nanizip:17796 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:54000 and anilist:159309, both members.\njw:326566-479662 is the same run: it maps SAME_AS to all four members and to anizip:17796, and its ten listed episodes carry the run's own titles in order, It's Always Love That Saves the World through They Hit Where It Hurts; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nnf:81716837 is a different work: it is titled Trapped Lemming in the only title it carries, with a 2021 start that predates this franchise, and it matches none of the run's titles in English, romaji or Japanese, so its SAME_AS claims against the four members do not hold."
+}

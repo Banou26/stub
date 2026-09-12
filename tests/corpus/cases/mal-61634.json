@@ -1,0 +1,713 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The offline row carries no titles or dates, so it was joined on its id mapping alone; the Netflix row is a near-miss title (To Be Hero X against To Be Winner) and is a separate show. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61634",
+      "mediaUri": "kitsu:50978",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61634",
+      "mediaUri": "anilist:166444",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50978",
+      "mediaUri": "nf:82035029",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61634",
+      "mediaUri": "nf:82035029",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61634",
+      "mediaUri": "offline:mal-61634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:166444",
+      "mediaUri": "offline:mal-61634",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407872",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407872"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407873",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407873"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407874",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407874"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "407875",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407875"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "407876",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407876"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "407877",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407877"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "407878",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407878"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "407879",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407879"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "407880",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407880"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "407881",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407881"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "407882",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407882"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "407883",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407883"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "407884",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407884"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "407885",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407885"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "407886",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407886"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "407887",
+      "mediaUri": "kitsu:50978",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407887"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82035031",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nice"
+        }
+      ],
+      "uri": "nf:82035031"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82035032",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82035032"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82035033",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82035033"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82035034",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82035034"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82035035",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82035035"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82035036",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82035036"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82035037",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82035037"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82035038",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82035038"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82035039",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82035039"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82035040",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82035040"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82035041",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82035041"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82035042",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82035042"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "82035043",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:82035043"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "82035044",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:82035044"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "82035045",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:82035045"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "82035046",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:82035046"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "82035047",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:82035047"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "82035048",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:82035048"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "82035049",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:82035049"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "82035050",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:82035050"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "82035051",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:82035051"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "82035052",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:82035052"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "82035053",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:82035053"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "82035054",
+      "mediaUri": "nf:82035029",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "nf:82035054"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:61634",
+        "nf:82035029"
+      ]
+    ],
+    "together": [
+      [
+        "kitsu:50978",
+        "mal:61634",
+        "anilist:166444",
+        "offline:mal-61634"
+      ]
+    ],
+    "unrelated": [
+      "nf:82035029"
+    ]
+  },
+  "name": "To Be Winner",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "50978",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "To Be Winner"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Cheng Ye Xiao He"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50978"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "61634",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "To Be Winner"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Cheng Ye Xiao He"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:61634"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "166444",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 03 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "To Be Winner"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Cheng Ye Xiao He"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "成也萧河"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:166444"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82035029",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2025-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "To Be Hero X"
+        }
+      ],
+      "uri": "nf:82035029"
+    },
+    {
+      "id": "mal-61634",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-61634"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f621095f1fc4478dbb7e858b7e120008c2780ec5966d25cf0a6560c910006ec0",
+      "4c3abee2b1c9b67ec3242fbb6b7220237bc5c43d94e5e6c9408237a6853ec3c0",
+      "4c2ab359bcdc0d375d0cb89f6dd65382fe2822ec280975d46ed6020d5dadbb15",
+      "3ddc9de62d81ec9edfdf48b4c2efe8c67555af86cd17ac8fa4121560055bf36f",
+      "90b3e2f742dc281690b7b0491e32d712ff36e6053cfc4e4a2cf3f994d1d18c7a",
+      "20c307156b4e3078bc03b89d6843e7b91b09babd8a950c2d3b723ba9bf9b0bfa",
+      "6cc39cb9edc5224602c54213a2910327adcb7f25b22870dd05010dd6f97bea96",
+      "3f3b8452f0425d7311658d9a3a483a441c08df6b8ee931f02de671f694464f07",
+      "7e3db0685de731f321f8a20c237fcef0539d65b82bc91c2731dd9612fc6d1ebf",
+      "f229f55443e5b3bb6a1503a8d5bd688f1494d16d230e8b6c719b5ac657861bf2",
+      "51499b00e9850672385541fc7e596100c0079f78e56a0050747fd1b3a10b762c",
+      "fa25f6ccd04fc27b43c3e2762ed22cd531d4dc5ffd2c0493307cbd692dfa471d",
+      "31238a3071f971d6a6c2dedca62d6e1093e91217122520f6b0460f0026b9d686",
+      "00d4b9cbc4ddac097ff0d4d881cbe3546f44f8369dcd1bb93f5b2d1208d1d534",
+      "62d71cc0a2ef68e42c4dc554a69bdb10b28006e6c1b213ed2885207ac7962a3b",
+      "eaa1aa35058ae745fdba2e257355c3329abc42a0e07c8bf1b82489aa1ec930ce",
+      "7ad28e4d52cbfd900c7401dc6bb90b8d47d11f42fa8bad8553ff2329c3db8084",
+      "2deef1b0dd2eab10c3e230004bba7d1d45c15f1c46c24ebc496b83b65d02c9f9",
+      "e3816ead96db47ad7f8e393d6b9c041a0c0bf1dac93c0ee754b3cd8c4490cb67",
+      "17a95d8d739d9c9fb61965514966c1ccf9bfb08c479c232304e947c5d503c206",
+      "75e94b0364209b788c9d528507457a3ff93635075b03c08595cccd1b809d70e3",
+      "006f98e261d4a89e6232fade1750d1a8fd532cb90cd18311295e5ff569f4ca68",
+      "a55e095cd29109a38947228fc3c29e8cc07b72096af94f1132884791004b699a",
+      "172a3382206ac8c3a20d63778690ae42b84e4eb4b23c6cb6230b3020d07e2605",
+      "8bccf8b848b94520cb4934b565d3a6af90f69832f619be8ae05cf003af9b3002",
+      "6150960352926be84dc4549b02dd3ca7525dbbada3508b5a31b13249fa7d45f1",
+      "c326734440c2062396afe3543a6460692cb1ef5868246838d6ed5f9f82ce0398",
+      "a9d5c35cec789941cd7b25f92e79b2f8d9b93a24a4f782176176671da0b774e4",
+      "a5ae5fbc34ecaa7f9057c0038e1226e0b40b7a63c161baf32a49f81fc455f271"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50978,mal:61634)"
+  },
+  "why": "The run is To Be Winner (Cheng Ye Xiao He), a sixteen-episode Chinese ONA that started 2026-08-03. The AniList row anilist:166444 is the same run: it carries a SAME_AS handle to mal:61634 and matches on the English and romanised titles, the 2026-08-03 start date, episodeCount 16 and the ONA type. The offline row offline:mal-61634 is the same run as well: its id is built on the MyAnimeList id 61634 and it carries SAME_AS handles to both mal:61634 and anilist:166444, so the catalogue mappings agree on one entry. The Netflix row nf:82035029 is marked unrelated and kept apart from mal:61634 because it is To Be Hero X, a different show with startDate 2025-01-01 and twenty-four episodes against this run's sixteen."
+}

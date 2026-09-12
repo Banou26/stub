@@ -1,0 +1,1121 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part was the start date: anilist, kitsu and Crunchyroll put episode 1 on 2026-07-03 while mal and anizip put it on 2026-07-10, so every anizip date sits a week after the Crunchyroll date for the same titled episode. The episode pairing therefore rests on the exact titles, which run one for one across all three listings; episodes 6 and 11 differ only by a backtick standing in for the apostrophe on the anizip side. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378124-GS00378135",
+      "mediaUri": "anilist:196218",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62078",
+      "mediaUri": "anilist:196218",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196218",
+      "mediaUri": "kitsu:50049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378124",
+      "mediaUri": "kitsu:50049",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:196218",
+      "mediaUri": "offline:anilist-196218",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62078",
+      "mediaUri": "offline:mal-62078",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50049",
+      "mediaUri": "offline:mal-62078",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62078",
+      "mediaUri": "anizip:19484",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196218",
+      "mediaUri": "anizip:19484",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196218",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50049",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62078",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-196218",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62078",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196218",
+      "mediaUri": "jw:489011-515837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19484",
+      "mediaUri": "jw:489011-515837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50049",
+      "mediaUri": "jw:489011-515837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62078",
+      "mediaUri": "jw:489011-515837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-196218",
+      "mediaUri": "jw:489011-515837",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62078",
+      "mediaUri": "jw:489011-515837",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "385882",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385882"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "385883",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385883"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "385884",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385884"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "385885",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385885"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "385886",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385886"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "385887",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385887"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "385888",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385888"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "385889",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385889"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "385890",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385890"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "385891",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385891"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "385892",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385892"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "385893",
+      "mediaUri": "kitsu:50049",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385893"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19484-1",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-07-10T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Girl with the Blue Horn"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と蒼角の乙女"
+        }
+      ],
+      "uri": "anizip:19484-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19484-2",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and His First Visitor"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と初めての来訪者"
+        }
+      ],
+      "uri": "anizip:19484-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19484-3",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Strange Merchant"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と奇妙な行商人"
+        }
+      ],
+      "uri": "anizip:19484-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19484-4",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Neighboring Lord"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様とお隣の領主"
+        }
+      ],
+      "uri": "anizip:19484-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19484-5",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Assailants from the Desert"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と砂漠からの襲撃者"
+        }
+      ],
+      "uri": "anizip:19484-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19484-6",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Twins` Prayer"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と双子の祈り"
+        }
+      ],
+      "uri": "anizip:19484-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19484-7",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the New Subjects"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と新たな領民たち"
+        }
+      ],
+      "uri": "anizip:19484-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19484-8",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Grassland Battle"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と草原の戦い"
+        }
+      ],
+      "uri": "anizip:19484-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19484-9",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and the Wedding"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と結婚式"
+        }
+      ],
+      "uri": "anizip:19484-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19484-10",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and His Son and Daughters"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様と息子と娘たち"
+        }
+      ],
+      "uri": "anizip:19484-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19484-11",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord and Alna`s Big Brother"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "辺境領主様とアルナーの兄"
+        }
+      ],
+      "uri": "anizip:19484-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19484-12",
+      "mediaUri": "anizip:19484",
+      "origin": "anizip",
+      "releaseDate": "2026-09-25T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19484-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378124-GS00378135-GE00380324JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-07-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Girl with the Blue Horn"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380324JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378124-GS00378135-GE00380325JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-07-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and His First Visitor"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380325JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378124-GS00378135-GE00380326JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Strange Merchant"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380326JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378124-GS00378135-GE00380327JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Neighboring Lord"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380327JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378124-GS00378135-GE00380328JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Assailants from the Desert"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380328JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378124-GS00378135-GE00380329JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Twins' Prayer"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380329JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378124-GS00378135-GE00380330JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the New Subjects"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380330JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378124-GS00378135-GE00380331JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Grassland Battle"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380331JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378124-GS00378135-GE00380332JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and the Wedding"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380332JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378124-GS00378135-GE00380333JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and His Son and Daughters"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380333JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00378124-GS00378135-GE00380334JAJP",
+      "mediaUri": "cr:GT00378124-GS00378135",
+      "origin": "cr",
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord and Alna's Big Brother"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135-GE00380334JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9496279",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Girl with the Blue Horn"
+        }
+      ],
+      "uri": "jw:9496279"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10574688",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and His First Visitor"
+        }
+      ],
+      "uri": "jw:10574688"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10574689",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Strange Merchant"
+        }
+      ],
+      "uri": "jw:10574689"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10574690",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Neighboring Lord"
+        }
+      ],
+      "uri": "jw:10574690"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10574691",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Assailants from the Desert"
+        }
+      ],
+      "uri": "jw:10574691"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10574692",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Twins' Prayer"
+        }
+      ],
+      "uri": "jw:10574692"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10574693",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the New Subjects"
+        }
+      ],
+      "uri": "jw:10574693"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10574694",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Grassland Battle"
+        }
+      ],
+      "uri": "jw:10574694"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10574695",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and the Wedding"
+        }
+      ],
+      "uri": "jw:10574695"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10574696",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and His Son and Daughters"
+        }
+      ],
+      "uri": "jw:10574696"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10574697",
+      "mediaUri": "jw:489011-515837",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Frontier Lord and Alna's Big Brother"
+        }
+      ],
+      "uri": "jw:10574697"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19484-1",
+        "b": "cr:GT00378124-GS00378135-GE00380324JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380324JAJP",
+        "b": "jw:9496279"
+      },
+      {
+        "a": "anizip:19484-2",
+        "b": "cr:GT00378124-GS00378135-GE00380325JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380325JAJP",
+        "b": "jw:10574688"
+      },
+      {
+        "a": "anizip:19484-3",
+        "b": "cr:GT00378124-GS00378135-GE00380326JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380326JAJP",
+        "b": "jw:10574689"
+      },
+      {
+        "a": "anizip:19484-4",
+        "b": "cr:GT00378124-GS00378135-GE00380327JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380327JAJP",
+        "b": "jw:10574690"
+      },
+      {
+        "a": "anizip:19484-5",
+        "b": "cr:GT00378124-GS00378135-GE00380328JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380328JAJP",
+        "b": "jw:10574691"
+      },
+      {
+        "a": "anizip:19484-6",
+        "b": "cr:GT00378124-GS00378135-GE00380329JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380329JAJP",
+        "b": "jw:10574692"
+      },
+      {
+        "a": "anizip:19484-7",
+        "b": "cr:GT00378124-GS00378135-GE00380330JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380330JAJP",
+        "b": "jw:10574693"
+      },
+      {
+        "a": "anizip:19484-8",
+        "b": "cr:GT00378124-GS00378135-GE00380331JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380331JAJP",
+        "b": "jw:10574694"
+      },
+      {
+        "a": "anizip:19484-9",
+        "b": "cr:GT00378124-GS00378135-GE00380332JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380332JAJP",
+        "b": "jw:10574695"
+      },
+      {
+        "a": "anizip:19484-10",
+        "b": "cr:GT00378124-GS00378135-GE00380333JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380333JAJP",
+        "b": "jw:10574696"
+      },
+      {
+        "a": "anizip:19484-11",
+        "b": "cr:GT00378124-GS00378135-GE00380334JAJP"
+      },
+      {
+        "a": "cr:GT00378124-GS00378135-GE00380334JAJP",
+        "b": "jw:10574697"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:196218",
+        "whole": "cr:GT00378124"
+      }
+    ],
+    "together": [
+      [
+        "anilist:196218",
+        "kitsu:50049",
+        "mal:62078",
+        "offline:anilist-196218",
+        "offline:mal-62078",
+        "anizip:19484",
+        "cr:GT00378124-GS00378135",
+        "jw:489011-515837"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "The Frontier Lord Begins with Zero Subjects",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "196218",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Frontier Lord Begins with Zero Subjects"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Ryoumin 0-Nin Start no Henkyou Ryoushu-sama"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "領民0人スタートの辺境領主様"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:196218"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50049",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Ryoumin 0-Nin Start no Henkyou Ryoushu-sama"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "領民0人スタートの辺境領主様"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50049"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62078",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord Begins with Zero Subjects"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Ryoumin 0-nin Start no Henkyou Ryoushu-sama"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62078"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-196218",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ryoumin 0-Nin Start no Henkyou Ryoushu-sama"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:anilist-196218"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62078",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ryoumin 0-nin Start no Henkyou Ryoushu-sama"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62078"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19484",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Frontier Lord Begins with Zero Subjects"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "領民0人スタートの辺境領主様"
+        }
+      ],
+      "uri": "anizip:19484"
+    },
+    {
+      "id": "GT00378124",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378124"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00378124-GS00378135",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Frontier Lord Begins with Zero Subjects"
+        }
+      ],
+      "uri": "cr:GT00378124-GS00378135"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "489011-515837",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:489011-515837"
+    }
+  ],
+  "source": {
+    "answers": [
+      "5275b21de2342345675303003683b70334afb9baa1fad15f99702266b237c1d4",
+      "99290d3a2c3b7de681a226c9f013b726bb25370bff414fd01d8cbefe0b7e0d7d",
+      "0a0ace92da7ff9cda1b9b54d92ceecd9cda55b58cc064c1e42a9210e477063f1",
+      "e247a11a4c4eef7fdc4e0497651a29efe7faec307e6d3a63b870e3a54246a153",
+      "bd1dfae17f8096e9feb8928ce312b48027dbeb59b22bc997707fdd2440b6579c",
+      "d0b0cb3aacfd741c7a40293217935f3966506c5ef4ed85e1a2f5c82b3e8239a5",
+      "c55a82932bda20c569e1c5eb72d2bbb6d9f1133ccb04fc167ce191d7c5eff2ca",
+      "5826f646b5b050d067b0233febda7873eb81dba5e90dbb97e253cfba22131407",
+      "8a3763df2fe91133aeee2e5a60fdc5b6d4fa5fc9151de8cc50f169390ff6747b",
+      "913265a4e1b8d9db54db139df4773ac4be1dd3d51180d111c9d503ec65ee86e9"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:196218,kitsu:50049,mal:62078,offline:anilist-196218,offline:mal-62078)"
+  },
+  "why": "The Frontier Lord Begins with Zero Subjects is a 12 episode summer 2026 run of the Ryoumin 0-Nin Start no Henkyou Ryoushu-sama adaptation, airing weekly from early July 2026 with anilist giving an end of 2026-09-18 and the last listed episode still to come. anizip:19484 is the same run: it carries SAME_AS ids to both anilist:196218 and mal:62078, lists the same 12 episodes, and its episode titles are the run's own. cr:GT00378124-GS00378135 is the same run: it carries SAME_AS ids to all five members, and its 11 listed episodes are the run's first 11 by title with none past the run's end. jw:489011-515837 is the same run: it carries SAME_AS ids to all five members and to anizip:19484, and its 11 episode titles match the run's one for one. cr:GT00378124 is the bare Crunchyroll series container for the same show, with no dates and no episodes of its own, so it holds the run rather than being it. Episodes 1 to 11 are paired between anizip, Crunchyroll and JustWatch on exact, distinctive titles in the same order (for example \"The Frontier Lord and the Strange Merchant\" at 3 and \"The Frontier Lord and the Wedding\" at 9); the anizip and Crunchyroll dates are a week apart throughout, matching the catalogues' own disagreement about the start date (2026-07-03 on anilist and kitsu, 2026-07-10 on mal), so the pairing rests on the titles. anizip's episode 12 and kitsu's 12 bare numbered episodes are paired with nothing: episode 12 has no title anywhere and the kitsu rows carry neither titles nor dates."
+}

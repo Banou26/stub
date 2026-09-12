@@ -1,0 +1,65 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to decide: the only row returned is the run's own member, a single-day music video with no episode date and no cross-catalogue handles. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407193",
+      "mediaUri": "kitsu:50930",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407193"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50930"
+      ]
+    ]
+  },
+  "name": "yumeiro wonder",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50930",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-23",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "yumeiro wonder"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "夢色ワンダ"
+        }
+      ],
+      "uri": "kitsu:50930"
+    }
+  ],
+  "source": {
+    "answers": [
+      "bc1caa42532bb7a32d3432b3236f2f2ce508290178f0d8717b4a918702ae45f9",
+      "189917105ed87d6d33226e4d03da3d94b3c780d44b243c22387df290f8b8c9ba"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50930)"
+  },
+  "why": "yumeiro wonder is a one-episode hololive music video dated 2026-07-23, start and end the same day, episodeCount 1. Kitsu is the only source that returned anything for it and the single row kitsu:50930 is the run's own member, so there is no other row to call same, holding, spanning or unrelated."
+}

@@ -1,0 +1,875 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The counts disagree across rows in ways that do not settle anything: the offline row says 12 against the run's 24, and AniZip says 24 while listing only the twelve episodes aired so far, both of which are ordinary for a two cour run still in its first half. The JustWatch season has no episode dates at all, so its ten episodes are placed on titles alone, six of them exact. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63489",
+      "mediaUri": "anilist:207809",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207809",
+      "mediaUri": "kitsu:50562",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63489",
+      "mediaUri": "kitsu:50562",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378099",
+      "mediaUri": "kitsu:50562",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63489",
+      "mediaUri": "offline:mal-63489",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207809",
+      "mediaUri": "offline:mal-63489",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50562",
+      "mediaUri": "offline:mal-63489",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63489",
+      "mediaUri": "anizip:19894",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207809",
+      "mediaUri": "anizip:19894",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207809",
+      "mediaUri": "jw:521437-557501",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19894",
+      "mediaUri": "jw:521437-557501",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50562",
+      "mediaUri": "jw:521437-557501",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63489",
+      "mediaUri": "jw:521437-557501",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63489",
+      "mediaUri": "jw:521437-557501",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "394775",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394775"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "394776",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394776"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "394777",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394777"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "394778",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394778"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "394779",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394779"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "394780",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394780"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "394781",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394781"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "394782",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394782"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "394783",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394783"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "394784",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394784"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "394785",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394785"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "394786",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394786"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "394787",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394787"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "394788",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394788"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "394789",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394789"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "394790",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394790"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "394791",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394791"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "394792",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394792"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "394793",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394793"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "394794",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394794"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "394795",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394795"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "394796",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394796"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "407183",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407183"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "407184",
+      "mediaUri": "kitsu:50562",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407184"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19894-1",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Goodbye Kiss, A Hello Kiss"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "別れと出会いのキス"
+        }
+      ],
+      "uri": "anizip:19894-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19894-2",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Black Water"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黒い水"
+        }
+      ],
+      "uri": "anizip:19894-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19894-3",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Can`t Go Back, I Won`t Go Back"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "還らない, 還れない"
+        }
+      ],
+      "uri": "anizip:19894-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19894-4",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Ishtar Incarnate"
+        }
+      ],
+      "uri": "anizip:19894-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19894-5",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Sword to Fight"
+        }
+      ],
+      "uri": "anizip:19894-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19894-6",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The One I Can`t Love"
+        }
+      ],
+      "uri": "anizip:19894-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19894-7",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Cold Lips"
+        }
+      ],
+      "uri": "anizip:19894-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19894-8",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Under the Apple Tree"
+        }
+      ],
+      "uri": "anizip:19894-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19894-9",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Sign on the Palm"
+        }
+      ],
+      "uri": "anizip:19894-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19894-10",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Ishtar the Purloined"
+        }
+      ],
+      "uri": "anizip:19894-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19894-11",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-09-15T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19894-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19894-12",
+      "mediaUri": "anizip:19894",
+      "origin": "anizip",
+      "releaseDate": "2026-09-22T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19894-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10239196",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Goodbye Kiss, a Hello Kiss"
+        }
+      ],
+      "uri": "jw:10239196"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10729223",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Black Water"
+        }
+      ],
+      "uri": "jw:10729223"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10729220",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Can't Go Back, I Won't Go Back"
+        }
+      ],
+      "uri": "jw:10729220"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10729226",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ishtar Incarnate"
+        }
+      ],
+      "uri": "jw:10729226"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10729219",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Sword to Fight"
+        }
+      ],
+      "uri": "jw:10729219"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10729228",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The One I Can't Love"
+        }
+      ],
+      "uri": "jw:10729228"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10729229",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cold Lips"
+        }
+      ],
+      "uri": "jw:10729229"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10729221",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Under the Apple Tree"
+        }
+      ],
+      "uri": "jw:10729221"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10729222",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Sign on the Palm"
+        }
+      ],
+      "uri": "jw:10729222"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10729224",
+      "mediaUri": "jw:521437-557501",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ishtar Purloined"
+        }
+      ],
+      "uri": "jw:10729224"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "jw:10239196",
+        "b": "anizip:19894-1"
+      },
+      {
+        "a": "jw:10729223",
+        "b": "anizip:19894-2"
+      },
+      {
+        "a": "jw:10729220",
+        "b": "anizip:19894-3"
+      },
+      {
+        "a": "jw:10729226",
+        "b": "anizip:19894-4"
+      },
+      {
+        "a": "jw:10729219",
+        "b": "anizip:19894-5"
+      },
+      {
+        "a": "jw:10729228",
+        "b": "anizip:19894-6"
+      },
+      {
+        "a": "jw:10729229",
+        "b": "anizip:19894-7"
+      },
+      {
+        "a": "jw:10729221",
+        "b": "anizip:19894-8"
+      },
+      {
+        "a": "jw:10729222",
+        "b": "anizip:19894-9"
+      },
+      {
+        "a": "jw:10729224",
+        "b": "anizip:19894-10"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:207809",
+        "whole": "cr:GT00378099"
+      }
+    ],
+    "together": [
+      [
+        "anilist:207809",
+        "kitsu:50562",
+        "mal:63489",
+        "offline:mal-63489",
+        "anizip:19894",
+        "jw:521437-557501"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Red River",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "207809",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Red River"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Sora wa Akai Kawa no Hotori"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "天は赤い河のほとり"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:207809"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "50562",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Red River"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Sora wa Akai Kawa no Hotori"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "天は赤い河のほとり"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50562"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "63489",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Red River"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sora wa Akai Kawa no Hotori"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63489"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63489",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sora wa Akai Kawa no Hotori"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63489"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "19894",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Red River"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "天は赤い河のほとり"
+        }
+      ],
+      "uri": "anizip:19894"
+    },
+    {
+      "id": "GT00378099",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378099"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "521437-557501",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:521437-557501"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f1c50661a5bbb47188237da9c6816f89f938d0a31f05984612d6233bf113d61c",
+      "25c7294ae053c3ef7f20bc5c5f6343536ee02ee8f8bceaef2edcf846b4186cd1",
+      "866b4215ade991bcf614dc172f0f6d52ed45bacce8ff5cbd4f1663d425f467c0",
+      "2341138a21350034c31c69c9f288c991230ee2192badacda50f22d388bdcc73c",
+      "e1310ba1e65ddb02e728bf27c7451ebfad85a1ff3885914648b8d94a395fe0c7",
+      "ae65ea1fd30af304af8b8a5ccd0cd83440627183a2f74a4ff6686efabf084376",
+      "e0e4925b28b2790a98160e160e1207a6acfe73a85a255b13438c497c8492d7ed"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:207809,kitsu:50562,mal:63489,offline:mal-63489)"
+  },
+  "why": "Red River (Sora wa Akai Kawa no Hotori) is a 24 episode run that began 2026-07-08 and is scheduled to finish 2026-12-15, so it is still airing; AniList, Kitsu and MyAnimeList all give episodeCount 24 and a 2026-07-07 or 2026-07-08 start. anizip:19894 is the same run: it carries first-party SAME_AS handles to mal:63489 and anilist:207809, its episodeCount is 24 like the run's, and the twelve episodes it has so far start 2026-07-07T16:30Z, the run's opening broadcast in Japan time. jw:521437-557501 is the same run: it is the JustWatch season for the show red-river, it carries first-party SAME_AS handles to anilist:207809, anizip:19894, kitsu:50562, mal:63489 and offline:mal-63489, and six of its ten episode titles (2, 4, 5, 7, 8 and 9) are character for character the anizip titles at the same numbers. Its ten episodes pair one to one with anizip episodes 1 to 10 on those titles, the other four differing only in letter case, apostrophe style and a dropped article (Ishtar Purloined for Ishtar the Purloined), so the alignment has no offset. cr:GT00378099 holds the run: it is a bare Crunchyroll series container (scope CONTAINER, the series url red-river, no dates, no episodes and no count) and kitsu:50562 declares PART_OF against it; no includes range is asserted because that container lists nothing to align."
+}

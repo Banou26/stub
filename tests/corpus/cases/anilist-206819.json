@@ -1,0 +1,216 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Straightforward: one non-member row, agreeing on both ids, on the count of 1 and on the date 2026-07-17, and its title is just the English rendering of the same film. The kitsu episode has no title or date, so the anizip Complete Movie entry was left unpaired. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63366",
+      "mediaUri": "anilist:206819",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206819",
+      "mediaUri": "kitsu:50774",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63366",
+      "mediaUri": "offline:mal-63366",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206819",
+      "mediaUri": "offline:mal-63366",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50774",
+      "mediaUri": "offline:mal-63366",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63366",
+      "mediaUri": "anizip:19857",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206819",
+      "mediaUri": "anizip:19857",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404269",
+      "mediaUri": "kitsu:50774",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404269"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19857-1",
+      "mediaUri": "anizip:19857",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:19857-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:206819",
+        "kitsu:50774",
+        "mal:63366",
+        "offline:mal-63366",
+        "anizip:19857"
+      ]
+    ]
+  },
+  "name": "Kimi to Hanabi to Yakusoku to",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "206819",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 17 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kimi to Hanabi to Yakusoku to"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "君と花火と約束と"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:206819"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50774",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-17",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kimi to Hanabi to Yakusoku to"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "君と花火と約束と"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50774"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63366",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-17",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kimi to Hanabi to Yakusoku to"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63366"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63366",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kimi to Hanabi to Yakusoku to"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63366"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "19857",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You, Fireworks, and Our Promise"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "君と花火と約束と"
+        }
+      ],
+      "uri": "anizip:19857"
+    }
+  ],
+  "source": {
+    "answers": [
+      "94e34b9d32e37ba728e33c9f204796ca62d448f49cf67484fd112bc60f72a23b",
+      "260bc466f74fcf6bb429af95f18f87ff2cb956ecc81453678214cd9fc59632d9",
+      "fe1219f2594e40c04026a0d9608fb9891a6ffa2dfd0e6d969f81e4402d90c2ad",
+      "c082800181b39723f949035f42b0af9fc5223a7f29a08facf081c5c707befe2b",
+      "27625ef652e3ba6f7321abbeb8e2944b7bef898c8383e34886275f4acb7d9fa4",
+      "bc4bad9f0eb43f9dbf374c167aeffb151ac9dfe6aa7c916e6cab21e9c6863161"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:206819,kitsu:50774,mal:63366,offline:mal-63366)"
+  },
+  "why": "The run is the one episode anime film Kimi to Hanabi to Yakusoku to, released 2026-07-17 on anilist 206819, mal 63366 and kitsu 50774, which map to each other first-party. anizip:19857 is the same run: it maps SAME_AS to both anilist 206819 and mal 63366, its episodeCount is 1 like the run's, and its single Complete Movie entry is dated 2026-07-17, the run's release date, under the English title You, Fireworks, and Our Promise."
+}

@@ -1,0 +1,1318 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll's episode dates run one week ahead of anizip's from episode 2 onward because it lists episodes 1 and 2 on the same day, so the pairing rests on titles alone; episodes 8, 9 and Crunchyroll 12 carry different English titles and are left unpaired. The Netflix season is left unsettled. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00365568-GS00376607",
+      "mediaUri": "anilist:209669",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63780",
+      "mediaUri": "anilist:209669",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209669",
+      "mediaUri": "kitsu:50613",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00365568",
+      "mediaUri": "kitsu:50613",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63780",
+      "mediaUri": "offline:mal-63780",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209669",
+      "mediaUri": "offline:mal-63780",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50613",
+      "mediaUri": "offline:mal-63780",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63780",
+      "mediaUri": "anizip:19961",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209669",
+      "mediaUri": "anizip:19961",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209669",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50613",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63780",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63780",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209669",
+      "mediaUri": "jw:438204-580871",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19961",
+      "mediaUri": "jw:438204-580871",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50613",
+      "mediaUri": "jw:438204-580871",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63780",
+      "mediaUri": "jw:438204-580871",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63780",
+      "mediaUri": "jw:438204-580871",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209669",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19961",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00365568-GS00376607",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:438204-580871",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50613",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63780",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63780",
+      "mediaUri": "nf:82655955-2",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "396115",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396115"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "396116",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396116"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "396117",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396117"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "396118",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396118"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "396119",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396119"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "396120",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396120"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "396121",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396121"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "396122",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396122"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "396123",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396123"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "396124",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396124"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "396125",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396125"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "396126",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396126"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "407267",
+      "mediaUri": "kitsu:50613",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407267"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19961-1",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-07-01T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Definitely Weird"
+        }
+      ],
+      "uri": "anizip:19961-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19961-2",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Please Make Me Stronger!"
+        }
+      ],
+      "uri": "anizip:19961-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19961-3",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "How Did You Know?!"
+        }
+      ],
+      "uri": "anizip:19961-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19961-4",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I`ll Wait"
+        }
+      ],
+      "uri": "anizip:19961-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19961-5",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Can`t Not Think About It"
+        }
+      ],
+      "uri": "anizip:19961-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19961-6",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "It`s Fine, Right?"
+        }
+      ],
+      "uri": "anizip:19961-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19961-7",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Because I Want to Stay by Your Side Forever"
+        }
+      ],
+      "uri": "anizip:19961-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19961-8",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Doctor`s Boyfriend?"
+        }
+      ],
+      "uri": "anizip:19961-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19961-9",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dont`t Look!!"
+        }
+      ],
+      "uri": "anizip:19961-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19961-10",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Did You Do It?!"
+        }
+      ],
+      "uri": "anizip:19961-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19961-11",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "What Do You Want?"
+        }
+      ],
+      "uri": "anizip:19961-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19961-12",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "No Helping It"
+        }
+      ],
+      "uri": "anizip:19961-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "19961-13",
+      "mediaUri": "anizip:19961",
+      "origin": "anizip",
+      "releaseDate": "2026-09-23T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19961-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00365568-GS00376607-GE00366184JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-07-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Definitely Weird"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366184JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00365568-GS00376607-GE00366185JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-07-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Please Make Me Stronger!"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366185JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00365568-GS00376607-GE00366186JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-07-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "How Did You Know?!"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366186JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00365568-GS00376607-GE00366187JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-07-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I'll Wait"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366187JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00365568-GS00376607-GE00366188JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-07-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Can't Not Think About It"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366188JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00365568-GS00376607-GE00366189JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-07-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "It's Fine, Right?"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366189JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00365568-GS00376607-GE00366190JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-08-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Because I Want to Stay By Your Side Forever"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366190JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00365568-GS00376607-GE00366191JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-08-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Teacher's Boyfriend?"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366191JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00365568-GS00376607-GE00366192JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-08-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Don't Look!!"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366192JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00365568-GS00376607-GE00366193JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-08-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Did You Do It?!"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366193JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00365568-GS00376607-GE00366194JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-09-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "What Do You Want?"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366194JAJP"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "GT00365568-GS00376607-GE00366195JAJP",
+      "mediaUri": "cr:GT00365568-GS00376607",
+      "origin": "cr",
+      "releaseDate": "2026-09-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "It Can't Be Helped"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607-GE00366195JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10648118",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Definitely Weird"
+        }
+      ],
+      "uri": "jw:10648118"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10648119",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Please Make Me Stronger!"
+        }
+      ],
+      "uri": "jw:10648119"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10648120",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "How Did You Know?!"
+        }
+      ],
+      "uri": "jw:10648120"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10648121",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'll Wait"
+        }
+      ],
+      "uri": "jw:10648121"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10648122",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Can't Not Think About It"
+        }
+      ],
+      "uri": "jw:10648122"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10648123",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "It's Fine, Right?"
+        }
+      ],
+      "uri": "jw:10648123"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10648124",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Because I Want to Stay by Your Side Forever"
+        }
+      ],
+      "uri": "jw:10648124"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10648125",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Teacher's Boyfriend?"
+        }
+      ],
+      "uri": "jw:10648125"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10648126",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Don't Look!!"
+        }
+      ],
+      "uri": "jw:10648126"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10648127",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Did You Do It?!"
+        }
+      ],
+      "uri": "jw:10648127"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10648128",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "What Do You Want?"
+        }
+      ],
+      "uri": "jw:10648128"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10648129",
+      "mediaUri": "jw:438204-580871",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "No Helping It"
+        }
+      ],
+      "uri": "jw:10648129"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82655981",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Definitely Weird"
+        }
+      ],
+      "uri": "nf:82655981"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82655982",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82655982"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82655983",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82655983"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82655984",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82655984"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82655985",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82655985"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82655986",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82655986"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82655987",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82655987"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82655988",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82655988"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82655989",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82655989"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82655990",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82655990"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82655991",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82655991"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82655992",
+      "mediaUri": "nf:82655955-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82655992"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19961-1",
+        "b": "cr:GT00365568-GS00376607-GE00366184JAJP"
+      },
+      {
+        "a": "anizip:19961-2",
+        "b": "cr:GT00365568-GS00376607-GE00366185JAJP"
+      },
+      {
+        "a": "anizip:19961-3",
+        "b": "cr:GT00365568-GS00376607-GE00366186JAJP"
+      },
+      {
+        "a": "anizip:19961-4",
+        "b": "cr:GT00365568-GS00376607-GE00366187JAJP"
+      },
+      {
+        "a": "anizip:19961-5",
+        "b": "cr:GT00365568-GS00376607-GE00366188JAJP"
+      },
+      {
+        "a": "anizip:19961-6",
+        "b": "cr:GT00365568-GS00376607-GE00366189JAJP"
+      },
+      {
+        "a": "anizip:19961-7",
+        "b": "cr:GT00365568-GS00376607-GE00366190JAJP"
+      },
+      {
+        "a": "anizip:19961-10",
+        "b": "cr:GT00365568-GS00376607-GE00366193JAJP"
+      },
+      {
+        "a": "anizip:19961-11",
+        "b": "cr:GT00365568-GS00376607-GE00366194JAJP"
+      },
+      {
+        "a": "anizip:19961-1",
+        "b": "jw:10648118"
+      },
+      {
+        "a": "anizip:19961-2",
+        "b": "jw:10648119"
+      },
+      {
+        "a": "anizip:19961-3",
+        "b": "jw:10648120"
+      },
+      {
+        "a": "anizip:19961-4",
+        "b": "jw:10648121"
+      },
+      {
+        "a": "anizip:19961-5",
+        "b": "jw:10648122"
+      },
+      {
+        "a": "anizip:19961-6",
+        "b": "jw:10648123"
+      },
+      {
+        "a": "anizip:19961-7",
+        "b": "jw:10648124"
+      },
+      {
+        "a": "anizip:19961-10",
+        "b": "jw:10648127"
+      },
+      {
+        "a": "anizip:19961-11",
+        "b": "jw:10648128"
+      },
+      {
+        "a": "anizip:19961-12",
+        "b": "jw:10648129"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:209669",
+        "whole": "cr:GT00365568"
+      }
+    ],
+    "together": [
+      [
+        "anilist:209669",
+        "kitsu:50613",
+        "mal:63780",
+        "offline:mal-63780",
+        "anizip:19961",
+        "cr:GT00365568-GS00376607",
+        "jw:438204-580871"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Hana-Kimi Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "209669",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 02 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Hana-Kimi Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Hanazakari no Kimitachi e 2nd Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "花ざかりの君たちへ 第2期"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:209669"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "50613",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hana-Kimi Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hanazakari no Kimitachi e 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "花ざかりの君たちへ 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50613"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "63780",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hana-Kimi Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Hanazakari no Kimitachi e 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63780"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63780",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hanazakari no Kimitachi e 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63780"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19961",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hana-Kimi (2026)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "花ざかりの君たちへ (2026)"
+        }
+      ],
+      "uri": "anizip:19961"
+    },
+    {
+      "id": "GT00365568",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00365568"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "GT00365568-GS00376607",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Hana-Kimi"
+        }
+      ],
+      "uri": "cr:GT00365568-GS00376607"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "438204-580871",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:438204-580871"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "82655955-2",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hana-Kimi"
+        }
+      ],
+      "uri": "nf:82655955-2"
+    }
+  ],
+  "source": {
+    "answers": [
+      "56a707f61e7e459d2707d84d2425b9877c772b01c3cb41b4c5aeb58a74996943",
+      "42e259ae5a4ac3adf96c59daa3bfbfc884d2455546aa22808bc6d35d8dd08d82",
+      "6e22b2ff3ca2041033efd0913b3f02df9705e3b23e239372f2fc79e9e2074764",
+      "6e52387842ea4312fd53d170234e59e37ce587cefe48d3286cd65fc0e9733e26",
+      "acce89c5cca7289576fd884d073a1fb330f137d9de117c62c7b2bf28a53843f6",
+      "7ca4d3b61a55bcae4d35f4031f9d39237fa0bafa72cb1612602149e35516e960",
+      "3d0f650ebfd6f8be312590c09e4aff5e1800695d55eb259d0cb51697d7169c13",
+      "034c6eec2497f136df6f18fdc37a171ad54425df1d528b77afafbfaaa87c1325",
+      "fd9f084780f2fb43c7e853fdc983c23d121ebe9a1eae2c71408a2fd8b393c17c",
+      "692af739f74128769c349d34f07c432ebeed6ec8b8d4d96270313440e15521f9",
+      "6052a347f99ce7a0dea6d54bb0ec617e94c578fd6d831f25d6aaed655be03021"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:209669,kitsu:50613,mal:63780,offline:mal-63780)"
+  },
+  "why": "The run is the second season of Hana-Kimi, a 13 episode summer 2026 show that started 2026-07-02 and is still airing (anilist and kitsu give an end of 2026-09-17, anizip still lists episode 13 as unaired on 2026-09-23). anizip:19961 is the same run: it carries first-party SAME_AS ids to both mal:63780 and anilist:209669 and lists the same 13 episodes. cr:GT00365568-GS00376607 is the same run: it maps SAME_AS to all four members and its 12 listed episodes carry this run's episode titles in the same order (Definitely Weird, How Did You Know?!, Did You Do It?!, What Do You Want? are byte identical to anizip's), with only the 13th episode missing because it has not aired. jw:438204-580871 is the same run: it maps SAME_AS to anilist, anizip, kitsu, mal and offline and its 12 episode titles match anizip's one for one, its 2026-01-01 start being a JustWatch placeholder rather than an air date. cr:GT00365568 is the bare Hana-Kimi series page with no episodes or dates of its own, so it holds the run rather than being it. Crunchyroll and JustWatch episodes are paired to anizip's by exact title only, since Crunchyroll's dates run a week ahead of anizip's from episode 2 (both list 2026-07-01 for episodes 1 and 2) and JustWatch carries no dates at all; episodes 8 and 9 are left unpaired because the titles disagree there (The Doctor`s Boyfriend? against Teacher's Boyfriend?, Dont`t Look!! against Don't Look!!), as is Crunchyroll episode 12 (It Can't Be Helped against No Helping It). nf:82655955-2 is left unsettled: it has no dates, 12 episodes against the run's 13, and every title after the first is the placeholder Episode N, so nothing places it."
+}

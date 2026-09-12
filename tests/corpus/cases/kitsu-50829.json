@@ -1,0 +1,564 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch row is the hard part: equal episode count and a SAME_AS claim, but no title, a year-placeholder start date and no dates on either side's episodes, so it is left unasserted and flagged rather than merged on the count. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50829",
+      "mediaUri": "offline:kitsu-50829",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50829",
+      "mediaUri": "jw:358381-366295",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50829",
+      "mediaUri": "jw:358381-366295",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50829",
+      "mediaUri": "nf:81488898",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50829",
+      "mediaUri": "nf:81488898",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405564",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405564"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405565",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405565"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405566",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405566"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405567",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405567"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405568",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405568"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405569",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405569"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405570",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405570"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405571",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405571"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405572",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405572"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405573",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405573"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405574",
+      "mediaUri": "kitsu:50829",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405574"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "6733610",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Awakening"
+        }
+      ],
+      "uri": "jw:6733610"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10069507",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Welcome to Kal Asterock (1)"
+        }
+      ],
+      "uri": "jw:10069507"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10397350",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Welcome to Kal Asterock (2)"
+        }
+      ],
+      "uri": "jw:10397350"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10397351",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": " The Fifth Banner"
+        }
+      ],
+      "uri": "jw:10397351"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10397352",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": " The Armorer of Mestras"
+        }
+      ],
+      "uri": "jw:10397352"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10397353",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": " Out of Their League"
+        }
+      ],
+      "uri": "jw:10397353"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10397354",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Sum of its Parts"
+        }
+      ],
+      "uri": "jw:10397354"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10397355",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dragon Fever"
+        }
+      ],
+      "uri": "jw:10397355"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10397356",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Dragon Within"
+        }
+      ],
+      "uri": "jw:10397356"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10397357",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Leech"
+        }
+      ],
+      "uri": "jw:10397357"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10397358",
+      "mediaUri": "jw:358381-366295",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Revelations"
+        }
+      ],
+      "uri": "jw:10397358"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81715477",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81715477"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81715478",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81715478"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81715479",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81715479"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81715480",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81715480"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81715481",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81715481"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81715482",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81715482"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81715483",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81715483"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81715484",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81715484"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81715485",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81715485"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81715486",
+      "mediaUri": "nf:81488898",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81715486"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81488898",
+        "kitsu:50829"
+      ]
+    ],
+    "together": [
+      [
+        "kitsu:50829",
+        "offline:kitsu-50829"
+      ]
+    ],
+    "unrelated": [
+      "nf:81488898"
+    ]
+  },
+  "name": "Dragon Striker",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "50829",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Dragon Striker"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50829"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "kitsu-50829",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dragon Striker"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "offline:kitsu-50829"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "358381-366295",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:358381-366295"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81488898",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dragon Sakura S2"
+        }
+      ],
+      "uri": "nf:81488898"
+    }
+  ],
+  "source": {
+    "answers": [
+      "befbf2a01c16c2de48b41c5e177518d97ee00d4942e11abb19a7edf3a9a036d1",
+      "b82dfae33a65ed62808d08115350cdadb37db54fe57c9efac242564f38c848df",
+      "6efe3812ce68c16dd79efe9235c75989f0a213ed4c01c317fb82469060d3bf9e",
+      "fd335468d8551fb58a8e23b88802c178239b1fadb9254bb5da862cfcd877c3ab",
+      "795d22b2f5a4b4137f35896036c11614460d9887da72f54ea4447655a540b728",
+      "7d1ddbfb58cd7c8153402d1fec2c54256f0020e1a1ed0b7ee2513d1c85f45ffc",
+      "9d5595e5028f3a5c296344fb04bb382553f418aae97d5d43e63b0cf44a6345d8",
+      "8b37e7a8bda8e666d9980b2daafa17d6ae95d34ba31a5a31086aab1d623c505d",
+      "fe11938d4ed07f8699c7dc4f953b634994365c29efce9eb1ad4b57d4c1f54398",
+      "f8eb597bc2ff8ffb65440f48f63dc2516ca52f7ae3df8aa67c0c525ebcc7ba0e",
+      "d42ef6d7326da1b61983489140723f26e262cb141a503e01892446ae70b9cf34",
+      "a2c0566941a97482ed36892300eb2bc61ca17ddf92363fab91bed813b9b3a80a",
+      "f65ef7d414c5652b4ef2780ec42550f01f7a4971b75769dfc0e35d35425c857b",
+      "3cdf2ee8d0be808b8e8775f227d3daead77ea8b339f47f41f65aac8c336a4e3c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50829,offline:kitsu-50829)"
+  },
+  "why": "Dragon Striker is an eleven episode Summer 2026 special whose Kitsu row starts 2026-06-09; Kitsu and the offline database give the same title and the same count of 11 and the offline row claims SAME_AS kitsu:50829, so those two rows are one run. The Netflix row is a different work despite claiming SAME_AS to both members: it is titled Dragon Sakura S2, starts 2021-01-01 and carries ten placeholder episode titles (Episode 1 through Episode 10), which shares nothing with this run but the word Dragon. The JustWatch row is left unsettled: it also claims SAME_AS to both members and its count of 11 matches, but it has no title, its start date is the year placeholder 2026-01-01 rather than the run's 2026-06-09, and its eleven titled episodes have no release dates while the run's eleven Kitsu episodes have neither titles nor dates, so nothing can be lined up and a matching count alone places nothing."
+}

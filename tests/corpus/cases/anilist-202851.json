@@ -1,0 +1,608 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Only the offline row had to be judged; the 52 Kitsu episode rows carry neither title nor date, so no episode was paired and no container row came back for the parent series. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:63240"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63240",
+      "mediaUri": "anilist:202851",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63240",
+      "mediaUri": "kitsu:50789",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202851",
+      "mediaUri": "kitsu:50789",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63240",
+      "mediaUri": "offline:mal-63240",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50789",
+      "mediaUri": "offline:mal-63240",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404484",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404484"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404485",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404485"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404486",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404486"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404487",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404487"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404488",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404488"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404489",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404489"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404490",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404490"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404491",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404491"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404492",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404492"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404493",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404493"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404494",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404494"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404495",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404495"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404496",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404496"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404497",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404497"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404498",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404498"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404499",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404499"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404500",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404500"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404501",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404501"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404502",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404502"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404503",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404503"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404504",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404504"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404505",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404505"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "404506",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404506"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "404507",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404507"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "404508",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404508"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "404509",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404509"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "404510",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404510"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "404511",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404511"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "404512",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404512"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "404513",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404513"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "404514",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404514"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "404515",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404515"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "404516",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404516"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "404517",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404517"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "404518",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404518"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "404519",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404519"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "404520",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404520"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "404521",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404521"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "404522",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404522"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "404523",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404523"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "404524",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404524"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "404525",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404525"
+    },
+    {
+      "episodeNumber": 43,
+      "id": "404526",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404526"
+    },
+    {
+      "episodeNumber": 44,
+      "id": "404527",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404527"
+    },
+    {
+      "episodeNumber": 45,
+      "id": "404528",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404528"
+    },
+    {
+      "episodeNumber": 46,
+      "id": "404529",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404529"
+    },
+    {
+      "episodeNumber": 47,
+      "id": "404530",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404530"
+    },
+    {
+      "episodeNumber": 48,
+      "id": "404531",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404531"
+    },
+    {
+      "episodeNumber": 49,
+      "id": "404532",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404532"
+    },
+    {
+      "episodeNumber": 50,
+      "id": "404533",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404533"
+    },
+    {
+      "episodeNumber": 51,
+      "id": "404534",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404534"
+    },
+    {
+      "episodeNumber": 52,
+      "id": "404535",
+      "mediaUri": "kitsu:50789",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404535"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:202851",
+        "kitsu:50789",
+        "offline:mal-63240"
+      ]
+    ]
+  },
+  "name": "A Record Of Mortal's Journey To Immortality 5th Season",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "202851",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 13 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Fanren Xiu Xian Zhuan Di Wu Ji"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "凡人修仙传 第五季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:202851"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "50789",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-13",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Record Of Mortal's Journey To Immortality 5th Season"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Fanren Xiu Xian Zhuan: Mulan Zhi Zhan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50789"
+    },
+    {
+      "id": "63240",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:63240"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "mal-63240",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fanren Xiu Xian Zhuan: Mulan Zhi Zhan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-63240"
+    }
+  ],
+  "source": {
+    "answers": [
+      "fc51aa05fdee48119d69c7a738cd0a23a80335f6b620d9ae05d34b90960fc766",
+      "bcc49a8c2984e7e9db267894a5e4e17c442d5a5d50626fad6fda44fc2012675f",
+      "01f0415f785db50710071dda3f5c26d50c9d6655359e7574474d73643fb25895",
+      "38de55e125f27ef51ba6a407272f798492bca071529b2df107df92428bb79652"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:202851,kitsu:50789,mal:63240)"
+  },
+  "why": "A Record Of Mortal's Journey To Immortality 5th Season is a 52 episode Chinese ONA that began 2026-06-13 and is still releasing, held on AniList, Kitsu and MyAnimeList. offline:mal-63240 is the same run: it claims SAME_AS to both mal:63240 and kitsu:50789, its count of 52 matches the AniList and Kitsu count, and its title Fanren Xiu Xian Zhuan: Mulan Zhi Zhan is the second Kitsu title."
+}

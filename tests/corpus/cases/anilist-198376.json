@@ -1,0 +1,1058 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch episode titles are romaji where anizip's English column is a translation, so the pairing rests on anizip's Japanese column, which the romaji matches one for one at every one of the 13 positions; only episodes 1 and 13 would match on the English column alone. The Netflix row claims SAME_AS to four members yet is a 2022 live action renovation series. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62430",
+      "mediaUri": "anilist:198376",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62430",
+      "mediaUri": "kitsu:50137",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198376",
+      "mediaUri": "kitsu:50137",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62430",
+      "mediaUri": "offline:mal-62430",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198376",
+      "mediaUri": "offline:mal-62430",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50137",
+      "mediaUri": "offline:mal-62430",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62430",
+      "mediaUri": "anizip:19566",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198376",
+      "mediaUri": "anizip:19566",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198376",
+      "mediaUri": "jw:495575-572634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19566",
+      "mediaUri": "jw:495575-572634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50137",
+      "mediaUri": "jw:495575-572634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62430",
+      "mediaUri": "jw:495575-572634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62430",
+      "mediaUri": "jw:495575-572634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198376",
+      "mediaUri": "nf:81032737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50137",
+      "mediaUri": "nf:81032737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62430",
+      "mediaUri": "nf:81032737",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62430",
+      "mediaUri": "nf:81032737",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "386997",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386997"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "386998",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386998"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "386999",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386999"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "387000",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387000"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "387001",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387001"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "387002",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387002"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "387003",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387003"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "387004",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387004"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "387005",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387005"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "387006",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387006"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "387007",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387007"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "387008",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387008"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "387009",
+      "mediaUri": "kitsu:50137",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387009"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19566-1",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mewtype"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "みゅーたいぷ"
+        }
+      ],
+      "uri": "anizip:19566-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19566-2",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Smooch!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ちゅ~"
+        }
+      ],
+      "uri": "anizip:19566-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19566-3",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Suit Yourself!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "すきにしろ"
+        }
+      ],
+      "uri": "anizip:19566-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19566-4",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Might Be Fun"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "たのしいかも"
+        }
+      ],
+      "uri": "anizip:19566-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19566-5",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Help"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "たすけて"
+        }
+      ],
+      "uri": "anizip:19566-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19566-6",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Destiny"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "うんめい"
+        }
+      ],
+      "uri": "anizip:19566-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19566-7",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Turning Over a New Leaf"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "こころあらたに"
+        }
+      ],
+      "uri": "anizip:19566-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19566-8",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Gold Star"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "はなまる"
+        }
+      ],
+      "uri": "anizip:19566-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19566-9",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Disbandment"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "かいさん"
+        }
+      ],
+      "uri": "anizip:19566-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19566-10",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sea"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "うみ"
+        }
+      ],
+      "uri": "anizip:19566-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19566-11",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "That Was Fun"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "たのしかった"
+        }
+      ],
+      "uri": "anizip:19566-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19566-12",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Goodbye"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "わかれ"
+        }
+      ],
+      "uri": "anizip:19566-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "19566-13",
+      "mediaUri": "anizip:19566",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mugendai Mewtype"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "夢限大みゅーたいぷ"
+        }
+      ],
+      "uri": "anizip:19566-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10509818",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "MewType"
+        }
+      ],
+      "uri": "jw:10509818"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10513657",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chu~"
+        }
+      ],
+      "uri": "jw:10513657"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10513729",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Suki ni Shiro"
+        }
+      ],
+      "uri": "jw:10513729"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10551179",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tanoshii Kamo"
+        }
+      ],
+      "uri": "jw:10551179"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10551236",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tasukete"
+        }
+      ],
+      "uri": "jw:10551236"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10551330",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Unmei"
+        }
+      ],
+      "uri": "jw:10551330"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10550907",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kokoro Arata ni"
+        }
+      ],
+      "uri": "jw:10550907"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10551016",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hanamaru"
+        }
+      ],
+      "uri": "jw:10551016"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10551096",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kaisan"
+        }
+      ],
+      "uri": "jw:10551096"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10550992",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Umi"
+        }
+      ],
+      "uri": "jw:10550992"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10551040",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tanoshikatta"
+        }
+      ],
+      "uri": "jw:10551040"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10551124",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Wakare"
+        }
+      ],
+      "uri": "jw:10551124"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "10551157",
+      "mediaUri": "jw:495575-572634",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mugendai MewType"
+        }
+      ],
+      "uri": "jw:10551157"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81110517",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Baby On Board"
+        }
+      ],
+      "uri": "nf:81110517"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81110518",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Schoolhouse Rock"
+        }
+      ],
+      "uri": "nf:81110518"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81110520",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Room With A View"
+        }
+      ],
+      "uri": "nf:81110520"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81110524",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "9 Is Enough"
+        }
+      ],
+      "uri": "nf:81110524"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81110521",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dirty Work"
+        }
+      ],
+      "uri": "nf:81110521"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81110522",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Flowers In Bloom"
+        }
+      ],
+      "uri": "nf:81110522"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81110523",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Art Of Giving"
+        }
+      ],
+      "uri": "nf:81110523"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81110519",
+      "mediaUri": "nf:81032737",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Four Years In One Day"
+        }
+      ],
+      "uri": "nf:81110519"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81032737",
+        "anilist:198376"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19566-1",
+        "b": "jw:10509818"
+      },
+      {
+        "a": "anizip:19566-2",
+        "b": "jw:10513657"
+      },
+      {
+        "a": "anizip:19566-3",
+        "b": "jw:10513729"
+      },
+      {
+        "a": "anizip:19566-4",
+        "b": "jw:10551179"
+      },
+      {
+        "a": "anizip:19566-5",
+        "b": "jw:10551236"
+      },
+      {
+        "a": "anizip:19566-6",
+        "b": "jw:10551330"
+      },
+      {
+        "a": "anizip:19566-7",
+        "b": "jw:10550907"
+      },
+      {
+        "a": "anizip:19566-8",
+        "b": "jw:10551016"
+      },
+      {
+        "a": "anizip:19566-9",
+        "b": "jw:10551096"
+      },
+      {
+        "a": "anizip:19566-10",
+        "b": "jw:10550992"
+      },
+      {
+        "a": "anizip:19566-11",
+        "b": "jw:10551040"
+      },
+      {
+        "a": "anizip:19566-12",
+        "b": "jw:10551124"
+      },
+      {
+        "a": "anizip:19566-13",
+        "b": "jw:10551157"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:198376",
+        "kitsu:50137",
+        "mal:62430",
+        "offline:mal-62430",
+        "anizip:19566",
+        "jw:495575-572634"
+      ]
+    ],
+    "unrelated": [
+      "nf:81032737"
+    ]
+  },
+  "name": "BanG Dream! YUME∞MITA",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "198376",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 02 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "BanG Dream! YUME∞MITA"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "BanG Dream! Yume∞Mita"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "バンドリ！ ゆめ∞みた"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:198376"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "50137",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Bang Dream! Yume∞Mita"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "バンドリ！ ゆめ∞みた"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50137"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "62430",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "BanG Dream! Yume∞Mita"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62430"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "mal-62430",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BanG Dream! Yume∞Mita"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62430"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19566",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bang Dream! Yumemita"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "BanG Dream! ゆめ∞みた"
+        }
+      ],
+      "uri": "anizip:19566"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "495575-572634",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:495575-572634"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81032737",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Instant Dream Home"
+        }
+      ],
+      "uri": "nf:81032737"
+    }
+  ],
+  "source": {
+    "answers": [
+      "5f80ae444c47af4edcfc74c672d5f096e428ed9a96eadc48a16b724bb75290fa",
+      "c00680be1a78c3054448dfd1bed5cf7c580b697c5038e2a9c1dd9a1173d22b82",
+      "e61eea6cc79175391f12270e811809fb2e19b961e562f5b25ee30d29ee4045d1",
+      "b7656c832446204a87f21b5a8c8def80c09d9b02c0fa7a408303540fbb413132",
+      "7b4e830495b6e6aa23df3c79e0ae6331a2da0d5fb8239b524e9eed7580618da9",
+      "f4d87eed66c5576eea5f95c2e768b97d1007f630ac3dec65f8f4cd5af831d307",
+      "73602f65672317513dce9a5fb3a3bb7ea92935bbc2bea33fdc848f0ea296b8e1",
+      "9f32e00fa89324cb265bafcffef1796085cf2e51ffccb06f0a50d0d64999511d",
+      "4aa46f343760e75de076cf008418c0dddfbd46a167aa3015f1cb3c634e7a987f",
+      "52701614fac187113c12621829f8bdf6c6085142b8c074d8488e79f109c683b9",
+      "932965554ac8c427bf1ea6f7caf13c29ed15ba5ab31bd53f95c7416e4dd11772",
+      "fce211b960fd945da992f83492e119510a72b1d42dcf7cf66b8a3509dd979216",
+      "97a6626ed0f8347dbc34cbbb858bd13469a098a2673de7cc47ddef25cbd8a1a6",
+      "093a3837c7dfb531571ecdb745664d7b4c324a3afe55e56f87cf74970fee3699",
+      "79d01a05e04843f9da6e62677de5419628b23628aec96dc27eabee93ddae7f68",
+      "68f2c230d59eac15bcaef692b0a3e606f9971ad8ac9b0f5042452d902182a586"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:198376,kitsu:50137,mal:62430,offline:mal-62430)"
+  },
+  "why": "The run is BanG Dream! YUME MITA, 13 episodes that ran 2026-07-02 to 2026-09-10 and have finished, with the first three going out together on the opening day. anizip:19566 is the same run: it carries first-party SAME_AS ids to both mal:62430 and anilist:198376, gives the same count of 13, and its episode 13 lands on 2026-09-10, the end date anilist and kitsu give. jw:495575-572634 is the same run: it points SAME_AS at anilist, anizip, kitsu, mal and offline, lists exactly 13 episodes, and its episode titles are the romanisation of anizip's Japanese ones one for one in order (Chu~ for chu~, Suki ni Shiro for sukinishiro, Tanoshii Kamo for tanoshiikamo, Kokoro Arata ni for kokoroaratani, Kaisan for kaisan), with MewType and Mugendai MewType at positions 1 and 13 matching anizip's English titles as well; its 2026-01-01 start is a JustWatch placeholder, not an air date. The 13 JustWatch episodes are paired to anizip's on that title match, which is one to one with no position left ambiguous, since JustWatch carries no dates and anizip puts episodes 1 to 3 on the same day. nf:81032737 is a different work: it is Instant Dream Home, the 2022 Netflix home renovation show, whose eight episodes are Baby On Board, Schoolhouse Rock and the like, and it has been attached here only by the word Dream."
+}

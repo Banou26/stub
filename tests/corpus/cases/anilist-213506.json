@@ -1,0 +1,315 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Kitsu counts 15 episodes where MyAnimeList and one offline entry count 12, but the ids tie every row to the same cour and no row sits outside the run, so the count spread changes nothing. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64378",
+      "mediaUri": "anilist:213506",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213506",
+      "mediaUri": "kitsu:50803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213506",
+      "mediaUri": "offline:anilist-213506",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50803",
+      "mediaUri": "offline:anilist-213506",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64378",
+      "mediaUri": "offline:mal-64378",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404848",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404848"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404849",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404849"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404850",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404850"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404851",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404851"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404852",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404852"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404853",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404853"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404854",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404854"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404855",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404855"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404856",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404856"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404857",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404857"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404858",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404858"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404859",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404859"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404860",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404860"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404861",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404861"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404862",
+      "mediaUri": "kitsu:50803",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404862"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213506",
+        "kitsu:50803",
+        "mal:64378",
+        "offline:anilist-213506",
+        "offline:mal-64378"
+      ]
+    ]
+  },
+  "name": "Hokuto no Ken: Kenou-gun Zako-tachi no Banka Part 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213506",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Hokuto no Ken: Kenou-gun Zako-tachi no Banka Part 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "北斗の拳 拳王軍ザコたちの挽歌 第2クール"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:213506"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 15,
+      "id": "50803",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hokuto no Ken: Kenou-gun Zako-tachi no Banka 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "北斗の拳 拳王軍ザコたちの挽歌 第2クール"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50803"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "64378",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Elegy for the Henchmen: Fist of the North Star Part 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Hokuto no Ken: Kenougun Zako-tachi no Banka Part 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:64378"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "anilist-213506",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hokuto no Ken: Kenou-gun Zako-tachi no Banka 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-213506"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-64378",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hokuto no Ken: Kenougun Zako-tachi no Banka Part 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-64378"
+    }
+  ],
+  "source": {
+    "answers": [
+      "0f53e6b54aeea7f2c87de67c2c5b3cf4d94645eed02a1ab3fe8518da84aa415a",
+      "40bc1e00f452e139f3eebf055ffcb68aa0511a7d78f5a70e527ddc34e234db88",
+      "4cef5bc9a50f74d8cd5624925e27525c3b080f7a3679105a22e862013b336e7d",
+      "0fe6b999474636320e5adb95581aafca32cdd76213beb264a76e517277c99fa8",
+      "1611b267a44cbf9f1d569b9391bd74638972a1e916ffcb18cb8bb04fd84e9202"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213506,kitsu:50803,mal:64378,offline:anilist-213506,offline:mal-64378)"
+  },
+  "why": "The run is the second cour of the Fist of the North Star short series Kenou-gun Zako-tachi no Banka, which began 2026-07-06 in summer 2026. All five rows anilist:213506, kitsu:50803, mal:64378, offline:anilist-213506 and offline:mal-64378 are one run: Kitsu maps SAME_AS to anilist:213506, AniList maps SAME_AS to mal:64378, the two offline entries map to the AniList and Kitsu ids and to the MyAnimeList id respectively, AniList and Kitsu and MyAnimeList all give startDate 2026-07-06, and the Japanese title is identical on AniList and Kitsu. No source outside the run's own address returned a row, so there is nothing else to place."
+}

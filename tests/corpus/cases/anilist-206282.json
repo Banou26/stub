@@ -1,0 +1,460 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: four member rows agreeing on ids, the 34 episode count and the 2026-07-20 start; Kitsu's 34 episode rows carry no titles or dates, so no episode pair could be asserted. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62954",
+      "mediaUri": "anilist:206282",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62954",
+      "mediaUri": "kitsu:50976",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62954",
+      "mediaUri": "offline:mal-62954",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206282",
+      "mediaUri": "offline:mal-62954",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407486",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407486"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407487",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407487"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407488",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407488"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "407489",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407489"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "407490",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407490"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "407491",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407491"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "407492",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407492"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "407493",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407493"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "407494",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407494"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "407495",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407495"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "407496",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407496"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "407497",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407497"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "407498",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407498"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "407499",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407499"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "407500",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407500"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "407501",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407501"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "407502",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407502"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "407503",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407503"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "407504",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407504"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "407505",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407505"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "407506",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407506"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "407507",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407507"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "407508",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407508"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "407509",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407509"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "407510",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407510"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "407511",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407511"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "407512",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407512"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "407513",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407513"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "407514",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407514"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "407515",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407515"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "407516",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407516"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "407517",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407517"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "407518",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407518"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "407519",
+      "mediaUri": "kitsu:50976",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407519"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:206282",
+        "kitsu:50976",
+        "mal:62954",
+        "offline:mal-62954"
+      ]
+    ]
+  },
+  "name": "The Eternal Supreme, Li Yunxiao",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "206282",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 20 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Wangu Zhizun: Li Yunxiao Zhuan"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "万古至尊：李云霄传"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:206282"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 34,
+      "id": "50976",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-20",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Eternal Supreme, Li Yunxiao"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Wangu Zhizun: Li Yunxiao Zhuan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50976"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 34,
+      "id": "62954",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-20",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Eternal Supreme, Li Yunxiao"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Wangu Zhizun: Li Yunxiao Zhuan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62954"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 34,
+      "id": "mal-62954",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Wangu Zhizun: Li Yunxiao Zhuan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62954"
+    }
+  ],
+  "source": {
+    "answers": [
+      "3c6a2a3abc5fbb5728abaadd4b1fa36c237617a8b4973d5c27d710e9f8503ff9",
+      "43635279f8749ae8fc107481588f48d24e1829799414f13d8fb40fa15d4e6def",
+      "f528437090ea726d5e5d325c1913ee59fe76396648fbd6867103f873c07cb2c3",
+      "44965bb9b15f467ceaec0b2e11bdeabd642ab9b0d3a5f46c772260b683f4ffb0"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:206282,kitsu:50976,mal:62954,offline:mal-62954)"
+  },
+  "why": "The Eternal Supreme, Li Yunxiao (Wangu Zhizun: Li Yunxiao Zhuan, 万古至尊：李云霄传) is a 34 episode Chinese ONA that began on 2026-07-20 and is still releasing. Anilist 206282, Kitsu 50976, MyAnimeList 62954 and the offline entry offline:mal-62954 are one run: Anilist, Kitsu and the offline row all map SAME_AS to mal:62954, Kitsu, MyAnimeList and the offline row all list 34 episodes, Kitsu and MyAnimeList agree on the 2026-07-20 start date, and every row carries the same pair of titles. Only these four member rows were returned, so nothing had to be held or set apart."
+}

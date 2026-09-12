@@ -1,0 +1,1596 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard row is the Netflix container: it claims SAME_AS to four members yet lists only main series Bungo Stray Dogs episodes, and one of its blocks is twelve generically titled entries that could be this season or anything else, so it is left alone and flagged rather than attached or split off. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62883",
+      "mediaUri": "anilist:201667",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201667",
+      "mediaUri": "kitsu:50328",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62883",
+      "mediaUri": "kitsu:50328",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GMEHMEN75",
+      "mediaUri": "kitsu:50328",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62883",
+      "mediaUri": "offline:mal-62883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201667",
+      "mediaUri": "offline:mal-62883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50328",
+      "mediaUri": "offline:mal-62883",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62883",
+      "mediaUri": "anizip:19698",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201667",
+      "mediaUri": "anizip:19698",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201667",
+      "mediaUri": "nf:80132126",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50328",
+      "mediaUri": "nf:80132126",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62883",
+      "mediaUri": "nf:80132126",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62883",
+      "mediaUri": "nf:80132126",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405490",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405490"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405491",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405491"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405492",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405492"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405493",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405493"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405494",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405494"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405495",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405495"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405496",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405496"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405497",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405497"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405498",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405498"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405499",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405499"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405500",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405500"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405501",
+      "mediaUri": "kitsu:50328",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405501"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19698-1",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bungo Stray Dogs Wan! The Real Returns! / Atsushi`s Sweet Recipe / Relativistic Dazai"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "文豪ストレイドッグス わん! THE REAL RETURNS! / 敦のスイーツ☆クッキング / 相対論的太宰"
+        }
+      ],
+      "uri": "anizip:19698-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19698-2",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Late Night Summons and Service / Between Freedom and Duty / Atsushi-kun and the Angel and Devil / Wan! Shorts: Won`t Stop Counting Up"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "深夜の呼び出しおもてなし / 自由と義務のはざまで / 敦君と天使と悪魔 / わん! 小ネタ カウントアップが 止まらない"
+        }
+      ],
+      "uri": "anizip:19698-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19698-3",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Hunting Dogs Are Here! / Investigate the Strongest Military Police Squad! / The Ultimate Military Police Science Squad`s (Super Scary) Hunting Dog Reasearch Lab"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "猟犬が来た! / 探れ! 軍警最強部隊 / 軍警最強科学 (ぱられる) 部隊猟犬 (こわいわんわん) 研究所"
+        }
+      ],
+      "uri": "anizip:19698-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19698-4",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Laid-Back Guild / We Intelligent Men / Kyou-chan and Lu-chan"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ゆるぎるど / 頭の善い僕たちは / きょーちゃんとルーちゃん"
+        }
+      ],
+      "uri": "anizip:19698-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19698-5",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bungo Stray Dogs Preschool 2!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "文ストほいくえん2!"
+        }
+      ],
+      "uri": "anizip:19698-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19698-6",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Reclaim Your Bygone Youth! / Oddly Incompatible / Wan! Shorts: The Cat, Akutagawa, and the Suspicious Gaze"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "取り戻せ! 青春! 過ぎ去った! 青春! / 微妙に嚙み合わない二人 / わん! 小ネタ キャッ! とやつがれ疑惑の眼差し"
+        }
+      ],
+      "uri": "anizip:19698-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19698-7",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Strength Is Everything! Survive the Night! / Sigma`s Secret"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "力こそ全て! 生き残れNight! / シグマくんのひ・み・つ"
+        }
+      ],
+      "uri": "anizip:19698-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19698-8",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Clash! At a Dangerous Field Day!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "激突! 危険な運動会!"
+        }
+      ],
+      "uri": "anizip:19698-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19698-9",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Oddly Delightful Meeting / Seize the Invisible Hand of God / A Certain Secret Meeting / Early Days"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "奇妙で愉快な待ち合わせ / 神の見えざる手を掴む / とある秘密の会合 / 設立ほやほや物語"
+        }
+      ],
+      "uri": "anizip:19698-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19698-10",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dazai, Chuuya, Age 14 (Edgelord Era): Personal Tastes / Dazai, Chuuya, Age 14: Hypothetically Speaking / An Ambitious Age / Wan! Shorts: New Teacher Atsushi-sensei!!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "太宰, 中也, 十四歳 (中二病) ~ 趣味の章 / 太宰, 中也, 十四歳 ~ もしも力があったなら / 背伸びしたいお年頃たち / わん! 小ネタ 新任教師 敦先生!!"
+        }
+      ],
+      "uri": "anizip:19698-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19698-11",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Wan! The Dark Era Chapter 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "わん! 黒の時代編 第二章"
+        }
+      ],
+      "uri": "anizip:19698-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19698-12",
+      "mediaUri": "anizip:19698",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19698-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80131687",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:80131687"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80193444",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Dark Age"
+        }
+      ],
+      "uri": "nf:80193444"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81105966",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Echo"
+        }
+      ],
+      "uri": "nf:81105966"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81663876",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 51"
+        }
+      ],
+      "uri": "nf:81663876"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80131688",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:80131688"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80193445",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nowhere to Return"
+        }
+      ],
+      "uri": "nf:80193445"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81105955",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dazai, Chuuya, Fifteen Years Old"
+        }
+      ],
+      "uri": "nf:81105955"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81663863",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 38"
+        }
+      ],
+      "uri": "nf:81663863"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81663877",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 52"
+        }
+      ],
+      "uri": "nf:81663877"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80131689",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:80131689"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80193446",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Room Where We Can Someday See the Ocean"
+        }
+      ],
+      "uri": "nf:80193446"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81105956",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The God of Fire"
+        }
+      ],
+      "uri": "nf:81105956"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81663864",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 39"
+        }
+      ],
+      "uri": "nf:81663864"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81663878",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 53"
+        }
+      ],
+      "uri": "nf:81663878"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80131690",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:80131690"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80193447",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bungo Stray Dogs"
+        }
+      ],
+      "uri": "nf:80193447"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81105957",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Only a Diamond Can Polish a Diamond"
+        }
+      ],
+      "uri": "nf:81105957"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81663865",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 40"
+        }
+      ],
+      "uri": "nf:81663865"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81663879",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 54"
+        }
+      ],
+      "uri": "nf:81663879"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80131691",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:80131691"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80193448",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Three Companies Conflict"
+        }
+      ],
+      "uri": "nf:80193448"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81105958",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My III Deeds are The Work of God"
+        }
+      ],
+      "uri": "nf:81105958"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81663866",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 41"
+        }
+      ],
+      "uri": "nf:81663866"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81663880",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 55"
+        }
+      ],
+      "uri": "nf:81663880"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80131692",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:80131692"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80193449",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Strategy of Conflict"
+        }
+      ],
+      "uri": "nf:80193449"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81105959",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Slap the Stick & Addict"
+        }
+      ],
+      "uri": "nf:81105959"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81663867",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 42"
+        }
+      ],
+      "uri": "nf:81663867"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81663881",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 56"
+        }
+      ],
+      "uri": "nf:81663881"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80131693",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:80131693"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80193450",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Will of Tycoon"
+        }
+      ],
+      "uri": "nf:80193450"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81105960",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Herurisu / Portrait of a Father"
+        }
+      ],
+      "uri": "nf:81105960"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81663868",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 43"
+        }
+      ],
+      "uri": "nf:81663868"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81663882",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 57"
+        }
+      ],
+      "uri": "nf:81663882"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80131694",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:80131694"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80193451",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Though the Mind May Be Wrong"
+        }
+      ],
+      "uri": "nf:80193451"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81105961",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fitzgerald Rising"
+        }
+      ],
+      "uri": "nf:81105961"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81663869",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 44"
+        }
+      ],
+      "uri": "nf:81663869"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81663883",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 58"
+        }
+      ],
+      "uri": "nf:81663883"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80131695",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:80131695"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80193452",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Double Black"
+        }
+      ],
+      "uri": "nf:80193452"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81105962",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Masked Assassin"
+        }
+      ],
+      "uri": "nf:81105962"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81663870",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 45"
+        }
+      ],
+      "uri": "nf:81663870"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81663884",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 59"
+        }
+      ],
+      "uri": "nf:81663884"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80131696",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:80131696"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80193453",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Part 1: Poe and Rampo / Part 2: Moby Dick, Swimming in the Sky"
+        }
+      ],
+      "uri": "nf:80193453"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81105963",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cannibalism (Part One)"
+        }
+      ],
+      "uri": "nf:81105963"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81663871",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 46"
+        }
+      ],
+      "uri": "nf:81663871"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81663885",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 60"
+        }
+      ],
+      "uri": "nf:81663885"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80131697",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:80131697"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80193454",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rashōmon, the Tiger and the Last Emperor"
+        }
+      ],
+      "uri": "nf:80193454"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81105964",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cannibalism (Part Two)"
+        }
+      ],
+      "uri": "nf:81105964"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81663872",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 47"
+        }
+      ],
+      "uri": "nf:81663872"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81663886",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 61"
+        }
+      ],
+      "uri": "nf:81663886"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80131698",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:80131698"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80193455",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "If I May Shed Away My Burden Now"
+        }
+      ],
+      "uri": "nf:80193455"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81105965",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cannibalism (Part Three)"
+        }
+      ],
+      "uri": "nf:81105965"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81663873",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 48"
+        }
+      ],
+      "uri": "nf:81663873"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81156916",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "He Walks Alone: OVA"
+        }
+      ],
+      "uri": "nf:81156916"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81663874",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 49"
+        }
+      ],
+      "uri": "nf:81663874"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81663875",
+      "mediaUri": "nf:80132126",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 50"
+        }
+      ],
+      "uri": "nf:81663875"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:201667",
+        "whole": "cr:GMEHMEN75"
+      }
+    ],
+    "together": [
+      [
+        "anilist:201667",
+        "kitsu:50328",
+        "mal:62883",
+        "offline:mal-62883",
+        "anizip:19698"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Bungo Stray Dogs WAN! 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "201667",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 02 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Bungo Stray Dogs WAN! 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Bungou Stray Dogs Wan! 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "文豪ストレイドッグス わん！２"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:201667"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50328",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Bungo Stray Dogs Wan! 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Bungou Stray Dogs Wan! 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "文豪ストレイドッグスわん！2"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50328"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62883",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bungo Stray Dogs Wan! 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Bungou Stray Dogs Wan! 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62883"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62883",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bungou Stray Dogs Wan! 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62883"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19698",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bungo Stray Dogs Wan! 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "文豪ストレイドッグス わん! 2"
+        }
+      ],
+      "uri": "anizip:19698"
+    },
+    {
+      "id": "GMEHMEN75",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GMEHMEN75"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80132126",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2016-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bungo Stray Dogs"
+        }
+      ],
+      "uri": "nf:80132126"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b66d31a3a7968163fd6405da5b1b46ea520bb7175fe0f9aaf4d1814d60456ae0",
+      "2ec66aef0f7160e80fb5453cc7d988f4220505e600f4a2e930300198d433b3b3",
+      "caf8bc0f514d2a5bda7ad28da4ffc9d58b2caec4b26de9752d2bb560c0d9aa99",
+      "7ccdc2432a6f0a8700a21377aef9a371278e30e303336487f28d09c10a247f9d",
+      "1afc689a7e3f98132ee83b5f26bd9e5bf3299c5417fa9c42173589fe593997ef",
+      "117fe665e05316549d6b6621db4d7f9381b164e3e1855696664474d65acacc3f",
+      "5462b0feee9d3991b42f1a6ab4a32dea95805e2047465033d96f04c40af343ca",
+      "dae0cadfb4b225ade0312679000672f387c6f015bd1ec0420a65621a9a9fcf20",
+      "df658abf6100589f4448bbd1307b931a5550b55abc2fee323ba6d595aa8ccee3",
+      "7b632f669cd3b682da9549e2bb2fe9f2ead24eca7ce1f89e04303d8d3cc0b595",
+      "836d2156460cd430ae2add68a0ff0926b0f3a2e762931fe5f6eb52e5221e9838",
+      "9e45afa867d4454e5c14db3010eb3ba302574f500e67a0ff9fce7e1378cf79b9",
+      "fef7c52ee499797e6894fe4af8cdaf8ef0ce8af834f988843e997f758053ebad",
+      "182d6177d4b10a473d8b57afda920ca4ae99b0a79c6deea5206a4f03d8e23786",
+      "91e276c81419c36c654ecfbf842c0c4e67be8cafe995be70d417c01172b6f27e",
+      "22afbda97e081a36d2a3fe2570a8f18ef634615e1292e850c3863b00d98b2a20",
+      "348b9e6b383f31cb337cdd83a4f1ef11a6d67db6c7e46cf7edebddf2c24b3511",
+      "3fb685409707eb4ec556abbb27cf9a86ac7c2cfa8bccdf9980c8771bdbe9e4b0",
+      "87588687d0f84462457fafd85ce726f9d040554404640507d0d519eda87d49dd",
+      "20f29884b854e2b5614453eb7a3c11bc03809328886fc84fe5c9158867393daf",
+      "213bdb15c2281831964f3526c0777f91ca154faa46362ab539f5802653ab139a",
+      "d464826cfa38b1c47ef1f2e1cfcde3da38991f3a3da2b7c01fbd846f0bc75548",
+      "aff4e0433e26f2505da004b0a6b93282ec15e9d9ec980e6b117f5a00f9727c77",
+      "67716e614964e71185e1bb16e384d5daaae3cb735e52849dc70052cafdbcaa50",
+      "34a0cbedcb55b341643094580afd84ccb667060e60b736611d492b2ecb2f1df4",
+      "354c389d26085e967cf23932a8acad9d2378db9a601b8a0cd656a0d70a997923",
+      "d3fe2e40cd48bd4b7ea9e92e8d7623857a97cf56ddc202f01347bea4bfacc53e",
+      "0479f679df29e0b1b2003de76c1c0cfa638e07da207a04b1fec8978d1bd6f893",
+      "32fd552ddb7e2dea25392fdfdd54ad9d352894d1b5b6e2350fb496741be6fa0a",
+      "97d476956d4b5eca3f636f58fb551455358109d3cbe2858d94d180b32dc88a36",
+      "fd614ec3fb1d74f84310dda0220e9ee38ffa9335ce883f188bfab9f8dc4c7f20",
+      "8c41fbebf17558b1a275e7eb9e0390748dd437a0ebd690536f49bf154c03439c",
+      "d5864545957ba3de0168cac053ebfc8a1691997806397380d72f788b88db8f19",
+      "250b497dde6af79df055c3decafc3f6ec84b269a993a8b9d3e524d45def10cb9",
+      "758254ca83640de0bf510592c737bff92fd1dcd33a00e6ecb58bc66457d11e1a",
+      "3d7ae5fbff8f4a0ebaca4d701ce5c12edf9bdb2f2803c635029af2dc449a3110",
+      "e017ac752664a3b8b341f900fb053ef0a3557886dc684ada86207e095c5e5d52",
+      "9cc68c01efd2eca2ca2979962230fa88a3c9253d26c4f1f4dc36b86700fb0717",
+      "2d745e11af90101be0539c9eef02f000eb586c3e57f525c7214580602f31a906",
+      "c9e45392cc628a29b2ca1ad0f554f2881757032a9b583141136cebb729c9958d",
+      "9c4884e7f3e0a88564dfa5ae170d242b403e572a4898eb33ab4ddc601eb14240",
+      "a926ecf138dec403714b68c82c43109875ddedccaa1386e8318343577263086c",
+      "d8733da46a981f5379bc2ea8f1f350bb89629dad22c12fc93c7f0cab525c3d30",
+      "c976d7909b0ebf7934c33b8c5a668a1a4d881484cbaf5bf2443fee9107539a96",
+      "852b87b4b3c6a05c3461d054cb05b6d5394aea7afa75e76d9cdf1470ab7efdc2",
+      "dd9196b869e58e12dd1a857bcf0221130d57674c735816efb6586f13172e1765",
+      "5a5f13eb530cc271a074ce3934a2f9d2b1318061cb68b188c83c9e124421b4d5",
+      "64564da12ffc7a36ac73abb1cf1bf0ea52918d221a0a789d5b36676dc25cadf9",
+      "3ccfb576da038cde34526fac7c5912a4a850263ec562da3b1363a5f429b49ce1",
+      "2040b4cdeb09c426635637097739cdddff237aa06749375ce2f8ff2ff6ae4345",
+      "4b2829b5bfd8edf718f91c4df357c59825878e8f367079e03a90bda82ae22810",
+      "f4e244cc634e17b41ebed05ce267a4446c269d1b68685ca41cdc98dff8a7f706",
+      "0f6b54aca982db2b33fef3cba47e6d7dc13fee132121fb3fd12ebdd6064fd6ad",
+      "dfd39d9444d47fe8c0450fa7e38d617b1ce9f2a57b78cef78ca13b83a691fa1b",
+      "699b69696b24f54f0d2c8acd0a635988a183a57a0f99b39bf38639e60ef56321",
+      "c64e7f0117e28f23b47bde05a5b098bed779f98e3b3a122175c8db5d447878a0",
+      "20920b6461dca3691ea058a0f7db93f28ad18cf239c174fde245e40aedabea4d",
+      "33b46a477e8416b75183b50b03197520561504d31e45b163e91036a39c48c004",
+      "d0c78a8a7d93d2e6b2e5827f2e39bc9504384ada5472f372bb9ebe1463ce41a9",
+      "0c068c1de3bec04cde7712a54d96970c6e9f9b9c0664ced98bf654d0bfb4b5c1",
+      "9ee1a0fe41b63de200a0a7921f89c35bb36f4b1b94fd2e81b5d87e368f8d3945",
+      "bb606399e5912ffe9ba9565e20a966f9813fce81d49eb00b80dbd90aa64e6b49",
+      "cb03180ee3fdf3a4e308e51591798d782ece15393a79f35dce7c3c4405d7e6c7",
+      "a552e76f761d19b374ac37c2b90afad43f75f8a85d3318f45b6b5efc8e74fca1",
+      "54757281a1fff4946485652099611a07710258dbc012c7db33e082f04fe7b7be",
+      "9f04ddf1984ddc5b402fb5218b72ac833245152815d7ece51975bb566918abb5",
+      "a12ef01fc48785ad437870fda0a5bbbaa4b9f7af2a533e549ceea0d95f0a1979"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:201667,kitsu:50328,mal:62883,offline:mal-62883)"
+  },
+  "why": "The run is Bungo Stray Dogs Wan! 2, the second season of the chibi short spinoff, 12 episodes from 2026-07-02 to 2026-09-17 and still airing. anizip:19698 is the same run: it carries first-party SAME_AS ids to both mal:62883 and anilist:201667, gives the same count of 12, and its episode 1 goes out 2026-07-02T12:30Z, the day the members give as the start. cr:GMEHMEN75 is the bare Crunchyroll series page for Bungo Stray Dogs Wan!, with no episodes, count or dates of its own, and kitsu:50328 already files itself under it as PART_OF, so it holds the run. nf:80132126 is left unsettled: it is the Netflix Bungo Stray Dogs title dated 2016-01-01, and the roughly sixty episodes it lists are main series ones (The Dark Age, Double Black, Cannibalism, numbered blocks running to 61) with not one Wan! title among them, so it cannot be told whether the franchise page also carries this short season or covers only the main show."
+}

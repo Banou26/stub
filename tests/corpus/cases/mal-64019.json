@@ -1,0 +1,82 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Thin run: only the mal entry and its offline mirror, no episodes on either, so the whole case is the one member pair. The second half of a two part film, but no row for the first part or for a container came back, so nothing was asserted about that. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64019",
+      "mediaUri": "offline:mal-64019",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64019",
+        "offline:mal-64019"
+      ]
+    ]
+  },
+  "name": "Sound! Euphonium: The Final Movie Part 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64019",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-11",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sound! Euphonium: The Final Movie Part 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Saishuu Gakushou Hibike! Euphonium: Kouhen"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64019"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64019",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saishuu Gakushou Hibike! Euphonium: Kouhen"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-64019"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9b24f4744fdb19337034a886ac24ae1299773b96bfecdb0dd3a81767d5e20f60",
+      "90476fbcb4152351d93629d731e429581fd772cd8b090245b03785eecc3f504d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64019,offline:mal-64019)"
+  },
+  "why": "The run is the one episode film Sound! Euphonium: The Final Movie Part 2 (Saishuu Gakushou Hibike! Euphonium: Kouhen), released 2026-09-11 on mal 64019, with the offline database row keyed on that same mal id mapping SAME_AS to it. Nothing else came back: no anilist, kitsu or anizip row and no streaming row, so there is nothing to merge, hold or set apart."
+}

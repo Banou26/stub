@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: three metadata rows only, joined by SAME_AS ids onto mal:64292 and agreeing on 2026-08-28. The apostrophe in Kon'in is a typographic one on anilist and plain on mal and offline, which is spelling rather than a different title. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64292",
+      "mediaUri": "anilist:212574",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64292",
+      "mediaUri": "offline:mal-64292",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:212574",
+        "mal:64292",
+        "offline:mal-64292"
+      ]
+    ]
+  },
+  "name": "Pure x Holic: Junketsu Otome to Kon’in Kankei!? The Animation",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "212574",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 28 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Pure x Holic: Junketsu Otome to Kon’in Kankei!? The Animation"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ピュアホリック ～純潔乙女と婚姻カンケイ！？～ The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:212574"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64292",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Pure x Holic: Junketsu Otome to Konin Kankei!? The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64292"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-64292",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pure x Holic: Junketsu Otome to Konin Kankei!? The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64292"
+    }
+  ],
+  "source": {
+    "answers": [
+      "be9d1cc73a07bc5e33d209c7f4936067cfa90813436aef51bf3472254ad41853",
+      "aaab1c449ee96f26fe935802e77060f5a5f074f049a8fbf41aa024f3c672f66d",
+      "be7ce500a3e311dd638aa3e4f3a80fc89c711b2cf9bf801d5b359f9d5559fb84"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:212574,mal:64292,offline:mal-64292)"
+  },
+  "why": "Pure x Holic: Junketsu Otome to Kon'in Kankei!? The Animation, a two episode adult OVA dated 2026-08-28. The three catalogue rows are one run: anilist:212574 carries a SAME_AS handle to mal:64292 and offline:mal-64292 carries one as well, anilist and mal agree on the day-precise date 28 Aug 2026 under the same title, and anilist and offline agree on episodeCount 2 (mal lists no count yet). No streaming season, container or episode row came back for this run, so nothing is held, spanned or ruled out."
+}

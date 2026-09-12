@@ -1,0 +1,49 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to weigh: the run has a single MyAnimeList row and no other source returned anything. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64802"
+      ]
+    ]
+  },
+  "name": "Fate/Grand Order: Hoshimi no Kairou",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64802",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-14",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Fate/Grand Order: Hoshimi no Kairou"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "mal:64802"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4d55b8a68af4297bf370d64a20f6d00088257fef1ed351b91b60b6e0ab79c0e9"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64802)"
+  },
+  "why": "The run is Fate/Grand Order: Hoshimi no Kairou, a single-episode special dated 2026-08-14 in summer 2026, known only from MyAnimeList. Only mal:64802 was returned, so it stands alone and there is no other row to judge."
+}

@@ -1,0 +1,555 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part was the Netflix row, which asserts SAME_AS to both members; its own fields refute it (title Tekken: Bloodline, start 2022-01-01, 6 episodes against kitsu 36 from 2026-07-10), and its 6 undated placeholder episodes cover none of the run, so it holds nothing either. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64793",
+      "mediaUri": "kitsu:50902",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50902",
+      "mediaUri": "nf:81002441",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64793",
+      "mediaUri": "nf:81002441",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406933",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406933"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "406934",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406934"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406935",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406935"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406936",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406936"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406937",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406937"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406938",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406938"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406939",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406939"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "406940",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406940"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "406941",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406941"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "406942",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406942"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "406943",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406943"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "406944",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406944"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "406945",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406945"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "406946",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406946"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "406947",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406947"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "406948",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406948"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "406949",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406949"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "406950",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406950"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "406951",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406951"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "406952",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406952"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "406953",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406953"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "406954",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406954"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "406955",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406955"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "406956",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406956"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "406957",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406957"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "406958",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406958"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "406959",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406959"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "406960",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406960"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "406961",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406961"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "406962",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406962"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "406963",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406963"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "406964",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406964"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "406965",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406965"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "406966",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406966"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "406967",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406967"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "406968",
+      "mediaUri": "kitsu:50902",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406968"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81056839",
+      "mediaUri": "nf:81002441",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81056839"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81056840",
+      "mediaUri": "nf:81002441",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81056840"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81056841",
+      "mediaUri": "nf:81002441",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81056841"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81056842",
+      "mediaUri": "nf:81002441",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81056842"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81056843",
+      "mediaUri": "nf:81002441",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81056843"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81056844",
+      "mediaUri": "nf:81002441",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81056844"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64793",
+        "nf:81002441"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "kitsu:50902",
+        "mal:64793"
+      ]
+    ],
+    "unrelated": [
+      "nf:81002441"
+    ]
+  },
+  "name": "Tekken! Cartoon",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 36,
+      "id": "50902",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tekken! Cartoon"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tekken! Yurutto Cartoon"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "てっけん！ゆるっとカートゥーン"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50902"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64793",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tekken! Cartoon"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tekken! Yurutto Cartoon"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64793"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81002441",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tekken: Bloodline"
+        }
+      ],
+      "uri": "nf:81002441"
+    }
+  ],
+  "source": {
+    "answers": [
+      "cdc14d94c45c0791532ddd94eb93acf3bb97176b7cb379e6169ab5b2c54fc39d",
+      "92eb7a2bcfa2cda64ae136ff909bebaded3dc3393c3c390c8fdc28116208020e",
+      "f1e3cfbf1459c6b0d8f21da8c5109b43395a6d2dd04f4d695f69da3562ae0532",
+      "88aa42c2a875b124bfb47077a290fa80e8bac5ad11836793e6c555195817be91",
+      "c95c4b8cb1c4cf3437e75f84455bbbb7e451b81eab3bf528b4b61ae5696bf497",
+      "2dedc5cfcc93b7e4a20adb79dfa092837dea2c3bdef06297a631f4b741e79317",
+      "232dfe40c7371a7cf29efb198bc277f7bc6888261e6e5f3a4b57e02e2ee66e99",
+      "6c0da294a89a9298457a139a19e5647825dcaaa02635cd0239b8be046012f80c",
+      "c2ef42b8e9be6d9454c9b21eaaf7be5b598030de023e1f74767a3017845e73eb"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50902,mal:64793)"
+  },
+  "why": "Tekken! Cartoon (Tekken! Yurutto Cartoon, てっけん！ゆるっとカートゥーン) is a run of short ONA cartoons that started on 2026-07-10. kitsu:50902 and mal:64793 are the same run: kitsu names mal:64793 SAME_AS, both give the 2026-07-10 start date and both carry the titles Tekken! Cartoon and Tekken! Yurutto Cartoon. nf:81002441 is a different work despite claiming SAME_AS to both members: it is Tekken: Bloodline, a 2022-01-01 Netflix series of 6 episodes, against this run of 36 episodes starting in 2026, so it shares only the word Tekken and is neither the same run nor a container over it."
+}

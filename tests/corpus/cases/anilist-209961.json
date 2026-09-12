@@ -1,0 +1,206 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Straightforward: a one-episode release plus a bare Crunchyroll series container. The only judgement was refusing an includes range, since the Crunchyroll row carries no episodes, no dates and no count. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63819",
+      "mediaUri": "anilist:209961",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209961",
+      "mediaUri": "kitsu:50646",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63819",
+      "mediaUri": "kitsu:50646",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00365787",
+      "mediaUri": "kitsu:50646",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63819",
+      "mediaUri": "offline:mal-63819",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209961",
+      "mediaUri": "offline:mal-63819",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50646",
+      "mediaUri": "offline:mal-63819",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "396658",
+      "mediaUri": "kitsu:50646",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396658"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:209961",
+        "whole": "cr:GT00365787"
+      }
+    ],
+    "together": [
+      [
+        "anilist:209961",
+        "kitsu:50646",
+        "mal:63819",
+        "offline:mal-63819"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "SHIBOYUGI: Playing Death Games to Put Food on the Table 44: CLOUDY BEACH",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "209961",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 10 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "SHIBOYUGI: Playing Death Games to Put Food on the Table 44: CLOUDY BEACH"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Shibou Yuugi de Meshi wo Kuu. 44: CLOUDY BEACH"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "死亡遊戯で飯を食う。44:CLOUDY BEACH"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:209961"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50646",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Shiboyugi: Playing Death Games to Put Food on the Table: 44 - Cloudy Beach"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Shibou Yuugi de Meshi wo Kuu. 44: Cloudy Beach"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "死亡遊戯で飯を食う。44:CLOUDY BEACH"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50646"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63819",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Shiboyugi: Playing Death Games to Put Food on the Table - L-O---E"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Shibou Yuugi de Meshi wo Kuu. 44: Cloudy Beach"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63819"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63819",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shibou Yuugi de Meshi wo Kuu. 44: Cloudy Beach"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63819"
+    },
+    {
+      "id": "GT00365787",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00365787"
+    }
+  ],
+  "source": {
+    "answers": [
+      "53dcc904debff23801f288e10cb4350aebfc54a0e0fc671a0178c6244bd01fa1",
+      "b7d5ee34b14f81f88268b966decbcc073fec7d384a57feb830a05bb2ff6bc8ac",
+      "fc5f4d8b32852b9c5639baaa32f0ec46374781e52be46baad308d41e2304a94b",
+      "da4c143f4f7cec183f63bab1f23f281367f7de85db2d833bb4b27da46fe73b91"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:209961,kitsu:50646,mal:63819,offline:mal-63819)"
+  },
+  "why": "SHIBOYUGI: Playing Death Games to Put Food on the Table 44: CLOUDY BEACH is a single 2026-07-10 release tied to the SHIBOYUGI series, carried by AniList, Kitsu, MyAnimeList and the offline database with episodeCount 1 and the same Japanese title, so the four members are the whole run. cr:GT00365787 holds the run: it is a bare Crunchyroll series container (scope CONTAINER, the series url shiboyugi-playing-death-games-to-put-food-on-the-table, no dates and no episodeCount) and kitsu:50646 declares PART_OF against it. No includes range is asserted for that container: it lists no episodes and no dates, so nothing can be aligned."
+}

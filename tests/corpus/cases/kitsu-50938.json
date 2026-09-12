@@ -1,0 +1,65 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was hard: a single Kitsu row with no handles and no other source, so the case asserts only the run itself. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407233",
+      "mediaUri": "kitsu:50938",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407233"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50938"
+      ]
+    ]
+  },
+  "name": "BANZAI☆MANKAI",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50938",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-20",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "BANZAI☆MANKAI"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "万歳☆満開"
+        }
+      ],
+      "uri": "kitsu:50938"
+    }
+  ],
+  "source": {
+    "answers": [
+      "6e03599dbb8ddf624a74542d7a7dec654832dd502b1c8c8eae79cbf0cfa05041",
+      "cedcc52e99b1ce0c53596ae42a8efac5221c2f26b3ae8d39b70f82b4f40d58c0"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50938)"
+  },
+  "why": "BANZAI☆MANKAI (万歳☆満開) is a one-episode summer 2026 entry, its single episode dated 2026-08-20 on Kitsu. Only Kitsu returned anything for it: kitsu:50938 is the run's sole member, it carries no handles to any other catalogue, and no other source returned a row, so there is nothing to merge, hold or separate."
+}

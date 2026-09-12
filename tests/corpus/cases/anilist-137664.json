@@ -1,0 +1,194 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Only one row to judge and it carried both id claims; the six Kitsu episode rows have no title and no date, so nothing was paired. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64375"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64375",
+      "mediaUri": "anilist:137664",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64375",
+      "mediaUri": "kitsu:50755",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:137664",
+      "mediaUri": "kitsu:50755",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64375",
+      "mediaUri": "offline:mal-64375",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50755",
+      "mediaUri": "offline:mal-64375",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403927",
+      "mediaUri": "kitsu:50755",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403927"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403928",
+      "mediaUri": "kitsu:50755",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403928"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "403929",
+      "mediaUri": "kitsu:50755",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403929"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "403930",
+      "mediaUri": "kitsu:50755",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403930"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "403931",
+      "mediaUri": "kitsu:50755",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403931"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "403932",
+      "mediaUri": "kitsu:50755",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403932"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:137664",
+        "kitsu:50755",
+        "offline:mal-64375"
+      ]
+    ]
+  },
+  "name": "Chenghuang",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 6,
+      "id": "137664",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 09 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Cheng Huang Lu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "城隍录"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:137664"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 6,
+      "id": "50755",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Chenghuang"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Cheng Huang Lu"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50755"
+    },
+    {
+      "id": "64375",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64375"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 6,
+      "id": "mal-64375",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cheng Huang Lu"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64375"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b19d2ebcbed0f76ab36d686e7bf2418b37cea580450bb5be816efb58aa0610e8",
+      "6992429b459cbf28bba65ad85ed00a5fbfb11b1a8473736b762bb42f431297fe",
+      "98c6594813828c6eef15e2ec088e17953b68db9cff093cc48212fdabf23feef0",
+      "b7f85fe69c1448c35eab81053bb81d17dd7d4983bbea1a2561133bc2f1d5c5dd"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:137664,kitsu:50755,mal:64375)"
+  },
+  "why": "Chenghuang (Cheng Huang Lu) is a 6 episode Chinese ONA that ran 2026-06-09 to 2026-07-07, held on AniList, Kitsu and MyAnimeList. offline:mal-64375 is the same run: it claims SAME_AS to both mal:64375 and kitsu:50755, its count of 6 matches and its title Cheng Huang Lu is the AniList romanised title."
+}

@@ -1,0 +1,1020 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Neither episode list carries a real title (Crunchyroll says Mystery N, anizip says nothing, JustWatch says Dai Ikkai and the rest, which is only an ordinal), so the Crunchyroll pairing rests entirely on the ten matching dates and the JustWatch episodes are left unplaced. JustWatch itself is kept in the run on its id claims and on listing the same ten aired episodes as Crunchyroll. refuted: 1 mark overturned. Removed jw:532446-578025 from together: nothing but its own outbound SAME_AS claims places it, since it has no episode dates, a 2026-01-01 start outside the run's span, a count of 10 against the run's 12, and ordinal episode titles that match nothing on anizip, whose episodes have no titles. The nf:82074316 row in this same run makes the same shape of SAME_AS claim to four members while being Let's Go Karaoke!, so that claim on its own does not carry a row into the run."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378084-GS00378085",
+      "mediaUri": "anilist:200230",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "anilist:200230",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "kitsu:50258",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200230",
+      "mediaUri": "kitsu:50258",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "offline:mal-62683",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200230",
+      "mediaUri": "offline:mal-62683",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50258",
+      "mediaUri": "offline:mal-62683",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "anizip:19646",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200230",
+      "mediaUri": "anizip:19646",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200230",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50258",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62683",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200230",
+      "mediaUri": "jw:532446-578025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19646",
+      "mediaUri": "jw:532446-578025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50258",
+      "mediaUri": "jw:532446-578025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "jw:532446-578025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62683",
+      "mediaUri": "jw:532446-578025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:200230",
+      "mediaUri": "nf:82074316",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50258",
+      "mediaUri": "nf:82074316",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62683",
+      "mediaUri": "nf:82074316",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62683",
+      "mediaUri": "nf:82074316",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404770",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404770"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404771",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404771"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404772",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404772"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404773",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404773"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404774",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404774"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404775",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404775"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404776",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404776"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404777",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404777"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404778",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404778"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404779",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404779"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404780",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404780"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404781",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404781"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404782",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404782"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404783",
+      "mediaUri": "kitsu:50258",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404783"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19646-1",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19646-2",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19646-3",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19646-4",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19646-5",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19646-6",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19646-7",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19646-8",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19646-9",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19646-10",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19646-11",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19646-12",
+      "mediaUri": "anizip:19646",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T07:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19646-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378084-GS00378085-GE00379350JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-07-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 1"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379350JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378084-GS00378085-GE00379351JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 2"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379351JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378084-GS00378085-GE00379352JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 3"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379352JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378084-GS00378085-GE00379353JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 4"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379353JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378084-GS00378085-GE00379354JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 5"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379354JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378084-GS00378085-GE00379355JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 6"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379355JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378084-GS00378085-GE00379356JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 7"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379356JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378084-GS00378085-GE00379357JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 8"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379357JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378084-GS00378085-GE00379358JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 9"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379358JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378084-GS00378085-GE00379359JAJP",
+      "mediaUri": "cr:GT00378084-GS00378085",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mystery 10"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085-GE00379359JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10601580",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Ikkai"
+        }
+      ],
+      "uri": "jw:10601580"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10607139",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Nikai"
+        }
+      ],
+      "uri": "jw:10607139"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10613083",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Sankai"
+        }
+      ],
+      "uri": "jw:10613083"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10629060",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Yonkai"
+        }
+      ],
+      "uri": "jw:10629060"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10629065",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Gokai"
+        }
+      ],
+      "uri": "jw:10629065"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10656091",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Rokukai"
+        }
+      ],
+      "uri": "jw:10656091"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10706401",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Nanakai"
+        }
+      ],
+      "uri": "jw:10706401"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10786175",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Hakkai"
+        }
+      ],
+      "uri": "jw:10786175"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10836925",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Kyuukai"
+        }
+      ],
+      "uri": "jw:10836925"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10880051",
+      "mediaUri": "jw:532446-578025",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dai Juukai"
+        }
+      ],
+      "uri": "jw:10880051"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82074339",
+      "mediaUri": "nf:82074316",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82074339"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82074340",
+      "mediaUri": "nf:82074316",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82074340"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82074341",
+      "mediaUri": "nf:82074316",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82074341"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82074342",
+      "mediaUri": "nf:82074316",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82074342"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82074343",
+      "mediaUri": "nf:82074316",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82074343"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:82074316",
+        "anilist:200230"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19646-1",
+        "b": "cr:GT00378084-GS00378085-GE00379350JAJP"
+      },
+      {
+        "a": "anizip:19646-2",
+        "b": "cr:GT00378084-GS00378085-GE00379351JAJP"
+      },
+      {
+        "a": "anizip:19646-3",
+        "b": "cr:GT00378084-GS00378085-GE00379352JAJP"
+      },
+      {
+        "a": "anizip:19646-4",
+        "b": "cr:GT00378084-GS00378085-GE00379353JAJP"
+      },
+      {
+        "a": "anizip:19646-5",
+        "b": "cr:GT00378084-GS00378085-GE00379354JAJP"
+      },
+      {
+        "a": "anizip:19646-6",
+        "b": "cr:GT00378084-GS00378085-GE00379355JAJP"
+      },
+      {
+        "a": "anizip:19646-7",
+        "b": "cr:GT00378084-GS00378085-GE00379356JAJP"
+      },
+      {
+        "a": "anizip:19646-8",
+        "b": "cr:GT00378084-GS00378085-GE00379357JAJP"
+      },
+      {
+        "a": "anizip:19646-9",
+        "b": "cr:GT00378084-GS00378085-GE00379358JAJP"
+      },
+      {
+        "a": "anizip:19646-10",
+        "b": "cr:GT00378084-GS00378085-GE00379359JAJP"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:200230",
+        "kitsu:50258",
+        "mal:62683",
+        "offline:mal-62683",
+        "anizip:19646",
+        "cr:GT00378084-GS00378085"
+      ]
+    ],
+    "unrelated": [
+      "nf:82074316"
+    ]
+  },
+  "name": "Let's go KAIKIGUMI",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "200230",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Let's go KAIKIGUMI"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Let's Go Kaikigumi"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "レッツゴー怪奇組"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:200230"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "50258",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Let's Go Kaiki-gumi"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "レッツゴー怪奇組"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50258"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62683",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Let's Go Kaikigumi"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Let's Go Kaiki-gumi"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62683"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62683",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Let's Go Kaiki-gumi"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62683"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19646",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Let`s Go Kaikigumi"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "レッツゴー怪奇組"
+        }
+      ],
+      "uri": "anizip:19646"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378084-GS00378085",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Let’s go KAIKIGUMI"
+        }
+      ],
+      "uri": "cr:GT00378084-GS00378085"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "532446-578025",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:532446-578025"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82074316",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2025-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Let’s Go Karaoke!"
+        }
+      ],
+      "uri": "nf:82074316"
+    }
+  ],
+  "source": {
+    "answers": [
+      "0d89a31507f710cbb4886b615fd28bae0a77fe0dc98edf8c6f6e5017407eb9d0",
+      "2eb45d0e2c19e6e7998c600295ea05021670a849142e50a6bc952bf45cc7aaa4",
+      "87751074a5667327d4af9b0890970245c5fa4d06551c1d7d389a5bddf5a0045b",
+      "e6990b24984ae830e2e652d1eb71167fa581f3d4e4a58f256d9c100e7d3ccc56",
+      "6adbb6c7140626642908fe6f83663809d2a29a5061064d0a55b94b659ed47100",
+      "8a5ef6c126b14a341a43cc525efd66074dc523e8c0e77d9e92c31b45e1a5729d",
+      "9bbb76d0080caac5eccba0aec5bdc5f878c95f7bfc82e9fff1799de777dbf7e6",
+      "4aaa71efa151d3dee88e68d4eb4bb90629b3d9c58a876d96cde4e1fb3838ee62",
+      "3b1aef4f153c417efba52467d402c3ae0d63a5affc7efa3f40f03fa729a649c0",
+      "652145adf7353a20089235305278f2e0fe4a4d6afa1b4398144749f99908d607",
+      "5a7ffdd1e19e1dc11bddcbac2cc32ae63db5f59cf90a3f1d0574866a18daa1ad",
+      "454c48c9060f81b165dc99ab97ee1f71937dac4e8871034a62ed05546f4ef516",
+      "4b39113517a0b5fbb8713bcc2534c0f650604a0bd46128b311953930474a7e8a",
+      "937c680187cb29087d247cf9015cc26db895b6b6218ea58f072e47eea9234510",
+      "b61bb03944ef0daf3458a95d91c5335ff4c122fc7a225ede28b132a5840e64a3"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:200230,kitsu:50258,mal:62683,offline:mal-62683)"
+  },
+  "why": "The run is Let's go KAIKIGUMI, 12 episodes that started 2026-07-05 and are still airing, with anilist giving an end of 2026-09-20. anizip:19646 is the same run: it carries first-party SAME_AS ids to both mal:62683 and anilist:200230, gives the same count of 12, and its episodes run weekly from 2026-07-05 to 2026-09-20, the members' exact start and end. cr:GT00378084-GS00378085 is the same run: anilist:200230 itself points at it with a SAME_AS handle, and its 10 episodes fall on exactly anizip's first 10 dates, 2026-07-05 through 2026-09-06, the remaining two not having aired. The 10 Crunchyroll episodes are paired to anizip's by release date, each on the same day, which is the only evidence available since Crunchyroll titles them Mystery 1 to Mystery 10 and anizip carries no titles at all. jw:532446-578025 is left unsettled: its only evidence is its own SAME_AS claims to anilist, anizip, kitsu, mal and offline, since it carries no episode dates, its 2026-01-01 start sits outside the run's 2026-07-05 to 2026-09-20 span, its count of 10 is not the run's 12, and its episode titles (Dai Ikkai, Dai Nikai and so on, simply first instalment, second instalment) match nothing in anizip, which carries no episode titles at all. nf:82074316 is a different work: it is Let's Go Karaoke!, dated 2025-01-01 with five generically titled episodes, and it has been attached here only by the words Let's Go."
+}

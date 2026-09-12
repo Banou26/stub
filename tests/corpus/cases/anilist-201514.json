@@ -1,0 +1,768 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "AniZip leaves episode 1 untitled while JustWatch calls it The Perfect Lady, and JustWatch publishes no episode dates, so position 1 was left unpaired even though every other position matches by title. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62876",
+      "mediaUri": "anilist:201514",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201514",
+      "mediaUri": "kitsu:50761",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62876",
+      "mediaUri": "kitsu:50761",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378102",
+      "mediaUri": "kitsu:50761",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:201514",
+      "mediaUri": "offline:anilist-201514",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62876",
+      "mediaUri": "offline:mal-62876",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50761",
+      "mediaUri": "offline:mal-62876",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62876",
+      "mediaUri": "anizip:19690",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201514",
+      "mediaUri": "anizip:19690",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:201514",
+      "mediaUri": "jw:518362-552886",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19690",
+      "mediaUri": "jw:518362-552886",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50761",
+      "mediaUri": "jw:518362-552886",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62876",
+      "mediaUri": "jw:518362-552886",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-201514",
+      "mediaUri": "jw:518362-552886",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62876",
+      "mediaUri": "jw:518362-552886",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404018",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404018"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404019",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404019"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404020",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404020"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404021",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404021"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404022",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404022"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404023",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404023"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404024",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404024"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404025",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404025"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404026",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404026"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404027",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404027"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404028",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404028"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404029",
+      "mediaUri": "kitsu:50761",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404029"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19690-1",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T17:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19690-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19690-2",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Caretaker Day 1"
+        }
+      ],
+      "uri": "anizip:19690-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19690-3",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Reunion"
+        }
+      ],
+      "uri": "anizip:19690-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19690-4",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Lies and Secrets"
+        }
+      ],
+      "uri": "anizip:19690-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19690-5",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kidnap Me"
+        }
+      ],
+      "uri": "anizip:19690-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19690-6",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tennoji Mirei`s Proposal"
+        }
+      ],
+      "uri": "anizip:19690-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19690-7",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Lady`s Concerns"
+        }
+      ],
+      "uri": "anizip:19690-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19690-8",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "No Lies"
+        }
+      ],
+      "uri": "anizip:19690-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19690-9",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Lady`s Day Off"
+        }
+      ],
+      "uri": "anizip:19690-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19690-10",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T17:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Plan to Free Narika from Isolation"
+        }
+      ],
+      "uri": "anizip:19690-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19690-11",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T17:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19690-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19690-12",
+      "mediaUri": "anizip:19690",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T17:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19690-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10150334",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Perfect Lady"
+        }
+      ],
+      "uri": "jw:10150334"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10623497",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Caretaker Day 1"
+        }
+      ],
+      "uri": "jw:10623497"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10623498",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Reunion"
+        }
+      ],
+      "uri": "jw:10623498"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10624362",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lies and Secrets"
+        }
+      ],
+      "uri": "jw:10624362"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10630157",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kidnap Me"
+        }
+      ],
+      "uri": "jw:10630157"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10630155",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tennoji Mirei's Proposal"
+        }
+      ],
+      "uri": "jw:10630155"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10630160",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Lady's Concerns"
+        }
+      ],
+      "uri": "jw:10630160"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10630159",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "No Lies"
+        }
+      ],
+      "uri": "jw:10630159"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10630161",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Lady's Day Off"
+        }
+      ],
+      "uri": "jw:10630161"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10630158",
+      "mediaUri": "jw:518362-552886",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Plan to Free Narika From Isolation"
+        }
+      ],
+      "uri": "jw:10630158"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19690-2",
+        "b": "jw:10623497"
+      },
+      {
+        "a": "anizip:19690-3",
+        "b": "jw:10623498"
+      },
+      {
+        "a": "anizip:19690-4",
+        "b": "jw:10624362"
+      },
+      {
+        "a": "anizip:19690-5",
+        "b": "jw:10630157"
+      },
+      {
+        "a": "anizip:19690-6",
+        "b": "jw:10630155"
+      },
+      {
+        "a": "anizip:19690-7",
+        "b": "jw:10630160"
+      },
+      {
+        "a": "anizip:19690-8",
+        "b": "jw:10630159"
+      },
+      {
+        "a": "anizip:19690-9",
+        "b": "jw:10630161"
+      },
+      {
+        "a": "anizip:19690-10",
+        "b": "jw:10630158"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:201514",
+        "whole": "cr:GT00378102"
+      }
+    ],
+    "together": [
+      [
+        "anilist:201514",
+        "kitsu:50761",
+        "mal:62876",
+        "offline:anilist-201514",
+        "offline:mal-62876",
+        "anizip:19690",
+        "jw:518362-552886"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Rich Girl Caretaker: I'm Secretly the Caregiver of the Most Popular Girl in This Rich Kid School",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "201514",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Rich Girl Caretaker: I'm Secretly the Caregiver of the Most Popular Girl in This Rich Kid School"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Saijo no Osewa: Takane no Hanadarake na Meimonkou de, Gakuin Ichi no Ojou-sama (Seikatsu Nouryoku Kaimu) wo Kagenagara Osewa suru Koto ni Narimashita"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "才女のお世話 高嶺の花だらけな名門校で、学院一のお嬢様(生活能力皆無)を陰ながらお世話することになりました"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:201514"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50761",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Rich Girl Caretaker: I'm Secretly the Caregiver of the Most Popular Girl in This Rich Kid School"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Saijo no Osewa: Takane no Hanadarake na Meimonkou de, Gakuin Ichi no Ojousama (Seikatsu Nouryoku Kaimu) wo Kagenagara Osewa suru Koto ni Narimashita"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "才女のお世話 高嶺の花だらけな名門校で、学院一のお嬢様(生活能力皆無)を陰ながらお世話することになりました"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50761"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62876",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Rich Girl Caretaker: I'm Secretly the Caregiver of the Most Popular Girl in This Rich Kid School"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Saijo no Osewa: Takane no Hanadarake na Meimonkou de, Gakuin Ichi no Ojousama (Seikatsu Nouryoku Kaimu) wo Kagenagara Osewa suru Koto ni Narimashita"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62876"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "anilist-201514",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saijo no Osewa: Takane no Hana Darake na Meimonkou de, Gakuin Ichi no Ojou-sama (Seikatsu Nouryoku Kaimu) o Kagenagara Osewa Suru Koto ni Narimashita"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-201514"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-62876",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saijo no Osewa: Takane no Hanadarake na Meimonkou de, Gakuin Ichi no Ojousama (Seikatsu Nouryoku Kaimu) wo Kagenagara Osewa suru Koto ni Narimashita"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62876"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19690",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Rich Girl Caretaker: I`m Secretly the Caregiver of the Most Popular Girl in This Rich Kid School"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "才女のお世話 高嶺の花だらけな名門校で, 学院一のお嬢様(生活能力皆無)を陰ながらお世話することになりました"
+        }
+      ],
+      "uri": "anizip:19690"
+    },
+    {
+      "id": "GT00378102",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378102"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "518362-552886",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:518362-552886"
+    }
+  ],
+  "source": {
+    "answers": [
+      "bebc184494432262b9ae1a0aecbc193738083c2a6dd27eac3f55b3651e370c11",
+      "b6e0c572a6a3eeb463fbae1cbe8ee4de8ab78c6c8e52197df24e8b5bfb51f8bd",
+      "78ad602a2aed2e16ecebbb6a66965ecd6b57976362944cd03357b43cf76e1bf2",
+      "687ca2fb7cbe6411ff3e462d749dd14117fe80ab89bd370629d52e242dfd01a0",
+      "e5421ae4299b7099dbf4a8bd2991a448175f47ecd33cf000e71db6618f8b1b77",
+      "b098daf8c4a64771658fa921d40eead58be8da2643c51bff4a04ebd82ba2a8de",
+      "344f75b1f6e7444940ff5c2ce88f04e5d59335dc876514c25dd220143ce2e1c5",
+      "c98088f2d1d12df61714a3d568605491496616091f6742b848b6b163427e84e7"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:201514,kitsu:50761,mal:62876,offline:anilist-201514,offline:mal-62876)"
+  },
+  "why": "Rich Girl Caretaker, a 12 episode summer 2026 TV run airing 2026-07-05 to 2026-09-20 and still on air at labelling time. AniZip 19690 is the same run: SAME_AS ids to mal:62876 and anilist:201514 and the same episodeCount of 12. The JustWatch season 518362-552886 is the same run: it maps SAME_AS onto all five members and onto anizip:19690, and its 10 episodes carry AniZip's episode titles in the same order, which is the aired part of the cour rather than a folded season (10 is fewer than 12). The bare Crunchyroll series GT00378102 is a container with no dates, count or episodes, and Kitsu already records it as a PART_OF container for this run, so it holds the run rather than merging with it. AniZip episodes 2 to 10 pair with JustWatch episodes 2 to 10 on exact, non generic titles (Caretaker Day 1, Reunion, Lies and Secrets, Kidnap Me, Tennoji Mirei's Proposal, A Lady's Concerns, No Lies, The Lady's Day Off, The Plan to Free Narika from Isolation). AniZip episode 1 (2026-07-04) carries no title and JustWatch carries no dates, so the first position is left unpaired, and AniZip episodes 11 and 12 (2026-09-12 and 2026-09-19) are untitled with no counterpart on JustWatch."
+}

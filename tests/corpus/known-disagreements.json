@@ -1,0 +1,23 @@
+{
+  "store": "current",
+  "note": "Cases today's store is known to get wrong. Asserted EXACTLY by current-store.test.ts: a case here must still fail, a case not here must pass, so a fix and a regression are both loud. The new store runs with no such list.",
+  "cases": {
+    "anilist-133007": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-202717": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-206521": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-206682": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-208754": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-208829": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-211232": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "anilist-214070": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "kitsu-50666": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-48832": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-63903": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-64361": "today's store leaves kitsu:50980 apart from offline:mal-64361: a merge it misses, the labels say together",
+    "mal-64674": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-64675": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-64682": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-64863": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)",
+    "mal-64867": "today's store welds a bare Netflix title id found by unogs's title search into this run; the labels say apart (an older film or series sharing the title)"
+  }
+}

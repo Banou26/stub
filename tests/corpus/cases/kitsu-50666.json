@@ -1,0 +1,154 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The SAME_AS handles in this run are unreliable: nf:60010487 claims to be the same run while being a 1989 live-action film by title and date, which is why the otherwise plausible jw:1282106 (exact title match, count 1, but only a 2026-01-01 placeholder date) is asserted neither way and the run is flagged. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50666",
+      "mediaUri": "jw:1282106",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:1282106",
+      "mediaUri": "nf:60010487",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50666",
+      "mediaUri": "nf:60010487",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "397075",
+      "mediaUri": "kitsu:50666",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:397075"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "1282106-1",
+      "mediaUri": "jw:1282106",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Avatar Aang: The Last Airbender"
+        }
+      ],
+      "uri": "jw:1282106-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "60010487-1",
+      "mediaUri": "nf:60010487",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Indiana Jones and the Last Crusade"
+        }
+      ],
+      "uri": "nf:60010487-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "kitsu:50666",
+        "nf:60010487"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "kitsu:50666"
+      ]
+    ],
+    "unrelated": [
+      "nf:60010487"
+    ]
+  },
+  "name": "Avatar Aang: The Last Airbender",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50666",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-25",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Avatar Aang: The Last Airbender"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50666"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "1282106",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:1282106"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "60010487",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "1989-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Indiana Jones and the Last Crusade"
+        }
+      ],
+      "uri": "nf:60010487"
+    }
+  ],
+  "source": {
+    "answers": [
+      "cf6b54a2c0d8396e3af5fea4d0aa4ddd66c97d9d5762bce2e1a761fab0b0bf8b",
+      "dc0464728082d10abbc9fdb7bd0b14f84f10e6f9623e39947ac485863ec298b0",
+      "bacdb64612e4a26f51de882105cc018592d03c8022c0d03fae8e2cf8c509836c",
+      "3e617e76355d1296d512e75891f39aed1d9f4308ff2670abd869c3b4b7438b7a",
+      "fe979fbf6a5637379bb5edc32b09c55507996c3c3c5ba295764091770866283d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50666)"
+  },
+  "why": "Avatar Aang: The Last Airbender is the 2026 animated feature, a single MOVIE entry on Kitsu running 2026-07-25 to 2026-07-25. The Netflix row nf:60010487 is Indiana Jones and the Last Crusade, titled that way in its only title and its only episode and dated 1989-01-01, so it is a different work and its SAME_AS handles to the run are wrong. The JustWatch row jw:1282106 is left unsettled: its one episode carries the exact title Avatar Aang: The Last Airbender and its count of 1 agrees, but its start date is the placeholder 2026-01-01 against the run's 2026-07-25, neither row's episode has a release date, and the same SAME_AS chain also produced the Indiana Jones row."
+}

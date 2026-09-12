@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: identical titles on all three rows, SAME_AS handles onto mal:64405, matching 2026-09-18 start and matching count 2. The title ends in a 2, so the sequel numbering is the only thing to watch, and no row for the first series came back to confuse it. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64405",
+      "mediaUri": "anilist:213067",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64405",
+      "mediaUri": "offline:mal-64405",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213067",
+        "mal:64405",
+        "offline:mal-64405"
+      ]
+    ]
+  },
+  "name": "Netorareta Bakunyuu Tsuma-tachi 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "213067",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 18 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Netorareta Bakunyuu Tsuma-tachi 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "寝取られた爆乳妻たち2"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:213067"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64405",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-18",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Netorareta Bakunyuu Tsuma-tachi 2"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64405"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-64405",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Netorareta Bakunyuu Tsuma-tachi 2"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64405"
+    }
+  ],
+  "source": {
+    "answers": [
+      "fe7a0d715644ddaeeee5befe197202aa73f1f311e5df96748b16707cc9b23dac",
+      "3e60f8b5377e867757c6eeded78733e81399f982c650208719d64e3617d75941",
+      "70c1eeba475cfe317134a6fc249176f18ed1975c018d5994e4dca906cf975f82"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213067,mal:64405,offline:mal-64405)"
+  },
+  "why": "Netorareta Bakunyuu Tsuma-tachi 2, a two episode adult OVA with volumes dated 2026-09-18 and 2026-10-16 on anilist. The three catalogue rows are one run: anilist:213067 carries a SAME_AS handle to mal:64405 and offline:mal-64405 carries one too, all three give the identical title, anilist and mal agree on the day-precise start 18 Sep 2026 and on the OVA type, and anilist and offline agree on episodeCount 2 (mal lists no count yet). No streaming season, container or episode row came back for this run, so nothing is held, spanned or ruled out, and in particular the first series is not present here to be marked unrelated."
+}

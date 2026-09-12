@@ -1,0 +1,59 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "A single row with no claims at all; the only thing to note is that the year in the title is part of the AniList name for this batch, and no other catalogue offered a row to compare it with. refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:215761"
+      ]
+    ]
+  },
+  "name": "POKÉTOON (2026)",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "215761",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 12 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "POKÉTOON (2026)"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "POKÉTOON (2026)"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "POKÉTOON (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:215761"
+    }
+  ],
+  "source": {
+    "answers": [
+      "183f3af36a567a72023815ed6cc2d31cec31123da1003ec47b8edc680d4fc092"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:215761)"
+  },
+  "why": "POKETOON (2026) is a two-episode summer 2026 ONA, the 2026 batch of the Pokemon shorts anthology, airing 2026-08-12 and 2026-08-19 on AniList. AniList 215761 is the only row any source returned for this address: no MyAnimeList, Kitsu, offline or streaming row came back and there are no handles, so the run stands alone with nothing to merge, attach or reject."
+}

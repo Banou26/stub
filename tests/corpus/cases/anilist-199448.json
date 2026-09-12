@@ -1,0 +1,199 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The Crunchyroll row is empty apart from its id, so the hold rests only on the first-party PART_OF CONTAINER handle kitsu publishes; with no episodes or dates on that side there is nothing to align, so no includes range was asserted. refuted: 0 marks overturned. repair 2026-09-12: removed from together, no source answered about them: mal:62276"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62276",
+      "mediaUri": "anilist:199448",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199448",
+      "mediaUri": "kitsu:50455",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62276",
+      "mediaUri": "kitsu:50455",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GEXH3W2EZ",
+      "mediaUri": "kitsu:50455",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62276",
+      "mediaUri": "offline:mal-62276",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199448",
+      "mediaUri": "offline:mal-62276",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50455",
+      "mediaUri": "offline:mal-62276",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "392507",
+      "mediaUri": "kitsu:50455",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:392507"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "392508",
+      "mediaUri": "kitsu:50455",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:392508"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404272",
+      "mediaUri": "kitsu:50455",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404272"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:199448",
+        "whole": "cr:GEXH3W2EZ"
+      }
+    ],
+    "together": [
+      [
+        "anilist:199448",
+        "kitsu:50455",
+        "offline:mal-62276"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Lord of Mysteries Specials",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "199448",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 20 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Lord of Mysteries Specials"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Guimi Zhi Zhu Specials"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "诡秘之主 特别篇"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:199448"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "50455",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-20",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Lord of Mysteries Specials"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Guimi Zhi Zhu Tebie Pian: Liewu"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50455"
+    },
+    {
+      "id": "62276",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:62276"
+    },
+    {
+      "id": "GEXH3W2EZ",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GEXH3W2EZ"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "mal-62276",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Guimi Zhi Zhu Specials"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62276"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e9b9a6cf754ae33ec51018615bc584fa5809798899bd8786f2a313884de8de66",
+      "2524a465fc8ded4a2326053742ffac8f3a08e0becc9aa42b8d15f5a5460b6b6f",
+      "235100b10a7ecaf1180e899e8d6bd151b9afa1d7a5b418ab53dba66df738d753",
+      "6efe9f27227afaae5065de53d8c8cacde338240a0d2271e9d9db8a546a00cb77"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:199448,kitsu:50455,mal:62276)"
+  },
+  "why": "Lord of Mysteries Specials (Guimi Zhi Zhu Specials, 诡秘之主 特别篇) is a three-part ONA special run that ran from 2026-06-20 to 2026-06-28. anilist:199448, kitsu:50455 and mal:62276 are one run: kitsu names both anilist:199448 and mal:62276 SAME_AS, anilist names mal:62276 SAME_AS, and anilist and kitsu agree on the 2026-06-20 start, the 2026-06-28 end and the count of 3. offline:mal-62276 is the same run again: it is keyed on MAL id 62276, names all three members SAME_AS and gives the same count of 3 with the title Guimi Zhi Zhu Specials. cr:GEXH3W2EZ holds the run rather than being it: it is a bare Crunchyroll series container with no dates, count or episodes of its own, and kitsu:50455 declares itself PART_OF it at CONTAINER scope."
+}

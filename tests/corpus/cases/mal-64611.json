@@ -1,0 +1,49 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned"
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64611"
+      ]
+    ]
+  },
+  "name": "PetitCure: Gekijou Manner Movie",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64611",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "PetitCure: Gekijou Manner Movie"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64611"
+    }
+  ],
+  "source": {
+    "answers": [
+      "338b10507251770b161eba2d17f696f236a63541f8269ec0816a52dd1ddfcf2b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64611)"
+  },
+  "why": "A one-episode theatrical manner short for the PetitCure line, dated 2026-07-12 on MyAnimeList. Only MyAnimeList returned anything for this run: the single row mal:64611 is the run's own member, and no other catalogue, streaming or container row came back, so there is nothing to mark same, hold, span or separate."
+}

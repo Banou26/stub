@@ -1,0 +1,957 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Two calls needed care. The JustWatch episode titles carry the same words as AniZip's but never the same punctuation (a tilde between the two halves where AniZip uses a colon), so the pairing rests on nine consecutive word-identical titles rather than on byte-identical ones; the dates are absent on the JustWatch side so they could not be used. The Netflix season was deliberately not merged: its count of 10 differs from the run's 12, it has no dates and its titles are placeholders, leaving only its own handles to go on, so it is flagged instead. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61280",
+      "mediaUri": "anilist:188525",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188525",
+      "mediaUri": "kitsu:50244",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61280",
+      "mediaUri": "kitsu:50244",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00371656",
+      "mediaUri": "kitsu:50244",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61280",
+      "mediaUri": "offline:mal-61280",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188525",
+      "mediaUri": "offline:mal-61280",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50244",
+      "mediaUri": "offline:mal-61280",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61280",
+      "mediaUri": "anizip:19232",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188525",
+      "mediaUri": "anizip:19232",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188525",
+      "mediaUri": "jw:477998-503896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19232",
+      "mediaUri": "jw:477998-503896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50244",
+      "mediaUri": "jw:477998-503896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61280",
+      "mediaUri": "jw:477998-503896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61280",
+      "mediaUri": "jw:477998-503896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:188525",
+      "mediaUri": "nf:81787975-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19232",
+      "mediaUri": "nf:81787975-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:477998-503896",
+      "mediaUri": "nf:81787975-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50244",
+      "mediaUri": "nf:81787975-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61280",
+      "mediaUri": "nf:81787975-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61280",
+      "mediaUri": "nf:81787975-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "388988",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388988"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "388989",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388989"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "388990",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388990"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "388991",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388991"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "388992",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388992"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "388993",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388993"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "388994",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388994"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "388995",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388995"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "388996",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388996"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "388997",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388997"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "388998",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388998"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "388999",
+      "mediaUri": "kitsu:50244",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:388999"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19232-1",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Magic House: What Would a Manga Protagonist Do Here?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔法屋敷~こんなとき, 漫画の主人公なら?"
+        }
+      ],
+      "uri": "anizip:19232-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19232-2",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-07-10T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You Are Brilliant: Drawing Manga Is Hard"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "あなたは輝いている~漫画を描くのは大変である"
+        }
+      ],
+      "uri": "anizip:19232-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19232-3",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kokoro`s Heart: Draw This, Then Die!!!!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "心の心～これ描いて死ね!!!!"
+        }
+      ],
+      "uri": "anizip:19232-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19232-4",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Utopia: Making Manga`s Better with Others"
+        }
+      ],
+      "uri": "anizip:19232-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19232-5",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Let`s All Go Together! Put Your Feelings into Manga"
+        }
+      ],
+      "uri": "anizip:19232-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19232-6",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Comitia: Let`s Make Manga That`s Even More Interesting!"
+        }
+      ],
+      "uri": "anizip:19232-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19232-7",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Lost World: Draw with the Intent to Kill"
+        }
+      ],
+      "uri": "anizip:19232-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19232-8",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Touch: 100 Things I Want to Draw for Manga!!!"
+        }
+      ],
+      "uri": "anizip:19232-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19232-9",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T14:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Surfing the Cyber Seas: Draw for Yourself, Not for Others!"
+        }
+      ],
+      "uri": "anizip:19232-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19232-10",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19232-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19232-11",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19232-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19232-12",
+      "mediaUri": "anizip:19232",
+      "origin": "anizip",
+      "releaseDate": "2026-09-25T14:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19232-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9283533",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Magic House ~ What Would a Manga Protagonist Do Here?"
+        }
+      ],
+      "uri": "jw:9283533"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10646818",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You Are Brilliant ~ Drawing Manga Is Hard"
+        }
+      ],
+      "uri": "jw:10646818"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10646819",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kokoro's Heart ~ Draw This, Then Die!!!!"
+        }
+      ],
+      "uri": "jw:10646819"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10646820",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Utopia ~ Making Manga's Better With Others"
+        }
+      ],
+      "uri": "jw:10646820"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10646821",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Let's All Go Together! ~ Put Your Feelings Into Manga"
+        }
+      ],
+      "uri": "jw:10646821"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10646822",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Comitia ~ Let's Make Manga That's Even More Interesting!"
+        }
+      ],
+      "uri": "jw:10646822"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10646823",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Lost World ~ Draw With the Intent to Kill"
+        }
+      ],
+      "uri": "jw:10646823"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10646824",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Touch ~ 100 Things I Want to Draw for Manga!!!"
+        }
+      ],
+      "uri": "jw:10646824"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10646825",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Surfing the Cyber Seas ~ Draw for Yourself, Not for Others!"
+        }
+      ],
+      "uri": "jw:10646825"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10646826",
+      "mediaUri": "jw:477998-503896",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "jw:10646826"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81787977",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81787977"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81787978",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81787978"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81787979",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81787979"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81787980",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81787980"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81787981",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81787981"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81787982",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81787982"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81787983",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81787983"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81787984",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81787984"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81787985",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81787985"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81787986",
+      "mediaUri": "nf:81787975-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81787986"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "jw:9283533",
+        "b": "anizip:19232-1"
+      },
+      {
+        "a": "jw:10646818",
+        "b": "anizip:19232-2"
+      },
+      {
+        "a": "jw:10646819",
+        "b": "anizip:19232-3"
+      },
+      {
+        "a": "jw:10646820",
+        "b": "anizip:19232-4"
+      },
+      {
+        "a": "jw:10646821",
+        "b": "anizip:19232-5"
+      },
+      {
+        "a": "jw:10646822",
+        "b": "anizip:19232-6"
+      },
+      {
+        "a": "jw:10646823",
+        "b": "anizip:19232-7"
+      },
+      {
+        "a": "jw:10646824",
+        "b": "anizip:19232-8"
+      },
+      {
+        "a": "jw:10646825",
+        "b": "anizip:19232-9"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:188525",
+        "whole": "cr:GT00371656"
+      }
+    ],
+    "together": [
+      [
+        "anilist:188525",
+        "kitsu:50244",
+        "mal:61280",
+        "offline:mal-61280",
+        "anizip:19232",
+        "jw:477998-503896"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Draw This, Then Die!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "188525",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Draw This, Then Die!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kore Kaite Shine"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "これ描いて死ね"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:188525"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50244",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Draw this, then die!"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kore Kaite Shine"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "これ描いて死ね"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50244"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61280",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Draw This, Then Die!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kore Kaite Shine"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61280"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61280",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kore Kaite Shine"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61280"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19232",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Draw This, Then Die!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "これ描いて死ね"
+        }
+      ],
+      "uri": "anizip:19232"
+    },
+    {
+      "id": "GT00371656",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00371656"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "477998-503896",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:477998-503896"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "81787975-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Draw This, Then Die"
+        }
+      ],
+      "uri": "nf:81787975-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f5afbb310428320e4e322ff3639d802a2588a638b8b84c5e20310a0d586472bb",
+      "9532addd7f3f172884d95713f4a2b9436e4305b1131c64c4d3f0fbd61baceb5a",
+      "525af6df8e5408e6330265e0bdb3b8179462b32c4631ba71c1c537b9a5fd3f0f",
+      "dce1161b95f5c4d6eaaaafb0d29aec978c4b6e6178d6a2df9a787821bb95d269",
+      "a20d0fbef9d3ecfb1f88c557b8bea11b42e188529e4574a0bb78545441b82ec1",
+      "e40413b1f8e13098477ee098971c1ba483d4d7aedca4090d6c4a4bd66042da24",
+      "8d4adc8ba531c88b9672f727e38f519fcf3c12d23247b2a646367891d682c36a",
+      "d45a03d6f38723fa8426fb595885bd9cc85a43541a124dfcbf9f29caf8f561b9",
+      "35360f7192fdb44917ab517e8551acb96df376f9933b77e7370cc64a683ff79f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:188525,kitsu:50244,mal:61280,offline:mal-61280)"
+  },
+  "why": "Draw This, Then Die! (Kore Kaite Shine) is a 12 episode summer 2026 run airing 2026-07-03 to 2026-09-25, so it is still on air; AniList and MyAnimeList both give episodeCount 12 and a 2026-07-03 start. anizip:19232 is the same run: it carries first-party SAME_AS handles to mal:61280 and anilist:188525, its episodeCount is 12, and its episode 1 releases 2026-07-03T14:30Z with episode 12 on 2026-09-25, the run's own first and last broadcast dates. jw:477998-503896 is the same run: it is the JustWatch season for kore-kaite-shine, it carries first-party SAME_AS handles to anilist:188525, anizip:19232, kitsu:50244, mal:61280 and offline:mal-61280, and nine of its ten episode titles repeat the AniZip titles word for word at the same numbers (Magic House, You Are Brilliant, Kokoro's Heart, Utopia, Let's All Go Together!, Comitia, The Lost World, Touch, Surfing the Cyber Seas, each with the same subtitle). Those nine pair one to one with anizip episodes 1 to 9, the two sources differing only in the glyph they put between the two halves of a title (JustWatch a tilde, AniZip a colon) and in apostrophe style; JustWatch's tenth entry is the placeholder Episode 10 and the AniZip episode 10 has no title yet, so that position is left unpaired. cr:GT00371656 holds the run: it is a bare Crunchyroll series container (scope CONTAINER, no dates, no episodes, no count) and kitsu:50244 declares PART_OF against it, with no includes range because it lists nothing to align. nf:81787975-1 is left unsettled: it is titled Draw This, Then Die and claims SAME_AS against every member, but its episodeCount is 10 against the run's 12, it carries no dates at all and its ten episodes are named Episode 1 to Episode 10, so nothing on it can be checked against the run."
+}

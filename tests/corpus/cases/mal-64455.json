@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The counts disagree (56 on MyAnimeList, 52 on Anilist) for a season still releasing, so the merge rests on the first-party id mapping and the shared day-precise 2026-07-18 start date rather than on the count. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64455",
+      "mediaUri": "anilist:214259",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64455",
+      "mediaUri": "offline:mal-64455",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214259",
+      "mediaUri": "offline:mal-64455",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64455",
+        "anilist:214259",
+        "offline:mal-64455"
+      ]
+    ]
+  },
+  "name": "Tales of Demon and God 10th Season",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 56,
+      "id": "64455",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tales of Demon and God 10th Season"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yao Shen Ji 10th Season"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64455"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 52,
+      "id": "214259",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 18 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Yao Shen Ji 10"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "妖神记 第十季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:214259"
+    },
+    {
+      "id": "mal-64455",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64455"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7c5dbcd2d6d97dbcc6857041d69e723205bb230f25c681a5d5bc67117aa52d58",
+      "fa5e392db29e5ce0eea5659a815f8f9b4f1e225039d7f19d939cebd6572518db",
+      "66d2aac21def287a390acee53092302c3ae60d90987e0f88649cc32995d39ce9"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64455)"
+  },
+  "why": "Tales of Demon and God 10th Season (Yao Shen Ji, 妖神记 第十季) is a long running Chinese ONA season that began on 2026-07-18 and is still releasing. Anilist 214259 is the same run: it maps SAME_AS to mal:64455, names the same tenth season of Yao Shen Ji and gives the same 2026-07-18 start date, the projected totals differing only as 56 against 52 while the season is still airing. The offline entry offline:mal-64455 is the same run: it maps SAME_AS to both mal:64455 and anilist:214259. No streaming or container row was returned for this season."
+}

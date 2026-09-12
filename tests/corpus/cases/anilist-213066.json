@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The offline row says episodeCount 1 where AniList says 3, which is the usual offline lag on an unfinished OVA run and not a reason to split rows the ids tie together. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64404",
+      "mediaUri": "anilist:213066",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64404",
+      "mediaUri": "offline:mal-64404",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213066",
+        "mal:64404",
+        "offline:mal-64404"
+      ]
+    ]
+  },
+  "name": "Muramata-san no Aijou",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "213066",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 11 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Muramata-san no Aijou"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "村又さんの愛情"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:213066"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64404",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-11",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Muramata-san no Aijou"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64404"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64404",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Muramata-san no Aijou"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64404"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ae36a70b5e6afab2b212b054387207f0cfe096ff8b8f42b25264348b3496332e",
+      "0d64f43dfd29067dfdafb8296124ba9d1dc7979f07ae760c0ec481d8a1f3b1cf",
+      "298115fdee9fd009e7d49743cb1e118009ba5a0f611ca19b42133b59f0a73d25"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213066,mal:64404,offline:mal-64404)"
+  },
+  "why": "The run is Muramata-san no Aijou, an OVA series whose first volume shipped 2026-09-11, with AniList listing three episodes running to 2026-11-13. The three rows anilist:213066, mal:64404 and offline:mal-64404 are one run: AniList and the offline entry both carry a SAME_AS handle to mal:64404, AniList and MyAnimeList give the same 2026-09-11 start date, and all three share the title, the OVA type and the summer 2026 season. No other source returned a row, so there is nothing else to place."
+}

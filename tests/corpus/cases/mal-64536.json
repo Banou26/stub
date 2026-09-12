@@ -1,0 +1,128 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard row was jw:2926665, a JustWatch movie page whose title matches exactly and which declares SAME_AS to both members, but whose only date is a 2026-01-01 placeholder that disagrees with the run's 2026-08-07; the title alone does not meet the bar for same, so it is asserted neither way and the run is flagged. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64536",
+      "mediaUri": "offline:mal-64536",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64536",
+      "mediaUri": "jw:2926665",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64536",
+      "mediaUri": "jw:2926665",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "2926665-1",
+      "mediaUri": "jw:2926665",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "To Your Island"
+        }
+      ],
+      "uri": "jw:2926665-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64536",
+        "offline:mal-64536"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "To Your Island",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64536",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "To Your Island"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Qu Ni de Dao"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64536"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64536",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Qu Ni de Dao"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-64536"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "2926665",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:2926665"
+    }
+  ],
+  "source": {
+    "answers": [
+      "dd531d5fa0341ca1e2646d54707719afa4ae72a3b4c07d9e135bd796a6da50e4",
+      "28ca98bb753121980b37a06fb388997d02497fd66fb671458b525ec0c5f02aff",
+      "10865e7f20e3d0951c6c05bbaef12e4f515b6a8ab39dd184448e70a28e9717dc"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64536,offline:mal-64536)"
+  },
+  "why": "To Your Island (Qu Ni de Dao) is a Chinese animated feature dated 2026-08-07 on MyAnimeList, and the offline entry keyed mal-64536 is the same film by its SAME_AS mapping, so those two are one run. The JustWatch row jw:2926665 is left unsettled: its single episode carries the same English title To Your Island and the same count of 1, but its start date is the year placeholder 2026-01-01 rather than the run's 2026-08-07 and its episode has no release date, so nothing dates it against the run."
+}

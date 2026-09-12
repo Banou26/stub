@@ -1,0 +1,978 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "kitsu prefixes every title with EPISODE 01 to EPISODE 10 and anizip does not, so only the five single segment titles could be matched outright; episodes 1, 2, 3, 8 and 10 join two or three segments and the two sources use different separators and abbreviations, so those were left unpaired. nf:82942010-1 was left unjudged even though its count matches, since it carries no dates and only its first entry has a real title. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:58929",
+      "mediaUri": "anilist:177699",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177699",
+      "mediaUri": "kitsu:48899",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58929",
+      "mediaUri": "offline:mal-58929",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177699",
+      "mediaUri": "offline:mal-58929",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48899",
+      "mediaUri": "offline:mal-58929",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58929",
+      "mediaUri": "anizip:18652",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177699",
+      "mediaUri": "anizip:18652",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177699",
+      "mediaUri": "jw:475917-500221",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18652",
+      "mediaUri": "jw:475917-500221",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48899",
+      "mediaUri": "jw:475917-500221",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58929",
+      "mediaUri": "jw:475917-500221",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-58929",
+      "mediaUri": "jw:475917-500221",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177699",
+      "mediaUri": "nf:82942010-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18652",
+      "mediaUri": "nf:82942010-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:475917-500221",
+      "mediaUri": "nf:82942010-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48899",
+      "mediaUri": "nf:82942010-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58929",
+      "mediaUri": "nf:82942010-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-58929",
+      "mediaUri": "nf:82942010-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "392778",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 01: PROLOGUE + SUPER SPARTAN i"
+        }
+      ],
+      "uri": "kitsu:392778"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "392779",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 02: SUPER SPARTAN ii + JUNK JUNGLE i"
+        }
+      ],
+      "uri": "kitsu:392779"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "393255",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 03: JUNK JUNGLE ii + MEGATECH MACHINE i + ii"
+        }
+      ],
+      "uri": "kitsu:393255"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "393256",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 04: ROBOT RONDO"
+        }
+      ],
+      "uri": "kitsu:393256"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "393257",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 05: PHANTOM FUND"
+        }
+      ],
+      "uri": "kitsu:393257"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "393258",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 06: DUMB BARTER"
+        }
+      ],
+      "uri": "kitsu:393258"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "393259",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 07: BYE BYE CLAY"
+        }
+      ],
+      "uri": "kitsu:393259"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "393260",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 08: INTERMISSION + BRAIN DRAIN i"
+        }
+      ],
+      "uri": "kitsu:393260"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "393261",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 09: BRAIN DRAIN ii"
+        }
+      ],
+      "uri": "kitsu:393261"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "393262",
+      "mediaUri": "kitsu:48899",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "EPISODE 10: BRAIN DRAIN iii + GHOST COAST + EPILOGUE"
+        }
+      ],
+      "uri": "kitsu:393262"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18652-1",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Prologue / Super Spartan I"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "PROLOGUE / SUPER SPARTAN i"
+        }
+      ],
+      "uri": "anizip:18652-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18652-2",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Super Spartan II / Junk Jungle I"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "Super Spartan ii / Junk Jungle i"
+        }
+      ],
+      "uri": "anizip:18652-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18652-3",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Junk Jungle II / Megatech Machine I / Megatech Machine II"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "JUNK JUNKGLE ii / MEGATECH MACHINE i / MEGATECH MACHINE ii"
+        }
+      ],
+      "uri": "anizip:18652-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18652-4",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Robot Rondo"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ROBOT RONDO"
+        }
+      ],
+      "uri": "anizip:18652-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18652-5",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Phantom Fund"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "PHANTOM FUND"
+        }
+      ],
+      "uri": "anizip:18652-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18652-6",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dumb Barter"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "DUMB BARTER"
+        }
+      ],
+      "uri": "anizip:18652-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18652-7",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bye Bye Clay"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "BYE BYE CLAY"
+        }
+      ],
+      "uri": "anizip:18652-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18652-8",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Intermission / Brain Drain I"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "INTERMISSION / BRAIN DRAIN i"
+        }
+      ],
+      "uri": "anizip:18652-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18652-9",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Brain Drain II"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "BRAIN DRAIN ii"
+        }
+      ],
+      "uri": "anizip:18652-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18652-10",
+      "mediaUri": "anizip:18652",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Brain Drain III / Ghost Coast / Epilogue"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "BRAIN DRAIN iii / GHOST COAST / EPILOGUE"
+        }
+      ],
+      "uri": "anizip:18652-10"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9217932",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "PROLOGUE + SUPER SPARTAN i"
+        }
+      ],
+      "uri": "jw:9217932"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10567777",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "SUPER SPARTAN ii + JUNK JUNGLE i"
+        }
+      ],
+      "uri": "jw:10567777"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10567778",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "JUNK JUNGLE ii + MEGATECH MACHINE i + ii"
+        }
+      ],
+      "uri": "jw:10567778"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10567779",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "ROBOT RONDO"
+        }
+      ],
+      "uri": "jw:10567779"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10567780",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "PHANTOM FUND"
+        }
+      ],
+      "uri": "jw:10567780"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10567781",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "DUMB BARTER"
+        }
+      ],
+      "uri": "jw:10567781"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10567782",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bye Bye Clay"
+        }
+      ],
+      "uri": "jw:10567782"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10567783",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Intermission + Brain Drain i"
+        }
+      ],
+      "uri": "jw:10567783"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10567784",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BRAIN DRAIN ii"
+        }
+      ],
+      "uri": "jw:10567784"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10567785",
+      "mediaUri": "jw:475917-500221",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BRAIN DRAIN ⅲ + GHOST COAST + EPILOGUE"
+        }
+      ],
+      "uri": "jw:10567785"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82942014",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Prologue + Super Spartan I"
+        }
+      ],
+      "uri": "nf:82942014"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82942015",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82942015"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82942016",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82942016"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82942017",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82942017"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82942018",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82942018"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82942019",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82942019"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82942020",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82942020"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82942021",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82942021"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82942022",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82942022"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82942023",
+      "mediaUri": "nf:82942010-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82942023"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "kitsu:393256",
+        "b": "anizip:18652-4"
+      },
+      {
+        "a": "kitsu:393257",
+        "b": "anizip:18652-5"
+      },
+      {
+        "a": "kitsu:393258",
+        "b": "anizip:18652-6"
+      },
+      {
+        "a": "kitsu:393259",
+        "b": "anizip:18652-7"
+      },
+      {
+        "a": "kitsu:393261",
+        "b": "anizip:18652-9"
+      }
+    ],
+    "together": [
+      [
+        "anilist:177699",
+        "kitsu:48899",
+        "mal:58929",
+        "offline:mal-58929",
+        "anizip:18652",
+        "jw:475917-500221"
+      ]
+    ]
+  },
+  "name": "THE GHOST IN THE SHELL",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "177699",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 07 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "THE GHOST IN THE SHELL"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Koukaku Kidoutai: THE GHOST IN THE SHELL"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "攻殻機動隊 THE GHOST IN THE SHELL"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:177699"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "48899",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "THE GHOST IN THE SHELL"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Koukaku Kidoutai: THE GHOST IN THE SHELL"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "攻殻機動隊 THE GHOST IN THE SHELL"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:48899"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "58929",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Ghost in the Shell"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Koukaku Kidoutai (TV)"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:58929"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-58929",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Koukaku Kidoutai (TV)"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-58929"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "18652",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Ghost in the Shell"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "攻殻機動隊 (2026)"
+        }
+      ],
+      "uri": "anizip:18652"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "475917-500221",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:475917-500221"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "82942010-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ghost in the Shell"
+        }
+      ],
+      "uri": "nf:82942010-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "dba912d906be022fe76a4e0812ca1ba4bee7407bef10e43f6ec7a26e9d242522",
+      "31743a77c6ff68d7c8a33ecabb41df2e550383c2819ef1850267d6393fea68aa",
+      "3359e415b06bef69af6e67e60ed6fdb66b366cc593b47a36e59e8c172cdbffa5",
+      "e95ee2ad6348cfdec706ed770c78fac02baa054c7bf1b412f5606b84184660d9",
+      "bf466256df33a01fe987cc9b7e4a651410808f52b7e3aa72b184cd962e187636",
+      "4bb3e6f2dbfe5bbb8d3d8da6ae36908ae2b95e172babbe392c5598fbee69a54a",
+      "b5cf145e8c2ab1207028d07de13a2e9c9b85b706ca783c4cd9de49e87e865a8d",
+      "c7fc98cd42ce3b0093c28251982e82f5f18bbe8440f270b9fcec7ceeab2e304e",
+      "55c1783037f221097f68cbbef6a48a649ee36692434f0094e582923784db41ff"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:177699,kitsu:48899,mal:58929,offline:mal-58929)"
+  },
+  "why": "THE GHOST IN THE SHELL is the ten episode summer 2026 cour on a weekly 14:00 slot, 2026-07-07 to 2026-09-08, and it has finished airing.\nanizip:18652 is the same run: the same ten episode count, and its own SAME_AS ids name mal:58929 and anilist:177699, both members.\njw:475917-500221 is the same run: it maps SAME_AS to all four members and to anizip:18652, and its ten episode titles are the run's own, PROLOGUE + SUPER SPARTAN i through BRAIN DRAIN + GHOST COAST + EPILOGUE; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe kitsu episodes 4, 5, 6, 7 and 9 pair with the same numbered anizip:18652 episodes on identical titles once kitsu's EPISODE 0N numbering prefix is set aside: Robot Rondo, Phantom Fund, Dumb Barter, Bye Bye Clay and Brain Drain II."
+}

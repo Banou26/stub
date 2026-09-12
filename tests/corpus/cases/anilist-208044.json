@@ -1,0 +1,943 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The two schedules are a week apart: the run's own episode rows are the Crunchyroll ones running 2026-06-25 to 2026-09-10, while anizip runs 2026-07-01 to 2026-09-16, matching mal's 2026-07-02 broadcast start, so the episodes were paired on their titles and not on dates. kitsu counts 22 episodes where anilist and mal count 12, which is left as it stands since kitsu is already part of the run's own address. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378115-GS00378128",
+      "mediaUri": "anilist:208044",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63508",
+      "mediaUri": "anilist:208044",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208044",
+      "mediaUri": "kitsu:50793",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63508",
+      "mediaUri": "kitsu:50793",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378115",
+      "mediaUri": "kitsu:50793",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63508",
+      "mediaUri": "offline:mal-63508",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208044",
+      "mediaUri": "offline:mal-63508",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50793",
+      "mediaUri": "offline:mal-63508",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63508",
+      "mediaUri": "anizip:19896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208044",
+      "mediaUri": "anizip:19896",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "GT00378115-GS00378128-GE00379302JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-06-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Prologue"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379302JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378115-GS00378128-GE00379303JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-07-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Lost Technology"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379303JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378115-GS00378128-GE00379304JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-07-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "OVERKILL"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379304JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378115-GS00378128-GE00379305JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-07-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Seek Freedom"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379305JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378115-GS00378128-GE00379306JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-07-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Through Her Eyes"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379306JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378115-GS00378128-GE00379307JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-07-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Dear Eftal"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379307JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378115-GS00378128-GE00379308JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-08-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Master Smile"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379308JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378115-GS00378128-GE00379309JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-08-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "No Escape"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379309JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378115-GS00378128-GE00379310JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-08-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Let Me Pay"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379310JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378115-GS00378128-GE00379311JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-08-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Veiled Truth"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379311JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00378115-GS00378128-GE00379312JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-09-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "False Dawn"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379312JAJP"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "GT00378115-GS00378128-GE00379313JAJP",
+      "mediaUri": "anilist:208044",
+      "origin": "cr",
+      "releaseDate": "2026-09-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Am Eftal"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128-GE00379313JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "404612",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404612"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404613",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404613"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404614",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404614"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404615",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404615"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404616",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404616"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404617",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404617"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404618",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404618"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404619",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404619"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404620",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404620"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404621",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404621"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404622",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404622"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404623",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404623"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404624",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404624"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404625",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404625"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404626",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404626"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404627",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404627"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404628",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404628"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404629",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404629"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404630",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404630"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404631",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404631"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404632",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404632"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404633",
+      "mediaUri": "kitsu:50793",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404633"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19896-1",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-07-01T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Prologue"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "雷神皇 -PROLOGUE-"
+        }
+      ],
+      "uri": "anizip:19896-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19896-2",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Lost Technology"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "無適の天才 -Lost Technology-"
+        }
+      ],
+      "uri": "anizip:19896-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19896-3",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Overkill"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "外道 -OVERKILL-"
+        }
+      ],
+      "uri": "anizip:19896-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19896-4",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Seek Freedom"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "旅立ち -Seek Freedom-"
+        }
+      ],
+      "uri": "anizip:19896-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19896-5",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Through Her Eyes"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "再会 -Through Her Eyes-"
+        }
+      ],
+      "uri": "anizip:19896-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19896-6",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dear Eftal"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "雷神撃 -Dear Ephtal-"
+        }
+      ],
+      "uri": "anizip:19896-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19896-7",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Master Smile"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "少女の想い -Master Smile-"
+        }
+      ],
+      "uri": "anizip:19896-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19896-8",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "No Escape"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "宿命 -No Escape-"
+        }
+      ],
+      "uri": "anizip:19896-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19896-9",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Let Me Pay"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "奪還 -Let Me Pay-"
+        }
+      ],
+      "uri": "anizip:19896-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19896-10",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Veiled Truth"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "欺瞞 -Veiled Truth-"
+        }
+      ],
+      "uri": "anizip:19896-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19896-11",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "False Dawn"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "断鎖 -False Dawn-"
+        }
+      ],
+      "uri": "anizip:19896-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19896-12",
+      "mediaUri": "anizip:19896",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Am Eftal"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "神をも超えて -I am Ephtal-"
+        }
+      ],
+      "uri": "anizip:19896-12"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19896-1",
+        "b": "cr:GT00378115-GS00378128-GE00379302JAJP"
+      },
+      {
+        "a": "anizip:19896-2",
+        "b": "cr:GT00378115-GS00378128-GE00379303JAJP"
+      },
+      {
+        "a": "anizip:19896-4",
+        "b": "cr:GT00378115-GS00378128-GE00379305JAJP"
+      },
+      {
+        "a": "anizip:19896-5",
+        "b": "cr:GT00378115-GS00378128-GE00379306JAJP"
+      },
+      {
+        "a": "anizip:19896-6",
+        "b": "cr:GT00378115-GS00378128-GE00379307JAJP"
+      },
+      {
+        "a": "anizip:19896-7",
+        "b": "cr:GT00378115-GS00378128-GE00379308JAJP"
+      },
+      {
+        "a": "anizip:19896-8",
+        "b": "cr:GT00378115-GS00378128-GE00379309JAJP"
+      },
+      {
+        "a": "anizip:19896-9",
+        "b": "cr:GT00378115-GS00378128-GE00379310JAJP"
+      },
+      {
+        "a": "anizip:19896-10",
+        "b": "cr:GT00378115-GS00378128-GE00379311JAJP"
+      },
+      {
+        "a": "anizip:19896-11",
+        "b": "cr:GT00378115-GS00378128-GE00379312JAJP"
+      },
+      {
+        "a": "anizip:19896-12",
+        "b": "cr:GT00378115-GS00378128-GE00379313JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:208044",
+        "whole": "cr:GT00378115"
+      }
+    ],
+    "together": [
+      [
+        "anilist:208044",
+        "kitsu:50793",
+        "mal:63508",
+        "offline:mal-63508",
+        "anizip:19896",
+        "cr:GT00378115-GS00378128"
+      ]
+    ]
+  },
+  "name": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "208044",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 26 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Rakudai Kenja no Gakuin Musou: Nidome no Tensei, S-Rank Cheat Majutsushi Bouken-roku"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "落第賢者の学院無双～二度目の転生、Sランクチート魔術師冒険録～"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:208044"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50793",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-26",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Rakudai Kenja no Gakuin Musou: Nidome no Tensei, S-Rank Cheat Majutsushi Boukenroku"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "落第賢者の学院無双～二度目の転生、Sランクチート魔術師冒険録～"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50793"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63508",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Rakudai Kenja no Gakuin Musou: Nidome no Tensei, S-Rank Cheat Majutsushi Boukenroku"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63508"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63508",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rakudai Kenja no Gakuin Musou: Nidome no Tensei, S-Rank Cheat Majutsushi Boukenroku"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63508"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19896",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "落第賢者の学院無双 ~二度目の転生, Sランクチート魔術師冒険録~"
+        }
+      ],
+      "uri": "anizip:19896"
+    },
+    {
+      "id": "GT00378115",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378115"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "GT00378115-GS00378128",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage"
+        }
+      ],
+      "uri": "cr:GT00378115-GS00378128"
+    }
+  ],
+  "source": {
+    "answers": [
+      "eee3b754a24e846b132a33f80178d1b18b3c6b6f837762fc1bbf2afbbf57a35b",
+      "1e93f6c40a61199553639650babf016a7f32114fd896bb28831702dea5284041",
+      "4b971a540db89c9eab7b3487cb07e6289171bdeef5f71b43aaa1cbd0d9013244",
+      "258d306e255bf267b3b7ab67f639e9eab1204dcc1f56073e8f7c00923622ec93",
+      "0ca45db30ad0204812a8510c21494fe91fe9d69255637a88264b33b621e578f3",
+      "8dba6412772caf0cc4730dd8d1ae20a71bd61a702262611f8bb8b9f9186de489",
+      "805d5bc5fae8f11d7ab6171f6a753634284d74e4fbb2275fb54f1cb30dcc3b2c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:208044,kitsu:50793,mal:63508,offline:mal-63508)"
+  },
+  "why": "From Overshadowed to Overpowered: Second Reincarnation of a Talentless Sage (Rakudai Kenja no Gakuin Musou) is a 12 episode Summer 2026 ONA run, streamed from 2026-06-25 and broadcast from 2026-07-02, running to mid September. anilist:208044, kitsu:50793, mal:63508 and offline:mal-63508 are one run: anilist gives mal:63508, kitsu gives anilist:208044 and mal:63508, offline gives all three, and anilist and mal both count 12 episodes. anizip:19896 is the same run: it maps to mal:63508 and anilist:208044, counts 12 episodes, and its titles are the run's own, from Prologue to I Am Eftal, its dates following the 2026-07-02 broadcast schedule mal gives rather than the earlier streaming dates. The Crunchyroll season cr:GT00378115-GS00378128 is the same run: anilist gives it as SAME_AS, it counts 12 episodes like the run, and the run's own episode rows are the Crunchyroll ones, dated 2026-06-25 to 2026-09-10. cr:GT00378115 is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Eleven episodes pair anizip to the run's Crunchyroll episode rows on identical non-generic titles (Prologue, Lost Technology, Seek Freedom, Through Her Eyes, Dear Eftal, Master Smile, No Escape, Let Me Pay, Veiled Truth, False Dawn, I Am Eftal); episode 3 is written OVERKILL on one side and Overkill on the other and is left unpaired, and the kitsu episode rows carry no title or date and place nothing."
+}

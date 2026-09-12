@@ -1,0 +1,87 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "A sixth season is exactly the shape where a franchise container or an earlier season would need separating, but no such row was returned, so there was nothing to place. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64509",
+      "mediaUri": "offline:mal-64509",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64509",
+        "offline:mal-64509"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Is This Honor of Kings? Season 6",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "64509",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-23",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Is This Honor of Kings? Season 6"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Shi Wangzhe A? 6th Season"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64509"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "mal-64509",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shi Wangzhe A? 6th Season"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64509"
+    }
+  ],
+  "source": {
+    "answers": [
+      "26ce66295d3b150df060856057f6c976b567d46486e4b32c4123a73de347b0f0",
+      "3750c469388480855868b72a183505aa681b3f201cb5d146a346a6a6ff288214"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64509,offline:mal-64509)"
+  },
+  "why": "Is This Honor of Kings? Season 6 (Shi Wangzhe A? 6th Season) is a 14 episode Chinese ONA starting 2026-07-23, and the two rows returned are both members of the run's own address: MyAnimeList 64509 and the offline entry keyed mal-64509, which maps SAME_AS to it and repeats the count of 14 and the SUMMER 2026 ONA placement. No other season, container or streaming row came back, so no part or container relation is asserted."
+}

@@ -1,0 +1,465 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row was easy to reject. What is uncomfortable is inside the run's own address: Anilist calls it Snack Hazama and starts it 2026-07-04, mal and kitsu call it Ushiro no Shoumen Kamui-san Mini Anime Gekijou and start it 2026-07-12, and the offline database returned a separate row per id, so the run is flagged for a human to confirm the address holds one work. The twelve kitsu episode rows carry no titles and no release dates, so no episode pair was asserted. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64543",
+      "mediaUri": "anilist:213831",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64543",
+      "mediaUri": "kitsu:50954",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213831",
+      "mediaUri": "offline:anilist-213831",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64543",
+      "mediaUri": "offline:mal-64543",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213831",
+      "mediaUri": "nf:81307101",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50954",
+      "mediaUri": "nf:81307101",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64543",
+      "mediaUri": "nf:81307101",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-213831",
+      "mediaUri": "nf:81307101",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64543",
+      "mediaUri": "nf:81307101",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407286",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407286"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407287",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407287"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407288",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407288"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "407289",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407289"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "407290",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407290"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "407291",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407291"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "407292",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407292"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "407293",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407293"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "407294",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407294"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "407295",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407295"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "407296",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407296"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "407297",
+      "mediaUri": "kitsu:50954",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407297"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81387044",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Flamin' Hot Cheetos"
+        }
+      ],
+      "uri": "nf:81387044"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81387043",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pringles"
+        }
+      ],
+      "uri": "nf:81387043"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81387045",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "KitKat"
+        }
+      ],
+      "uri": "nf:81387045"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81387046",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Oreo"
+        }
+      ],
+      "uri": "nf:81387046"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81387047",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Gushers"
+        }
+      ],
+      "uri": "nf:81387047"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81387048",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ho Hos"
+        }
+      ],
+      "uri": "nf:81387048"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81387049",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lay's"
+        }
+      ],
+      "uri": "nf:81387049"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81387050",
+      "mediaUri": "nf:81307101",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Finale"
+        }
+      ],
+      "uri": "nf:81387050"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:213831",
+        "nf:81307101"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:213831",
+        "kitsu:50954",
+        "mal:64543",
+        "offline:anilist-213831",
+        "offline:mal-64543"
+      ]
+    ],
+    "unrelated": [
+      "nf:81307101"
+    ]
+  },
+  "name": "Snack Hazama",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "213831",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Snack Hazama"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Snack HAZAMA"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "スナックはざま-HAZAMA-"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:213831"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50954",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Ushiro no Shoumen Kamui-san Mini Anime Gekijou"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "うしろの正面カムイさん ミニアニメ劇場"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50954"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "64543",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Ushiro no Shoumen Kamui-san Mini Anime Gekijou"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:64543"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "anilist-213831",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Snack HAZAMA"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-213831"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-64543",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ushiro no Shoumen Kamui-san Mini Anime"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-64543"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81307101",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Snack VS. Chef"
+        }
+      ],
+      "uri": "nf:81307101"
+    }
+  ],
+  "source": {
+    "answers": [
+      "0dee4fd6ac52888a4291874c26f9a1b52ec66c752b4f567daa29c2093ebaa143",
+      "35a9eaac6d61c5e7c755f4cbf434592ca600ee624ee0c1048eef92267a8101e4",
+      "2ae1e3c6f66fd5ceb771e23cb76b4fe12b0a2e321beb9974a60b92582403c7e8",
+      "5589e175d9bf678742e02d5831e64593afdda7f3e898d6599fd0fc208a1ae937",
+      "fe91129fa92a1b8a9b2ace9efbe3ab0b87ec15c944ada8faeeed2a9517f87bed",
+      "aaa2284e2c5f97ab83e9a949f0f3ade7b6ba715eaabecb16ef2d4602c1985d0a",
+      "945a47e9ac18a825ce154acb4b40ba8ba5d5f2febd2e5fa34ebae56735eaaa67",
+      "0ad266ba6abe79942674fe7eb2b1c37dadecd6556e77406eae6554e549a45f12",
+      "410134c285db3a80b3e7d6c45fa60ed1f4f6617b5c2166252f4dcbf8e1f258ac",
+      "e9535e18b653b64507e56496f40367f4b3097304948a53f1714394b137314aa6",
+      "3b44ad789ceefac31d1609e3138a28386394aa48c8ab8cfb7d06108b0aa04520",
+      "3f49d2ebea9d20418c4a55522c86c83a8977a1ada589f260cef6ec0c1f07f58c",
+      "91514a6033c8f129a2e30699706dc9c390ab06fc85fcfc471feb3dd2b3964df7",
+      "65b00ebcd8f5bf6f16e4d9cccef8d92cece049cf658d7d2bc7531f082b4e9c13"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213831,kitsu:50954,mal:64543,offline:anilist-213831,offline:mal-64543)"
+  },
+  "why": "The run is a summer 2026 twelve episode short: Anilist files it as Snack Hazama (スナックはざま-HAZAMA-) from 2026-07-04, while MyAnimeList and Kitsu file the same id mapping under Ushiro no Shoumen Kamui-san Mini Anime Gekijou from 2026-07-12, and the two offline database rows carry one title each. The five member rows are kept as one run: anilist:213831 and kitsu:50954 both carry a first-party SAME_AS to mal:64543, the two offline rows are keyed on the anilist and mal ids with SAME_AS to them, and every row gives the same twelve episode count and the same summer 2026 season. nf:81307101 Snack VS. Chef is unrelated: it is a 2022 Netflix cooking competition whose eight episodes are named after snack brands (Flamin' Hot Cheetos, Pringles, KitKat, Oreo), which is neither the count nor the subject of a twelve episode 2026 anime short, so its SAME_AS claims on every member row are a collision on the word Snack."
+}

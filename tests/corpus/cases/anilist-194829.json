@@ -1,0 +1,796 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "JustWatch publishes no episode release dates here, so the 10 episode pairs rest on exact title matches against AniZip; episode 1 differs only in the capitalisation of 'on' in 'Takes On a New Position'. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61897",
+      "mediaUri": "anilist:194829",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194829",
+      "mediaUri": "kitsu:49995",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61897",
+      "mediaUri": "kitsu:49995",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61897",
+      "mediaUri": "offline:mal-61897",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194829",
+      "mediaUri": "offline:mal-61897",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49995",
+      "mediaUri": "offline:mal-61897",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61897",
+      "mediaUri": "anizip:19400",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194829",
+      "mediaUri": "anizip:19400",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:194829",
+      "mediaUri": "jw:444561-546764",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19400",
+      "mediaUri": "jw:444561-546764",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49995",
+      "mediaUri": "jw:444561-546764",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61897",
+      "mediaUri": "jw:444561-546764",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61897",
+      "mediaUri": "jw:444561-546764",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "384092",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384092"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "384093",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384093"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "384094",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384094"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "384095",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384095"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "384096",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384096"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "384097",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384097"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "384098",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384098"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "384099",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384099"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "384100",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384100"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "384101",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384101"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "384102",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384102"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "384103",
+      "mediaUri": "kitsu:49995",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:384103"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19400-1",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Takes On a New Position"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 新たな職場に行く"
+        }
+      ],
+      "uri": "anizip:19400-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19400-2",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Watches Them Grow"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 成長を見守る"
+        }
+      ],
+      "uri": "anizip:19400-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19400-3",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Sees Himself in an Old Man"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 老輩に己を重ねる"
+        }
+      ],
+      "uri": "anizip:19400-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19400-4",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Returns Home"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 帰省する"
+        }
+      ],
+      "uri": "anizip:19400-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19400-5",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Lets Out a Roar"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 雄叫びをあげる"
+        }
+      ],
+      "uri": "anizip:19400-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19400-6",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Faces Off Against His Father"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 父と対峙する"
+        }
+      ],
+      "uri": "anizip:19400-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19400-7",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Gets an Invitation from Nobility"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 貴族に招かれる"
+        }
+      ],
+      "uri": "anizip:19400-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19400-8",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Gets a Marriage Proposal"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 求婚される"
+        }
+      ],
+      "uri": "anizip:19400-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19400-9",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Goes to the Holy City"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 教都に行く"
+        }
+      ],
+      "uri": "anizip:19400-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19400-10",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Sees in the New Year"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 新年を迎える"
+        }
+      ],
+      "uri": "anizip:19400-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19400-11",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Old Country Bumpkin Flies into a Rage"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 激しく憤る"
+        }
+      ],
+      "uri": "anizip:19400-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19400-12",
+      "mediaUri": "anizip:19400",
+      "origin": "anizip",
+      "releaseDate": "2026-09-23T14:45:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19400-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10065785",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Takes on a New Position"
+        }
+      ],
+      "uri": "jw:10065785"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10568180",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Watches Them Grow"
+        }
+      ],
+      "uri": "jw:10568180"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10627795",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Sees Himself in an Old Man"
+        }
+      ],
+      "uri": "jw:10627795"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10627797",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Returns Home"
+        }
+      ],
+      "uri": "jw:10627797"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10627799",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Lets Out a Roar"
+        }
+      ],
+      "uri": "jw:10627799"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10627801",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Faces Off Against His Father"
+        }
+      ],
+      "uri": "jw:10627801"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10627803",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Gets an Invitation from Nobility"
+        }
+      ],
+      "uri": "jw:10627803"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10627805",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Gets a Marriage Proposal"
+        }
+      ],
+      "uri": "jw:10627805"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10627807",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Goes to the Holy City"
+        }
+      ],
+      "uri": "jw:10627807"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10627809",
+      "mediaUri": "jw:444561-546764",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Old Country Bumpkin Sees in the New Year"
+        }
+      ],
+      "uri": "jw:10627809"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19400-1",
+        "b": "jw:10065785"
+      },
+      {
+        "a": "anizip:19400-2",
+        "b": "jw:10568180"
+      },
+      {
+        "a": "anizip:19400-3",
+        "b": "jw:10627795"
+      },
+      {
+        "a": "anizip:19400-4",
+        "b": "jw:10627797"
+      },
+      {
+        "a": "anizip:19400-5",
+        "b": "jw:10627799"
+      },
+      {
+        "a": "anizip:19400-6",
+        "b": "jw:10627801"
+      },
+      {
+        "a": "anizip:19400-7",
+        "b": "jw:10627803"
+      },
+      {
+        "a": "anizip:19400-8",
+        "b": "jw:10627805"
+      },
+      {
+        "a": "anizip:19400-9",
+        "b": "jw:10627807"
+      },
+      {
+        "a": "anizip:19400-10",
+        "b": "jw:10627809"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:194829",
+        "kitsu:49995",
+        "mal:61897",
+        "offline:mal-61897",
+        "anizip:19400",
+        "jw:444561-546764"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "From Old Country Bumpkin to Master Swordsman II",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "194829",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "From Old Country Bumpkin to Master Swordsman II"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Katainaka no Ossan, Kensei ni Naru II"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "片田舎のおっさん、剣聖になるII"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:194829"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49995",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "From Old Country Bumpkin to Master Swordsman Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Katainaka no Ossan, Kensei ni Naru 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "片田舎のおっさん、剣聖になる 第二期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49995"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61897",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "From Old Country Bumpkin to Master Swordsman Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Katainaka no Ossan, Kensei ni Naru II"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61897"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61897",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Katainaka no Ossan, Kensei ni Naru II"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61897"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19400",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "From Old Country Bumpkin to Master Swordsman Season 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "片田舎のおっさん, 剣聖になるII"
+        }
+      ],
+      "uri": "anizip:19400"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "444561-546764",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:444561-546764"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e63ca376e4b73755badc2e7190b5a8f0c7cbef9998431f87456cb4ae499194dd",
+      "f65c2562b3ecdc047e99089f31fb5dbf8ff0d7e49711a89340badc58ffeb68a4",
+      "a8e6c4825c0285a1e8688b1ab657cd5bbe98fc7ac5a33c0941d9e50ce1b0e301",
+      "9248d137ee7306bfa4caf438336a460270c4e5e82392e103a0477331050ff6e2",
+      "5e06b74540bd58fd511d0f728392171149b575357eff43c17dcf9657f5b59630",
+      "34561325b8d587cc5584194da9c8eec7d66074a03e538e9052e3745629a43846",
+      "24466236bf26fc7a60fabb9e2bf8871bcf3697049a6965058901975b8020ee74"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:194829,kitsu:49995,mal:61897,offline:mal-61897)"
+  },
+  "why": "The second cour of From Old Country Bumpkin to Master Swordsman, a 12 episode TV run airing 2026-07-08 to 2026-09-23 and not yet finished. AniZip 19400 is the same run: it carries SAME_AS ids to mal:61897 and anilist:194829, the same episodeCount of 12, and a first episode dated 2026-07-08, the run's own start date. JustWatch 444561-546764 is the same run too: it maps SAME_AS onto all four members and onto anizip:19400, and its 10 episodes carry exactly the AniZip episode titles in order, which is the aired part of this cour rather than a separate work or a folded season (10 is fewer than 12, not more). The 10 JustWatch episodes pair one to one with AniZip episodes 1 to 10 on those exact, non generic titles, from The Old Country Bumpkin Takes On a New Position to The Old Country Bumpkin Sees in the New Year. AniZip episodes 11 and 12 (2026-09-16 and 2026-09-23) have no JustWatch counterpart yet, so they pair with nothing, and Kitsu's 12 episode rows carry neither titles nor release dates, so nothing is asserted about them."
+}

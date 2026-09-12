@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: three member rows, agreeing ids, title, start date and count, and no episodes listed anywhere to pair. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64530",
+      "mediaUri": "anilist:213732",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64530",
+      "mediaUri": "offline:mal-64530",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213732",
+        "mal:64530",
+        "offline:mal-64530"
+      ]
+    ]
+  },
+  "name": "Mujikaku na Osananajimi to Kyoumi Honi de Yatte Mitara THE ANIMATION",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213732",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 25 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mujikaku na Osananajimi to Kyoumi Honi de Yatte Mitara THE ANIMATION"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "無自覚な幼馴染と興味本位でヤってみたら THE ANIMATION"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:213732"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "64530",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-25",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mujikaku na Osananajimi to Kyoumi Honi de Yattemitara The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64530"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "mal-64530",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mujikaku na Osananajimi to Kyoumi Honi de Yattemitara The Animation"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64530"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b1cfe0ddd52decf4fb468a711d8a229579ae916d446013a64d15d91c2d27e156",
+      "9ef09702e7f960298fdf539f9fb8ff1bb614dbcbec23a3f6848210e86f298b3e",
+      "401d9003779bde2ab0922f7472e226f0e43b394ec22f1949dd1edfa1f4aaf96c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213732,mal:64530,offline:mal-64530)"
+  },
+  "why": "Mujikaku na Osananajimi to Kyoumi Honi de Yatte Mitara THE ANIMATION (無自覚な幼馴染と興味本位でヤってみたら THE ANIMATION) is a three episode adult OVA starting 2026-09-25, with Anilist carrying a 2026-10-29 end date. Anilist 213732, MyAnimeList 64530 and the offline entry offline:mal-64530 are one run: Anilist and the offline row both map SAME_AS to mal:64530, all three carry the same title, MyAnimeList and the offline row both list 3 episodes, and Anilist and MyAnimeList agree on the 2026-09-25 start date. Only the run's own member rows were returned, so there was nothing to hold it or to set apart."
+}

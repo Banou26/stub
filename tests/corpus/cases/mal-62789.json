@@ -1,0 +1,113 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: only the three catalogue rows exist, their ids map to each other and the dates and counts agree, and no source carried episodes to pair. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62789",
+      "mediaUri": "anilist:206273",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62789",
+      "mediaUri": "offline:mal-62789",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206273",
+      "mediaUri": "offline:mal-62789",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:62789",
+        "anilist:206273",
+        "offline:mal-62789"
+      ]
+    ]
+  },
+  "name": "GuAn",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "62789",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-28",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "GuAn"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yi Zhan Cangqiong"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62789"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "206273",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 28 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "GuAn"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Yi Zhan Cangqiong"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "一斩苍穹"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:206273"
+    },
+    {
+      "id": "mal-62789",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-62789"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e89d58e5d5d42f6049631b010e5f270d9e9de4f5a8ac7f4065b2c3552ca77b8c",
+      "221c8cce05f5cbfe7c1e32f920d4c4b9d7e094c2bffeef159be674fda40136ee",
+      "0d1dfec4ebf16b285a5a5fe54554a589737b3e0d00d38af470aff56ec1b8f21f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:62789)"
+  },
+  "why": "GuAn (Yi Zhan Cangqiong, 一斩苍穹) is a 26 episode Chinese ONA that began on 2026-07-28 and is still releasing. Anilist 206273 is the same run: it maps SAME_AS to mal:62789, lists the same 26 episodes, the same 2026-07-28 start date and the same English and romanised titles. The offline entry offline:mal-62789 is the same run: it maps SAME_AS to both mal:62789 and anilist:206273. No other source returned a row for this show."
+}

@@ -1,0 +1,913 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "No episode pairing was possible: anizip carries only Japanese titles with dates, kitsu carries neither, JustWatch carries English translations with no dates, and Netflix numbers its entries Episode 1 to Episode 11. nf:82760630-1 was left unjudged, its eleven entries sitting against the ten that have aired and the run's twelve. Refuted: the same mark on jw:518630-563252 was removed from together. That row carries no title, a year level 2026-01-01 start and ten episodes against the run's twelve, and its ten English episode titles appear in no other row of this run (anizip carries Japanese titles only, kitsu carries none), so its only evidence is its own SAME_AS claims and nothing in the view checks them; it is left unknown, the same treatment nf:82760630-1 got on the same evidence."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63403",
+      "mediaUri": "anilist:207141",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207141",
+      "mediaUri": "kitsu:50551",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82760630",
+      "mediaUri": "kitsu:50551",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63403",
+      "mediaUri": "offline:mal-63403",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207141",
+      "mediaUri": "offline:mal-63403",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50551",
+      "mediaUri": "offline:mal-63403",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63403",
+      "mediaUri": "anizip:19873",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207141",
+      "mediaUri": "anizip:19873",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82760630",
+      "mediaUri": "jw:518630-563252",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:207141",
+      "mediaUri": "jw:518630-563252",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19873",
+      "mediaUri": "jw:518630-563252",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50551",
+      "mediaUri": "jw:518630-563252",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63403",
+      "mediaUri": "jw:518630-563252",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82760630-1",
+      "mediaUri": "jw:518630-563252",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63403",
+      "mediaUri": "jw:518630-563252",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207141",
+      "mediaUri": "nf:82760630-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19873",
+      "mediaUri": "nf:82760630-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:518630-563252",
+      "mediaUri": "nf:82760630-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50551",
+      "mediaUri": "nf:82760630-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63403",
+      "mediaUri": "nf:82760630-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63403",
+      "mediaUri": "nf:82760630-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "394556",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394556"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "394557",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394557"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "394558",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394558"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "394559",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394559"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "394560",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394560"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "394561",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394561"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "394562",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394562"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "394563",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394563"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "394564",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394564"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "394565",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394565"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "394566",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394566"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "394567",
+      "mediaUri": "kitsu:50551",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:394567"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19873-1",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーがヤニねこにゃ"
+        }
+      ],
+      "uri": "anizip:19873-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19873-2",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーの後輩たちにゃ"
+        }
+      ],
+      "uri": "anizip:19873-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19873-3",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーはボケよりツッコミ寄りにゃ"
+        }
+      ],
+      "uri": "anizip:19873-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19873-4",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーのまわりは変人ばかりにゃ"
+        }
+      ],
+      "uri": "anizip:19873-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19873-5",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーたち秘境に行くにゃ"
+        }
+      ],
+      "uri": "anizip:19873-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19873-6",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーの夏が始まって終わるにゃ"
+        }
+      ],
+      "uri": "anizip:19873-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19873-7",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーも親から生まれたにゃ"
+        }
+      ],
+      "uri": "anizip:19873-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19873-8",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ニャーたちも師走は走るにゃ"
+        }
+      ],
+      "uri": "anizip:19873-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19873-9",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19873-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19873-10",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19873-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19873-11",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19873-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19873-12",
+      "mediaUri": "anizip:19873",
+      "origin": "anizip",
+      "releaseDate": "2026-09-24T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19873-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10324950",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm Yani Neko, Nya"
+        }
+      ],
+      "uri": "jw:10324950"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10560896",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": " Meet My Juniors, Nya"
+        }
+      ],
+      "uri": "jw:10560896"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10560897",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm More Straight Than Funny, Nya"
+        }
+      ],
+      "uri": "jw:10560897"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10560898",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Freaks All Around Me, Nya"
+        }
+      ],
+      "uri": "jw:10560898"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10560899",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "We're Off to a Secret Place, Nya"
+        }
+      ],
+      "uri": "jw:10560899"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10560900",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Summer Starts and Ends Here, Nya"
+        }
+      ],
+      "uri": "jw:10560900"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10560901",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Was Born to Parents Too, Nya"
+        }
+      ],
+      "uri": "jw:10560901"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10560902",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Even We Run Around in December, Nya"
+        }
+      ],
+      "uri": "jw:10560902"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10560903",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Little Sis Is Popular, Nya"
+        }
+      ],
+      "uri": "jw:10560903"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10560904",
+      "mediaUri": "jw:518630-563252",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm Gonnya Enjoy the Outing Too, Nya"
+        }
+      ],
+      "uri": "jw:10560904"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82760632",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82760632"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82760633",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82760633"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82760634",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82760634"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82760635",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82760635"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82760636",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82760636"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82760637",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82760637"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82760638",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82760638"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82760639",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82760639"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82760640",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82760640"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82760641",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82760641"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82760642",
+      "mediaUri": "nf:82760630-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82760642"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "anilist:207141",
+        "whole": "nf:82760630"
+      }
+    ],
+    "together": [
+      [
+        "anilist:207141",
+        "kitsu:50551",
+        "mal:63403",
+        "offline:mal-63403",
+        "anizip:19873"
+      ]
+    ]
+  },
+  "name": "Chainsmoker Cat",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "207141",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Chainsmoker Cat"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Yani Neko"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ヤニねこ"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:207141"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50551",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Chainsmoker Cat"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Yani Neko"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ヤニねこ"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50551"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63403",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Chainsmoker Cat"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yani Neko"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63403"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63403",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yani Neko"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63403"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19873",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Chainsmoker Cat"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ヤニねこ"
+        }
+      ],
+      "uri": "anizip:19873"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "518630-563252",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:518630-563252"
+    },
+    {
+      "id": "82760630",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "nf:82760630"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82760630-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chainsmoker Cat"
+        }
+      ],
+      "uri": "nf:82760630-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9c7e11e0c77150714bd0a3b4f50339f11d183431d97032a4b5fd4dccadb5d66c",
+      "f4ccdae2e7b9bbe9e5d55190a85e4de0eeb0bbbbaed256f6e57cafcddefc8def",
+      "4264811c2ffee36715c84f35c1bbf807b1d1f2eaa151a4a9f2e4e161c4e29754",
+      "35110aec517d2aa52c973a01c9d236649076b1a487ce790e2652787becfd2aa5",
+      "5a14e59c3cb4e43ee7932d791129f2a8cee06fbe0c808f28247fc0cf973f8734",
+      "9862e8fd3e94f5002e3e2897ce0e1e3820725cc582c3aaf43a8ef546d394b0b9",
+      "c67b0d0268bd91dfab6be3d1da7e1ec643c3f41e36b04f8de935e44bea80eb44",
+      "977586601a52cb6b56ab08bf9f08923aaa3fbf3bbac930b491ef6dc1b2de8ef0",
+      "755e6deb4750341e0eaa7b5eac0aa8f963549ea29d4904d2f7defea98ce5bd27"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:207141,kitsu:50551,mal:63403,offline:mal-63403)"
+  },
+  "why": "Chainsmoker Cat (Yani Neko) is the twelve episode summer 2026 cour on a weekly 15:30 slot, first episode 2026-07-02 and last 2026-09-24, with a break week around 2026-08-27 and ten episodes aired so far.\nanizip:19873 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:63403 and anilist:207141, both members.\njw:518630-563252 is the same run: it maps SAME_AS to all four members and to anizip:19873, and its ten listed episodes are exactly the ten that have aired; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nnf:82760630 holds the run: a bare Netflix container with no title, count or dates, named PART_OF by both kitsu:50551 and jw:518630-563252."
+}

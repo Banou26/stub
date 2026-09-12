@@ -1,0 +1,101 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: three catalogue rows tied by first-party SAME_AS mappings, no container, streaming or episode rows to align. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:55003",
+      "mediaUri": "anilist:161680",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:55003",
+      "mediaUri": "offline:mal-55003",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:161680",
+      "mediaUri": "offline:mal-55003",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:55003",
+        "anilist:161680",
+        "offline:mal-55003"
+      ]
+    ]
+  },
+  "name": "1LDK + JK Ikinari Doukyo? Micchaku!? Hatsu Ecchi!!?",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "55003",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2023-07-07",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "1LDK + JK Ikinari Doukyo? Micchaku!? Hatsu Ecchi!!?"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:55003"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "161680",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 07 Jul 2023 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "1LDK+JK Ikinari Doukyo? Micchaku!? Hatsu Ecchi!!?"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "1LDK＋J系 いきなり同居？密着！？初エッチ！！？"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:161680"
+    },
+    {
+      "id": "mal-55003",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-55003"
+    }
+  ],
+  "source": {
+    "answers": [
+      "91772458a6c54abef47dbe96fa863f796ae2d48542df8af3743ac813fb1742d4",
+      "69857887c2273920f45ff2bfeb0e8ae7f00148762b6e12d5b8cea9444b38c17b",
+      "a74723bbb97bb6ed0909d52d1ffa4bbe1204e600acc54812c8f983e88e9dde3b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:55003)"
+  },
+  "why": "An adult OVA run keyed on mal:55003, first episode dated 2023-07-07, with only the three metadata catalogue rows and no streaming or container rows. anilist:161680 is the same run: it carries a first-party SAME_AS mapping to mal:55003, the same jp-en title and the same 2023-07-07 start date. offline:mal-55003 is the same run: the offline database row maps SAME_AS to both mal:55003 and anilist:161680."
+}

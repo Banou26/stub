@@ -1,0 +1,105 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only judgement here is the Netflix row: it claims SAME_AS on the MyAnimeList id but names Hollow Man with a 2000-01-01 start against a 2026-08-21 movie, and nothing in the two titles overlaps beyond the word Man. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64863",
+      "mediaUri": "nf:60000893",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "60000893-1",
+      "mediaUri": "nf:60000893",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hollow Man"
+        }
+      ],
+      "uri": "nf:60000893-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64863",
+        "nf:60000893"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64863"
+      ]
+    ],
+    "unrelated": [
+      "nf:60000893"
+    ]
+  },
+  "name": "Potato Man",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64863",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Potato Man"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tudou Xia: Wo Yao Dang Da Xia"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64863"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "60000893",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2000-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hollow Man"
+        }
+      ],
+      "uri": "nf:60000893"
+    }
+  ],
+  "source": {
+    "answers": [
+      "36943d608e43d7692e9358eac53f046e688d41aeb761e8ea61dac918798da18d",
+      "575614e9c68fb28d26b2bcce75ecd9c526e8de9f26378c0eaae7685cfc3bbfb1"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64863)"
+  },
+  "why": "Potato Man (Tudou Xia: Wo Yao Dang Da Xia) is a single episode movie dated 2026-08-21, and mal:64863 is the only row that actually describes it. nf:60000893 is Hollow Man, a 2000 title with one episode of the same name, so despite its SAME_AS claim on mal:64863 it is a different work by name and by date and is neither merged nor attached."
+}

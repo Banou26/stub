@@ -1,0 +1,375 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Both Netflix rows claim SAME_AS to every member, which is wrong: their own titles and 2012 dates identify them as the earlier Beginnings and Eternal compilation films, not the 2026-08-28 fourth film, so the claims were overruled on the row content. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:48820",
+      "mediaUri": "anilist:133007",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:133007",
+      "mediaUri": "kitsu:44451",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48820",
+      "mediaUri": "kitsu:44451",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48820",
+      "mediaUri": "offline:mal-48820",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:133007",
+      "mediaUri": "offline:mal-48820",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44451",
+      "mediaUri": "offline:mal-48820",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48820",
+      "mediaUri": "anizip:16278",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:133007",
+      "mediaUri": "anizip:16278",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:133007",
+      "mediaUri": "nf:80041086",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:16278",
+      "mediaUri": "nf:80041086",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44451",
+      "mediaUri": "nf:80041086",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48820",
+      "mediaUri": "nf:80041086",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-48820",
+      "mediaUri": "nf:80041086",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:133007",
+      "mediaUri": "nf:80041087",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:16278",
+      "mediaUri": "nf:80041087",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44451",
+      "mediaUri": "nf:80041087",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48820",
+      "mediaUri": "nf:80041087",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-48820",
+      "mediaUri": "nf:80041087",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "302286",
+      "mediaUri": "kitsu:44451",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:302286"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "16278-1",
+      "mediaUri": "anizip:16278",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:16278-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80041086-1",
+      "mediaUri": "nf:80041086",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Puella Magi Madoka Magica the Movie: Beginnings"
+        }
+      ],
+      "uri": "nf:80041086-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80041087-1",
+      "mediaUri": "nf:80041087",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Puella Magi Madoka Magica the Movie: Eternal"
+        }
+      ],
+      "uri": "nf:80041087-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:133007",
+        "nf:80041086"
+      ],
+      [
+        "anilist:133007",
+        "nf:80041087"
+      ],
+      [
+        "nf:80041086",
+        "nf:80041087"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:133007",
+        "kitsu:44451",
+        "mal:48820",
+        "offline:mal-48820",
+        "anizip:16278"
+      ]
+    ],
+    "unrelated": [
+      "nf:80041086",
+      "nf:80041087"
+    ]
+  },
+  "name": "Puella Magi Madoka Magica the Movie -Walpurgisnacht: Rising-",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "133007",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 28 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Puella Magi Madoka Magica the Movie -Walpurgisnacht: Rising-"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mahou Shoujo Madoka☆Magica: Walpurgis no Kaiten"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "劇場版 魔法少女まどか☆マギカ〈ワルプルギスの廻天〉"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:133007"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "44451",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Puella Magi Madoka Magica the Movie -Walpurgisnacht: Rising-"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mahou Shoujo Madoka☆Magica: Walpurgis no Kaiten"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "魔法少女まどか☆マギカ 〈ワルプルギスの廻天〉"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:44451"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "48820",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Puella Magi Madoka Magica the Movie - Walpurgisnacht: Rising"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mahou Shoujo Madoka★Magica Movie 4: Walpurgis no Kaiten"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:48820"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-48820",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mahou Shoujo Madoka★Magica Movie 4: Walpurgis no Kaiten"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-48820"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "16278",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Puella Magi Madoka Magica the Movie - Walpurgisnacht: Rising"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "劇場版 魔法少女まどか☆マギカ〈ワルプルギスの廻天〉"
+        }
+      ],
+      "uri": "anizip:16278"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "80041086",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2012-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Puella Magi Madoka Magica the Movie: Beginnings"
+        }
+      ],
+      "uri": "nf:80041086"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "80041087",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2012-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Puella Magi Madoka Magica the Movie: Eternal"
+        }
+      ],
+      "uri": "nf:80041087"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9149d8e38f9eb03aaaa159f1f6ae606d3777df15a07d4a88d87fc9d385aeb4e8",
+      "3dac4eaf37a396399468a5b3b13dafe2553d6258f1a1a84dec5419c32a982091",
+      "b1774c1429c35da54824938e17556408033f78ac6380715e2014a1185b2bce8f",
+      "dfa9ccd5a78f4fe660867f8366fd21cc4ef9ac87e321dc0ff8ff777ebd6b9b88",
+      "ac4d81630fc67e13afd48df4a27a2c9d0bf4cfd77ab7e4729e91c4ed00d95f3c",
+      "c7c480161eca1b1c6e9ae14cded2ba7fc2b9e44942f99014ddcb1b6819688c1c",
+      "306abb1dd7513a3b84c4604b779b90e3ecb59502cb2235c5011e9ebb784d878c",
+      "68176d52011bac9631f00fd00cf3fa692ea02520aae047597e2392fa6b22d0d7",
+      "a697fe9216269a8de0ce8b6b4831ee9d6f59978c02d25fbac0b48685280d4377",
+      "b5c5c22cdebadfcba62cfad554fe305a115e2dec0274b0332826808ef9947803"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:133007,kitsu:44451,mal:48820,offline:mal-48820)"
+  },
+  "why": "Puella Magi Madoka Magica the Movie -Walpurgisnacht: Rising- is a single feature film released 2026-08-28, the fourth Madoka Magica film, carried here as a one episode MOVIE run. anilist:133007, kitsu:44451, mal:48820 and offline:mal-48820 are one run: anilist and kitsu both give mal:48820, kitsu and offline give anilist:133007, and anilist, kitsu and mal all carry the 2026-08-28 date with a count of 1. anizip:16278 is the same run: it maps to mal:48820 and anilist:133007, lists one episode, and that episode is dated 2026-08-28, the film's release day. nf:80041086 is Puella Magi Madoka Magica the Movie: Beginnings, the 2011 to 2012 first compilation film, dated 2012 here and titled differently, so it is a different work despite its SAME_AS claims. nf:80041087 is Puella Magi Madoka Magica the Movie: Eternal, the second compilation film, also dated 2012 and titled differently, so it is a different work as well, and the two Netflix films are different works from each other. No episode pairs are asserted: the kitsu episode row carries neither a title nor a date, so there is nothing to match the anizip Complete Movie entry against."
+}

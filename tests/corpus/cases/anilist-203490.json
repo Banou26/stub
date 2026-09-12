@@ -1,0 +1,1352 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The episode work was easy for once: Crunchyroll and AniZip agree date for date on eleven episodes and JustWatch repeats Crunchyroll's titles exactly, so both pairings rest on hard fields. The judgement calls were the two partial seasons, 11 episodes against a 24 episode run, accepted as the same run rather than containers because their last episode is 2026-09-11 while the run continues to December, so neither folds two cours. The Netflix season was left alone: only its episode 1 carries a real title and it has no dates at all. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00371926-GS00371927",
+      "mediaUri": "anilist:203490",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63061",
+      "mediaUri": "anilist:203490",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203490",
+      "mediaUri": "kitsu:50797",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00371926",
+      "mediaUri": "kitsu:50797",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63061",
+      "mediaUri": "offline:mal-63061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203490",
+      "mediaUri": "offline:mal-63061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50797",
+      "mediaUri": "offline:mal-63061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63061",
+      "mediaUri": "anizip:19755",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203490",
+      "mediaUri": "anizip:19755",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203490",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50797",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63061",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63061",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203490",
+      "mediaUri": "jw:510257-553374",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19755",
+      "mediaUri": "jw:510257-553374",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50797",
+      "mediaUri": "jw:510257-553374",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63061",
+      "mediaUri": "jw:510257-553374",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63061",
+      "mediaUri": "jw:510257-553374",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:203490",
+      "mediaUri": "nf:82941827-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19755",
+      "mediaUri": "nf:82941827-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:510257-553374",
+      "mediaUri": "nf:82941827-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50797",
+      "mediaUri": "nf:82941827-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63061",
+      "mediaUri": "nf:82941827-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63061",
+      "mediaUri": "nf:82941827-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404680",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404680"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404681",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404681"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404682",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404682"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404683",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404683"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404684",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404684"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404685",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404685"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404686",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404686"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404687",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404687"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404688",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404688"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404689",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404689"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404690",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404690"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404691",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404691"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404692",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404692"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404693",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404693"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404694",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404694"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404695",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404695"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404696",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404696"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404697",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404697"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404698",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404698"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404699",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404699"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404700",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404700"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404701",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404701"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "404702",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404702"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "404703",
+      "mediaUri": "kitsu:50797",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404703"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19755-1",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Welcome to the Narita Family"
+        }
+      ],
+      "uri": "anizip:19755-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19755-2",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-07-10T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Lies Make Families"
+        }
+      ],
+      "uri": "anizip:19755-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19755-3",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Narita Family`s New Rule"
+        }
+      ],
+      "uri": "anizip:19755-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19755-4",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Unable to Be Honest"
+        }
+      ],
+      "uri": "anizip:19755-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19755-5",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Shut Away Angel"
+        }
+      ],
+      "uri": "anizip:19755-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19755-6",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sibling`s Feelings"
+        }
+      ],
+      "uri": "anizip:19755-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19755-7",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Younger Brother Is a Prince?"
+        }
+      ],
+      "uri": "anizip:19755-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19755-8",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "What`ll Happen to the Cultural Festival?!"
+        }
+      ],
+      "uri": "anizip:19755-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19755-9",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Birthday Present Bonus"
+        }
+      ],
+      "uri": "anizip:19755-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19755-10",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Sign of Connection"
+        }
+      ],
+      "uri": "anizip:19755-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19755-11",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19755-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19755-12",
+      "mediaUri": "anizip:19755",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19755-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00371926-GS00371927-GE00379510JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-07-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Welcome to the Narita Family"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379510JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00371926-GS00371927-GE00379511JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-07-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Lies Make Families"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379511JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00371926-GS00371927-GE00379512JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-07-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Narita Family’s New Rule"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379512JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00371926-GS00371927-GE00379513JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-07-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Unable to Be Honest"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379513JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00371926-GS00371927-GE00379514JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-07-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Shut Away Angel"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379514JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00371926-GS00371927-GE00379515JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-08-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Siblings’ Feelings"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379515JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00371926-GS00371927-GE00379516JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-08-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "My Younger Brother Is a Prince?"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379516JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00371926-GS00371927-GE00379517JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-08-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "What’ll Happen to the Cultural Festival?!"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379517JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00371926-GS00371927-GE00379518JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-08-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Birthday Present Bonus"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379518JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00371926-GS00371927-GE00379519JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-09-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Sign of Connection"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379519JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00371926-GS00371927-GE00379520JAJP",
+      "mediaUri": "cr:GT00371926-GS00371927",
+      "origin": "cr",
+      "releaseDate": "2026-09-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Hiroshima Onomichi Steam Incident"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927-GE00379520JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10159053",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Welcome to the Narita Family"
+        }
+      ],
+      "uri": "jw:10159053"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10704736",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lies Make Families"
+        }
+      ],
+      "uri": "jw:10704736"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10704744",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Narita Family’s New Rule"
+        }
+      ],
+      "uri": "jw:10704744"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10704735",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Unable to Be Honest"
+        }
+      ],
+      "uri": "jw:10704735"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10704741",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shut Away Angel"
+        }
+      ],
+      "uri": "jw:10704741"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10704742",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Siblings’ Feelings"
+        }
+      ],
+      "uri": "jw:10704742"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10704737",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Younger Brother Is a Prince?"
+        }
+      ],
+      "uri": "jw:10704737"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10704738",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "What’ll Happen to the Cultural Festival?!"
+        }
+      ],
+      "uri": "jw:10704738"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10704734",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Birthday Present Bonus"
+        }
+      ],
+      "uri": "jw:10704734"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10704743",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Sign of Connection"
+        }
+      ],
+      "uri": "jw:10704743"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10704740",
+      "mediaUri": "jw:510257-553374",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "jw:10704740"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82941830",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Welcome to the Narita Family"
+        }
+      ],
+      "uri": "nf:82941830"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82941831",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82941831"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82941832",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82941832"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82941833",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82941833"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82941834",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82941834"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82941835",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82941835"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82941836",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82941836"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82941837",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82941837"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82941838",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82941838"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82941839",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82941839"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82941840",
+      "mediaUri": "nf:82941827-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82941840"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379510JAJP",
+        "b": "anizip:19755-1"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379511JAJP",
+        "b": "anizip:19755-2"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379512JAJP",
+        "b": "anizip:19755-3"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379513JAJP",
+        "b": "anizip:19755-4"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379514JAJP",
+        "b": "anizip:19755-5"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379515JAJP",
+        "b": "anizip:19755-6"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379516JAJP",
+        "b": "anizip:19755-7"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379517JAJP",
+        "b": "anizip:19755-8"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379518JAJP",
+        "b": "anizip:19755-9"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379519JAJP",
+        "b": "anizip:19755-10"
+      },
+      {
+        "a": "cr:GT00371926-GS00371927-GE00379520JAJP",
+        "b": "anizip:19755-11"
+      },
+      {
+        "a": "jw:10159053",
+        "b": "cr:GT00371926-GS00371927-GE00379510JAJP"
+      },
+      {
+        "a": "jw:10704736",
+        "b": "cr:GT00371926-GS00371927-GE00379511JAJP"
+      },
+      {
+        "a": "jw:10704744",
+        "b": "cr:GT00371926-GS00371927-GE00379512JAJP"
+      },
+      {
+        "a": "jw:10704735",
+        "b": "cr:GT00371926-GS00371927-GE00379513JAJP"
+      },
+      {
+        "a": "jw:10704741",
+        "b": "cr:GT00371926-GS00371927-GE00379514JAJP"
+      },
+      {
+        "a": "jw:10704742",
+        "b": "cr:GT00371926-GS00371927-GE00379515JAJP"
+      },
+      {
+        "a": "jw:10704737",
+        "b": "cr:GT00371926-GS00371927-GE00379516JAJP"
+      },
+      {
+        "a": "jw:10704738",
+        "b": "cr:GT00371926-GS00371927-GE00379517JAJP"
+      },
+      {
+        "a": "jw:10704734",
+        "b": "cr:GT00371926-GS00371927-GE00379518JAJP"
+      },
+      {
+        "a": "jw:10704743",
+        "b": "cr:GT00371926-GS00371927-GE00379519JAJP"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:203490",
+        "whole": "cr:GT00371926"
+      }
+    ],
+    "together": [
+      [
+        "anilist:203490",
+        "kitsu:50797",
+        "mal:63061",
+        "offline:mal-63061",
+        "anizip:19755",
+        "cr:GT00371926-GS00371927",
+        "jw:510257-553374"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Please Excuse My Younger Brothers",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "203490",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Please Excuse My Younger Brothers"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Uchi no Otouto-domo ga Sumimasen"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "うちの弟どもがすみません"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:203490"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "50797",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Please Excuse My Younger Brothers"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Uchi no Otouto-domo ga Sumimasen"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "うちの弟どもがすみません"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50797"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "63061",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Please Excuse My Younger Brothers"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Uchi no Otouto-domo ga Sumimasen"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63061"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "mal-63061",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Uchi no Otouto-domo ga Sumimasen"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63061"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "19755",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Please Excuse My Younger Brothers"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "うちの弟どもがすみません"
+        }
+      ],
+      "uri": "anizip:19755"
+    },
+    {
+      "id": "GT00371926",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00371926"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00371926-GS00371927",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Please Excuse My Younger Brothers"
+        }
+      ],
+      "uri": "cr:GT00371926-GS00371927"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "510257-553374",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:510257-553374"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82941827-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Please Excuse My Younger Brothers"
+        }
+      ],
+      "uri": "nf:82941827-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "c33767f5ae1560fdb51650650770d554bca7f61bf4d7e8bb70b186eb6e0699b6",
+      "976462909ff03f27baa9098c4b960bfa666f3da356fe96d6199fbee3f75f0a4c",
+      "5f4ff9cbbcacbde98cfa7826a9f5711d47617b7023773ae1aec91f7a1a8a8884",
+      "35ab0b5a4a4159da10f9a05e25734dfd684c439c3fefd20817c34bf92aa1558b",
+      "ffeaf656b617f2bc1c94f1f7ddef036a8ee980136733ac706dd27bb9cdf5b76a",
+      "7667bc4a76713b6ac1033dac14b2b1cb044fe306fc8fe8dcca950ec9ea1443d6",
+      "583ca3e2d148333f01d3d794f42d6ad7ae6ea8c5319389edc70d64d0487cc7cc",
+      "b7aff36cb27705c5e33c9008570c3a420ef9490ed6021a8502954a060facb8ec",
+      "2df63dd5996bc8e05b849d588b859fc070cdd6536ab2693d2b5b7027142ec1c8",
+      "38110ea10d46261ad11f5567cf1b5ec7dfed483c46bf88a9d59eae119c8a24ff",
+      "07c31c8d6bbbc1d419537634b4f44857d1131af097b82fb8c1b72aae901fe3f2"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:203490,kitsu:50797,mal:63061,offline:mal-63061)"
+  },
+  "why": "Please Excuse My Younger Brothers (Uchi no Otouto-domo ga Sumimasen) is a 24 episode run that began 2026-07-04 and is scheduled to end 2026-12-11, so it is halfway through a two cour broadcast; AniList, Kitsu, MyAnimeList and the offline row all give episodeCount 24 and a 2026-07-04 start. anizip:19755 is the same run: it carries first-party SAME_AS handles to mal:63061 and anilist:203490, its episodeCount is 24, and its episode 1 releases 2026-07-03T15:00Z, the 2026-07-04 premiere in Japan time. cr:GT00371926-GS00371927 is the same run: anilist:203490 itself declares SAME_AS against it, it is the Crunchyroll season under the series please-excuse-my-younger-brothers, and the 11 episodes it lists (a partial listing of the 24, not a fold, since its last episode is 2026-09-11 and the run continues to December) sit on the same eleven dates as AniZip's episodes 1 to 11 with seven titles character for character identical. Those 11 Crunchyroll episodes pair with AniZip episodes 1 to 11 on those dates, every one the same calendar day. jw:510257-553374 is the same run: it is the JustWatch season at the slug please-excuse-my-younger-brothers, it carries first-party SAME_AS handles to anilist:203490, anizip:19755, kitsu:50797, mal:63061 and offline:mal-63061, and its first ten episode titles are character for character the Crunchyroll titles at the same numbers. Those ten pair with Crunchyroll episodes 1 to 10 on those titles; JustWatch's eleventh entry is the placeholder Episode 11 and is left unpaired. cr:GT00371926 holds the run: it is the bare Crunchyroll series container (scope CONTAINER, no dates, no episodes, no count) and kitsu:50797 declares PART_OF against it, with no includes range since it lists nothing to align. nf:82941827-1 is left unsettled: it is titled Please Excuse My Younger Brothers and claims SAME_AS against every member, but it carries no dates, its episodeCount of 11 is neither the run's 24 nor anything the row itself explains, and ten of its eleven episodes are named Episode 2 to Episode 11."
+}

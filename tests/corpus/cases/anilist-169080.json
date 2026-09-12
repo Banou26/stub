@@ -1,0 +1,656 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Only one non-member row and it agrees on ids, count and the whole weekly date ladder. Worth noting for later that kitsu 47929 lists 24 untitled episodes against the run's 12, which looks like it is counting both cours, but kitsu is already a member of the address so it needed no mark. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:56613",
+      "mediaUri": "anilist:169080",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169080",
+      "mediaUri": "kitsu:47929",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56613",
+      "mediaUri": "kitsu:47929",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56613",
+      "mediaUri": "offline:mal-56613",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169080",
+      "mediaUri": "offline:mal-56613",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47929",
+      "mediaUri": "offline:mal-56613",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56613",
+      "mediaUri": "anizip:18188",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169080",
+      "mediaUri": "anizip:18188",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "386504",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386504"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "386505",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386505"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404808",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404808"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404809",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404809"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404810",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404810"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404811",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404811"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404812",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404812"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404813",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404813"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404814",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404814"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404815",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404815"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404816",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404816"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404817",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404817"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404818",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404818"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404819",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404819"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404820",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404820"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404821",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404821"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404822",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404822"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404823",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404823"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404824",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404824"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404825",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404825"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404826",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404826"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404827",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404827"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "404828",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404828"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "404829",
+      "mediaUri": "kitsu:47929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404829"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18188-1",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Onwards to Adventure!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "冒険の旅にしゅっぱーつ!"
+        }
+      ],
+      "uri": "anizip:18188-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18188-2",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Power of Healing Is Important."
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "癒しの力は大切です."
+        }
+      ],
+      "uri": "anizip:18188-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18188-3",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "So, This Is the World of Adults..."
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "これが, オトナの世界..."
+        }
+      ],
+      "uri": "anizip:18188-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18188-4",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fight for the Prize!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "戦って勝ち取るんだよ!"
+        }
+      ],
+      "uri": "anizip:18188-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18188-5",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "So in Other Words, Girl Power?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "つまりは女子力?"
+        }
+      ],
+      "uri": "anizip:18188-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18188-6",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Leave It to Laffey!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ラフィーにお任せ!"
+        }
+      ],
+      "uri": "anizip:18188-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18188-7",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Godlike Way to Spend a Holiday."
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "神様的休息日の過ごし方."
+        }
+      ],
+      "uri": "anizip:18188-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18188-8",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Please Forgive My Sins..."
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "私の罪をお赦しください..."
+        }
+      ],
+      "uri": "anizip:18188-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18188-9",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Lucky Item?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "わたしのラッキーアイテム?"
+        }
+      ],
+      "uri": "anizip:18188-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18188-10",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Let`s Enjoy Some Delicious Sweets."
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "美味しいスイーツを食べましょうか."
+        }
+      ],
+      "uri": "anizip:18188-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18188-11",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T16:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18188-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18188-12",
+      "mediaUri": "anizip:18188",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T16:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18188-12"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:169080",
+        "kitsu:47929",
+        "mal:56613",
+        "offline:mal-56613",
+        "anizip:18188"
+      ]
+    ]
+  },
+  "name": "Anime AzurLane: Slow Ahead! Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "169080",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Anime AzurLane: Slow Ahead! Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Azur Lane: Bisoku Zenshin! Ni!!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "アズールレーン びそくぜんしんっ！にっ！！"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:169080"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "47929",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "AzurLane: Slow Ahead! Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Azur Lane Bisoku Zenshin! 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "アズールレーン びそくぜんしんっ！ 第二期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:47929"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "56613",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Azur Lane: Slow Ahead! Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Azur Lane: Bisoku Zenshin! Ni!!"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:56613"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-56613",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Azur Lane: Bisoku Zenshin! Ni!!"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-56613"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "18188",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Azur Lane: Slow Ahead! Season 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "アズールレーン びそくぜんしんっ! にっ!!"
+        }
+      ],
+      "uri": "anizip:18188"
+    }
+  ],
+  "source": {
+    "answers": [
+      "29550a1d4b13aa04b2130631bcba8550b792fc8513a1d76529c5cf3afd080705",
+      "4df2e221e7ee01080a6ed2ac734d941a8207574fde08d784aaf393332c6aa552",
+      "c3e8f8b3d8de14d80cd77baa51bcf729dfe9602dc1ccfcf41eca9231932f83dd",
+      "b2d5a499b450f6040d21c1b20d0706e454719a782eec00dc37bf4ce746d36faa",
+      "f67bedb4aefd554379ad216835eabc703bfc182efda2811f85e6844bcd4dace2"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:169080,kitsu:47929,mal:56613,offline:mal-56613)"
+  },
+  "why": "The run is the second season of the Azur Lane: Slow Ahead! short form comedy, twelve episodes from 2026-07-06 to 2026-09-20 on anilist 169080, mal 56613 and kitsu 47929. anizip:18188 is the same run: it maps SAME_AS to both anilist 169080 and mal 56613, its episodeCount is 12 like the run's, and its episode release dates run 2026-07-05T16:00Z (2026-07-06 JST, the run's start) weekly to 2026-09-20T16:00Z, which is the run's end date exactly."
+}

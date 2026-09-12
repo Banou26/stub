@@ -1,0 +1,496 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The only hard call is the Netflix row, which asserts SAME_AS on both members while describing a different show (My Love Story!!, 24 episodes, 2015); the three disagreeing fields outweigh the handle, so it is marked unrelated rather than a container. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64522"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64522",
+      "mediaUri": "kitsu:50931",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50931",
+      "mediaUri": "nf:81409988",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64522",
+      "mediaUri": "nf:81409988",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407195",
+      "mediaUri": "kitsu:50931",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407195"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81409990",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81409990"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81409991",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81409991"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81409992",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81409992"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81409993",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81409993"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81409994",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81409994"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81409995",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81409995"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81409996",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81409996"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81409997",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81409997"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81409998",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81409998"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81409999",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81409999"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81410000",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81410000"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81410001",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81410001"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81410002",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:81410002"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81410003",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:81410003"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81410004",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:81410004"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81410005",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:81410005"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81410006",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:81410006"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81410007",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:81410007"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81410008",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:81410008"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81410009",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:81410009"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81410010",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:81410010"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81410011",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:81410011"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81410012",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:81410012"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81410013",
+      "mediaUri": "nf:81409988",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "nf:81410013"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81409988",
+        "mal:64522"
+      ]
+    ],
+    "together": [],
+    "unrelated": [
+      "nf:81409988"
+    ]
+  },
+  "name": "FBKingdom Story",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50931",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-30",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "FBKingdom Story"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "FBKINGDOM STORY"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50931"
+    },
+    {
+      "id": "64522",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64522"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81409988",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2015-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Love Story!!"
+        }
+      ],
+      "uri": "nf:81409988"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a3eda926573e094c912209708fd9602f9a75dc4ca7608c26e8c4d17b608e30d4",
+      "23097b7bd1647ec0bd850ca6192df08518f8234f49fb3eb5bc41215dd81e4041",
+      "481ebdb097fc9d4afda2f47624b39c17fa17fde68441298ca1bb216f02ccc2ce",
+      "d49f57e4043c6899bef44ad79fab804da7f11f451a92a1129cda5917c6cdf65b",
+      "983a4ba65256e6d61fd5528cb98319f395e1cead0a3ac713f257551f1b0004bc",
+      "1df8e4b4b3a1519b0c607ca9f5a645f9662c626ec9cec69c1f71a5ab5d27788a",
+      "93519475ac4d60b2549d35fed1fefb4a896e4b43bc9b848757c2e70ed863dcef",
+      "14209f051ef959a65780d13a905c051330d47902a510606ce4cd893ac194d209",
+      "9d0b4e8961591fb0c4e66cdbbce5c6121288507446faee6bd496cbe312ce3547",
+      "a71b75423981c14d2f087cefe8fb0e892d9007fa35140a689b5f8f363fd3ac80",
+      "82e96edf4e1f29e73ed6c62decf6be975183cefb76ff0184f274ef585c075430",
+      "0f9605c19e340b24ae1479a0f75fc18d5b4250974aad78e73868ea75fe5eac57",
+      "5aa176e6635ef3589b66e5667871a95f0b0eb9a48cced41742dd7f19593a0ce5",
+      "1d7b3b8f2722ffd05f47e791abec5dce841323f2f16a955f858b2713d66b9d47",
+      "2933a6527b84ee64bcd6ef125bd9b2219d86c92ecfbfd8459a756e538820d9df",
+      "b505b0929a843680cb1cbb243fc33024d9b5875d4f7bc88728578c25ed8d87a6",
+      "ea63513fda26665db88ff2d617a8c8af67d7df7175205266563d70e5b971b146",
+      "14ab56040b9110afd378424b9355639116828513adf8df139dc040b5c3b49d3a",
+      "349019913a948ed511a32eb7954b6d678bfbe68fab2cd8d9a8de64c43e68e1c0",
+      "6a74d7efd853b1ad24fe3d0e534a2bdb4de0a18b89b5c099c5e009bff570dde1",
+      "1eaf25ccd68b76c67e0f316d9e931dcf282c542795adbd414d6e1aa2a1c4a4d3",
+      "20ce108a7015802e9b8340e3ce5c9baad604b0e0515dfd97b36649996d2a5599",
+      "3952e81d1a991fe9664f35bdf612e23d4b4988bb4e3b9dc327537112f4e1a192",
+      "d8e158a7b8b9486d43c2668a24bb01f8f5ce6120b2ffd3bb776a2a662b5c48ff",
+      "3a9c39f46d7ddce6e8f345c5bf931822ce6efc13be51c0918cce75f90e51062d",
+      "9b0f7245c3121d72f4f5fcb48081906322ec7a543530dae4e63e1a503a8fcdd3",
+      "d06119ca43cf7fb5720d1ba5d71490236ba2db8edc58493d31473a67adceb682"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50931,mal:64522)"
+  },
+  "why": "FBKingdom Story is a single-episode ONA dated 2026-06-30 (kitsu:50931, episodeCount 1), and mal:64522 is its own member by the SAME_AS handle kitsu:50931 carries. nf:81409988 is unrelated: it is Netflix's listing of My Love Story!!, a 24-episode series with a 2015-01-01 start date and no shared title, so its SAME_AS handles to kitsu:50931 and mal:64522 contradict the date, the count and the title and are not followed."
+}

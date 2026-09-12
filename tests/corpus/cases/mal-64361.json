@@ -1,0 +1,105 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Only three rows, all one work; the offline row's season field (SPRING 2026) disagrees with Kitsu's SUMMER 2026 start of 2026-06-06, resolved in favour of the shared MyAnimeList id. Refuted: 0 marks overturned. The one same mark rests on the offline row keying its own id to the MyAnimeList id (offline:mal-64361) plus a SAME_AS handle to mal:64361; checked from the other side, the title Haiiro no Shoumei and the episodeCount of 1 both agree with Kitsu, the offline row carries no startDate to contradict Kitsu's 2026-06-06, and the SPRING against SUMMER season bucket is the only disagreement, too coarse to unseat the id mapping. repair 2026-09-12: removed from together, no source answered about them: mal:64361"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64361",
+      "mediaUri": "kitsu:50980",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64361",
+      "mediaUri": "offline:mal-64361",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407910",
+      "mediaUri": "kitsu:50980",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407910"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50980",
+        "offline:mal-64361"
+      ]
+    ]
+  },
+  "name": "Haiiro no Shoumei",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50980",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Haiiro no Shoumei"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "灰色の証明"
+        }
+      ],
+      "uri": "kitsu:50980"
+    },
+    {
+      "id": "64361",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64361"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64361",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Haiiro no Shoumei"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "offline:mal-64361"
+    }
+  ],
+  "source": {
+    "answers": [
+      "52f954b2d86abd2182da9b7154b5550e01f5cfa8f8a77b99aa01e742072e09ce",
+      "83848d0aaf7c929101e2c20b4148aae73eae3127fff2ba8f2112f0e56c8f9108",
+      "98f506de92d412acb0f0353a20bc0a1b7848b5ae435f8883f4b21f598000355f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50980,mal:64361)"
+  },
+  "why": "Haiiro no Shoumei is a single episode special, carried by Kitsu as one episode starting 2026-06-06 and by MyAnimeList as id 64361. The offline database row offline:mal-64361 is the same run: its id is the MyAnimeList id itself and it carries a SAME_AS handle to mal:64361, with the same title Haiiro no Shoumei and the same episodeCount of 1 (its season field reads SPRING 2026 against Kitsu's SUMMER 2026, which does not outweigh the first-party id mapping)."
+}

@@ -1,0 +1,309 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "No episode titles or air dates on any row, so the 18 Kitsu episode rows were left unpaired; nothing but the four catalogue rows was returned. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63987",
+      "mediaUri": "anilist:211220",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211220",
+      "mediaUri": "kitsu:50878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63987",
+      "mediaUri": "offline:mal-63987",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211220",
+      "mediaUri": "offline:mal-63987",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406843",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406843"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "406844",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406844"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406845",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406845"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406846",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406846"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406847",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406847"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406848",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406848"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406849",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406849"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "406850",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406850"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "406851",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406851"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "406852",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406852"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "406853",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406853"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "406854",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406854"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "406855",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406855"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "406856",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406856"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "406857",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406857"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "406858",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406858"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "406859",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406859"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "406860",
+      "mediaUri": "kitsu:50878",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406860"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:211220",
+        "kitsu:50878",
+        "mal:63987",
+        "offline:mal-63987"
+      ]
+    ]
+  },
+  "name": "Raised by Demons: Panda Li",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "211220",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 29 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Raised by Demons: Panda Li"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Li Xiongmao"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "李熊猫"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:211220"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 18,
+      "id": "50878",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-29",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Raised by Demons: Panda Li"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Li Xiongmao"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50878"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 18,
+      "id": "63987",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-29",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Raised by Demons: Panda Li"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Li Xiongmao"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:63987"
+    },
+    {
+      "id": "mal-63987",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-63987"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2db467676c9315adcf981b34eb3f26907124a52bea0fe7c67966d3da9a22d304",
+      "3029e748dbe6573a4e3f84e86296138f1cde4742a5e854123bb5804962f466ed",
+      "b80951c79f8a3d080f4e1a9da8232d671fd335d818cb9d4ff20b445771ddb866",
+      "aa19b245332eee53897ef0d03d0d90094ec964eeb2aac1fc690a507ebf7543ff"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:211220,kitsu:50878)"
+  },
+  "why": "Raised by Demons: Panda Li is an 18 episode Chinese ONA that started 2026-07-29. mal:63987 is the same run: anilist:211220 claims SAME_AS to it, and its start date 2026-07-29, its count of 18 and its title all match the AniList and Kitsu rows. offline:mal-63987 is the same run: it claims SAME_AS to both mal:63987 and anilist:211220."
+}

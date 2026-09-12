@@ -1,0 +1,185 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: one non-member row, anizip:20112, tied by first-party ids, by the Japanese title and by the 2026-08-21 date. The run's address carries two offline rows, one keyed on the anilist id and one on the mal id, both already members. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63973",
+      "mediaUri": "anilist:176373",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:176373",
+      "mediaUri": "offline:anilist-176373",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63973",
+      "mediaUri": "offline:mal-63973",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63973",
+      "mediaUri": "anizip:20112",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:176373",
+      "mediaUri": "anizip:20112",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "20112-1",
+      "mediaUri": "anizip:20112",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:20112-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:176373",
+        "mal:63973",
+        "offline:anilist-176373",
+        "offline:mal-63973",
+        "anizip:20112"
+      ]
+    ]
+  },
+  "name": "Shiranuhi",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "176373",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 21 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Shiranuhi"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "しらぬひ"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:176373"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63973",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Shiranuhi"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63973"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-176373",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shiranuhi"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:anilist-176373"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63973",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shiranuhi"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63973"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "20112",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "しらぬひ"
+        }
+      ],
+      "uri": "anizip:20112"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d7361b7cd1c8376309f8769c79254ebae0c4a143abea89c97a0cdedc1ec13065",
+      "7f4e8839008aa46d372535c91458d9aaeeb47b87598c7524e07faf20a652bb45",
+      "54843cef212cacb81331472ac35862e171ed7b247b4601a7ce99765e465a389e",
+      "a6aa1eb2e202a2412d7e6f45290a13cb49ce6f53003b36d7a8a0cdcb2e84de16",
+      "1d4bb28fbb9c8fc65c2a0cf151a348a9f1e07c6c765046cd1b9d35325116fe5c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:176373,mal:63973,offline:anilist-176373,offline:mal-63973)"
+  },
+  "why": "Shiranuhi, a one episode anime film released 2026-08-21, keyed on anilist:176373 with mal:63973 and two offline rows as members. anizip:20112 is the same run: it maps SAME_AS to both mal:63973 and anilist:176373, carries the Japanese title しらぬひ that anilist:176373 also gives, and its single episode is dated 2026-08-21, the anilist start and end date and the mal start date."
+}

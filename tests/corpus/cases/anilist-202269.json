@@ -1,0 +1,1024 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "JustWatch has no episode dates, so its episodes were placed on exact titles alone; its tenth entry is romanised (Zutto, Soba ni) instead of translated, which is not an exact match, so that one position was left unplaced rather than paired by position. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378087-GS00378088",
+      "mediaUri": "anilist:202269",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62936",
+      "mediaUri": "anilist:202269",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62936",
+      "mediaUri": "kitsu:50350",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202269",
+      "mediaUri": "kitsu:50350",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62936",
+      "mediaUri": "offline:mal-62936",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202269",
+      "mediaUri": "offline:mal-62936",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50350",
+      "mediaUri": "offline:mal-62936",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62936",
+      "mediaUri": "anizip:19720",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202269",
+      "mediaUri": "anizip:19720",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202269",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50350",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62936",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62936",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202269",
+      "mediaUri": "jw:514097-547561",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19720",
+      "mediaUri": "jw:514097-547561",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50350",
+      "mediaUri": "jw:514097-547561",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62936",
+      "mediaUri": "jw:514097-547561",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62936",
+      "mediaUri": "jw:514097-547561",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "390471",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390471"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "390472",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390472"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "390473",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390473"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "390474",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390474"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "390475",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390475"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "390476",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390476"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "390477",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390477"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "390478",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390478"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "390479",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390479"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "390480",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390480"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "390481",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390481"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "390482",
+      "mediaUri": "kitsu:50350",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:390482"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19720-1",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Encounter"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "出会い"
+        }
+      ],
+      "uri": "anizip:19720-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19720-2",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fuyutsuki Koharu"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "冬月小春"
+        }
+      ],
+      "uri": "anizip:19720-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19720-3",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Yellow Bookmark"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黄色い栞"
+        }
+      ],
+      "uri": "anizip:19720-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19720-4",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "First Date"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "初めてのデート"
+        }
+      ],
+      "uri": "anizip:19720-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19720-5",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Aerial Fireworks"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "打上げ花火"
+        }
+      ],
+      "uri": "anizip:19720-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19720-6",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Empty Terrace Seat"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "空白のテラス席"
+        }
+      ],
+      "uri": "anizip:19720-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19720-7",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Transparent"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "透明"
+        }
+      ],
+      "uri": "anizip:19720-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19720-8",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Pangs of Love"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "恋心"
+        }
+      ],
+      "uri": "anizip:19720-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19720-9",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Alone"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ひとり"
+        }
+      ],
+      "uri": "anizip:19720-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19720-10",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Stay by Her Side"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ずっと, そばに"
+        }
+      ],
+      "uri": "anizip:19720-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19720-11",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19720-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19720-12",
+      "mediaUri": "anizip:19720",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19720-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378087-GS00378088-GE00378961JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-07-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "An Encounter"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378961JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378087-GS00378088-GE00378962JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-07-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Fuyutsuki Koharu"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378962JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378087-GS00378088-GE00378963JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-07-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Yellow Bookmark"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378963JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378087-GS00378088-GE00378964JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-07-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "First Date"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378964JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378087-GS00378088-GE00378965JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-08-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Aerial Fireworks"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378965JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378087-GS00378088-GE00378966JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-08-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Empty Terrace Seat"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378966JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378087-GS00378088-GE00378967JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-08-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Transparent"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378967JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378087-GS00378088-GE00378968JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-08-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Pangs of Love"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378968JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378087-GS00378088-GE00378969JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-08-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Alone"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378969JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378087-GS00378088-GE00378970JAJP",
+      "mediaUri": "cr:GT00378087-GS00378088",
+      "origin": "cr",
+      "releaseDate": "2026-09-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Stay By Her Side"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088-GE00378970JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10076588",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "An Encounter"
+        }
+      ],
+      "uri": "jw:10076588"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10016909",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fuyutsuki Koharu"
+        }
+      ],
+      "uri": "jw:10016909"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10047714",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Yellow Bookmark"
+        }
+      ],
+      "uri": "jw:10047714"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10088866",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "First Date"
+        }
+      ],
+      "uri": "jw:10088866"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10102319",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Aerial Fireworks"
+        }
+      ],
+      "uri": "jw:10102319"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10125082",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Empty Terrace Seat"
+        }
+      ],
+      "uri": "jw:10125082"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10151605",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Transparent"
+        }
+      ],
+      "uri": "jw:10151605"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10164033",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pangs of Love"
+        }
+      ],
+      "uri": "jw:10164033"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10633348",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Alone"
+        }
+      ],
+      "uri": "jw:10633348"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10633349",
+      "mediaUri": "jw:514097-547561",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Zutto, Soba ni"
+        }
+      ],
+      "uri": "jw:10633349"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19720-1",
+        "b": "cr:GT00378087-GS00378088-GE00378961JAJP"
+      },
+      {
+        "a": "anizip:19720-2",
+        "b": "cr:GT00378087-GS00378088-GE00378962JAJP"
+      },
+      {
+        "a": "anizip:19720-3",
+        "b": "cr:GT00378087-GS00378088-GE00378963JAJP"
+      },
+      {
+        "a": "anizip:19720-4",
+        "b": "cr:GT00378087-GS00378088-GE00378964JAJP"
+      },
+      {
+        "a": "anizip:19720-5",
+        "b": "cr:GT00378087-GS00378088-GE00378965JAJP"
+      },
+      {
+        "a": "anizip:19720-6",
+        "b": "cr:GT00378087-GS00378088-GE00378966JAJP"
+      },
+      {
+        "a": "anizip:19720-7",
+        "b": "cr:GT00378087-GS00378088-GE00378967JAJP"
+      },
+      {
+        "a": "anizip:19720-8",
+        "b": "cr:GT00378087-GS00378088-GE00378968JAJP"
+      },
+      {
+        "a": "anizip:19720-9",
+        "b": "cr:GT00378087-GS00378088-GE00378969JAJP"
+      },
+      {
+        "a": "anizip:19720-10",
+        "b": "cr:GT00378087-GS00378088-GE00378970JAJP"
+      },
+      {
+        "a": "jw:10076588",
+        "b": "cr:GT00378087-GS00378088-GE00378961JAJP"
+      },
+      {
+        "a": "jw:10016909",
+        "b": "cr:GT00378087-GS00378088-GE00378962JAJP"
+      },
+      {
+        "a": "jw:10047714",
+        "b": "cr:GT00378087-GS00378088-GE00378963JAJP"
+      },
+      {
+        "a": "jw:10088866",
+        "b": "cr:GT00378087-GS00378088-GE00378964JAJP"
+      },
+      {
+        "a": "jw:10102319",
+        "b": "cr:GT00378087-GS00378088-GE00378965JAJP"
+      },
+      {
+        "a": "jw:10125082",
+        "b": "cr:GT00378087-GS00378088-GE00378966JAJP"
+      },
+      {
+        "a": "jw:10151605",
+        "b": "cr:GT00378087-GS00378088-GE00378967JAJP"
+      },
+      {
+        "a": "jw:10164033",
+        "b": "cr:GT00378087-GS00378088-GE00378968JAJP"
+      },
+      {
+        "a": "jw:10633348",
+        "b": "cr:GT00378087-GS00378088-GE00378969JAJP"
+      }
+    ],
+    "together": [
+      [
+        "anilist:202269",
+        "kitsu:50350",
+        "mal:62936",
+        "offline:mal-62936",
+        "anizip:19720",
+        "cr:GT00378087-GS00378088",
+        "jw:514097-547561"
+      ]
+    ]
+  },
+  "name": "Love Unseen Beneath the Clear Night Sky",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "202269",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Love Unseen Beneath the Clear Night Sky"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Toumei na Yoru ni Kakeru Kimi to, Me ni Mienai Koi wo Shita."
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "透明な夜に駆ける君と、目に見えない恋をした。"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:202269"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50350",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Love Unseen Beneath the Clear Night Sky"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tomei na Yoru ni Kakeru-kun to, Menimienai Koi wo Shita"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "透明な夜に駆ける君と、目に見えない恋をした。"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50350"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62936",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Love Unseen Beneath the Clear Night Sky"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Toumei na Yoru ni Kakeru Kimi to, Me ni Mienai Koi wo Shita."
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62936"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62936",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Toumei na Yoru ni Kakeru Kimi to, Me ni Mienai Koi wo Shita."
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62936"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19720",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Love Unseen Beneath the Clear Night Sky"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "透明な夜に駆ける君と, 目に見えない恋をした."
+        }
+      ],
+      "uri": "anizip:19720"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378087-GS00378088",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Love Unseen Beneath the Clear Night Sky"
+        }
+      ],
+      "uri": "cr:GT00378087-GS00378088"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "514097-547561",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:514097-547561"
+    }
+  ],
+  "source": {
+    "answers": [
+      "36bc94a53fb42430b857a3c6edd502deff382f50765c04eeefc6fedb5cf0ec65",
+      "9d4e904e257210260390eddc019cebb4093a483a3a67c2e05e20cf17e52bb697",
+      "fd7ac5d0fa09c205cf793ad35f4d0e6a77a45014267122185edbb84f9dadfbae",
+      "ead0e730faa788aaca946f3d20cf720b9a83b55bc8f80a86ba0cf1a6ac834bd8",
+      "a056dfda20587293d69d824f14a98cdae9fc6b88fedcc1fa4b72c3e68cb41711",
+      "ddfe7579410617ae47c3595108904355a993ec760e5c6563964af2e999f641ad",
+      "d1fa9f3dc753fea277cf57470bc0c8476de8e67214dea35287d5e2edc51db768",
+      "01206b88162e57c7cdf1a12b0b2b679e8846e60d496c8ed959aefdb50464e253",
+      "43f3fa8d30eba06de6be5e9ba0cc7bec1bcca078950e857bf0b5183d703592f5"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:202269,kitsu:50350,mal:62936,offline:mal-62936)"
+  },
+  "why": "Love Unseen Beneath the Clear Night Sky (Toumei na Yoru ni Kakeru Kimi to, Me ni Mienai Koi wo Shita.) is a 12 episode Summer 2026 run airing 2026-07-06 to 2026-09-21, ten episodes out by the time of labelling. anilist:202269, kitsu:50350, mal:62936 and offline:mal-62936 are one run: anilist gives mal:62936, kitsu gives mal:62936 and anilist:202269, offline gives all three, and anilist, kitsu and mal carry the same 2026-07-06 start with 12 episodes, kitsu ending on 2026-09-21 as anilist does. anizip:19720 is the same run: it maps to mal:62936 and anilist:202269, lists 12 episodes, and its first and last fall on 2026-07-06 and 2026-09-21, the run's own dates. The Crunchyroll season cr:GT00378087-GS00378088 is the same run: anilist gives it as SAME_AS, and its 10 episodes sit on 2026-07-06 through 2026-09-07, the same days anizip gives episodes 1 to 10, none of them past the run's end. The JustWatch season jw:514097-547561 is the same run too: its episodes 1 to 9 carry An Encounter, Fuyutsuki Koharu, The Yellow Bookmark, First Date, Aerial Fireworks, The Empty Terrace Seat, Transparent, Pangs of Love and Alone, the exact non-generic titles anizip and Crunchyroll give those nine. Episodes pair anizip to Crunchyroll on matching release days for 1 to 10 and JustWatch to Crunchyroll on the nine exact titles; JustWatch's tenth entry is titled Zutto, Soba ni, a romanised form rather than the English Stay by Her Side, and with no date on the JustWatch side it is left unpaired, as are the kitsu episode rows, which carry neither title nor date."
+}

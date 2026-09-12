@@ -1,0 +1,154 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: the run has only its three member rows, no container, streaming or neighbouring rows to judge, and the Kitsu episodes carry no titles or dates so no episode pairing was possible. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "anilist:212652",
+      "mediaUri": "kitsu:50738",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:212652",
+      "mediaUri": "offline:anilist-212652",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50738",
+      "mediaUri": "offline:anilist-212652",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403719",
+      "mediaUri": "kitsu:50738",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403719"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403720",
+      "mediaUri": "kitsu:50738",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403720"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "403721",
+      "mediaUri": "kitsu:50738",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403721"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:212652",
+        "kitsu:50738",
+        "offline:anilist-212652"
+      ]
+    ]
+  },
+  "name": "Kidou Keisatsu Patlabor EZY File 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "212652",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 21 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kidou Keisatsu Patlabor EZY File 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "機動警察パトレイバー EZY File 2"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:212652"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "50738",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Patlabor EZY File 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kidou Keisatsu Patlabor EZY File 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "機動警察パトレイバー EZY File 2"
+        }
+      ],
+      "type": "OVA",
+      "uri": "kitsu:50738"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "anilist-212652",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kidou Keisatsu Patlabor EZY File 2"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:anilist-212652"
+    }
+  ],
+  "source": {
+    "answers": [
+      "306c883eae49553f8783743e0460a8cfb1f0adce66fc3e187e54a51194178683",
+      "c8632381a2995c4f45004dc4e44e9be99868a96b72cb89c0afc6c758538c077d",
+      "88662f607a3a29eeb64662475e75db7f3ebd586aa4b4fe0bcd5037122673e34e"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:212652,kitsu:50738,offline:anilist-212652)"
+  },
+  "why": "A three episode Patlabor EZY File 2 OVA released 21 August 2026, carried by only three catalogue rows. Anilist 212652, Kitsu 50738 and the offline entry offline:anilist-212652 are one run: Kitsu and the offline row both map SAME_AS to anilist:212652, all three list 3 episodes, the same Japanese title 機動警察パトレイバー EZY File 2, and Anilist and Kitsu agree on the 2026-08-21 start and end date."
+}

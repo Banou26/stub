@@ -1,0 +1,249 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "One call to make, against a source claim: the Netflix row asserts SAME_AS, but Kulipari: Dream Walker is a distinct franchise name dated 2018 with 10 episodes, so the claim reads as a match on the shared word Walker and the row is marked unrelated rather than left open. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62734",
+      "mediaUri": "nf:80180600",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "80180510",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:80180510"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80180511",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:80180511"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80180512",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:80180512"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80180513",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:80180513"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80180514",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:80180514"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80180515",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:80180515"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80180516",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:80180516"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80180517",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:80180517"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80180518",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:80180518"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80180519",
+      "mediaUri": "nf:80180600",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:80180519"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:62734",
+        "nf:80180600"
+      ]
+    ],
+    "together": [
+      [
+        "mal:62734"
+      ]
+    ],
+    "unrelated": [
+      "nf:80180600"
+    ]
+  },
+  "name": "Spiritual Realm Walker",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "62734",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Spiritual Realm Walker"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Lingjing Xingzhe"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62734"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80180600",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2018-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kulipari: Dream Walker"
+        }
+      ],
+      "uri": "nf:80180600"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d1c422da8ebdc917317cc60341034a9fa38bbbc64e5ada3b2e0e553cc5f5ee42",
+      "5e34aeb2ef2af69373df781355719e968109838cc85bf8707c8be465eb3076fa",
+      "58820650354a640f67750f34763443e55036a61f30d49d20e19412a56a454c4f",
+      "a28822a3f22a16ccd23886d2dde23da651f9be43e678b5159d96359efa1813d1",
+      "513ecfada5cd6fe5bb6cc3bf173bc154488669005f04bd95458ec1003b457214",
+      "8c0f51804f1eb342ff1a7cc076b739ad55423d2747bd8d75f9ff916550c71a66",
+      "5cacd0813d6b2865a15bc480b33b9f581a8c56537813f2c34898d3e7a42b9f0b",
+      "9fec2a62fe33059b03b7554274bfcb719d13a50c882ad9badb34e42f5be98daa",
+      "baba0edb1508363334e19b691ed3c286dfb0ddf8a81f1b161b50ac630f90a3d9",
+      "96f3b7d26fe796abce0ced202c17f60e89bf9072cb84b51da3fb1da3e75ebe5c",
+      "dddfb477ff5b4311e1c1c863c19d563ce551db3e43a29504dd36e31fbc9170e5",
+      "aadfcb48dd4525d77e92f1a839cc0f1af936f1f9a1b4d712a85bad15e4aa97ba"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:62734)"
+  },
+  "why": "Spiritual Realm Walker (Lingjing Xingzhe) is a 24-episode Chinese ONA that started 2026-09-03, and MyAnimeList is the only catalogue that returned it. The Netflix title Kulipari: Dream Walker (nf:80180600) is a different work despite its SAME_AS claim on mal:62734: it is its own named property with no word of the run title beyond Walker, it starts 2018-01-01, eight years before the run, and it lists 10 dateless placeholder episodes against the run count of 24, so it is marked unrelated and held apart from mal:62734."
+}

@@ -1,0 +1,557 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Two rows disagree with the catalogues: the JustWatch season links to both mal:64683 and mal:63225, and the offline row is keyed on mal-63225 while AniList maps this run to mal:64683, so both were left unasserted and flagged. The Netflix row was easy: 2015 dates and a different title. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64683",
+      "mediaUri": "anilist:205068",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:205068",
+      "mediaUri": "kitsu:50932",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:205068",
+      "mediaUri": "jw:531130-580247",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50932",
+      "mediaUri": "jw:531130-580247",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64683",
+      "mediaUri": "jw:531130-580247",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63225",
+      "mediaUri": "jw:531130-580247",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:205068",
+      "mediaUri": "nf:82017897",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50932",
+      "mediaUri": "nf:82017897",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:205068",
+      "mediaUri": "offline:mal-63225",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407196",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407196"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407197",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407197"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407198",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407198"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "407199",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407199"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "407200",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407200"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "407201",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407201"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "407202",
+      "mediaUri": "kitsu:50932",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407202"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10642625",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "jw:10642625"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10642626",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "jw:10642626"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10642627",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "jw:10642627"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10642628",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "jw:10642628"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10642629",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "jw:10642629"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10642630",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "jw:10642630"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10642631",
+      "mediaUri": "jw:531130-580247",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "jw:10642631"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82017899",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-01-06"
+        }
+      ],
+      "uri": "nf:82017899"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82017900",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-01-13"
+        }
+      ],
+      "uri": "nf:82017900"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82017901",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-02-03"
+        }
+      ],
+      "uri": "nf:82017901"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82017902",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-02-10"
+        }
+      ],
+      "uri": "nf:82017902"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82017903",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-02-24"
+        }
+      ],
+      "uri": "nf:82017903"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82017904",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-03-03"
+        }
+      ],
+      "uri": "nf:82017904"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82017905",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-03-10"
+        }
+      ],
+      "uri": "nf:82017905"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82017906",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-03-17"
+        }
+      ],
+      "uri": "nf:82017906"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82017907",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-03-24"
+        }
+      ],
+      "uri": "nf:82017907"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82017908",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-04-07"
+        }
+      ],
+      "uri": "nf:82017908"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82017909",
+      "mediaUri": "nf:82017897",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2015-04-14"
+        }
+      ],
+      "uri": "nf:82017909"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:205068",
+        "nf:82017897"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:205068",
+        "kitsu:50932",
+        "mal:64683"
+      ]
+    ],
+    "unrelated": [
+      "nf:82017897"
+    ]
+  },
+  "name": "One-Room TA",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "205068",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 28 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "One-Room TA"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Wollum Jogyonim"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "원룸 조교님"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:205068"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "50932",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "One-Room TA"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Wollum Jogyonim"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50932"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 7,
+      "id": "531130-580247",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:531130-580247"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64683",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "One-Room TA"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "One Room Jogyo-nim"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64683"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82017897",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2015-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Room Mate"
+        }
+      ],
+      "uri": "nf:82017897"
+    },
+    {
+      "id": "mal-63225",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-63225"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2048c881c679ce0840b7f6bc5bc186684097ba8ad80ebd47f1d1cadd78e3fa70",
+      "401586d06bb5e3366fdcabdfc0c78e87bf5832aebee4cb47344a9c5e5a2135b7",
+      "987fc4021df6dfb27f6a7c52a99cf71591e4246916b9a6699fbef0a95e0ba5d4",
+      "70d854cde2b9ca72b1797aa1988411fd1d7fc43ea98908967bdb49bd997d7826",
+      "f1bef6372678e1355724c0c3f2b2ca2529b9507aff4986f7e09bc4b04e0ccb3f",
+      "7c6877bfb918a8773f005c35d96c3f170bda2a02e9313bdf17ee4746126da941",
+      "d390f94fa44478b51f80e5173a89bec8f8e5aba3d1e1b33374a000f6da0c2ac4",
+      "70da219bccaa5849ba1f9c3dcfa792e09ad5cbcbcac37eba1a331120e5d5bb5e",
+      "215827fd2d5099f87095951fe8929554d2054c81117d8752d8bb9ef47c15d1db",
+      "b78ae607df8b1acdc5c7cd677fec0a0bc3d20921f4b8e4a3814c3a00c2de65b4",
+      "653fb1fe682008646409b0dc8a5c390e1e443f9acf0c3969ba99294be54814cb",
+      "ba09af61c781aa5d30a9a8c1ff7b9c0052de74b33d1215ad8316a88a78b54343",
+      "4daa7325983eb9abbadada67626e5093f4a784e72c9a3b2207fb3d45fd5ca52c",
+      "a458115ce3e39c18d0c279214e622901dc94de09967f8b9498332f6cf61d84d2",
+      "e4c0e80c3faa95f35fa3e351eb9a2c874d64fb648312594cb71f0a1ae39c4f98",
+      "ae58cf931e56cb05213f01c5e79ccb614d989bb6ae3287f693d2f2d72bf53c48",
+      "4ed84579c4b6fae755c629519cbe2af946f08d2a0a4404355ead9f85479b692c",
+      "3ec1339ba624bc23ca1e4fabbbe70d20a5240c9f9e7e9608dd4b00126a63457b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:205068,kitsu:50932)"
+  },
+  "why": "One-Room TA is a 7 episode Korean ONA that ran 2026-08-28 to 2026-09-11, held on AniList and Kitsu. mal:64683 is the same run: anilist:205068 claims SAME_AS to it, its title One-Room TA matches and its start date 2026-08-28 is the same day. nf:82017897 Room Mate is a different work: it is a 2015 title whose 11 episodes carry dates from 2015-01-06 to 2015-04-14, none of them inside this run's 2026 window, and its only title, Room Mate, is not one of the run's titles. jw:531130-580247 is left unsettled: its count of 7 matches but it carries no title, a placeholder 2026-01-01 start and placeholder episode titles Episode 1 to Episode 7, and it claims SAME_AS to two different MyAnimeList ids (mal:64683 and mal:63225), so its links cannot be relied on. offline:mal-63225 is left unsettled: it claims SAME_AS to anilist:205068 but is keyed on mal-63225 while AniList maps the same run to mal:64683, and it carries no title, date or count to break the tie."
+}

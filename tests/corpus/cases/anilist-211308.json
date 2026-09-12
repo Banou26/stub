@@ -1,0 +1,378 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Single-episode title, so every row agrees on count; the only care needed was the JustWatch and Netflix rows, whose startDate 2026-01-01 is a placeholder rather than a real date, accepted as same on their first-party SAME_AS handles, matching count and unchanged title. No episode pairs asserted: only anizip carries an episode date, and the Kitsu, JustWatch and Netflix episode rows have none. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64012",
+      "mediaUri": "anilist:211308",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211308",
+      "mediaUri": "kitsu:50765",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64012",
+      "mediaUri": "kitsu:50765",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81493703",
+      "mediaUri": "kitsu:50765",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211308",
+      "mediaUri": "offline:anilist-211308",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50765",
+      "mediaUri": "offline:anilist-211308",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64012",
+      "mediaUri": "offline:mal-64012",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64012",
+      "mediaUri": "anizip:20023",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211308",
+      "mediaUri": "anizip:20023",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81493703",
+      "mediaUri": "jw:2884940",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211308",
+      "mediaUri": "jw:2884940",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50765",
+      "mediaUri": "jw:2884940",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64012",
+      "mediaUri": "jw:2884940",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-211308",
+      "mediaUri": "jw:2884940",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64012",
+      "mediaUri": "jw:2884940",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211308",
+      "mediaUri": "nf:81493703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:20023",
+      "mediaUri": "nf:81493703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50765",
+      "mediaUri": "nf:81493703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64012",
+      "mediaUri": "nf:81493703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-211308",
+      "mediaUri": "nf:81493703",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64012",
+      "mediaUri": "nf:81493703",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404102",
+      "mediaUri": "kitsu:50765",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404102"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "20023-1",
+      "mediaUri": "anizip:20023",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Web"
+        }
+      ],
+      "uri": "anizip:20023-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "2884940-1",
+      "mediaUri": "jw:2884940",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE RIBBON HERO"
+        }
+      ],
+      "uri": "jw:2884940-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81493703-1",
+      "mediaUri": "nf:81493703",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE RIBBON HERO"
+        }
+      ],
+      "uri": "nf:81493703-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:211308",
+        "kitsu:50765",
+        "mal:64012",
+        "offline:anilist-211308",
+        "offline:mal-64012",
+        "anizip:20023",
+        "jw:2884940",
+        "nf:81493703"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "THE RIBBON HERO",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "211308",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 08 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "THE RIBBON HERO"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "THE RIBBON HERO"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "THE RIBBON HERO"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:211308"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50765",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "THE RIBBON HERO"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "リボンへーロー"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50765"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64012",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-08",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "The Ribbon Hero"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64012"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-211308",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE RIBBON HERO"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:anilist-211308"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64012",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ribbon Hero"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64012"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "20023",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "THE RIBBON HERO リボンヒーロー"
+        }
+      ],
+      "uri": "anizip:20023"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "2884940",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:2884940"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "81493703",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE RIBBON HERO"
+        }
+      ],
+      "uri": "nf:81493703"
+    }
+  ],
+  "source": {
+    "answers": [
+      "70f8938204d5878b6be1d1ef2f4f3b5bbc5c4bae21e2ee71c9bda4260a6b5e27",
+      "bd88adbaedfb39d051aeb21d678f44361d9b82f6e1463934469a7b2e40d25c66",
+      "713e8816739d413a58a1695ba37b1dfaad7fc05122c5ba839f0704e85e203d67",
+      "7aebf7a92ba644b41b74a9ceab05ef77e999340f4156c30e81a70d489dc7ead4",
+      "a49b9a79711848e8774fa8ce9f30b79f0f296e59493e70bb96825a3ae99bd88b",
+      "c9e8e2c43214ccba3dd751e0b8f4df0c6b9b7e1482c2d2dc30115f2b33a12940",
+      "00cf61819c2032d89cc4f8c72959e8fc95c3dd872fde52cc41321887d73782ca",
+      "a264ddfb9e044d053d4c6fed95900fcc6d6f06e0fc999530ae8ec53e198fe62c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:211308,kitsu:50765,mal:64012,offline:anilist-211308,offline:mal-64012)"
+  },
+  "why": "THE RIBBON HERO is a one-episode summer 2026 title that released on 2026-08-08, catalogued as a movie by AniList, Kitsu and the offline database and as an ONA by MyAnimeList, so every row here describes the same single release. anizip:20023 is the same run: it carries first-party SAME_AS handles to both mal:64012 and anilist:211308, its episodeCount is 1 like the run's, and its only episode releases 2026-08-08, the run's start date. nf:81493703 is the same run: kitsu:50765 carries a first-party SAME_AS handle to it, it echoes the same handle back to anilist, anizip, kitsu, mal and both offline rows, its episodeCount is 1 and its title THE RIBBON HERO is the run's title unchanged. jw:2884940 is the same run: its JustWatch page is the movie the-ribbon-hero, its episodeCount is 1, its single episode is titled THE RIBBON HERO, and it carries first-party SAME_AS handles to all five members plus nf:81493703."
+}

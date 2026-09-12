@@ -1,0 +1,65 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was hard: a single Kitsu row with no handles and no other source, so the case asserts only the run itself. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407235",
+      "mediaUri": "kitsu:50940",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407235"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50940"
+      ]
+    ]
+  },
+  "name": "Takoyaki Gazing",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50940",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Takoyaki Gazing"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "天たこ観測"
+        }
+      ],
+      "uri": "kitsu:50940"
+    }
+  ],
+  "source": {
+    "answers": [
+      "58f5e71ebf16f88508db4f448bf38646d43d43eadc5d3ef16099d5ed340eca1c",
+      "39f75d374d1dbf2fccaa587ea4f14ccf3e8652cc3ddadcb12b101a1db48ef818"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50940)"
+  },
+  "why": "Takoyaki Gazing (天たこ観測) is a one-episode summer 2026 entry, its single episode dated 2026-08-24 on Kitsu. Only Kitsu returned anything for it: kitsu:50940 is the run's sole member, it carries no handles to any other catalogue, and no other source returned a row, so there is nothing to merge, hold or separate."
+}

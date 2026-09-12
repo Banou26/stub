@@ -1,0 +1,119 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: only the three member rows were returned, no container, streaming or episode rows to judge. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63619",
+      "mediaUri": "anilist:208685",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63619",
+      "mediaUri": "offline:mal-63619",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:208685",
+        "mal:63619",
+        "offline:mal-63619"
+      ]
+    ]
+  },
+  "name": "My Classmate’s a Sexy Actress, and Now We Live Together?!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "208685",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "My Classmate’s a Sexy Actress, and Now We Live Together?!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Onaji Zemi no Someya-san ga Sexy Joyuu Datta Hanashi."
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "同じゼミの染谷さんがセクシー女優だった話。"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:208685"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "63619",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Classmate's a Sexy Actress, and Now We Live Together?!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Onaji Semi no Someya-san ga Sexy Joyuu datta Hanashi."
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:63619"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-63619",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Onaji Semi no Someya-san ga Sexy Joyuu datta Hanashi."
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-63619"
+    }
+  ],
+  "source": {
+    "answers": [
+      "92751e7109fe0261763396d8847340345945089a7e74becf7f6faba980990e68",
+      "16c904316cbc481f8353b39471e5f2308fe31ca1ff69c0710ecd661201071a6e",
+      "168686a490beedcce61eb172503ee1d3942199451f873c8d68c3f841f828331b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:208685,mal:63619,offline:mal-63619)"
+  },
+  "why": "An eight episode summer 2026 ONA run, Onaji Zemi no Someya-san ga Sexy Joyuu Datta Hanashi., starting 2026-07-06, returned only by the three metadata catalogues and by no streaming source. The three rows are one run: anilist:208685 maps SAME_AS to mal:63619 and offline:mal-63619 maps SAME_AS to mal:63619, and anilist:208685 and mal:63619 agree on the 2026-07-06 start date, the count of 8 and the title."
+}

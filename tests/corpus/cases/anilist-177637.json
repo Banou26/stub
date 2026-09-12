@@ -1,0 +1,1151 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Kitsu is the unusual source here in carrying full episode titles but no dates, so its ten pairs rest on exact title matches with AniZip; JustWatch position 10 uses the romanised Yaiba o Motta Princess and was left unpaired. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378059-GS00378060",
+      "mediaUri": "anilist:177637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58878",
+      "mediaUri": "anilist:177637",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177637",
+      "mediaUri": "kitsu:48880",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58878",
+      "mediaUri": "kitsu:48880",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378059",
+      "mediaUri": "kitsu:48880",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:58878",
+      "mediaUri": "offline:mal-58878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177637",
+      "mediaUri": "offline:mal-58878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48880",
+      "mediaUri": "offline:mal-58878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58878",
+      "mediaUri": "anizip:18643",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177637",
+      "mediaUri": "anizip:18643",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177637",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48880",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58878",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-58878",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:177637",
+      "mediaUri": "jw:485469-511223",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18643",
+      "mediaUri": "jw:485469-511223",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:48880",
+      "mediaUri": "jw:485469-511223",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:58878",
+      "mediaUri": "jw:485469-511223",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-58878",
+      "mediaUri": "jw:485469-511223",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "367932",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mermaid Princess Lara"
+        }
+      ],
+      "uri": "kitsu:367932"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "367933",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Running Through Shiga"
+        }
+      ],
+      "uri": "kitsu:367933"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "367934",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Look Away and You Lose"
+        }
+      ],
+      "uri": "kitsu:367934"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "367935",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Princess and the Prince"
+        }
+      ],
+      "uri": "kitsu:367935"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "367936",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "I'm Willing to Die for Cake!"
+        }
+      ],
+      "uri": "kitsu:367936"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "367937",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Light That Shines on Me"
+        }
+      ],
+      "uri": "kitsu:367937"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "367938",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Meet Me at Biwako Terrace Saturday at 10"
+        }
+      ],
+      "uri": "kitsu:367938"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "367939",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Night of the Final Match"
+        }
+      ],
+      "uri": "kitsu:367939"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "367940",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "True Love"
+        }
+      ],
+      "uri": "kitsu:367940"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "367941",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Princess with a Blade"
+        }
+      ],
+      "uri": "kitsu:367941"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "367942",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:367942"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "367943",
+      "mediaUri": "kitsu:48880",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:367943"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18643-1",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mermaid Princess Lara"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "人魚姫ララ"
+        }
+      ],
+      "uri": "anizip:18643-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18643-2",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Running Through Shiga"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "滋賀を走る"
+        }
+      ],
+      "uri": "anizip:18643-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18643-3",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Look Away and You Lose"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "目, そらしたら負け"
+        }
+      ],
+      "uri": "anizip:18643-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18643-4",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Princess and the Prince"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "姫と王子"
+        }
+      ],
+      "uri": "anizip:18643-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18643-5",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I`m Willing to Die for Cake!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ケーキのためなら死ねます!"
+        }
+      ],
+      "uri": "anizip:18643-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18643-6",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Light That Shines on Me"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "わたしを照らす光"
+        }
+      ],
+      "uri": "anizip:18643-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18643-7",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Meet Me at Biwako Terrace Saturday at 10"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "土曜の10時, びわ湖テラスで"
+        }
+      ],
+      "uri": "anizip:18643-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18643-8",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Night of the Final Match"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "決勝戦の夜"
+        }
+      ],
+      "uri": "anizip:18643-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18643-9",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "True Love"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "本当の愛"
+        }
+      ],
+      "uri": "anizip:18643-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18643-10",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Princess with a Blade"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "刃を持ったプリンセス"
+        }
+      ],
+      "uri": "anizip:18643-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18643-11",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T15:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔女グレイス"
+        }
+      ],
+      "uri": "anizip:18643-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18643-12",
+      "mediaUri": "anizip:18643",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T15:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18643-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378059-GS00378060-GE00378240JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-07-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mermaid Princess Lara"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378240JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378059-GS00378060-GE00378241JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Running Through Shiga"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378241JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378059-GS00378060-GE00378242JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Look Away and You Lose"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378242JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378059-GS00378060-GE00378243JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Princess and the Prince"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378243JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378059-GS00378060-GE00378244JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I'm Willing to Die for Cake!"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378244JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378059-GS00378060-GE00378245JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Light That Shines on Me"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378245JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378059-GS00378060-GE00378246JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Meet Me at Biwako Terrace Saturday at 10"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378246JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378059-GS00378060-GE00378247JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Night of the Final Match"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378247JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378059-GS00378060-GE00378248JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "True Love"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378248JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378059-GS00378060-GE00378249JAJP",
+      "mediaUri": "cr:GT00378059-GS00378060",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Princess with a Blade"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060-GE00378249JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9418347",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mermaid Princess Lara"
+        }
+      ],
+      "uri": "jw:9418347"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10619389",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Running Through Shiga"
+        }
+      ],
+      "uri": "jw:10619389"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10619391",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Look Away and You Lose"
+        }
+      ],
+      "uri": "jw:10619391"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10619384",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Princess and the Prince"
+        }
+      ],
+      "uri": "jw:10619384"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10619392",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm Willing to Die for Cake!"
+        }
+      ],
+      "uri": "jw:10619392"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10619388",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Light That Shines on Me"
+        }
+      ],
+      "uri": "jw:10619388"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10619382",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Meet Me at Biwako Terrace Saturday at 10"
+        }
+      ],
+      "uri": "jw:10619382"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10619387",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Night of the Final Match"
+        }
+      ],
+      "uri": "jw:10619387"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10619386",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "True Love"
+        }
+      ],
+      "uri": "jw:10619386"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10619385",
+      "mediaUri": "jw:485469-511223",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yaiba o Motta Princess"
+        }
+      ],
+      "uri": "jw:10619385"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:18643-1",
+        "b": "cr:GT00378059-GS00378060-GE00378240JAJP"
+      },
+      {
+        "a": "anizip:18643-2",
+        "b": "cr:GT00378059-GS00378060-GE00378241JAJP"
+      },
+      {
+        "a": "anizip:18643-3",
+        "b": "cr:GT00378059-GS00378060-GE00378242JAJP"
+      },
+      {
+        "a": "anizip:18643-4",
+        "b": "cr:GT00378059-GS00378060-GE00378243JAJP"
+      },
+      {
+        "a": "anizip:18643-5",
+        "b": "cr:GT00378059-GS00378060-GE00378244JAJP"
+      },
+      {
+        "a": "anizip:18643-6",
+        "b": "cr:GT00378059-GS00378060-GE00378245JAJP"
+      },
+      {
+        "a": "anizip:18643-7",
+        "b": "cr:GT00378059-GS00378060-GE00378246JAJP"
+      },
+      {
+        "a": "anizip:18643-8",
+        "b": "cr:GT00378059-GS00378060-GE00378247JAJP"
+      },
+      {
+        "a": "anizip:18643-9",
+        "b": "cr:GT00378059-GS00378060-GE00378248JAJP"
+      },
+      {
+        "a": "anizip:18643-10",
+        "b": "cr:GT00378059-GS00378060-GE00378249JAJP"
+      },
+      {
+        "a": "anizip:18643-1",
+        "b": "kitsu:367932"
+      },
+      {
+        "a": "anizip:18643-2",
+        "b": "kitsu:367933"
+      },
+      {
+        "a": "anizip:18643-3",
+        "b": "kitsu:367934"
+      },
+      {
+        "a": "anizip:18643-4",
+        "b": "kitsu:367935"
+      },
+      {
+        "a": "anizip:18643-5",
+        "b": "kitsu:367936"
+      },
+      {
+        "a": "anizip:18643-6",
+        "b": "kitsu:367937"
+      },
+      {
+        "a": "anizip:18643-7",
+        "b": "kitsu:367938"
+      },
+      {
+        "a": "anizip:18643-8",
+        "b": "kitsu:367939"
+      },
+      {
+        "a": "anizip:18643-9",
+        "b": "kitsu:367940"
+      },
+      {
+        "a": "anizip:18643-10",
+        "b": "kitsu:367941"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378240JAJP",
+        "b": "jw:9418347"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378241JAJP",
+        "b": "jw:10619389"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378242JAJP",
+        "b": "jw:10619391"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378243JAJP",
+        "b": "jw:10619384"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378244JAJP",
+        "b": "jw:10619392"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378245JAJP",
+        "b": "jw:10619388"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378246JAJP",
+        "b": "jw:10619382"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378247JAJP",
+        "b": "jw:10619387"
+      },
+      {
+        "a": "cr:GT00378059-GS00378060-GE00378248JAJP",
+        "b": "jw:10619386"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:177637",
+        "whole": "cr:GT00378059"
+      }
+    ],
+    "together": [
+      [
+        "anilist:177637",
+        "kitsu:48880",
+        "mal:58878",
+        "offline:mal-58878",
+        "anizip:18643",
+        "cr:GT00378059-GS00378060",
+        "jw:485469-511223"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Goodbye, Lara",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "177637",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Goodbye, Lara"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Sayonara Lara"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "さよならララ"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:177637"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "48880",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Goodbye, Lara"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Sayonara Lara"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "さよなら ララ"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:48880"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "58878",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Goodbye, Lara"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sayonara Lara"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:58878"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-58878",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sayonara Lara"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-58878"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "18643",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Goodbye, Lara"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "さよならララ"
+        }
+      ],
+      "uri": "anizip:18643"
+    },
+    {
+      "id": "GT00378059",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378059"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378059-GS00378060",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Goodbye, Lara"
+        }
+      ],
+      "uri": "cr:GT00378059-GS00378060"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "485469-511223",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:485469-511223"
+    }
+  ],
+  "source": {
+    "answers": [
+      "be12ca3dfd6bdb12677e22044665d5dc23a942b62b8f07374b51d41d3e6524fe",
+      "a23d62e299bb7c3b36cd8c1c589a921b5f2fa0e77f6873f3b8ddec8b1e850536",
+      "72a5dbe78ab21dac7b809bbe649580f8b5c7dd2649addced478f1eef2303b717",
+      "e30597e9646e821e4aa6c9110ebc23d08c0f56107ec9c7d970c3d1f07aab69a4",
+      "2ccbc6e1cf87977bcf560bb76f0ca08c87a196f5a153c064c2c6716b0071007e",
+      "79a1a0348581d8818f2f2f495637724c821034d751e09346970e9a430bbb2155",
+      "239aa1ef8343e0dc7242d70a29c2d6c2531e839e6a9dde89a99a91657ab1baa0",
+      "76689bc2b0496d3f53a82516370cfbb315e5a794d4995a88fe4bb8bfdf076a3c",
+      "a484f9c7b5fe6a75527a868d60c5eca75c94f255372990975e86768ed5a15f2a"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:177637,kitsu:48880,mal:58878,offline:mal-58878)"
+  },
+  "why": "Goodbye, Lara, a 12 episode summer 2026 TV run airing 2026-07-05 to 2026-09-20 and still on air at labelling time. AniZip 18643 is the same run: SAME_AS ids to mal:58878 and anilist:177637 and the same episodeCount of 12. The Crunchyroll season GT00378059-GS00378060 is the same run: it maps SAME_AS onto all four members and its 10 episodes sit on the same Sundays as AniZip's first 10 (2026-07-05 through 2026-09-06) with the same titles, so it is the aired part of the cour, not a folded season (10 is fewer than 12). The JustWatch season 485469-511223 is the same run: it maps SAME_AS onto all four members and onto anizip:18643 and repeats nine of the same episode titles in order. The bare Crunchyroll series GT00378059 is a container with no dates, count or episodes of its own, and Kitsu records it as a PART_OF container for this run, so it holds the run. AniZip episodes 1 to 10 pair with the Crunchyroll episodes on matching broadcast days and identical titles (Mermaid Princess Lara through The Princess with a Blade), and with Kitsu's episodes 1 to 10, which carry exactly the same ten titles. Crunchyroll episodes 1 to 9 pair with the JustWatch ones on those same exact titles. JustWatch episode 10 is listed as Yaiba o Motta Princess, a romanised Japanese title rather than The Princess with a Blade, and JustWatch carries no dates, so that position is left unpaired; AniZip episode 11 (2026-09-13) has only the Japanese title and episode 12 none at all, and Kitsu's episodes 11 and 12 are untitled, so those positions are left alone too."
+}

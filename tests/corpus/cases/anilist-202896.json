@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Two small disagreements that do not change the verdict: offline truncates the title to Cheat Item Kanrikyoku no Oshigoto EX and types it OVA against ONA on the other two, and only anilist carries a count (1). The SAME_AS handles onto mal:64542 and the shared 2026-07-03 start carry the merge. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64542",
+      "mediaUri": "anilist:202896",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64542",
+      "mediaUri": "offline:mal-64542",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:202896",
+        "mal:64542",
+        "offline:mal-64542"
+      ]
+    ]
+  },
+  "name": "Cheat Item Kanrikyoku no Oshigoto EX Sanzan Yarareta Ato Dashi Douse Zenbu Wasureru kara Higaisha Tsumamigui Shitemo Ii yo ne",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "202896",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Cheat Item Kanrikyoku no Oshigoto EX Sanzan Yarareta Ato Dashi Douse Zenbu Wasureru kara Higaisha Tsumamigui Shitemo Ii yo ne"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "チートアイテム管理局のお仕事EX 散々ヤラれた後だし、どうせ全部忘れるから、被害者つまみ食いしてもいいよね"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:202896"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64542",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Cheat Item Kanrikyoku no Oshigoto EX: Sanzan Yarareta Atodashi, Toose Zenbu Wasureru kara, Higaisha Tsumamigui shite mo Ii yo ne"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64542"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-64542",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cheat Item Kanrikyoku no Oshigoto EX"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64542"
+    }
+  ],
+  "source": {
+    "answers": [
+      "c352489ebfb1fe0fe9352e692a65130df75e0d6c5631b0f6d9a3572a673b33ec",
+      "d4c87d7f6d15800a492496d1b3e0a1a8d3e4834ef52f0a62c3dc00198a59b921",
+      "998c5d28b06bfdd0ea3969e62a966748b5e71cc1756d6501db23ee4f5d2dbd14"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:202896,mal:64542,offline:mal-64542)"
+  },
+  "why": "Cheat Item Kanrikyoku no Oshigoto EX, a one episode adult short dated 2026-07-03. The three catalogue rows are one run: anilist:202896 carries a SAME_AS handle to mal:64542 and offline:mal-64542 carries one too, anilist and mal give the same long title down to the romanisation of the subtitle and agree on the day-precise date 03 Jul 2026, and offline carries the truncated head of that same title. offline types the work OVA where anilist and mal type it ONA, which is a format disagreement between catalogues over one adult short, not a second work. No streaming season, container or episode row came back for this run, so nothing is held, spanned or ruled out."
+}

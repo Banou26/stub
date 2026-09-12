@@ -1,0 +1,53 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to weigh: one row, no handles, no episode count and no other source. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:64668"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Tengu Tousen",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64668",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tengu Tousen"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64668"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ba755242e10a5b51ff20bc5ef42c92178d649953524ba5493931676d80134503"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64668)"
+  },
+  "why": "Tengu Tousen is a summer 2026 ONA that started on 2026-07-24. MyAnimeList is the only source that returned anything for it: mal:64668 carries the start date and the title and names no handles, and no other origin returned a neighbouring row, so there is nothing to merge, hold or separate."
+}

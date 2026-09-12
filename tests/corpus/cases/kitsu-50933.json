@@ -1,0 +1,173 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "One row to judge: a Korean award show broadcast in 2025 against a 2026-07-24 one-episode anime release, sharing only the word Entertainment, so it is marked unrelated despite the SAME_AS handle. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50933",
+      "mediaUri": "nf:82007694",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407203",
+      "mediaUri": "kitsu:50933",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407203"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82007696",
+      "mediaUri": "nf:82007694",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2025-01-29"
+        }
+      ],
+      "uri": "nf:82007696"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82679366",
+      "mediaUri": "nf:82007694",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2025-12-30"
+        }
+      ],
+      "uri": "nf:82679366"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82007697",
+      "mediaUri": "nf:82007694",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2025-01-29"
+        }
+      ],
+      "uri": "nf:82007697"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82685901",
+      "mediaUri": "nf:82007694",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2025-12-30"
+        }
+      ],
+      "uri": "nf:82685901"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82685902",
+      "mediaUri": "nf:82007694",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2025-12-30"
+        }
+      ],
+      "uri": "nf:82685902"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:82007694",
+        "kitsu:50933"
+      ]
+    ],
+    "together": [
+      [
+        "kitsu:50933"
+      ]
+    ],
+    "unrelated": [
+      "nf:82007694"
+    ]
+  },
+  "name": "Gimmick Gimmick Entertainment",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50933",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Gimmick Gimmick Entertainment"
+        }
+      ],
+      "uri": "kitsu:50933"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82007694",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2025-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "2024 SBS Entertainment Awards"
+        }
+      ],
+      "uri": "nf:82007694"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b256efff220ea401d7a36c14618dd3e803eae2b534cc0b52472fa173b9816617",
+      "2f91a65c73f305cb03413a5a1833bb6b365ce2ca9ecdc8189d8294463d948928",
+      "332185e7425734bfbf7fe47e8ed5b363109603577a8d205b80bcdc0d38bf0ee0",
+      "cb02e8eb7bca4e00d0d0d99741eefa5ca8c4aae0e92e928686b1ba5907f9ff0a",
+      "c72edad34ef6be3881f8eb9299edc78b2a149706c382cdaa0312d97495494111",
+      "4ebc5cd526a563e5c675857235cfa724d62c83333c27b327a71ba5c74025871b",
+      "5f54982554ea35c48cb0445ecf380bc37747764ac63e025e42263498aa9e3ba8",
+      "6c8d68073fd3566f64d8c1ab3010642742534930e4454e1054f5805c19d5de88"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50933)"
+  },
+  "why": "Gimmick Gimmick Entertainment is a single-episode release dated 2026-07-24, start and end the same day (kitsu:50933, episodeCount 1), and kitsu is the only source that returned it. nf:82007694 is unrelated: it is Netflix's 2024 SBS Entertainment Awards, a 2025-01-01 award show whose listed episodes are dated 2025-01-29 and 2025-12-30, so its SAME_AS handle to kitsu:50933 rests on the shared word Entertainment and is not followed."
+}

@@ -1,0 +1,790 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The odd field is kitsu:50179, which lists 22 bare episode rows against the 12 that anilist, mal, offline and anizip all agree on; it is a member of the run's own address so it stays in the cluster, but its episodes carry no titles or dates and are paired with nothing. JustWatch has no dates at all, so the pairing rests entirely on the titles, which are film title references and therefore distinctive. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62535",
+      "mediaUri": "anilist:199066",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199066",
+      "mediaUri": "kitsu:50179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62535",
+      "mediaUri": "offline:mal-62535",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199066",
+      "mediaUri": "offline:mal-62535",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50179",
+      "mediaUri": "offline:mal-62535",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62535",
+      "mediaUri": "anizip:19594",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199066",
+      "mediaUri": "anizip:19594",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199066",
+      "mediaUri": "jw:517073-554878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19594",
+      "mediaUri": "jw:517073-554878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50179",
+      "mediaUri": "jw:517073-554878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62535",
+      "mediaUri": "jw:517073-554878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62535",
+      "mediaUri": "jw:517073-554878",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "387402",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387402"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "387403",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387403"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "387404",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387404"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "387405",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387405"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "387406",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387406"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "387407",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387407"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "387408",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387408"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "387409",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387409"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "387410",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387410"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "387411",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387411"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "387412",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387412"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "387413",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387413"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "387414",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387414"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "387415",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387415"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "387416",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387416"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "387417",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387417"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "387418",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387418"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "387419",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387419"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "387420",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387420"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "387421",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387421"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "387422",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387422"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "387423",
+      "mediaUri": "kitsu:50179",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387423"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19594-1",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "When Ryusei Met Meteor..."
+        }
+      ],
+      "uri": "anizip:19594-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19594-2",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Witches of Oz"
+        }
+      ],
+      "uri": "anizip:19594-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19594-3",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Midnight Run"
+        }
+      ],
+      "uri": "anizip:19594-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19594-4",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Those Who Can`t Be Forgiven"
+        }
+      ],
+      "uri": "anizip:19594-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19594-5",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Much Ado About Nothing"
+        }
+      ],
+      "uri": "anizip:19594-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19594-6",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Pulp Fiction"
+        }
+      ],
+      "uri": "anizip:19594-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19594-7",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Seven"
+        }
+      ],
+      "uri": "anizip:19594-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19594-8",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Training Day"
+        }
+      ],
+      "uri": "anizip:19594-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19594-9",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T17:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Scream"
+        }
+      ],
+      "uri": "anizip:19594-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19594-10",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T17:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19594-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19594-11",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T17:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19594-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19594-12",
+      "mediaUri": "anizip:19594",
+      "origin": "anizip",
+      "releaseDate": "2026-09-26T17:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19594-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10188703",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "When Ryusei Met Meteor..."
+        }
+      ],
+      "uri": "jw:10188703"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10649041",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Witches of Oz"
+        }
+      ],
+      "uri": "jw:10649041"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10649042",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Midnight Run"
+        }
+      ],
+      "uri": "jw:10649042"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10649043",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Those Who Can't Be Forgiven"
+        }
+      ],
+      "uri": "jw:10649043"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10649044",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Much Ado About Nothing"
+        }
+      ],
+      "uri": "jw:10649044"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10649045",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pulp Fiction"
+        }
+      ],
+      "uri": "jw:10649045"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10649046",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Seven"
+        }
+      ],
+      "uri": "jw:10649046"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10649047",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Training Day"
+        }
+      ],
+      "uri": "jw:10649047"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10649048",
+      "mediaUri": "jw:517073-554878",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Scream"
+        }
+      ],
+      "uri": "jw:10649048"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19594-1",
+        "b": "jw:10188703"
+      },
+      {
+        "a": "anizip:19594-2",
+        "b": "jw:10649041"
+      },
+      {
+        "a": "anizip:19594-3",
+        "b": "jw:10649042"
+      },
+      {
+        "a": "anizip:19594-4",
+        "b": "jw:10649043"
+      },
+      {
+        "a": "anizip:19594-5",
+        "b": "jw:10649044"
+      },
+      {
+        "a": "anizip:19594-6",
+        "b": "jw:10649045"
+      },
+      {
+        "a": "anizip:19594-7",
+        "b": "jw:10649046"
+      },
+      {
+        "a": "anizip:19594-8",
+        "b": "jw:10649047"
+      },
+      {
+        "a": "anizip:19594-9",
+        "b": "jw:10649048"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:199066",
+        "kitsu:50179",
+        "mal:62535",
+        "offline:mal-62535",
+        "anizip:19594",
+        "jw:517073-554878"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Hanaori-san Still Wants to Fight in the Next Life",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "199066",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 12 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Hanaori-san Still Wants to Fight in the Next Life"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Hanaori-san wa Tensei Shite mo Kenka ga Shitai"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "花織さんは転生しても喧嘩がしたい"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:199066"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50179",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hanaori-san wa Tensei Shite mo Kenka ga Shitai"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "花織さんは転生しても喧嘩がしたい"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50179"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62535",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hanaori-san Still Wants to Fight in the Next Life"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Hanaori-san wa Tensei shitemo Kenka ga Shitai"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62535"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62535",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hanaori-san wa Tensei shitemo Kenka ga Shitai"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62535"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19594",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hanaori-san Still Wants to Fight in the Next Life"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "花織さんは転生しても喧嘩がしたい"
+        }
+      ],
+      "uri": "anizip:19594"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "517073-554878",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:517073-554878"
+    }
+  ],
+  "source": {
+    "answers": [
+      "fcdc0d5dd27a23e68e3b40e3003530ae9991359881970cf256b79b2cd1c6f64c",
+      "3023af9bf4e3bc5bfed3490778bd153c5a31bb2aea5733f3e91ed64d90deabae",
+      "6ac8568bc46cab3d267dd85f229cfc347a26029accc63fd6c59b143293532428",
+      "e63c03e9558980dfcab1737eb0b95cfca855f0f99cdb8b683b05d51367fe2f3a",
+      "404ef6a1e16b415cdbac46afd3b3e7f5b8a8d198d06e8148b52943e87231a84b",
+      "dde28f62f55c325713fd7000997b58c13e4e8d59b2fc261c8c923485a802cf38",
+      "977b535e6ba016a03a21adb969dd75ec786db983ddb6ba35d049c764448a777b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:199066,kitsu:50179,mal:62535,offline:mal-62535)"
+  },
+  "why": "Hanaori-san Still Wants to Fight in the Next Life is a 12 episode summer 2026 TV run that started 2026-07-12 and is still airing, with anilist giving an end of 2026-09-27. anizip:19594 is the same run: it carries SAME_AS ids to anilist:199066 and mal:62535 and lists the same 12 episodes on the run's weekly Saturday night slot. jw:517073-554878 is the same run: it carries SAME_AS ids to all four members and to anizip:19594, and its 9 listed episodes are the run's first 9 by title, which is what a listing of a still airing run looks like. Episodes 1 to 9 are paired between anizip and JustWatch on exact, distinctive titles in the same order (\"When Ryusei Met Meteor...\" at 1, \"Midnight Run\" at 3, \"Training Day\" at 8), with episode 4 differing only by a backtick standing in for the apostrophe. anizip's episodes 10, 11 and 12 have no titles and the kitsu episode rows carry neither titles nor dates, so neither is paired."
+}

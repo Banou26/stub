@@ -1,0 +1,568 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing contested: every row returned is already a member of the run's address and the three catalogue rows agree on date and count. The 46 kitsu episode rows carry no titles and no release dates, so no episode pair could be asserted. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62248",
+      "mediaUri": "anilist:199409",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199409",
+      "mediaUri": "kitsu:50279",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62248",
+      "mediaUri": "kitsu:50279",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62248",
+      "mediaUri": "offline:mal-62248",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406316",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406316"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "406317",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406317"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406334",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406334"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406335",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406335"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406338",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406338"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406656",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406656"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406733",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406733"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "406734",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406734"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "406735",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406735"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "406736",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406736"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "406737",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406737"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "406738",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406738"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "406739",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406739"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "406740",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406740"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "406741",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406741"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "406742",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406742"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "406743",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406743"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "406744",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406744"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "406745",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406745"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "406746",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406746"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "406747",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406747"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "406748",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406748"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "406749",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406749"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "406750",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406750"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "406751",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406751"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "406752",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406752"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "406753",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406753"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "406754",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406754"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "406755",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406755"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "406756",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406756"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "406757",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406757"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "406758",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406758"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "406759",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406759"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "406760",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406760"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "406761",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406761"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "406762",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406762"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "406763",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406763"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "406764",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406764"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "406765",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406765"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "406766",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406766"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "406767",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406767"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "406768",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406768"
+    },
+    {
+      "episodeNumber": 43,
+      "id": "406769",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406769"
+    },
+    {
+      "episodeNumber": 44,
+      "id": "406770",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406770"
+    },
+    {
+      "episodeNumber": 45,
+      "id": "406771",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406771"
+    },
+    {
+      "episodeNumber": 46,
+      "id": "406772",
+      "mediaUri": "kitsu:50279",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406772"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:199409",
+        "kitsu:50279",
+        "mal:62248",
+        "offline:mal-62248"
+      ]
+    ]
+  },
+  "name": "A Will Eternal Final Season",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 46,
+      "id": "199409",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 22 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Yi Nian Yongheng 4"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "一念永恒 第四季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:199409"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 46,
+      "id": "50279",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-22",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Will Eternal Final Season"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Yi Nian Yong Heng: Wanjie Ji"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50279"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 46,
+      "id": "62248",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-22",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Will Eternal Final Season"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yi Nian Yong Heng: Wanjie Ji"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62248"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-62248",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yi Nian Yong Heng: Wanjie Ji"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62248"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7308973119dd0677f3f43a06b38648ed860840bd52c90fd19c8b0f6c06c6f5f1",
+      "d08cb9e0727c0d64ea8568d0a35117179c011c5d1c9c53cb9381397d73ab430d",
+      "76ef81e8c742b1a4ba3f5e44f2418b39fc5c45ca8a028128ce2a06a3b08942ad",
+      "64c0e2e46f34804e41ac9dd9d33a0c0864322c3093680dcbcd4bf6d1956e38a8"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:199409,kitsu:50279,mal:62248,offline:mal-62248)"
+  },
+  "why": "A Will Eternal Final Season (Yi Nian Yong Heng: Wanjie Ji, listed on Anilist as Yi Nian Yongheng 4) is the fourth and final season of the Chinese ONA, 46 episodes from 2026-07-22. All four rows are one run: mal:62248, anilist:199409 and kitsu:50279 all give the same 2026-07-22 start date and the same 46 episode count, anilist and kitsu both carry first-party SAME_AS handles to mal:62248 and kitsu carries one to anilist:199409, and offline:mal-62248 is keyed on the mal id with a SAME_AS to it and the same Yi Nian Yong Heng: Wanjie Ji title. No streaming rows, container rows or other seasons came back for this run, so nothing is attached, held or set apart."
+}

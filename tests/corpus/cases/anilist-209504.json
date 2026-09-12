@@ -1,0 +1,1228 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part was the Netflix row: it claims SAME_AS against four members but is plainly a different 2023 series with 13 placeholder-titled episodes, so it is marked unrelated rather than trusted. The JustWatch season lists 10 of 12 episodes with no dates at all, so the episode alignment rests entirely on titles: five are exact and the other five differ only in punctuation or one typo, which fixes the offset at zero. Kitsu's episodeCount of 33 against the run's 12 is left alone because Kitsu is a member of the run's own address. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63752",
+      "mediaUri": "anilist:209504",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209504",
+      "mediaUri": "kitsu:50768",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63752",
+      "mediaUri": "kitsu:50768",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63752",
+      "mediaUri": "offline:mal-63752",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209504",
+      "mediaUri": "offline:mal-63752",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50768",
+      "mediaUri": "offline:mal-63752",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63752",
+      "mediaUri": "anizip:19954",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209504",
+      "mediaUri": "anizip:19954",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209504",
+      "mediaUri": "jw:532161-578041",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19954",
+      "mediaUri": "jw:532161-578041",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50768",
+      "mediaUri": "jw:532161-578041",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63752",
+      "mediaUri": "jw:532161-578041",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63752",
+      "mediaUri": "jw:532161-578041",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209504",
+      "mediaUri": "nf:82090744",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50768",
+      "mediaUri": "nf:82090744",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63752",
+      "mediaUri": "nf:82090744",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63752",
+      "mediaUri": "nf:82090744",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404147",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404147"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404148",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404148"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404149",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404149"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404150",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404150"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404151",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404151"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404152",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404152"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404153",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404153"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404154",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404154"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404155",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404155"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404156",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404156"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404157",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404157"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404158",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404158"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404159",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404159"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404160",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404160"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404161",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404161"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404162",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404162"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404163",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404163"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404164",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404164"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404165",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404165"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404166",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404166"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404167",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404167"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404168",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404168"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "404169",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404169"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "404170",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404170"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "404171",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404171"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "404172",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404172"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "404173",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404173"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "404174",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404174"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "404175",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404175"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "404176",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404176"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "404177",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404177"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "404178",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404178"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "404179",
+      "mediaUri": "kitsu:50768",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404179"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19954-1",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Trout Fishing in Another World! With a Side of Hot Oni"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "異世界トラウト一本釣り! ～鬼さん添えて～"
+        }
+      ],
+      "uri": "anizip:19954-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19954-2",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Combine Your Friends and Ingredients for a Tasty Rice Dish!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "仲間も具材も, ひとつにしちゃえ炊き込みご飯!"
+        }
+      ],
+      "uri": "anizip:19954-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19954-3",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "War on the Water! Seafood Barbeque!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "海で開戦! 海鮮バーベキュー!"
+        }
+      ],
+      "uri": "anizip:19954-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19954-4",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Food Demon Descends! Thou Art Tartar Sauce!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "食の悪魔降臨! 汝はタルタルソース!"
+        }
+      ],
+      "uri": "anizip:19954-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19954-5",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Listen Up, Boys! It`s a Dungeon Meat Fest!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "野郎ども! ダンジョン肉祭りだあっ!"
+        }
+      ],
+      "uri": "anizip:19954-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19954-6",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "We Like Conger Eel, But We Love Freshwater Eeel, Too!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "朕, アナゴもいいけどウナギも好き!"
+        }
+      ],
+      "uri": "anizip:19954-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19954-7",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Muchi Dango on Your Waist! Please Give Me Every Last One!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "お腰につけたムーチ団子～, 一つ残らずくださいな～♪"
+        }
+      ],
+      "uri": "anizip:19954-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19954-8",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Stew & Ikura: \"Who Do You Choose, Me or Her?!\" Rice: \"I Love You Both!\""
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "煮込み&イクラ『私とあの子, どっちを選ぶの!?』米『両方とも大好きだ!』"
+        }
+      ],
+      "uri": "anizip:19954-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19954-9",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Crispy Solution, Crunchy Reconciliation! `Cause It`s Tempura!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サクッと解決, カラッと和解! 天ぷらだけにね!"
+        }
+      ],
+      "uri": "anizip:19954-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19954-10",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hyahha! It`s Tartar Sauce Time! (For the 2nd Time in 5 Episodes)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ひゃっはあっ, タルタルソースの時間だぁっ! (5話ぶり2回目)"
+        }
+      ],
+      "uri": "anizip:19954-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19954-11",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T14:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19954-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19954-12",
+      "mediaUri": "anizip:19954",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T14:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19954-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10602074",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trout Fishing in Another World! ~With a Side of Hot Oni~"
+        }
+      ],
+      "uri": "jw:10602074"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10608279",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Combine Your Friends and Ingredients for a Tasty Rice Dish!"
+        }
+      ],
+      "uri": "jw:10608279"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10611998",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "War on the Water! Seafood Barbeque!"
+        }
+      ],
+      "uri": "jw:10611998"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10631929",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Food Demon Descends! Thou Art Tartar Sauce!"
+        }
+      ],
+      "uri": "jw:10631929"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10631883",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Listen Up, Boys! It's a Dungeon Meat Fest!"
+        }
+      ],
+      "uri": "jw:10631883"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10658160",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "We Like Conger Eel, but We Love Freshwater Eel, Too!"
+        }
+      ],
+      "uri": "jw:10658160"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10727599",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Muchi Dango on Your Waist! Please Give Me Every Last One!"
+        }
+      ],
+      "uri": "jw:10727599"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10796584",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Stew & Ikura: \"Who Do You Choose, Me or Her?!\" Rice: \"I Love You Both!\""
+        }
+      ],
+      "uri": "jw:10796584"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10842140",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crispy Solution, Crunchy Reconciliation! 'Cause It's Tempura!"
+        }
+      ],
+      "uri": "jw:10842140"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10886004",
+      "mediaUri": "jw:532161-578041",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hyahha! It's Tartar Sauce Time! (For the 2nd Time in 5 Episodes)"
+        }
+      ],
+      "uri": "jw:10886004"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82090746",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82090746"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82090747",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82090747"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82090748",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82090748"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82090749",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82090749"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82090750",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82090750"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82090751",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82090751"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82090752",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82090752"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82090753",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82090753"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82090754",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82090754"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82090755",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82090755"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82090756",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82090756"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82090757",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82090757"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "82090758",
+      "mediaUri": "nf:82090744",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:82090758"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:82090744",
+        "anilist:209504"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "jw:10602074",
+        "b": "anizip:19954-1"
+      },
+      {
+        "a": "jw:10608279",
+        "b": "anizip:19954-2"
+      },
+      {
+        "a": "jw:10611998",
+        "b": "anizip:19954-3"
+      },
+      {
+        "a": "jw:10631929",
+        "b": "anizip:19954-4"
+      },
+      {
+        "a": "jw:10631883",
+        "b": "anizip:19954-5"
+      },
+      {
+        "a": "jw:10658160",
+        "b": "anizip:19954-6"
+      },
+      {
+        "a": "jw:10727599",
+        "b": "anizip:19954-7"
+      },
+      {
+        "a": "jw:10796584",
+        "b": "anizip:19954-8"
+      },
+      {
+        "a": "jw:10842140",
+        "b": "anizip:19954-9"
+      },
+      {
+        "a": "jw:10886004",
+        "b": "anizip:19954-10"
+      }
+    ],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:209504",
+        "kitsu:50768",
+        "mal:63752",
+        "offline:mal-63752",
+        "anizip:19954",
+        "jw:532161-578041"
+      ]
+    ],
+    "unrelated": [
+      "nf:82090744"
+    ]
+  },
+  "name": "The Forsaken Saintess and Her Foodie Roadtrip in Another World",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "209504",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Forsaken Saintess and Her Foodie Roadtrip in Another World"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Suterare Seijo no Isekai Gohantabi: Kakure Skill de Camping Car wo Shoukan Shimashita"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "捨てられ聖女の異世界ごはん旅 隠れスキルでキャンピングカーを召喚しました"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:209504"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 33,
+      "id": "50768",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Forsaken Saintess and Her Foodie Roadtrip in Another World"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Suterare Seijo no Isekai Gohantabi: Kakure Skill de Camping Car wo Shoukan Shimashita"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "捨てられ聖女の異世界ごはん旅 隠れスキルでキャンピングカーを召喚しました"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50768"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63752",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Forsaken Saintess and her Foodie Roadtrip in Another World"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Suterare Seijo no Isekai Gohan Tabi: Kakure Skill de Camping Car wo Shoukan shimashita"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63752"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63752",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Suterare Seijo no Isekai Gohan Tabi: Kakure Skill de Camping Car wo Shoukan shimashita"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63752"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19954",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Forsaken Saintess and Her Foodie Roadtrip in Another World"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "捨てられ聖女の異世界ごはん旅 隠れスキルでキャンピングカーを召喚しました"
+        }
+      ],
+      "uri": "anizip:19954"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "532161-578041",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:532161-578041"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82090744",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Reincarnation Of The Strongest Exorcist In Another World"
+        }
+      ],
+      "uri": "nf:82090744"
+    }
+  ],
+  "source": {
+    "answers": [
+      "bd06089f6a151838b9af060d34b407e794cf25fe3c8473f4f5ea925bea9e2998",
+      "cf5db70e117b54fff8ed4f556c96fa255cccb3c154b5c6ff5e3b49889bee4923",
+      "b4959ef5b3a57767f58aee4d5bc4e9a89c49782dad0b5f8c9af565e88c146122",
+      "6147681a901eed8c9fe03ced81821f0fd03e116c7de7b409db0ad3df9a6ff9e9",
+      "09c842870a23f4ed98f9e105c3d161ef7efa9d562c47943aa15f1e3e3b8de112",
+      "994f5ca56d0f92e03ab5144d044ac8853ca0fa7bc321af2800c5df2d3ba30cf4",
+      "35040defd6898db66a04e57150998b23c079823e763f0b7f7d25ef5eee9c74fb",
+      "6a179208c31b5eedc961102239c555556748730c1edf1a8ceed0a367e99a6337",
+      "871ac744c2569b79be0f3abec6e38fe7ad03da51c2b6967fe061a9aa633757a2",
+      "759a7faf706912477c1ffb141945c7f76db9ab2d5b7e24e0221e434540cbd767",
+      "3ba4059c0311ca49e2908a27b8f165564e97697237bc0d6d8f0129bbdd1610ca",
+      "0c933a1741ae12ec39e3e7d5c6f6ee40ee62d6b901a99d4abcb597391b8631e2",
+      "a43f46378bbd72ead5d794ab3b63a92907573a99894afd530b54ef2a8553e816",
+      "acf5cc9689341c85742b0d4ac1f521c03eb9b993eb7f27ce0e8f42299542869e",
+      "d02cd74065bf69ac3c0497217734aa20dd361fe5304e174c57acdef1e0076d7f",
+      "36b09c60099c963d3357200995c212b638f47eb7f93e3a38fd5a8514b8be4e5e",
+      "f9b3e0ec2b13bb9f65d217b17d6dca992d2f9ad597564be3aacf8a4200e8288d",
+      "cb9f6a07054a72655fe9d7e09a9b5fbc35e284502331e42ab01b2764b7693cde",
+      "26b3888fde9415dc8fd4715ad1075a61a19a6aa9ac1f4e6472c9576298110b5e",
+      "69fb8ef8cdfc373a88ebf6eb648642d97bbec30c36f77c09f24049d023b7916b",
+      "02126143791972b79bad779e9b83786c6a53c851003e2dfc79dd29a197d971f2"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:209504,kitsu:50768,mal:63752,offline:mal-63752)"
+  },
+  "why": "The Forsaken Saintess and Her Foodie Roadtrip in Another World is a 12 episode summer 2026 TV run that started 2026-07-06 and is still airing, with AniList and MyAnimeList both giving startDate 2026-07-06 and episodeCount 12. anizip:19954 is the same run: it carries first-party SAME_AS handles to mal:63752 and anilist:209504, its episodeCount is 12, its episode 1 releases 2026-07-06 and its episode 12 on 2026-09-21, matching the AniList start and end dates to the day. jw:532161-578041 is the same run: it is the JustWatch season for suterare-seijo-no-isekai-gohan-tabi, it lists 10 of the run's 12 episodes and no more, it carries first-party SAME_AS handles to anilist:209504, anizip:19954, kitsu:50768, mal:63752 and offline:mal-63752, and five of its episode titles (2, 3, 4, 7 and 8) are character for character the anizip titles at the same numbers. Its 10 episodes pair one to one with anizip episodes 1 to 10 on those titles, the remaining five differing only in apostrophe style, a pair of tildes around a subtitle and one spelling slip (Eeel for Eel), so the alignment has no offset. nf:82090744 is unrelated: it is titled The Reincarnation Of The Strongest Exorcist In Another World, starts 2023-01-01 and carries 13 episodes named Episode 1 to Episode 13, a different show of a different year, so its SAME_AS handles to this run's members are wrong."
+}

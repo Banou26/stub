@@ -1,0 +1,1052 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch season lists the ten aired episodes with exact titles but no release dates, so its episodes were left unpaired; the Netflix row claims SAME_AS to the run but is the series container opened in 2017. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GR9P57W96-GS00380130",
+      "mediaUri": "anilist:135865",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:49233",
+      "mediaUri": "anilist:135865",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:135865",
+      "mediaUri": "kitsu:44778",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:49233",
+      "mediaUri": "kitsu:44778",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GR9P57W96",
+      "mediaUri": "kitsu:44778",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:49233",
+      "mediaUri": "offline:mal-49233",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:135865",
+      "mediaUri": "offline:mal-49233",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44778",
+      "mediaUri": "offline:mal-49233",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:49233",
+      "mediaUri": "anizip:16392",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:135865",
+      "mediaUri": "anizip:16392",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:80169285",
+      "mediaUri": "jw:53433-304924",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:135865",
+      "mediaUri": "jw:53433-304924",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:16392",
+      "mediaUri": "jw:53433-304924",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GR9P57W96-GS00380130",
+      "mediaUri": "jw:53433-304924",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44778",
+      "mediaUri": "jw:53433-304924",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:49233",
+      "mediaUri": "jw:53433-304924",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-49233",
+      "mediaUri": "jw:53433-304924",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:135865",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:16392",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GR9P57W96-GS00380130",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:53433-304924",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:44778",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:49233",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-49233",
+      "mediaUri": "nf:80169285",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "306105",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:306105"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "306106",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:306106"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "326219",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:326219"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "326220",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:326220"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "326221",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:326221"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "329094",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:329094"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "329095",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:329095"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "329096",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:329096"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "350146",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:350146"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "350147",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:350147"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "350148",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:350148"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "350149",
+      "mediaUri": "kitsu:44778",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:350149"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "16392-1",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Salamander Combat Team"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サラマンダー戦闘団"
+        }
+      ],
+      "uri": "anizip:16392-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "16392-2",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Strange Friendship"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "奇妙な友情"
+        }
+      ],
+      "uri": "anizip:16392-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "16392-3",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Well-Intentioned Mediator"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "善意の仲介人"
+        }
+      ],
+      "uri": "anizip:16392-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "16392-4",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Operation Iron Hammer"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "鉄槌作戦"
+        }
+      ],
+      "uri": "anizip:16392-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "16392-5",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Unlucky Draw"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "貧乏籤"
+        }
+      ],
+      "uri": "anizip:16392-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "16392-6",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Decoy"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "囮"
+        }
+      ],
+      "uri": "anizip:16392-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "16392-7",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Purgatory"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "煉獄"
+        }
+      ],
+      "uri": "anizip:16392-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "16392-8",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Torpedo Strike"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "雷撃"
+        }
+      ],
+      "uri": "anizip:16392-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "16392-9",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sightseeing Tour"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "観光旅行"
+        }
+      ],
+      "uri": "anizip:16392-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "16392-10",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Way to Survive"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "活路"
+        }
+      ],
+      "uri": "anizip:16392-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "16392-11",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:16392-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "16392-12",
+      "mediaUri": "anizip:16392",
+      "origin": "anizip",
+      "releaseDate": "2026-09-23T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:16392-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GR9P57W96-GS00380130-GE00380131JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-07-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Salamander Combat Team"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380131JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GR9P57W96-GS00380130-GE00380132JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-07-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Strange Friendship"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380132JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GR9P57W96-GS00380130-GE00380133JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-07-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Well-Intentioned Mediator"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380133JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GR9P57W96-GS00380130-GE00380134JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-07-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Operation Iron Hammer"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380134JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GR9P57W96-GS00380130-GE00380135JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-08-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Unlucky Draw"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380135JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GR9P57W96-GS00380130-GE00380136JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-08-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Decoy"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380136JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GR9P57W96-GS00380130-GE00380137JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-08-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Purgatory"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380137JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GR9P57W96-GS00380130-GE00380138JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-08-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Torpedo Strike"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380138JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GR9P57W96-GS00380130-GE00380139JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-09-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Sightseeing Tour"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380139JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GR9P57W96-GS00380130-GE00380140JAJP",
+      "mediaUri": "cr:GR9P57W96-GS00380130",
+      "origin": "cr",
+      "releaseDate": "2026-09-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Way to Survive"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130-GE00380140JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "5734401",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Salamander Combat Team"
+        }
+      ],
+      "uri": "jw:5734401"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10626649",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Strange Friendship"
+        }
+      ],
+      "uri": "jw:10626649"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10626655",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Well-Intentioned Mediator"
+        }
+      ],
+      "uri": "jw:10626655"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10626666",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Operation Iron Hammer"
+        }
+      ],
+      "uri": "jw:10626666"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10626674",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Unlucky Draw"
+        }
+      ],
+      "uri": "jw:10626674"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10626683",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Decoy"
+        }
+      ],
+      "uri": "jw:10626683"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10626695",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Purgatory"
+        }
+      ],
+      "uri": "jw:10626695"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10626706",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Torpedo Strike"
+        }
+      ],
+      "uri": "jw:10626706"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10626718",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sightseeing Tour"
+        }
+      ],
+      "uri": "jw:10626718"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10626728",
+      "mediaUri": "jw:53433-304924",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Way to Survive"
+        }
+      ],
+      "uri": "jw:10626728"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380131JAJP",
+        "b": "anizip:16392-1"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380132JAJP",
+        "b": "anizip:16392-2"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380133JAJP",
+        "b": "anizip:16392-3"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380134JAJP",
+        "b": "anizip:16392-4"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380135JAJP",
+        "b": "anizip:16392-5"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380136JAJP",
+        "b": "anizip:16392-6"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380137JAJP",
+        "b": "anizip:16392-7"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380138JAJP",
+        "b": "anizip:16392-8"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380139JAJP",
+        "b": "anizip:16392-9"
+      },
+      {
+        "a": "cr:GR9P57W96-GS00380130-GE00380140JAJP",
+        "b": "anizip:16392-10"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:135865",
+        "whole": "cr:GR9P57W96"
+      },
+      {
+        "part": "anilist:135865",
+        "whole": "nf:80169285"
+      }
+    ],
+    "together": [
+      [
+        "anilist:135865",
+        "kitsu:44778",
+        "mal:49233",
+        "offline:mal-49233",
+        "anizip:16392",
+        "cr:GR9P57W96-GS00380130",
+        "jw:53433-304924"
+      ]
+    ]
+  },
+  "name": "Saga of Tanya the Evil Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "135865",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Saga of Tanya the Evil Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Youjo Senki II"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "幼女戦記Ⅱ"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:135865"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "44778",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Saga of Tanya the Evil II"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Youjo Senki II"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "幼女戦記 II"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:44778"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49233",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Saga of Tanya the Evil II"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Youjo Senki II"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:49233"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-49233",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Youjo Senki II"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-49233"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "16392",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Saga of Tanya the Evil II"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "幼女戦記II"
+        }
+      ],
+      "uri": "anizip:16392"
+    },
+    {
+      "id": "GR9P57W96",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GR9P57W96"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GR9P57W96-GS00380130",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Saga of Tanya the Evil"
+        }
+      ],
+      "uri": "cr:GR9P57W96-GS00380130"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "53433-304924",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:53433-304924"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80169285",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2017-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saga of Tanya the Evil"
+        }
+      ],
+      "uri": "nf:80169285"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4213d7048af466c9abda5a0da3730d09454c249a729fa017cc75979b80519609",
+      "69b06301d24a84faabfdf38e4976600f6a2c0eb28835fac6c8bd4fa3a94e098e",
+      "6a37bce568a27532399e71d78b9c3ef0c7a573a9cc2c0b5ef91f6a349f467253",
+      "d10670dfd8efeb3229caa21653e00c6c5cf9d275241f275b76b02eb8cfa017f6",
+      "bbcef26de9106b2588bd05515b6da8fdfb2bd7097f0028a5a157da562535a487",
+      "91467024a567cead1d0a5dba264a8b95f19940a279f3e99974b2e287c7e5de0d",
+      "6b5cabd5eef953a4601a477783f885a00410281664e53704fcb3c3cba373ab7d",
+      "09cb28ec65ff1ab89ded9c4962d2effa032d68e38600b7c852b10ce5e737d4e9"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:135865,kitsu:44778,mal:49233,offline:mal-49233)"
+  },
+  "why": "Saga of Tanya the Evil Season 2 is the twelve episode summer 2026 cour, airing 2026-07-08 to 2026-09-23, with episodes 11 and 12 still to come.\nanizip:16392 is the same run: same twelve episode count, and its own SAME_AS ids point at mal:49233 and anilist:135865, both members.\ncr:GR9P57W96-GS00380130 is the same run: anilist:135865 maps to it SAME_AS, and its ten listed episodes carry the run's exact titles, Salamander Combat Team through A Way to Survive, on the same weekly dates as anizip:16392 (2026-07-08 to 2026-09-09).\njw:53433-304924 is the same run: it maps SAME_AS to all four members plus anizip:16392 and the Crunchyroll season, and its ten episode titles are the run's first ten in order; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GR9P57W96 holds the run: a bare Crunchyroll series container with no title, count or dates, and kitsu:44778 declares PART_OF against it.\nnf:80169285 holds the run: the Netflix container for Saga of Tanya the Evil with a 2017 start, so it covers the 2017 first season as well as this cour and is the whole show rather than this run.\nThe ten Crunchyroll episodes pair with anizip:16392 episodes 1 to 10 on identical release dates (2026-07-08 through 2026-09-09, same day each) and identical English titles."
+}

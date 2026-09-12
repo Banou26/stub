@@ -1,0 +1,161 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Anpanman has a long film series, so the Netflix row needed care: it is a member-claimed SAME_AS but names a 1993 dinosaur film, thirty-three years off this one's 2026-06-26 release. The offline row's SPRING 2026 season tag disagrees with AniList's SUMMER 2026 and was ignored, since the row is the MyAnimeList id itself and the titles match. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:63356"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63356",
+      "mediaUri": "anilist:206682",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206682",
+      "mediaUri": "nf:81719606",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63356",
+      "mediaUri": "nf:81719606",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63356",
+      "mediaUri": "nf:81719606",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63356",
+      "mediaUri": "offline:mal-63356",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206682",
+      "mediaUri": "offline:mal-63356",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81719606-1",
+      "mediaUri": "nf:81719606",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Anpanman: Adventure of Dinasour Nosshi"
+        }
+      ],
+      "uri": "nf:81719606-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:206682",
+        "nf:81719606"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:206682",
+        "offline:mal-63356"
+      ]
+    ],
+    "unrelated": [
+      "nf:81719606"
+    ]
+  },
+  "name": "Soreike! Anpanman: Pantan to Yakusoku no Hoshi",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "206682",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 26 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Soreike! Anpanman: Pantan to Yakusoku no Hoshi"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "それいけ！アンパンマン　パンタンと約束の星"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:206682"
+    },
+    {
+      "id": "63356",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:63356"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "81719606",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "1993-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Anpanman: Adventure of Dinasour Nosshi"
+        }
+      ],
+      "uri": "nf:81719606"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63356",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sore Ike! Anpanman: Pantan to Yakusoku no Hoshi"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63356"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ee4a90def58510c87256e01637dfb2b44d0e67ced1f7fd8405c40d43fda5a655",
+      "51359a78c6404cc52ed614c5b0c099160be1ad11fd9b0813538cd3e2537161a2",
+      "fabe6af886314bf4910f337ef0803a9f9ba78e6d35cd689a6709db32c116c318",
+      "da0109523fdf4ecd688e80dba06f41c29c346d498ed7c7b43c004a5ad6e088f1",
+      "61264c8561b29c6dbee70bacc8a097cddae4eb2f008bfe0f86acbffbee408e6b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:206682,mal:63356)"
+  },
+  "why": "Soreike! Anpanman: Pantan to Yakusoku no Hoshi is the 2026 Anpanman feature, one episode, released 2026-06-26 on AniList, with MyAnimeList carrying the same film as mal:63356. offline:mal-63356 is the same run: it is the MyAnimeList id mirrored in the offline database, it maps SAME_AS to both mal:63356 and anilist:206682, and its title Sore Ike! Anpanman: Pantan to Yakusoku no Hoshi and its single-episode MOVIE shape match the AniList row. The Netflix row nf:81719606 Anpanman: Adventure of Dinasour Nosshi is a different Anpanman film despite its SAME_AS handles: it is dated 1993-01-01 against this film's 2026-06-26, and its title names the dinosaur Nosshi story rather than Pantan and the promised star, so it is neither merged nor attached."
+}

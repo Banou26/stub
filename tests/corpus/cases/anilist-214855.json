@@ -1,0 +1,106 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The offline row carries no titles, dates or counts at all, so it rests entirely on its id mapping to the two members. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64725",
+      "mediaUri": "anilist:214855",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64725",
+      "mediaUri": "offline:mal-64725",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214855",
+      "mediaUri": "offline:mal-64725",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:214855",
+        "mal:64725",
+        "offline:mal-64725"
+      ]
+    ]
+  },
+  "name": "Fate/Grand Order: Fujimaru Ritsuka wa Wakaranai Season 4",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "214855",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 07 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Fate/Grand Order: Fujimaru Ritsuka wa Wakaranai Season 4"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "Fate/Grand Order 藤丸立香はわからない Season4"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:214855"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64725",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fate/Grand Order: You've Lost Ritsuka Fujimaru Season 4"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Fate/Grand Order: Fujimaru Ritsuka wa Wakaranai Season 4"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64725"
+    },
+    {
+      "id": "mal-64725",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64725"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a443b5ad61fddc41023eb6817d59472f74d41dedeb69c661e10edfaa93431f05",
+      "3027511fc5ce0f35093d1d3496f63ae65b95724b9d1ef62231a3c677ebf3d1a3",
+      "02a768fa6ca4bb177927ca2e1fb87d3f955868ee31badb8f19fa224f8ef95c3a"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214855,mal:64725)"
+  },
+  "why": "The run is the fourth season of the Fate/Grand Order short ONA Fujimaru Ritsuka wa Wakaranai, starting 2026-08-07 in summer 2026. The offline row offline:mal-64725 is the same run: its id is built on the MyAnimeList id 64725 and it carries SAME_AS handles to both mal:64725 and anilist:214855, so the two catalogue ids the run already holds are the pair it maps together. AniList and MyAnimeList themselves agree on the romanised title, the 2026-08-07 start date and the ONA type. Nothing else was returned for this run."
+}

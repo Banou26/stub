@@ -1,0 +1,224 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only judgement call was the Netflix row: it is a container with no count and only placeholder episode titles under a different English name, so it was attached as a holder and no episode range was aligned. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62707",
+      "mediaUri": "anilist:212969",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62707",
+      "mediaUri": "nf:81758011",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62707",
+      "mediaUri": "offline:mal-62707",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:212969",
+      "mediaUri": "offline:mal-62707",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81758013",
+      "mediaUri": "nf:81758011",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81758013"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81758014",
+      "mediaUri": "nf:81758011",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81758014"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81758015",
+      "mediaUri": "nf:81758011",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81758015"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81758016",
+      "mediaUri": "nf:81758011",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81758016"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81765534",
+      "mediaUri": "nf:81758011",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81765534"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "mal:62707",
+        "whole": "nf:81758011"
+      }
+    ],
+    "together": [
+      [
+        "mal:62707",
+        "anilist:212969",
+        "offline:mal-62707"
+      ]
+    ]
+  },
+  "name": "Oriental Martial Academy",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "62707",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-16",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Oriental Martial Academy"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Dongda Gao Wu Xueyuan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62707"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "212969",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 16 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Oriental Martial Academy"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Dongda Gao Wu Xueyuan"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "东大高武学院"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:212969"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81758011",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2024-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Maverick Academy"
+        }
+      ],
+      "uri": "nf:81758011"
+    },
+    {
+      "id": "mal-62707",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-62707"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f8f3896e3a4de936a9944fd261d5b7269fa37aef0289d2cc07efc4ec11527b93",
+      "5dcba0159f96c0a47eb8cc4761a7d88e334114dda5365d40bb4a142494c4c654",
+      "d36ff3c5f32bd9499947995103e72850c32c2ae02a7a3f4dfeafd9c0f815cec5",
+      "6416f499c27ca6bb668d963326ecbe1f57e876184a07ce4c747b6639629c3b00",
+      "94f32c84da98734d19fcf67300f9e7b928c0ae045e01601834ad4ca475d0ed87",
+      "f5458e6c9cef8b4cef8efdbca8a92d72346289c10ab9ded1a152c7adac70c974",
+      "f3b2a99f9c3660e91089642e0c62ae2ea32fbaf8e0134c74232eb42ba7093196",
+      "6876e253cb0f61ee7054eff2942d66f72fa8f3855391d54b8eefd777e52d5570",
+      "7c4d5d2e6e053dacd8716312624ef8bd84832ef99b9b0cfec532d479c27b1c9c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:62707)"
+  },
+  "why": "Oriental Martial Academy (Dongda Gao Wu Xueyuan, 东大高武学院) is a 26 episode Chinese ONA that began on 2026-07-16 and is still releasing. Anilist 212969 is the same run: it maps SAME_AS to mal:62707, carries the same English and romanised titles, and gives the same 2026-07-16 start date. The offline entry offline:mal-62707 is the same run: it maps SAME_AS to both mal:62707 and anilist:212969. The Netflix row nf:81758011 is a bare series container (scope CONTAINER, no episode count, listing placeholder titles Episode 1 to Episode 5 with no dates) mapped SAME_AS to mal:62707, so it holds the run; with no episode dates on the Netflix side and only Netflix's own translated placeholder titles, no episode range could be aligned."
+}

@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing contested: three rows, all members, agreeing on title and on the 2026-07-31 date. The Anilist end timestamp (2026-07-30 15:00 GMT) falls before its own start timestamp, which is a timezone artefact on a same day OVA and was not treated as evidence of anything. No episode rows came back from any source. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64373",
+      "mediaUri": "anilist:212617",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64373",
+      "mediaUri": "offline:mal-64373",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:212617",
+        "mal:64373",
+        "offline:mal-64373"
+      ]
+    ]
+  },
+  "name": "Inaka ni wa Kore Kurai Shika Goraku ga nai",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "212617",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 31 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Inaka ni wa Kore Kurai Shika Goraku ga nai"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "田舎にはこれくらいしか娯楽がない"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:212617"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64373",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-31",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Inaka ni wa Kore Kurai Shika Goraku ga Nai"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64373"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-64373",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Inaka ni wa Kore Kurai Shika Goraku ga Nai"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64373"
+    }
+  ],
+  "source": {
+    "answers": [
+      "533e84909ee5782059a0de30fced2e3084c5d35762e8dc3f3a384740507a2529",
+      "f9c6a2efb4ed9e6325f211956ad679b0cc34f39d238485a664b38ccb497e8baf",
+      "227f94b1eedbf981c3235117c373d2a3395006df12dc60700283dd769abd8394"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:212617,mal:64373,offline:mal-64373)"
+  },
+  "why": "Inaka ni wa Kore Kurai Shika Goraku ga Nai (田舎にはこれくらいしか娯楽がない) is a summer 2026 OVA dated 2026-07-31, with two episodes in the offline database. All three rows are one run: anilist:212617 carries a first-party SAME_AS to mal:64373 and gives the same romanised title and the same 2026-07-31 start date, and offline:mal-64373 is keyed on the mal id with a SAME_AS to it and the same title. Only the three catalogue rows came back, with no streaming, container or other season rows, so nothing is attached, held or set apart."
+}

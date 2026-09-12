@@ -1,0 +1,1283 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Two things needed care. The Netflix row claims SAME_AS against every member but is titled The Yakuza's Guide to Babysitting and dated 2022, so it is a different work and is marked unrelated. JustWatch episode 10 reads \"Umibe nite\" against \"By the Sea\" everywhere else, which is the same title in romaji rather than a match the rules accept, and JustWatch has no dates, so that one pair is left out while 1 to 9 stand. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00379182-GS00379183",
+      "mediaUri": "anilist:199408",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "anilist:199408",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199408",
+      "mediaUri": "kitsu:50766",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "kitsu:50766",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00379182",
+      "mediaUri": "kitsu:50766",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "offline:mal-62289",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199408",
+      "mediaUri": "offline:mal-62289",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50766",
+      "mediaUri": "offline:mal-62289",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "anizip:19530",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199408",
+      "mediaUri": "anizip:19530",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199408",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50766",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62289",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199408",
+      "mediaUri": "jw:506589-536748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19530",
+      "mediaUri": "jw:506589-536748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50766",
+      "mediaUri": "jw:506589-536748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "jw:506589-536748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62289",
+      "mediaUri": "jw:506589-536748",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199408",
+      "mediaUri": "nf:81618733",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50766",
+      "mediaUri": "nf:81618733",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62289",
+      "mediaUri": "nf:81618733",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62289",
+      "mediaUri": "nf:81618733",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404103",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404103"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404104",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404104"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404105",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404105"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404106",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404106"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404107",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404107"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404108",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404108"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404109",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404109"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404110",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404110"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404111",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404111"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404112",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404112"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404113",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404113"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404114",
+      "mediaUri": "kitsu:50766",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404114"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19530-1",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Despair and a Promise of Revenge"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "絶望と報復の誓い"
+        }
+      ],
+      "uri": "anizip:19530-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19530-2",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Starting Business in Asylum"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "亡命と起業"
+        }
+      ],
+      "uri": "anizip:19530-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19530-3",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Met on the Road"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "旅路での出会い"
+        }
+      ],
+      "uri": "anizip:19530-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19530-4",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "New Friends and Social Parties"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "新たな仲間と社交パーティー"
+        }
+      ],
+      "uri": "anizip:19530-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19530-5",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Adventurers Assemble"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "冒険者集結"
+        }
+      ],
+      "uri": "anizip:19530-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19530-6",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Taking Back the Fortress"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "砦, 奪還作戦"
+        }
+      ],
+      "uri": "anizip:19530-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19530-7",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Revenge in the Dead of Night"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "闇夜の報復"
+        }
+      ],
+      "uri": "anizip:19530-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19530-8",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Tragedy of the House of Count Arty"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "アーティ伯爵家の悲劇"
+        }
+      ],
+      "uri": "anizip:19530-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19530-9",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Empire`s Merchants` Guild Council"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "帝国ギルド評議会"
+        }
+      ],
+      "uri": "anizip:19530-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19530-10",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T13:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "By the Sea"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "海辺にて"
+        }
+      ],
+      "uri": "anizip:19530-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19530-11",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19530-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19530-12",
+      "mediaUri": "anizip:19530",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T13:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19530-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00379182-GS00379183-GE00379184JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-07-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Despair and a Promise of Revenge"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379184JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00379182-GS00379183-GE00379185JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-07-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Starting Business In Asylum"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379185JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00379182-GS00379183-GE00379186JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-07-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Met on the Road"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379186JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00379182-GS00379183-GE00379187JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-07-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "New Friends and Social Parties"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379187JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00379182-GS00379183-GE00379188JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-08-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Adventurers Assemble"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379188JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00379182-GS00379183-GE00379189JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-08-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Taking Back the Fortress"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379189JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00379182-GS00379183-GE00379190JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-08-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Revenge in the Dead of Night"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379190JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00379182-GS00379183-GE00379191JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-08-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Tragedy of the House of Count Arty"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379191JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00379182-GS00379183-GE00379192JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-08-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Empire's Merchants' Guild Council"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379192JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00379182-GS00379183-GE00379193JAJP",
+      "mediaUri": "cr:GT00379182-GS00379183",
+      "origin": "cr",
+      "releaseDate": "2026-09-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "By the Sea"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183-GE00379193JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9885053",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Despair and a Promise of Revenge"
+        }
+      ],
+      "uri": "jw:9885053"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10589501",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Starting Business In Asylum"
+        }
+      ],
+      "uri": "jw:10589501"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10589502",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Met on the Road"
+        }
+      ],
+      "uri": "jw:10589502"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10589503",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "New Friends and Social Parties"
+        }
+      ],
+      "uri": "jw:10589503"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10589504",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Adventurers Assemble"
+        }
+      ],
+      "uri": "jw:10589504"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10589505",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Taking Back the Fortress"
+        }
+      ],
+      "uri": "jw:10589505"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10589506",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Revenge in the Dead of Night"
+        }
+      ],
+      "uri": "jw:10589506"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10589507",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Tragedy of the House of Count Arty"
+        }
+      ],
+      "uri": "jw:10589507"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10589508",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Empire's Merchants' Guild Council"
+        }
+      ],
+      "uri": "jw:10589508"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10589509",
+      "mediaUri": "jw:506589-536748",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Umibe nite"
+        }
+      ],
+      "uri": "jw:10589509"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81618735",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81618735"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81618736",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81618736"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81618737",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81618737"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81618738",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81618738"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81618739",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81618739"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81618740",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81618740"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81618741",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81618741"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81618742",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81618742"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81618743",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81618743"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81618744",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81618744"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81618745",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81618745"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81618746",
+      "mediaUri": "nf:81618733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81618746"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:199408",
+        "nf:81618733"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19530-1",
+        "b": "cr:GT00379182-GS00379183-GE00379184JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379184JAJP",
+        "b": "jw:9885053"
+      },
+      {
+        "a": "anizip:19530-2",
+        "b": "cr:GT00379182-GS00379183-GE00379185JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379185JAJP",
+        "b": "jw:10589501"
+      },
+      {
+        "a": "anizip:19530-3",
+        "b": "cr:GT00379182-GS00379183-GE00379186JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379186JAJP",
+        "b": "jw:10589502"
+      },
+      {
+        "a": "anizip:19530-4",
+        "b": "cr:GT00379182-GS00379183-GE00379187JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379187JAJP",
+        "b": "jw:10589503"
+      },
+      {
+        "a": "anizip:19530-5",
+        "b": "cr:GT00379182-GS00379183-GE00379188JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379188JAJP",
+        "b": "jw:10589504"
+      },
+      {
+        "a": "anizip:19530-6",
+        "b": "cr:GT00379182-GS00379183-GE00379189JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379189JAJP",
+        "b": "jw:10589505"
+      },
+      {
+        "a": "anizip:19530-7",
+        "b": "cr:GT00379182-GS00379183-GE00379190JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379190JAJP",
+        "b": "jw:10589506"
+      },
+      {
+        "a": "anizip:19530-8",
+        "b": "cr:GT00379182-GS00379183-GE00379191JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379191JAJP",
+        "b": "jw:10589507"
+      },
+      {
+        "a": "anizip:19530-9",
+        "b": "cr:GT00379182-GS00379183-GE00379192JAJP"
+      },
+      {
+        "a": "cr:GT00379182-GS00379183-GE00379192JAJP",
+        "b": "jw:10589508"
+      },
+      {
+        "a": "anizip:19530-10",
+        "b": "cr:GT00379182-GS00379183-GE00379193JAJP"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:199408",
+        "whole": "cr:GT00379182"
+      }
+    ],
+    "together": [
+      [
+        "anilist:199408",
+        "kitsu:50766",
+        "mal:62289",
+        "offline:mal-62289",
+        "anizip:19530",
+        "cr:GT00379182-GS00379183",
+        "jw:506589-536748"
+      ]
+    ],
+    "unrelated": [
+      "nf:81618733"
+    ]
+  },
+  "name": "A Livid Lady’s Guide to Getting Even: How I Crushed My Homeland with My Mighty Grimoires",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "199408",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "A Livid Lady’s Guide to Getting Even: How I Crushed My Homeland with My Mighty Grimoires"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Buchigire Reijou wa Houfuku wo Chikaimashita.: Madousho no Chikara de Sokoku wo Tataki Tsubushimasu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ブチ切れ令嬢は報復を誓いました。　～魔導書の力で祖国を叩き潰します～"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:199408"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50766",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Livid Lady’s Guide to Getting Even: How I Crushed My Homeland with My Mighty Grimoires"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Buchigire Reijou wa Houfuku wo Chikaimashita.: Madousho no Chikara de Sokoku wo Tataki Tsubushimasu"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ブチ切れ令嬢は報復を誓いました。　～魔導書の力で祖国を叩き潰します～"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50766"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62289",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Livid Lady's Guide to Getting Even: How I Crushed My Homeland with My Mighty Grimoires"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Buchigire Reijou wa Houfuku wo Chikaimashita. Madousho no Chikara de Sokoku wo Tatakitsubushimasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62289"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62289",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Buchigire Reijou wa Houfuku wo Chikaimashita. Madousho no Chikara de Sokoku wo Tatakitsubushimasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62289"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19530",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Livid Lady`s Guide to Getting Even: How I Crushed My Homeland with My Mighty Grimoires"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ブチ切れ令嬢は報復を誓いました. ~魔導書の力で祖国を叩き潰します~"
+        }
+      ],
+      "uri": "anizip:19530"
+    },
+    {
+      "id": "GT00379182",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00379182"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00379182-GS00379183",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Livid Lady's Guide to Getting Even: How I Crushed My Homeland with My Mighty Grimoires"
+        }
+      ],
+      "uri": "cr:GT00379182-GS00379183"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "506589-536748",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:506589-536748"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81618733",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Yakuza's Guide to Babysitting"
+        }
+      ],
+      "uri": "nf:81618733"
+    }
+  ],
+  "source": {
+    "answers": [
+      "1fd745c3e8239f1db1f2f19171b492921088203897aef6e9993157b91ade4229",
+      "9a4a39670a4c0041d6899987495eb6a3091ba998d56283e93580328e4f2e9868",
+      "0345179ab62a2f355b466b3013cb34aa072d4aa9da259f791e9378ab19797046",
+      "63a680671fa3be65aacb1dd02feeb031760303eaa42d1e1d3488244dd7a1846a",
+      "d223084b03b05ecba85ef2c4f046f771341d3f11e1bf3d92e115fe06d2a9aff0",
+      "396290ac82fdff05cd22381b1dc3783be1c48e863fbd0cdabffac180be49990a",
+      "56d906b43f104d4e268c19301a6f4cb626b67926a6e0d0280cc32d863fbbf53a",
+      "333669c213b58f8815defe9e69a21b3e67465c94cecf592df6607d5d647e396e",
+      "8ff1deb37a5534dfe8e3cd6c95cc08a31e12f808c62937b1609d5bf21a0f343c",
+      "09c5340f5334fc3b215cc2fef584a2537cef4fb13a1bae589a953727a3ab71d4",
+      "05f59d40c9cc978f3fbded9002c35c5e4a4b140d7a88fd4205e3f0bb61fb1970",
+      "85b6c4c8999068c908aa461c11581d8567b80f50760e7bc8052ea60f6987920b",
+      "b8bb3e006f464a61cfdb25e29299f480eb39eb9ce3f2529e4342c66f3e58a869",
+      "b57108529e7a7a25ed58337068822fb0589d7cf10940807ca802e41328fbadc6",
+      "9aebed3dfb67d2754c1b91acd198cb2c207f7e6fc6f4e28d738411fde5acaa19",
+      "8fbf4996e676652fa89e35e44406b8d3e13aa45482e08a8494c846b9495bf7a2",
+      "2df58d87d80e1e4a95de246d613c42f6595540f480ea2f132ddfe41f2e5acb1b",
+      "0734afea333ee661f7c5b78718c5cbb4db7a62689318586e619835259af1129c",
+      "7e0264cfd7a89ee9df79cbec2ce4669f01267660d550c706186cdc5ba085bec8",
+      "cada706db2aafbabd8f89ff94d15a9f6c76570a93f23f89760c39bcf531671a4",
+      "53a2ca7d718bd01cb2a86e62568932ca9d03610337929dcf8c099111b9025bac",
+      "18e0ee2a84591d09f7f3a526ec46797c43c761ea0bd7b75164cbeb6e7496c230"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:199408,kitsu:50766,mal:62289,offline:mal-62289)"
+  },
+  "why": "A Livid Lady's Guide to Getting Even is a 12 episode summer 2026 TV run that started 2026-07-06 and is still airing, with anilist giving an end of 2026-09-21. anizip:19530 is the same run: it carries SAME_AS ids to anilist:199408 and mal:62289, lists the same 12 episodes, and its weekly dates land on the run's own days. cr:GT00379182-GS00379183 is the same run: it carries SAME_AS ids to all four members and its 10 listed episodes share the run's dates day for day (2026-07-06 through 2026-09-07) with none past the run's end. jw:506589-536748 is the same run: it carries SAME_AS ids to all four members and to anizip:19530, and its first 9 episode titles match the Crunchyroll ones exactly. cr:GT00379182 is the bare Crunchyroll series container for the show, with no dates and no episodes of its own, so it holds the run. nf:81618733 is a different work despite its SAME_AS claims: it is titled The Yakuza's Guide to Babysitting, dated 2022-01-01, and carries twelve generically numbered episodes, so it is a 2022 series and not this one. Episodes 1 to 10 are paired between anizip and Crunchyroll on identical release days and identical titles, and episodes 1 to 9 between Crunchyroll and JustWatch on exact titles. JustWatch episode 10 is left unpaired: it is titled \"Umibe nite\" where Crunchyroll and anizip both say \"By the Sea\", and JustWatch carries no dates, so there is no date or title match to rest a pair on. anizip's episodes 11 and 12 have no titles and kitsu's twelve episode rows carry neither titles nor dates, so neither is paired."
+}

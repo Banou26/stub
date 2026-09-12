@@ -1,0 +1,554 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: one non-member row, anizip:19462, tied by first-party ids and by matching dates and count. No episode pairs are possible because the only other episode list, kitsu:50032, has neither titles nor dates. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62031",
+      "mediaUri": "anilist:195833",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:195833",
+      "mediaUri": "kitsu:50032",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62031",
+      "mediaUri": "offline:mal-62031",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:195833",
+      "mediaUri": "offline:mal-62031",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50032",
+      "mediaUri": "offline:mal-62031",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62031",
+      "mediaUri": "anizip:19462",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:195833",
+      "mediaUri": "anizip:19462",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "385308",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385308"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "385309",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385309"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "385310",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385310"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "385311",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385311"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "385312",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385312"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "385313",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385313"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "385314",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385314"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "385315",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385315"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "385316",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385316"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "385317",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385317"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "385318",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385318"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "385319",
+      "mediaUri": "kitsu:50032",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385319"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19462-1",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Flaming Dodgeball Girl! Danko Ichigeki!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "炎の闘球女!一撃弾子!"
+        }
+      ],
+      "uri": "anizip:19462-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19462-2",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Fated Rival, Arriving With Style!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "颯爽登場!因縁のライバル!"
+        }
+      ],
+      "uri": "anizip:19462-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19462-3",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Clashing as the Fierce Match Begins!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "激突!波乱必至の試合開始!"
+        }
+      ],
+      "uri": "anizip:19462-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19462-4",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Rainy Showdown! Danko Awakens!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "雨の中の決戦!弾子、覚醒!"
+        }
+      ],
+      "uri": "anizip:19462-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19462-5",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Battle Concludes! Onward, Tamagawa Dodgeball Club!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "因縁の決着!進め球川闘球部!"
+        }
+      ],
+      "uri": "anizip:19462-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19462-6",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A New Opponent at the Joint Training Camp!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "新たな強敵!?合同特訓!"
+        }
+      ],
+      "uri": "anizip:19462-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19462-7",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Super Secret Dodgeball Championship Begins!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "開幕!裏超闘球大会!"
+        }
+      ],
+      "uri": "anizip:19462-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19462-8",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Superpowered Clash of the Titans!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "超常対決!巨人VS巨人!"
+        }
+      ],
+      "uri": "anizip:19462-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19462-9",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Chilling Memories and Devastating Dodgeball!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "戦慄の記憶!修羅のドッジ!"
+        }
+      ],
+      "uri": "anizip:19462-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19462-10",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Survive the Danger Time!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "生き残れ!デンジャラス・タイム!"
+        }
+      ],
+      "uri": "anizip:19462-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19462-11",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Blast Away the Darkness with the Legendary Shot!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "闇をなぎ払え!伝説のシュート!"
+        }
+      ],
+      "uri": "anizip:19462-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19462-12",
+      "mediaUri": "anizip:19462",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T14:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19462-12"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:195833",
+        "kitsu:50032",
+        "mal:62031",
+        "offline:mal-62031",
+        "anizip:19462"
+      ]
+    ]
+  },
+  "name": "Flaming Dodgeball Girl Danko",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "195833",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Flaming Dodgeball Girl Danko"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Honoo no Toukyuujyo Dodge Danko"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "炎の闘球女 ドッジ弾子"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:195833"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50032",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Dodgeball Girl Danko"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Honoo no Toukyuujyo Dodge Danko"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "炎の闘球女 ドッジ弾子"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50032"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62031",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Flaming Dodgeball Girl Danko"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Honoo no Toukyuujo: Dodge Danko"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62031"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62031",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Honoo no Toukyuujo: Dodge Danko"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62031"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19462",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Flaming Dodgeball Girl Danko"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "炎の闘球女 ドッジ弾子"
+        }
+      ],
+      "uri": "anizip:19462"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4346e38294c4680f024c347ed43c33291fab4edb865e969f77bc7c6c2f703515",
+      "6b19ebefe1bf4b483a0b3ec70369e358072c50e1f3480fe782138422c2757854",
+      "55139329a52c88fe9fd24c17238bc86aed2e79188b6b3de97ad9f63e753d6852",
+      "162e271985ddfb0924d3f31cc93e343851fb00692e8f8321e513e1ada15e1404",
+      "16631626569f5065ac758c2b9518c91f19c6ae990bb870339baf82e7e19ea1c3"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:195833,kitsu:50032,mal:62031,offline:mal-62031)"
+  },
+  "why": "Honoo no Toukyuujo: Dodge Danko, a twelve episode summer 2026 TV run running 2026-07-06 to 2026-09-21, keyed on anilist:195833 with kitsu, mal and offline as members, and no streaming row returned. anizip:19462 is the same run: it maps SAME_AS to both mal:62031 and anilist:195833, gives the same count of 12, and its episode dates run 2026-07-06 to 2026-09-21, matching the anilist start and end dates."
+}

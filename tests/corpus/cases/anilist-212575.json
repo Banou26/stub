@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: three member rows only, no episode counts to compare beyond the offline row's 1, and no episodes listed anywhere to pair. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64291",
+      "mediaUri": "anilist:212575",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64291",
+      "mediaUri": "offline:mal-64291",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:212575",
+        "mal:64291",
+        "offline:mal-64291"
+      ]
+    ]
+  },
+  "name": "Sare Tsuma wa Ubawaretai",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "212575",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 28 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Sare Tsuma wa Ubawaretai"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "サレ妻は奪われたい"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:212575"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64291",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-28",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sare Tsuma wa Ubawaretai"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64291"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64291",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sare Tsuma wa Ubawaretai"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64291"
+    }
+  ],
+  "source": {
+    "answers": [
+      "083f69905421b03aa12f5c0ac095675566f50384d7593777e51ade70eb541f14",
+      "fae87e7e56ba9b8b3f0bbcc39400ea01facfdfb0a4d85bba98f55e7ac3019943",
+      "8db9347f5af19825e131b5744678de148c9904452ed4f718b46c824f1a6360af"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:212575,mal:64291,offline:mal-64291)"
+  },
+  "why": "Sare Tsuma wa Ubawaretai (サレ妻は奪われたい) is an adult OVA whose first part released on 2026-08-28, with Anilist carrying a later 2026-11-26 end date for the second. Anilist 212575, MyAnimeList 64291 and the offline entry offline:mal-64291 are one run: both Anilist and the offline row map SAME_AS to mal:64291, all three carry the identical title, and Anilist and MyAnimeList agree on the 2026-08-28 start date. Only the run's own member rows were returned, so there was nothing to hold it or to set apart."
+}

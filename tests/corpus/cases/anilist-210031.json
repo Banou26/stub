@@ -1,0 +1,1370 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "anizip renders apostrophes as backticks in three titles (Winter`s, That`s, Valentine`s), which is a character artifact and not a different title. The JustWatch episodes are romaji transliterations with no dates, so they were left unpaired. nf:82653227-2 was left unjudged: it numbers its eleven entries Episode 13 to Episode 23 on a running count and carries no dates. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00365624-GS00376760",
+      "mediaUri": "anilist:210031",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "anilist:210031",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210031",
+      "mediaUri": "kitsu:50634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "kitsu:50634",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00365624",
+      "mediaUri": "kitsu:50634",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "offline:mal-63832",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210031",
+      "mediaUri": "offline:mal-63832",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50634",
+      "mediaUri": "offline:mal-63832",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "anizip:19983",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210031",
+      "mediaUri": "anizip:19983",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210031",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19983",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:486031-575992",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50634",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82653227-2",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63832",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210031",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19983",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00365624-GS00376760",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50634",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82653227-2",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63832",
+      "mediaUri": "jw:486031-575992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210031",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19983",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00365624-GS00376760",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:486031-575992",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50634",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63832",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63832",
+      "mediaUri": "nf:82653227-2",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "396498",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Christmas Eve"
+        }
+      ],
+      "uri": "kitsu:396498"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "396499",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Dilemma of a Winter's Night"
+        }
+      ],
+      "uri": "kitsu:396499"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "396500",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Year That's Passed, and the Year to Come"
+        }
+      ],
+      "uri": "kitsu:396500"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "396501",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "New School Term"
+        }
+      ],
+      "uri": "kitsu:396501"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "396502",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Valentine's Day"
+        }
+      ],
+      "uri": "kitsu:396502"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "396503",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Threshold of Spring"
+        }
+      ],
+      "uri": "kitsu:396503"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "396504",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Gradation"
+        }
+      ],
+      "uri": "kitsu:396504"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "396505",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Future"
+        }
+      ],
+      "uri": "kitsu:396505"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "396506",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Past and Present"
+        }
+      ],
+      "uri": "kitsu:396506"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "396507",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Feelings and Choices"
+        }
+      ],
+      "uri": "kitsu:396507"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "396508",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396508"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "396509",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396509"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405624",
+      "mediaUri": "kitsu:50634",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405624"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19983-1",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Christmas Eve"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "クリスマスイヴ"
+        }
+      ],
+      "uri": "anizip:19983-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19983-2",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dilemma of a Winter`s Night"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "冬の夜のジレンマ"
+        }
+      ],
+      "uri": "anizip:19983-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19983-3",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Year That`s Passed, and the Year to Come"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "行く年来る年"
+        }
+      ],
+      "uri": "anizip:19983-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19983-4",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "New School Term"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "新学期"
+        }
+      ],
+      "uri": "anizip:19983-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19983-5",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Valentine`s Day"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "バレンタイン"
+        }
+      ],
+      "uri": "anizip:19983-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19983-6",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Threshold of Spring"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "春の手前"
+        }
+      ],
+      "uri": "anizip:19983-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19983-7",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Gradation"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "グラデーション"
+        }
+      ],
+      "uri": "anizip:19983-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19983-8",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Future"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "この先"
+        }
+      ],
+      "uri": "anizip:19983-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19983-9",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Past and Present"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "過去と今"
+        }
+      ],
+      "uri": "anizip:19983-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19983-10",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T08:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Feelings and Choices"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "想いと選択"
+        }
+      ],
+      "uri": "anizip:19983-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19983-11",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T08:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19983-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19983-12",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T08:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19983-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "19983-13",
+      "mediaUri": "anizip:19983",
+      "origin": "anizip",
+      "releaseDate": "2026-09-27T08:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19983-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00365624-GS00376760-GE00366879JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-07-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Christmas Eve"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366879JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00365624-GS00376760-GE00366880JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Dilemma of a Winter's Night"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366880JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00365624-GS00376760-GE00366881JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Year That's Passed, and the Year to Come"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366881JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00365624-GS00376760-GE00366882JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "New School Term"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366882JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00365624-GS00376760-GE00366883JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Valentine's Day"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366883JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00365624-GS00376760-GE00366884JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Threshold of Spring"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366884JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00365624-GS00376760-GE00366885JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Gradation"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366885JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00365624-GS00376760-GE00366886JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Future"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366886JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00365624-GS00376760-GE00366887JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Past and Present"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366887JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00365624-GS00376760-GE00366888JAJP",
+      "mediaUri": "cr:GT00365624-GS00376760",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Feelings and Choices"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760-GE00366888JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10566362",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Christmas Eve"
+        }
+      ],
+      "uri": "jw:10566362"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10653958",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fuyu no Yoru no Dilemma"
+        }
+      ],
+      "uri": "jw:10653958"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10653956",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yuku Toshi Kuru Toshi"
+        }
+      ],
+      "uri": "jw:10653956"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10653961",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shingakki"
+        }
+      ],
+      "uri": "jw:10653961"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10653959",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Valentine"
+        }
+      ],
+      "uri": "jw:10653959"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10653960",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Haru no Temae"
+        }
+      ],
+      "uri": "jw:10653960"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10653957",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Gradation"
+        }
+      ],
+      "uri": "jw:10653957"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10658511",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Konosaki"
+        }
+      ],
+      "uri": "jw:10658511"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10658526",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kako to Ima"
+        }
+      ],
+      "uri": "jw:10658526"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10842405",
+      "mediaUri": "jw:486031-575992",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Omoi to sentaku"
+        }
+      ],
+      "uri": "jw:10842405"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82653261",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:82653261"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82653262",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:82653262"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82653263",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:82653263"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82653264",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:82653264"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82653265",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:82653265"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82653266",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:82653266"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82653267",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:82653267"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82653268",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:82653268"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82653269",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:82653269"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82653270",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:82653270"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82653271",
+      "mediaUri": "nf:82653227-2",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:82653271"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "kitsu:396498",
+        "b": "anizip:19983-1"
+      },
+      {
+        "a": "kitsu:396499",
+        "b": "anizip:19983-2"
+      },
+      {
+        "a": "kitsu:396500",
+        "b": "anizip:19983-3"
+      },
+      {
+        "a": "kitsu:396501",
+        "b": "anizip:19983-4"
+      },
+      {
+        "a": "kitsu:396502",
+        "b": "anizip:19983-5"
+      },
+      {
+        "a": "kitsu:396503",
+        "b": "anizip:19983-6"
+      },
+      {
+        "a": "kitsu:396504",
+        "b": "anizip:19983-7"
+      },
+      {
+        "a": "kitsu:396505",
+        "b": "anizip:19983-8"
+      },
+      {
+        "a": "kitsu:396506",
+        "b": "anizip:19983-9"
+      },
+      {
+        "a": "kitsu:396507",
+        "b": "anizip:19983-10"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366879JAJP",
+        "b": "anizip:19983-1"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366880JAJP",
+        "b": "anizip:19983-2"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366881JAJP",
+        "b": "anizip:19983-3"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366882JAJP",
+        "b": "anizip:19983-4"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366883JAJP",
+        "b": "anizip:19983-5"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366884JAJP",
+        "b": "anizip:19983-6"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366885JAJP",
+        "b": "anizip:19983-7"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366886JAJP",
+        "b": "anizip:19983-8"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366887JAJP",
+        "b": "anizip:19983-9"
+      },
+      {
+        "a": "cr:GT00365624-GS00376760-GE00366888JAJP",
+        "b": "anizip:19983-10"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:210031",
+        "whole": "cr:GT00365624"
+      }
+    ],
+    "together": [
+      [
+        "anilist:210031",
+        "kitsu:50634",
+        "mal:63832",
+        "offline:mal-63832",
+        "anizip:19983",
+        "cr:GT00365624-GS00376760",
+        "jw:486031-575992"
+      ]
+    ]
+  },
+  "name": "You and I Are Polar Opposites Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "210031",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "You and I Are Polar Opposites Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Seihantai na Kimi to Boku 2nd Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "正反対な君と僕 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:210031"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "50634",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "You and I Are Polar Opposites Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Seihantai na Kimi to Boku 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "正反対な君と僕 第2期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50634"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "63832",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You and I Are Polar Opposites Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Seihantai na Kimi to Boku 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63832"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63832",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Seihantai na Kimi to Boku 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63832"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19983",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You and I Are Polar Opposites (2026)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "正反対な君と僕 (2026)"
+        }
+      ],
+      "uri": "anizip:19983"
+    },
+    {
+      "id": "GT00365624",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00365624"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00365624-GS00376760",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "You and I Are Polar Opposites"
+        }
+      ],
+      "uri": "cr:GT00365624-GS00376760"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "486031-575992",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:486031-575992"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82653227-2",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You and I Are Polar Opposites"
+        }
+      ],
+      "uri": "nf:82653227-2"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d181a2498168730e537ccf609067290bbc496899e38e28e2691e20c711200325",
+      "62a0fab62887be964526cea2f8328629d5dc67f2c865bfdc546c54024def3b03",
+      "3cabd1828c3376af87e38193fad9cea8a44c744dd2d15a7a84b8abc1218825d2",
+      "8312683fbd1435b7fd8efca9bef983981d001f2ad6ba90babb4c485aca349d9d",
+      "0adafb6b6b506e0c332d162c0f9c21b85c62b22bc471b599bcc1d979a81d20e9",
+      "5c6eb4e54d8deca92cbb5c9d62c8c6b5a6e46605a1033bca5fb4d8c87e79aa22",
+      "975e9491c677f35839a0411a06c37fe720f1dfe432abac3c3c7a980868c2383f",
+      "95f33034507124b3af204aa6ac0415e1e21dd7f08fce5e56b905d3330a56d4bb",
+      "942808b9cb0be3766d2de07091ef2d62a1eb7c2af72078e6d5796a187f0b0640",
+      "ae62de270c034c0f3c3bd067f9bd04b5f0e7b5d89fb53c6ed755e0af14e5f92a",
+      "135bc09b6a14d0908b4bf4c82d8f83863ace0368188f584f3c390dccebe7a602"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:210031,kitsu:50634,mal:63832,offline:mal-63832)"
+  },
+  "why": "You and I Are Polar Opposites Season 2 is the thirteen episode summer 2026 cour on a weekly 08:00 slot, first episode 2026-07-05 and thirteenth 2026-09-27, with ten aired so far.\nanizip:19983 is the same run: the same thirteen episode count, and its own SAME_AS ids name mal:63832 and anilist:210031, both members.\ncr:GT00365624-GS00376760 is the same run: anilist:210031 maps to it SAME_AS, and its ten episodes sit on the run's own weekly dates 2026-07-05 through 2026-09-06 with the same titles, Christmas Eve through Feelings and Choices.\njw:486031-575992 is the same run: it maps SAME_AS to all four members, to anizip:19983 and to the Crunchyroll season, and lists exactly the ten episodes aired so far; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\ncr:GT00365624 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:50634 as PART_OF.\nThe kitsu episodes 1 to 10 pair with anizip:19983 episodes 1 to 10 on ten matching titles, Christmas Eve, Dilemma of a Winter's Night, The Year That's Passed and the Year to Come, New School Term, Valentine's Day, Threshold of Spring, Gradation, The Future, Past and Present and Feelings and Choices.\nThe Crunchyroll episodes 1 to 10 pair with the same anizip episodes on identical release dates, 2026-07-05 through 2026-09-06 week by week."
+}

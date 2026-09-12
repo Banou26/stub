@@ -1,0 +1,1094 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The judgement call was the JustWatch season at 24 against the run's 25: it is short because the last episode has not aired yet, not because it is a different cut, and every one of its id handles points at this run. No episode pairs could be asserted: JustWatch has titles but no dates, anizip has dates but no titles, kitsu has neither, and JustWatch's last five entries are placeholders like Episode 20. No range was put on the Crunchyroll container since it returned no episodes at all. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62957",
+      "mediaUri": "anilist:213484",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62957",
+      "mediaUri": "kitsu:50828",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213484",
+      "mediaUri": "kitsu:50828",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00379214",
+      "mediaUri": "kitsu:50828",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62957",
+      "mediaUri": "offline:mal-62957",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213484",
+      "mediaUri": "offline:mal-62957",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50828",
+      "mediaUri": "offline:mal-62957",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62957",
+      "mediaUri": "anizip:20151",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213484",
+      "mediaUri": "anizip:20151",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213484",
+      "mediaUri": "jw:538593-575588",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:20151",
+      "mediaUri": "jw:538593-575588",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50828",
+      "mediaUri": "jw:538593-575588",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62957",
+      "mediaUri": "jw:538593-575588",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62957",
+      "mediaUri": "jw:538593-575588",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405539",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405539"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405540",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405540"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405541",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405541"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405542",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405542"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405543",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405543"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405544",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405544"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405545",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405545"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405546",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405546"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405547",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405547"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405548",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405548"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405549",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405549"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405550",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405550"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405551",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405551"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "405552",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405552"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "405553",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405553"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "405554",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405554"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "405555",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405555"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "405556",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405556"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "405557",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405557"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "405558",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405558"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "405559",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405559"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "405560",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405560"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "405561",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405561"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "405562",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405562"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "405563",
+      "mediaUri": "kitsu:50828",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405563"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "20151-1",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "20151-2",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "20151-3",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "20151-4",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "20151-5",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "20151-6",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-10",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "20151-7",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "20151-8",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "20151-9",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "20151-10",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "20151-11",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "20151-12",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "20151-13",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-13"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "20151-14",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-14"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "20151-15",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-15"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "20151-16",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-16"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "20151-17",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-17"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "20151-18",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-18"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "20151-19",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-19"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "20151-20",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-20"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "20151-21",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-21"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "20151-22",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-22"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "20151-23",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-23"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "20151-24",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-24"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "20151-25",
+      "mediaUri": "anizip:20151",
+      "origin": "anizip",
+      "releaseDate": "2026-09-15",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:20151-25"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10561163",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The 100-Day Kingship Plan Begins"
+        }
+      ],
+      "uri": "jw:10561163"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10561164",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Illiteracy Ruins the Magic Lesson"
+        }
+      ],
+      "uri": "jw:10561164"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10561165",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ultimate Grimoire Appears"
+        }
+      ],
+      "uri": "jw:10561165"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10561166",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Recipe Too Awful to Watch"
+        }
+      ],
+      "uri": "jw:10561166"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10561167",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Not a Duel, Just a Stiff Neck"
+        }
+      ],
+      "uri": "jw:10561167"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10561168",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "King Lie's Cover Blown Too Soon!"
+        }
+      ],
+      "uri": "jw:10561168"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10561169",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Reborn as the Ultimate Wealthy Tycoon"
+        }
+      ],
+      "uri": "jw:10561169"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10561170",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Girls Really Are Brave and Adorable!"
+        }
+      ],
+      "uri": "jw:10561170"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10561171",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "If You Like Someone, Be Bold and Confess!"
+        }
+      ],
+      "uri": "jw:10561171"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10561172",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Touch My People and Die!"
+        }
+      ],
+      "uri": "jw:10561172"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10561173",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Look Up! There's Gold in the Sky!"
+        }
+      ],
+      "uri": "jw:10561173"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10561175",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Snatching the Title of District Chief!"
+        }
+      ],
+      "uri": "jw:10561175"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "10561176",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Reviving District 10"
+        }
+      ],
+      "uri": "jw:10561176"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "10561177",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Magic for the Masses"
+        }
+      ],
+      "uri": "jw:10561177"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "10561178",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Hero Saves the Beauty?! What a Cliché Plot!"
+        }
+      ],
+      "uri": "jw:10561178"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "10561180",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Then How About a Taste of My Fist?!"
+        }
+      ],
+      "uri": "jw:10561180"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "10561182",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Every Show of Support is a Battle!"
+        }
+      ],
+      "uri": "jw:10561182"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "10561184",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Miraculous Cure"
+        }
+      ],
+      "uri": "jw:10561184"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "10561186",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Who Am I?! I'm Your Big Bro!"
+        }
+      ],
+      "uri": "jw:10561186"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "10561188",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "jw:10561188"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "10561190",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "jw:10561190"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "10561192",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "jw:10561192"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "10561194",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "jw:10561194"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "10561196",
+      "mediaUri": "jw:538593-575588",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "jw:10561196"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "anilist:213484",
+        "whole": "cr:GT00379214"
+      }
+    ],
+    "together": [
+      [
+        "anilist:213484",
+        "kitsu:50828",
+        "mal:62957",
+        "offline:mal-62957",
+        "anizip:20151",
+        "jw:538593-575588"
+      ]
+    ]
+  },
+  "name": "Crowned in a Hundred Days",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "id": "213484",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Crowned in a Hundred Days"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Bai Ri Cheng Wang"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "百日成王"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213484"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "id": "50828",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Crowned in a Hundred Days"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Bai Ri Cheng Wang"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50828"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "id": "62957",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Crowned in a Hundred Days"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Bai Ri Cheng Wang"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62957"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "id": "mal-62957",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bai Ri Cheng Wang"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62957"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 25,
+      "id": "20151",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Crowned in a Hundred Days"
+        }
+      ],
+      "uri": "anizip:20151"
+    },
+    {
+      "id": "GT00379214",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00379214"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "538593-575588",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:538593-575588"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8d58779145d4bd3583e9cdf1090e63e6f1dd3f83780aa1247d18d15cb7ddb483",
+      "aeed6843e922177734770c32e240b045a793df526cbfac12e44513ab7382cc17",
+      "4f98efcd441b16f1017ce611d560277d5e25df49f3887622063782f186bff78c",
+      "55f82337f119aece6365d31801519335bc95f6946e1487aad63afa0a104a9320",
+      "f2a4129ec4501f46e41dec1cc9ef57ba8d22b507420c4e7216963535a6c8bccb",
+      "51b240ef82c4cc45c44bcfdd45697c720451ca0f66bdfb33b7d584bbeb6cfefa",
+      "6940175ffff0775b7ffd45d055a1f465a963628e609fad12686707052d119262"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213484,kitsu:50828,mal:62957,offline:mal-62957)"
+  },
+  "why": "The run is the Chinese ONA Crowned in a Hundred Days (Bai Ri Cheng Wang), twenty five episodes from 2026-07-03 to 2026-09-15 on anilist 213484, mal 62957 and kitsu 50828, still releasing today. anizip:20151 is the same run: it maps SAME_AS to both anilist 213484 and mal 62957, its episodeCount is 25 like the run's, and its episode dates start on 2026-07-03 with the four episode premiere and end on 2026-09-15, the run's end date. jw:538593-575588 is the same run: it maps SAME_AS to every member and to anizip 20151, and its 24 episodes are the 24 that had aired by today (anizip dates episode 24 on 2026-09-11 and episode 25 on 2026-09-15, still to come), with episode 1 titled The 100-Day Kingship Plan Begins. cr:GT00379214 holds the run: it is a bare Crunchyroll series container with no season, no dates and no episodes of its own, and kitsu 50828 declares itself PART_OF it."
+}

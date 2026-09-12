@@ -1,0 +1,247 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Straightforward once the AniZip row was read: it agrees by id, by count and by the 2026-07-19 release date. No episode pair was asserted because the three Kitsu episode rows carry neither a title nor a release date, and all three AniZip episodes share the same date, so position would be the only thing linking them. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62079",
+      "mediaUri": "anilist:196223",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62079",
+      "mediaUri": "kitsu:50042",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196223",
+      "mediaUri": "kitsu:50042",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62079",
+      "mediaUri": "offline:mal-62079",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196223",
+      "mediaUri": "offline:mal-62079",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50042",
+      "mediaUri": "offline:mal-62079",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62079",
+      "mediaUri": "anizip:19486",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196223",
+      "mediaUri": "anizip:19486",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "385632",
+      "mediaUri": "kitsu:50042",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385632"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "385633",
+      "mediaUri": "kitsu:50042",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385633"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "385634",
+      "mediaUri": "kitsu:50042",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385634"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19486-1",
+      "mediaUri": "anizip:19486",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19486-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19486-2",
+      "mediaUri": "anizip:19486",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19486-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19486-3",
+      "mediaUri": "anizip:19486",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19486-3"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:196223",
+        "kitsu:50042",
+        "mal:62079",
+        "offline:mal-62079",
+        "anizip:19486"
+      ]
+    ]
+  },
+  "name": "Cyborg 009: Nemesis",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "196223",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 19 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Cyborg 009: Nemesis"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "サイボーグ009 ネメシス"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:196223"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "50042",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-19",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Cyborg 009: Nemesis"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "サイボーグ009 ネメシス"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50042"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "62079",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-19",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Cyborg 009: Nemesis"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62079"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "mal-62079",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cyborg 009: Nemesis"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62079"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "19486",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サイボーグ009 ネメシス"
+        }
+      ],
+      "uri": "anizip:19486"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8485903b8d0e88e0cdcfbc1e387f578a498abcf55c63fab1a0326c7000145b07",
+      "417e2f98649a05175cd71870c701ad65075840259931c8478fb136125538b4c2",
+      "88ee0f31215a8753d617ad84e55d1979c28c90100ae44307a05fda07dedcbb57",
+      "9caaf20328c8e88430d8fa51da2367eea795c2ff2a3dfb4d7bde342265a91bd3",
+      "766c105e17d2c6b6c9f0f87ced4133ec165c6152ddefaff32d12e4dbd0bcdf5d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:196223,kitsu:50042,mal:62079,offline:mal-62079)"
+  },
+  "why": "Cyborg 009: Nemesis (サイボーグ009 ネメシス) is a three episode ONA released in one drop on 2026-07-19, in summer 2026. anizip:19486 is the same run: it carries first-party SAME_AS handles to both mal:62079 and anilist:196223, lists the same three episodes, gives the same Japanese title, and its three episode release dates are all 2026-07-19, the same day Anilist gives as both the start and the end of the run. The four member rows agree on title, on the three episode count and on the 2026-07-19 start date. No streaming rows, container rows or other seasons came back, so nothing is attached, held or set apart."
+}

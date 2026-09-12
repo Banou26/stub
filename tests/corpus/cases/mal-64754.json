@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64754",
+      "mediaUri": "anilist:214829",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64754",
+      "mediaUri": "offline:mal-64754",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214829",
+      "mediaUri": "offline:mal-64754",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64754",
+        "anilist:214829",
+        "offline:mal-64754"
+      ]
+    ]
+  },
+  "name": "Divine Love 2nd Season",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 20,
+      "id": "64754",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Divine Love 2nd Season"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Di Ling Ai: Shui Xin Chan"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64754"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 20,
+      "id": "214829",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 07 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Di Ling Ai: Shui Xin Chan"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "缔灵爱水心缠"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:214829"
+    },
+    {
+      "id": "mal-64754",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64754"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a344ad6f031a4bc8cdbb5a7b0e97e5d53d5a2070d691069c6055f94d4ceec63c",
+      "87b308448a3f234a2c5d5765acc7cb784ade9dd0b62a997cac62b60d8b3f2ff0",
+      "74dbd51bb1ab36f887c16951f39f5f693ba212e085644cca72c56968d1646f86"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64754)"
+  },
+  "why": "Divine Love 2nd Season (Di Ling Ai: Shui Xin Chan) is a twenty episode Chinese ONA run starting 2026-08-07, held on MyAnimeList as mal:64754. anilist:214829 is the same run: it maps SAME_AS to mal:64754, it starts on the same day 2026-08-07, it lists the same twenty episodes, and its romanized title Di Ling Ai: Shui Xin Chan is the MyAnimeList romanization exactly. offline:mal-64754 is the same run too: it is the MyAnimeList id mirrored in the offline database and maps SAME_AS to both mal:64754 and anilist:214829. No streaming or container row came back for this run."
+}

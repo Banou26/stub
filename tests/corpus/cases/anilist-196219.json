@@ -1,0 +1,766 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The kitsu member lists 33 untitled, undated episodes against the 12 that anilist, mal, offline and anizip agree on, but it is a member of the run's own address, so it needed no judgement; its inflated count is the only thing in the view that disagrees. The Crunchyroll container carries no episodes, so its hold gets no range. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62080",
+      "mediaUri": "anilist:196219",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196219",
+      "mediaUri": "kitsu:50048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62080",
+      "mediaUri": "kitsu:50048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378125",
+      "mediaUri": "kitsu:50048",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62080",
+      "mediaUri": "offline:mal-62080",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196219",
+      "mediaUri": "offline:mal-62080",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50048",
+      "mediaUri": "offline:mal-62080",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62080",
+      "mediaUri": "anizip:19485",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196219",
+      "mediaUri": "anizip:19485",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "385849",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385849"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "385850",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385850"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "385851",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385851"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "385852",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385852"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "385853",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385853"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "385854",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385854"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "385855",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385855"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "385856",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385856"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "385857",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385857"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "385858",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385858"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "385859",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385859"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "385860",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385860"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "385861",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385861"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "385862",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385862"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "385863",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385863"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "385864",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385864"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "385865",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385865"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "385866",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385866"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "385867",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385867"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "385868",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385868"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "385869",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385869"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "385870",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385870"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "385871",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385871"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "385872",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385872"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "385873",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385873"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "385874",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385874"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "385875",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385875"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "385876",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385876"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "385877",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385877"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "385878",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385878"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "385879",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385879"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "385880",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385880"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "385881",
+      "mediaUri": "kitsu:50048",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385881"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19485-1",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-06-30T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Disgrace of the Ducal House of Sanchez"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サンチェス公爵家の出来損ない"
+        }
+      ],
+      "uri": "anizip:19485-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19485-2",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Bloodthirty Second Prince"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "戦好きの第二皇子"
+        }
+      ],
+      "uri": "anizip:19485-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19485-3",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Founder`s Day Fete"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "建国記念パーティー"
+        }
+      ],
+      "uri": "anizip:19485-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19485-4",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Red Eyes and Ruby"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "赤い瞳とルビー"
+        }
+      ],
+      "uri": "anizip:19485-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19485-5",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hidden Divinity"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "秘められた神聖力"
+        }
+      ],
+      "uri": "anizip:19485-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19485-6",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "First Prince Gilbert"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "第一皇子ギルバート"
+        }
+      ],
+      "uri": "anizip:19485-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19485-7",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Waver of the Perfect Young Lady"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "完璧令嬢の揺らぎ"
+        }
+      ],
+      "uri": "anizip:19485-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19485-8",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jonathan`s Scheme"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ジョナサンの企み"
+        }
+      ],
+      "uri": "anizip:19485-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19485-9",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Exposed Sin"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "暴かれた罪"
+        }
+      ],
+      "uri": "anizip:19485-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19485-10",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Saintly Trials"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "聖女試験"
+        }
+      ],
+      "uri": "anizip:19485-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19485-11",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08T13:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Perfect Young Lady`s Resolve"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "完璧令嬢の決意"
+        }
+      ],
+      "uri": "anizip:19485-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19485-12",
+      "mediaUri": "anizip:19485",
+      "origin": "anizip",
+      "releaseDate": "2026-09-15T13:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19485-12"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "anilist:196219",
+        "whole": "cr:GT00378125"
+      }
+    ],
+    "together": [
+      [
+        "anilist:196219",
+        "kitsu:50048",
+        "mal:62080",
+        "offline:mal-62080",
+        "anizip:19485"
+      ]
+    ]
+  },
+  "name": "The Oblivious Saint Can't Contain Her Power",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "196219",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 30 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Oblivious Saint Can't Contain Her Power"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mujikaku Seijo wa Kyou mo Muishiki ni Chikara wo Tare Nagasu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "無自覚聖女は今日も無意識に力を垂れ流す"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:196219"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 33,
+      "id": "50048",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-30",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Oblivious Saint Can't Contain Her Power"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mujikaku Seijo wa Kyou mo Muishiki ni Chikara wo Tare Nagasu"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "無自覚聖女は今日も無意識に力を垂れ流す"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50048"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62080",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-06-30",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Oblivious Saint Can't Contain Her Power"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mujikaku Seijo wa Kyou mo Muishiki ni Chikara wo Tare Nagasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62080"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62080",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mujikaku Seijo wa Kyou mo Muishiki ni Chikara wo Tare Nagasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62080"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19485",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Oblivious Saint Can`t Contain Her Power"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "無自覚聖女は今日も無意識に力を垂れ流す"
+        }
+      ],
+      "uri": "anizip:19485"
+    },
+    {
+      "id": "GT00378125",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378125"
+    }
+  ],
+  "source": {
+    "answers": [
+      "1477e36558237ebd3901d614ff39825bf20813ba9aed52e161dd68eb439855e7",
+      "a097f40c2e553871582e318e35bd31bdc5e73f26d6c8f1eb2aa92555339c0da8",
+      "9e5cf61a0709860fc9be2c0ca904e66c0cea95eef4f9ead5911ca10cae38c023",
+      "1943894ea4e44fecf17749c067a835bc5fc42792d154b661966275f95b730fdc",
+      "11978d65e059faafeae4652dbf45ee4b668f3bbcf63dedf0e20a47642414e038"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:196219,kitsu:50048,mal:62080,offline:mal-62080)"
+  },
+  "why": "The Oblivious Saint Can't Contain Her Power is a 12 episode summer 2026 TV run starting 2026-06-30 (anilist and mal both give that start, anilist an end of 2026-09-15, and anilist, mal and offline all give 12 episodes). anizip:19485 is the same run: it carries SAME_AS ids to both mal:62080 and anilist:196219, the same count of 12, and its episode 1 is dated 2026-06-30T13:00:00Z, the run's start, with weekly episodes through 2026-09-15. cr:GT00378125 holds the run: it is a Crunchyroll series container with no count and no dates, and kitsu:50048 declares the run PART_OF it. No episode pairs are asserted: only anizip carries episode titles and dates, and the kitsu episode rows carry neither."
+}

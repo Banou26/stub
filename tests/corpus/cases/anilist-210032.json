@@ -1,0 +1,1008 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The two Netflix containers were the work: nf:80204451 claims SAME_AS to both members but is scope CONTAINER with 39 franchise episodes starting 2018, which makes it a holder and not a match, and nf:81922765 carries no fields at all so it rests entirely on the member's own PART_OF handle. No episode anywhere in this run has a release date, so no range could be aligned. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:63833"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63833",
+      "mediaUri": "anilist:210032",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210032",
+      "mediaUri": "kitsu:50635",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81922765",
+      "mediaUri": "kitsu:50635",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:210032",
+      "mediaUri": "nf:80204451",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50635",
+      "mediaUri": "nf:80204451",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63833",
+      "mediaUri": "offline:mal-63833",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210032",
+      "mediaUri": "offline:mal-63833",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50635",
+      "mediaUri": "offline:mal-63833",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "396510",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Pickle"
+        }
+      ],
+      "uri": "kitsu:396510"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "396511",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Death Match"
+        }
+      ],
+      "uri": "kitsu:396511"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "396512",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Beast and the Warrior"
+        }
+      ],
+      "uri": "kitsu:396512"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "396513",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Protection"
+        }
+      ],
+      "uri": "kitsu:396513"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "396514",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Cutting off the Country"
+        }
+      ],
+      "uri": "kitsu:396514"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "396515",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Un-Severable"
+        }
+      ],
+      "uri": "kitsu:396515"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "396516",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "For the Country"
+        }
+      ],
+      "uri": "kitsu:396516"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "396517",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Scar and the Sword"
+        }
+      ],
+      "uri": "kitsu:396517"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "396518",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "That Man, Hanayama"
+        }
+      ],
+      "uri": "kitsu:396518"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "396519",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Eliminate"
+        }
+      ],
+      "uri": "kitsu:396519"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "396520",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Exquisite Skill"
+        }
+      ],
+      "uri": "kitsu:396520"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "396521",
+      "mediaUri": "kitsu:50635",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Way of the Sword"
+        }
+      ],
+      "uri": "kitsu:396521"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80204909",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Synchronicity"
+        }
+      ],
+      "uri": "nf:80204909"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80204973",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ungranted Freedom"
+        }
+      ],
+      "uri": "nf:80204973"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81161461",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Begin! The Centennial Tournament"
+        }
+      ],
+      "uri": "nf:81161461"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80204910",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dark Martial Arts"
+        }
+      ],
+      "uri": "nf:80204910"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80204974",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tremendous muscle power"
+        }
+      ],
+      "uri": "nf:80204974"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81161462",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Turnaround"
+        }
+      ],
+      "uri": "nf:81161462"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80204911",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "They're Finally Here!!"
+        }
+      ],
+      "uri": "nf:80204911"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80204975",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Slash"
+        }
+      ],
+      "uri": "nf:80204975"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81161463",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Revived!"
+        }
+      ],
+      "uri": "nf:81161463"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80204912",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Battle Begins"
+        }
+      ],
+      "uri": "nf:80204912"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80204976",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dad!!"
+        }
+      ],
+      "uri": "nf:80204976"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81161464",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Team Formed!"
+        }
+      ],
+      "uri": "nf:81161464"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80204913",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Want some more?"
+        }
+      ],
+      "uri": "nf:80204913"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80204977",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Thanks"
+        }
+      ],
+      "uri": "nf:80204977"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81161465",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hand Pocket"
+        }
+      ],
+      "uri": "nf:81161465"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80204914",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sergeant Katahira’s Report"
+        }
+      ],
+      "uri": "nf:80204914"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80204978",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Admission of defeat"
+        }
+      ],
+      "uri": "nf:80204978"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81161466",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Excellennnnt!"
+        }
+      ],
+      "uri": "nf:81161466"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80204915",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A formidable team"
+        }
+      ],
+      "uri": "nf:80204915"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80204979",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saga"
+        }
+      ],
+      "uri": "nf:80204979"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81161467",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kaioh"
+        }
+      ],
+      "uri": "nf:81161467"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80204916",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A match Vs. a true fight"
+        }
+      ],
+      "uri": "nf:80204916"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80204980",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Punishment"
+        }
+      ],
+      "uri": "nf:80204980"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81161468",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Title of the Strongest"
+        }
+      ],
+      "uri": "nf:81161468"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80204917",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shaken Shinshinkai"
+        }
+      ],
+      "uri": "nf:80204917"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80204981",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Clash of the alphas"
+        }
+      ],
+      "uri": "nf:80204981"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81161469",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Master vs the Boxer"
+        }
+      ],
+      "uri": "nf:81161469"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80204918",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Air Duel"
+        }
+      ],
+      "uri": "nf:80204918"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80204982",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Real Attack"
+        }
+      ],
+      "uri": "nf:80204982"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81161470",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Stand and Fight"
+        }
+      ],
+      "uri": "nf:81161470"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80204919",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tiger slayer"
+        }
+      ],
+      "uri": "nf:80204919"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80204983",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Defeat"
+        }
+      ],
+      "uri": "nf:80204983"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81161471",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Awakening"
+        }
+      ],
+      "uri": "nf:81161471"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80204920",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Candy"
+        }
+      ],
+      "uri": "nf:80204920"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80204984",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "God and the devil"
+        }
+      ],
+      "uri": "nf:80204984"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81161472",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Completion"
+        }
+      ],
+      "uri": "nf:81161472"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "80204921",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mr. Oliva"
+        }
+      ],
+      "uri": "nf:80204921"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "80204985",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Centennial Tournament"
+        }
+      ],
+      "uri": "nf:80204985"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81161473",
+      "mediaUri": "nf:80204451",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Revenge Tokyo"
+        }
+      ],
+      "uri": "nf:81161473"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:210032",
+        "whole": "nf:80204451"
+      },
+      {
+        "part": "anilist:210032",
+        "whole": "nf:81922765"
+      }
+    ],
+    "together": [
+      [
+        "anilist:210032",
+        "kitsu:50635",
+        "offline:mal-63833"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "BAKI-DOU: The Invincible Samurai Part 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "210032",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 18 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "BAKI-DOU: The Invincible Samurai Part 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "BAKI-DOU Part 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "刃牙道 第2クール"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:210032"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50635",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "BAKI-DOU: The Invincible Samurai Part 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "BAKI-DOU Part 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "刃牙道 第2クール"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50635"
+    },
+    {
+      "id": "63833",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:63833"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80204451",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2018-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "BAKI"
+        }
+      ],
+      "uri": "nf:80204451"
+    },
+    {
+      "id": "81922765",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "nf:81922765"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63833",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Baki-dou Part 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-63833"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7a279d60acdfb4b825d48c557c1c50dde84ea36d0377c257551dc2a721259399",
+      "e14c65c9c7a093041ce1c2bb6197315d0c4c2c3b958bb344ff7cd4dbd242138c",
+      "dcb81e15e406b735cc4864efc9bcc53fd95346835f16d07fdb96b3cb8555b1bb",
+      "9e6d497f40ec057146ee05c016baa1ddd8882397179ff2b09ca4039c447e071f",
+      "68ef098142b056407beb9f054ddc3920104a40246d03e64091f8dad7ee40b05d",
+      "017a28822844803eb609b7edaacfbda906e9ae5128c03b3308a90b3d248d764e",
+      "26104f14062feb99917118732d7dac1d1beff735bb96d7d7017cc11a1f7275b6",
+      "1169e79bda075f1b15df11e4482b1e98cd576aae60dbbad8d6424457a8113df4",
+      "9ee011b6580eeaedf1cb4acfcdf8101c7f9e45759bcc230858fccfc2d13ff2fe",
+      "030b870d5a2c9461651e120c2cdd23a21c8a6cb25d84a46e2df0ba5ed1b0f3bd",
+      "d81e59c7ba3a5c645fb6e221f29ce9e43c9c59e52030efa04c51ab9b48769a32",
+      "2b590472d15e6ac1f6b7e58c0e2f15092a6911197d048e5f889edb1c63048239",
+      "863ee8a465bb4f57918a2fb958f809004cea217b739a30b6279f8b7bd61cafbf",
+      "4dba072b2387b6fa63448907762314d856158010dbe04046cd037040cf7ed10d",
+      "e1391da08c4f3373967cb47307ac08271b0a936cf601bd7fabd1c6aee3d914d8",
+      "71f8da558efdab5ce315c1042c0d9b0c0edb3b18186588ea26aa274100f774f9",
+      "f99b5518d0e7c8b7b17e28a0e7a72562e1240849fc3cc24236d67253423dfc9b",
+      "0b65b8c8672d718ee39e11d0a2f360541fecf26c79a6b07e4eaf61cc736f7ab5",
+      "6c4fd911449b5b0eef47d0541d1976a9f94301ddfc8cc05aa099ceefdfe5159a",
+      "f4df9671fe734c34f3ad14591620493caee660b411be7be840cc4485f96303c0",
+      "61a93aef73b6d356c43f02e01012d2026a11ed3b4f099bba73671b1f22fe5aac",
+      "962bfc9cef51ff71457d0137bf28893b0f5fabc7833c1ce9b82a737f186f7f79",
+      "3832d74cdd7e0310910256bc87f5d3fe7e66502ee877d2ea5afb8b1ba0d0d6d2",
+      "866600460d4fc45bdbd6eac479f327d5314bc1ccabcb3425ef910b01cc16a63e",
+      "a42719db616e3d366e7c3b7c8745280c1f769e5c9c83ba8bdd792185351b4e1e",
+      "f5cce71ef2a47b7c464688e28f0dcfaa41eca0bb6940e2742469118b2463bf56",
+      "338b54e1ce1ffa96e6a8da104f32eb6417616b337935a67704307d1c77abe01b",
+      "d1c08e81abed9af373b1ead1e659f1e9d447c33ff4ae8f756223cb34d96f4ffa",
+      "24836c5219604b1e7767fd9a7bdcb8391d45d3ccece3e2b1d313ba121c678800",
+      "9bbfb946855d2fdb04a01ad52d74db807b79408707ca7e62b160851cd54aaaf0",
+      "ee50d4bf55cbd69d374cfbd45c5a655f92af827887155e2fdf3a2564ff33b289",
+      "ce055a57b609672dd00140b761127ca95c9f458e6446ec78bf96c52f89e277f1",
+      "96e6cf6e91536d703d9bc5880d711f8e133bfef0fa33e009482f752f00e99392",
+      "422d3b9374442824eb5d80db8535bb594aa900b6efe280eda4db204c73ad0b13",
+      "968c481372a52c989679eb4224222543e421557874b1da98acaa09266f20b3fb",
+      "228674bf1d9d5ed475576cf66249b333d20fd45af564d88ae191e6526696c9d3",
+      "3d036b1ac53679b514aa47a92a35d9a1df1319f1031a947f30b3b187574d6745",
+      "cbeda0f29a2a3cccf5433afaa989fe7f67a9e5df67af4a5e56fb3bc9c0dedb6f",
+      "fb13f5503cf4d06a829c167a4498cfa114bd6b1d92775eb31b0c45c378032876",
+      "0cd0ca650aa06f3e3d8b123e32f75dea09228ab9bcb4fa32607e5c7f442a3136",
+      "775835303d9601ad0c4ab2fdb13d337121977f2a97b05e2535af4cb5d3d621b7",
+      "3fbdf15ed913400590286ecda78dc9d6d6062e120210def0d67066a9f12df52e",
+      "cf91617ee223c8943ab5beb330f75a097d7b50cc9e09ca9906f1a4ba3608839b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:210032,kitsu:50635)"
+  },
+  "why": "BAKI-DOU: The Invincible Samurai Part 2 is the second cour of the 2026 Baki-Dou ONA, 12 episodes from 2026-06-18, and AniList 210032, Kitsu 50635, MyAnimeList 63833 and the offline entry keyed mal-63833 are one run: AniList and the offline entry both map SAME_AS to mal:63833, Kitsu maps SAME_AS to AniList, and AniList, Kitsu and the offline entry all carry the same count of 12, the same SPRING 2026 ONA classification and the same titles BAKI-DOU Part 2 and 刃牙道 第2クール. The Netflix row nf:80204451 is the bare BAKI series container, scope CONTAINER with 39 episodes from 2018 covering the whole franchise rather than this cour, so it holds the run. The Netflix row nf:81922765 is a bare title container that the member kitsu:50635 itself declares PART_OF, so it holds the run too. No includes range is asserted for either: not one episode on any Netflix row or on the Kitsu member carries a release date, and Netflix's episode titles are its own translation, so nothing aligns them."
+}

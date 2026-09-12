@@ -1,0 +1,66 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was hard: a single Kitsu row with no handles and no other source, so the case asserts only the run itself. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407234",
+      "mediaUri": "kitsu:50939",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407234"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50939"
+      ]
+    ]
+  },
+  "name": "Stardust Capsule",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50939",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-26",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Stardust Capsule"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "星屑カプセル"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50939"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f694de2b984f7ba1dfb8280f88d0353190b08dd0d33bb862191d23aa8bad0980",
+      "7ee7d77cb894ea7aeca78f4fb95333fffafb84be07a57149de79a5cd89fe806c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50939)"
+  },
+  "why": "Stardust Capsule (星屑カプセル) is a one-episode summer 2026 special, its single episode dated 2026-08-26 on Kitsu. Only Kitsu returned anything for it: kitsu:50939 is the run's sole member, it carries no handles to any other catalogue, and no other source returned a row, so there is nothing to merge, hold or separate."
+}

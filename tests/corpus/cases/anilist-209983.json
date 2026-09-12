@@ -1,0 +1,1122 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row claims SAME_AS on all four members but is a bare title with container scope, generic episode labels and no dates, so it was attached as a container rather than merged; Kitsu's 22 episode rows and AniList's count of 13 disagree with the MyAnimeList and AniZip count of 12 without changing any mark. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63817",
+      "mediaUri": "anilist:209983",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209983",
+      "mediaUri": "kitsu:50760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63817",
+      "mediaUri": "kitsu:50760",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63817",
+      "mediaUri": "offline:mal-63817",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209983",
+      "mediaUri": "offline:mal-63817",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50760",
+      "mediaUri": "offline:mal-63817",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63817",
+      "mediaUri": "anizip:19978",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209983",
+      "mediaUri": "anizip:19978",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82703566",
+      "mediaUri": "jw:504764-574803",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:209983",
+      "mediaUri": "jw:504764-574803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19978",
+      "mediaUri": "jw:504764-574803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50760",
+      "mediaUri": "jw:504764-574803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63817",
+      "mediaUri": "jw:504764-574803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63817",
+      "mediaUri": "jw:504764-574803",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209983",
+      "mediaUri": "nf:82703566",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50760",
+      "mediaUri": "nf:82703566",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63817",
+      "mediaUri": "nf:82703566",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63817",
+      "mediaUri": "nf:82703566",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403996",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403996"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403997",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403997"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "403998",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403998"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "403999",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403999"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404000",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404000"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404001",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404001"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404002",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404002"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404003",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404003"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404004",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404004"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404005",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404005"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404006",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404006"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404007",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404007"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404008",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404008"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404009",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404009"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404010",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404010"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404011",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404011"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404012",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404012"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404013",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404013"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404014",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404014"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404015",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404015"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404016",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404016"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404017",
+      "mediaUri": "kitsu:50760",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404017"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19978-1",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Off to Academy City!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "学園都市へ!"
+        }
+      ],
+      "uri": "anizip:19978-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19978-2",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-07-10T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A New Friend"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "新たな出会い"
+        }
+      ],
+      "uri": "anizip:19978-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19978-3",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Conquer the Dungeon"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ダンジョンを攻略せよ"
+        }
+      ],
+      "uri": "anizip:19978-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19978-4",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Order from the Prince"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "王太子からの誘い"
+        }
+      ],
+      "uri": "anizip:19978-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19978-5",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Sovereign of Spirits` Prophecy"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "精霊王の予言"
+        }
+      ],
+      "uri": "anizip:19978-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19978-6",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Showdown at the Academy Tournament!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "決戦! 学園武術大会"
+        }
+      ],
+      "uri": "anizip:19978-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19978-7",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Onward to Rohzenheim"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ローゼンヘイムへ"
+        }
+      ],
+      "uri": "anizip:19978-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19978-8",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Battle of Tiamo"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ティアモ攻防戦"
+        }
+      ],
+      "uri": "anizip:19978-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19978-9",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Demons of Lapolka"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ラポルカの魔族たち"
+        }
+      ],
+      "uri": "anizip:19978-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19978-10",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Plentiful Prayers"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "祈りが満ちて"
+        }
+      ],
+      "uri": "anizip:19978-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19978-11",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T16:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "開放者"
+        }
+      ],
+      "uri": "anizip:19978-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19978-12",
+      "mediaUri": "anizip:19978",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T16:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19978-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10550096",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "OFF TO ACADEMY CITY!"
+        }
+      ],
+      "uri": "jw:10550096"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10576713",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A NEW FRIEND"
+        }
+      ],
+      "uri": "jw:10576713"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10576715",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "CONQUER THE DUNGEON"
+        }
+      ],
+      "uri": "jw:10576715"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10622485",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "AN ORDER FROM THE PRINCE"
+        }
+      ],
+      "uri": "jw:10622485"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10638993",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE SOVEREIGN OF SPIRITS' PROPHECY"
+        }
+      ],
+      "uri": "jw:10638993"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10652113",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "SHOWDOWN AT THE ACADEMY TOURNAMENT!"
+        }
+      ],
+      "uri": "jw:10652113"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10688748",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "ONWARD TO ROHZENHEIM"
+        }
+      ],
+      "uri": "jw:10688748"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10767930",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE BATTLE OF TIAMO"
+        }
+      ],
+      "uri": "jw:10767930"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10820015",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "THE DEMONS OF LAPOLKA"
+        }
+      ],
+      "uri": "jw:10820015"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10875476",
+      "mediaUri": "jw:504764-574803",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "PLENTIFUL PRAYERS"
+        }
+      ],
+      "uri": "jw:10875476"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82703570",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82703570"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82703571",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82703571"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82703572",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82703572"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82703573",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82703573"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82703574",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82703574"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82703575",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82703575"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82703576",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82703576"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82703577",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82703577"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82703578",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82703578"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82703579",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82703579"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82703580",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82703580"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82703581",
+      "mediaUri": "nf:82703566",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82703581"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19978-1",
+        "b": "jw:10550096"
+      },
+      {
+        "a": "anizip:19978-2",
+        "b": "jw:10576713"
+      },
+      {
+        "a": "anizip:19978-3",
+        "b": "jw:10576715"
+      },
+      {
+        "a": "anizip:19978-4",
+        "b": "jw:10622485"
+      },
+      {
+        "a": "anizip:19978-5",
+        "b": "jw:10638993"
+      },
+      {
+        "a": "anizip:19978-6",
+        "b": "jw:10652113"
+      },
+      {
+        "a": "anizip:19978-7",
+        "b": "jw:10688748"
+      },
+      {
+        "a": "anizip:19978-8",
+        "b": "jw:10767930"
+      },
+      {
+        "a": "anizip:19978-9",
+        "b": "jw:10820015"
+      },
+      {
+        "a": "anizip:19978-10",
+        "b": "jw:10875476"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:209983",
+        "whole": "nf:82703566"
+      }
+    ],
+    "together": [
+      [
+        "anilist:209983",
+        "kitsu:50760",
+        "mal:63817",
+        "offline:mal-63817",
+        "anizip:19978",
+        "jw:504764-574803"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "HELL MODE: The Hardcore Gamer Dominates in Another World with Garbage Balancing Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "209983",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "HELL MODE: The Hardcore Gamer Dominates in Another World with Garbage Balancing Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Hell Mode: Yarikomi-zuki no Gamer wa Haisettei no Isekai de Musou Suru 2nd Season"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ヘルモード ～やり込み好きのゲーマーは廃設定の異世界で無双する～ 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:209983"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50760",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "HELL MODE: The Hardcore Gamer Dominates in Another World with Garbage Balancing Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hell Mode: Yarikomi-zuki no Gamer wa Haisettei no Isekai de Musou Suru 2nd Season"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ヘルモード ～やり込み好きのゲーマーは廃設定の異世界で無双する～ 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50760"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63817",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hell Mode: The Hardcore Gamer Dominates in Another World with Garbage Balancing Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Hell Mode: Yarikomizuki no Gamer wa Hai Settei no Isekai de Musou suru 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63817"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63817",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hell Mode: Yarikomizuki no Gamer wa Hai Settei no Isekai de Musou suru 2nd Season"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63817"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19978",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hell Mode: The Hardcore Gamer Dominates in Another World with Garbage Balancing (2026)"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ヘルモード ~やり込み好きのゲーマーは廃設定の異世界で無双する~ (2026)"
+        }
+      ],
+      "uri": "anizip:19978"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "504764-574803",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:504764-574803"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82703566",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hell Mode: The Hardcore Gamer Dominates in Another World With Garbage Balancing"
+        }
+      ],
+      "uri": "nf:82703566"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2a876d85c65500c3af399c99e8ad84812de9a3b879725464047039b9d1c67da5",
+      "e0cb34fea6f2e0b334454f17a2e0c5c75367b18f2c0a217d5100bc40b4193524",
+      "38e94bb2c975db0a33e00416920e099feec6acea86ddce422056cb125fbf7319",
+      "4b3408e9760e81955823f41156e5bef9f4b25305a7a286058397cdb5d909d9e2",
+      "bd265097b3eaffbfb8ce8f4f797efb90a701028ab65890f6c167dc07137fa938",
+      "1ded62d215eccaf93c56dcaf57bf07f25bfb824684832152883103a157bd6c42",
+      "777a240f0acc295aa100dbde8bdd49848e6803ba2b0ee130da20c2b099507e9d",
+      "976736cb53c330872531df984be9b40c98cc84c9dc1327e74068305561fd3ace",
+      "cf0d8c15c4d58a5464f8de353e92e17bb8d1a495cf89964bf88ecc0dc2189fd7",
+      "70702cd9c8d4bd45c35e84acb62b1c30a541721c18979abb294dc0c5d6daac81",
+      "8f84e59aaaa9f0df98054a9fd2ab5a3275684c455f7f829ac7a8f3d235245cf9",
+      "978cf0e03073358dd20ce41a2bd7d90550f617cb80c6b1f4c217eb473aa5f35c",
+      "f4483c1500073e95219b66b24452cbcfc54c6c6a04629f21907e02c35aa263bf",
+      "39124b72c9eb4b595e70cfa2bd13b3baabc190ef4b9ed650ba624c3fa0638f70",
+      "19303b28c23590f632e36da8574b7f86b32ebd139fbb6ff7860b060ff5bacedb",
+      "567fbdc4141e985ca330657e7814cb25c33185c0ff46965188134432af7aed26",
+      "29dae60cf65764e5fec72a1fdcf0d00bc75e12656bfa411e54a583747af93550",
+      "b949a193f38bb095a871504fac58ae747d35c9ddcf7d8a8390ae31fbd08bd08f",
+      "24e98041664bf7a95bf44ac424a720e8c9c2b66c1eb29571c3a576377e499a20",
+      "2e1f8e2d192fff2cba79f22020b6ee96a1cddb9e3d3228676268620f2c0f2436"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:209983,kitsu:50760,mal:63817,offline:mal-63817)"
+  },
+  "why": "Hell Mode second season, a summer 2026 TV run starting 2026-07-04 and ending 2026-09-18, still on air at labelling time; AniList counts 13 episodes where MyAnimeList and AniZip count 12. AniZip 19978 is the same run: SAME_AS ids to mal:63817 and anilist:209983, the MyAnimeList episode count of 12, and a first episode dated 2026-07-03, the run's own start weekend. The JustWatch season 504764-574803 is the same run: it maps SAME_AS onto all four members and onto anizip:19978 and lists ten of AniZip's episode titles in the same order, differing only in being set in capitals. The Netflix title 82703566 is a bare container: it has no season of its own, no episode count and no dates, its episodes are placeholders numbered Episode 1 to Episode 12, and JustWatch already records it as a PART_OF container for this season, so it holds the run instead of merging with it. AniZip episodes 1 to 10 pair with the JustWatch ones on those titles (Off to Academy City! through Plentiful Prayers). No range is claimed inside the Netflix container: it publishes no episode dates and its episode labels are generic, so its twelve positions cannot be placed against the run's. AniZip episode 11 (2026-09-11) carries only a Japanese title and episode 12 none at all, and Kitsu lists 22 untitled, undated episode rows against this 12 episode season, so none of those are paired."
+}

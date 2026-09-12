@@ -1,0 +1,1024 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Both streaming rows are ten episodes into a run that is still airing, so the short count is just the broadcast so far and not a different work. The episode pairs rest on titles alone since JustWatch gives no dates, but the ten titles are exact and none of them is a placeholder. kitsu 42337 lists 42 untitled episodes, so nothing could be paired against a member. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:39473"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00379439-GS00379440",
+      "mediaUri": "anilist:108992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63802",
+      "mediaUri": "anilist:108992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:108992",
+      "mediaUri": "kitsu:42337",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:39473",
+      "mediaUri": "kitsu:42337",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:108992",
+      "mediaUri": "offline:anilist-108992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:42337",
+      "mediaUri": "offline:anilist-108992",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63802",
+      "mediaUri": "offline:mal-63802",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:108992",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:42337",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:39473",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63802",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-108992",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63802",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:108992",
+      "mediaUri": "jw:224953-235214",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:42337",
+      "mediaUri": "jw:224953-235214",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:39473",
+      "mediaUri": "jw:224953-235214",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63802",
+      "mediaUri": "jw:224953-235214",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-108992",
+      "mediaUri": "jw:224953-235214",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63802",
+      "mediaUri": "jw:224953-235214",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "274262",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:274262"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "274263",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:274263"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "274264",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:274264"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "364793",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:364793"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405018",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405018"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405019",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405019"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405020",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405020"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405021",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405021"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405022",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405022"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405023",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405023"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405024",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405024"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405025",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405025"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405026",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405026"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "405027",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405027"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "405028",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405028"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "405029",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405029"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "405030",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405030"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "405031",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405031"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "405032",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405032"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "405033",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405033"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "405034",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405034"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "405035",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405035"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "405036",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405036"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "405037",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405037"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "405038",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405038"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "405039",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405039"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "405040",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405040"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "405041",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405041"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "405042",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405042"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "405043",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405043"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "405044",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405044"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "405045",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405045"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "405046",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405046"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "405047",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405047"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "405048",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405048"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "405049",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405049"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "405050",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405050"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "405051",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405051"
+    },
+    {
+      "episodeNumber": 39,
+      "id": "405052",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405052"
+    },
+    {
+      "episodeNumber": 40,
+      "id": "405053",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405053"
+    },
+    {
+      "episodeNumber": 41,
+      "id": "405054",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405054"
+    },
+    {
+      "episodeNumber": 42,
+      "id": "405055",
+      "mediaUri": "kitsu:42337",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405055"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00379439-GS00379440-GE00380106JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-07-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "First Light"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380106JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00379439-GS00379440-GE00380107JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-07-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Adrenaline Game"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380107JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00379439-GS00379440-GE00380108JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-07-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Diabolic Meteor"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380108JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00379439-GS00379440-GE00380109JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-07-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Overheat"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380109JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00379439-GS00379440-GE00380110JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-08-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Girls' Roar"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380110JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00379439-GS00379440-GE00380111JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-08-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Shin-Shin-Koiwa"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380111JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00379439-GS00379440-GE00380112JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-08-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Restored Memory"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380112JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00379439-GS00379440-GE00380113JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-08-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Deep Divide"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380113JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00379439-GS00379440-GE00380114JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-09-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Empty Crown"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380114JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00379439-GS00379440-GE00380115JAJP",
+      "mediaUri": "cr:GT00379439-GS00379440",
+      "origin": "cr",
+      "releaseDate": "2026-09-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Barrier Break"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440-GE00380115JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "4327125",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "First Light"
+        }
+      ],
+      "uri": "jw:4327125"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10695005",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Adrenaline Game"
+        }
+      ],
+      "uri": "jw:10695005"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10695002",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Diabolic Meteor"
+        }
+      ],
+      "uri": "jw:10695002"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10695004",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Overheat"
+        }
+      ],
+      "uri": "jw:10695004"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10695003",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Girls' Roar"
+        }
+      ],
+      "uri": "jw:10695003"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10695000",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shin-Shin-Koiwa"
+        }
+      ],
+      "uri": "jw:10695000"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10695001",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Restored Memory"
+        }
+      ],
+      "uri": "jw:10695001"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10820528",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Deep Divide"
+        }
+      ],
+      "uri": "jw:10820528"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10820527",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Empty Crown"
+        }
+      ],
+      "uri": "jw:10820527"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10875212",
+      "mediaUri": "jw:224953-235214",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Barrier Break"
+        }
+      ],
+      "uri": "jw:10875212"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380106JAJP",
+        "b": "jw:4327125"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380107JAJP",
+        "b": "jw:10695005"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380108JAJP",
+        "b": "jw:10695002"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380109JAJP",
+        "b": "jw:10695004"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380110JAJP",
+        "b": "jw:10695003"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380111JAJP",
+        "b": "jw:10695000"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380112JAJP",
+        "b": "jw:10695001"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380113JAJP",
+        "b": "jw:10820528"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380114JAJP",
+        "b": "jw:10820527"
+      },
+      {
+        "a": "cr:GT00379439-GS00379440-GE00380115JAJP",
+        "b": "jw:10875212"
+      }
+    ],
+    "together": [
+      [
+        "anilist:108992",
+        "kitsu:42337",
+        "mal:63802",
+        "offline:anilist-108992",
+        "offline:mal-63802",
+        "cr:GT00379439-GS00379440",
+        "jw:224953-235214"
+      ]
+    ]
+  },
+  "name": "Mebius Dust",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "108992",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 09 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Mebius Dust"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mebius Dust"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "メビウス・ダスト"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:108992"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 42,
+      "id": "42337",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Mebius Dust"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "メビウス・ダスト"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:42337"
+    },
+    {
+      "id": "39473",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:39473"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "63802",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mebius Dust"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63802"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "anilist-108992",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mebius Dust"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-108992"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-63802",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mebius Dust"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63802"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00379439-GS00379440",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mebius Dust"
+        }
+      ],
+      "uri": "cr:GT00379439-GS00379440"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "224953-235214",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:224953-235214"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b3690eed7c6bbbf9c57fe6ee76b6de08415c8f246c17e7019d3e6754fe7e4027",
+      "35e86ded799602c8e7d52ffca78f1fe76c0f5f3d52ee84877e831707e73a82f3",
+      "5cd9dae7eb25f00ee47e7f8ad32ad772f94f3863a7c6e07793e028714f97ab87",
+      "842593bcda8c93cbdc87b57fe2a1628444f67feecb4f87b0d0b13b947971eb0e",
+      "30bcd9501b0754ac602d1b530fb5d09955ba68fbad698213c01bbba84d80749e",
+      "651f7700dfb805505b80fd126246f9c0458bc5c3a20e8b2b48b1c52d6a3a368f",
+      "964fc08d6d5a88001de1ae0f540e2848334b9c75332fe0fc0a680a64a5428095",
+      "ab0f8c0af61ace520458669af89ffc611b63b510555da7c72fc86c7d2335b670",
+      "e1657ff5ddd0231a0c138b8ec0a2ec267119f7becf2032c085e5c01717e857fb"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:108992,kitsu:42337,mal:39473,mal:63802,offline:anilist-108992,offline:mal-63802)"
+  },
+  "why": "The run is the summer 2026 TV series Mebius Dust, airing weekly from 2026-07-09 to 2026-09-24 on anilist 108992 and mal 63802, still releasing today. cr:GT00379439-GS00379440 is the same run: anilist 108992 itself carries that Crunchyroll id as a SAME_AS handle, and its ten episodes run weekly from 2026-07-09, the run's start date, to 2026-09-10, inside the run's window. jw:224953-235214 is the same run: its episodeCount is 10 like Crunchyroll's, it maps SAME_AS to every member, and its ten episode titles are Crunchyroll's word for word, First Light through Barrier Break. The Crunchyroll and JustWatch episodes pair one to one on those ten exact, non-generic titles."
+}

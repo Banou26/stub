@@ -1,0 +1,579 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only judgement call was the Netflix row, which asserts SAME_AS against all six members while its title, its 2026-01-01 start and its episode titles all describe another show; the handles were treated as wrong rather than as evidence. Kitsu's 18 episodes carry no titles and no dates, so no episode pairing was possible. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64357",
+      "mediaUri": "anilist:213097",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213097",
+      "mediaUri": "kitsu:50802",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213097",
+      "mediaUri": "offline:anilist-213097",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50802",
+      "mediaUri": "offline:kitsu-50802",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64357",
+      "mediaUri": "offline:mal-64357",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213097",
+      "mediaUri": "nf:81772673",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50802",
+      "mediaUri": "nf:81772673",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64357",
+      "mediaUri": "nf:81772673",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-213097",
+      "mediaUri": "nf:81772673",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50802",
+      "mediaUri": "nf:81772673",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64357",
+      "mediaUri": "nf:81772673",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404830",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404830"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404831",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404831"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404832",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404832"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404833",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404833"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404834",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404834"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404835",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404835"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404836",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404836"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404837",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404837"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404838",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404838"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404839",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404839"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404840",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404840"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404841",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404841"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404842",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404842"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404843",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404843"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404844",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404844"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404845",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404845"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404846",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404846"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404847",
+      "mediaUri": "kitsu:50802",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404847"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81946765",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Copulatory Tie"
+        }
+      ],
+      "uri": "nf:81946765"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81946766",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Dating Sites"
+        }
+      ],
+      "uri": "nf:81946766"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81946767",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Lull"
+        }
+      ],
+      "uri": "nf:81946767"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81946768",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Truth About Canada"
+        }
+      ],
+      "uri": "nf:81946768"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81946769",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Hot Mess"
+        }
+      ],
+      "uri": "nf:81946769"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81946770",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Horse Who Loved Me"
+        }
+      ],
+      "uri": "nf:81946770"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81946771",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Polycule"
+        }
+      ],
+      "uri": "nf:81946771"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81946772",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Passion of Raynal Skidski"
+        }
+      ],
+      "uri": "nf:81946772"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81946773",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The All-Nighter"
+        }
+      ],
+      "uri": "nf:81946773"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81946774",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Wolf Wedding"
+        }
+      ],
+      "uri": "nf:81946774"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:213097",
+        "nf:81772673"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:213097",
+        "kitsu:50802",
+        "mal:64357",
+        "offline:anilist-213097",
+        "offline:kitsu-50802",
+        "offline:mal-64357"
+      ]
+    ],
+    "unrelated": [
+      "nf:81772673"
+    ]
+  },
+  "name": "TOMICA & TOM Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213097",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "TOMICA & TOM Season 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "トミカとトム シーズン2"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:213097"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 18,
+      "id": "50802",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "TOMICA & TOM Season 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "トミカとトム シーズン2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50802"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64357",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tomica & Tom (TV) Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tomica to Tom (TV) Season 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:64357"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-213097",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "TOMICA & TOM Season 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-213097"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "kitsu-50802",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "TOMICA & TOM Season 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:kitsu-50802"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-64357",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tomica to Tom (TV) Season 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-64357"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81772673",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mating Season"
+        }
+      ],
+      "uri": "nf:81772673"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8f3165bbdf95a27c113afb3ab6ac3ce42b4e524b872df8fedb9d319bc1b3297c",
+      "8a1224bee73cb498013488f0e8b8344043ee0fb324451cbe92691900e4da59a7",
+      "a793bfefeb13f1e8d5241dce82b7f91428cbf96333c8646e86ec45c3aa5473c0",
+      "e195ded0aef623a2511bd5307ef9f101c39497f2dd8c5a7c6079861174c3347e",
+      "30d573f02a30ba28071d49aa2434aa042b913c62fa232fcea4ba6a2f182b45a9",
+      "3ad3b04de90183dd6d88e33d32a59f046d5072a7eb137156cba49943efbf00b2",
+      "24a084355133d5d11f6dc21aa4801e4eaca1f13c0677aa712462d0098bfe4de4",
+      "8221310f6371d9ec99112aea646653ac710f5d72f2fe991c81ad73c7e608fc30",
+      "f9f89059bf352605e3d0a036d525ad35917b53b58402af6e92a53e2838b388c7",
+      "8813f1d180c832704737bf2e4b053e2d9b149c41333353dfd911e42f724de3de",
+      "577324b9d2188243e4028db60a8570057c9f6eea41836f797c6329941d0935e4",
+      "48bb727b5a0e9f02a177736c2f38a2909367a17ce16fc7e554f42f370b13d63b",
+      "9eff3b9dc8f5e7755c49c05c5eeec1933b8364f62d74a1d59444657d6b02303a",
+      "7c5a5f93ec2d9b2e61c89c5c97a7d2d1c203cf052d037d4de3a1a4ca3cfbeca3",
+      "247fca1e3d70e1d4b1d63524119b7e9fd0a1b6d318b48ee030b1cd7588e48744",
+      "4ce6a21be8ebc732fb1b069d7255c880d11fcca61bb0aa116485dbfbdfecb1e5",
+      "54977c8637a25ba3bc68827018f58911a7e201ed26a0e2d064deb6cc3a8d09f8"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213097,kitsu:50802,mal:64357,offline:anilist-213097,offline:kitsu-50802,offline:mal-64357)"
+  },
+  "why": "TOMICA & TOM Season 2 is the second run of a short Tomica toy-car series, starting 2026-07-05 and carried by AniList, Kitsu, MyAnimeList and the offline database. The six member rows are one run: anilist:213097 maps SAME_AS to mal:64357, kitsu:50802 maps SAME_AS to anilist:213097, all three share the 2026-07-05 start and the title TOMICA & TOM Season 2 (Tomica to Tom on MyAnimeList), and each offline row is the same catalogue id mirrored. The Netflix row nf:81772673 Mating Season is a different work despite its SAME_AS handles to every member: its title matches none of theirs, its start date is 2026-01-01 rather than 2026-07-05, and its ten episode titles (The Copulatory Tie, The Dating Sites, The Polycule) belong to an adult comedy, not to a toy-car short, so it is neither merged nor attached."
+}

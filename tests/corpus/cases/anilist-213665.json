@@ -1,0 +1,270 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing to judge: every row returned is already a member of the run's own address, and the only episode list (kitsu, eleven untitled entries) carries no titles or dates to pair on. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63878",
+      "mediaUri": "anilist:213665",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63878",
+      "mediaUri": "kitsu:50649",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213665",
+      "mediaUri": "kitsu:50649",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63878",
+      "mediaUri": "offline:mal-63878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213665",
+      "mediaUri": "offline:mal-63878",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50649",
+      "mediaUri": "offline:mal-63878",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405788",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405788"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405789",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405789"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405963",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405963"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406018",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406018"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406336",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406336"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406657",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406657"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406890",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406890"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "407053",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407053"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "407191",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407191"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "407241",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407241"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "407917",
+      "mediaUri": "kitsu:50649",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407917"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213665",
+        "kitsu:50649",
+        "mal:63878",
+        "offline:mal-63878"
+      ]
+    ]
+  },
+  "name": "Saved By the Ice Cold Prince's Embrace",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213665",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 07 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Saved By the Ice Cold Prince's Embrace"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Migawari Reijou wo Sukutta no wa Reikoku Mujihi na Koori no Ouji no Ai deshita"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "身代わり令嬢を救ったのは冷酷無慈悲な氷の王子の愛でした"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:213665"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "50649",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Saved by the Ice Cold Prince's Embrace"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Migawari Reijou wo Sukutta no wa Reikoku Mujihi na Koori no Ouji no Ai deshita"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "身代わり令嬢を救ったのは冷酷無慈悲な氷の王子の愛でした"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50649"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "63878",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Saved by the Ice Cold Prince's Embrace"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Migawari Reijou wo Sukutta no wa Reikoku Mujihi na Koori no Ouji no Ai deshita"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63878"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-63878",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Migawari Reijou wo Sukutta no wa Reikoku Mujihi na Koori no Ouji no Ai deshita"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63878"
+    }
+  ],
+  "source": {
+    "answers": [
+      "f12c605a1e7ac9dbcfa4bf9a677e309eafcb64bd9c0fedfaa58369b2f98fd631",
+      "a2af2a54d555ca8dac44a54ffda1d440e0514d4a78ea3b00a9a00ae568a45ed9",
+      "02daf39fc0fd9adb04605414644c1febd2473d4f5b8cea5efcb5061ac7c89cfb",
+      "06ff99ad4930de1b9690b7df9fce4b0980c1deb51d30426ff271e0e2458b768b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213665,kitsu:50649,mal:63878,offline:mal-63878)"
+  },
+  "why": "The run is the summer 2026 short form series Saved by the Ice Cold Prince's Embrace (Migawari Reijou wo Sukutta no wa Reikoku Mujihi na Koori no Ouji no Ai deshita), airing 2026-07-07 to 2026-09-22 on anilist 213665 and mal 63878, with kitsu 50649 and the offline row keyed on mal 63878 mapping SAME_AS to both. No source returned a row outside that address, so there is nothing to hold it, split it or contradict it."
+}

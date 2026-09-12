@@ -1,0 +1,60 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was hard: a single Kitsu row with no handles and no other source, so the case asserts only the run itself. refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407205",
+      "mediaUri": "kitsu:50935",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407205"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50935"
+      ]
+    ]
+  },
+  "name": "Boom! Boom! Tropica Vacation",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50935",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-28",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Boom! Boom! Tropica Vacation"
+        }
+      ],
+      "uri": "kitsu:50935"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a2df43a1f1f1b895dd24adcd79bb57bde1b224eafd2ff082d282b5c1780ca4f9",
+      "dd348df729b4f4187c1602cb4c8b3f051f14679867abc01721f916707f765f35"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50935)"
+  },
+  "why": "Boom! Boom! Tropica Vacation is a one-episode summer 2026 entry, its single episode dated 2026-07-28 on Kitsu. Only Kitsu returned anything for it: kitsu:50935 is the run's sole member, it carries no handles to any other catalogue, and no other source returned a row, so there is nothing to merge, hold or separate."
+}

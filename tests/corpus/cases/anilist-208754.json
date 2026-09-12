@@ -1,0 +1,284 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "anizip was the awkward one: its English title, Echoes of Aincrad Movie, names nothing else in the run and its date is 2026-05-09 against a July release, but its Japanese title is the run's title character for character and its ids point at both mal and anilist, so it is kept. The Netflix row claims SAME_AS to all five members while plainly being The Angry Birds Movie. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63736",
+      "mediaUri": "anilist:208754",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208754",
+      "mediaUri": "kitsu:50775",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63736",
+      "mediaUri": "offline:mal-63736",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208754",
+      "mediaUri": "offline:mal-63736",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50775",
+      "mediaUri": "offline:mal-63736",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63736",
+      "mediaUri": "anizip:20025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208754",
+      "mediaUri": "anizip:20025",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208754",
+      "mediaUri": "nf:80091938",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:20025",
+      "mediaUri": "nf:80091938",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50775",
+      "mediaUri": "nf:80091938",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63736",
+      "mediaUri": "nf:80091938",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63736",
+      "mediaUri": "nf:80091938",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404270",
+      "mediaUri": "kitsu:50775",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404270"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "20025-1",
+      "mediaUri": "anizip:20025",
+      "origin": "anizip",
+      "releaseDate": "2026-05-09",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:20025-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80091938-1",
+      "mediaUri": "nf:80091938",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Angry Birds Movie"
+        }
+      ],
+      "uri": "nf:80091938-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:80091938",
+        "anilist:208754"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:208754",
+        "kitsu:50775",
+        "mal:63736",
+        "offline:mal-63736",
+        "anizip:20025"
+      ]
+    ],
+    "unrelated": [
+      "nf:80091938"
+    ]
+  },
+  "name": "Unanswered//butterfly: Sword Art Online",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "208754",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 10 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Unanswered//butterfly: Sword Art Online"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "Unanswered//butterfly: Sword Art Online"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:208754"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50775",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Unanswered//butterfly: Sword Art Online"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50775"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63736",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Sword Art Online: Unanswered//butterfly"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63736"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63736",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sword Art Online: Unanswered//butterfly"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63736"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "20025",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Echoes of Aincrad Movie"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "SWORD ART ONLINE Unanswered//butterfly"
+        }
+      ],
+      "uri": "anizip:20025"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "80091938",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2016-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Angry Birds Movie"
+        }
+      ],
+      "uri": "nf:80091938"
+    }
+  ],
+  "source": {
+    "answers": [
+      "486416c48769d5c7ae31153733ff3453901172cb3d79748861555ec49d635a9a",
+      "33c2fe55d3670f2d5ec998db0a8d802ae8d1c004a8c2bd7494da49040a31a548",
+      "0e35a98873a66058f785f8e682abb3fe754d2f6bdc75dadb7dfa0af7bde53ede",
+      "878ab9105cfea7cb982f7273bc7c81977419e15be121b2d2678993e780d915c1",
+      "79ba6a64e4243eadcde13fce6fce2cf7c0cba94032aff031df6359a5a4a75cdd",
+      "e260a1e80def24bb70b3d5f3bd89aee55c04706ea3d785e265efbc64908eaa6a",
+      "063e8b8d946c802621f55d50996d7d0f483fa67ee212417e08713ed3b93d4abd",
+      "f5b9f782c77c15fa1760343de3cb49453776a13571d7662a4d6b57e389bdc909"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:208754,kitsu:50775,mal:63736,offline:mal-63736)"
+  },
+  "why": "The run is the Sword Art Online film Unanswered//butterfly, a single part MOVIE that anilist and kitsu open on 2026-07-10 and MyAnimeList on 2026-07-09. anizip:20025 is the same film: it carries first-party SAME_AS ids to both mal:63736 and anilist:208754, gives a count of 1, and its Japanese title is SWORD ART ONLINE Unanswered//butterfly, the run's own title, even though its English column reads Echoes of Aincrad Movie and its single entry is dated 2026-05-09 rather than July. nf:80091938 is a different work: it is The Angry Birds Movie, the 2016 computer animated feature, dated 2016-01-01 with its own name as its single episode title, so it must not be merged with this film or hung off it. The kitsu member's one episode has neither title nor date and anizip's is dated two months away from the release, so nothing can be paired episode to episode."
+}

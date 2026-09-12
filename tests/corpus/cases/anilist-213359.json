@@ -1,0 +1,294 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The two disagreements are inside the run's own address and change nothing: kitsu starts it a day early (2026-07-12) and counts 14 episodes where the offline database counts 13. The 14 kitsu episode rows carry no titles and no release dates, so no episode pair was asserted. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64435",
+      "mediaUri": "anilist:213359",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213359",
+      "mediaUri": "kitsu:50773",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64435",
+      "mediaUri": "offline:mal-64435",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213359",
+      "mediaUri": "offline:mal-64435",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50773",
+      "mediaUri": "offline:mal-64435",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404255",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404255"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404256",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404256"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404257",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404257"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404258",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404258"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404259",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404259"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404260",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404260"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404261",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404261"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404262",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404262"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404263",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404263"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404264",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404264"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404265",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404265"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404266",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404266"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404267",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404267"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404268",
+      "mediaUri": "kitsu:50773",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404268"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213359",
+        "kitsu:50773",
+        "mal:64435",
+        "offline:mal-64435"
+      ]
+    ]
+  },
+  "name": "Theatre of Darkness: Yamishibai 17",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213359",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 13 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Theatre of Darkness: Yamishibai 17"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Yami Shibai 17"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "闇芝居 十七期"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:213359"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 14,
+      "id": "50773",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Theatre of Darkness: Yamishibai 17"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Yami Shibai 17"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "闇芝居 十七期"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50773"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64435",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-13",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Theatre of Darkness: Yamishibai 17"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yami Shibai 17"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:64435"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "mal-64435",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yami Shibai 17"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-64435"
+    }
+  ],
+  "source": {
+    "answers": [
+      "260946441e78447a7de15e56953ec5163471243a2c2cc594054377766f9d224f",
+      "722e5915c1cd8ee4f4526a8d2c0c1cfe640b91648c5843f5026f5f011c925b6f",
+      "28e42f16de97629564969f14161b0794c00d92444e6ffbe321e8b52f2a378068",
+      "be8389ee97270fb5aa7cfa73388bc1eb53515ab8089334ccf68be6933f9613fa"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213359,kitsu:50773,mal:64435,offline:mal-64435)"
+  },
+  "why": "Theatre of Darkness: Yamishibai 17 (闇芝居 十七期) is the seventeenth season of the horror short, a summer 2026 TV short starting 2026-07-13 and running to early October. All four rows are one run: anilist:213359 carries a first-party SAME_AS to mal:64435, kitsu:50773 carries one to anilist:213359, offline:mal-64435 claims SAME_AS to all three, and the rows share the Theatre of Darkness: Yamishibai 17 and Yami Shibai 17 titles plus the Japanese 闇芝居 十七期, with start dates one day apart (2026-07-12 on kitsu against 2026-07-13 on mal and Anilist). No streaming rows, container rows or other seasons came back, so nothing is attached, held or set apart."
+}

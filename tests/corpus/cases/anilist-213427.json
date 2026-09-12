@@ -1,0 +1,99 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "refuted: 0 marks overturned. repair 2026-09-12: removed from together, no source answered about them: mal:64325"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64325",
+      "mediaUri": "anilist:213427",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64325",
+      "mediaUri": "offline:mal-64325",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213427",
+      "mediaUri": "offline:mal-64325",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213427",
+        "offline:mal-64325"
+      ]
+    ]
+  },
+  "name": "Pie no Mi: Oshi no Mori e Youkoso!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "213427",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 22 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Pie no Mi: Oshi no Mori e Youkoso!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "パイの実 おしの森へようこそ！"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213427"
+    },
+    {
+      "id": "64325",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64325"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "mal-64325",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pie no Mi: Oshi no Mori e Youkoso!"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64325"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9855bbb534489192d7355bab4c5e1f5cd52be32178c17a9142a3bcab8e4a775a",
+      "20a1982f27456e98a8f0f81956cd039f52a82d98267398c3ad885f5f6f3f926f"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213427,mal:64325)"
+  },
+  "why": "Pie no Mi: Oshi no Mori e Youkoso! is an 8 episode ONA starting 2026-06-22 on Anilist, carried by anilist:213427 and mal:64325. offline:mal-64325 is the same run: it is keyed on the MyAnimeList id 64325 and carries SAME_AS handles to both mal:64325 and anilist:213427, with the identical title and the same episodeCount of 8, so its SPRING 2026 season tag (against Anilist's SUMMER 2026) is only a bucketing difference for a late June start. Nothing else came back for this title."
+}

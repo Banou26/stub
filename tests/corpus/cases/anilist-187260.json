@@ -1,0 +1,1291 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "JustWatch carries no episode dates, so it was judged on nine exact non-generic titles shared with anizip and Crunchyroll rather than on dates; the Netflix season has only placeholder titles and no dates and was left alone. anizip also lists a Pre-Broadcast Special dated 2026-06-21 with no episode number, but it has no episode row here so nothing was asserted about it. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00374354-GS00374355",
+      "mediaUri": "anilist:187260",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "anilist:187260",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187260",
+      "mediaUri": "kitsu:49607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "kitsu:49607",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00374354",
+      "mediaUri": "kitsu:49607",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "offline:mal-61126",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187260",
+      "mediaUri": "offline:mal-61126",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49607",
+      "mediaUri": "offline:mal-61126",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "anizip:19189",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187260",
+      "mediaUri": "anizip:19189",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187260",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19189",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:472876-497875",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49607",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82964715-1",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61126",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187260",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19189",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00374354-GS00374355",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49607",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82964715-1",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61126",
+      "mediaUri": "jw:472876-497875",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187260",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19189",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00374354-GS00374355",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:472876-497875",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49607",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61126",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61126",
+      "mediaUri": "nf:82964715-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "378813",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378813"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "378814",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378814"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "378815",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378815"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "378816",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378816"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "378817",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378817"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "378818",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378818"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "378819",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378819"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "378820",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378820"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "378821",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378821"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "378822",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378822"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "378823",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378823"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "378824",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378824"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "378825",
+      "mediaUri": "kitsu:49607",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378825"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19189-1",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Kiss"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "キス"
+        }
+      ],
+      "uri": "anizip:19189-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19189-2",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "It Does Hurt"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ちゃんと痛いよ"
+        }
+      ],
+      "uri": "anizip:19189-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19189-3",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Friends"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ともだち"
+        }
+      ],
+      "uri": "anizip:19189-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19189-4",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Accomplices"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "共犯"
+        }
+      ],
+      "uri": "anizip:19189-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19189-5",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Endless Night"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "終わらない夜"
+        }
+      ],
+      "uri": "anizip:19189-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19189-6",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Welcome Home"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "おかえり"
+        }
+      ],
+      "uri": "anizip:19189-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19189-7",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Not Afraid Anymore"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "もう怖くないよ"
+        }
+      ],
+      "uri": "anizip:19189-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19189-8",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I`m Back"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ただいま"
+        }
+      ],
+      "uri": "anizip:19189-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19189-9",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Magic"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "わたしの魔法"
+        }
+      ],
+      "uri": "anizip:19189-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19189-10",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08T12:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Unforgettable Day"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "忘れない日"
+        }
+      ],
+      "uri": "anizip:19189-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19189-11",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-09-15T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19189-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19189-12",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-09-22T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19189-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "19189-13",
+      "mediaUri": "anizip:19189",
+      "origin": "anizip",
+      "releaseDate": "2026-09-29T12:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19189-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00374354-GS00374355-GE00378362JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-07-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Kiss"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378362JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00374354-GS00374355-GE00378363JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-07-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "It Does Hurt"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378363JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00374354-GS00374355-GE00378364JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-07-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Friends"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378364JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00374354-GS00374355-GE00378365JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-07-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Accomplices"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378365JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00374354-GS00374355-GE00378366JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-08-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Endless Night"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378366JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00374354-GS00374355-GE00378367JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-08-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Welcome Home"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378367JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00374354-GS00374355-GE00378368JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-08-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Not Afraid Anymore"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378368JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00374354-GS00374355-GE00378369JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-08-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I'm Back"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378369JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00374354-GS00374355-GE00378370JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-09-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "My Magic"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378370JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00374354-GS00374355-GE00378371JAJP",
+      "mediaUri": "cr:GT00374354-GS00374355",
+      "origin": "cr",
+      "releaseDate": "2026-09-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "An Unforgettable Day"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355-GE00378371JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9180964",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Kiss"
+        }
+      ],
+      "uri": "jw:9180964"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10643396",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "It Does Hurt"
+        }
+      ],
+      "uri": "jw:10643396"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10643398",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Friends"
+        }
+      ],
+      "uri": "jw:10643398"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10643400",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Accomplices"
+        }
+      ],
+      "uri": "jw:10643400"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10643402",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Endless Night"
+        }
+      ],
+      "uri": "jw:10643402"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10643404",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Welcome Home"
+        }
+      ],
+      "uri": "jw:10643404"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10643406",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Not Afraid Anymore"
+        }
+      ],
+      "uri": "jw:10643406"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10643408",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm Back"
+        }
+      ],
+      "uri": "jw:10643408"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10643410",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Magic"
+        }
+      ],
+      "uri": "jw:10643410"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10643412",
+      "mediaUri": "jw:472876-497875",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "jw:10643412"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82964717",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82964717"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82964718",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82964718"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82964719",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82964719"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82964720",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82964720"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82964721",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82964721"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82964722",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82964722"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82964723",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82964723"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82964724",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82964724"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82964725",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82964725"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82964726",
+      "mediaUri": "nf:82964715-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82964726"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19189-1",
+        "b": "cr:GT00374354-GS00374355-GE00378362JAJP"
+      },
+      {
+        "a": "anizip:19189-2",
+        "b": "cr:GT00374354-GS00374355-GE00378363JAJP"
+      },
+      {
+        "a": "anizip:19189-3",
+        "b": "cr:GT00374354-GS00374355-GE00378364JAJP"
+      },
+      {
+        "a": "anizip:19189-4",
+        "b": "cr:GT00374354-GS00374355-GE00378365JAJP"
+      },
+      {
+        "a": "anizip:19189-5",
+        "b": "cr:GT00374354-GS00374355-GE00378366JAJP"
+      },
+      {
+        "a": "anizip:19189-6",
+        "b": "cr:GT00374354-GS00374355-GE00378367JAJP"
+      },
+      {
+        "a": "anizip:19189-7",
+        "b": "cr:GT00374354-GS00374355-GE00378368JAJP"
+      },
+      {
+        "a": "anizip:19189-8",
+        "b": "cr:GT00374354-GS00374355-GE00378369JAJP"
+      },
+      {
+        "a": "anizip:19189-9",
+        "b": "cr:GT00374354-GS00374355-GE00378370JAJP"
+      },
+      {
+        "a": "anizip:19189-10",
+        "b": "cr:GT00374354-GS00374355-GE00378371JAJP"
+      },
+      {
+        "a": "jw:9180964",
+        "b": "anizip:19189-1"
+      },
+      {
+        "a": "jw:10643396",
+        "b": "anizip:19189-2"
+      },
+      {
+        "a": "jw:10643398",
+        "b": "anizip:19189-3"
+      },
+      {
+        "a": "jw:10643400",
+        "b": "anizip:19189-4"
+      },
+      {
+        "a": "jw:10643402",
+        "b": "anizip:19189-5"
+      },
+      {
+        "a": "jw:10643404",
+        "b": "anizip:19189-6"
+      },
+      {
+        "a": "jw:10643406",
+        "b": "anizip:19189-7"
+      },
+      {
+        "a": "jw:10643408",
+        "b": "anizip:19189-8"
+      },
+      {
+        "a": "jw:10643410",
+        "b": "anizip:19189-9"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:187260",
+        "whole": "cr:GT00374354"
+      }
+    ],
+    "together": [
+      [
+        "anilist:187260",
+        "kitsu:49607",
+        "mal:61126",
+        "offline:mal-61126",
+        "anizip:19189",
+        "cr:GT00374354-GS00374355",
+        "jw:472876-497875"
+      ]
+    ]
+  },
+  "name": "I Want to Love You Till Your Dying Day",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "187260",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 07 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "I Want to Love You Till Your Dying Day"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Kimi ga Shinu made Koi wo Shitai"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "きみが死ぬまで恋をしたい"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:187260"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "49607",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "I Want to Love You Till Your Dying Day"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kimi ga Shinu made Koi wo Shitai"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "きみが死ぬまで恋をしたい"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49607"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "61126",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Want to Love You Till Your Dying Day"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Kimi ga Shinu made Koi wo Shitai"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61126"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-61126",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kimi ga Shinu made Koi wo Shitai"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61126"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19189",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Want to Love You Till Your Dying Day"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "きみが死ぬまで恋をしたい"
+        }
+      ],
+      "uri": "anizip:19189"
+    },
+    {
+      "id": "GT00374354",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00374354"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00374354-GS00374355",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Want to Love You Till Your Dying Day"
+        }
+      ],
+      "uri": "cr:GT00374354-GS00374355"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "472876-497875",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:472876-497875"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "82964715-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Want To Love You Till Your Dying Day"
+        }
+      ],
+      "uri": "nf:82964715-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "159fc32799bbf774a92735397f349c431ed48f1aab9458af54c1beb87c388f22",
+      "ac7b7c33187da3c050601618d2374984d397dd7711c23269a0f9cf2cdab76280",
+      "4f97688189abe537614b0776d9ddafdc9718433a3341dda359f6f957a568ae80",
+      "20c544fd0554330cf65299cedc5ab2722b4c8e43a1d313715297d53224c2dd46",
+      "aeb1e329a180019737d181f509901d65a437a58aeff9fb8298769eb0d244d6a0",
+      "1d5e8d46e2ae8da8710173faea543188e3fd77593eeb1227b5294661aaeaf54c",
+      "679e9b2e9ac2ee4ed859da6495e4e0e6009847bfab25641bc63d9966ce0d0df3",
+      "1474ede4c063826c6bfee33d5e27f6801d675ef63690cd7597594a96b5c718dc",
+      "2be5757941159e0399336ffd6f7e59802c2297eabbec0a1dbc95f7833878ad75",
+      "096c1eaf71c9cc9c5c1770c0854fbddf6321ba7dc691b8ba35e2bc923c98f38c",
+      "f475ebd0c7438b1c79a70ba796cd42055af5b0a4c9be3c0f823d756fe7c8f392"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:187260,kitsu:49607,mal:61126,offline:mal-61126)"
+  },
+  "why": "I Want to Love You Till Your Dying Day is a 13 episode Summer 2026 TV run airing 2026-07-07 to 2026-09-29, ten episodes out by the time of labelling. anilist:187260, kitsu:49607, mal:61126 and offline:mal-61126 are one run: anilist and kitsu both give mal:61126, kitsu and offline give anilist:187260, and anilist, kitsu and mal all carry the 2026-07-07 start with 13 episodes. anizip:19189 is the same run: it maps to mal:61126 and anilist:187260, lists 13 episodes, and its episode 1 falls on 2026-07-07 and episode 13 on 2026-09-29, the run's own start and end. The Crunchyroll season cr:GT00374354-GS00374355 is the same run rather than a container: its 10 episodes are the run's first 10 by both date (The Kiss on 2026-07-07 through An Unforgettable Day on 2026-09-08, matching anizip day for day) and title, and nothing in it runs past the run's dates. The JustWatch season jw:472876-497875 is the same run too: episodes 1 to 9 carry The Kiss, It Does Hurt, Friends, Accomplices, Endless Night, Welcome Home, Not Afraid Anymore, I'm Back and My Magic, the exact titles anizip and Crunchyroll give those nine episodes, and its count of 10 does not exceed the run's 13. cr:GT00374354 is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Episodes pair anizip to Crunchyroll on matching release dates and titles for episodes 1 to 10, and JustWatch to anizip on the nine exact non-generic titles; JustWatch's Episode 10 is a placeholder and pairs with nothing, and the kitsu episode rows carry neither title nor date so they place nothing. The Netflix season nf:82964715-1 lists 10 episodes all titled Episode 1 to Episode 10 with no dates against a 13 episode run, so it is left unsettled."
+}

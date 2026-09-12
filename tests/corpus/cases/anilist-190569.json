@@ -1,0 +1,909 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix season is the awkward one: its count of 12 and its season title match the run exactly, but it carries no episode dates and only placeholder episode titles, and a count on its own is not evidence, so it was left alone rather than merged. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61483",
+      "mediaUri": "anilist:190569",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:190569",
+      "mediaUri": "kitsu:49851",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378078",
+      "mediaUri": "kitsu:49851",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61483",
+      "mediaUri": "offline:mal-61483",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:190569",
+      "mediaUri": "offline:mal-61483",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49851",
+      "mediaUri": "offline:mal-61483",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61483",
+      "mediaUri": "anizip:19290",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:190569",
+      "mediaUri": "anizip:19290",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:190569",
+      "mediaUri": "nf:82941737-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19290",
+      "mediaUri": "nf:82941737-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49851",
+      "mediaUri": "nf:82941737-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61483",
+      "mediaUri": "nf:82941737-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61483",
+      "mediaUri": "nf:82941737-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "381722",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "All That Is in the Heavens and All That Is in the Earth"
+        }
+      ],
+      "uri": "kitsu:381722"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "381723",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Roses That Bloom in Safar"
+        }
+      ],
+      "uri": "kitsu:381723"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "381724",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "An Undying Flame"
+        }
+      ],
+      "uri": "kitsu:381724"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "381725",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Otchigin"
+        }
+      ],
+      "uri": "kitsu:381725"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "381726",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Snake Shows Its Colors, Man Hides His Colors"
+        }
+      ],
+      "uri": "kitsu:381726"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "381727",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Mergen People"
+        }
+      ],
+      "uri": "kitsu:381727"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "381728",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Brothers"
+        }
+      ],
+      "uri": "kitsu:381728"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "381729",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Great Khatun Boraqchin"
+        }
+      ],
+      "uri": "kitsu:381729"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "381730",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tengri"
+        }
+      ],
+      "uri": "kitsu:381730"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "381731",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Wisdom"
+        }
+      ],
+      "uri": "kitsu:381731"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "381732",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "An Ungraceful Stone"
+        }
+      ],
+      "uri": "kitsu:381732"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "381733",
+      "mediaUri": "kitsu:49851",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:381733"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19290-1",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "All That Is in the Heavens and All That Is in the Earth"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "天にあるもの 地にあるもの"
+        }
+      ],
+      "uri": "anizip:19290-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19290-2",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Roses That Bloom in Safar"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サファルに咲く薔薇"
+        }
+      ],
+      "uri": "anizip:19290-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19290-3",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Undying Flame"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "消しえぬ炎"
+        }
+      ],
+      "uri": "anizip:19290-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19290-4",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Otchigin"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "炉の主[オッチギン]"
+        }
+      ],
+      "uri": "anizip:19290-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19290-5",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Snake Shows Its Colors, Man Hides His Colors"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "蛇のまだらは外側に 人のまだらは内側に"
+        }
+      ],
+      "uri": "anizip:19290-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19290-6",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Mergen People"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "メルゲンの民"
+        }
+      ],
+      "uri": "anizip:19290-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19290-7",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Brothers"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "兄弟"
+        }
+      ],
+      "uri": "anizip:19290-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19290-8",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Great Khatun Boraqchin"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "大カトゥン ボラクチン"
+        }
+      ],
+      "uri": "anizip:19290-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19290-9",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Tengri"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "天[テングリ]"
+        }
+      ],
+      "uri": "anizip:19290-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19290-10",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Wisdom"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "知恵"
+        }
+      ],
+      "uri": "anizip:19290-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19290-11",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T14:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Ungraceful Stone"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "不器用な石"
+        }
+      ],
+      "uri": "anizip:19290-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19290-12",
+      "mediaUri": "anizip:19290",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T14:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19290-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82941755",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82941755"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82941756",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82941756"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82941757",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82941757"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82941758",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82941758"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82941759",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82941759"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82941760",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82941760"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82941761",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82941761"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82941762",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82941762"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82941763",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82941763"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82941764",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82941764"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82941765",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82941765"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82941766",
+      "mediaUri": "nf:82941737-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:82941766"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "kitsu:381722",
+        "b": "anizip:19290-1"
+      },
+      {
+        "a": "kitsu:381723",
+        "b": "anizip:19290-2"
+      },
+      {
+        "a": "kitsu:381724",
+        "b": "anizip:19290-3"
+      },
+      {
+        "a": "kitsu:381725",
+        "b": "anizip:19290-4"
+      },
+      {
+        "a": "kitsu:381726",
+        "b": "anizip:19290-5"
+      },
+      {
+        "a": "kitsu:381727",
+        "b": "anizip:19290-6"
+      },
+      {
+        "a": "kitsu:381728",
+        "b": "anizip:19290-7"
+      },
+      {
+        "a": "kitsu:381729",
+        "b": "anizip:19290-8"
+      },
+      {
+        "a": "kitsu:381730",
+        "b": "anizip:19290-9"
+      },
+      {
+        "a": "kitsu:381731",
+        "b": "anizip:19290-10"
+      },
+      {
+        "a": "kitsu:381732",
+        "b": "anizip:19290-11"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:190569",
+        "whole": "cr:GT00378078"
+      }
+    ],
+    "together": [
+      [
+        "anilist:190569",
+        "kitsu:49851",
+        "mal:61483",
+        "offline:mal-61483",
+        "anizip:19290"
+      ]
+    ]
+  },
+  "name": "Jaadugar: A Witch in Mongolia",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "190569",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Jaadugar: A Witch in Mongolia"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Tenmaku no Jaadugar"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "天幕のジャードゥーガル"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:190569"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49851",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Jaadugar: A Witch in Mongolia"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tenmaku no Jaadugar"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "天幕のジャードゥーガル"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49851"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61483",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jaadugar: A Witch in Mongolia"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tenmaku no Jaadugar"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61483"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-61483",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tenmaku no Jaadugar"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61483"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19290",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jaadugar: A Witch in Mongolia"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "天幕のジャードゥーガル"
+        }
+      ],
+      "uri": "anizip:19290"
+    },
+    {
+      "id": "GT00378078",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378078"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "82941737-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jaadugar: A Witch in Mongolia"
+        }
+      ],
+      "uri": "nf:82941737-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7cb4c99eac82ce74ee41be7775402ecb9174ff55c80b78b4269dfb7dc186f697",
+      "221af0368e7ff796c05067f68a22ac026883fd349e147985816948dd5ba71c09",
+      "c58850c06dd88c0a6e4fd5ad6169a6d86db9fd5d05db5c33d10b5a88ce240e47",
+      "f63c52eceec2c90e82a5d22fb8c431b875d6f54d49cfd59bcad0e79924346c8c",
+      "81ee519a37c3a7ef5d41fcc58aeb808245b101691202c9e4241f023c935cf50c",
+      "2ab4ce07761627bb2622fa63e34e720435821992ac7f355066f8aae068f95379",
+      "b532936fe0291fe0863361fe2a5eefc55f601c320a36819edecc9a1f7d5a2f95"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:190569,kitsu:49851,mal:61483,offline:mal-61483)"
+  },
+  "why": "Jaadugar: A Witch in Mongolia (Tenmaku no Jaadugar) is a 12 episode Summer 2026 run that aired 2026-07-04 to 2026-09-12, with episodes 1 and 2 broadcast together on the first day. anilist:190569, kitsu:49851, mal:61483 and offline:mal-61483 are one run: anilist gives mal:61483, kitsu gives anilist:190569, offline gives all three, and anilist, kitsu and mal carry the same 2026-07-04 start with 12 episodes, kitsu ending on 2026-09-12 as anilist does. anizip:19290 is the same run: it maps to mal:61483 and anilist:190569, lists 12 episodes, and its first and last fall on 2026-07-04 and 2026-09-12, the run's own dates. cr:GT00378078 is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Episodes 1 to 11 pair kitsu to anizip on identical non-generic titles, from All That Is in the Heavens and All That Is in the Earth to An Ungraceful Stone; episode 12 is untitled on both sides and is not paired. The Netflix season nf:82941737-1 lists 12 episodes titled Episode 1 to Episode 12 with no dates, and a matching count alone places nothing, so it is left unsettled."
+}

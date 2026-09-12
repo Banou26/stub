@@ -1,0 +1,1012 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard row was nf:82736186-1: it carries SAME_AS ids to every member but has no dates, placeholder titles after episode 1 and a count of 11 that matches no other row, so it was left unasserted and the run flagged. kitsu:50519 lists 16 untitled, undated episodes, so no kitsu episode could be paired either. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63418",
+      "mediaUri": "anilist:207254",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63418",
+      "mediaUri": "kitsu:50519",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207254",
+      "mediaUri": "kitsu:50519",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63418",
+      "mediaUri": "offline:mal-63418",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207254",
+      "mediaUri": "offline:mal-63418",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50519",
+      "mediaUri": "offline:mal-63418",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63418",
+      "mediaUri": "anizip:19877",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207254",
+      "mediaUri": "anizip:19877",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207254",
+      "mediaUri": "jw:531525-570049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19877",
+      "mediaUri": "jw:531525-570049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50519",
+      "mediaUri": "jw:531525-570049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63418",
+      "mediaUri": "jw:531525-570049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82736186-1",
+      "mediaUri": "jw:531525-570049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63418",
+      "mediaUri": "jw:531525-570049",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207254",
+      "mediaUri": "nf:82736186-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19877",
+      "mediaUri": "nf:82736186-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50519",
+      "mediaUri": "nf:82736186-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63418",
+      "mediaUri": "nf:82736186-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63418",
+      "mediaUri": "nf:82736186-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405002",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405002"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405003",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405003"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405004",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405004"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405005",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405005"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405006",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405006"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405007",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405007"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405008",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405008"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405009",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405009"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405010",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405010"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405011",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405011"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405012",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405012"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405013",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405013"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405014",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405014"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "405015",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405015"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "405016",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405016"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "405017",
+      "mediaUri": "kitsu:50519",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405017"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19877-1",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-07-07T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Small Three"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "SMALL THREE"
+        }
+      ],
+      "uri": "anizip:19877-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19877-2",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-07-14T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Multiverse"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "MULTIVERSE"
+        }
+      ],
+      "uri": "anizip:19877-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19877-3",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-07-21T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Aliens"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ALIENS"
+        }
+      ],
+      "uri": "anizip:19877-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19877-4",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-07-28T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mr. Segami"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "MR. SEGAMI"
+        }
+      ],
+      "uri": "anizip:19877-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19877-5",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-08-04T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Rebellion"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "REBELLION"
+        }
+      ],
+      "uri": "anizip:19877-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19877-6",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-08-11T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Game On!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "GAME ON!"
+        }
+      ],
+      "uri": "anizip:19877-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19877-7",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-08-18T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Counterattack"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "COUNTERATTACK"
+        }
+      ],
+      "uri": "anizip:19877-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19877-8",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-08-25T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Strangers"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "THE STRANGERS"
+        }
+      ],
+      "uri": "anizip:19877-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19877-9",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-09-01T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Strong Men"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "THE STRONG MEN"
+        }
+      ],
+      "uri": "anizip:19877-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19877-10",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-09-08T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Time Is Up"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "TIME IS UP"
+        }
+      ],
+      "uri": "anizip:19877-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19877-11",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-09-15T15:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "We Are Thunder 3!!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "WE ARE THUNDER 3!!"
+        }
+      ],
+      "uri": "anizip:19877-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19877-12",
+      "mediaUri": "anizip:19877",
+      "origin": "anizip",
+      "releaseDate": "2026-09-22T15:45:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19877-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10466526",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "SMALL THREE"
+        }
+      ],
+      "uri": "jw:10466526"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10466533",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "MULTIVERSE"
+        }
+      ],
+      "uri": "jw:10466533"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10466534",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "ALIENS"
+        }
+      ],
+      "uri": "jw:10466534"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10466535",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "MR. SEGAMI"
+        }
+      ],
+      "uri": "jw:10466535"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10466536",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "REBELLION"
+        }
+      ],
+      "uri": "jw:10466536"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10466537",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "jw:10466537"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10466538",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "jw:10466538"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10466539",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "jw:10466539"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10466540",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "jw:10466540"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10466541",
+      "mediaUri": "jw:531525-570049",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "jw:10466541"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82764610",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "SMALL THREE"
+        }
+      ],
+      "uri": "nf:82764610"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82764611",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82764611"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82764612",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82764612"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82764613",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82764613"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82764614",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82764614"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82764615",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82764615"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82764616",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82764616"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82764617",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82764617"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82764618",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82764618"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82764619",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82764619"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82764620",
+      "mediaUri": "nf:82736186-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82764620"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "jw:10466526",
+        "b": "anizip:19877-1"
+      },
+      {
+        "a": "jw:10466533",
+        "b": "anizip:19877-2"
+      },
+      {
+        "a": "jw:10466534",
+        "b": "anizip:19877-3"
+      },
+      {
+        "a": "jw:10466535",
+        "b": "anizip:19877-4"
+      },
+      {
+        "a": "jw:10466536",
+        "b": "anizip:19877-5"
+      }
+    ],
+    "together": [
+      [
+        "anilist:207254",
+        "kitsu:50519",
+        "mal:63418",
+        "offline:mal-63418",
+        "anizip:19877",
+        "jw:531525-570049"
+      ]
+    ]
+  },
+  "name": "Thunder 3",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "207254",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 09 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Thunder 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Thunder 3"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "サンダー３"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:207254"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "50519",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Thunder 3"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "サンダー3"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50519"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63418",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Thunder 3"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63418"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63418",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Thunder 3"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63418"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19877",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Thunder 3"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サンダー3"
+        }
+      ],
+      "uri": "anizip:19877"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "531525-570049",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:531525-570049"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82736186-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Thunder 3"
+        }
+      ],
+      "uri": "nf:82736186-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ef175efbdfa9d33e990f7d9f55a471a12797367ba90ce7323cb9638f6d428030",
+      "95c83edf83830ebb4fb8c9bebac5d9ce6e1c19356d956118ecb5da7981424624",
+      "99f3fb0ba2493ab01958550a1aa3251dc3f4c57801088e45ac2ffb404830dba4",
+      "a93df2616155d2fef8fce3ecc2eae86dbd7bbcfd801e53ae330702606d285b71",
+      "26168a40190b7c5b89f8ff684ce8fb9675d2eff6b2fdf0bcc31caf49593ca244",
+      "a9ff39bed8248c4bdc83f83e131fea764ca37a5e5999e78e360fc0d135076984",
+      "73a4f7ad111ba316036e134d962b65f811471e38d6b1dce4a1de931fc662af1a",
+      "eb69c247c4074c3d628977a1f894cba374e7ec38dffba1c49f88f87fd7f5bebd",
+      "633eab8c0615b0243bc850c0bca997e8fa2642115ae736c41f2769dc32a2c79b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:207254,kitsu:50519,mal:63418,offline:mal-63418)"
+  },
+  "why": "Thunder 3, a summer 2026 TV run still releasing (anilist start 2026-07-09, last listed episode 2026-09-22), keyed on anilist:207254 with mal, kitsu and offline as members. anizip:19877 is the same run: it maps SAME_AS to both mal:63418 and anilist:207254 and lists 12 episodes, the same count mal:63418 gives. jw:531525-570049 is the same run: it maps SAME_AS to every member and to anizip:19877, and its ten listed episodes are the first ten of the twelve, with episodes 1 to 5 carrying the exact titles SMALL THREE, MULTIVERSE, ALIENS, MR. SEGAMI and REBELLION that anizip:19877 gives for the same numbers. Those five JustWatch episodes are paired one to one with the anizip episodes of the same titles; the JustWatch episodes 6 to 10 are placeholders (Episode 6 and so on) and are paired with nothing. nf:82736186-1 is left unsettled: it has no episode dates, its episode titles past the first are placeholders, and its count of 11 matches neither the 12 of mal:63418 and anizip:19877 nor the 16 of kitsu:50519, so nothing places it."
+}

@@ -1,0 +1,653 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "One non-member row and it is a title collision on the word Perfect. The members themselves disagree on the count (kitsu 22, offline 12, anilist and mal none), but they are already one address so nothing rested on it. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63514",
+      "mediaUri": "anilist:213666",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63514",
+      "mediaUri": "kitsu:50769",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213666",
+      "mediaUri": "kitsu:50769",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213666",
+      "mediaUri": "offline:anilist-213666",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63514",
+      "mediaUri": "offline:mal-63514",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50769",
+      "mediaUri": "offline:mal-63514",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213666",
+      "mediaUri": "nf:80991133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50769",
+      "mediaUri": "nf:80991133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63514",
+      "mediaUri": "nf:80991133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-213666",
+      "mediaUri": "nf:80991133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63514",
+      "mediaUri": "nf:80991133",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404183",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404183"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404184",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404184"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404185",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404185"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404186",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404186"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404187",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404187"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404188",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404188"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404189",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404189"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404190",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404190"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404191",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404191"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404192",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404192"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404193",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404193"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404194",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404194"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404195",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404195"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404196",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404196"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404197",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404197"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404198",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404198"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404199",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404199"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404200",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404200"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404201",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404201"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404202",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404202"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404203",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404203"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404204",
+      "mediaUri": "kitsu:50769",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404204"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81250655",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Big Changes"
+        }
+      ],
+      "uri": "nf:81250655"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81250657",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Opening Day"
+        }
+      ],
+      "uri": "nf:81250657"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81250658",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Day at Cortez"
+        }
+      ],
+      "uri": "nf:81250658"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81250659",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Best Laid Plans"
+        }
+      ],
+      "uri": "nf:81250659"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81250660",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Head-to-Head"
+        }
+      ],
+      "uri": "nf:81250660"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81250661",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Qualifier"
+        }
+      ],
+      "uri": "nf:81250661"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81250662",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sleepover"
+        }
+      ],
+      "uri": "nf:81250662"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81250663",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Uninvited Guests"
+        }
+      ],
+      "uri": "nf:81250663"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81250664",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Training Day"
+        }
+      ],
+      "uri": "nf:81250664"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81250665",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sarah’s Bet"
+        }
+      ],
+      "uri": "nf:81250665"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81250666",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Family Feud"
+        }
+      ],
+      "uri": "nf:81250666"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81250667",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ready for Battle"
+        }
+      ],
+      "uri": "nf:81250667"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81250668",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hillside Part One"
+        }
+      ],
+      "uri": "nf:81250668"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81250669",
+      "mediaUri": "nf:80991133",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hillside Part Two"
+        }
+      ],
+      "uri": "nf:81250669"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:213666",
+        "nf:80991133"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:213666",
+        "kitsu:50769",
+        "mal:63514",
+        "offline:anilist-213666",
+        "offline:mal-63514"
+      ]
+    ],
+    "unrelated": [
+      "nf:80991133"
+    ]
+  },
+  "name": "Perfect Addiction",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213666",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Perfect Addiction"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Perfect Addiction"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "パーフェクトアディクション"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213666"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50769",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-31",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Perfect Addiction"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50769"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "63514",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Perfect Addiction"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63514"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "anilist-213666",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Perfect Addiction"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:anilist-213666"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63514",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Perfect Addiction"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63514"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80991133",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2020-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Perfect Landing"
+        }
+      ],
+      "uri": "nf:80991133"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a06f86f3d7b9b5ce7e4db3687837aab4368ccb6e45e2ad9f180541e4d35cfefd",
+      "186eb7b92035311c4c8034a0e24fcaed69a8991fb68968479d40cf3a20f4db93",
+      "2986c547badc66fb34d70a1c80e021338290a749dbe65b72bb3298419397f343",
+      "0a0dfaa52e9cef72e4bc003836dc61a755daaf819a86b5e6a0195edd9465d909",
+      "d5376fd2c1fe71c406beefd5f8b75984d537df5259dc0399ac5e9fc2812c314c",
+      "17898b27347649b3db044fe41530ea9cff1d9f0138547124e4eeed2b3545a732",
+      "c4b2f385bc51bf65e6d846b1a6b29fecf9f7594e7a83d4cbb98927be3e53e055",
+      "de072fb9ea2d13c324fd14afb2aba1381dcfd1535eac3b5c8552389298ec384a",
+      "0786a0af99085ff1d39e91c3037f7a12e3e38eb09dc845b80ad9e6dbb5a099fc",
+      "dd13987eea6b2af304191a9c27c58ee0be27f4f78ae93338d0cde7d72a6c89d4",
+      "295c19ca814c702a94d6d00da6051e7a4a22e88008a118c20c58f8520e88f149",
+      "4c8c20029a2cf8bdecca97808de16860b7c7128f315976a3549f396890c5f1d2",
+      "b5de8356c89a1c33a423153704ea6f6a7496e51d0dd8d20663a549860ee09268",
+      "4792e0ef096254070fb5ad26338f2b7f0554962ce862ba408cc64e83b7e09221",
+      "9dd912e1cff4262b4edb0d54f8fabb107934153cec0a411bb31c085f20f45d83",
+      "a3bd8ed525f738f72cd8175ef50013209627239a4bbef10a54d1d8a96d0e9592",
+      "46a7db1f8098a66e328675154e624656ddf58acffc50bf0973f5ef2548611a98",
+      "017ad5b11914b2021dd1bd456ec81056fb5eb0d466f4f996f01e937b53f98e90",
+      "776c7de2301ba10a4f51fae84ae2cb793ae0b4ac291bc746303d5dd36111c9fa",
+      "772c9c7ffd5728a37a1a79171cacb0bad66dbbd12560428296300b6b54112d0b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213666,kitsu:50769,mal:63514,offline:anilist-213666,offline:mal-63514)"
+  },
+  "why": "The run is the summer 2026 ONA Perfect Addiction, starting 2026-07-08 on anilist 213666 and mal 63514, which map to each other first-party, with kitsu 50769 and the two offline rows on the same address. nf:80991133 is unrelated: it is My Perfect Landing, a 2020 live action teen series whose fourteen episodes are Big Changes through Hillside Part Two, and it shares nothing with this run but the word Perfect, so the SAME_AS claims it carries on every member are wrong."
+}

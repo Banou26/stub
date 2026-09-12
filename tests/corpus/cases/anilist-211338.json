@@ -1,0 +1,109 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: only the three member rows exist, with first-party id agreement and a matching start date. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64095",
+      "mediaUri": "anilist:211338",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64095",
+      "mediaUri": "offline:mal-64095",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:211338",
+        "mal:64095",
+        "offline:mal-64095"
+      ]
+    ]
+  },
+  "name": "Harem-tou e Youkoso!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "211338",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 31 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Harem-tou e Youkoso!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ハーレム島へようこそ！"
+        }
+      ],
+      "type": "OVA",
+      "uri": "anilist:211338"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64095",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-31",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Harem Shima e Youkoso!"
+        }
+      ],
+      "type": "OVA",
+      "uri": "mal:64095"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64095",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Harem Shima e Youkoso!"
+        }
+      ],
+      "type": "OVA",
+      "uri": "offline:mal-64095"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9e6936b0db519bebc97c1d5b7567b2ac517af811dd67f99a98c2ff34a4a1d20d",
+      "94338cc6a1d173d07714b4e110d4d451af4e4589f4f214ad2a0bf1ad5928678f",
+      "daf52791147819aeae68a3a6eb4f66cf4a18c318d4fabe1421afe43299489aab"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:211338,mal:64095,offline:mal-64095)"
+  },
+  "why": "The run is Harem-tou e Youkoso!, a single-episode summer 2026 OVA that MyAnimeList and the offline database list under the reading Harem Shima e Youkoso!. The three rows anilist:211338, mal:64095 and offline:mal-64095 are one run: AniList and the offline entry both carry a SAME_AS handle to mal:64095, AniList and MyAnimeList agree on the 2026-07-31 start date, and all three agree on the OVA type and the summer 2026 season. No other source returned a row for this title, so there is nothing else to place."
+}

@@ -1,0 +1,1646 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row carries SAME_AS claims to every member but is a different work, a food taste test clip show, so it had to be marked unrelated against its own handles. Episode 3 was left unpaired because the two titles differ in capitalisation. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:61546",
+      "mediaUri": "anilist:213847",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61546",
+      "mediaUri": "kitsu:49866",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213847",
+      "mediaUri": "kitsu:49866",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213847",
+      "mediaUri": "offline:anilist-213847",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61546",
+      "mediaUri": "offline:mal-61546",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49866",
+      "mediaUri": "offline:mal-61546",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213847",
+      "mediaUri": "jw:536586-574458",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49866",
+      "mediaUri": "jw:536586-574458",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61546",
+      "mediaUri": "jw:536586-574458",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-213847",
+      "mediaUri": "jw:536586-574458",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61546",
+      "mediaUri": "jw:536586-574458",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213847",
+      "mediaUri": "nf:83081630",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49866",
+      "mediaUri": "nf:83081630",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61546",
+      "mediaUri": "nf:83081630",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-213847",
+      "mediaUri": "nf:83081630",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61546",
+      "mediaUri": "nf:83081630",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406710",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A New Threat"
+        }
+      ],
+      "uri": "kitsu:406710"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "406711",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Hidden Weapon"
+        }
+      ],
+      "uri": "kitsu:406711"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406712",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Voice From the Past"
+        }
+      ],
+      "uri": "kitsu:406712"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406713",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Nawaam Attacks"
+        }
+      ],
+      "uri": "kitsu:406713"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406714",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Storm of Violence"
+        }
+      ],
+      "uri": "kitsu:406714"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406715",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Light of the Force"
+        }
+      ],
+      "uri": "kitsu:406715"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406716",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Jedi Strike Back"
+        }
+      ],
+      "uri": "kitsu:406716"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "406717",
+      "mediaUri": "kitsu:49866",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Ninth Jedi"
+        }
+      ],
+      "uri": "kitsu:406717"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10544642",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A New Threat"
+        }
+      ],
+      "uri": "jw:10544642"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10560086",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Hidden Weapon"
+        }
+      ],
+      "uri": "jw:10560086"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10560087",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Voice from the Past"
+        }
+      ],
+      "uri": "jw:10560087"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10560088",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nawaam Attacks"
+        }
+      ],
+      "uri": "jw:10560088"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10560089",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Storm of Violence"
+        }
+      ],
+      "uri": "jw:10560089"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10560090",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Light of the Force"
+        }
+      ],
+      "uri": "jw:10560090"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10560091",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Jedi Strike Back"
+        }
+      ],
+      "uri": "jw:10560091"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10560092",
+      "mediaUri": "jw:536586-574458",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ninth Jedi"
+        }
+      ],
+      "uri": "jw:10560092"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "83046719",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "3 Italian Chefs Taste Test Supermarket Marinara Sauce | Epicurious"
+        }
+      ],
+      "uri": "nf:83046719"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "83112711",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black: We Try Each Other's Barbecue | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112711"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "83129822",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Men vs Women: We Try Each Other's Fried Chicken | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83129822"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "83057432",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Anna Cathcart Tries Korean Food | Food & Wine"
+        }
+      ],
+      "uri": "nf:83057432"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "83112724",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Korean vs Black: We Try Each Other's Fried Chicken | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112724"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "83143295",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Asian vs Black: We Try Each Other's Potato Salad | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83143295"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "83112727",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs Italian: We Try Each Other's Spaghetti | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112727"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "83112881",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black vs Latino vs Asian: We Try Each Other's Steak | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112881"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "83155678",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Asian vs Black: We Try Each Other's Spiciest Dishes Part 2 | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83155678"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "83093113",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Boxed Mac & Cheese | Epicurious"
+        }
+      ],
+      "uri": "nf:83093113"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "83112728",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs. Black: We Try Each Other's Steaks | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112728"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "83166426",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Foodies vs Picky Eaters: We Try Each Other's Favorite Dishes | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83166426"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "83058623",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Top Chef Judges Try Southern Food (Supermarket vs Small Batch) | Food & Wine"
+        }
+      ],
+      "uri": "nf:83058623"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "83112731",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mexican vs Black: We Try Each Other's Tacos | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112731"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "83180149",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hood vs Suburbs: Steak | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83180149"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "83112758",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs White: We Try Each Other's Mac & Cheese | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112758"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "83112868",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs Black: We Try Each Others Christmas Plates: ALL STARS | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112868"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "83093115",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Boxed Brownie | Epicurious"
+        }
+      ],
+      "uri": "nf:83093115"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "83112846",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jewish vs Black: We Try Each Other's Brisket | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112846"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "83058680",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tina Fey, Will Forte & Colman Domingo Try Italian vs. American Food | Food & Wine"
+        }
+      ],
+      "uri": "nf:83058680"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "83112847",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs White: We Try Each Other's Turkey Plates | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112847"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "83112849",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "UK vs US: We Try Each Other's Fish & Chips | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112849"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "83112869",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chinese vs Black: We Try Each Other's Fried Rice | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112869"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "83093116",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Bag of Frozen French Fries | Epicurious"
+        }
+      ],
+      "uri": "nf:83093116"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "83112850",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black: We Try Each Other's Potato Salad | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112850"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "83058624",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Millie Bobby Brown & Louis Partridge Try English vs. American Food | Food & Wine"
+        }
+      ],
+      "uri": "nf:83058624"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "83112851",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black: We Try Each Others Struggle Meals | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112851"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "83112852",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs Mexican: We Try Each Other's Enchiladas | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112852"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "83112870",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Filipino vs Black: We Try Each Other's Smothered Chicken | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112870"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "83093117",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Box of Frozen Dumplings | Epicurious"
+        }
+      ],
+      "uri": "nf:83093117"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "83112853",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chinese vs Black: We Try Each Other's Ramen | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112853"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "83112854",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black: Grandmas Try Each Other's Cheesecake | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112854"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "83112872",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Aunt vs Auntie: We Try Each Other's Shrimp & Grits | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112872"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "83093118",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Frozen Pizza | Epicurious"
+        }
+      ],
+      "uri": "nf:83093118"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "83112855",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Korean vs Black: We Try Each Other's Oxtails | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112855"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "83112856",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black: We Try Each Other's Gumbo | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112856"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "83112873",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Young vs Old: We Try Each Other’s Catfish Plates | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112873"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "83093125",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Instant Ramen | Epicurious"
+        }
+      ],
+      "uri": "nf:83093125"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "83112858",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Latino vs Black: We Try Each Other's Struggle Meals | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112858"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "83112859",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ethiopian vs Eritrean: We Try Each Other's Injera & Stew | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112859"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "83112875",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs. White: We Try Each Other's Hot Dogs | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112875"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "83093120",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Boxed Chocolate Chip Cookie Mix | Epi"
+        }
+      ],
+      "uri": "nf:83093120"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "83112860",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Black vs. Korean: We Try Each Other's Barbecue Chicken feat. Anderson .Paak & Yvette Nicole Brown | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112860"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "83112861",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jamaican vs Black: We Try Each Other's Oxtail | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112861"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "83112878",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Indian vs African: We Try Each Others Curry | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112878"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "83093121",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Boxed Pancake Mix | Epicurious"
+        }
+      ],
+      "uri": "nf:83093121"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "83112863",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nigerian vs Ghanaian: We Try Each Other's Fufu and Soup/Stew | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112863"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "83112865",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black vs Latino vs Asian: We Try Each Other's Spiciest Dishes | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112865"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "83112880",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black vs Latino vs Asian: We Try Each Other's Rice Dishes | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83112880"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "83093122",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Frozen Burrito | Epicurious"
+        }
+      ],
+      "uri": "nf:83093122"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "83115005",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Italian vs Black: We Try Each Other's Spaghetti | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83115005"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "83115006",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Men vs Women: We Try Each Other's Sandwiches | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83115006"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "83115008",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Asian vs Black: We Try Each Other's Noodle Dishes | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83115008"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "83093132",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Hot Dog | Epicurious"
+        }
+      ],
+      "uri": "nf:83093132"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "83115007",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Young Ho's vs Old Ho's: We Try Each Other's Fish Fry | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83115007"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "83093131",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Veggie Burger | Epicurious"
+        }
+      ],
+      "uri": "nf:83093131"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "83193074",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "White vs Black: We Try Each Other's Chili | Cocoa Butter"
+        }
+      ],
+      "uri": "nf:83193074"
+    },
+    {
+      "episodeNumber": 28,
+      "id": "83093133",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Salsa | Epicurious"
+        }
+      ],
+      "uri": "nf:83093133"
+    },
+    {
+      "episodeNumber": 29,
+      "id": "83093141",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Frozen Burger | Epicurious"
+        }
+      ],
+      "uri": "nf:83093141"
+    },
+    {
+      "episodeNumber": 30,
+      "id": "83093139",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Chocolatiers Blind Taste Test Every Chocolate Bar | Epicurious"
+        }
+      ],
+      "uri": "nf:83093139"
+    },
+    {
+      "episodeNumber": 31,
+      "id": "83093123",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Boxed Stuffing | Epicurious"
+        }
+      ],
+      "uri": "nf:83093123"
+    },
+    {
+      "episodeNumber": 32,
+      "id": "83093140",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Microwave Popcorn | Epicurious"
+        }
+      ],
+      "uri": "nf:83093140"
+    },
+    {
+      "episodeNumber": 33,
+      "id": "83093124",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Coffee Experts Blind Taste Test Every Supermarket Coffee | Epicurious"
+        }
+      ],
+      "uri": "nf:83093124"
+    },
+    {
+      "episodeNumber": 34,
+      "id": "83093143",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Ranch Dressing | Epicurious"
+        }
+      ],
+      "uri": "nf:83093143"
+    },
+    {
+      "episodeNumber": 35,
+      "id": "83093128",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Frozen Chicken Nuggets | Epicurious"
+        }
+      ],
+      "uri": "nf:83093128"
+    },
+    {
+      "episodeNumber": 36,
+      "id": "83093126",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Potato Chip | Epicurious"
+        }
+      ],
+      "uri": "nf:83093126"
+    },
+    {
+      "episodeNumber": 37,
+      "id": "83093135",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Marinara Sauce | Epicurious"
+        }
+      ],
+      "uri": "nf:83093135"
+    },
+    {
+      "episodeNumber": 38,
+      "id": "83093127",
+      "mediaUri": "nf:83081630",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pro Chefs Blind Taste Test Every Beef Jerky | Epicurious"
+        }
+      ],
+      "uri": "nf:83093127"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:213847",
+        "nf:83081630"
+      ]
+    ],
+    "episodePairs": [
+      {
+        "a": "kitsu:406710",
+        "b": "jw:10544642"
+      },
+      {
+        "a": "kitsu:406711",
+        "b": "jw:10560086"
+      },
+      {
+        "a": "kitsu:406713",
+        "b": "jw:10560088"
+      },
+      {
+        "a": "kitsu:406714",
+        "b": "jw:10560089"
+      },
+      {
+        "a": "kitsu:406715",
+        "b": "jw:10560090"
+      },
+      {
+        "a": "kitsu:406716",
+        "b": "jw:10560091"
+      },
+      {
+        "a": "kitsu:406717",
+        "b": "jw:10560092"
+      }
+    ],
+    "together": [
+      [
+        "anilist:213847",
+        "kitsu:49866",
+        "mal:61546",
+        "offline:anilist-213847",
+        "offline:mal-61546",
+        "jw:536586-574458"
+      ]
+    ],
+    "unrelated": [
+      "nf:83081630"
+    ]
+  },
+  "name": "Star Wars: Visions Presents - The Ninth Jedi",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "213847",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 05 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Star Wars: Visions Presents - The Ninth Jedi"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Star Wars: Visions - Kyuuninme no Jedi"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "Star Wars：ビジョンズ 九人目のジェダイ"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213847"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "49866",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Star Wars: Visions Presents - The Ninth Jedi"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Star Wars: Visions - Kyuuninme no Jedi"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "Star Wars：ビジョンズ 九人目のジェダイ"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:49866"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "61546",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Star Wars: Visions Presents - The Ninth Jedi"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Star Wars: Visions - Kyuuninme no Jedi"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:61546"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "anilist-213847",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Star Wars: Visions - Kyuuninme no Jedi"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:anilist-213847"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "id": "mal-61546",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Star Wars: Visions Presents - The Ninth Jedi"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-61546"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 8,
+      "id": "536586-574458",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:536586-574458"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "83081630",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Taste Wars"
+        }
+      ],
+      "uri": "nf:83081630"
+    }
+  ],
+  "source": {
+    "answers": [
+      "dc339dda8b193e48e12ce8e8a9a558b605c412fb0dde814df6a133da1ccd0be6",
+      "89de0eae01e6ee6eb5678f373724921e899d42f124063a7412de328796aedabe",
+      "352a56365974e5ed03a0de82482787d000f18213270e82415e5e28fadc2e272d",
+      "dd6a01f223f3a3cd4880f8ccf1c9853863fb632597eb09b5bc87d9443e0aa0c9",
+      "34b354372a364203350a21d4a2b1e1096b2a5a8d38c251a32ae40a2668cef2e9",
+      "b6dd5e3cd74ed700c0dd716b2bdbb5cd420d2ba5cd394472fea800ad189a384b",
+      "1bd84f66665c49e208bc93bfbb064f9a499c54cccc7aa1085048c40b04243db0",
+      "0ce820bda06c8dec8571037af2d1908b973f0ac1d0e739c8e4c5bf21d8580ba7",
+      "920083e857fc372408e9e1e9f25c0b04d8a73dd34bda778f11b4bccf6cb7bee3",
+      "73f1ab41df849e49e99540daeb3b06a6e1b8e34c4b989a6eb9db96798dd31524",
+      "bfe37887e18679876ac366ac560ae138fd3554aed64ae3f54872f0f3ca7bfb97",
+      "f7118728941c4237160dfe00c9cb985c39f148a882d36b9147099c98fbe42f24",
+      "5e83364afb45cc91b728697771fbcbcf0fbf773d2318d0ab7b29fb88b2e1f47f",
+      "b2ab689fa77ab18267f1f7e6fdec6127a2d37c2d2060e6facb35612ffde80697",
+      "aa4740332dd0f7cfaa9d0229819ef855776dbf61b990ebf5266a7138e5d03c01",
+      "4480b6897b82fc27170dd042ba782974f4b17aed2c7830138290b634bb0acf3d",
+      "d06756be88cc15e3c9a71fb270bd9e5d1f885ed50d9fd24848bad7d596279168",
+      "86d8ca8b4e4192c676b41f15be35cd9696a2054f83941340c1faedca1d194865",
+      "aebd8c4d7dabc07093dd7385d4632cfe061c90edc9d4298427b6d24c41f4a69c",
+      "9ac658e84095559ee1337f6fcb06aca7e3565c4fc43a1a2e3e051cfd5aa81328",
+      "07ff21fb784d0da400e36fcd9ac79bbac3a6f994a0206737fd0f025db2482c3d",
+      "ef718e99f39013ccab4486a2f20ffea65df81f5926b5a720753595c052114f93",
+      "703fe552696518a3da636bd51a10990645b69b0acd21aacedeb4b2a385a409ac",
+      "de0f8d91b994e4e23771f69544a521ff4750136c3c8c5234ef32373f376684fb",
+      "030650d41637009421970a77d48f5117ce4f71a36056fa6dcd35468121a5933f",
+      "8c4e8cde4151f1f19b33aca0eca628fb98dc506bfd4855fb68eb8f0b752364cb",
+      "fee993f41b05acdda04943dd1f91e9d89300655f81212a6fa81cca99679637d0",
+      "abfecf232ee80383016334023fbd540f511db04102686907b492da7ba9e11ca6",
+      "c2712abc93ea933a6363f4199a1833d10cdce9c3ec41b52e8a7682d1ecf84a6d",
+      "8f80d37246082da0362d90c77cf09a6d5ba1eea7133a75d1e89bb099aebf125f",
+      "e707913cc43e345b247bfc15247cb7d6f72c7b31b2e7a8978f7b174437ade4c0",
+      "d367d02d33535b4aa12cab4cbefecbf9378ed57fb5b85bed7a3132427c89e29e",
+      "a0b02267b4f8d5fd105bf62507c7f5c434184635dd03a04092bc29e1e0c5f2ca",
+      "bd3e563ffbdec45f999c4e75bbfd7fc67197eb4842eb4cdbce041e2e9a58a797",
+      "229ef14382bfee1335ef9cb782b50935bfe326fd4f38297f333e8b6d304d6a5f",
+      "0baa3428d2ae0fdf5cb05ef8d03be3fd5ebfc9a3ba5ea777cacc6c97abac3b9b",
+      "a1683ae014a1dcca09c0d472f0208dbbf4f70088a068071a9f9ce392c7275e8a",
+      "d92cd9165aeb40c9964794da5a5bc16c5f38151016e311f258343eb7395fbd01",
+      "da01495db1b12703a2d6e05c185ac99ac457450d3e9e727013d99a0fa57c6d8f",
+      "99b941dfd74efc29d4e6034b535771094f2aef4786560e083c15cec30816bd3c",
+      "4851e9bfa7daebaa95a04eb845196849b31ab295273e3fbc32466adc266f9d6f",
+      "c72fbc1b83a88bb1cd41ee26fa132337729ecf11dc955840a0a10d34cfc5eb88",
+      "6eba55fd9013b3d0b140e724516071c535ea2d199a0c9224409a15d9be35ef0b",
+      "1cbdbad867d644b53b4662d1ac2a34a41ee59615307113289327209092101056",
+      "3cdaf2b7c4591c6d043785e3e3b379464cb21f0c17a3ec827e21d5a2834d90de",
+      "f7eb75e5bb1d7346969c23573d793f0b4b1445c13b71c0a770ecf1954b1899de",
+      "861d432daf2f19c0276f371a04bc794c4d1bc61bb3ed076c773d9a9708a5f108",
+      "72fdc40ce3db2f21b0b3d85662073d3052575dbce75c01a42b1ec0af5beb82c8",
+      "64d77dd87a1f497e5a3104f1663259380c57b9c484fba359b44897f4b3c2b2b5",
+      "82f4b594812c7010de895efeb7f16ae38e7521e198cfe1baff0051e28055cf78",
+      "049909bdb2e8091a6fe4e0a265661580e70a0ee1e6c92d2af2050368396c37fe",
+      "ab4928565ed4b9c124d2f6191de79629ee9c29eb2e7b26373c7b2e1acd52dafb",
+      "88708635503dbab1571ef7d8c25c6af92aa6f00b2f21e57b666c40f06bb842e8",
+      "f24ac500720a9f9cef2e4895c386b8d2c5e56d0a131f4b400c66c3b25c062f2e",
+      "cc62e9f3c8197d70120f20280a698d7dc2d96f27668be3dc1d67c47d65f6966c",
+      "b81f12d3e69a6edd7c875ab4fca46edae165e18899e4e700e3cc295dc201bc9c",
+      "734fca01507043a45d4e0519937ecd0ba52ce05b695a4c8f5dfc8315b0a04add",
+      "4b968bda2068e8ede3652f8a00c5c9d0ac7b6bb4c570d858af6c052174ec63b4",
+      "112209877b1796df3cf9af4bfdfe2b9dbd82fa653ba9cabcfa4c840a0a7d92ff",
+      "7014537d0ba95fbc290ef5bd92080f1e00acdb01c141448d3904c7b3dbc9bef5",
+      "35c2a30001bd58fc0ff4aed3693abc967b315cf3060cb7da99947641f67d65bb",
+      "6d9d42dad63032626551bdee0eca5616673fb15ab80e1caef344b9393d0ea187",
+      "98bff996496278a8750dad63f43e1e0f48c093c6e2607fbf6a4a5177dc7f0698",
+      "142b821cba7fc6749520708c5a6628debf64df12151a4ebe42e93bdab07faa98",
+      "caada530fbccd3447e71f297a89df3eb7931cc7174898756f2ecf3bc9b708174",
+      "a651ef0a6c96b29195889663f9e17460b3f12f8905941627ec3d5275bc974503",
+      "f93b0b021b1d3bd254fbf86faf0615a651837b72e6fec4c5b5a2d75b64687137",
+      "1748fb200ec95e025594cbe6b984fb6d98b34a624893c27938c51a7630558c8e",
+      "452e431f4c644f7a17259e2994c94df36911ed538128e85814b43e521fb470ea",
+      "f47254524d8ed89961b47fbdc3f7df41e9b9cb9890ce41028306b37e8206c4f9",
+      "b87eeb52442e57353000a2b8b8f3fb7a4b71c00636e5d9fba5145af1e1fd02e4",
+      "8cd0e0fe3576796a9034887d5d2d93a28c93525e8c742053aec66c6dcbe5ad59",
+      "0f7ef30c7e6b59c69240506ea5d8de28978d77567c3738ca9251767020ad84b6",
+      "d4c793ca8b8d9e559283a93ec74b8f370829e1df64f152aa3f1e3e262c4e63eb",
+      "2ec317497cdb4c1571567f775d9b80684c8debb363aabdab86bda6df5b4a4241"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213847,kitsu:49866,mal:61546,offline:anilist-213847,offline:mal-61546)"
+  },
+  "why": "The run is the eight episode Star Wars: Visions ONA spin-off The Ninth Jedi, dated 2026-08-05 with eight episodes on anilist 213847, mal 61546 and kitsu 49866, which map to each other first-party. The JustWatch season jw:536586-574458 is the same run: its episodeCount is 8 like the run's and all eight of its episode titles are the run's, A New Threat through The Ninth Jedi, matching kitsu's list. Its episodes pair with kitsu's on seven exact, non-generic titles; episode 3 is left unpaired because JustWatch writes Voice from the Past against kitsu's Voice From the Past. nf:83081630 is unrelated: it is titled Taste Wars and its episode list is dozens of food taste test videos from Epicurious and Cocoa Butter, so its SAME_AS claim on the members is wrong."
+}

@@ -1,0 +1,1302 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row is the trap here: it claims SAME_AS against all four members, but its title (Tiger and Dragon), its 2005 date and its prologue plus eleven numbered episodes belong to a different work, so it is marked unrelated rather than a container. As in the other summer 2026 runs, anizip and mal put episode 1 a week later than anilist, kitsu and Crunchyroll, so the episode pairing is by title; episodes 8, 10 and 11 differ only in punctuation or a leading article. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378117-GS00378133",
+      "mediaUri": "anilist:186863",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "anilist:186863",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "kitsu:49585",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:186863",
+      "mediaUri": "kitsu:49585",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378117",
+      "mediaUri": "kitsu:49585",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "offline:mal-61048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:186863",
+      "mediaUri": "offline:mal-61048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49585",
+      "mediaUri": "offline:mal-61048",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "anizip:19172",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:186863",
+      "mediaUri": "anizip:19172",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:186863",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49585",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61048",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:186863",
+      "mediaUri": "jw:471316-514816",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19172",
+      "mediaUri": "jw:471316-514816",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49585",
+      "mediaUri": "jw:471316-514816",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "jw:471316-514816",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61048",
+      "mediaUri": "jw:471316-514816",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:186863",
+      "mediaUri": "nf:81642967",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49585",
+      "mediaUri": "nf:81642967",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:61048",
+      "mediaUri": "nf:81642967",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-61048",
+      "mediaUri": "nf:81642967",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "378692",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378692"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "378693",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378693"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "378694",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378694"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "378695",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378695"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "378696",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378696"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "378697",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378697"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "378698",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378698"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "378699",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378699"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "378700",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378700"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "378701",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378701"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "378702",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378702"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "378703",
+      "mediaUri": "kitsu:49585",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:378703"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19172-1",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Cat and the Dragon"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "猫と竜"
+        }
+      ],
+      "uri": "anizip:19172-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19172-2",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Mother Cat and the Girl"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "母猫と少女"
+        }
+      ],
+      "uri": "anizip:19172-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19172-3",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Kittens and the Winged Uncle"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "子猫達と羽のおじちゃん"
+        }
+      ],
+      "uri": "anizip:19172-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19172-4",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Black Cat and the Prince"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黒猫と王子"
+        }
+      ],
+      "uri": "anizip:19172-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19172-5",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The White Cat and the Girl"
+        }
+      ],
+      "uri": "anizip:19172-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19172-6",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Evening of Foxtails"
+        }
+      ],
+      "uri": "anizip:19172-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19172-7",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Return of the Mother Cat"
+        }
+      ],
+      "uri": "anizip:19172-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19172-8",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Life in the Castle Town / The Black Cat and the Adventurous Prince"
+        }
+      ],
+      "uri": "anizip:19172-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19172-9",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The White Cat and the Lazy Girl"
+        }
+      ],
+      "uri": "anizip:19172-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19172-10",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Demon and the Dragon and Mother`s Day"
+        }
+      ],
+      "uri": "anizip:19172-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19172-11",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Final Resting Place"
+        }
+      ],
+      "uri": "anizip:19172-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19172-12",
+      "mediaUri": "anizip:19172",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19172-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378117-GS00378133-GE00378143JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-06-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Cat and the Dragon"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378143JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378117-GS00378133-GE00378144JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Mother Cat and the Girl"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378144JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378117-GS00378133-GE00378145JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-07-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Kittens and the Winged Uncle"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378145JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378117-GS00378133-GE00378146JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-07-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Black Cat and the Prince"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378146JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378117-GS00378133-GE00378147JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-07-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The White Cat and the Girl"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378147JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378117-GS00378133-GE00378148JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-08-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Evening of Foxtails"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378148JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378117-GS00378133-GE00378149JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-08-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Return of the Mother Cat"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378149JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378117-GS00378133-GE00378150JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-08-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Life in the Castle Town | The Black Cat and the Adventurous Prince"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378150JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378117-GS00378133-GE00378151JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-08-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The White Cat and the Lazy Girl"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378151JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378117-GS00378133-GE00378152JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-08-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Demon and the Dragon and Mother's Day"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378152JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00378117-GS00378133-GE00378153JAJP",
+      "mediaUri": "cr:GT00378117-GS00378133",
+      "origin": "cr",
+      "releaseDate": "2026-09-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Final Resting Place"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133-GE00378153JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9480530",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Cat and the Dragon"
+        }
+      ],
+      "uri": "jw:9480530"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10559856",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Mother Cat and the Girl"
+        }
+      ],
+      "uri": "jw:10559856"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10678095",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Kittens and the Winged Uncle"
+        }
+      ],
+      "uri": "jw:10678095"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10678094",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Black Cat and the Prince"
+        }
+      ],
+      "uri": "jw:10678094"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10678097",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The White Cat and the Girl"
+        }
+      ],
+      "uri": "jw:10678097"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10678096",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Evening of Foxtails"
+        }
+      ],
+      "uri": "jw:10678096"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10678101",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Return of the Mother Cat"
+        }
+      ],
+      "uri": "jw:10678101"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10678102",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Life in the Castle Town & the Black Cat and the Adventurous Prince"
+        }
+      ],
+      "uri": "jw:10678102"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10678103",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The White Cat and the Lazy Girl"
+        }
+      ],
+      "uri": "jw:10678103"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10678099",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Demon and the Dragon and Mother's Day"
+        }
+      ],
+      "uri": "jw:10678099"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10678100",
+      "mediaUri": "jw:471316-514816",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Final Resting Place"
+        }
+      ],
+      "uri": "jw:10678100"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81642969",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Prologue"
+        }
+      ],
+      "uri": "nf:81642969"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81642970",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81642970"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81642971",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81642971"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81642972",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81642972"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81642973",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81642973"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81642974",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81642974"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81642975",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81642975"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81642976",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81642976"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81642977",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81642977"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81642978",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81642978"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81642979",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81642979"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81643006",
+      "mediaUri": "nf:81642967",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81643006"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:186863",
+        "nf:81642967"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19172-1",
+        "b": "cr:GT00378117-GS00378133-GE00378143JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378143JAJP",
+        "b": "jw:9480530"
+      },
+      {
+        "a": "anizip:19172-2",
+        "b": "cr:GT00378117-GS00378133-GE00378144JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378144JAJP",
+        "b": "jw:10559856"
+      },
+      {
+        "a": "anizip:19172-3",
+        "b": "cr:GT00378117-GS00378133-GE00378145JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378145JAJP",
+        "b": "jw:10678095"
+      },
+      {
+        "a": "anizip:19172-4",
+        "b": "cr:GT00378117-GS00378133-GE00378146JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378146JAJP",
+        "b": "jw:10678094"
+      },
+      {
+        "a": "anizip:19172-5",
+        "b": "cr:GT00378117-GS00378133-GE00378147JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378147JAJP",
+        "b": "jw:10678097"
+      },
+      {
+        "a": "anizip:19172-6",
+        "b": "cr:GT00378117-GS00378133-GE00378148JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378148JAJP",
+        "b": "jw:10678096"
+      },
+      {
+        "a": "anizip:19172-7",
+        "b": "cr:GT00378117-GS00378133-GE00378149JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378149JAJP",
+        "b": "jw:10678101"
+      },
+      {
+        "a": "anizip:19172-8",
+        "b": "cr:GT00378117-GS00378133-GE00378150JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378150JAJP",
+        "b": "jw:10678102"
+      },
+      {
+        "a": "anizip:19172-9",
+        "b": "cr:GT00378117-GS00378133-GE00378151JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378151JAJP",
+        "b": "jw:10678103"
+      },
+      {
+        "a": "anizip:19172-10",
+        "b": "cr:GT00378117-GS00378133-GE00378152JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378152JAJP",
+        "b": "jw:10678099"
+      },
+      {
+        "a": "anizip:19172-11",
+        "b": "cr:GT00378117-GS00378133-GE00378153JAJP"
+      },
+      {
+        "a": "cr:GT00378117-GS00378133-GE00378153JAJP",
+        "b": "jw:10678100"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:186863",
+        "whole": "cr:GT00378117"
+      }
+    ],
+    "together": [
+      [
+        "anilist:186863",
+        "kitsu:49585",
+        "mal:61048",
+        "offline:mal-61048",
+        "anizip:19172",
+        "cr:GT00378117-GS00378133",
+        "jw:471316-514816"
+      ]
+    ],
+    "unrelated": [
+      "nf:81642967"
+    ]
+  },
+  "name": "The Cat and the Dragon",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "186863",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 27 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Cat and the Dragon"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Neko to Ryuu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "猫と竜"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:186863"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "49585",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-27",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Cat and the Dragon"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Neko to Ryuu"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "猫と竜"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49585"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "61048",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Cat and the Dragon"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Neko to Ryuu"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:61048"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "mal-61048",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Neko to Ryuu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-61048"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19172",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Cat and the Dragon"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "猫と竜"
+        }
+      ],
+      "uri": "anizip:19172"
+    },
+    {
+      "id": "GT00378117",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378117"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00378117-GS00378133",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Cat and the Dragon"
+        }
+      ],
+      "uri": "cr:GT00378117-GS00378133"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "471316-514816",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:471316-514816"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81642967",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2005-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tiger and Dragon"
+        }
+      ],
+      "uri": "nf:81642967"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d82f70135c0558fbcd501a153b89a255e6cba4b7368ac5e840267bb00dd9105e",
+      "16f650caab1f7e7b718a4862ec1cb75ce627fe62f72e6b3ec3fbf4b70310ff2f",
+      "f4319ecfb7b7a72bcc887282d9dc43d2977f58c2a2d2214b2d69799fc6528da6",
+      "1834ca9842f9f67865ed3089f78fa8f0f8457cd9e184538e74a525ef2bc21b56",
+      "b6d889b70ce4748f55a55c7196e502aa57befcc94edfba1fadd26d9b2629725a",
+      "a66177c9594ef12a990adf4f66a999bc7e07c324c759309de56e33b45e35d62f",
+      "b12c4c65fa149916c96a1eae38377a2bdc152636b6222daa3d16c7bf129bbbad",
+      "903d62ac4adb2032de9c349359775b5cddcdd85895720eac172d92f7cb5de208",
+      "a84b1067fee2b8ca16c80097d49459828151f8fcb4e8c16aa6521e4ff1134c30",
+      "20bd8a66a5760143a5cd0737191b9d5dd71bed3d3dcf0918931711726f2a54ec",
+      "2b98bdf925fff3034d98b1f1823f428d71ef334e27f0a88c6c3846e8c0cb7fa6",
+      "73b7bad6595191a89f5f4efb77b71f9b0f61e31fd3ecf5d1c67cb52ec72f8c0e",
+      "ad6d5e0734e64122157a9fea75f17056c1dfd932061a56c0408caf88ea581c55",
+      "4b2c4153b07982ccd65c82aaa6f01b9d03a53e422210b559caba96d2f1afd509",
+      "cedbb0ba6887f958fb14cceed5623464c2b98790cc2f8ac248e8d6a24ec6c6b9",
+      "2c93f71e79a0b4ce2e95cd1eb629390688dcf7d5ac2191a2211d22147195fdad",
+      "d796d34e5229f6eef3bce540684eb9038a514ba2a4cfe439f7409d776034649b",
+      "10844695befb68141ce3cc38f2d370e4fbaada509ed30b61e101c7bcebc86771",
+      "a2ce17979c5aa12d457be8a17d6aef3d1a6217c04685658b320ceb26ab3db80b",
+      "2f4afe0bda32a0623a8a6e729d3782167308892750ce0d041e6788f517de383d",
+      "64f9b2d2ba8b2fe8be801b14ab3d99ac19c38af6c5174db50e5175f33f640a20",
+      "215694b3638239ccd042433d124667b026d5f280360c7f3d288650ad04c3e7ba"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:186863,kitsu:49585,mal:61048,offline:mal-61048)"
+  },
+  "why": "The Cat and the Dragon (Neko to Ryuu) is a 12 episode summer 2026 run, weekly, ending 2026-09-12 on anilist and kitsu. anizip:19172 is the same run: it carries SAME_AS ids to anilist:186863 and mal:61048 and lists the same 12 episodes under the run's own titles. cr:GT00378117-GS00378133 is the same run: it carries SAME_AS ids to all four members and its 11 listed episodes are the run's first 11 by title, none of them past the run's end. jw:471316-514816 is the same run: it carries SAME_AS ids to all four members and to anizip:19172, and its 11 episode titles match one for one. cr:GT00378117 is the bare Crunchyroll series container for the show, with no dates and no episodes of its own, so it holds the run. nf:81642967 is a different work despite its SAME_AS claims: it is titled Tiger and Dragon, dated 2005-01-01, and its episode list is a prologue followed by eleven generically numbered episodes, which is the 2005 live action drama and not this 2026 anime. Episodes 1 to 11 are paired between anizip, Crunchyroll and JustWatch on exact, distinctive titles in the same order (\"The Kittens and the Winged Uncle\" at 3, \"The Return of the Mother Cat\" at 7, \"The White Cat and the Lazy Girl\" at 9); the anizip dates sit a week after the Crunchyroll dates throughout, matching the catalogues' own split over the start date (2026-06-27 on anilist, kitsu and Crunchyroll, 2026-07-04 on mal and anizip), so the pairing rests on the titles. anizip's episode 12 has no title anywhere and kitsu's twelve episode rows carry neither titles nor dates, so neither is paired."
+}

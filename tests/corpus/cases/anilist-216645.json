@@ -1,0 +1,83 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: two rows, one SAME_AS handle, matching date 2026-09-05 and matching count 4. Worth noting the long-running Hetalia World Stars series returned no container row here, so no holds relation is asserted. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64861",
+      "mediaUri": "anilist:216645",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:216645",
+        "mal:64861"
+      ]
+    ]
+  },
+  "name": "Hetalia World★Stars (2026)",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 4,
+      "id": "216645",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 05 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Hetalia World★Stars (2026)"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ヘタリア World★Stars (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:216645"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 4,
+      "id": "64861",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-05",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Hetalia World★Stars (2026)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64861"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a7cf24f2e625c3415f83cda50a5d37aae064d88ed745843e35070abc192e1536",
+      "f9490c3e164d1b1bcacc776e20d5e0ea36bac4f02641de1f599caf8402f1fc4d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:216645,mal:64861)"
+  },
+  "why": "Hetalia World Stars (2026), a four episode ONA short dated 2026-09-05. anilist:216645 and mal:64861 are one run: anilist carries a first-party SAME_AS handle to mal:64861, and the two agree on the day-precise date 05 Sep 2026, on episodeCount 4, on the ONA type and on the same title. No other row came back for this run, so nothing is held, spanned or ruled out."
+}

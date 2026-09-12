@@ -357,3 +357,13 @@ what that covers:
   describes, an episode no episode row describes, a range that runs backwards, a range whose two sides
   are different lengths, a new expectation with no `checked` stamp (all five kinds), a stamp whose day
   is not `YYYY-MM-DD`, and an unknown key at each of the seven places one can be typed.
+
+## Known disagreements of the store being replaced
+
+`known-disagreements.json` lists, by slug and with a reason, the cases today's store gets wrong: the
+labels are the truth about the works (decided by hand from the recorded season, refuted, reviewed), and
+where the union-find store disagrees the harness asserts that the disagreement PERSISTS. A case listed
+there must still fail, a case not listed must pass, and a listed slug with no case file fails the run,
+so a fix, a regression and a stale entry are all loud. The replacement store runs with no such list.
+As of 2026-09-12 the list holds seventeen runs: sixteen where today's store welds a bare Netflix title
+id found by a title search into a run whose labels say apart, and one merge it misses.

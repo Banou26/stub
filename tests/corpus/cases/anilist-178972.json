@@ -1,0 +1,216 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part is that anizip counts the film as one Complete Movie entry while the three catalogues count three parts, so the counts do not agree; the ids and the 2026-11-06 date do. The members also disagree with each other on the release date (anilist 2026-11-06 against mal and kitsu 2026-07-25), which is left alone since they are one address already. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:59217",
+      "mediaUri": "anilist:178972",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178972",
+      "mediaUri": "kitsu:50879",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59217",
+      "mediaUri": "kitsu:50879",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59217",
+      "mediaUri": "anizip:18734",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178972",
+      "mediaUri": "anizip:18734",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59217",
+      "mediaUri": "offline:mal-59217",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:178972",
+      "mediaUri": "offline:mal-59217",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406861",
+      "mediaUri": "kitsu:50879",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406861"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "406862",
+      "mediaUri": "kitsu:50879",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406862"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406863",
+      "mediaUri": "kitsu:50879",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406863"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18734-1",
+      "mediaUri": "anizip:18734",
+      "origin": "anizip",
+      "releaseDate": "2026-11-06",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:18734-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:178972",
+        "kitsu:50879",
+        "mal:59217",
+        "anizip:18734",
+        "offline:mal-59217"
+      ]
+    ]
+  },
+  "name": "Grotesqqque",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 3,
+      "id": "178972",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 06 Nov 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "GROTESQQQUE"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "GROTESQQQUE -グロテスク-"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:178972"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 3,
+      "id": "50879",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-25",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Grotesqqque"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "GROTESQQQUE -グロテスク-"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50879"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 3,
+      "id": "59217",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-25",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Grotesqqque"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:59217"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "18734",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "GROTESQQQUE"
+        }
+      ],
+      "uri": "anizip:18734"
+    },
+    {
+      "id": "mal-59217",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-59217"
+    }
+  ],
+  "source": {
+    "answers": [
+      "c0c0f97b3d04837d65f82c04e0f47bb7d4b35bb71b196cfb16d4a7436e9ac5fd",
+      "0e15731472409a66b5fbb02c69585032eaf3d9ad600fe828872d87fa4b25076e",
+      "98beda214e8312770b87c6e2743395180050da1b298a0b826a76dd476bceb90c",
+      "3e3cba1d3e26681ee7d0a258de3a6b2b185bf85164e88edadec4561e7dbbebe6",
+      "2bddc3b3b8cbdd4eccc9c32f9b098e2617e5a84d6ee146641af74e5efee439cc"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:178972,kitsu:50879,mal:59217)"
+  },
+  "why": "The run is the anime film Grotesqqque, carried as three parts on anilist 178972, mal 59217 and kitsu 50879, which map to each other first-party. anizip:18734 is the same run: it maps SAME_AS to both anilist 178972 and mal 59217, its title GROTESQQQUE is the run's, and its single Complete Movie entry is dated 2026-11-06, the same day anilist gives as the run's start and end. offline:mal-59217 is the same run: it is the offline database entry keyed on mal id 59217 and maps SAME_AS to mal 59217, anilist 178972 and anidb 18734, the id anizip is keyed on."
+}

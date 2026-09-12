@@ -1,0 +1,716 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "No outside row was returned, so there was nothing to place. Worth noting for a reader: anilist:209800 declares 12 episodes but lists 22, the first twelve dated January to March 2026, so its episode list covers both cours while the run is the second; kitsu:50622 lists 22 untitled, undated episodes and offline:mal-63047 says 1. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63047",
+      "mediaUri": "anilist:209800",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209800",
+      "mediaUri": "kitsu:50622",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63047",
+      "mediaUri": "offline:mal-63047",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:209800",
+      "mediaUri": "offline:mal-63047",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50622",
+      "mediaUri": "offline:mal-63047",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "GT00367517-GS00367518-GE00367519JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-01-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Prologue"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367519JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00367517-GS00367518-GE00367521JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-01-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Armor"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367521JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00367517-GS00367518-GE00367523JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-01-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Link"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367523JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00367517-GS00367518-GE00367525JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-01-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Combat"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367525JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00367517-GS00367518-GE00367527JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-02-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Sadness"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367527JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00367517-GS00367518-GE00367529JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-02-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Restart"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367529JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00367517-GS00367518-GE00367531JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-02-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Memory"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367531JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00367517-GS00367518-GE00367533JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-02-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Again"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367533JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00367517-GS00367518-GE00367535JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-03-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Outbreak"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367535JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00367517-GS00367518-GE00367537JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-03-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Sacrifice"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367537JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00367517-GS00367518-GE00367539JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-03-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Return"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367539JAJP"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "GT00367517-GS00367518-GE00367541JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-03-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Epilogue"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367541JAJP"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "GT00367517-GS00367518-GE00367543JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-07-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A New Chapter"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367543JAJP"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "GT00367517-GS00367518-GE00367545JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-07-14T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Miracle"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367545JAJP"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "GT00367517-GS00367518-GE00367547JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-07-21T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "In Concert"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367547JAJP"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "GT00367517-GS00367518-GE00367549JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-07-28T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Offense and Defense"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367549JAJP"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "GT00367517-GS00367518-GE00367551JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-08-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Flash"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367551JAJP"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "GT00367517-GS00367518-GE00367553JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-08-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Comeback"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367553JAJP"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "GT00367517-GS00367518-GE00367555JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-08-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Collapse"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367555JAJP"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "GT00367517-GS00367518-GE00367557JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-08-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Duty"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367557JAJP"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "GT00367517-GS00367518-GE00367559JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-09-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Warning"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367559JAJP"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "GT00367517-GS00367518-GE00367561JAJP",
+      "mediaUri": "anilist:209800",
+      "origin": "cr",
+      "releaseDate": "2026-09-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Love"
+        }
+      ],
+      "uri": "cr:GT00367517-GS00367518-GE00367561JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "396285",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396285"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "396286",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396286"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "396287",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396287"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "396288",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396288"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "396289",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396289"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "396290",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396290"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "396291",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396291"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "396292",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396292"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "396293",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396293"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "396294",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396294"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "396295",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396295"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "396296",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396296"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "396297",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396297"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "396298",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396298"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "396299",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396299"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "396300",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396300"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "396301",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396301"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "396302",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396302"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "396303",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396303"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "396304",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396304"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "396305",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396305"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "396306",
+      "mediaUri": "kitsu:50622",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:396306"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:209800",
+        "kitsu:50622",
+        "mal:63047",
+        "offline:mal-63047"
+      ]
+    ]
+  },
+  "name": "Yoroi-Shinden Samurai Troopers Cour 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "209800",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 07 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Yoroi-Shinden Samurai Troopers Cour 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Yoroi Shinden Samurai Troopers Part 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "鎧真伝サムライトルーパー 第2クール"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:209800"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50622",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Yoroi-Shinden Samurai Troopers Part 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "鎧真伝サムライトルーパー 第2クール"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50622"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63047",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Yoroi-Shinden Samurai Troopers Part 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yoroi Shin Den Samurai Troopers Part 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63047"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63047",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yoroi Shin Den Samurai Troopers Part 2"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63047"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7e4355c4d8a5537394a84f8b968f5a5bd3a82375d3791881e5a73cbdf1fb32c8",
+      "f6927d4ca84da7458fc036356422433fbf4e0588b236aea18f1cbb71f93a0e7c",
+      "fe26cc3addda0050eabf10c6044942cb02432757cfef1e0a20ae2f6ab9b1262b",
+      "c6852eb3ce6204042b03335422b49c9d3aa72e12cf2497e1d1212bf3b56fce34",
+      "13e0c32f5dbb9a4dd8a9ace5476c482466816909b779fbaf38266999de3542f5"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:209800,kitsu:50622,mal:63047,offline:mal-63047)"
+  },
+  "why": "Yoroi-Shinden Samurai Troopers Part 2, the second cour of the 2026 series, twelve episodes running 2026-07-07 to 2026-09-22, and the only rows returned are the run's own members. The four rows are one run: anilist:209800 maps SAME_AS to mal:63047, kitsu:50622 maps SAME_AS to anilist:209800, offline:mal-63047 maps SAME_AS to all three, and anilist:209800 and mal:63047 agree on the 2026-07-07 start date and the count of 12."
+}

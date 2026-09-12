@@ -1,0 +1,110 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Straightforward: the MAL row is bare (no title, no dates), so it rests entirely on the first-party SAME_AS handles from AniList and Kitsu, which agree with each other. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64711"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64711",
+      "mediaUri": "anilist:214559",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214559",
+      "mediaUri": "kitsu:50865",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64711",
+      "mediaUri": "kitsu:50865",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406368",
+      "mediaUri": "kitsu:50865",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406368"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:214559",
+        "kitsu:50865"
+      ]
+    ]
+  },
+  "name": "BooooM!!!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "214559",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 30 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "BooooM!!!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "BooooM!!!"
+        }
+      ],
+      "uri": "anilist:214559"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50865",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-30",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "BooooM!!!"
+        }
+      ],
+      "uri": "kitsu:50865"
+    },
+    {
+      "id": "64711",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64711"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b31bf19d984b09dc5ad83dbc5da36b256bf7524ca4e65ff452940daba28ff2ca",
+      "137299e4ecbac9cd8f79f76d89eb712bee828ce33ea4740bd1e9fd44f64e4487",
+      "d67747852292cb314d25aa75ed49049ea72e26ed9b605588d80dac0d3ab228e6"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214559,kitsu:50865,mal:64711)"
+  },
+  "why": "BooooM!!! is a single-episode Summer 2026 title that AniList, Kitsu and MyAnimeList each list once. The three rows are one run: Kitsu's row carries SAME_AS handles to both anilist:214559 and mal:64711 and AniList's row carries the same SAME_AS handle to mal:64711, and the two dated rows agree on a 2026-07-30 start and end with an episode count of 1. No other source returned a row, so there is nothing to attach or to hold apart."
+}

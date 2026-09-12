@@ -1,0 +1,105 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "A single member with one Netflix row asserting SAME_AS; the 2002-01-01 date against the film's 2026-08-05 date, plus two unrelated titles, made the mapping plainly wrong. No episode marks: both sides have one episode and the only Netflix episode title repeats its own film title. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64682",
+      "mediaUri": "nf:81653503",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81653503-1",
+      "mediaUri": "nf:81653503",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Legend of Al, John and Jack"
+        }
+      ],
+      "uri": "nf:81653503-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64682",
+        "nf:81653503"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64682"
+      ]
+    ],
+    "unrelated": [
+      "nf:81653503"
+    ]
+  },
+  "name": "Teenieping: Legend of the Whale Heartstone",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64682",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Teenieping: Legend of the Whale Heartstone"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Salangui Hachyuping: Golaeboseogui Jeonseol"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64682"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "81653503",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2002-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Legend of Al, John and Jack"
+        }
+      ],
+      "uri": "nf:81653503"
+    }
+  ],
+  "source": {
+    "answers": [
+      "899ec1382f535ac41dd8576cca7aa722c0bec73b8bb6263a078dc50e3d2ba59c",
+      "722891bd37ec9b5e1793ff1ec68fc74d4188c9263cc848145ed8d099817feec4"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64682)"
+  },
+  "why": "Teenieping: Legend of the Whale Heartstone is the 2026-08-05 Teenieping feature (Korean title Salangui Hachyuping: Golaeboseogui Jeonseol), a single MOVIE row on MyAnimeList and the only member of the run. The Netflix row nf:81653503 The Legend of Al, John and Jack is a different work even though it claims SAME_AS to mal:64682: its title shares nothing with either Teenieping title and it is dated 2002-01-01, twenty-four years before this film, so it is kept out of the cluster and not attached to it."
+}

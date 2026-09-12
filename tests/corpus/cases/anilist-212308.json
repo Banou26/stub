@@ -1,0 +1,361 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing outside the four members was returned, so the only question was whether the disagreeing counts (kitsu 22, offline 1) break the id mappings; they do not, since all four are joined by first-party SAME_AS ids and share the start date. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64210",
+      "mediaUri": "anilist:212308",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:212308",
+      "mediaUri": "kitsu:50799",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64210",
+      "mediaUri": "offline:mal-64210",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:212308",
+      "mediaUri": "offline:mal-64210",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50799",
+      "mediaUri": "offline:mal-64210",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404726",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404726"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404727",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404727"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404728",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404728"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404729",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404729"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404730",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404730"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404731",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404731"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404732",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404732"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404733",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404733"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404734",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404734"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404735",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404735"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404736",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404736"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404737",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404737"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404738",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404738"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404739",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404739"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404740",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404740"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404741",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404741"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404742",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404742"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404743",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404743"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404744",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404744"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404745",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404745"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404746",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404746"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404747",
+      "mediaUri": "kitsu:50799",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404747"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:212308",
+        "kitsu:50799",
+        "mal:64210",
+        "offline:mal-64210"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Pan no Akachan (TV)",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "212308",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Pan no Akachan (TV)"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "パンの赤ちゃん"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:212308"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50799",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Pan no Akachan (TV)"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "パンの赤ちゃん"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50799"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64210",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Babies of Bread"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Pan no Akachan (TV)"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:64210"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64210",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pan no Akachan (TV)"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-64210"
+    }
+  ],
+  "source": {
+    "answers": [
+      "04285be9469b55aafc959ee48a3718a62b62b2337a27778c07e19e6095ed79fa",
+      "3840a1662c746142d096b4c3f906df9b096994f3b80fbbf20ef6b0437975eb3e",
+      "da30a8b64beb7a9ee830db419fa1738411c4e19e18c52bdf39c899f8f2aa5986",
+      "05fa7634e2de13d11fb73d7f191e341f79e1fdbc9d7137d1f1a249bbc1927cf1"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:212308,kitsu:50799,mal:64210,offline:mal-64210)"
+  },
+  "why": "Pan no Akachan (TV) is the summer 2026 stop-motion TV short, airing from 2026-07-04. The four rows are one run: anilist:212308 names mal:64210 as SAME_AS, kitsu:50799 names anilist:212308, offline:mal-64210 names all three, and anilist, kitsu and mal all carry the 2026-07-04 start date with the same Japanese title パンの赤ちゃん. No other source returned a row for this run, so nothing else is marked."
+}

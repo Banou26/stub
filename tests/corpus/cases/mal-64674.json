@@ -1,0 +1,105 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Monkey King is among the most reused titles in Chinese animation, so the Netflix row looks convincing on title alone; the release dates are what separate them, 2023-01-01 on Netflix against 2026-07-24 on MyAnimeList. No other source returned a row, so there was nothing to corroborate the film itself. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64674",
+      "mediaUri": "nf:80237245",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "80237245-1",
+      "mediaUri": "nf:80237245",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Monkey King"
+        }
+      ],
+      "uri": "nf:80237245-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64674",
+        "nf:80237245"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64674"
+      ]
+    ],
+    "unrelated": [
+      "nf:80237245"
+    ]
+  },
+  "name": "Monkey King",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64674",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-24",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Monkey King"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Wukong Da Sheng"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64674"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "80237245",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Monkey King"
+        }
+      ],
+      "uri": "nf:80237245"
+    }
+  ],
+  "source": {
+    "answers": [
+      "02f5c8cb2453cfe35249cf362855a2bfe8b6619e3877edfb0223e2e3fdb26f46",
+      "c51482bc1eab15c35fe8e2421da225b2b27ff7081fbf909fb87b1da1ed976010"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64674)"
+  },
+  "why": "Monkey King (Wukong Da Sheng) is a single-episode Chinese animated feature dated 2026-07-24 on MyAnimeList, the run's only member. The Netflix row nf:80237245 The Monkey King is a different film of a much reused title: it is dated 2023-01-01, three years before this one's 2026-07-24 release, so it cannot be the same work, and its SAME_AS handle to mal:64674 rests on the shared title alone; it is kept apart and unattached."
+}

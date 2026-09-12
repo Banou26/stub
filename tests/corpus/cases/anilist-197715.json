@@ -1,0 +1,1128 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll's double premiere on 2026-07-01 puts its episode dates one week off AniZip's from position 2 onward, so the pairs had to be made on titles rather than dates; position 12 disagrees across all three sources and was left alone. refuted: 2 marks overturned, the episode pairs anizip:19534-10 to cr:GT00371878-GS00371879-GE00378852JAJP and cr:GT00371878-GS00371879-GE00378852JAJP to jw:10804866. Crunchyroll lists Damned Ideas of Common Sense at both its position 10 and its position 12, so the title places neither row, and by date its position 10 (2026-08-26) is AniZip's position 9 (2026-08-26), not AniZip's position 10 (2026-09-02); what is left picking position 10 is the position itself."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00371878-GS00371879",
+      "mediaUri": "anilist:197715",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62322",
+      "mediaUri": "anilist:197715",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197715",
+      "mediaUri": "kitsu:50109",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62322",
+      "mediaUri": "kitsu:50109",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00371878",
+      "mediaUri": "kitsu:50109",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62322",
+      "mediaUri": "offline:mal-62322",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197715",
+      "mediaUri": "offline:mal-62322",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50109",
+      "mediaUri": "offline:mal-62322",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62322",
+      "mediaUri": "anizip:19534",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197715",
+      "mediaUri": "anizip:19534",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197715",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50109",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62322",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62322",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:197715",
+      "mediaUri": "jw:494182-537094",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19534",
+      "mediaUri": "jw:494182-537094",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50109",
+      "mediaUri": "jw:494182-537094",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62322",
+      "mediaUri": "jw:494182-537094",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62322",
+      "mediaUri": "jw:494182-537094",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "386682",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386682"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "386683",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386683"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "386684",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386684"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "386685",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386685"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "386686",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386686"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "386687",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386687"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "386688",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386688"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "386689",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386689"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "386690",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386690"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "386691",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386691"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "386692",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386692"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "386693",
+      "mediaUri": "kitsu:50109",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:386693"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19534-1",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-07-01T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "How the World Works"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "世界の仕組み"
+        }
+      ],
+      "uri": "anizip:19534-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19534-2",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Ultimate Idiot"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "最高に馬鹿だから"
+        }
+      ],
+      "uri": "anizip:19534-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19534-3",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Demon and Human Coexistence"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔族と人間の共存"
+        }
+      ],
+      "uri": "anizip:19534-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19534-4",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "I Have Questions for You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "聞きたいことがある"
+        }
+      ],
+      "uri": "anizip:19534-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19534-5",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Assigned Roles"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "与えられた役割"
+        }
+      ],
+      "uri": "anizip:19534-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19534-6",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Her Highness`s Thinking"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "姫様のお考え"
+        }
+      ],
+      "uri": "anizip:19534-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19534-7",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "You`re Changed by the People You Meet"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "出会いは人を変える"
+        }
+      ],
+      "uri": "anizip:19534-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19534-8",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Incompatible"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "相容れない"
+        }
+      ],
+      "uri": "anizip:19534-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19534-9",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hope Like Never Before"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "これまでにない希望"
+        }
+      ],
+      "uri": "anizip:19534-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19534-10",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Damned Ideas of Common Sense"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "これから壊す"
+        }
+      ],
+      "uri": "anizip:19534-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19534-11",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The King`s Authority Is Absolute"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "王は絶対"
+        }
+      ],
+      "uri": "anizip:19534-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19534-12",
+      "mediaUri": "anizip:19534",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "クソみたいな常識"
+        }
+      ],
+      "uri": "anizip:19534-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00371878-GS00371879-GE00378843JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-07-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "How the World Works"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378843JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00371878-GS00371879-GE00378844JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-07-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Ultimate Idiot"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378844JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00371878-GS00371879-GE00378845JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-07-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Demon and Human Coexistence"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378845JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00371878-GS00371879-GE00378846JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-07-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I Have Questions for You"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378846JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00371878-GS00371879-GE00378847JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-07-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Assigned Roles"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378847JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00371878-GS00371879-GE00378848JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-07-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Her Highness's Thinking"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378848JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00371878-GS00371879-GE00378849JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-08-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "You're Changed by the People You Meet"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378849JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00371878-GS00371879-GE00378850JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-08-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Incompatible"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378850JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00371878-GS00371879-GE00378851JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-08-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Hope Like Never Before"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378851JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00371878-GS00371879-GE00378852JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-08-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Damned Ideas of Common Sense"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378852JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00371878-GS00371879-GE00378853JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-09-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The King's Authority Is Absolute"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378853JAJP"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "GT00371878-GS00371879-GE00378854JAJP",
+      "mediaUri": "cr:GT00371878-GS00371879",
+      "origin": "cr",
+      "releaseDate": "2026-09-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Damned Ideas of Common Sense"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879-GE00378854JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9889255",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "How the World Works"
+        }
+      ],
+      "uri": "jw:9889255"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10567187",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Ultimate Idiot"
+        }
+      ],
+      "uri": "jw:10567187"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10567188",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Demon and Human Coexistence"
+        }
+      ],
+      "uri": "jw:10567188"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10610797",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Have Questions for You"
+        }
+      ],
+      "uri": "jw:10610797"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10620084",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Assigned Roles"
+        }
+      ],
+      "uri": "jw:10620084"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10636008",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Her Highness's Thinking"
+        }
+      ],
+      "uri": "jw:10636008"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10648333",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You're Changed by the People You Meet"
+        }
+      ],
+      "uri": "jw:10648333"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10668308",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Incompatible"
+        }
+      ],
+      "uri": "jw:10668308"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10747390",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hope Like Never Before"
+        }
+      ],
+      "uri": "jw:10747390"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10804866",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Damned Ideas of Common Sense"
+        }
+      ],
+      "uri": "jw:10804866"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10857134",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The King's Authority Is Absolute"
+        }
+      ],
+      "uri": "jw:10857134"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10894307",
+      "mediaUri": "jw:494182-537094",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lv12 Kuso Mitai na Joushiki"
+        }
+      ],
+      "uri": "jw:10894307"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19534-1",
+        "b": "cr:GT00371878-GS00371879-GE00378843JAJP"
+      },
+      {
+        "a": "anizip:19534-2",
+        "b": "cr:GT00371878-GS00371879-GE00378844JAJP"
+      },
+      {
+        "a": "anizip:19534-3",
+        "b": "cr:GT00371878-GS00371879-GE00378845JAJP"
+      },
+      {
+        "a": "anizip:19534-4",
+        "b": "cr:GT00371878-GS00371879-GE00378846JAJP"
+      },
+      {
+        "a": "anizip:19534-5",
+        "b": "cr:GT00371878-GS00371879-GE00378847JAJP"
+      },
+      {
+        "a": "anizip:19534-6",
+        "b": "cr:GT00371878-GS00371879-GE00378848JAJP"
+      },
+      {
+        "a": "anizip:19534-7",
+        "b": "cr:GT00371878-GS00371879-GE00378849JAJP"
+      },
+      {
+        "a": "anizip:19534-8",
+        "b": "cr:GT00371878-GS00371879-GE00378850JAJP"
+      },
+      {
+        "a": "anizip:19534-9",
+        "b": "cr:GT00371878-GS00371879-GE00378851JAJP"
+      },
+      {
+        "a": "anizip:19534-11",
+        "b": "cr:GT00371878-GS00371879-GE00378853JAJP"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378843JAJP",
+        "b": "jw:9889255"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378844JAJP",
+        "b": "jw:10567187"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378845JAJP",
+        "b": "jw:10567188"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378846JAJP",
+        "b": "jw:10610797"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378847JAJP",
+        "b": "jw:10620084"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378848JAJP",
+        "b": "jw:10636008"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378849JAJP",
+        "b": "jw:10648333"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378850JAJP",
+        "b": "jw:10668308"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378851JAJP",
+        "b": "jw:10747390"
+      },
+      {
+        "a": "cr:GT00371878-GS00371879-GE00378853JAJP",
+        "b": "jw:10857134"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:197715",
+        "whole": "cr:GT00371878"
+      }
+    ],
+    "together": [
+      [
+        "anilist:197715",
+        "kitsu:50109",
+        "mal:62322",
+        "offline:mal-62322",
+        "anizip:19534",
+        "cr:GT00371878-GS00371879",
+        "jw:494182-537094"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "The Villager of Level 999",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "197715",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 02 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Villager of Level 999"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "LV999 no Murabito"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "LV999の村人"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:197715"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50109",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Villager of Level 999"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "LV999 no Murabito"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "LV999の村人"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50109"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62322",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Villager of Level 999"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Lv999 no Murabito"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62322"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62322",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lv999 no Murabito"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62322"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19534",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Villager of Level 999"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "LV999の村人"
+        }
+      ],
+      "uri": "anizip:19534"
+    },
+    {
+      "id": "GT00371878",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00371878"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "GT00371878-GS00371879",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Villager of Level 999"
+        }
+      ],
+      "uri": "cr:GT00371878-GS00371879"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "494182-537094",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:494182-537094"
+    }
+  ],
+  "source": {
+    "answers": [
+      "78d06bb607b433327f789c041a57ee656943a218087d21bd0ee4ab39b7fbb274",
+      "fd58a85954ee7ea71123f2ce60f4edd0d5351b90862f0ddaca857af19c3cda89",
+      "b71dae77f9d6cd42e07128fb4e708f85816b586f1669d7b2e9ba4eb73013d840",
+      "4a6a25bb1f2de31a458d2c192ec52c5f67b66d218a9f84df1fbbe00fb7d02b41",
+      "5879dedc2ba8243a978e949c4a56d5ab929134b254298f111ae7beea41267843",
+      "55d7d2c4edfed83b5fa92acaec080d4d26e6e36efe0c52ef0da4cfd9be2c424e",
+      "fbd579ae44d54e25cce8f624026d49680d52f8a4b6af7c1f39cd97d974c183ea",
+      "53fa38dc2d8e7c61fedc2df92e3933f6494fc30fd308622b105354e9ea32f692",
+      "8cb75b39bd4ac53407801967288c7277759961b4be307fb89973c4bb254fec09"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:197715,kitsu:50109,mal:62322,offline:mal-62322)"
+  },
+  "why": "The Villager of Level 999, a 12 episode summer 2026 run airing from 2026-07-02 to 2026-09-10. AniZip 19534 is the same run: SAME_AS ids to mal:62322 and anilist:197715 and the same episodeCount of 12. The Crunchyroll season GT00371878-GS00371879 is the same run: it maps SAME_AS onto all four members, carries the same episodeCount of 12 and the same episode titles, and its last episode on 2026-09-09 matches the run's own end date. The JustWatch season 494182-537094 is the same run: it maps SAME_AS onto all four members and onto anizip:19534 and carries the same 12 episode titles in the same order. The bare Crunchyroll series GT00371878 is a container with no dates, count or episodes of its own, and Kitsu records it as a PART_OF container for this run, so it holds the run. Positions 1 to 9 and position 11 pair between AniZip and Crunchyroll, and between Crunchyroll and JustWatch, on exact non generic titles (How the World Works, The Ultimate Idiot, Demon and Human Coexistence, I Have Questions for You, Assigned Roles, Her Highness's Thinking, You're Changed by the People You Meet, Incompatible, Hope Like Never Before, The King's Authority Is Absolute). Those pairs rest on the titles and not on the dates, because Crunchyroll aired episodes 1 and 2 together on 2026-07-01 and then ran a week behind AniZip's weekly slots, so a date alignment would wrongly shift every later episode by one. Position 10 is left unpaired: Crunchyroll carries the title Damned Ideas of Common Sense twice, at its position 10 (2026-08-26) and again at its position 12 (2026-09-09), so that string names two rows rather than one, and the only date it matches is AniZip's position 9 (2026-08-26), not AniZip's position 10 (2026-09-02). Position 12 is left unpaired too: AniZip titles it only in Japanese (クソみたいな常識), Crunchyroll repeats the position 10 title there, and JustWatch gives the romanised Lv12 Kuso Mitai na Joushiki, so no two of them agree on a title and JustWatch carries no dates at all."
+}

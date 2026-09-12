@@ -1,0 +1,152 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Straightforward: the only non-member row, anizip:19724, uses the English title We Are Aliens but carries the same Japanese title, the same first-party ids and the same 2026-09-25 date. mal:62973 is a bare id row with no fields but is a member of the run's own address. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:62973"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62973",
+      "mediaUri": "anilist:202429",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62973",
+      "mediaUri": "offline:mal-62973",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202429",
+      "mediaUri": "offline:mal-62973",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62973",
+      "mediaUri": "anizip:19724",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:202429",
+      "mediaUri": "anizip:19724",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "19724-1",
+      "mediaUri": "anizip:19724",
+      "origin": "anizip",
+      "releaseDate": "2026-09-25",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:19724-1"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:202429",
+        "offline:mal-62973",
+        "anizip:19724"
+      ]
+    ]
+  },
+  "name": "Wareware wa Uchuujin",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "202429",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 25 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Wareware wa Uchuujin"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "我々は宇宙人"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:202429"
+    },
+    {
+      "id": "62973",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:62973"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-62973",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Wareware wa Uchuujin"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-62973"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "19724",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "We Are Aliens"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "我々は宇宙人"
+        }
+      ],
+      "uri": "anizip:19724"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2b6b8ee7b8480a44e9ec5d497c9b5cf1d20f5280d72fe6642152c809e895e104",
+      "502a35bd86eb29f205add953f0bfd4ef2e62a2e50cd2746bed104963eef0843e",
+      "1a6f1e0ce8f814ad7c002264fee59af227c06cf7ab1db11b80d370001f0d2736"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:202429,mal:62973,offline:mal-62973)"
+  },
+  "why": "Wareware wa Uchuujin, a single episode anime film dated 2026-09-25, returned by the three catalogues and by anizip, with no streaming or container row. anizip:19724 is the same run: it maps SAME_AS to both mal:62973 and anilist:202429, carries the identical Japanese title 我々は宇宙人, gives one episode like anilist:202429, and that episode is dated 2026-09-25, the anilist start and end date."
+}

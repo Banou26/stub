@@ -1,0 +1,653 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Worth double checking because a franchise container could plausibly hold a tie-in short, but the descriptions settle it: the run is a Kureiji Ollie song video and the Netflix row is the OSHI NO KO series, so it is a name collision, not a container. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50929",
+      "mediaUri": "nf:81684733",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407192",
+      "mediaUri": "kitsu:50929",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407192"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81684735",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81684735"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81789056",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81789056"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82177447",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 25"
+        }
+      ],
+      "uri": "nf:82177447"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81684736",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81684736"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81789057",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:81789057"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82177448",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82177448"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81684737",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81684737"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81789058",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:81789058"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82177449",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82177449"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81684738",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81684738"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81789059",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:81789059"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82177450",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82177450"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81684739",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81684739"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81789060",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:81789060"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82177451",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 29"
+        }
+      ],
+      "uri": "nf:82177451"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81684740",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81684740"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81789061",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:81789061"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82177452",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 30"
+        }
+      ],
+      "uri": "nf:82177452"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81684741",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81684741"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81789062",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:81789062"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82177453",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 31"
+        }
+      ],
+      "uri": "nf:82177453"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81684742",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81684742"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81789063",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:81789063"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82177454",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 32"
+        }
+      ],
+      "uri": "nf:82177454"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81684743",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81684743"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81789064",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:81789064"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82177455",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 33"
+        }
+      ],
+      "uri": "nf:82177455"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81684744",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81684744"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81789065",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:81789065"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82177456",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 34"
+        }
+      ],
+      "uri": "nf:82177456"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81684745",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81684745"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81789066",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:81789066"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82177457",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 35"
+        }
+      ],
+      "uri": "nf:82177457"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81789067",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:81789067"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81907316",
+      "mediaUri": "nf:81684733",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "nf:81907316"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81684733",
+        "kitsu:50929"
+      ]
+    ],
+    "together": [
+      [
+        "kitsu:50929"
+      ]
+    ],
+    "unrelated": [
+      "nf:81684733"
+    ]
+  },
+  "name": "Oshi Mode ON",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50929",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-22",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Oshi Mode ON"
+        }
+      ],
+      "uri": "kitsu:50929"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81684733",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "【OSHI NO KO】"
+        }
+      ],
+      "uri": "nf:81684733"
+    }
+  ],
+  "source": {
+    "answers": [
+      "28afbf2c1dce9ab2e575814cadc9d640d269af46f8881138cf1e7cb7dfc96592",
+      "6c9f79cd50230e00b34ff5899dcd259de49af7aa5246706eb770316a899387b8",
+      "aa625906646f3728f92ffc5bb8e4fbbfe2ea91b61033844ecdfcdebbe5b3deb0",
+      "6ecd8036a051a94c9200fee90fcde4f907c6ecc8c1b6dbac00403b731755cd90",
+      "ff30a08d0a96752118a4e3d827975cdc8d1f5dba40a565df155e779e3ecb080b",
+      "569b1d6dd4d82b7f2a4360224cb4f4a86548ebc7e8c4548ee12a562ddbdf5a17",
+      "d09028bf780b2332ff33827197faf5d906cf161156476e0ef73f3e4ccc7e2262",
+      "41855c1b1fb1365fd3cd4cbded5235a5d1d92c334a331913219fd50d0a95cd9e",
+      "5d67cbbca78ab67ab222a58f63c7c5f6f7960ba95ae3d26fbe4043accd93c9fe",
+      "780aad7f11e5950bf11fab43c4441c2ccc86d8236828bdc9d25759f33305f83b",
+      "0ee377ae049dba4bb654ea4d34c71499e298ce508732c518ead86f79b8e13f51",
+      "cb890dc9e35c3cf4acf3e3d606ca9211c16701dbca1770a7815ef5864bb39ceb",
+      "fd7f99ff0ce451656633e4a6d5c016a5abead57e9c9e78f948da18e601033b0c",
+      "e0ddb361516ff6704d035189a404c48e5d22b6409ca600e8ae301168f31f43f7",
+      "66d03213c9b80a19ec78fe676ff4366003294adcfb5bea1d592f9d62d4b055ea",
+      "16d9082a351a0c12002ecdc02ae9094bf9bc66a42bb804eeb0c10d80296f3c83",
+      "a68cf540bfd010a460eff08af9162d616eccabc09761411b9ccbd0268caa0e74",
+      "0326dd45becaf257b15da29d125153cd927cf2bdffab472cd21ac09a71f6fc62",
+      "794f3e6acde91c65e0ac61211728543c6e4066229d5dba404d6901339b0d46c8",
+      "6ea96be203b52dbe45b5caf91df23dc3609e06710b13c5251eb9fd18e8ff44e2",
+      "132ea5e3cc82ca4686b2310cb9d1370a71582aa7260ec524e4beacec2914ff80",
+      "355dfa4cc2e7bb4e74e9c364fc588fe9a7f276e7653df24debdbaefef5e89748",
+      "2f2a0f0426c8af2a4f0a7861eaa0556bb1a9be1aff060f277501d66d97570e33",
+      "0c2fba792bae1d9c4077b9b0023c3a267d5ec6677ef06e7b2b827c664e512b03",
+      "c8d2a75c2ef20b83d96d4fad5d96b954ec9e4abcb3556688b8b4f767f21b17cd",
+      "b8e992a0d3cba03126f36383a04f6e1fd29d2803a05a217634cfda254e869bf1",
+      "766d753a9b11d31360301670044590d3fdb46a0583992f31a4f5c3bdecc271b0",
+      "26679fd2b9b9857b7e4346d3af793a7e6f6931c4ab579bc429c783294902805a",
+      "8e270695728709a078cd7571ed1d2fd68f13044cd9ab200475b753a28ba5230d",
+      "8575d742b45ec2ec1d2e83d0bda6b68959de388a7c2b8acd0756d32915e3815d",
+      "65b4645e209c143bb4f3192d326e58c34074341cb185e0444352db1d6b7c6d3b",
+      "7c89e4b079acf10c5249266c5b161dced5619566c8684c948c11f8338bf76807",
+      "a8baaa2015174716119be9a14c9765c6b47670fbeb0c3205094a710b5473e4c3",
+      "06ef0c67631339ebaee85fb3391d473d356a3afb7ace49819c5f30c8b592de4f",
+      "100e68dbc90d2cba99ac28e8bcd7b3d556b345c5b7374d037179afa2522bd4ca",
+      "166a9d5803b6c4c989aeb5643959afe01ea019f1ab03868e39bd3a2254f7e250",
+      "3d7e77a9354a3f345e3846f1cffddf82a81954e4264163f9090ae71d2e32da9c",
+      "41ce7e460e1be556c6ec2fa9aa33efec200ffe98697d0619dd3e6805bdca6030"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50929)"
+  },
+  "why": "Oshi Mode ON is a one-episode music video for the Kureiji Ollie song of that name, dated 2026-08-22 with start and end on the same day (kitsu:50929, episodeCount 1), and kitsu is the only catalogue that returned it. nf:81684733 is unrelated: it is Netflix's listing of the idol drama OSHI NO KO, starting 2023-01-01 with 35 listed episodes over several seasons, so its SAME_AS handle to kitsu:50929 rests on the shared word Oshi and is not followed."
+}

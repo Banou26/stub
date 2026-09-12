@@ -1,0 +1,285 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row asserts SAME_AS to both members and had to be overruled on its title, its 2024 start date and its ten character-named episodes against a run of one undated episode. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50810",
+      "mediaUri": "offline:kitsu-50810",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50810",
+      "mediaUri": "nf:82153724",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50810",
+      "mediaUri": "nf:82153724",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405120",
+      "mediaUri": "kitsu:50810",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405120"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82153726",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Eddy"
+        }
+      ],
+      "uri": "nf:82153726"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82153727",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shark"
+        }
+      ],
+      "uri": "nf:82153727"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82153728",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Loopy"
+        }
+      ],
+      "uri": "nf:82153728"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82153729",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tongtong"
+        }
+      ],
+      "uri": "nf:82153729"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82153730",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rody"
+        }
+      ],
+      "uri": "nf:82153730"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82153731",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Harry"
+        }
+      ],
+      "uri": "nf:82153731"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82153732",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Petty"
+        }
+      ],
+      "uri": "nf:82153732"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82153733",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "J"
+        }
+      ],
+      "uri": "nf:82153733"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82153734",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Crong"
+        }
+      ],
+      "uri": "nf:82153734"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82153735",
+      "mediaUri": "nf:82153724",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Poby"
+        }
+      ],
+      "uri": "nf:82153735"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:82153724",
+        "kitsu:50810"
+      ]
+    ],
+    "together": [
+      [
+        "kitsu:50810",
+        "offline:kitsu-50810"
+      ]
+    ],
+    "unrelated": [
+      "nf:82153724"
+    ]
+  },
+  "name": "SUPERNOVA SUPER GIRL",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50810",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-27",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "SUPERNOVA SUPER GIRL"
+        }
+      ],
+      "uri": "kitsu:50810"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "kitsu-50810",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "SUPERNOVA SUPER GIRL"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "offline:kitsu-50810"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82153724",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2024-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Pororo Super Super Show"
+        }
+      ],
+      "uri": "nf:82153724"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d06a932ddcc4fe0f666208d9216902731a9ad5299b055afd0ac95cc675da5ba9",
+      "c56e9a36502d344209d0b7954e0f0a17c0399eca46ea8a101bc88951a84ddaba",
+      "3f681cd22735eaff64854e011fea90010567e865f667c1a27f419b4daa18d13b",
+      "9834bc6856a9d54e57f370afb40e1ed95842c620ed5158e08fc423681e6658cb",
+      "928336e31375abaa11415b2ec95caee3c3b938bb87dea1f5b8ee0a38e3bb301a",
+      "667a14295922901c44aa6210d6d75aff106b9162d8f0c1dd51ee01c4b490bbaf",
+      "5d53aa21bd082af2fef5b8d61f3b6a66349cf1d5990067efb26df8f92528793b",
+      "aeac833c61ebb267ddb07694339f471777377bf16e5c2953dbb3000054a711c0",
+      "47512249a5856179936709ce6f0f36928f77248cffe5f81a91335af12fa38761",
+      "c0d70ac3a06c676004cc2c2e89e74a6bace97f834d6ed39f44f75f45be9c3716",
+      "c2bd717bc9bb9e4508de7f202095708f7bbdf2e80927858dd40dadadc9b80695",
+      "d4264c7357ab4dddbc52d380d04ba0365be4d161a37eb7633e4037910054fedd",
+      "75f0bcf7709334a8c1ff171fa72a3803e47ed6453bc9851705e5e0e77e5b4e46",
+      "2dd7796fcfb6b7363a6a12cadc61334cbb11a5d94005e99bbea263abffe6e734"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50810,offline:kitsu-50810)"
+  },
+  "why": "SUPERNOVA SUPER GIRL is a single-episode Summer 2026 special dated 2026-06-27 on Kitsu. The Kitsu and offline rows are one run: they share the title, both give an episode count of 1, and the offline row claims SAME_AS kitsu:50810. The Netflix row is a different work despite claiming SAME_AS to both members: it is titled Pororo Super Super Show, starts 2024-01-01, and its ten episodes are named after the characters of that Korean children's series (Eddy, Loopy, Crong, Poby), which cannot be a one-episode 2026 anime special. Kitsu's single episode has no title and no release date, so it pairs with nothing on the Netflix side."
+}

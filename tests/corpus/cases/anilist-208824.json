@@ -1,0 +1,134 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing was hard: four rows, all members, joined by agreeing AniList and MyAnimeList id mappings, with the only wrinkle a one letter spelling difference in the offline title. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63641",
+      "mediaUri": "anilist:208824",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208824",
+      "mediaUri": "offline:anilist-208824",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63641",
+      "mediaUri": "offline:mal-63641",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:208824",
+        "mal:63641",
+        "offline:anilist-208824",
+        "offline:mal-63641"
+      ]
+    ]
+  },
+  "name": "Plannosaurus Gachi Koseibutsu-bu",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "208824",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 12 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Plannosaurus Gachi Koseibutsu-bu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "プラノサウルス ガチコセイブツ部"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:208824"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "63641",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Plannosaurus Gachi Koseibutsu-bu"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63641"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-208824",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Plannosaurus Gachi Koseibutsu-bu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-208824"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-63641",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Planosaurus Gachi Koseibutsu-bu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63641"
+    }
+  ],
+  "source": {
+    "answers": [
+      "53bc1fb726c56d14401d30e8a1dfb2b80dafbaff6e4c545f256c4e4de18fd0fd",
+      "bab5613d0372708b392fbb4a30a6dedb7f858fb91ac197ce79578b7229cd194c",
+      "ac9cc91b5aa90937ec3609a48576de2b25029bc85e02d57a174411fe1b56e048",
+      "3bfb1ef63f2336ba5fd5ea79b918f10f4bdb697198c420965bdd545580180f41"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:208824,mal:63641,offline:anilist-208824,offline:mal-63641)"
+  },
+  "why": "Plannosaurus Gachi Koseibutsu-bu is a summer 2026 TV short, 2026-07-12 on both AniList and MyAnimeList and running to 2026-09-26 on AniList, and every row returned for the address is already a member of it. AniList 208824 and MyAnimeList 63641 are joined by the AniList SAME_AS handle and share the title and the 2026-07-12 start; the two offline database rows are the same run seen twice, offline:anilist-208824 keyed on the AniList id with a SAME_AS handle to it and offline:mal-63641 keyed on the MyAnimeList id with a SAME_AS handle to that, both marked SUMMER 2026 and both carrying the same title (offline:mal-63641 spells it Planosaurus with one n). Nothing outside the run was returned, so there is no container, no split season and no unrelated row to mark."
+}

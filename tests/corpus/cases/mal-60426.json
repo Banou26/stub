@@ -1,0 +1,107 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Anilist carries no start date for this row, so the merge rests on the first-party id mapping, the matching 16 episode count and the shared Huang Feng Ling arc title. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:60426",
+      "mediaUri": "anilist:198708",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:60426",
+      "mediaUri": "offline:mal-60426",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198708",
+      "mediaUri": "offline:mal-60426",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:60426",
+        "anilist:198708",
+        "offline:mal-60426"
+      ]
+    ]
+  },
+  "name": "Fox Spirit Matchmaker 13th Season",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "60426",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-11",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fox Spirit Matchmaker 13th Season"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Huyao Xiao Hongniang 13: Huang Feng Ling Pian"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:60426"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 16,
+      "id": "198708",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Huyao Xiao Hongniang: Huang Feng Ling"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "狐妖小红娘 黄风岭"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:198708"
+    },
+    {
+      "id": "mal-60426",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-60426"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ae64f655399511be581e6e73df49208a42b5e8b9d40ff0e2d8bf69e4e0135536",
+      "f1730e0f1dd684b8bebdd41561cc213851d326d09f7512ffe53d3b114ea1810e",
+      "eea8484507cfcc18019ef9e6f0e861484c7b2eca519039e9240b93520819e0e5"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:60426)"
+  },
+  "why": "Fox Spirit Matchmaker 13th Season (Huyao Xiao Hongniang, the 狐妖小红娘 黄风岭 / Huang Feng Ling arc) is a 16 episode Chinese ONA that began on 2026-09-11. Anilist 198708 is the same run: it maps SAME_AS to mal:60426, lists the same 16 episodes and names the same Huang Feng Ling arc that the MyAnimeList romanised title carries. The offline entry offline:mal-60426 is the same run: it maps SAME_AS to both mal:60426 and anilist:198708. No streaming or container row was returned for this season."
+}

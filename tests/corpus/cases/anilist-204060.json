@@ -1,0 +1,1135 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing contested here. The streaming seasons list 10 episodes against the run's 12 but their last episode is 2026-09-06, inside the run's window and two weeks short of its 2026-09-20 finish, so they are partial listings of a still airing run rather than folds. Kitsu's episodeCount of 24 disagrees with the offline row's 12 and with AniZip's 12, but Kitsu is a member of the run's own address so nothing turns on it. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378075-GS00378076",
+      "mediaUri": "anilist:204060",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63100",
+      "mediaUri": "anilist:204060",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204060",
+      "mediaUri": "kitsu:50801",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378075",
+      "mediaUri": "kitsu:50801",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63100",
+      "mediaUri": "offline:mal-63100",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204060",
+      "mediaUri": "offline:mal-63100",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50801",
+      "mediaUri": "offline:mal-63100",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63100",
+      "mediaUri": "anizip:19768",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204060",
+      "mediaUri": "anizip:19768",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204060",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50801",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63100",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63100",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204060",
+      "mediaUri": "jw:512179-544302",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19768",
+      "mediaUri": "jw:512179-544302",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378075-GS00378076",
+      "mediaUri": "jw:512179-544302",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50801",
+      "mediaUri": "jw:512179-544302",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63100",
+      "mediaUri": "jw:512179-544302",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63100",
+      "mediaUri": "jw:512179-544302",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404784",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404784"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404785",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404785"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404786",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404786"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404787",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404787"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404788",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404788"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404789",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404789"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404790",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404790"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404791",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404791"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404792",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404792"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404793",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404793"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404794",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404794"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404795",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404795"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404796",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404796"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404797",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404797"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404798",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404798"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404799",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404799"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404800",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404800"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404801",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404801"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404802",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404802"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404803",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404803"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404804",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404804"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404805",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404805"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "404806",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404806"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "404807",
+      "mediaUri": "kitsu:50801",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404807"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19768-1",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-07-05T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Flames and Meetings"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "炎との出逢い"
+        }
+      ],
+      "uri": "anizip:19768-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19768-2",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-07-12T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "They`re Like Gunpowder"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "火薬のようなやつら"
+        }
+      ],
+      "uri": "anizip:19768-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19768-3",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-07-19T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Loser`s Cry of Victory"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "負け犬の勝鬨"
+        }
+      ],
+      "uri": "anizip:19768-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19768-4",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-07-26T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "He Who Masters Poison"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "毒を御す者"
+        }
+      ],
+      "uri": "anizip:19768-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19768-5",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-08-02T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Magic of Bliss"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "至福の調合[マジック]"
+        }
+      ],
+      "uri": "anizip:19768-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19768-6",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-08-09T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Soul of Chinese Cooking"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "中華の神髄"
+        }
+      ],
+      "uri": "anizip:19768-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19768-7",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-08-16T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Toss That Wok!"
+        }
+      ],
+      "uri": "anizip:19768-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19768-8",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-08-23T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Malice"
+        }
+      ],
+      "uri": "anizip:19768-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19768-9",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-08-30T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Innovating for the Future"
+        }
+      ],
+      "uri": "anizip:19768-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19768-10",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-09-06T08:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Judges` Focus"
+        }
+      ],
+      "uri": "anizip:19768-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19768-11",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-09-13T08:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19768-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19768-12",
+      "mediaUri": "anizip:19768",
+      "origin": "anizip",
+      "releaseDate": "2026-09-20T08:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19768-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378075-GS00378076-GE00379326JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-07-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Flames and Meetings"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379326JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378075-GS00378076-GE00379327JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-07-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "They're Like Gunpowder"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379327JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378075-GS00378076-GE00379328JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-07-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Loser's Cry of Victory"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379328JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378075-GS00378076-GE00379329JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-07-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "He Who Masters Poison"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379329JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378075-GS00378076-GE00379330JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-08-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Magic of Bliss"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379330JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378075-GS00378076-GE00379331JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-08-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Soul of Chinese Cooking"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379331JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378075-GS00378076-GE00379332JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-08-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Toss That Wok!"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379332JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378075-GS00378076-GE00379333JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-08-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Malice"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379333JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378075-GS00378076-GE00379334JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-08-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Innovating for the Future"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379334JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378075-GS00378076-GE00379335JAJP",
+      "mediaUri": "cr:GT00378075-GS00378076",
+      "origin": "cr",
+      "releaseDate": "2026-09-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Judges' Focus"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076-GE00379335JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10030228",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Flames and Meetings"
+        }
+      ],
+      "uri": "jw:10030228"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10709678",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "They're Like Gunpowder"
+        }
+      ],
+      "uri": "jw:10709678"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10709679",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Loser's Cry of Victory"
+        }
+      ],
+      "uri": "jw:10709679"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10709677",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "He Who Masters Poison"
+        }
+      ],
+      "uri": "jw:10709677"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10709671",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Magic of Bliss"
+        }
+      ],
+      "uri": "jw:10709671"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10709670",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Soul of Chinese Cooking"
+        }
+      ],
+      "uri": "jw:10709670"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10709676",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Toss That Wok!"
+        }
+      ],
+      "uri": "jw:10709676"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10709669",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Malice"
+        }
+      ],
+      "uri": "jw:10709669"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10709675",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Innovating for the Future"
+        }
+      ],
+      "uri": "jw:10709675"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10709672",
+      "mediaUri": "jw:512179-544302",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Judges' Focus"
+        }
+      ],
+      "uri": "jw:10709672"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379326JAJP",
+        "b": "anizip:19768-1"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379327JAJP",
+        "b": "anizip:19768-2"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379328JAJP",
+        "b": "anizip:19768-3"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379329JAJP",
+        "b": "anizip:19768-4"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379330JAJP",
+        "b": "anizip:19768-5"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379331JAJP",
+        "b": "anizip:19768-6"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379332JAJP",
+        "b": "anizip:19768-7"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379333JAJP",
+        "b": "anizip:19768-8"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379334JAJP",
+        "b": "anizip:19768-9"
+      },
+      {
+        "a": "cr:GT00378075-GS00378076-GE00379335JAJP",
+        "b": "anizip:19768-10"
+      },
+      {
+        "a": "jw:10030228",
+        "b": "cr:GT00378075-GS00378076-GE00379326JAJP"
+      },
+      {
+        "a": "jw:10709678",
+        "b": "cr:GT00378075-GS00378076-GE00379327JAJP"
+      },
+      {
+        "a": "jw:10709679",
+        "b": "cr:GT00378075-GS00378076-GE00379328JAJP"
+      },
+      {
+        "a": "jw:10709677",
+        "b": "cr:GT00378075-GS00378076-GE00379329JAJP"
+      },
+      {
+        "a": "jw:10709671",
+        "b": "cr:GT00378075-GS00378076-GE00379330JAJP"
+      },
+      {
+        "a": "jw:10709670",
+        "b": "cr:GT00378075-GS00378076-GE00379331JAJP"
+      },
+      {
+        "a": "jw:10709676",
+        "b": "cr:GT00378075-GS00378076-GE00379332JAJP"
+      },
+      {
+        "a": "jw:10709669",
+        "b": "cr:GT00378075-GS00378076-GE00379333JAJP"
+      },
+      {
+        "a": "jw:10709675",
+        "b": "cr:GT00378075-GS00378076-GE00379334JAJP"
+      },
+      {
+        "a": "jw:10709672",
+        "b": "cr:GT00378075-GS00378076-GE00379335JAJP"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:204060",
+        "whole": "cr:GT00378075"
+      }
+    ],
+    "together": [
+      [
+        "anilist:204060",
+        "kitsu:50801",
+        "mal:63100",
+        "offline:mal-63100",
+        "anizip:19768",
+        "cr:GT00378075-GS00378076",
+        "jw:512179-544302"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Iron Wok Jan!",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "204060",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Iron Wok Jan!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Tetsunabe no Jan!"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "鉄鍋のジャン！"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:204060"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 24,
+      "id": "50801",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Iron Wok Jan"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tetsunabe no Jan!"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "鉄鍋のジャン！"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50801"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "63100",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Iron Wok Jan!"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tetsunabe no Jan!"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63100"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63100",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tetsunabe no Jan!"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63100"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19768",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Iron Wok Jan!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "鉄鍋のジャン!"
+        }
+      ],
+      "uri": "anizip:19768"
+    },
+    {
+      "id": "GT00378075",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378075"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378075-GS00378076",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Iron Wok Jan"
+        }
+      ],
+      "uri": "cr:GT00378075-GS00378076"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "512179-544302",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:512179-544302"
+    }
+  ],
+  "source": {
+    "answers": [
+      "60d8cc616070bd4dfb6623c132b94a2fffb60d0692ec91605e23840b5c22f61e",
+      "90fc0610c94cbc6b6d26f834c8b0493f19a1f2fe2565bcb963865ce37af7f74a",
+      "1a58309970e1489b816ad341e9ef1653f420115aaaa94b7af0ed7ec16631780c",
+      "d18535ed24284477afb971e18a3f136adf53d420868554b70e5d2cdcefbfac91",
+      "887c2293ec2570ec5556850861443a6c9580afa6c4ef046b079d0f1b62ca1646",
+      "435ce2584f68366c19e7e34be652b08f1ef016008b10f36ef78c69b6b1d776cb",
+      "0ca15af9fcbfef450f8122de00fdb282c7dd606c268b4e2cdb493d5738fe069e",
+      "32ca0f9b2e9b0db57e3b8eb21d340ac093b91e22394172114fd7adbf3ae73822",
+      "435272d3ea8cd5fc8d938b1b375e825f329c843449b11e9f59470c63395d567c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:204060,kitsu:50801,mal:63100,offline:mal-63100)"
+  },
+  "why": "Iron Wok Jan! (Tetsunabe no Jan!) is a 12 episode summer 2026 run airing 2026-07-05 to 2026-09-20, with AniList and MyAnimeList both giving the 2026-07-05 start and the offline row giving episodeCount 12. anizip:19768 is the same run: it carries first-party SAME_AS handles to mal:63100 and anilist:204060, its episodeCount is 12, and its episodes run 2026-07-05T08:30Z to 2026-09-20T08:30Z, the run's own first and last broadcast dates to the day. cr:GT00378075-GS00378076 is the same run: anilist:204060 itself declares SAME_AS against it, it is the Crunchyroll season under the series iron-wok-jan, and the ten episodes it lists sit on the same ten dates as AniZip's episodes 1 to 10 with seven of the titles character for character identical. Those ten Crunchyroll episodes pair with AniZip episodes 1 to 10 on those dates, every one the same calendar day. jw:512179-544302 is the same run: it is the JustWatch season at the slug iron-wok-jan, it carries first-party SAME_AS handles to anilist:204060, anizip:19768, cr:GT00378075-GS00378076, kitsu:50801, mal:63100 and offline:mal-63100, and all ten of its episode titles are character for character the Crunchyroll titles at the same numbers, so its ten episodes pair with Crunchyroll's ten. cr:GT00378075 holds the run: it is the bare Crunchyroll series container (scope CONTAINER, no dates, no episodes, no count) and kitsu:50801 declares PART_OF against it, with no includes range since it lists nothing to align."
+}

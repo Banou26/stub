@@ -1,0 +1,137 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Straightforward: the Netflix SAME_AS claim points at a 1998 Rugrats feature, contradicted by title and date alike. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63903",
+      "mediaUri": "offline:mal-63903",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63903",
+      "mediaUri": "nf:18021979",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63903",
+      "mediaUri": "nf:18021979",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "18021979-1",
+      "mediaUri": "nf:18021979",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Rugrats Movie"
+        }
+      ],
+      "uri": "nf:18021979-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:63903",
+        "nf:18021979"
+      ]
+    ],
+    "together": [
+      [
+        "mal:63903",
+        "offline:mal-63903"
+      ]
+    ],
+    "unrelated": [
+      "nf:18021979"
+    ]
+  },
+  "name": "Star Detective Precure! The Movie: The Mysterious Garden and a Secret Pair",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "63903",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Star Detective Precure! The Movie: The Mysterious Garden and a Secret Pair"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Meitantei Precure! Movie: Fushigi na Niwa to 2-ri no Himitsu"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:63903"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63903",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Meitantei Precure! Movie: Fushigi na Niwa to 2-ri no Himitsu"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-63903"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "18021979",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "1998-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Rugrats Movie"
+        }
+      ],
+      "uri": "nf:18021979"
+    }
+  ],
+  "source": {
+    "answers": [
+      "808e1ae708a95ea69356f1e9cf9b0dd5ce39543ea6a0c71f28e3c8517b224906",
+      "45899148eff58db9387912bc2f50bca2bba5f5673372a5ccd015e0af801d9996",
+      "096f3722eff826b78016dc65142e4b40797f60716ba312bc4df54d3d955afc2b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:63903,offline:mal-63903)"
+  },
+  "why": "The run is the Precure feature Meitantei Precure! Movie: Fushigi na Niwa to 2-ri no Himitsu, one MOVIE entry dated 2026-09-18. The rows mal:63903 and offline:mal-63903 are one run: the offline entry carries a SAME_AS handle to mal:63903 and repeats the same romanised title, episodeCount 1, MOVIE type and summer 2026 season. The Netflix row nf:18021979 is marked unrelated and kept apart from mal:63903 because it is The Rugrats Movie, an American animated feature with startDate 1998-01-01 and its own title on its single episode, which is a different work from a 2026 Precure film."
+}

@@ -1,0 +1,108 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The offline row carries no title, dates or count of its own, so it rests entirely on its mal-64580 key and its two SAME_AS handles; no other source returned a row, so there was nothing to hold or separate. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64580",
+      "mediaUri": "anilist:213908",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64580",
+      "mediaUri": "offline:mal-64580",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213908",
+      "mediaUri": "offline:mal-64580",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:213908",
+        "mal:64580",
+        "offline:mal-64580"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "Rusuban",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "213908",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 01 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Rusuban"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "るすばん"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:213908"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64580",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-01",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Rusuban (2026)"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64580"
+    },
+    {
+      "id": "mal-64580",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64580"
+    }
+  ],
+  "source": {
+    "answers": [
+      "7b636c525ba141ae84e0ce2da85a471fb1da98d0041b0b9a659aa07cd6f8b410",
+      "009da3c5228835bb24f8265e4c0998706880309f9627577da4720995d7a1b986",
+      "d2b2fc70e4ea558d135968ae312ae60f27d4de5b40006c80a2c9b01d808765c0"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213908,mal:64580)"
+  },
+  "why": "Rusuban is a one-episode summer 2026 anime film released on 2026-08-01. anilist:213908 and mal:64580 are the same film: anilist names mal:64580 SAME_AS, both give 2026-08-01, both give MOVIE with a count of 1, and both carry the title Rusuban. offline:mal-64580 is the same film again: it is keyed on the MAL id 64580 and names both mal:64580 and anilist:213908 as SAME_AS, so the first-party id mappings agree."
+}

@@ -238,10 +238,24 @@ const pendingReport = (corpusCase: CorpusCase, pending: string, failures: string
  * I15 in docs/design-inputs/01-edge-cases.md, and it is not a separate suite because a store that
  * gets a case right in one order and wrong in the other has not got the case right.
  */
-export const runCorpus = (store: CorpusStore) => {
+/**
+ * Runs every case against a store. `known` names the cases that store is KNOWN to get wrong (by slug,
+ * with the reason): a known case must still fail, a case not listed must pass, and a listed slug with
+ * no case file fails the run, so a fix, a regression and a stale entry are all loud. The store being
+ * replaced runs with its list (tests/corpus/known-disagreements.json); the replacement runs with none.
+ */
+export const runCorpus = (store: CorpusStore, options: { known?: Record<string, string> } = {}) => {
   const cases = loadCases()
+  const known = options.known ?? {}
+  const knownReason = (file: string): string | undefined => known[file.replace(/\.json$/, '')]
 
   describe('corpus', () => {
+    test('every known disagreement names a case that exists', () => {
+      const files = new Set(cases.map(entry => entry.file.replace(/\.json$/, '')))
+      const stale = Object.keys(known).filter(slug => !files.has(slug))
+      expect(stale, 'known disagreements naming no case file').toEqual([])
+    })
+
     test('the corpus loads and every case file matches the format in ./types.ts', () => {
       const files = readdirSync(CASES_DIR).filter(file => file.endsWith('.json'))
       expect(files.length, 'no case files found').toBeGreaterThan(0)
@@ -258,14 +272,22 @@ export const runCorpus = (store: CorpusStore) => {
         reversed: await drive(store, corpusCase, true),
       }))()
 
-      test(`${file}: ${corpusCase.name}`, async () => {
-        const failures = checkClusters(corpusCase, (await both()).forward)
+      const reason = knownReason(file)
+      const suffix = reason ? ` (known disagreement of this store: ${reason})` : ''
+      const settle = (failures: string[]) => {
+        if (reason) {
+          if (!failures.length) throw new Error(`${file}: listed as a known disagreement but the store now agrees with the labels; remove it from the known list`)
+          return
+        }
         if (failures.length) throw new Error(report(corpusCase, failures))
+      }
+
+      test(`${file}: ${corpusCase.name}${suffix}`, async () => {
+        settle(checkClusters(corpusCase, (await both()).forward))
       })
 
-      test(`${file}: ${corpusCase.name} (rows reversed)`, async () => {
-        const failures = checkClusters(corpusCase, (await both()).reversed)
-        if (failures.length) throw new Error(report(corpusCase, failures))
+      test(`${file}: ${corpusCase.name} (rows reversed)${suffix}`, async () => {
+        settle(checkClusters(corpusCase, (await both()).reversed))
       })
 
       test(`${file}: arrival order does not decide the clusters`, async () => {

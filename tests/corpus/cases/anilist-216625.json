@@ -1,0 +1,83 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64965",
+      "mediaUri": "anilist:216625",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:216625",
+        "mal:64965"
+      ]
+    ]
+  },
+  "name": "PokéOki SEASON 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 4,
+      "id": "216625",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 07 Sep 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "PokéOki SEASON 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ポケ起き SEASON 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:216625"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 4,
+      "id": "64965",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-09-07",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Poke Oki Season 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64965"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a0081c5b23c2ca3f0befe5833f0265870e99f6cbc024c89bd55fd00d84f47d0a",
+      "a0b7ede685fb9f5ceca6a6630bfe9a7284041ddf81e380802023712f655a7543"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:216625,mal:64965)"
+  },
+  "why": "PokéOki SEASON 2 (ポケ起き SEASON 2) is a four episode Pokemon ONA short run, 2026-09-07 to 2026-09-28 on AniList, with MyAnimeList carrying the same four episode run from 2026-09-07 as Poke Oki Season 2. The two member rows are one run: anilist:216625 maps SAME_AS to mal:64965 and the two agree on the 2026-09-07 start, on four episodes and on the romanized title. No other source returned a row for this run, so nothing holds it, spans it or needs keeping apart."
+}

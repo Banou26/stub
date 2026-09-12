@@ -1,0 +1,74 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64416",
+      "mediaUri": "offline:mal-64416",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64416",
+        "offline:mal-64416"
+      ]
+    ]
+  },
+  "name": "Yurukawa Mell-chan (ONA)",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64416",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-01",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Yurukawa Mell-chan (ONA)"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64416"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-64416",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yurukawa Mell-chan"
+        }
+      ],
+      "uri": "offline:mal-64416"
+    }
+  ],
+  "source": {
+    "answers": [
+      "94cc2a11b51bf2900e26e27fbdb65f328c38c54ef9f54bef42f59b5d75a26c40",
+      "dad6c946675c759892bc9409742fe8a92a66bad8810e42bc72a2ec13901748ae"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64416,offline:mal-64416)"
+  },
+  "why": "Yurukawa Mell-chan is a summer 2026 ONA on MyAnimeList starting 2026-07-01 with no episode count and no episode list, carried by mal:64416 and offline:mal-64416, which the offline row itself maps to mal:64416. No other source returned a row for it, so there is nothing further to relate."
+}

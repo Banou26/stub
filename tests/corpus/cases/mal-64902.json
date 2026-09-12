@@ -1,0 +1,54 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned."
+  },
+  "claims": [],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64902"
+      ]
+    ]
+  },
+  "name": "20001 An Earth Odyssey",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64902",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "20001 An Earth Odyssey"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "20001-nen Chikyuu no Tabi"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64902"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d9e70e0220efc8607488a81eb41f16f3bef96fd72808dceb81e03f86c23e621e"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64902)"
+  },
+  "why": "20001 An Earth Odyssey (20001-nen Chikyuu no Tabi) is a single episode summer 2026 movie dated 2026-07-18, and mal:64902 is the only row any source returned for it, so the run stands alone with nothing to relate to it."
+}

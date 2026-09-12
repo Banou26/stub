@@ -1,0 +1,267 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The catalogues disagree wildly on the release date (2026-07-19, 2027-01-01, 2027-12-31), so the clustering rests entirely on the first-party id mappings. The Netflix row claims SAME_AS to every member yet is plainly a 2005 live action film, so it is the one row the ids had to be overruled on. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:48832",
+      "mediaUri": "anilist:210309",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48832",
+      "mediaUri": "anizip:16279",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210309",
+      "mediaUri": "anizip:16279",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210309",
+      "mediaUri": "kitsu:50692",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48832",
+      "mediaUri": "kitsu:50692",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210309",
+      "mediaUri": "nf:70028904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:16279",
+      "mediaUri": "nf:70028904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50692",
+      "mediaUri": "nf:70028904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48832",
+      "mediaUri": "nf:70028904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-48832",
+      "mediaUri": "nf:70028904",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:48832",
+      "mediaUri": "offline:mal-48832",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:210309",
+      "mediaUri": "offline:mal-48832",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50692",
+      "mediaUri": "offline:mal-48832",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "402994",
+      "mediaUri": "kitsu:50692",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:402994"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "70028904-1",
+      "mediaUri": "nf:70028904",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The 40-Year-Old Virgin"
+        }
+      ],
+      "uri": "nf:70028904-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:70028904",
+        "mal:48832"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "mal:48832",
+        "anilist:210309",
+        "anizip:16279",
+        "kitsu:50692",
+        "offline:mal-48832"
+      ]
+    ],
+    "unrelated": [
+      "nf:70028904"
+    ]
+  },
+  "name": "Cherry and Virgin",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "48832",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-19",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Cherry and Virgin"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:48832"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "210309",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 01 Jan 2027 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "CHERRY AND VIRGIN"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "CHERRY AND VIRGIN"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:210309"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "16279",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "CHERRY AND VIRGIN"
+        }
+      ],
+      "uri": "anizip:16279"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "50692",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2027-12-31",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "CHERRY AND VIRGIN"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "kitsu:50692"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "70028904",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2005-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The 40-Year-Old Virgin"
+        }
+      ],
+      "uri": "nf:70028904"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-48832",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cherry and Virgin"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-48832"
+    }
+  ],
+  "source": {
+    "answers": [
+      "9a0936c73d55c0fea4364b2c71ecc0252a67547a2e7b605243d866f503e1ec25",
+      "48e52e3442f130084d97a51ae291f2a2a17af93328cb57a858c567cd55d052bd",
+      "8dfc655261b76a6ca50f4918a3558ad4bf915553707de530b87e3d9853438c63",
+      "1ee834ac9492aef65f78cf445ba4bb19e3826b8a106fa96bcd2ed18c3f22d169",
+      "da14c21e9f86f4c8d1df813f93b56970a9c1788a6375ad6e35bd6dcc2b21320d",
+      "4c80e581e38c63986ef8961ca80de58c5e33ab3f127b2f422fa376f1f8b7e031",
+      "5bb9cb1211853eb6b4b327d96ded3e01940863e5405d3d066799d6c68854ffea"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:48832)"
+  },
+  "why": "The run is the anime film CHERRY AND VIRGIN, a single entry that MyAnimeList dates 2026-07-19 while anilist, kitsu and the offline database place it in 2027, all of them as a one part MOVIE. anilist:210309, anizip:16279, kitsu:50692 and offline:mal-48832 are all the same work: every one of them carries a first-party SAME_AS id to mal:48832 and they agree with each other as well (anizip and kitsu both also point at anilist:210309, the offline row is keyed on the MyAnimeList id itself), and all four give the same title and a count of 1. nf:70028904 is a different work: it is The 40-Year-Old Virgin, the 2005 American live action comedy, dated 2005-01-01 with its own title as its single episode title, and it has been attached here only by the word Virgin, so it must not be merged or hung off this film."
+}

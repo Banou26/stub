@@ -1,0 +1,740 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Hard part was the two streaming season rows: both claim SAME_AS to every member, but neither lists an episode date and the catalogue side lists no episode titles, so there is no date or title evidence either way and both were left unsettled. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62856",
+      "mediaUri": "anilist:103303",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:103303",
+      "mediaUri": "kitsu:41923",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62856",
+      "mediaUri": "kitsu:41923",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81698957",
+      "mediaUri": "kitsu:41923",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:103303",
+      "mediaUri": "offline:anilist-103303",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:41923",
+      "mediaUri": "offline:anilist-103303",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62856",
+      "mediaUri": "offline:mal-62856",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81698957",
+      "mediaUri": "jw:320096-328355",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:103303",
+      "mediaUri": "jw:320096-328355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:41923",
+      "mediaUri": "jw:320096-328355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62856",
+      "mediaUri": "jw:320096-328355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-103303",
+      "mediaUri": "jw:320096-328355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62856",
+      "mediaUri": "jw:320096-328355",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:103303",
+      "mediaUri": "nf:81698957-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:320096-328355",
+      "mediaUri": "nf:81698957-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:41923",
+      "mediaUri": "nf:81698957-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62856",
+      "mediaUri": "nf:81698957-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-103303",
+      "mediaUri": "nf:81698957-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62856",
+      "mediaUri": "nf:81698957-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "309439",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309439"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "309440",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309440"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "309441",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309441"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "309442",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309442"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "309443",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309443"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "309444",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309444"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "309445",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309445"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "309446",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309446"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "309447",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309447"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "309448",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309448"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "309449",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309449"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "309450",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:309450"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405847",
+      "mediaUri": "kitsu:41923",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405847"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "6197240",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Electric Boy"
+        }
+      ],
+      "uri": "jw:6197240"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10574755",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Mysteries of the Catalog"
+        }
+      ],
+      "uri": "jw:10574755"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10574813",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Their Dream"
+        }
+      ],
+      "uri": "jw:10574813"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10574817",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Steadfast Girl"
+        }
+      ],
+      "uri": "jw:10574817"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10574816",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Proof of Love"
+        }
+      ],
+      "uri": "jw:10574816"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10574814",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Sound of Innovation"
+        }
+      ],
+      "uri": "jw:10574814"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10574812",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Elopement"
+        }
+      ],
+      "uri": "jw:10574812"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10574809",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "His Brother's Footsteps"
+        }
+      ],
+      "uri": "jw:10574809"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10574811",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Time to Part"
+        }
+      ],
+      "uri": "jw:10574811"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10574818",
+      "mediaUri": "jw:320096-328355",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Engagement Trouble"
+        }
+      ],
+      "uri": "jw:10574818"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81699364",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Electric Boy"
+        }
+      ],
+      "uri": "nf:81699364"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81699365",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81699365"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81699366",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81699366"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81699367",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81699367"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81699368",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81699368"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81699369",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81699369"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81699370",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81699370"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81699371",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81699371"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81699372",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81699372"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81699373",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81699373"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81699374",
+      "mediaUri": "nf:81698957-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81699374"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "anilist:103303",
+        "whole": "nf:81698957"
+      }
+    ],
+    "together": [
+      [
+        "anilist:103303",
+        "kitsu:41923",
+        "mal:62856",
+        "offline:anilist-103303",
+        "offline:mal-62856"
+      ]
+    ]
+  },
+  "name": "Sparks of Tomorrow",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "103303",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Sparks of Tomorrow"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Nijusseiki Denki Mokuroku: Eureka Evrika"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "二十世紀電氣目録-ユーレカ・エヴリカ-"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:103303"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "41923",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Sparks of Tomorrow"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Nijusseiki Denki Mokuroku: Eureka Evrika"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "二十世紀電氣目録-ユーレカ・エヴリカ-"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:41923"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "62856",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Sparks of Tomorrow"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Nijusseiki Denki Mokuroku: Eureka Evrika"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62856"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 2,
+      "id": "anilist-103303",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sparks of Tomorrow"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:anilist-103303"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-62856",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nijusseiki Denki Mokuroku: Eureka Evrika"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62856"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "320096-328355",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:320096-328355"
+    },
+    {
+      "id": "81698957",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "nf:81698957"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "81698957-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Sparks of Tomorrow"
+        }
+      ],
+      "uri": "nf:81698957-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "e42731988135258dc7efe099d6f922256cdccf6da81e9a72d6dd0b1033513b87",
+      "11e50bf011010c517379c2013fa984a3c5966b0089eeef5f7002c9dde89cdd21",
+      "538d3dd7c8340898f7bbcb44d47ce06dd5da5b22d4da20fd86d1a3d9e43dfa15",
+      "3870f6c082fbc42185419fc96a7fc5328742df3b234323c850ef2b98ec477d7c",
+      "1dc0cf1d24cb2a0b2dc7e40dbcd5ed0215e78587058a20714ab9149247699bc2",
+      "16db65a83c90795ce9210e868dea408f963e41ee36811d3caefb3b6efc926247",
+      "35d1b995754305fcd49825d4eed280b0f95ee48d12c4fad69b68c190e9d71ec4",
+      "524c02e1d9a82e3a8db22f467534c3fbad3011f5572fa18b00a83b70fc27608a"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:103303,kitsu:41923,mal:62856,offline:anilist-103303,offline:mal-62856)"
+  },
+  "why": "Sparks of Tomorrow is a single cour TV run of 13 episodes airing 2026-07-05 to 2026-09-27 (Summer 2026) and still releasing at the time of labelling. The anilist, kitsu and mal rows are one run: anilist gives mal:62856, kitsu gives anilist:103303 and mal:62856, and all three carry the same day precise 2026-07-05 start with 13 episodes, while the two offline rows are keyed on anilist-103303 and mal-62856 and hand back those same ids. nf:81698957 is a bare Netflix title id with no season, no dates and no count, so it holds the run instead of being it. The JustWatch season jw:320096-328355 (10 episodes, a 2026-01-01 start that matches nothing, no episode dates) and the Netflix season nf:81698957-1 (11 episodes, titles Episode 2 through Episode 11, no dates) are each shorter than the still releasing 13 episode run and the catalogue rows carry no episode titles or dates to check them against, so neither is settled here."
+}

@@ -1,0 +1,372 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Straightforward: four rows, all linked by first-party SAME_AS handles, with the same 2026-08-21 start and the same count of 26; the only variation is the English title (Jade Dynasty versus Zhu Xian), which is the usual translation of the same name. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62990",
+      "mediaUri": "anilist:206189",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206189",
+      "mediaUri": "kitsu:50936",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62990",
+      "mediaUri": "offline:mal-62990",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:206189",
+      "mediaUri": "offline:mal-62990",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407206",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407206"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "407207",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407207"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407208",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407208"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "407209",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407209"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "407210",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407210"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "407211",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407211"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "407212",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407212"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "407213",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407213"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "407214",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407214"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "407215",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407215"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "407216",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407216"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "407217",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407217"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "407218",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407218"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "407219",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407219"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "407220",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407220"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "407221",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407221"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "407222",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407222"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "407223",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407223"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "407224",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407224"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "407225",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407225"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "407226",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407226"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "407227",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407227"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "407228",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407228"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "407229",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407229"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "407230",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407230"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "407231",
+      "mediaUri": "kitsu:50936",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407231"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:206189",
+        "kitsu:50936",
+        "mal:62990",
+        "offline:mal-62990"
+      ]
+    ]
+  },
+  "name": "Zhu Xian Final",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "206189",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 21 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Zhu Xian Final"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "诛仙 最终季"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:206189"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "50936",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Zhu Xian Final"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50936"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "62990",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-21",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jade Dynasty Final Season"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Zhu Xian: Zuizhong Ji"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62990"
+    },
+    {
+      "id": "mal-62990",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-62990"
+    }
+  ],
+  "source": {
+    "answers": [
+      "163c4dad6b66118d59e027a8038ef01b86357a9393945f1bdf7423426d98caa2",
+      "c376dfd80397f37a8b452858f9fc9df2e4d61bb629dd532fbe1f68f432fa1f50",
+      "4dec9d9d5ab005152cd5dcecd822f76332869a2aa397c7821cec90ba789835a4",
+      "b3b6a87be62a7d656976e987e2aa489137eb8a63ef90e31ce543752f4f53295d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:206189,kitsu:50936)"
+  },
+  "why": "Zhu Xian Final (Jade Dynasty Final Season) is a 26-episode Chinese ONA that started 2026-08-21 and is still running, carried by anilist:206189 and kitsu:50936 which point at each other with SAME_AS handles. mal:62990 is the same run: anilist:206189 maps to it SAME_AS, and its startDate 2026-08-21, episodeCount 26 and title Zhu Xian: Zuizhong Ji match the members field for field. offline:mal-62990 is the same run too, since the offline database entry carries SAME_AS handles to both mal:62990 and anilist:206189 and holds no field that disagrees."
+}

@@ -1,0 +1,788 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Two Crunchyroll episode titles are worded differently from anizip's (episodes 3 and 7), so the pairing rests on the release dates, which match day for day across all ten. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:G8DHV78ZM-GS00377802",
+      "mediaUri": "anilist:198946",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62513",
+      "mediaUri": "anilist:198946",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62513",
+      "mediaUri": "kitsu:50154",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198946",
+      "mediaUri": "kitsu:50154",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:G8DHV78ZM",
+      "mediaUri": "kitsu:50154",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:62513",
+      "mediaUri": "offline:mal-62513",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198946",
+      "mediaUri": "offline:mal-62513",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50154",
+      "mediaUri": "offline:mal-62513",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62513",
+      "mediaUri": "anizip:19581",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:198946",
+      "mediaUri": "anizip:19581",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "387175",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387175"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "387176",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387176"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "387177",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387177"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "387178",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387178"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "387179",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387179"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "387180",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387180"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "387181",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387181"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "387182",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387182"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "387183",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387183"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "387184",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387184"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "387185",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387185"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "387186",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387186"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "387187",
+      "mediaUri": "kitsu:50154",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387187"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19581-1",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Solsein, the Divine Academy"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "神学校ソルセイン"
+        }
+      ],
+      "uri": "anizip:19581-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19581-2",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-07-15T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Another World"
+        }
+      ],
+      "uri": "anizip:19581-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19581-3",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-07-22T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Hero Legend and the Village of Origin"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "勇者伝承とはじまりの町"
+        }
+      ],
+      "uri": "anizip:19581-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19581-4",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-07-29T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Dark Tower"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黒い塔"
+        }
+      ],
+      "uri": "anizip:19581-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19581-5",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-08-05T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Battle with Oneself"
+        }
+      ],
+      "uri": "anizip:19581-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19581-6",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-08-12T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Whispering Voice"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "囁く声"
+        }
+      ],
+      "uri": "anizip:19581-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19581-7",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-08-19T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The World We See, and the Hidden World"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "表の世界と裏の世界"
+        }
+      ],
+      "uri": "anizip:19581-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19581-8",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-08-26T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Memories of a Friend"
+        }
+      ],
+      "uri": "anizip:19581-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19581-9",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-09-02T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Mirror Labyrinth"
+        }
+      ],
+      "uri": "anizip:19581-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19581-10",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-09-09T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Second Trial"
+        }
+      ],
+      "uri": "anizip:19581-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19581-11",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-09-16T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19581-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19581-12",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-09-23T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19581-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "19581-13",
+      "mediaUri": "anizip:19581",
+      "origin": "anizip",
+      "releaseDate": "2026-09-30T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19581-13"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "G8DHV78ZM-GS00377802-GE00377803JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-07-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Solsein, the Divine Academy"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377803JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "G8DHV78ZM-GS00377802-GE00377804JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-07-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Another World"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377804JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "G8DHV78ZM-GS00377802-GE00377805JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-07-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Hero Legend and the Town of Beginnings"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377805JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "G8DHV78ZM-GS00377802-GE00377806JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-07-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Dark Tower"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377806JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "G8DHV78ZM-GS00377802-GE00377807JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-08-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Battle With Oneself"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377807JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "G8DHV78ZM-GS00377802-GE00377808JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-08-12T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Whispering Voice"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377808JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "G8DHV78ZM-GS00377802-GE00377809JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-08-19T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The World We See, And the Hidden World"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377809JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "G8DHV78ZM-GS00377802-GE00377810JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-08-26T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Memories of a Friend"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377810JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "G8DHV78ZM-GS00377802-GE00377811JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-09-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Mirror Labyrinth"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377811JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "G8DHV78ZM-GS00377802-GE00377812JAJP",
+      "mediaUri": "cr:G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "releaseDate": "2026-09-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Second Trial"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802-GE00377812JAJP"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19581-1",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377803JAJP"
+      },
+      {
+        "a": "anizip:19581-2",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377804JAJP"
+      },
+      {
+        "a": "anizip:19581-3",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377805JAJP"
+      },
+      {
+        "a": "anizip:19581-4",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377806JAJP"
+      },
+      {
+        "a": "anizip:19581-5",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377807JAJP"
+      },
+      {
+        "a": "anizip:19581-6",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377808JAJP"
+      },
+      {
+        "a": "anizip:19581-7",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377809JAJP"
+      },
+      {
+        "a": "anizip:19581-8",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377810JAJP"
+      },
+      {
+        "a": "anizip:19581-9",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377811JAJP"
+      },
+      {
+        "a": "anizip:19581-10",
+        "b": "cr:G8DHV78ZM-GS00377802-GE00377812JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:198946",
+        "whole": "cr:G8DHV78ZM"
+      }
+    ],
+    "together": [
+      [
+        "anilist:198946",
+        "kitsu:50154",
+        "mal:62513",
+        "offline:mal-62513",
+        "anizip:19581",
+        "cr:G8DHV78ZM-GS00377802"
+      ]
+    ]
+  },
+  "name": "Clevatess Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "198946",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Clevatess Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "クレバテスⅡ-魔獣の王と偽りの勇者伝承-"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:198946"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "50154",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Clevatess: The King of Devil Beasts Season 2"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "クレバテスⅡ-魔獣の王と偽りの勇者伝承-"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50154"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "62513",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Clevatess Season 2"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62513"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62513",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62513"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 13,
+      "id": "19581",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Clevatess II"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "クレバテスII-魔獣の王と偽りの勇者伝承-"
+        }
+      ],
+      "uri": "anizip:19581"
+    },
+    {
+      "id": "G8DHV78ZM",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:G8DHV78ZM"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "G8DHV78ZM-GS00377802",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Clevatess II"
+        }
+      ],
+      "uri": "cr:G8DHV78ZM-GS00377802"
+    }
+  ],
+  "source": {
+    "answers": [
+      "3d4ecf7ad4963dfa2ff14ac06607e122f75232515d22118db63f567c20abc1e4",
+      "5e28141443cdabefae4139a0803af612543b1172577da998575db89f925c60a2",
+      "828b024ab2c727d68fa4b9c9318f5cacd9bdf009183777b30be51f2efcb2cca9",
+      "2f14838b7cf741ced4b988f7c9a4d48d650805dbe17d16215a77783ed6d1db74",
+      "8baf1ea0c887e1b022ca58c4277e2e189ea95c947364380934f04f16d0e7803f",
+      "d9ba902dd873394be224458d497529679a37a8fe097b1d7e79f8513885188b73"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:198946,kitsu:50154,mal:62513,offline:mal-62513)"
+  },
+  "why": "Clevatess Season 2 (Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou) is a 13 episode Summer 2026 run airing 2026-07-08 to 2026-09-30, ten episodes out by the time of labelling. anilist:198946, kitsu:50154, mal:62513 and offline:mal-62513 are one run: anilist gives mal:62513, kitsu gives mal:62513 and anilist:198946, offline gives all three, and anilist, kitsu and mal carry the same 2026-07-08 start with 13 episodes. anizip:19581 is the same run: it maps to mal:62513 and anilist:198946, lists 13 episodes, and its first and last episodes fall on 2026-07-08 and 2026-09-30, the run's own start and end. The Crunchyroll season cr:G8DHV78ZM-GS00377802 is the same run: anilist gives it as SAME_AS, and its 10 episodes sit on 2026-07-08 through 2026-09-09, the same days anizip gives episodes 1 to 10, with no episode past the run's dates and a count short of 13 rather than over it. cr:G8DHV78ZM is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Episodes 1 to 10 pair anizip to Crunchyroll on matching release days, with titles agreeing too apart from small wording differences (The Hero Legend and the Village of Origin against The Hero Legend and the Town of Beginnings); the kitsu episode rows carry no title or date and place nothing."
+}

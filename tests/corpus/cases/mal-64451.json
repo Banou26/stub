@@ -1,0 +1,194 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Kitsu and offline were easy, both agreeing on id, title, date and count; the work was in reading the Netflix row, which claims SAME_AS but whose own episode titles name the Trick live-action specials of 2005, 2010 and 2014. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64451",
+      "mediaUri": "kitsu:50784",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64451",
+      "mediaUri": "nf:81260165",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64451",
+      "mediaUri": "offline:mal-64451",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50784",
+      "mediaUri": "offline:mal-64451",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404374",
+      "mediaUri": "kitsu:50784",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404374"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81260167",
+      "mediaUri": "nf:81260165",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trick Shinsaku Special 2005"
+        }
+      ],
+      "uri": "nf:81260167"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81260168",
+      "mediaUri": "nf:81260165",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trick Shinsaku Special 2010"
+        }
+      ],
+      "uri": "nf:81260168"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81260169",
+      "mediaUri": "nf:81260165",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trick Shinsaku Special 2014"
+        }
+      ],
+      "uri": "nf:81260169"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "mal:64451",
+        "nf:81260165"
+      ]
+    ],
+    "together": [
+      [
+        "mal:64451",
+        "kitsu:50784",
+        "offline:mal-64451"
+      ]
+    ],
+    "unrelated": [
+      "nf:81260165"
+    ]
+  },
+  "name": "One Hundred Thousand Years of Qi Training: Yang Ascendant",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64451",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "One Hundred Thousand Years of Qi Training: Yang Ascendant"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Lian Qi Shi Wan Nian Special: Yangji Tianxia"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64451"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50784",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Lian Qi Shi Wan Nian Special: Yangji Tianxia"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50784"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81260165",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2014-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trick Shinsaku Special"
+        }
+      ],
+      "uri": "nf:81260165"
+    },
+    {
+      "id": "mal-64451",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64451"
+    }
+  ],
+  "source": {
+    "answers": [
+      "ca360616b1c1a8e7531bd64c633f20cc28426ee19155936c9683c7b728143cb6",
+      "b416e02e192740acd87434c74f7428e799c9dcf7162d44796c0fb3ea80d20cab",
+      "2170fe453375d65d48ad437de3c14271eba85637fdc16fb85c85740248372e23",
+      "b0a9cfd2dacab2c36a54c2b7be8cd1f82cdfbb423d9195d4a71eaecc52e05d9f",
+      "27a5f7a67fc363c7dfc1e7ea54f0576cb6f57b88c53ca3c449dcf8999580dee6",
+      "871334219ba7de399afffaa1ee411a401e24ec2133c210ee641886ff652d94dc",
+      "e46cccf536a754d8a815a1fb0724b9b4493786b43d94de3cba585bb9bdc12729"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64451)"
+  },
+  "why": "One Hundred Thousand Years of Qi Training: Yang Ascendant is a one-episode summer 2026 Chinese ONA special released 2026-07-18, held on MyAnimeList as mal:64451. Kitsu 50784 is the same run: it carries the same romanised title Lian Qi Shi Wan Nian Special: Yangji Tianxia that MyAnimeList lists as the jp-en title, the same day-precise start 2026-07-18, the same episodeCount 1, the same ONA type, and a SAME_AS handle to mal:64451. The offline database row offline:mal-64451 is the same run too: its id is built on the MyAnimeList id 64451 and it carries SAME_AS handles to both mal:64451 and kitsu:50784. The Netflix title Trick Shinsaku Special (nf:81260165) is a different work, a 2014-01-01 container whose three episodes are titled Trick Shinsaku Special 2005, 2010 and 2014, with nothing of this show in it beyond the word Special, so it is marked unrelated and held apart from mal:64451."
+}

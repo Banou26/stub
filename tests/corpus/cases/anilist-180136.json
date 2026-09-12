@@ -1,0 +1,1467 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Crunchyroll and JustWatch seasons stop at 11 of 26 episodes, which is a partial listing of a run still airing rather than a fold, since no episode of either runs past the run's own dates. JustWatch was paired to Crunchyroll rather than to anizip because anizip's episode 1 title is shorter by two words. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378018-GS00378019",
+      "mediaUri": "anilist:180136",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59741",
+      "mediaUri": "anilist:180136",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:180136",
+      "mediaUri": "kitsu:49183",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378018",
+      "mediaUri": "kitsu:49183",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:59741",
+      "mediaUri": "offline:mal-59741",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:180136",
+      "mediaUri": "offline:mal-59741",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49183",
+      "mediaUri": "offline:mal-59741",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59741",
+      "mediaUri": "anizip:18854",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:180136",
+      "mediaUri": "anizip:18854",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:180136",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49183",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59741",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59741",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:180136",
+      "mediaUri": "jw:454469-474794",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18854",
+      "mediaUri": "jw:454469-474794",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49183",
+      "mediaUri": "jw:454469-474794",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59741",
+      "mediaUri": "jw:454469-474794",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59741",
+      "mediaUri": "jw:454469-474794",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:180136",
+      "mediaUri": "nf:82942166-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18854",
+      "mediaUri": "nf:82942166-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:454469-474794",
+      "mediaUri": "nf:82942166-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:49183",
+      "mediaUri": "nf:82942166-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:59741",
+      "mediaUri": "nf:82942166-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-59741",
+      "mediaUri": "nf:82942166-1",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "372516",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372516"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "372517",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372517"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "372518",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372518"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "372519",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372519"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "372520",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372520"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "372521",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372521"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "372522",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372522"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "372523",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372523"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "372524",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372524"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "372525",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372525"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "372526",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372526"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "372527",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372527"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "372528",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372528"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "372529",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372529"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "372530",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372530"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "372531",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372531"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "372532",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372532"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "372533",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372533"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "372534",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372534"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "372535",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372535"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "372536",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372536"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "372537",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372537"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "372538",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372538"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "372539",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372539"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "372540",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372540"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "372541",
+      "mediaUri": "kitsu:49183",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:372541"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18854-1",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Elymas the Heavy Knight"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "重騎士エルマ"
+        }
+      ],
+      "uri": "anizip:18854-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18854-2",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Menacing Foul Eight-Legged Beast"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "脅威の猿蜘蛛"
+        }
+      ],
+      "uri": "anizip:18854-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18854-3",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Raid Quest"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "大規模依頼[レイドクエスト]"
+        }
+      ],
+      "uri": "anizip:18854-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18854-4",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Existence Evolution"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "存在進化"
+        }
+      ],
+      "uri": "anizip:18854-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18854-5",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fang of Smoldering Insanity"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "燻り狂う牙"
+        }
+      ],
+      "uri": "anizip:18854-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18854-6",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Ruche the Pierrot"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "道化師ルーチェ"
+        }
+      ],
+      "uri": "anizip:18854-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18854-7",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Golden Raana Farming"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "成金ラーナ狩り"
+        }
+      ],
+      "uri": "anizip:18854-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18854-8",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Wandering"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "王の彷徨[ワンダリング]"
+        }
+      ],
+      "uri": "anizip:18854-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18854-9",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Dreamlord"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "夢の主[マスター]"
+        }
+      ],
+      "uri": "anizip:18854-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18854-10",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Negotiation"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "交渉"
+        }
+      ],
+      "uri": "anizip:18854-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18854-11",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T15:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Inescapable Past"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "逃れられない過去"
+        }
+      ],
+      "uri": "anizip:18854-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18854-12",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T15:15:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18854-12"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "18854-13",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-09-24T15:15:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18854-13"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "18854-14",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-10-01T15:15:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18854-14"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "18854-15",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-10-08T15:15:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18854-15"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "18854-16",
+      "mediaUri": "anizip:18854",
+      "origin": "anizip",
+      "releaseDate": "2026-10-15T15:15:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18854-16"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378018-GS00378019-GE00378020JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-07-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "I'm Elymas the Heavy Knight"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378020JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378018-GS00378019-GE00378021JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-07-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Menacing Foul Eight-Legged Beast"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378021JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378018-GS00378019-GE00378022JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-07-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Raid Quest"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378022JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378018-GS00378019-GE00378023JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-07-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Existence Evolution"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378023JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378018-GS00378019-GE00378024JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-07-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Fang of Smoldering Insanity"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378024JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378018-GS00378019-GE00378025JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-08-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Ruche the Pierrot"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378025JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378018-GS00378019-GE00378026JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-08-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Golden Raana Farming"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378026JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378018-GS00378019-GE00378027JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-08-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Wandering"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378027JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378018-GS00378019-GE00378028JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-08-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Dreamlord"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378028JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378018-GS00378019-GE00378029JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-09-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Negotiation"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378029JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00378018-GS00378019-GE00378030JAJP",
+      "mediaUri": "cr:GT00378018-GS00378019",
+      "origin": "cr",
+      "releaseDate": "2026-09-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Inescapable Past"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019-GE00378030JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "8809364",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I'm Elymas the Heavy Knight"
+        }
+      ],
+      "uri": "jw:8809364"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10561179",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Menacing Foul Eight-Legged Beast"
+        }
+      ],
+      "uri": "jw:10561179"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10561181",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Raid Quest"
+        }
+      ],
+      "uri": "jw:10561181"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10561183",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Existence Evolution"
+        }
+      ],
+      "uri": "jw:10561183"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10561185",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fang of Smoldering Insanity"
+        }
+      ],
+      "uri": "jw:10561185"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10561187",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ruche the Pierrot"
+        }
+      ],
+      "uri": "jw:10561187"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10561189",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Golden Raana Farming"
+        }
+      ],
+      "uri": "jw:10561189"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10561191",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Wandering"
+        }
+      ],
+      "uri": "jw:10561191"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10561193",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Dreamlord"
+        }
+      ],
+      "uri": "jw:10561193"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10561195",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Negotiation"
+        }
+      ],
+      "uri": "jw:10561195"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10561197",
+      "mediaUri": "jw:454469-474794",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Inescapable Past"
+        }
+      ],
+      "uri": "jw:10561197"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82942168",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82942168"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82942169",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82942169"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82942170",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82942170"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82942171",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82942171"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82942172",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82942172"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82942173",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82942173"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82942174",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82942174"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82942175",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82942175"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82942176",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82942176"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82942177",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82942177"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82942178",
+      "mediaUri": "nf:82942166-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82942178"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:18854-1",
+        "b": "cr:GT00378018-GS00378019-GE00378020JAJP"
+      },
+      {
+        "a": "anizip:18854-2",
+        "b": "cr:GT00378018-GS00378019-GE00378021JAJP"
+      },
+      {
+        "a": "anizip:18854-3",
+        "b": "cr:GT00378018-GS00378019-GE00378022JAJP"
+      },
+      {
+        "a": "anizip:18854-4",
+        "b": "cr:GT00378018-GS00378019-GE00378023JAJP"
+      },
+      {
+        "a": "anizip:18854-5",
+        "b": "cr:GT00378018-GS00378019-GE00378024JAJP"
+      },
+      {
+        "a": "anizip:18854-6",
+        "b": "cr:GT00378018-GS00378019-GE00378025JAJP"
+      },
+      {
+        "a": "anizip:18854-7",
+        "b": "cr:GT00378018-GS00378019-GE00378026JAJP"
+      },
+      {
+        "a": "anizip:18854-8",
+        "b": "cr:GT00378018-GS00378019-GE00378027JAJP"
+      },
+      {
+        "a": "anizip:18854-9",
+        "b": "cr:GT00378018-GS00378019-GE00378028JAJP"
+      },
+      {
+        "a": "anizip:18854-10",
+        "b": "cr:GT00378018-GS00378019-GE00378029JAJP"
+      },
+      {
+        "a": "anizip:18854-11",
+        "b": "cr:GT00378018-GS00378019-GE00378030JAJP"
+      },
+      {
+        "a": "jw:8809364",
+        "b": "cr:GT00378018-GS00378019-GE00378020JAJP"
+      },
+      {
+        "a": "jw:10561179",
+        "b": "cr:GT00378018-GS00378019-GE00378021JAJP"
+      },
+      {
+        "a": "jw:10561181",
+        "b": "cr:GT00378018-GS00378019-GE00378022JAJP"
+      },
+      {
+        "a": "jw:10561183",
+        "b": "cr:GT00378018-GS00378019-GE00378023JAJP"
+      },
+      {
+        "a": "jw:10561185",
+        "b": "cr:GT00378018-GS00378019-GE00378024JAJP"
+      },
+      {
+        "a": "jw:10561187",
+        "b": "cr:GT00378018-GS00378019-GE00378025JAJP"
+      },
+      {
+        "a": "jw:10561189",
+        "b": "cr:GT00378018-GS00378019-GE00378026JAJP"
+      },
+      {
+        "a": "jw:10561191",
+        "b": "cr:GT00378018-GS00378019-GE00378027JAJP"
+      },
+      {
+        "a": "jw:10561193",
+        "b": "cr:GT00378018-GS00378019-GE00378028JAJP"
+      },
+      {
+        "a": "jw:10561195",
+        "b": "cr:GT00378018-GS00378019-GE00378029JAJP"
+      },
+      {
+        "a": "jw:10561197",
+        "b": "cr:GT00378018-GS00378019-GE00378030JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:180136",
+        "whole": "cr:GT00378018"
+      }
+    ],
+    "together": [
+      [
+        "anilist:180136",
+        "kitsu:49183",
+        "mal:59741",
+        "offline:mal-59741",
+        "anizip:18854",
+        "cr:GT00378018-GS00378019",
+        "jw:454469-474794"
+      ]
+    ]
+  },
+  "name": "The Exiled Heavy Knight Knows How to Game the System",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "180136",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Exiled Heavy Knight Knows How to Game the System"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Tsuihou Sareta Tensei Juukishi wa Game Chishiki de Musou Suru"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "追放された転生重騎士はゲーム知識で無双する"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:180136"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "49183",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Tsuihou Sareta Tensei Juukishi wa Game Sashiki de Musou Suru"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "追放された転生重騎士はゲーム知識で無双する"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:49183"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "59741",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Exiled Heavy Knight Knows How to Game the System"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Tsuihou sareta Tensei Juukishi wa Game Chishiki de Musou suru"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:59741"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-59741",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Tsuihou sareta Tensei Juukishi wa Game Chishiki de Musou suru"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-59741"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 26,
+      "id": "18854",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Exiled Heavy Knight Knows How to Game the System"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "追放された転生重騎士はゲーム知識で無双する"
+        }
+      ],
+      "uri": "anizip:18854"
+    },
+    {
+      "id": "GT00378018",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378018"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00378018-GS00378019",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Exiled Heavy Knight Knows How to Game the System"
+        }
+      ],
+      "uri": "cr:GT00378018-GS00378019"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "454469-474794",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:454469-474794"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82942166-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Exiled Heavy Knight Knows How To Game the System"
+        }
+      ],
+      "uri": "nf:82942166-1"
+    }
+  ],
+  "source": {
+    "answers": [
+      "4a8fbf1b500b4a2c0ce18de20f6a0ee750c25f8eb0fc913c1a140fcc87879cf5",
+      "c6a433e826a2ecdd4d1bb31bfcf9da38ae12001386460ab1f78b5fbc192e6ed7",
+      "313d1d8451429c6ec348556a7a5a7de640d200b7b57ea7f4df73a787b669412d",
+      "a05a5d03fd5c4a0470c96694fb067fedc1ba0090f6443a8b320396eef3929fb3",
+      "36b92337eabee6b4cc9d24928f5a4cdfa8de0cfb60bf6e9fee82e092c0c3dc67",
+      "06849979f8a7ace518fb7f086ecb6594497c65787aa27e569a818587a35f3192",
+      "13083a7c78123ba0f88b934fc78d1429b440b9b361187de4aa1b989951d07736",
+      "985fdbb3fb9cad2ad9e89a739ff7390169c22d718ffbcfe399e5819b7554a5b3",
+      "be97850f68323928e0912b994fe2cc9ac0d69e07c870a084d50ad2a66b4cbea6",
+      "12379072950057abbeb5f6fc89e1a0383a5af096d352ef8ec929e87fbcece9f2",
+      "5782385caab9fc01458f12b6ce56f5e36b3ac7e6182bd050feda9c6f611ca132"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:180136,kitsu:49183,mal:59741,offline:mal-59741)"
+  },
+  "why": "The Exiled Heavy Knight Knows How to Game the System is a 26 episode run airing 2026-07-03 to 2026-12-25 across two cours, eleven episodes out by the time of labelling. anilist:180136, kitsu:49183, mal:59741 and offline:mal-59741 are one run: anilist gives mal:59741, kitsu and offline give anilist:180136, and anilist, kitsu and mal all carry the 2026-07-03 start with 26 episodes. anizip:18854 is the same run: it maps to mal:59741 and anilist:180136 and lists 26 episodes on the run's weekly Thursday schedule from 2026-07-02. The Crunchyroll season cr:GT00378018-GS00378019 is the same run, not a container: anilist itself gives it as SAME_AS, its 11 episodes fall on 2026-07-02 to 2026-09-10, the same days anizip gives episodes 1 to 11, and its count of 11 is short of the run's 26 rather than over it. The JustWatch season jw:454469-474794 is the same run as well: all 11 of its episode titles, from I'm Elymas the Heavy Knight to Inescapable Past, are the exact non-generic titles Crunchyroll gives the same 11 positions. cr:GT00378018 is a bare Crunchyroll series id with no season, dates or count, so it holds the run. Episodes pair anizip to Crunchyroll on matching release days for episodes 1 to 11 (episode 1's titles differ slightly, Elymas the Heavy Knight against I'm Elymas the Heavy Knight, but both sit on 2026-07-02), and JustWatch to Crunchyroll on the 11 exact titles; the kitsu episode rows carry no title or date and place nothing. The Netflix season nf:82942166-1 lists 11 episodes titled Episode 1 to Episode 11 with no dates against a 26 episode run, so it is left unsettled."
+}

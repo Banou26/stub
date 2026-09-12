@@ -1,0 +1,174 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Small run with one real extra row. The offline row carries no title, no dates and no count, so it rests entirely on its two SAME_AS ids. The Netflix row shares the anniversary special wording but is a different franchise and points at other ids. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64597",
+      "mediaUri": "anilist:214031",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64597",
+      "mediaUri": "offline:mal-64597",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:214031",
+      "mediaUri": "offline:mal-64597",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "81662513",
+      "mediaUri": "nf:81663074",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kath & Kim, Our Effluent Life - With Extra Effluent"
+        }
+      ],
+      "uri": "nf:81662513"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81662514",
+      "mediaUri": "nf:81663074",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kath & Kim, 20 Preposterous Years - Warts & All"
+        }
+      ],
+      "uri": "nf:81662514"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:214031",
+        "nf:81663074"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:214031",
+        "mal:64597",
+        "offline:mal-64597"
+      ]
+    ],
+    "unrelated": [
+      "nf:81663074"
+    ]
+  },
+  "name": "Mob Psycho 100 10th Anniversary Special Movie",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "214031",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 12 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Mob Psycho 100 10th Anniversary Special Movie"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Mob Psycho 100: 10 Shuunen Kinen Tokubetsu Eizou"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "モブサイコ100 10周年記念特別映像"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:214031"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64597",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-12",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mob Psycho 100: 10th Anniversary Special Video"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Mob Psycho 100: 10-shuunen Kinen Tokubetsu Eizou"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64597"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81663074",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kath & Kim: 20th Anniversary Specials"
+        }
+      ],
+      "uri": "nf:81663074"
+    },
+    {
+      "id": "mal-64597",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64597"
+    }
+  ],
+  "source": {
+    "answers": [
+      "bf517baf62040464515747144cf2f87fc0a3542b2d0dba6ea5d5e34af502e226",
+      "20c68e5a684bb7045526ae1c49443e39e0c24e8b2c163585b9e5a9ea02ede064",
+      "47143751747b4afe497651374f73af44764f639a8eb799e8c7de400ba999ecb1",
+      "0307a4d242328daf93f2d557f992d466269a38d2ef997994328b14b59c4685ba",
+      "b3c12ed32e211a9a356d75cb0f6d3b9802d0d5ff35e85b2eb850acf8ad7e0ab7",
+      "25283cffd600a2a4f85dd37fba6d09f76b17624f4b7b712f8f658a5afc62b1ee"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:214031,mal:64597)"
+  },
+  "why": "The run is a one episode 10th anniversary special video for Mob Psycho 100, dated 2026-07-12 with episodeCount 1 on anilist 214031 and mal 64597, which map to each other first-party. offline:mal-64597 is the same run: it is the offline database entry keyed on mal id 64597 and it maps SAME_AS to both members, anilist 214031 and mal 64597. nf:81663074 is unrelated: it is Kath & Kim: 20th Anniversary Specials, a 2022 live action comedy whose two episodes are Our Effluent Life and 20 Preposterous Years, and its own SAME_AS handles point at anilist 213343, kitsu 50776 and mal 64429, none of which belong to this run."
+}

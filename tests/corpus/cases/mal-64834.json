@@ -1,0 +1,427 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The one non-member row asserts SAME_AS to both members, so the call rests on its own fields instead: a 2017 start date nine years before the run and 20 Korean period drama episode titles against a single 2026-08-18 ONA episode. Refuted: 0 marks overturned. Checked the unrelated call from the other side, asking what could make nf:80178564 this run: its title My Only Love Song matches neither Godly Love: On Air nor any Kitsu title, its startDate 2017-01-01 sits nine years before the run's 2026-08-18, it lists 20 episodes against the run's 1, its categories are SERIES with no ANIME, and none of its 20 episodes carries a releaseDate that could cover the run's date, so it cannot hold the run either; the SAME_AS handles are the only thing pointing the other way and every field contradicts them. repair 2026-09-12: removed from together, no source answered about them: mal:64834"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64834",
+      "mediaUri": "kitsu:50947",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50947",
+      "mediaUri": "nf:80178564",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64834",
+      "mediaUri": "nf:80178564",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "407242",
+      "mediaUri": "kitsu:50947",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407242"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80178566",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Am Princess Pyeong-gang"
+        }
+      ],
+      "uri": "nf:80178566"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80178567",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Know Who You Are"
+        }
+      ],
+      "uri": "nf:80178567"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80178568",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "That's Me, On Dal"
+        }
+      ],
+      "uri": "nf:80178568"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80178569",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "You Have Reached Your Destination"
+        }
+      ],
+      "uri": "nf:80178569"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80178570",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "This Is Your Destiny"
+        }
+      ],
+      "uri": "nf:80178570"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80178571",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Got You"
+        }
+      ],
+      "uri": "nf:80178571"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80178572",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Take My Hand"
+        }
+      ],
+      "uri": "nf:80178572"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80178573",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Now Traveling to Your Destination"
+        }
+      ],
+      "uri": "nf:80178573"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80178574",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Recalculating"
+        }
+      ],
+      "uri": "nf:80178574"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80178575",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Resetting Your Destination"
+        }
+      ],
+      "uri": "nf:80178575"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80178576",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Truth or Dare"
+        }
+      ],
+      "uri": "nf:80178576"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80178577",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Don't Disappear"
+        }
+      ],
+      "uri": "nf:80178577"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "80178578",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Completely Bewitched"
+        }
+      ],
+      "uri": "nf:80178578"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "80178579",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Where Is … ?"
+        }
+      ],
+      "uri": "nf:80178579"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "80178580",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "On Dal, the General"
+        }
+      ],
+      "uri": "nf:80178580"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "80178581",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Die by My Hand"
+        }
+      ],
+      "uri": "nf:80178581"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "80178582",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Disappearing"
+        }
+      ],
+      "uri": "nf:80178582"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "80178583",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "I Will Obey Your Order"
+        }
+      ],
+      "uri": "nf:80178583"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "80178584",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Arrived at Your Final Destination"
+        }
+      ],
+      "uri": "nf:80178584"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "80178585",
+      "mediaUri": "nf:80178564",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Only Love Song"
+        }
+      ],
+      "uri": "nf:80178585"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:80178564",
+        "mal:64834"
+      ]
+    ],
+    "together": [],
+    "unrelated": [
+      "nf:80178564"
+    ]
+  },
+  "name": "Godly Love: On Air",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50947",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-18",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Godly Love: On Air"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50947"
+    },
+    {
+      "id": "64834",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64834"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80178564",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2017-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Only Love Song"
+        }
+      ],
+      "uri": "nf:80178564"
+    }
+  ],
+  "source": {
+    "answers": [
+      "1d2626173b687b43edc6cd5364415bd26521d1d2f601122af42267d425fe5d41",
+      "0f27f1526015c06383eac2ac8582adf1ed7074e9e56ed3a7bbc5e2666f2f3a8f",
+      "0475de5882b766f7bd24417a2fa688f32a1a67b1e27879fa015bb4f80e86b73a",
+      "7008ad51b036ec2d1a7c3009f608fe2efc27ec41cbb840b1bd284716ee93e745",
+      "1d1cd241e70ac0b159fde90975f6aeb0da66933af92d6746600bb437f59c79b0",
+      "8951d549a218789ed4eedc0a6e19ab83ff46569a6d8e1acaf8c287e224e5df14",
+      "255a4bace5d097ad7c3e61208f9a3f8542e37f0119dbcdc440c2f81210ba03ab",
+      "30fa5cc874b95d228760cef57a72be254ca2d4c64921e6c8f8fa205813153c62",
+      "ae6e11047da33fef1d22f8d39536c343303ede6871d93c947b7a815039209f75",
+      "913e4633cfcbe72e5c2a8eaabc53647d99cd6d7f3ecd3e94cf7c696e8bd6d8c0",
+      "46aaae0b521c3d036d894b931abbb0ed8f2c09c9eb75ac88b3a725af8f923b12",
+      "f9395ed4031d077d3dc5b30acef447122bc5023cbef47f80f3e6913de9ebccb9",
+      "8639b75a6c09bec9546f7662f9421e80e5f2318ffe070c875c8226599a373ae2",
+      "d2703fc895b903fb84ae5bcf33d70ed7441f3972348fd279db813aa04188980a",
+      "e659d567a83588f6c172432715a941c9c53a595e0a473269cf1413e219afc0b7",
+      "53adcf87c244fd40a484be074f0cb0d0aaec174cc5dcfbe2d0cd79ebb0463931",
+      "7b765284449ef804d6080503c1b02cbd5269ca410c3c43f4f8974899a5a6f1f7",
+      "abbf114a4e5bc627ec89a1349b47390c655a4f6e18c6191c5791804c027e6979",
+      "b92add4ad59419e270027c6d617cfa25f7d16622c1ecfbdfce30f60eab46d511",
+      "d4b8d820f92a38b9026811bbb5cd0497fa259eb9b941b4907f63a3ab399ccc03",
+      "ddcef461e40acba3a91bd03ed6728b8c14f57ce312037684cc49f1772d417202",
+      "beb7edb4072822abf8fcb2720a5a09fad7f288af8f52502587104c45ac7ef092",
+      "7bf2fd526d0ed9427cf434abfe8161928d378b06016e46daa6fc4c9bcc9a258e"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50947,mal:64834)"
+  },
+  "why": "Godly Love: On Air is a single episode anime ONA, listed by Kitsu as one episode airing 2026-08-18 (SUMMER 2026) and by MyAnimeList as id 64834. The Netflix container nf:80178564 is a different work despite its SAME_AS handles to kitsu:50947 and mal:64834: it is My Only Love Song, a 2017 title (startDate 2017-01-01) with 20 episodes whose titles (I Am Princess Pyeong-gang, That's Me On Dal, On Dal the General) retell the Pyeonggang and On Dal story, which nothing in this one episode 2026 ONA matches, so it is neither merged nor attached."
+}

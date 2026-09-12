@@ -1,0 +1,1163 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll labels its first episode Episode 1 and anizip carries only the Japanese title for that one, so the pairing there rests on the 2026-07-06 date rather than a title. kitsu has neither titles nor dates. The JustWatch episodes match the run's titles but carry no dates and were left unpaired, and nf:81169530-3 was left unjudged. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GNVHKN94W-GS00378061",
+      "mediaUri": "anilist:199111",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "anilist:199111",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199111",
+      "mediaUri": "kitsu:50181",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "kitsu:50181",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "offline:mal-62542",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199111",
+      "mediaUri": "offline:mal-62542",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50181",
+      "mediaUri": "offline:mal-62542",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "anizip:19600",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199111",
+      "mediaUri": "anizip:19600",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199111",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19600",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:80747-577206",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50181",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81169530-3",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62542",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199111",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19600",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GNVHKN94W-GS00378061",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50181",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:81169530-3",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62542",
+      "mediaUri": "jw:80747-577206",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:199111",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19600",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GNVHKN94W-GS00378061",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:80747-577206",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50181",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62542",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62542",
+      "mediaUri": "nf:81169530-3",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "387429",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387429"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "387430",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387430"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "387431",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387431"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "387432",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387432"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "387433",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387433"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "387434",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387434"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "387435",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387435"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "387436",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387436"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "387437",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387437"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "387438",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387438"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "387439",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387439"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "387440",
+      "mediaUri": "kitsu:50181",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:387440"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19600-1",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "やり残し"
+        }
+      ],
+      "uri": "anizip:19600-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19600-2",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Homecoming"
+        }
+      ],
+      "uri": "anizip:19600-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19600-3",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Saving Private Passport"
+        }
+      ],
+      "uri": "anizip:19600-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19600-4",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Oceans of Palau"
+        }
+      ],
+      "uri": "anizip:19600-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19600-5",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "TV Special"
+        }
+      ],
+      "uri": "anizip:19600-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19600-6",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Assist"
+        }
+      ],
+      "uri": "anizip:19600-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19600-7",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mother"
+        }
+      ],
+      "uri": "anizip:19600-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19600-8",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mixer, Round 2"
+        }
+      ],
+      "uri": "anizip:19600-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19600-9",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Ordeals"
+        }
+      ],
+      "uri": "anizip:19600-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19600-10",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T15:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Lottery"
+        }
+      ],
+      "uri": "anizip:19600-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19600-11",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19600-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19600-12",
+      "mediaUri": "anizip:19600",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T15:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19600-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GNVHKN94W-GS00378061-GE00378264JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-07-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378264JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GNVHKN94W-GS00378061-GE00378265JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-07-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Homecoming"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378265JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GNVHKN94W-GS00378061-GE00378266JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-07-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Saving Private Passport"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378266JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GNVHKN94W-GS00378061-GE00378267JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-07-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Oceans of Palau"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378267JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GNVHKN94W-GS00378061-GE00378268JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-08-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "TV Special"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378268JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GNVHKN94W-GS00378061-GE00378269JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-08-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Assist"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378269JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GNVHKN94W-GS00378061-GE00378270JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-08-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mother"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378270JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GNVHKN94W-GS00378061-GE00378271JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-08-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Mixer, Round 2"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378271JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GNVHKN94W-GS00378061-GE00378272JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-08-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Ordeals"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378272JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GNVHKN94W-GS00378061-GE00378273JAJP",
+      "mediaUri": "cr:GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "releaseDate": "2026-09-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Lottery"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061-GE00378273JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10583311",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Unfinished Business"
+        }
+      ],
+      "uri": "jw:10583311"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10583313",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Homecoming"
+        }
+      ],
+      "uri": "jw:10583313"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10583315",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saving Private Passport"
+        }
+      ],
+      "uri": "jw:10583315"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10583317",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Oceans of Palau"
+        }
+      ],
+      "uri": "jw:10583317"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10583319",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "TV Special"
+        }
+      ],
+      "uri": "jw:10583319"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10583321",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Assist"
+        }
+      ],
+      "uri": "jw:10583321"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10583323",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mother"
+        }
+      ],
+      "uri": "jw:10583323"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10583325",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mixer, Round 2"
+        }
+      ],
+      "uri": "jw:10583325"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10583327",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ordeals"
+        }
+      ],
+      "uri": "jw:10583327"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10583329",
+      "mediaUri": "jw:80747-577206",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lottery"
+        }
+      ],
+      "uri": "jw:10583329"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82984829",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:82984829"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82984830",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82984830"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82984831",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82984831"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82984832",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82984832"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82984833",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82984833"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82984834",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82984834"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82984835",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82984835"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82984836",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82984836"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82984837",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82984837"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82984838",
+      "mediaUri": "nf:81169530-3",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82984838"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378264JAJP",
+        "b": "anizip:19600-1"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378265JAJP",
+        "b": "anizip:19600-2"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378266JAJP",
+        "b": "anizip:19600-3"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378267JAJP",
+        "b": "anizip:19600-4"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378268JAJP",
+        "b": "anizip:19600-5"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378269JAJP",
+        "b": "anizip:19600-6"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378270JAJP",
+        "b": "anizip:19600-7"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378271JAJP",
+        "b": "anizip:19600-8"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378272JAJP",
+        "b": "anizip:19600-9"
+      },
+      {
+        "a": "cr:GNVHKN94W-GS00378061-GE00378273JAJP",
+        "b": "anizip:19600-10"
+      }
+    ],
+    "together": [
+      [
+        "anilist:199111",
+        "kitsu:50181",
+        "mal:62542",
+        "offline:mal-62542",
+        "anizip:19600",
+        "cr:GNVHKN94W-GS00378061",
+        "jw:80747-577206"
+      ]
+    ]
+  },
+  "name": "Grand Blue Dreaming Season 3",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "199111",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Tue, 07 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Grand Blue Dreaming Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Grand Blue Season 3"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ぐらんぶる Season 3"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:199111"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50181",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Grand Blue Season 3"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ぐらんぶる Season 3"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50181"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62542",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Grand Blue Dreaming Season 3"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Grand Blue Season 3"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62542"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-62542",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Grand Blue Season 3"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62542"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19600",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Grand Blue Dreaming Season 3"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ぐらんぶる Season 3"
+        }
+      ],
+      "uri": "anizip:19600"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GNVHKN94W-GS00378061",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Grand Blue Dreaming"
+        }
+      ],
+      "uri": "cr:GNVHKN94W-GS00378061"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "80747-577206",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:80747-577206"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "81169530-3",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Grand Blue"
+        }
+      ],
+      "uri": "nf:81169530-3"
+    }
+  ],
+  "source": {
+    "answers": [
+      "21cd35a2977e2c885b10d3b13b521c2d235f0000c08c6c94b32be1a37dbe12fc",
+      "b5575364b41bce754ae4542f295366126ce23bb7eb444656b3b7c3e6fece3f9c",
+      "bda71f7690fcfc324cfad53158e00558789c206c6a6b9945d1e82ee820be76aa",
+      "f274e8352b2365e18753c2cf5f7c4f67d24d43af87a0ef6cf1a5b7df69dee30f",
+      "b5760bf7258a5f8a99784f4126efb29240b89487cba0c9deb091adfbeb26b422",
+      "244df0e46760bcfcf57a51e3e5f74b58ad7290d15985464a22a54d3ea4bd0528",
+      "dbd79d0bb6a6b7d89fb30c2eb06385e912e4abc7dbdf104f08ffac206eecd2f0",
+      "11abd6061e880da5587673917b70c8e5b718031836959207d2a2c2ea16941c32",
+      "b04b6cd002ccb7d3114050b450eb2da6811edfdb661ca6f2be69e19f785df981",
+      "e6f3503b145dd1fe8c3ffc625c07646b5f2c81bc3e1c773f08dc6a0fe2d6e155",
+      "326fc6526d3e4177c048b4a2dc7d55582656b84b3db52321652ab91c3ece4869"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:199111,kitsu:50181,mal:62542,offline:mal-62542)"
+  },
+  "why": "Grand Blue Dreaming Season 3 is the twelve episode summer 2026 cour on a weekly 15:00 slot, 2026-07-06 to 2026-09-21, with ten episodes aired so far.\nanizip:19600 is the same run: the same twelve episode count, and its own SAME_AS ids name mal:62542 and anilist:199111, both members.\ncr:GNVHKN94W-GS00378061 is the same run: anilist:199111 maps to it SAME_AS, and its ten episodes sit on the run's own weekly dates, 2026-07-06 through 2026-09-07, with the same titles from Homecoming to Lottery.\njw:80747-577206 is the same run: it maps SAME_AS to all four members, to anizip:19600 and to the Crunchyroll season, and lists exactly the ten episodes aired so far with the run's titles; its 2026-01-01 start is a year level placeholder rather than a broadcast date.\nThe Crunchyroll episodes 1 to 10 pair with anizip:19600 episodes 1 to 10 on identical release dates week by week, 2026-07-06 through 2026-09-07."
+}

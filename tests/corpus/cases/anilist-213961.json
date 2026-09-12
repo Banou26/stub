@@ -1,0 +1,303 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The only wrinkle was the one day gap between the Anilist start timestamp (2026-07-09 00:00 GMT) and the 2026-07-08 start on mal and kitsu, which is inside the day of slack and is backed by the SAME_AS handles either way. The 18 kitsu episode rows have no titles and no release dates, so no episode pair could be asserted. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64577",
+      "mediaUri": "anilist:213961",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64577",
+      "mediaUri": "kitsu:50846",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213961",
+      "mediaUri": "kitsu:50846",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64577",
+      "mediaUri": "offline:mal-64577",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213961",
+      "mediaUri": "offline:mal-64577",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406033",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406033"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "406034",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406034"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "406035",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406035"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "406036",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406036"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "406037",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406037"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "406038",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406038"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "406039",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406039"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "406040",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406040"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "406041",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406041"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "406042",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406042"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "406043",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406043"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "406044",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406044"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "406045",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406045"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "406046",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406046"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "406047",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406047"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "406048",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406048"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "406049",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406049"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "406050",
+      "mediaUri": "kitsu:50846",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406050"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:213961",
+        "kitsu:50846",
+        "mal:64577",
+        "offline:mal-64577"
+      ]
+    ]
+  },
+  "name": "Youjo Shenki 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "213961",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Thu, 09 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Youjo Shenki 2"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "ようじょしぇんき2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:213961"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 18,
+      "id": "50846",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Youjo Shenki 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "ようじょしぇんき2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50846"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "64577",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-08",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Youjo Shenki 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64577"
+    },
+    {
+      "id": "mal-64577",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-64577"
+    }
+  ],
+  "source": {
+    "answers": [
+      "d75e0eea08015942089b3089ed9ebea80993f919c70996721860d66de4dcbae8",
+      "9726587e2254f5115c93b3ed0a67253086c721d9de460c5e2065bd70469943c2",
+      "2e3c7c39a7e712a4cb33497e47d0a1c967bd9d65e0736d80cf068fd3f9851ea8",
+      "4274b1998fc2b4a67e9852b283f0be4d2ab3abc88417402d7aa7e516ebbbdbc6"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213961,kitsu:50846,mal:64577)"
+  },
+  "why": "Youjo Shenki 2 is the second season of the short ONA, running from 2026-07-08 in summer 2026 with 18 episodes on Kitsu. All four rows are one run: anilist:213961 and kitsu:50846 both carry a first-party SAME_AS to mal:64577 and kitsu also claims SAME_AS to anilist:213961, the three catalogues share the Youjo Shenki 2 title and the Japanese title ようじょしぇんき2, and the start dates agree to the day once the Anilist timestamp of 2026-07-09 00:00 GMT is read against the 2026-07-08 local date on mal and kitsu. offline:mal-64577 is the same run: it is keyed on the mal id and claims SAME_AS to both mal:64577 and anilist:213961. No streaming rows, container rows or other seasons came back, so nothing is attached, held or set apart."
+}

@@ -1,0 +1,1046 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The JustWatch season has the right titles but no release dates and is not a metadata catalogue, so its episodes are left unpaired; only anizip to Crunchyroll, with matching dates on both sides, is asserted. The kitsu member's 22 episodes and the offline member's 1 disagree with the 12 that anilist, mal and anizip carry, but both are members of the run's own address. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378118-GS00378134",
+      "mediaUri": "anilist:208225",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63537",
+      "mediaUri": "anilist:208225",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63537",
+      "mediaUri": "kitsu:50767",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208225",
+      "mediaUri": "kitsu:50767",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378118",
+      "mediaUri": "kitsu:50767",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63537",
+      "mediaUri": "offline:mal-63537",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208225",
+      "mediaUri": "offline:mal-63537",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50767",
+      "mediaUri": "offline:mal-63537",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63537",
+      "mediaUri": "anizip:19909",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208225",
+      "mediaUri": "anizip:19909",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208225",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50767",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63537",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63537",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:208225",
+      "mediaUri": "jw:523894-560933",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19909",
+      "mediaUri": "jw:523894-560933",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378118-GS00378134",
+      "mediaUri": "jw:523894-560933",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50767",
+      "mediaUri": "jw:523894-560933",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63537",
+      "mediaUri": "jw:523894-560933",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63537",
+      "mediaUri": "jw:523894-560933",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404125",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404125"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "404126",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404126"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "404127",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404127"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "404128",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404128"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "404129",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404129"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "404130",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404130"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "404131",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404131"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "404132",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404132"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "404133",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404133"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "404134",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404134"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "404135",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404135"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "404136",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404136"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "404137",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404137"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "404138",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404138"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "404139",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404139"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "404140",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404140"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "404141",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404141"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "404142",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404142"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "404143",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404143"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "404144",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404144"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "404145",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404145"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "404146",
+      "mediaUri": "kitsu:50767",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404146"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19909-1",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-07-04T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Marriage Just for Show"
+        }
+      ],
+      "uri": "anizip:19909-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19909-2",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-07-11T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "...Thank You"
+        }
+      ],
+      "uri": "anizip:19909-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19909-3",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-07-18T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Cufflinks and a Music Box"
+        }
+      ],
+      "uri": "anizip:19909-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19909-4",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-07-25T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Behind a Smile"
+        }
+      ],
+      "uri": "anizip:19909-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19909-5",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-08-01T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Sound of Distant Rain"
+        }
+      ],
+      "uri": "anizip:19909-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19909-6",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-08-08T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Trap Hidden at the Soiree"
+        }
+      ],
+      "uri": "anizip:19909-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19909-7",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-08-15T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "An Unexpected Gift"
+        }
+      ],
+      "uri": "anizip:19909-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19909-8",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-08-22T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Misunderstandings and Falsehoods"
+        }
+      ],
+      "uri": "anizip:19909-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19909-9",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-08-29T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Jarmo`s Vow"
+        }
+      ],
+      "uri": "anizip:19909-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19909-10",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-09-05T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Julius`s Wish"
+        }
+      ],
+      "uri": "anizip:19909-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19909-11",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-09-12T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19909-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19909-12",
+      "mediaUri": "anizip:19909",
+      "origin": "anizip",
+      "releaseDate": "2026-09-19T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19909-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378118-GS00378134-GE00378549JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-07-04T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Marriage Just for Show"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378549JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378118-GS00378134-GE00378550JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-07-11T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "...Thank You"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378550JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378118-GS00378134-GE00378551JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-07-18T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Cufflinks and a Music Box"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378551JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378118-GS00378134-GE00378552JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-07-25T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Behind a Smile"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378552JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378118-GS00378134-GE00378553JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-08-01T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Sound of Distant Rain"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378553JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378118-GS00378134-GE00378554JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-08-08T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Trap Hidden at the Soirée"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378554JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378118-GS00378134-GE00378555JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-08-15T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "An Unexpected Gift"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378555JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378118-GS00378134-GE00378556JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-08-22T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Misunderstandings and Falsehoods"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378556JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378118-GS00378134-GE00378557JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-08-29T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Jarmo's Vow"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378557JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378118-GS00378134-GE00378558JAJP",
+      "mediaUri": "cr:GT00378118-GS00378134",
+      "origin": "cr",
+      "releaseDate": "2026-09-05T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Julius's Wish"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134-GE00378558JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10290742",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Marriage Just for Show"
+        }
+      ],
+      "uri": "jw:10290742"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10679732",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "...Thank You"
+        }
+      ],
+      "uri": "jw:10679732"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10679958",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cufflinks and a Music Box"
+        }
+      ],
+      "uri": "jw:10679958"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10679741",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Behind a Smile"
+        }
+      ],
+      "uri": "jw:10679741"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10679902",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Sound of Distant Rain"
+        }
+      ],
+      "uri": "jw:10679902"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10679837",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Trap Hidden at the Soirée"
+        }
+      ],
+      "uri": "jw:10679837"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10679845",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "An Unexpected Gift"
+        }
+      ],
+      "uri": "jw:10679845"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10679942",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Misunderstandings and Falsehoods"
+        }
+      ],
+      "uri": "jw:10679942"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10679933",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Jarmo's Vow"
+        }
+      ],
+      "uri": "jw:10679933"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10679786",
+      "mediaUri": "jw:523894-560933",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Julius's Wish"
+        }
+      ],
+      "uri": "jw:10679786"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19909-1",
+        "b": "cr:GT00378118-GS00378134-GE00378549JAJP"
+      },
+      {
+        "a": "anizip:19909-2",
+        "b": "cr:GT00378118-GS00378134-GE00378550JAJP"
+      },
+      {
+        "a": "anizip:19909-3",
+        "b": "cr:GT00378118-GS00378134-GE00378551JAJP"
+      },
+      {
+        "a": "anizip:19909-4",
+        "b": "cr:GT00378118-GS00378134-GE00378552JAJP"
+      },
+      {
+        "a": "anizip:19909-5",
+        "b": "cr:GT00378118-GS00378134-GE00378553JAJP"
+      },
+      {
+        "a": "anizip:19909-6",
+        "b": "cr:GT00378118-GS00378134-GE00378554JAJP"
+      },
+      {
+        "a": "anizip:19909-7",
+        "b": "cr:GT00378118-GS00378134-GE00378555JAJP"
+      },
+      {
+        "a": "anizip:19909-8",
+        "b": "cr:GT00378118-GS00378134-GE00378556JAJP"
+      },
+      {
+        "a": "anizip:19909-9",
+        "b": "cr:GT00378118-GS00378134-GE00378557JAJP"
+      },
+      {
+        "a": "anizip:19909-10",
+        "b": "cr:GT00378118-GS00378134-GE00378558JAJP"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:208225",
+        "whole": "cr:GT00378118"
+      }
+    ],
+    "together": [
+      [
+        "anilist:208225",
+        "kitsu:50767",
+        "mal:63537",
+        "offline:mal-63537",
+        "anizip:19909",
+        "cr:GT00378118-GS00378134",
+        "jw:523894-560933"
+      ]
+    ]
+  },
+  "name": "The Duke’s Son Claims He Won’t Love Me Yet Showers Me with Adoration",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "208225",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sun, 05 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Duke’s Son Claims He Won’t Love Me Yet Showers Me with Adoration"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "\"Kimi wo Aisuru Ki wa nai\" to Itta Jiki Koushaku-sama ga Naze ka Dekiai Shitekimasu"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "「きみを愛する気はない」と言った次期公爵様がなぜか溺愛してきます"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:208225"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 22,
+      "id": "50767",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "\"Kimi wo Aisuru Ki wa nai\" to Itta Jiki Koushaku-sama ga Naze ka Dekiai Shitekimasu"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "「きみを愛する気はない」と言った次期公爵様がなぜか溺愛してきます"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50767"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63537",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-05",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Duke's Son Claims He Won't Love Me Yet Showers Me with Adoration"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "\"Kimi wo Aisuru Ki wa Nai\" to Itta Jiki Koushaku-sama ga Nazeka Dekiai shitekimasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63537"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63537",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "\"Kimi wo Aisuru Ki wa Nai\" to Itta Jiki Koushaku-sama ga Nazeka Dekiai shitekimasu"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63537"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19909",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Duke`s Son Claims He Won`t Love Me, But Showers Me with Adoration"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "「きみを愛する気はない」と言った次期公爵様がなぜか溺愛してきます"
+        }
+      ],
+      "uri": "anizip:19909"
+    },
+    {
+      "id": "GT00378118",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378118"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378118-GS00378134",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Duke's Son Claims He Won't Love Me, Yet Showers Me with Adoration"
+        }
+      ],
+      "uri": "cr:GT00378118-GS00378134"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "523894-560933",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:523894-560933"
+    }
+  ],
+  "source": {
+    "answers": [
+      "6be9aa9a01f1c582e49cee679d8b475bd790fb1a9a687a9321b8f701c8faa9d0",
+      "7bda09ae020017280eb77f0e224ba41b6afecb4acc178031fb7b0083f08f47a0",
+      "54f786201b61aeab9c768460257847a3aba0c4b0c97699c1093e21a363bac94e",
+      "948ccd2b274171d8b542b000da5d70a6b21d9143d1b97239a6b90be9c62126b0",
+      "9b4675db14354c6235dc3c683ddf96408e1891f567051aa6013da28e4ca3646f",
+      "ee3d74214b994b4567bbaca3fbdb6dc5653462c54d4fbd2dde5e8499cda2e4f2",
+      "dcf4b41a756a47f82b014badfdb3f322d890f1d9ac78324dc211724b0f63bcf9",
+      "0647da543f85efc35d977657213160f96221a1459cedc6ae3288bd24ee2c1d95",
+      "2fd6540884731f0a3b1fc5a032471caf4cf1661b9d8de59b4467c11c58f56cda"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:208225,kitsu:50767,mal:63537,offline:mal-63537)"
+  },
+  "why": "The Duke's Son Claims He Won't Love Me Yet Showers Me with Adoration is a 12 episode summer 2026 TV run that is still airing: anilist gives 2026-07-05 to 2026-09-19 with 12 episodes, mal the same 2026-07-05 start and 12, and anizip still lists episodes 11 and 12 for 2026-09-12 and 2026-09-19. anizip:19909 is the same run: it carries SAME_AS ids to both mal:63537 and anilist:208225 and the same count of 12, with weekly episodes from 2026-07-04T16:30:00Z. cr:GT00378118-GS00378134 is the same run: anilist:208225 names it SAME_AS, and its 10 episodes are the run's first 10 on the same days (2026-07-04 through 2026-09-05) under the same titles, 10 being what had aired. jw:523894-560933 is the same run: it lists the same 10 episodes in the same order under the same titles (A Marriage Just for Show, The Sound of Distant Rain, Julius's Wish) and names anilist:208225, anizip:19909, the Crunchyroll season, kitsu:50767, mal:63537 and offline:mal-63537 as the same run. cr:GT00378118 holds the run: it is the bare Crunchyroll series container with no count and no dates, and kitsu:50767 declares the run PART_OF it. The ten episode pairs are between anizip and Crunchyroll, whose release dates agree to the day and whose titles are the same text (Soiree against Soirée on episode 6 being an accent only)."
+}

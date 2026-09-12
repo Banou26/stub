@@ -1,0 +1,3163 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row is the whole My Hero Academia franchise title, not a season, so it holds the one episode special rather than matching it; with no dates on either side and no episode title on the run side there is nothing to align, so no range is claimed. No anizip row was returned for this run, so the usual id agreement between catalogues could not be used. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64107",
+      "mediaUri": "anilist:211711",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211711",
+      "mediaUri": "kitsu:50701",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GE00379883JAJP",
+      "mediaUri": "kitsu:50701",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:64107",
+      "mediaUri": "offline:mal-64107",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211711",
+      "mediaUri": "offline:mal-64107",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50701",
+      "mediaUri": "offline:mal-64107",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211711",
+      "mediaUri": "nf:80135674",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50701",
+      "mediaUri": "nf:80135674",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64107",
+      "mediaUri": "nf:80135674",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64107",
+      "mediaUri": "nf:80135674",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403121",
+      "mediaUri": "kitsu:50701",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:403121"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80135737",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Izuku Midoriya: Origin"
+        }
+      ],
+      "uri": "nf:80135737"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "80214679",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "そういうことね お茶子さん"
+        }
+      ],
+      "uri": "nf:80214679"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81021693",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81021693"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81310094",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 66"
+        }
+      ],
+      "uri": "nf:81310094"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81438768",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81438768"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81640780",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 114"
+        }
+      ],
+      "uri": "nf:81640780"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81770600",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Memories 1"
+        }
+      ],
+      "uri": "nf:81770600"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82036406",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Toshinori Yagi: Rising/Origin"
+        }
+      ],
+      "uri": "nf:82036406"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80135738",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "What It Takes to Be a Hero"
+        }
+      ],
+      "uri": "nf:80135738"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "80214680",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "うなれ体育祭"
+        }
+      ],
+      "uri": "nf:80214680"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81021694",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81021694"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81310095",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 67"
+        }
+      ],
+      "uri": "nf:81310095"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81438769",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 94"
+        }
+      ],
+      "uri": "nf:81438769"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81640781",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 115"
+        }
+      ],
+      "uri": "nf:81640781"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81770601",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 147"
+        }
+      ],
+      "uri": "nf:81770601"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82036407",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 172"
+        }
+      ],
+      "uri": "nf:82036407"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80135739",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Roaring Muscles"
+        }
+      ],
+      "uri": "nf:80135739"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "80214681",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "みんな個性的でいいね"
+        }
+      ],
+      "uri": "nf:80214681"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81021695",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81021695"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81310096",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 68"
+        }
+      ],
+      "uri": "nf:81310096"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81438770",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 95"
+        }
+      ],
+      "uri": "nf:81438770"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81640782",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 116"
+        }
+      ],
+      "uri": "nf:81640782"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81770602",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 148"
+        }
+      ],
+      "uri": "nf:81770602"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82036408",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 173"
+        }
+      ],
+      "uri": "nf:82036408"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80135740",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Start Line"
+        }
+      ],
+      "uri": "nf:80135740"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "80214682",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "策策策画"
+        }
+      ],
+      "uri": "nf:80214682"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81021696",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81021696"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81310097",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 69"
+        }
+      ],
+      "uri": "nf:81310097"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81438771",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 96"
+        }
+      ],
+      "uri": "nf:81438771"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81640783",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 117"
+        }
+      ],
+      "uri": "nf:81640783"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81770603",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 149"
+        }
+      ],
+      "uri": "nf:81770603"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82036409",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 174"
+        }
+      ],
+      "uri": "nf:82036409"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80135741",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "What I Can Do For Now"
+        }
+      ],
+      "uri": "nf:80135741"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "80214683",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "騎馬戦決着"
+        }
+      ],
+      "uri": "nf:80214683"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81021697",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81021697"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81310098",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 70"
+        }
+      ],
+      "uri": "nf:81310098"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81438772",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 97"
+        }
+      ],
+      "uri": "nf:81438772"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81640784",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 118"
+        }
+      ],
+      "uri": "nf:81640784"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81770604",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 150"
+        }
+      ],
+      "uri": "nf:81770604"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82036410",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 175"
+        }
+      ],
+      "uri": "nf:82036410"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80135742",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rage, You Damn Nerd"
+        }
+      ],
+      "uri": "nf:80135742"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "80214684",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "全てを持って生まれた男の子"
+        }
+      ],
+      "uri": "nf:80214684"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81021698",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81021698"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81310099",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 71"
+        }
+      ],
+      "uri": "nf:81310099"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81438773",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 98"
+        }
+      ],
+      "uri": "nf:81438773"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81640785",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 119"
+        }
+      ],
+      "uri": "nf:81640785"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81770605",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 151"
+        }
+      ],
+      "uri": "nf:81770605"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82036411",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Wrench It Open, Izuku Midoriya!!"
+        }
+      ],
+      "uri": "nf:82036411"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80135743",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Deku vs. Kacchan"
+        }
+      ],
+      "uri": "nf:80135743"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "80214685",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "勝ち負け"
+        }
+      ],
+      "uri": "nf:80214685"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81021699",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81021699"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81310100",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 72"
+        }
+      ],
+      "uri": "nf:81310100"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81438774",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 99"
+        }
+      ],
+      "uri": "nf:81438774"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81640786",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 120"
+        }
+      ],
+      "uri": "nf:81640786"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81770606",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 152"
+        }
+      ],
+      "uri": "nf:81770606"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82036412",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "From Aizawa"
+        }
+      ],
+      "uri": "nf:82036412"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80135744",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Bakugou's Starting Line"
+        }
+      ],
+      "uri": "nf:80135744"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "80214686",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "奮え！チャレンジャー"
+        }
+      ],
+      "uri": "nf:80214686"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81021700",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81021700"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81310101",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 73"
+        }
+      ],
+      "uri": "nf:81310101"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81438775",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 100"
+        }
+      ],
+      "uri": "nf:81438775"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81640787",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 121"
+        }
+      ],
+      "uri": "nf:81640787"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81770607",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 153"
+        }
+      ],
+      "uri": "nf:81770607"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82036413",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Izuku Midoriya Rising"
+        }
+      ],
+      "uri": "nf:82036413"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80135745",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Yeah, Just Do Your Best, Iida!"
+        }
+      ],
+      "uri": "nf:80135745"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "80214687",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "爆vs麗日豪"
+        }
+      ],
+      "uri": "nf:80214687"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81021701",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81021701"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81310102",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 74"
+        }
+      ],
+      "uri": "nf:81310102"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81438776",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 97"
+        }
+      ],
+      "uri": "nf:81438776"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81640788",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 122"
+        }
+      ],
+      "uri": "nf:81640788"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81770608",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 154"
+        }
+      ],
+      "uri": "nf:81770608"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82036414",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 179"
+        }
+      ],
+      "uri": "nf:82036414"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80135746",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Encounter with the Unknown"
+        }
+      ],
+      "uri": "nf:80135746"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "80214688",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "轟 焦凍:オリジン"
+        }
+      ],
+      "uri": "nf:80214688"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81021702",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81021702"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81310103",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 75"
+        }
+      ],
+      "uri": "nf:81310103"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81438777",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 98"
+        }
+      ],
+      "uri": "nf:81438777"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81640789",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 123"
+        }
+      ],
+      "uri": "nf:81640789"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81770609",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 155"
+        }
+      ],
+      "uri": "nf:81770609"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82036415",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 180"
+        }
+      ],
+      "uri": "nf:82036415"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80135747",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Game Over"
+        }
+      ],
+      "uri": "nf:80135747"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "80214689",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "飯田くんファイト"
+        }
+      ],
+      "uri": "nf:80214689"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81021703",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81021703"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81310104",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 76"
+        }
+      ],
+      "uri": "nf:81310104"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81438778",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 103"
+        }
+      ],
+      "uri": "nf:81438778"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81640790",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 124"
+        }
+      ],
+      "uri": "nf:81640790"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81770610",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 156"
+        }
+      ],
+      "uri": "nf:81770610"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82036416",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 181"
+        }
+      ],
+      "uri": "nf:82036416"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80135748",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "All Might"
+        }
+      ],
+      "uri": "nf:80135748"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "80214690",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "轟vs爆豪"
+        }
+      ],
+      "uri": "nf:80214690"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81021704",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81021704"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81310105",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 77"
+        }
+      ],
+      "uri": "nf:81310105"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81438779",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 104"
+        }
+      ],
+      "uri": "nf:81438779"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81640791",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 125"
+        }
+      ],
+      "uri": "nf:81640791"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81770611",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 157"
+        }
+      ],
+      "uri": "nf:81770611"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "82036417",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "More"
+        }
+      ],
+      "uri": "nf:82036417"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "80135749",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Upon Each of Their Hearts"
+        }
+      ],
+      "uri": "nf:80135749"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "80214691",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "名前をつけてみようの会"
+        }
+      ],
+      "uri": "nf:80214691"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81021705",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:81021705"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81310106",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 78"
+        }
+      ],
+      "uri": "nf:81310106"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81438780",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 101"
+        }
+      ],
+      "uri": "nf:81438780"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81640792",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 126"
+        }
+      ],
+      "uri": "nf:81640792"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81770612",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 158"
+        }
+      ],
+      "uri": "nf:81770612"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "83109890",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 183"
+        }
+      ],
+      "uri": "nf:83109890"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "80226888",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:80226888"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81021706",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:81021706"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81310090",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "OVA Save! Rescue Training"
+        }
+      ],
+      "uri": "nf:81310090"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81310107",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 79"
+        }
+      ],
+      "uri": "nf:81310107"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81438781",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 106"
+        }
+      ],
+      "uri": "nf:81438781"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81640793",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 127"
+        }
+      ],
+      "uri": "nf:81640793"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81770613",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 159"
+        }
+      ],
+      "uri": "nf:81770613"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "80226889",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:80226889"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81021707",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:81021707"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81310108",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 80"
+        }
+      ],
+      "uri": "nf:81310108"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81438782",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 107"
+        }
+      ],
+      "uri": "nf:81438782"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81640794",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 128"
+        }
+      ],
+      "uri": "nf:81640794"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81770614",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 160"
+        }
+      ],
+      "uri": "nf:81770614"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "80226890",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:80226890"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81021708",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:81021708"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81310109",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 81"
+        }
+      ],
+      "uri": "nf:81310109"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81438783",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 108"
+        }
+      ],
+      "uri": "nf:81438783"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81640795",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 129"
+        }
+      ],
+      "uri": "nf:81640795"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81770615",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 161"
+        }
+      ],
+      "uri": "nf:81770615"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "80226891",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:80226891"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81021709",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 17"
+        }
+      ],
+      "uri": "nf:81021709"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81310110",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 82"
+        }
+      ],
+      "uri": "nf:81310110"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81438784",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 109"
+        }
+      ],
+      "uri": "nf:81438784"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81640796",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 130"
+        }
+      ],
+      "uri": "nf:81640796"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "81770616",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 162"
+        }
+      ],
+      "uri": "nf:81770616"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "80226892",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:80226892"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81021710",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 18"
+        }
+      ],
+      "uri": "nf:81021710"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81310111",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 83"
+        }
+      ],
+      "uri": "nf:81310111"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81438785",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 110"
+        }
+      ],
+      "uri": "nf:81438785"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81640797",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 131"
+        }
+      ],
+      "uri": "nf:81640797"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "81770617",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 163"
+        }
+      ],
+      "uri": "nf:81770617"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "80226893",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:80226893"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81021711",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 19"
+        }
+      ],
+      "uri": "nf:81021711"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81310112",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 84"
+        }
+      ],
+      "uri": "nf:81310112"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81438786",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 111"
+        }
+      ],
+      "uri": "nf:81438786"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81640798",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 132"
+        }
+      ],
+      "uri": "nf:81640798"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "81770618",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 164"
+        }
+      ],
+      "uri": "nf:81770618"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "80226894",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:80226894"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81021712",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 20"
+        }
+      ],
+      "uri": "nf:81021712"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81310113",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 85"
+        }
+      ],
+      "uri": "nf:81310113"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81438787",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 112"
+        }
+      ],
+      "uri": "nf:81438787"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81640799",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 133"
+        }
+      ],
+      "uri": "nf:81640799"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "81770619",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 165"
+        }
+      ],
+      "uri": "nf:81770619"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "80226895",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:80226895"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81021713",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 21"
+        }
+      ],
+      "uri": "nf:81021713"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81310114",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 86"
+        }
+      ],
+      "uri": "nf:81310114"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81438788",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": " "
+        }
+      ],
+      "uri": "nf:81438788"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81640800",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 134"
+        }
+      ],
+      "uri": "nf:81640800"
+    },
+    {
+      "episodeNumber": 21,
+      "id": "81770620",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 166"
+        }
+      ],
+      "uri": "nf:81770620"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "80226896",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:80226896"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81021714",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 22"
+        }
+      ],
+      "uri": "nf:81021714"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81310115",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 87"
+        }
+      ],
+      "uri": "nf:81310115"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81438789",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 114"
+        }
+      ],
+      "uri": "nf:81438789"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81640801",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 135"
+        }
+      ],
+      "uri": "nf:81640801"
+    },
+    {
+      "episodeNumber": 22,
+      "id": "81770621",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 167"
+        }
+      ],
+      "uri": "nf:81770621"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "80226897",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:80226897"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81021715",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 23"
+        }
+      ],
+      "uri": "nf:81021715"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81310116",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 88"
+        }
+      ],
+      "uri": "nf:81310116"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81438790",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 115"
+        }
+      ],
+      "uri": "nf:81438790"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81640802",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 136"
+        }
+      ],
+      "uri": "nf:81640802"
+    },
+    {
+      "episodeNumber": 23,
+      "id": "81770622",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 168"
+        }
+      ],
+      "uri": "nf:81770622"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "80226898",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "nf:80226898"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81021716",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 24"
+        }
+      ],
+      "uri": "nf:81021716"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81310117",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 89"
+        }
+      ],
+      "uri": "nf:81310117"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81438791",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 116"
+        }
+      ],
+      "uri": "nf:81438791"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81640803",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 137"
+        }
+      ],
+      "uri": "nf:81640803"
+    },
+    {
+      "episodeNumber": 24,
+      "id": "81770623",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 169"
+        }
+      ],
+      "uri": "nf:81770623"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "80226899",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 25"
+        }
+      ],
+      "uri": "nf:80226899"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81021717",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 25"
+        }
+      ],
+      "uri": "nf:81021717"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81310118",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 90"
+        }
+      ],
+      "uri": "nf:81310118"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81438792",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 117"
+        }
+      ],
+      "uri": "nf:81438792"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81640804",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 138"
+        }
+      ],
+      "uri": "nf:81640804"
+    },
+    {
+      "episodeNumber": 25,
+      "id": "81770624",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 170"
+        }
+      ],
+      "uri": "nf:81770624"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "81310092",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "OVA Training of the Dead"
+        }
+      ],
+      "uri": "nf:81310092"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "81310119",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 91"
+        }
+      ],
+      "uri": "nf:81310119"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "81438793",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 118"
+        }
+      ],
+      "uri": "nf:81438793"
+    },
+    {
+      "episodeNumber": 26,
+      "id": "81644093",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "UA Heroes Battle"
+        }
+      ],
+      "uri": "nf:81644093"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "81310120",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 92"
+        }
+      ],
+      "uri": "nf:81310120"
+    },
+    {
+      "episodeNumber": 27,
+      "id": "81438794",
+      "mediaUri": "nf:80135674",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 119"
+        }
+      ],
+      "uri": "nf:81438794"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "partOf": [
+      {
+        "part": "anilist:211711",
+        "whole": "cr:GE00379883JAJP"
+      },
+      {
+        "part": "anilist:211711",
+        "whole": "nf:80135674"
+      }
+    ],
+    "together": [
+      [
+        "anilist:211711",
+        "kitsu:50701",
+        "mal:64107",
+        "offline:mal-64107"
+      ]
+    ]
+  },
+  "name": "My Hero Academia: I am a hero too",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "211711",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 03 Aug 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "My Hero Academia: I am a hero too"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Boku no Hero Academia: I am a hero too"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "僕のヒーローアカデミア I am a hero too"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:211711"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50701",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-02",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "My Hero Academia: I am a hero too"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Boku no Hero Academia: I am a hero too"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50701"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "64107",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "My Hero Academia: I Am a Hero Too"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Boku no Hero Academia: I Am a Hero Too"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64107"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64107",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Boku no Hero Academia: I Am a Hero Too"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64107"
+    },
+    {
+      "id": "GE00379883JAJP",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GE00379883JAJP"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "80135674",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2016-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "My Hero Academia"
+        }
+      ],
+      "uri": "nf:80135674"
+    }
+  ],
+  "source": {
+    "answers": [
+      "5f815a7dbd9a7036d3a3708fcda3923eaeee2a65152b6e3c9615440e5de7b4c7",
+      "6d1e2502efa8aefac5103d061ff3ab86f11b621d7e49103008d9c8c956c7657b",
+      "62df50f9becbb43c43783cccb27844478bdba128d3dfd90630447dbde558897d",
+      "40aef7abe938ecd72688063f60868b48357dea3a2fc2a7e9c9b5dd33afd67222",
+      "9392ecf5bf00de64f1aaf717c34214c5f23793d461ad2700f5c3bf5fc65b0cb5",
+      "02600186846ae138d0637521bc596372039fa65802db27038141ebf9f8bb939f",
+      "fcafe75180f56f719e68ecb49c163f279ff25748f6c5fbbfd5f895b05f2cfa25",
+      "6cb7c526ae90752973f18d38b81f73c3ded9b1e8876dffa52477a69a089152f4",
+      "e397ba9afd4c00b0cd5f71a607d0eeb9a4872859bb735a9fb067dc5a83e01fb4",
+      "4f28232c9de845b53ad4e2b06b8f68d5d9f7f48146455add8f6ca51610ff6292",
+      "81526f17b2056f0f158ae8f1e53bdddcd89e83de7202e416de5ced31b492999e",
+      "d9a0a3c18f56ca720faaa8a75b886d5a9410c7aae674bff883d26e56c1136846",
+      "3bc41f5b656138a9545a41d3608e17985bcc14f05d06d9c33723e28c38ed32c8",
+      "f753dee8a4e16fd6ebfeb791f1446902c209827ab8e245831734d0f8730fb1c9",
+      "c964328be5b21659edcb78662afb81d86b1e76db11a7b14eaface4b329e709b3",
+      "b8bf32f4d0bee91c05ce4a44a54a6b3ebcde57075b2180ca69f46b4868592d34",
+      "1183b973261754e12b010cd062b93989a1ce85f930f81177db69643bf1a35912",
+      "964830a07723d06248672cf7398d8be7d21174d1b6a555f0934987a746655b17",
+      "326b7210201e59b8b9c4dcfa1cfea22e22d79314c049dba65117f3ee18392c63",
+      "1b0dc500fca35dc30586e1a5d0c9c997321eddaa7dd2bf848b9d766749e98f45",
+      "bd988a6a0abac50690be34b74b02c271ec3f996a5ef1a6c003fd49dc05f1ccda",
+      "2d1b2ed913bf4f5a2062a6d26f1d708c4c2ee6329b8091524b5f9a155525f858",
+      "6f2b219e215730c0b79c9f5de36ff46cb7d9e38acfac4a974abee74eb4a59b3a",
+      "97540675c33657ea64179802e5c1e8cee576ea99b5a0f31c6b55a8f6dc857d74",
+      "3eeefbd7365a2abccff73f616913840d395666b863b9c817d229ed719bf34c10",
+      "063945f1d44456de555ceda2b0d1f26ab5bda65b76eed3007964c4c1a7a2659b",
+      "d78f28b987da7fed023dcd1265bf811ea7a9e6064e776cec8d8f23d179935258",
+      "2ba962ae2f91d185e3b05760a658b136a83b27976fe86d4c8685d10b3af27927",
+      "eca57ae9f3f0d639ff8911f9539103ee0a32c926fdb0c7d725b643e066fa5da4",
+      "774d65cb617410794be7d7680a3bccf07b635fe170a77b8de6629f1c1040d1ba",
+      "e8013338f53188bf392d5f495c9247402bd36197f81a315aef9c2227504f3c2a",
+      "a7a29c6108ddc7dbbd60293fd297af66d460cd9c037e72fcc5237eb1e6759ea0",
+      "a48b1fe637c8668fbbd7c37e7cb80e46ceb15e64417586418d5affac282d83dd",
+      "ce26dda7c456a84920fca87de671f46367ac2f9e65023eac5cb38c21ebc941cd",
+      "788492bea744d32bfdf62f84f9eedd889057d0004318e3a8ab95ad8aa1e363ce",
+      "216284dc823ce456c2e1444ef986c68e5cc0513254d957fc62bac559dd840cf6",
+      "94a621ea29c70abc52c737500bda8f92283ac3ccc25bb02d2b403acef3ee1e83",
+      "62b98346e9bc6a7f5449958e7bec64bc35d9b2dd8a33deb0f41ae2bd34761940",
+      "510526719879e12562b1f34137fb9c01ba13c54349811e66290069030c99d7a0",
+      "d6c86f110c21de3f25e5512e0b5e52b2a3ad0d97fe85117bce9b2bc082b5ccb4",
+      "1c993ea78df179401928162946eebfc780a215f192b0ecec26f1672dfd8a47cc",
+      "dcac2ac8f5a3dfb6cee3f54d05d64f451d448180e244f692cc08095a2a47929c",
+      "251be391ae678554215752853d917254c0d117d804ef9e44e2c6d0491cf9a152",
+      "5e70f6636a0d5b9862f912039c9af0b048c0f3d9e13d9562ecb702048522bb61",
+      "7a1d305dd64e153384071990cf93e98dc37ac9594fd2bb0093bc447b389fba03",
+      "0e27456d57086a89098e49fcc7254fe9bdd972f215b25d6c3f617a58120854e2",
+      "15fcd25c4ab2048d63fb7508e7727065712e7badcaeef4fc089a750ce00448b6",
+      "becbf901b1a27e92dbfbeecdccba4d8b38b25cb7991878efa98b74b08b21d7fb",
+      "c738ef8489d39bce8fc18119195c9a0b10870bbaafc4ea1db8146741ed0939a3",
+      "3b57296a720edfe80115c5aa48709586a7dce817e037ea6e20ec2cec97d0e08d",
+      "41fb6aebc4eb77563004bf09c712d30294dafe3cec51a6f296209f2fb6342ef4",
+      "baeef44c1b96cc80313011ecc8e19adfccb526e42db4dea6f875444a3e7c4ee0",
+      "dc0c983145b89206ec5a64d5e9a2c5d594407e38ffa481e37e9ff078d7b78138",
+      "a7843cd6907570b76ced69826871447f6e7ad5ecbe93a32c67f592677de9c7bf",
+      "ef086a2b4b3dd35edc12c3ba49e8afa245ca073c3327750a202f5e863366c603",
+      "0f55e65227dbf2ded2412f1b69d5627a4ba7816006c56ee02f438e9a1522cd6a",
+      "c4a86ddd7f7b5faaa0fa46a7e2b8f0bfff001715fc42ebbf2e7ce62b77baef97",
+      "4a4304424af8f4638deaed13d0fff53af392b1f0a44f854c7e1e4016519bd660",
+      "2d49614c0c68a16d48d122b0d00a42115dbadd800b0c99f302bc88e0b439acbd",
+      "7a998677a31b47b977a8b065a88d99b5ff6ecd5cf04089fe3b97d666a443925f",
+      "3d9322877151aa7993026038481119a8c01638813c6b2150a3e96bbdf2f29220",
+      "b5a773407aad8ef2219121b2952fb0ed3b75ad8ffb63f5df78b61b0e60ee1142",
+      "93c10e2e0e2772e8e7d9231506ab7826f3853fda6de7177c41c4d8865a31dd6c",
+      "65b2e9ea2717f18e36c9e3e7d44663d622ccc9cbfac4edc2c109bfd4f7424678",
+      "92b8a0bd3ac870617e41fb9fa3f0c4ea4cd338933e27d357411dece28d6280b9",
+      "65548793f19f396134d7bf5b326ceddb0ef2dd04494f8ce838c382459a5fa6d3",
+      "750df2287c2fb057088f9d7acf8a32946a2c5d43faf185739eab460cef09f42e",
+      "7ad275e636a262080ec084286b3e4bb1e834f6559369ed26fd960a2a765c04b3",
+      "f7ae22e874efe9753e6f0d074e8ad213e43551efa23fec8c3c3cf601bc64167b",
+      "99d2a9cce9589d6afda31e130294b2a12f2f9612c5e79e5c24c3b44fbf6a0ed7",
+      "b68c1bcb637a5d2a8f56d74cf1b48bb13496838d838f59e867bdb1f9981463ca",
+      "6005d42128a23f8c095bdc31364769d8d62cfb59f1cc3c0ffcf80f6313679fb9",
+      "2a2ab381700406740c0b472aa33afdc08359bfc0269b267bcdfff5d82c8548fb",
+      "77b1967510f67d136e8a45c0711c9a235be1fe270788f56820ec32ea225735dd",
+      "bcfbf53529cd92501eb74a42167957fad53a18aa1aefab19d3360a2866807082",
+      "ebb44b1356af131d5e9ba984abb7a27c2bfc49a155a73a23cd1fa24ba15f16ab",
+      "dc8905ffa9dc44e22c9c72a84c156e2d1e890377f7194761f1c16b650166a49b",
+      "a3ba103fbe1bcaf81ca814595a7a5d7050f048ed9948c95b8a08d0edc47e53ed",
+      "1166c53ba91e33cf67074aa020415ee88a9ba52401b649e3067cf35d317cf230",
+      "657d7b68816de9fe4b047fa830d27ba3f7333db588422e8b0b61b666bd97126a",
+      "1ab5f8c5dfffcb6b14d3980a7b989d66899ca348adbf0d4c1ac6bc6311f6cc0c",
+      "e0c6570c513e6bbfc963a1dfaf1c52bb666f3cd69473a6314f16a9a659aa97d2",
+      "5fbd024ef42c41f57eb8d329a495a3e3d209dd5a94bace5d9959f0d7e2637afd",
+      "fcbd66527229dd9ac5833ac7e317e64a98efc49a9634e09feb709406ee7db608",
+      "f035b35b489e958952ac0b7414924efca696f11b0af65d02a3d22f4e10cf2a0f",
+      "bf18171291ff4cb2c9bb288ab84a31e5e7ef02a2167163a443fa531b489a0231",
+      "2db2c1e5ac33c3cf33ca2980f3da96fed28a9ef5888c7015199b74de5b99ae5c",
+      "685ed23cff0f0440eabf0785def9ea3366bc62c5bd0417504492804bf154b737",
+      "5fc2a519599505e9e36feefb41719437ec687a3011c66c0319d6347644407e63",
+      "53a1f8c0ad72599d71daec3bf8aa28ff193ea3ae943fe01dfac2f871f1a2d52b",
+      "dd3f25071c48f51897f9f61f7712ddb44594f708b951d72abb2a4d8cb982124f",
+      "a99a8859528f4a0b7dacfbef7bf721596a38e1bd7106817e30d71d2de7cfef15",
+      "097ea776f4089d73d7ae0a2bbf718e5c46aa2c529c4245b50a567181a30c7cc1",
+      "973ef6192804b671148afd748d5e81ac385630cc04482e0905646c4c40aeb988",
+      "0d17962e70a23849391ddb113a7d309668526b948c70711ae2237d06b665b660",
+      "98904c2a5e4ffd9b1f8880416d88581bac64cdc2c7d86c5f9d9a339c6bd1072d",
+      "9645b4b0e94e79988c882a2e3dbabd93f8c2aa50757143110d087ccb07ae8d79",
+      "5ee8c9195ab7a2ff6da566dc95ae1ac5852a8aeceba64814a5f3a1293b1d60b6",
+      "2dc4b05233c2d5818ad0fba93428c1e98c96f7522948b32187e16b782534b82a",
+      "2bf8169e708ad2997b58b9b9340e76feefd5716a84a9b58d49e9f6d459570d42",
+      "c64a7e5e0ede4d61bc4514c1664f87513bee394c6a4bf6ad272e9d316dec3273",
+      "0c36a67e9f440d099839e3f615bed2969b3cb571b47d4d392113a22c28a1a382",
+      "b66da67d6f217a9eb767129dd1a1652cc0f6705dea910eecbe592d72025fae48",
+      "ef4562c73adebc07dc678abac28e5a2865790d8c9edf2ce3f292b1bd090e8f6d",
+      "18e7f69163897628e45b71a78db25d953881d326d537413b72bc438a217da4b6",
+      "6c89c75b735910ce171ea356ff9c96cf47bb6b1f05f9e59133def5b27aa50f4d",
+      "e027a189ff94bdd6734364a0bb5b30b0d3104487733e4864aeca965009ee3d84",
+      "80c2d52b423d3b0359f3a102f651f546830fc2019009191aa7b0eda4e61e0267",
+      "610583bf9160780db08dc24a62e9eb0e196e5719b1e2ddca3ee983822aaffcc8",
+      "5885fe46a0bcd2bb87f4b2c03b63a65e6b914d8ac8b74506a6fe31bc6085ce8b",
+      "6998d1887d3e88bf49c237b014c2a6f5960213fd5e3a5ff82e7bd45abec0458b",
+      "0801d0ec40c5916d7d81cf87ec39541e842c996194e6282707befea7e8556680",
+      "406bcfbd9afb3c5a28c706493d1f81b1d82e371040628f1352e39ee1c8b2c307",
+      "2e82b21d2f64eaa941b2f71a605302d31a67f6d4de8b8c045c97177fb92c1e3d",
+      "f63141e48a765e9e66571d7929d810fe86ff4fc9e8ab9212ff605c293e755388",
+      "d0c3a9edaf2eb6a3f006b6cb5a72306d56c8decaf10ad50b4db618c352d7dbf8",
+      "3f6054ef995501628aca75cee218cbf36948d66278e6d9271b7e79e8ec6b53c0",
+      "e0fde00ddb4169c819bbd3393d93b129a602d6e2498a24f2c0789379e3b0e1e5",
+      "dd701b18fc0c77ea3f22a8c6129f0b5d4307dfe4463ba392e7a4172e9a217d56",
+      "e590ca74a0f936557dfa7c4b6d29efc6d9e1b87f014a2a60c68546b26e489251",
+      "cd87a04d17e2cc915c28aebbfeeed6215db07856623c6a4f063752590884bd91",
+      "1abd9ff0d64efc2c7c5d845ed958c34b687587d73c0e226f9796f748c8718e73",
+      "97b5f7b2ee60472015af63c3a86d0ce33fbee057a41917a55d65caf3a1fb63ca",
+      "58592cac92b14040346b989dfbc25656ea8064bfecdfd0556602da3db11877ea",
+      "15f579b279d50365bd0b45e8fc19c761483dcb408a6b8a1f6bb87fddf9dab8b7",
+      "8c8e00d44227c088e2cfdb59ba1bd9087cb1213a2201e496551e696dc751a9d2",
+      "d0f86395ffcaf16529803e4e965669a522136e82689b455777fc73a7aa6fbcbb",
+      "4de55d69af4b6a581498cc540d273c876729fad69d7e0940d5f330abee8f751e",
+      "25a1306c25de75003775c5bea37a4861c1e715f7311f97190eda0a82c3ccd2ae",
+      "daa2906b2bce984bac611df517c668296190cc1467a627e0238b9555155cb41c",
+      "23412f25981955bd9e02b44dcf9f84dec53da09dea69e8c31b267f4cb69a22f8",
+      "5debc959f52b61feb3f41dc5df636b400a865d6e872cfcd2499c9c140e49c96f",
+      "4ce153cc101552842c561ac0c794861bd167b3e6110b9c9a395aad0ffcfada5a",
+      "cf588e026da8a3b3e4f55284a4551833d551b90a34417e32478240efe3ffe16b",
+      "f242935b673d86d99cde8ffcca0ab17da84eb395849376161facaa9feb98720f",
+      "a7a58da69ade520ac46b5719d1b226c1e055682c961fae22ea0c11e75fc6ef67",
+      "a219c82a19984be38b3dcf92ee6c79bb7755fa695e6452b81d7d50a6a4141d74",
+      "ada82a3abdbefd49c1a2942573ce024010fa928d5720d7edb847d14f7032a0a3",
+      "f79e74ebcf096ce4444d79c8f254c04c0b96a93f830270af6dac28945784def2",
+      "42a42fae20724a1d2f78a8431a1df7ff6b45ab5347a66daf7f70ca6cc79e9cb4",
+      "bb7ceab1850d8e8c3149ed9057c03594d66e254201c2b585c2f86adcc737bb8d",
+      "ba0e2f5d68fc4351d65f060d468e50c2ee9c6266c83e097bb5a931c2bfec611d",
+      "62c57aaa19cfdf87d1f03a1f6bd96776b75a012b274bc1a53184d74196aae008",
+      "890887541e119668d32544d0aa6cad3185bf22027db6bcb2571bdd891b6a0b97",
+      "46330bd00b32f55a4a71780eaa33f27b8d117351770f12b707ea1ec798e164dd",
+      "8b9cdbfac890e1e2348687b1071e2249c9f2aeeb57b2f752c4e3f474d0eb67ec",
+      "13628f840652e3aeae96e492f38773e6a26690fcc8dc20f1e54fa7f7eddeecc4",
+      "b11114521db2c91a361875108cf7aead22d79ae9059fed022429979c456a2d63",
+      "b4185ca2cfe6362e13365931b29f123bd432bb8ec7eca6dbb06a1127cd85f50e",
+      "c3787afc99d575d2e5b092629970b45d905275e7f8b64d5df53823c42f7abacf",
+      "660b3dc94988481a774870e2e8277fa8346a665a7ceb1c21ebb1f191e3c91550",
+      "b6b5fe6e10183db1838cdd1effdb19cad3424663945c5bac78ffb7ad7d30b32a",
+      "cb56752fb90cd989908967f7981ae60805098c670488481fdf58e10bb98c410c",
+      "e5b987eff7bc6411a1a938df0726fe4849854636da3a37f04acfb3ba2c8b3912",
+      "83ede5d3c855bf7262706d67905c24d01f5a0f2c913deb14dfd0bb500cb249c3",
+      "fc1440e80fd13983b3b00f9ad8f523681e74b61101e1fd6837a9fa466466ac05",
+      "604efe5e7c6dc9971188e3396fee1531c387aed598baea6eb9d2beef7907e26e",
+      "1da8a0803d3752ccbd8f0983123fe16ce82d8521b23c7240a4ad33f0f0da1e1b",
+      "3ff7ae33a2e980b66bd2743ef0432fd1b66f0af980d0ba897bf6a870328754da",
+      "8ed8ea6ee2d64713102cc2a7bdf38535a9db14068786001b136ddb7f53878687",
+      "65feba1ac76d5cf6ae701c9ec7813fdb7bf91931129218948f7b0bd4df182102",
+      "e5026f7eac98c1423ce280a5b34679673154a457e92e51ddb08b776aac41812a",
+      "55287c0f7f986940e899a597902fbd6da8e817cdc81a0c8c3e27f8db037e6be4",
+      "323c87870095fe1cb7dcfe9f73ed2cd3e00947a39f6c0778586e9e40da1d9c38",
+      "8a8c025c5c60ef68f211fd3648d4ec972912da70b7d018d6dff990a03ee0b3f3",
+      "49b4a287ad8289e20ad516665afa6c5ece136716ef919b8259b17f49a8c4d69d",
+      "7b93a5db22204285c9978e275485054304f0b7ae0eb88bd509074402f7a13bfd",
+      "3082c125635f0a477f40708e09431e5dd6d512f0291bde6020d1833ff44407ea",
+      "a4960feae4b1b2a35cf8a22c8ba813fe9d049fdff48db500c245916f7d086284",
+      "7fe4ddcda8a07da6dcfd80e65b104844204a15b53d64d08d841dba256f76ed79",
+      "31f45aed894eee1588670c6e20df3221b35e5ce885edecc8117b790a4808d3d7",
+      "e4d733f87bd5d69a97211a9094573903c21c7b774afcb030b804d2525261c2d5",
+      "952b93d12d1ddb7736ff2f7e186e0b9d98daa75cd3eef8698152cc0a3a6bd31b",
+      "36f1db3e6176bc005ed26e629b41872ab76ba978545d3562a1cd59da09a718ab",
+      "f0f81e9fa15a5e40aef757386833a354376d46636f9adc6deb8f6ec04d7fb8d1",
+      "fedcb9c131f5c7f79929f5745f52e3462dfa581197aebcb3a0175e19a859b3e3",
+      "6060dd4f0e04a3ea75e57c741002044cf652eefd5d45d2ff7e972158aeb40d98",
+      "9d86a53ac12c1205b6db21cdc82407c73a32b8ae7cd535eb95a8f3ba6d03f7a6",
+      "bd35dbf1209e63f228c1972b84c822ab2e6afd4f387e1c789cac1f72af570e33",
+      "626825427b39e5d0232094bfc543d9494d331a7076c71295d2d24f192d604313",
+      "e336be4faa732066e4065e02168a698f085ab0ea917ae261c50aee8c42b0b7e4",
+      "c448517151123dbbbcb3b259bec3c7e77e436e7e3e1deb092cd0eb696367b1d4",
+      "f0c030c19be0daf0c4e4d20b60f82476c92917ad34997366aec1d205af71d7b7",
+      "4a463cd62c5c13ec7d5c1cba211289d19c93173c155902483f331a4e7222e233",
+      "59fcc9375a18ac62b08e611684ff88ec28ee931e602263c9efe0336fff498f1c",
+      "b57dbd895b8c966152ab29d57d5a797d7d55467db0d8282efed3a6de9dc77c9c",
+      "a28ab933f646947cc7849c612f384119fc770a4f914420a3f194fdbfc8dee1e7",
+      "c28c5a87483c74f8d8e66581afefdb5b9291661ed1592d95c845daa027a67654"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:211711,kitsu:50701,mal:64107,offline:mal-64107)"
+  },
+  "why": "My Hero Academia: I am a hero too is a single episode summer 2026 special: anilist gives start and end 2026-08-03 with one episode, mal 2026-08-03 with one, kitsu 2026-08-02 with one, and offline one, so the four members agree on the work and differ only by a day on the date. cr:GE00379883JAJP holds the run: it is a Crunchyroll watch container with no count and no dates, and kitsu:50701 declares the special PART_OF it. nf:80135674 holds the run: it is the bare Netflix title container for My Hero Academia, carrying no count and no episode dates but 183 episodes of the parent series (Izuku Midoriya: Origin onward, plus Memories 1 and Toshinori Yagi: Rising/Origin), and it claims the same run through anilist:211711, kitsu:50701, mal:64107 and offline:mal-64107. Neither hold gets a range: the Netflix episodes carry no release dates and the run has no episode titles of its own to align against."
+}

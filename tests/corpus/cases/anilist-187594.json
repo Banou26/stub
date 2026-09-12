@@ -1,0 +1,176 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Nothing hard: only the four metadata rows came back, all cross-linked by first-party SAME_AS ids, with mal and kitsu agreeing on 2026-08-08 and one episode. No streaming or container row to weigh, and the single kitsu episode row has no date or title so it pairs with nothing. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62723",
+      "mediaUri": "anilist:187594",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187594",
+      "mediaUri": "kitsu:50280",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62723",
+      "mediaUri": "kitsu:50280",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62723",
+      "mediaUri": "offline:mal-62723",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:187594",
+      "mediaUri": "offline:mal-62723",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50280",
+      "mediaUri": "offline:mal-62723",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "406838",
+      "mediaUri": "kitsu:50280",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:406838"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "anilist:187594",
+        "kitsu:50280",
+        "mal:62723",
+        "offline:mal-62723"
+      ]
+    ]
+  },
+  "name": "Perfect World Movie: Ninefold The Burning Sky",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "187594",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Perfect World Movie: Ninefold The Burning Sky"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Wanmei Shijie Movie: Jiu Jie Fen Tian"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "完美世界剧场版 九劫焚天"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:187594"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50280",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-08-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Perfect World Movie: Ninefold The Burning Sky"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Wanmei Shijie Movie: Jiu Jie Fen Tian"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50280"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "62723",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-08-08",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Perfect World Movie: Ninefold The Burning Sky"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Wanmei Shijie Movie: Jiu Jie Fen Tian"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:62723"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-62723",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Wanmei Shijie Movie: Jiu Jie Fen Tian"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-62723"
+    }
+  ],
+  "source": {
+    "answers": [
+      "41d1a94fa6ff20c68abf7f5492d96d8dcad0b6f7fdcafb434bbc274c4c82fcbe",
+      "846182b5697dc9d60e69ace4d2cf19347ed91ae9de2ec7ca9660f71675c3ec04",
+      "c26783834e8162862344e151c1bfe7a6c1bb9552f3192d471c159c2c26e37825",
+      "5dcfb1dbed938a87231fa6f7d3865b6b72508cccc68dc5410ef30ceb0ed02c2c"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:187594,kitsu:50280,mal:62723,offline:mal-62723)"
+  },
+  "why": "A one-episode Chinese ONA film spun off the Perfect World (Wanmei Shijie) donghua, dated 2026-08-08 on both mal and kitsu with episodeCount 1. The four catalogue rows are one run: kitsu:50280 and offline:mal-62723 each carry SAME_AS handles to both anilist:187594 and mal:62723, anilist:187594 carries SAME_AS to mal:62723, and mal and kitsu agree on the same day-precise start date 2026-08-08 and the same count of 1 under the same title. No streaming row and no container row came back for this run, so nothing is held, spanned or ruled out."
+}

@@ -1,0 +1,678 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row is the trap: it claims SAME_AS against all three members and its title Behind Your Touch reads close to He's behind you, but it dates to 2023 and carries 16 placeholder-titled episodes against a 12 episode 2026 short, so it is unrelated. AniZip's dates are UTC evening stamps that fall a day before the AniList dates, which is the ordinary Japan time offset, not a mismatch. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63468",
+      "mediaUri": "anilist:207674",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63468",
+      "mediaUri": "offline:mal-63468",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63468",
+      "mediaUri": "anizip:19889",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207674",
+      "mediaUri": "anizip:19889",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:207674",
+      "mediaUri": "nf:81669777",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63468",
+      "mediaUri": "nf:81669777",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63468",
+      "mediaUri": "nf:81669777",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "19889-1",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-07-03T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Mary-san / Teketeke"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "メリーさん / テケテケ"
+        }
+      ],
+      "uri": "anizip:19889-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19889-2",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-07-10T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kokkuri-san"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "コックリさん"
+        }
+      ],
+      "uri": "anizip:19889-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19889-3",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-07-17T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Cursed Doll / The Gap Woman"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "呪いの人形 / 隙間女"
+        }
+      ],
+      "uri": "anizip:19889-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19889-4",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-07-24T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Slit-Mouthed Woman / Rokurokubi"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "口裂け女 / ろくろ首"
+        }
+      ],
+      "uri": "anizip:19889-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19889-5",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-07-31T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Bakeneko"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "化け猫"
+        }
+      ],
+      "uri": "anizip:19889-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19889-6",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-08-07T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Mountain Pass Spirit / Jet Babaa"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "峠の霊 / ジェットババア"
+        }
+      ],
+      "uri": "anizip:19889-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19889-7",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-08-14T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hanako-san of the Toilet"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "トイレの花子さん"
+        }
+      ],
+      "uri": "anizip:19889-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19889-8",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-08-21T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Succubus / Hell"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "サキュバス / 地獄"
+        }
+      ],
+      "uri": "anizip:19889-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19889-9",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-08-28T16:30:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Resurrection"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "黄泉帰り"
+        }
+      ],
+      "uri": "anizip:19889-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19889-10",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-09-04T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19889-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19889-11",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-09-11T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19889-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19889-12",
+      "mediaUri": "anizip:19889",
+      "origin": "anizip",
+      "releaseDate": "2026-09-18T16:30:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19889-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81671458",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 1"
+        }
+      ],
+      "uri": "nf:81671458"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81671459",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:81671459"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81671460",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:81671460"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81671461",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:81671461"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81671462",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:81671462"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81671463",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:81671463"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81671464",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:81671464"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81671465",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:81671465"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81671466",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:81671466"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81671467",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:81671467"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81671468",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:81671468"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81671469",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "nf:81671469"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "81671470",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 13"
+        }
+      ],
+      "uri": "nf:81671470"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "81671471",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 14"
+        }
+      ],
+      "uri": "nf:81671471"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "81671472",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 15"
+        }
+      ],
+      "uri": "nf:81671472"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "81671473",
+      "mediaUri": "nf:81669777",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 16"
+        }
+      ],
+      "uri": "nf:81671473"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81669777",
+        "anilist:207674"
+      ]
+    ],
+    "episodeApart": [],
+    "episodePairs": [],
+    "includes": [],
+    "partOf": [],
+    "together": [
+      [
+        "anilist:207674",
+        "mal:63468",
+        "offline:mal-63468",
+        "anizip:19889"
+      ]
+    ],
+    "unrelated": [
+      "nf:81669777"
+    ]
+  },
+  "name": "KAMUI ---He's behind you",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "207674",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Sat, 04 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "KAMUI ---He's behind you"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Ushiro no Shoumen Kamui-san"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "うしろの正面カムイさん"
+        }
+      ],
+      "type": "TV_SHORT",
+      "uri": "anilist:207674"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63468",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-04",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "KAMUI: He's Behind You"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Ushiro no Shoumen Kamui-san"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63468"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-63468",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ushiro no Shoumen Kamui-san"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63468"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19889",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kamui: He`s behind you"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "うしろの正面カムイさん"
+        }
+      ],
+      "uri": "anizip:19889"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81669777",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2023-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Behind Your Touch"
+        }
+      ],
+      "uri": "nf:81669777"
+    }
+  ],
+  "source": {
+    "answers": [
+      "20bae8eed42f02cf2c78eccbb11f7bb99dd0e0aa8b01bf786d793e29f0a83193",
+      "3f1396458dc531f224da64c8d228a2f47b04cde2b61d64b10f0d1c9779b9b11c",
+      "81b0c55c8e9f2ec78f3747d0a1f22c0732f9566377a8a9bcbbb2bfaa6f89aa0f",
+      "eb47f1347df02bd9865581649da10623b0067cbe03bcc23b69adc78905ae0c52",
+      "7b5697360d22318f0e894c2f585a5d7de3adf0e3a5d710410c925c89b09740c7",
+      "25189b93b351b7146a0ac75d63f529f7d2bccd949944e70dd4241b3a1762af07",
+      "1fb7c733e10316d6a788ea2532234140ab88d68a55bf6155b8741ffbcca87c11",
+      "e2a7425d93ad469a597ff9b58f98e47546b044ae2b1ef0bb4119689aba1ec14d",
+      "7316d6b7259f031449274ed2d898d209cc15821c44cd524ee4ff6357c437c34b",
+      "48e6c55c7329869cbc2e81613963e1c6d78501f2e3333bdfe9a5faa8ba22bf3b",
+      "732aac69c4fb3c16d58371ba4d18f783872cbfdcc120590190ec183bd02841f3",
+      "d0dc85e806b97efd4da2567d49eab133e04ff666c26c0ddbb5774d8f1fe3f460",
+      "560acfb8ab4390b4799f554b9231857b20a1491c8bb590253dce2c1efc82afdc",
+      "9343becd4ede76a428ac824ebc715cd11e5b89f8386aa948d436ed2235341b3a",
+      "cc76ee8d02e34f8885e5df791baa338f0d15c5d8fc1b9893d8642fb8664c72d5",
+      "78f6f7d50bd5a49ee38fc33be096168cda955c5323d8678882d72e95f0de0ceb",
+      "cf8e95370c01274c92d45deb3aa850adb9e7213ff9bab5f78462dabbc0809c86",
+      "10f422a9e9eafd7d2149265692f217058a3122ecb82bb5729d0c4295783548a9",
+      "7e4849decca12030013c996af0ddeca4505409ea99497f52f2aaf45956a394dc",
+      "35cd842f92310aa4de35ab0d2890f279b210141dd989ded683092f97760670d9",
+      "6ed0bc0c28d5c51f8130a592abc50925bf047054162369558013afa797f721de"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:207674,mal:63468,offline:mal-63468)"
+  },
+  "why": "KAMUI ---He's behind you (Ushiro no Shoumen Kamui-san) is a 12 episode summer 2026 TV short that ran 2026-07-04 to 2026-09-19 on AniList, with MyAnimeList and the offline database agreeing on the count of 12 and on the 2026-07-04 start. anizip:19889 is the same run: it carries first-party SAME_AS handles to mal:63468 and anilist:207674, its episodeCount is 12, and its numbered episodes run 2026-07-03T16:30Z to 2026-09-18T16:30Z, which is the 2026-07-04 to 2026-09-19 broadcast window in Japan time. nf:81669777 is unrelated: it is Behind Your Touch, a 2023 title with 16 episodes named Episode 1 to Episode 16, a different work whose English name merely resembles this one, so its SAME_AS handles to anilist:207674, mal:63468 and offline:mal-63468 are wrong. No episode pairs are asserted: anizip is the only row carrying episodes, and its twelve unnumbered Mini-Anime Theater entries have nothing on any other row to pair with."
+}

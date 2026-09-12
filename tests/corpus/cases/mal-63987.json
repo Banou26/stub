@@ -1,0 +1,112 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Small run with only the three metadata catalogue rows and no streaming or container rows, so nothing beyond the id agreement had to be weighed. The anilist end date of 2026-08-19 sits close to the start for an 18 episode count, but no episode rows came back either side so no per-episode mark was made. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:63987",
+      "mediaUri": "anilist:211220",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63987",
+      "mediaUri": "offline:mal-63987",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211220",
+      "mediaUri": "offline:mal-63987",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:63987",
+        "anilist:211220",
+        "offline:mal-63987"
+      ]
+    ]
+  },
+  "name": "Raised by Demons: Panda Li",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 18,
+      "id": "63987",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-29",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Raised by Demons: Panda Li"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Li Xiongmao"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:63987"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "211220",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 29 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Raised by Demons: Panda Li"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Li Xiongmao"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "李熊猫"
+        }
+      ],
+      "type": "ONA",
+      "uri": "anilist:211220"
+    },
+    {
+      "id": "mal-63987",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [],
+      "uri": "offline:mal-63987"
+    }
+  ],
+  "source": {
+    "answers": [
+      "b80951c79f8a3d080f4e1a9da8232d671fd335d818cb9d4ff20b445771ddb866",
+      "2db467676c9315adcf981b34eb3f26907124a52bea0fe7c67966d3da9a22d304",
+      "aa19b245332eee53897ef0d03d0d90094ec964eeb2aac1fc690a507ebf7543ff"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:63987)"
+  },
+  "why": "Raised by Demons: Panda Li (Li Xiongmao) is a summer 2026 Chinese ONA, MyAnimeList listing 18 episodes from 2026-07-29. anilist:211220 is the same run: it carries a first-party SAME_AS to mal:63987, the same 2026-07-29 start date and the same English and romanised titles. offline:mal-63987 is the same run: the offline database row is built from the mal and anilist ids and claims SAME_AS to both. No streaming or container rows came back for this run, so nothing is attached or held."
+}

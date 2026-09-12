@@ -1,0 +1,1094 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Crunchyroll and JustWatch punctuate two titles differently from AniZip (A Sparkling Weekend with tildes rather than a colon, Kuroe VS Akae rather than Kuroe vs. Akae), so the JustWatch pairs were anchored on Crunchyroll, whose titles match it character for character, and the Crunchyroll pairs on the matching broadcast dates. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378081-GS00378082",
+      "mediaUri": "anilist:204466",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63150",
+      "mediaUri": "anilist:204466",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204466",
+      "mediaUri": "kitsu:50411",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378081",
+      "mediaUri": "kitsu:50411",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:63150",
+      "mediaUri": "offline:mal-63150",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204466",
+      "mediaUri": "offline:mal-63150",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50411",
+      "mediaUri": "offline:mal-63150",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63150",
+      "mediaUri": "anizip:19782",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204466",
+      "mediaUri": "anizip:19782",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204466",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50411",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63150",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63150",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:204466",
+      "mediaUri": "jw:512285-544472",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19782",
+      "mediaUri": "jw:512285-544472",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50411",
+      "mediaUri": "jw:512285-544472",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:63150",
+      "mediaUri": "jw:512285-544472",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-63150",
+      "mediaUri": "jw:512285-544472",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "391525",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391525"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "391526",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391526"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "391527",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391527"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "391528",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391528"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "391529",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391529"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "391530",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391530"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "391531",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391531"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "391532",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391532"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "391533",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391533"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "391534",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391534"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "391535",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391535"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "391536",
+      "mediaUri": "kitsu:50411",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:391536"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "19782-1",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-07-02T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Kaiju Girl Appears in Tokyo"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "乙女怪獣東京に現る"
+        }
+      ],
+      "uri": "anizip:19782-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19782-2",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Unopened Door"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "開かない扉"
+        }
+      ],
+      "uri": "anizip:19782-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19782-3",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Sparkling Weekend: Where Dreams Come True"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "キラメク週末 ~夢の国へ~"
+        }
+      ],
+      "uri": "anizip:19782-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19782-4",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Scary Kaiju Fest"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "恐怖の怪獣フェス"
+        }
+      ],
+      "uri": "anizip:19782-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19782-5",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Gyaru and Lipstick"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "ギャルと口紅"
+        }
+      ],
+      "uri": "anizip:19782-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19782-6",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Rairi`s Forest"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "らいりの森"
+        }
+      ],
+      "uri": "anizip:19782-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19782-7",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "All Eyes on Arata"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "狙われた新汰"
+        }
+      ],
+      "uri": "anizip:19782-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19782-8",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Fly to Manatsu`s Kaiju Island!!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "マ夏の怪獣島へ飛べ!!"
+        }
+      ],
+      "uri": "anizip:19782-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19782-9",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Release the Torrent of Complaints, Kaiju Girl!"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "乙女怪獣愚痴を吐け!"
+        }
+      ],
+      "uri": "anizip:19782-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19782-10",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Don`t Cry, Heartbroken Kaiju"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "泣くな失恋怪獣"
+        }
+      ],
+      "uri": "anizip:19782-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19782-11",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T16:15:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kuroe vs. Akae"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "クロエVSアカエ"
+        }
+      ],
+      "uri": "anizip:19782-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19782-12",
+      "mediaUri": "anizip:19782",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T16:15:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19782-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378081-GS00378082-GE00378395JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-07-02T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Kaiju Girl Appears in Tokyo"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378395JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378081-GS00378082-GE00378396JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-07-09T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Unopened Door"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378396JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378081-GS00378082-GE00378397JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-07-16T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Sparkling Weekend ~Where Dreams Come True~"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378397JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378081-GS00378082-GE00378398JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-07-23T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Scary Kaiju Fest"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378398JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378081-GS00378082-GE00378399JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-07-30T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "A Gyaru and Lipstick"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378399JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378081-GS00378082-GE00378400JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-08-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Rairi's Forest"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378400JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378081-GS00378082-GE00378401JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-08-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "All Eyes on Arata"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378401JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378081-GS00378082-GE00378402JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-08-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Fly to Manatsu's Kaiju Island!!"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378402JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378081-GS00378082-GE00378403JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-08-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Release the Torrent of Complaints, Kaiju Girl!"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378403JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378081-GS00378082-GE00378404JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-09-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Don't Cry, Heartbroken Kaiju"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378404JAJP"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "GT00378081-GS00378082-GE00378405JAJP",
+      "mediaUri": "cr:GT00378081-GS00378082",
+      "origin": "cr",
+      "releaseDate": "2026-09-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Kuroe vs. Akae"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082-GE00378405JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "10032414",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Kaiju Girl Appears in Tokyo"
+        }
+      ],
+      "uri": "jw:10032414"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10592485",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Unopened Door"
+        }
+      ],
+      "uri": "jw:10592485"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10592486",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Sparkling Weekend ~Where Dreams Come True~"
+        }
+      ],
+      "uri": "jw:10592486"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10592487",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Scary Kaiju Fest"
+        }
+      ],
+      "uri": "jw:10592487"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10592488",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Gyaru and Lipstick"
+        }
+      ],
+      "uri": "jw:10592488"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10592489",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rairi's Forest"
+        }
+      ],
+      "uri": "jw:10592489"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10592490",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "All Eyes on Arata"
+        }
+      ],
+      "uri": "jw:10592490"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10592491",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Fly to Manatsu's Kaiju Island!!"
+        }
+      ],
+      "uri": "jw:10592491"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10592492",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Release the Torrent of Complaints, Kaiju Girl!"
+        }
+      ],
+      "uri": "jw:10592492"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10592493",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Don't Cry, Heartbroken Kaiju"
+        }
+      ],
+      "uri": "jw:10592493"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10592494",
+      "mediaUri": "jw:512285-544472",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kuroe VS Akae"
+        }
+      ],
+      "uri": "jw:10592494"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:19782-1",
+        "b": "cr:GT00378081-GS00378082-GE00378395JAJP"
+      },
+      {
+        "a": "anizip:19782-2",
+        "b": "cr:GT00378081-GS00378082-GE00378396JAJP"
+      },
+      {
+        "a": "anizip:19782-3",
+        "b": "cr:GT00378081-GS00378082-GE00378397JAJP"
+      },
+      {
+        "a": "anizip:19782-4",
+        "b": "cr:GT00378081-GS00378082-GE00378398JAJP"
+      },
+      {
+        "a": "anizip:19782-5",
+        "b": "cr:GT00378081-GS00378082-GE00378399JAJP"
+      },
+      {
+        "a": "anizip:19782-6",
+        "b": "cr:GT00378081-GS00378082-GE00378400JAJP"
+      },
+      {
+        "a": "anizip:19782-7",
+        "b": "cr:GT00378081-GS00378082-GE00378401JAJP"
+      },
+      {
+        "a": "anizip:19782-8",
+        "b": "cr:GT00378081-GS00378082-GE00378402JAJP"
+      },
+      {
+        "a": "anizip:19782-9",
+        "b": "cr:GT00378081-GS00378082-GE00378403JAJP"
+      },
+      {
+        "a": "anizip:19782-10",
+        "b": "cr:GT00378081-GS00378082-GE00378404JAJP"
+      },
+      {
+        "a": "anizip:19782-11",
+        "b": "cr:GT00378081-GS00378082-GE00378405JAJP"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378395JAJP",
+        "b": "jw:10032414"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378396JAJP",
+        "b": "jw:10592485"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378397JAJP",
+        "b": "jw:10592486"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378398JAJP",
+        "b": "jw:10592487"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378399JAJP",
+        "b": "jw:10592488"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378400JAJP",
+        "b": "jw:10592489"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378401JAJP",
+        "b": "jw:10592490"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378402JAJP",
+        "b": "jw:10592491"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378403JAJP",
+        "b": "jw:10592492"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378404JAJP",
+        "b": "jw:10592493"
+      },
+      {
+        "a": "cr:GT00378081-GS00378082-GE00378405JAJP",
+        "b": "jw:10592494"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:204466",
+        "whole": "cr:GT00378081"
+      }
+    ],
+    "together": [
+      [
+        "anilist:204466",
+        "kitsu:50411",
+        "mal:63150",
+        "offline:mal-63150",
+        "anizip:19782",
+        "cr:GT00378081-GS00378082",
+        "jw:512285-544472"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "KAIJU GIRL CARAMELISE",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "204466",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 03 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "KAIJU GIRL CARAMELISE"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Otome Kaijuu Caraméliser"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "乙女怪獣キャラメリゼ"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:204466"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50411",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Kaiju Girl Caramelise"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Otome Kaiju Caramelise"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "乙女怪獣キャラメリゼ"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50411"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "63150",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-03",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kaiju Girl Caramelise"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Otome Kaijuu Caraméliser"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:63150"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "mal-63150",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Otome Kaijuu Caraméliser"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-63150"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19782",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Kaiju Girl Caramelise"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "乙女怪獣キャラメリゼ"
+        }
+      ],
+      "uri": "anizip:19782"
+    },
+    {
+      "id": "GT00378081",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378081"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "GT00378081-GS00378082",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "KAIJU GIRL CARAMELISE"
+        }
+      ],
+      "uri": "cr:GT00378081-GS00378082"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "512285-544472",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:512285-544472"
+    }
+  ],
+  "source": {
+    "answers": [
+      "aec2388b10094382da66540113903ade62449eb03c475165216d4b5415780003",
+      "9978f54d8e408a3d5bb18bf8b9af4148215df622fb190a34dc65bd1c39e3e211",
+      "09297021b8752ac66820abeb798c9df06e77e2a85659f6d72994ec777d805e93",
+      "98f7aa3ad67491caa21b30a2e05b9bea8e2d5235d71333c561310e28bea7d4b0",
+      "84612fe319410c9f45c855cdc97aaf9653a837c7412e456e82252dea689e07af",
+      "48be3b6f8b58a9f84d5d369d2e6bcb058f307b9b968545c102c88b24ed334196",
+      "a25af7cc2d9147564771105e3ed788c97485e026235379ad926a8ad289432b45",
+      "e03084b6b4e24fc054b85b55aa2f31172917425f9c198b0bdb26b3f00433db32",
+      "3af8adcf0bf38966708d7204b2645a6744bfaf1bb8ece73693b92ae6f2865046"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:204466,kitsu:50411,mal:63150,offline:mal-63150)"
+  },
+  "why": "Kaiju Girl Caramelise, a 12 episode summer 2026 TV run starting 2026-07-03 and finishing 2026-09-17, still airing at the time of labelling. AniZip 19782 is the same run: it carries SAME_AS ids to mal:63150 and anilist:204466 and the same episodeCount of 12. The Crunchyroll season GT00378081-GS00378082 is the same run: it maps SAME_AS onto all four members, and its 11 episodes sit on the same broadcast days as AniZip's first 11 (2026-07-02 through 2026-09-10) under the same titles, so it is the aired part of this cour and not a folded two cour season (11 is fewer than 12). The JustWatch season 512285-544472 is the same run as well: it maps SAME_AS onto all four members and onto anizip:19782, and lists the same 11 episode titles in the same order. The bare Crunchyroll series GT00378081 is a container with no dates or count of its own, so it holds the run rather than being merged into it. AniZip episodes 1 to 11 pair with the Crunchyroll episodes on matching release days and exact titles (The Kaiju Girl Appears in Tokyo through Kuroe vs. Akae), and the Crunchyroll episodes pair with the JustWatch ones on those same titles. AniZip episode 12 (2026-09-17) had not aired on either service and pairs with nothing, and Kitsu's 12 episode rows carry no titles or dates, so nothing is asserted about them."
+}

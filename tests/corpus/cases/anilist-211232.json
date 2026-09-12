@@ -1,0 +1,232 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The hard part is nf:70019062, which claims SAME_AS against every catalogue row in the run while being Nausicaa of the Valley of the Wind (1984); the shared word Valley in the English titles is the whole of the resemblance, and its 1984-01-01 date against a July 2026 movie settles it as a different work. mal's 2026-07-07 and anilist's 2026-07-08 differ by one day, within the day of slack, and the anizip episode dated 2026-07-08 matches the anilist date. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64431",
+      "mediaUri": "anilist:211232",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64431",
+      "mediaUri": "offline:mal-64431",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211232",
+      "mediaUri": "offline:mal-64431",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64431",
+      "mediaUri": "anizip:20019",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211232",
+      "mediaUri": "anizip:20019",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:211232",
+      "mediaUri": "nf:70019062",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:20019",
+      "mediaUri": "nf:70019062",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64431",
+      "mediaUri": "nf:70019062",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-64431",
+      "mediaUri": "nf:70019062",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "20019-1",
+      "mediaUri": "anizip:20019",
+      "origin": "anizip",
+      "releaseDate": "2026-07-08",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Complete Movie"
+        }
+      ],
+      "uri": "anizip:20019-1"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "70019062-1",
+      "mediaUri": "nf:70019062",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nausicaä of the Valley of the Wind"
+        }
+      ],
+      "uri": "nf:70019062-1"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:211232",
+        "nf:70019062"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:211232",
+        "mal:64431",
+        "offline:mal-64431",
+        "anizip:20019"
+      ]
+    ],
+    "unrelated": [
+      "nf:70019062"
+    ]
+  },
+  "name": "Majo no Tani no Yoru",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "211232",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Wed, 08 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Majo no Tani no Yoru"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "魔女の谷の夜"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "anilist:211232"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "64431",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-07",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Majo no Tani no Yoru"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "mal:64431"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "mal-64431",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Majo no Tani no Yoru"
+        }
+      ],
+      "type": "MOVIE",
+      "uri": "offline:mal-64431"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "20019",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "A Night in the Valley of Witches"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "魔女の谷の夜"
+        }
+      ],
+      "uri": "anizip:20019"
+    },
+    {
+      "categories": [
+        "MOVIE"
+      ],
+      "episodeCount": 1,
+      "id": "70019062",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "1984-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nausicaä of the Valley of the Wind"
+        }
+      ],
+      "uri": "nf:70019062"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2f3e7f8afad886f75c4ebf83bd2b1c440f5de0c82f7a0a1710a90c9fa39979b8",
+      "af79f835fb645e7b087c1d4c905f6400a8674c5632d1eb3787affdcb1d4c49d9",
+      "72af43fed4c6777354922048958d1e906611112d94475f84a83f8cefe992d338",
+      "5c980dc1b5c13f65395a05b949d7d3a57cb2bfcaafae6f21397a2cb75d9a5eda",
+      "325a2bc4922825717c4b5c2875d5c5b4a20a4961d0ed3ebd13706ffd23fd3e81",
+      "189aa8308703a198cae01ef6a5995f0d546251e42109f13b8858f9e2e6bb993b"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:211232,mal:64431,offline:mal-64431)"
+  },
+  "why": "Majo no Tani no Yoru (A Night in the Valley of Witches), a single-episode MOVIE released in July 2026: anilist:211232 dates it 08 Jul 2026 start and end with episodeCount 1, mal:64431 dates it 2026-07-07 with episodeCount 1, and offline:mal-64431 is the same title with count 1. anizip:20019 is the same run: it carries first-party SAME_AS handles to both mal:64431 and anilist:211232, its Japanese title 魔女の谷の夜 is anilist's own jp title, its episodeCount is 1, and its single episode is dated 2026-07-08, the anilist start date. nf:70019062 is a different work: it is Nausicaa of the Valley of the Wind, the 1984 Studio Ghibli feature, with startDate 1984-01-01 and a sole episode titled \"Nausicaa of the Valley of the Wind\", so its SAME_AS handles to all four catalogue rows are wrong and it is kept apart from anilist:211232 rather than merged. The anizip episode and the Netflix episode are not paired, because the only row carrying the Netflix episode is a different film."
+}

@@ -1,0 +1,506 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "The Netflix row asserts SAME_AS to both members, which had to be overruled on its title, its 2021 start date and its episode titles. The Hulu container is completely bare, so it could only be taken as a holder and never as a match. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "hulu:23f6ee9b-a8e3-4acc-abc0-a54897349c35",
+      "mediaUri": "kitsu:50809",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "kitsu:50809",
+      "mediaUri": "offline:kitsu-50809",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50809",
+      "mediaUri": "nf:81080959",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50809",
+      "mediaUri": "nf:81080959",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405100",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405100"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405101",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405101"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "405102",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405102"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "405103",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405103"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "405104",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405104"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "405105",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405105"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "405106",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405106"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "405107",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405107"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "405108",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405108"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "405109",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405109"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "405110",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405110"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "405111",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405111"
+    },
+    {
+      "episodeNumber": 13,
+      "id": "405112",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405112"
+    },
+    {
+      "episodeNumber": 14,
+      "id": "405113",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405113"
+    },
+    {
+      "episodeNumber": 15,
+      "id": "405114",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405114"
+    },
+    {
+      "episodeNumber": 16,
+      "id": "405115",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405115"
+    },
+    {
+      "episodeNumber": 17,
+      "id": "405116",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405116"
+    },
+    {
+      "episodeNumber": 18,
+      "id": "405117",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405117"
+    },
+    {
+      "episodeNumber": 19,
+      "id": "405118",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405118"
+    },
+    {
+      "episodeNumber": 20,
+      "id": "405119",
+      "mediaUri": "kitsu:50809",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405119"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81243871",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Nature Hates Jerks"
+        }
+      ],
+      "uri": "nf:81243871"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81243862",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Parenthood Is Perilous"
+        }
+      ],
+      "uri": "nf:81243862"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81243866",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "When Love Goes Wrong"
+        }
+      ],
+      "uri": "nf:81243866"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81243869",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Only the Scared Survive"
+        }
+      ],
+      "uri": "nf:81243869"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81243864",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "We Live on a Queer Planet"
+        }
+      ],
+      "uri": "nf:81243864"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81243868",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Trust No One"
+        }
+      ],
+      "uri": "nf:81243868"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81243861",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Evil Is Natural"
+        }
+      ],
+      "uri": "nf:81243861"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81243867",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Monsters Are Real"
+        }
+      ],
+      "uri": "nf:81243867"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81243863",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Live Lazy or Die Trying"
+        }
+      ],
+      "uri": "nf:81243863"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81105537",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Life Is Ugly"
+        }
+      ],
+      "uri": "nf:81105537"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "81243870",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Feed the Beast"
+        }
+      ],
+      "uri": "nf:81243870"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "81243865",
+      "mediaUri": "nf:81080959",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Animals Never Shut Up"
+        }
+      ],
+      "uri": "nf:81243865"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "nf:81080959",
+        "kitsu:50809"
+      ]
+    ],
+    "partOf": [
+      {
+        "part": "kitsu:50809",
+        "whole": "hulu:23f6ee9b-a8e3-4acc-abc0-a54897349c35"
+      }
+    ],
+    "together": [
+      [
+        "kitsu:50809",
+        "offline:kitsu-50809"
+      ]
+    ],
+    "unrelated": [
+      "nf:81080959"
+    ]
+  },
+  "name": "Adventure Time: Side Quests",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 20,
+      "id": "50809",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-29",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Adventure Time: Side Quests"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50809"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 20,
+      "id": "kitsu-50809",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Adventure Time: Side Quests"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:kitsu-50809"
+    },
+    {
+      "id": "23f6ee9b-a8e3-4acc-abc0-a54897349c35",
+      "origin": "hulu",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "hulu:23f6ee9b-a8e3-4acc-abc0-a54897349c35"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81080959",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2021-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Adventure Beast"
+        }
+      ],
+      "uri": "nf:81080959"
+    }
+  ],
+  "source": {
+    "answers": [
+      "8d30410f22fd4b13c606c8d6da4b679b8a6007474038e22b858307dd4be50627",
+      "f4ddad4deb0a8f71f2218a424c431c33f6755b9fc424626475dc0a61dd10412f",
+      "4446d36038a042ba86549972f33af78345727769de354ed833b79a0322aa9d7c",
+      "9cc71edc353313f439d5060b9b6bdcf022476a4cf3609729b342855676866b46",
+      "3ee784c2a7175781e974990dc1d1f003ef31b15b32cd709398584839f9c91ea0",
+      "d983657811883333dcd9a8637b7ea035f54b70848f54b9be9248645f29c408d0",
+      "cc7718445530d0958b29193c5bb165c8b0f391fe6afa9d591b8da6c1a3bdb904",
+      "892110d63ad13d3a6156542e4e7cc788bab1c44e92ecd3a7a395bcdf8a988995",
+      "af5b1562682563722577a91a56b8afbbd4d56132d964ff1d0447f8aae4fde93d",
+      "cc0750b171db9857275f570ffc59e44487b6ba36c2ea0d7a851ae04ab2e80502",
+      "3e6772c239cfd80c99b44a351fb645e738e1cb0cb5fdf695ada1d778b092a9bd",
+      "115274469dea34391edbc63ad9e020ab4a63299dec702d572492108538dc3cb4",
+      "b238b97ddeee0ca7fbf6b8ee8cf5d8efc2d96f649f1aff1fb72834e12a35cf02",
+      "00d372f26c8816b8d8bc423446301e4c8bd6d71152c29deec927c273fbcf61b6",
+      "a00d793abc9f0729cee979cef647ce78c3a0a3a2c6500c6a44c488b7afa72584"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50809,offline:kitsu-50809)"
+  },
+  "why": "Adventure Time: Side Quests is a 20 episode ONA starting 2026-06-29; Kitsu and the offline database describe it identically and the offline row claims SAME_AS kitsu:50809, so those two rows are one run. The Hulu row is a bare container with no title, dates or episodes, and the run's own Kitsu row claims PART_OF CONTAINER on it, so it holds the run rather than being it; with no episode data on either side there is nothing to align, so no range is given. The Netflix row is a different work despite its SAME_AS claim: it is titled Adventure Beast, starts 2021-01-01, and its twelve episode titles (Nature Hates Jerks, Parenthood Is Perilous, Animals Never Shut Up and the rest) belong to that nature comedy and not to a 2026 Adventure Time spin-off. Kitsu's twenty episodes carry no titles and no release dates and Netflix's carry titles but no dates, so no episode pairs can be asserted anywhere in this run."
+}

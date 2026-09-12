@@ -1,0 +1,77 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64510",
+      "mediaUri": "offline:mal-64510",
+      "relation": "SAME_AS"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "mal:64510",
+        "offline:mal-64510"
+      ]
+    ]
+  },
+  "name": "Ruguo Lishi Shi Yiqun Miao: Daming Huangchao Pian",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "64510",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-11",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Ruguo Lishi Shi Yiqun Miao: Daming Huangchao Pian"
+        }
+      ],
+      "type": "ONA",
+      "uri": "mal:64510"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-64510",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Ruguo Lishi Shi Yiqun Miao: Daming Huangchao Pian"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:mal-64510"
+    }
+  ],
+  "source": {
+    "answers": [
+      "c5c6a37be3bd8d4eadddffa2904d2f13377e92b8ffd2f9cddd31416d79198061",
+      "45cbb321dce068401486d0137fe29943dd3ae03b7ce4e8d3cfc22be6a1ed4990"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(mal:64510,offline:mal-64510)"
+  },
+  "why": "Ruguo Lishi Shi Yiqun Miao: Daming Huangchao Pian is a twelve episode Chinese ONA run starting 2026-07-11 on MyAnimeList. Its two member rows are one run: offline:mal-64510 is the MyAnimeList id mirrored in the offline database, maps SAME_AS to mal:64510, and carries the same title and the same twelve episodes. No other catalogue, streaming or container row came back, so there is nothing further to mark."
+}

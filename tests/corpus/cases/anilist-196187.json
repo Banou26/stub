@@ -1,0 +1,1205 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Netflix lists eleven episodes against the run's twelve and titles them Episode 2 to Episode 11 with a Smoke 1 opener, so none of its episodes were placed; the JustWatch episodes carry the right titles but no dates and were left unpaired too. refuted: 0 marks overturned"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "anilist:196187",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "anizip:19479",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196187",
+      "mediaUri": "anizip:19479",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82757039",
+      "mediaUri": "jw:488719-515179",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "disney:25eb842b-a4c2-4120-9c86-7feec790de08",
+      "mediaUri": "jw:488719-515179",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "jw:488719",
+      "mediaUri": "jw:488719-515179",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:196187",
+      "mediaUri": "jw:488719-515179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19479",
+      "mediaUri": "jw:488719-515179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50040",
+      "mediaUri": "jw:488719-515179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "jw:488719-515179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "nf:82757039-1",
+      "mediaUri": "jw:488719-515179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62076",
+      "mediaUri": "jw:488719-515179",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196187",
+      "mediaUri": "kitsu:50040",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "kitsu:50040",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378116",
+      "mediaUri": "kitsu:50040",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "anilist:196187",
+      "mediaUri": "nf:82757039-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19479",
+      "mediaUri": "nf:82757039-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "jw:488719-515179",
+      "mediaUri": "nf:82757039-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50040",
+      "mediaUri": "nf:82757039-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "nf:82757039-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62076",
+      "mediaUri": "nf:82757039-1",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196187",
+      "mediaUri": "nf:82757039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:19479",
+      "mediaUri": "nf:82757039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50040",
+      "mediaUri": "nf:82757039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "nf:82757039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-62076",
+      "mediaUri": "nf:82757039",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:62076",
+      "mediaUri": "offline:mal-62076",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:196187",
+      "mediaUri": "offline:mal-62076",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50040",
+      "mediaUri": "offline:mal-62076",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "19479-1",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-07-09T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Smoking Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏でヤニ吸うふたり"
+        }
+      ],
+      "uri": "anizip:19479-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "19479-2",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-07-16T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Cheering Up Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏で添えるふたり"
+        }
+      ],
+      "uri": "anizip:19479-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "19479-3",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-07-23T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Smoking Behind the Supermarket with You and More"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏で贈るふたり"
+        }
+      ],
+      "uri": "anizip:19479-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "19479-4",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-07-30T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Learning Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏で学ぶひとり"
+        }
+      ],
+      "uri": "anizip:19479-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "19479-5",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-08-06T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hanging Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏でかけるふたり"
+        }
+      ],
+      "uri": "anizip:19479-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "19479-6",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-08-13T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Lingering Scent Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏に残る匂い"
+        }
+      ],
+      "uri": "anizip:19479-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "19479-7",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-08-20T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The End of Summer Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏と夏の終わり"
+        }
+      ],
+      "uri": "anizip:19479-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "19479-8",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-08-27T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Searching Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏から見つけるふたり"
+        }
+      ],
+      "uri": "anizip:19479-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "19479-9",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-09-03T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Asking Behind the Supermarket Alone"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏で触れるひとり"
+        }
+      ],
+      "uri": "anizip:19479-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "19479-10",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-09-10T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Shining Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏で光るふたり"
+        }
+      ],
+      "uri": "anizip:19479-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "19479-11",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-09-17T14:45:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Hello from Behind the Supermarket"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏で迎える声"
+        }
+      ],
+      "uri": "anizip:19479-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "19479-12",
+      "mediaUri": "anizip:19479",
+      "origin": "anizip",
+      "releaseDate": "2026-09-24T14:45:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:19479-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9484764",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smoking Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:9484764"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10430238",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Cheering Up Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430238"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10430239",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smoking Behind the Supermarket With You and More"
+        }
+      ],
+      "uri": "jw:10430239"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10430240",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Learning Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430240"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10430241",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Hanging Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430241"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10430242",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Lingering Scent Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430242"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10430250",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The End of Summer Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430250"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10430251",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Searching Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430251"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10430252",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Asking Behind the Supermarket Alone"
+        }
+      ],
+      "uri": "jw:10430252"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10430253",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shining Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:10430253"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "10430254",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "jw:10430254"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "10430255",
+      "mediaUri": "jw:488719-515179",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 12"
+        }
+      ],
+      "uri": "jw:10430255"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "385589",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Smoking Behind the Supermarket With You"
+        }
+      ],
+      "uri": "kitsu:385589"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "385590",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Cheering Up Behind the Supermarket with You"
+        }
+      ],
+      "uri": "kitsu:385590"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "385591",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Smoking Behind the Supermarket with You and More"
+        }
+      ],
+      "uri": "kitsu:385591"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "385592",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Learning Behind the Supermarket With You"
+        }
+      ],
+      "uri": "kitsu:385592"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "385593",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Hanging Behind the Supermarket with You"
+        }
+      ],
+      "uri": "kitsu:385593"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "385594",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Lingering Scent Behind the Supermarket With You"
+        }
+      ],
+      "uri": "kitsu:385594"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "385595",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The End of Summer Behind the Supermarket with You"
+        }
+      ],
+      "uri": "kitsu:385595"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "385596",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Searching Behind the Supermarket with You"
+        }
+      ],
+      "uri": "kitsu:385596"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "385597",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Asking Behind the Supermarket Alone"
+        }
+      ],
+      "uri": "kitsu:385597"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "385598",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385598"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "385599",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385599"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "385600",
+      "mediaUri": "kitsu:50040",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:385600"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "82757041",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smoke 1"
+        }
+      ],
+      "uri": "nf:82757041"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "82757042",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 2"
+        }
+      ],
+      "uri": "nf:82757042"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "82757043",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 3"
+        }
+      ],
+      "uri": "nf:82757043"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "82757044",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 4"
+        }
+      ],
+      "uri": "nf:82757044"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "82757045",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 5"
+        }
+      ],
+      "uri": "nf:82757045"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "82757046",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 6"
+        }
+      ],
+      "uri": "nf:82757046"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "82757047",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 7"
+        }
+      ],
+      "uri": "nf:82757047"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "82757048",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 8"
+        }
+      ],
+      "uri": "nf:82757048"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "82757049",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 9"
+        }
+      ],
+      "uri": "nf:82757049"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "82757050",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 10"
+        }
+      ],
+      "uri": "nf:82757050"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "82757051",
+      "mediaUri": "nf:82757039-1",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Episode 11"
+        }
+      ],
+      "uri": "nf:82757051"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodePairs": [
+      {
+        "a": "kitsu:385589",
+        "b": "anizip:19479-1"
+      },
+      {
+        "a": "kitsu:385590",
+        "b": "anizip:19479-2"
+      },
+      {
+        "a": "kitsu:385591",
+        "b": "anizip:19479-3"
+      },
+      {
+        "a": "kitsu:385592",
+        "b": "anizip:19479-4"
+      },
+      {
+        "a": "kitsu:385593",
+        "b": "anizip:19479-5"
+      },
+      {
+        "a": "kitsu:385594",
+        "b": "anizip:19479-6"
+      },
+      {
+        "a": "kitsu:385595",
+        "b": "anizip:19479-7"
+      },
+      {
+        "a": "kitsu:385596",
+        "b": "anizip:19479-8"
+      },
+      {
+        "a": "kitsu:385597",
+        "b": "anizip:19479-9"
+      }
+    ],
+    "partOf": [
+      {
+        "part": "anilist:196187",
+        "whole": "cr:GT00378116"
+      },
+      {
+        "part": "anilist:196187",
+        "whole": "jw:488719"
+      },
+      {
+        "part": "anilist:196187",
+        "whole": "nf:82757039"
+      },
+      {
+        "part": "anilist:196187",
+        "whole": "disney:25eb842b-a4c2-4120-9c86-7feec790de08"
+      }
+    ],
+    "together": [
+      [
+        "anilist:196187",
+        "anizip:19479",
+        "jw:488719-515179",
+        "kitsu:50040",
+        "mal:62076",
+        "nf:82757039-1",
+        "offline:mal-62076"
+      ]
+    ]
+  },
+  "name": "Smoking Behind the Supermarket with You",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "196187",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 10 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "Smoking Behind the Supermarket with You"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Super no Ura de Yani Suu Futari"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "スーパーの裏でヤニ吸うふたり"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:196187"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "19479",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Smoking Behind the Supermarket with You"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "スーパーの裏でヤニ吸うふたり"
+        }
+      ],
+      "uri": "anizip:19479"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "488719-515179",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:488719-515179"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "488719",
+      "origin": "jw",
+      "scope": "CONTAINER",
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smoking Behind the Supermarket with You"
+        }
+      ],
+      "uri": "jw:488719"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "50040",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-09",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Smoking Behind the Supermarket With You"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Super no Ura de Yani Suu Futari"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "スーパーの裏でヤニ吸うふたり"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:50040"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "62076",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-10",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Smoking Behind the Supermarket with You"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Super no Ura de Yani Suu Futari"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:62076"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 11,
+      "id": "82757039-1",
+      "origin": "nf",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smoking Behind the Supermarket With You"
+        }
+      ],
+      "uri": "nf:82757039-1"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "82757039",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Smoking Behind the Supermarket With You"
+        }
+      ],
+      "uri": "nf:82757039"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 6,
+      "id": "mal-62076",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Super no Ura de Yani Suu Futari"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-62076"
+    },
+    {
+      "id": "GT00378116",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378116"
+    },
+    {
+      "id": "25eb842b-a4c2-4120-9c86-7feec790de08",
+      "origin": "disney",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "disney:25eb842b-a4c2-4120-9c86-7feec790de08"
+    }
+  ],
+  "source": {
+    "answers": [
+      "a223dae090ce3db615dcffad647cec62d14b2bada4081522f0a40efe8c994b7f",
+      "1a79404c7085b943b1d492a46b970cba63b3a5fc5f3073b3cc313c04a7afdafc",
+      "269212e1ad5195cc1df0f3d545bbc44807056ce2d687d2a7e05eb7389ddd99e0",
+      "2475698e80a2de9812865d45d8a3971494b9baae684d4009e3be10e9c91e5bff",
+      "71a7c1049f4632926785daf6a99afeefaf84bac16ea3a9278de57e8fdf8d47e4",
+      "1bbfa697a267b59f8a28e2e3f976fa47f15b45827e4d048b64d4c52beab029fa",
+      "3f7cd0f77d5f20492572a4e1f19c00d18f91635c4904bcc45442dbb5eb1a4948",
+      "72f4eb0619a6f925c5b4cec3e1588a8ea9e252672b41b756f25682b7f0c89002",
+      "32f0e1203e9351060ba4c3bfce4d3b732c9a107623ceecae954be77c66971015"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:196187,anizip:19479,jw:488719-515179,kitsu:50040,mal:62076,nf:82757039-1,offline:mal-62076)"
+  },
+  "why": "Smoking Behind the Supermarket with You is the twelve episode summer 2026 cour, airing 2026-07-09 to 2026-09-24 on a weekly 14:45 slot.\nThe seven members (anilist:196187, anizip:19479, jw:488719-515179, kitsu:50040, mal:62076, nf:82757039-1, offline:mal-62076) are one run: anilist, kitsu, anizip and offline all map SAME_AS to mal:62076, anilist and kitsu agree on the twelve episode count and the 2026-07-09 start, and jw and nf both map SAME_AS across the whole set.\ncr:GT00378116 holds the run: a bare Crunchyroll series container with no title, count or dates, named by kitsu:50040 as PART_OF.\njw:488719 holds the run: the JustWatch title container for the show, carrying only the series title and a year level 2026-01-01 start, with jw:488719-515179 declared PART_OF it.\nnf:82757039 holds the run: the Netflix show container for the same title, with no count and a year level start, of which nf:82757039-1 is the first season.\ndisney:25eb842b-a4c2-4120-9c86-7feec790de08 holds the run: a bare Disney container with no title, count or dates, named by jw:488719-515179 as PART_OF.\nThe kitsu episodes 1 to 9 pair with anizip:19479 episodes 1 to 9 on nine exact English titles, Smoking Behind the Supermarket With You through Asking Behind the Supermarket Alone, all distinctive and none generic; kitsu 10 to 12 have no titles yet and were left alone."
+}

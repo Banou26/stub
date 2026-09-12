@@ -1,0 +1,122 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "Only three rows and no episode dates or titles anywhere, so nothing beyond the id mapping could be asserted; no container row was returned for this special. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64483"
+  },
+  "claims": [
+    {
+      "handleUri": "mal:64483",
+      "mediaUri": "kitsu:50807",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64483",
+      "mediaUri": "offline:mal-64483",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50807",
+      "mediaUri": "offline:mal-64483",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "405072",
+      "mediaUri": "kitsu:50807",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405072"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "405073",
+      "mediaUri": "kitsu:50807",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:405073"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "407060",
+      "mediaUri": "kitsu:50807",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:407060"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "together": [
+      [
+        "kitsu:50807",
+        "offline:mal-64483"
+      ]
+    ]
+  },
+  "name": "Zombie Stage",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 3,
+      "id": "50807",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-26",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Zombie Stage"
+        }
+      ],
+      "uri": "kitsu:50807"
+    },
+    {
+      "id": "64483",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64483"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "id": "mal-64483",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Zombie Stage"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "offline:mal-64483"
+    }
+  ],
+  "source": {
+    "answers": [
+      "2afe37f3c7d9e1f1763c04f2aa1af53c544a87df0a073b568da5e5d13c572e5f",
+      "e98992197c2dc1ff65b4ee4c7c161f0bad0a178d8d25bf19b577efab2ba71b64",
+      "bf58dd22c1abce38ff3caf8010fa20a67a19466d1aa14a97bce08500db092bc8"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50807,mal:64483)"
+  },
+  "why": "Zombie Stage is a short 3 episode special starting 2026-06-26, carried by Kitsu and MyAnimeList only. The offline database row offline:mal-64483 is the same run: it is keyed on the MAL id itself and claims SAME_AS to both mal:64483 and kitsu:50807, and its English title Zombie Stage matches the Kitsu title."
+}

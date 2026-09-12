@@ -1,0 +1,1054 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "This one is unusually consistent: anizip and Crunchyroll agree on all ten dates, so the run half of the pairing needs no judgement. The only call was JustWatch episodes 5 and 6, which write the two part festival as (1) and (2) rather than Part 1 and Part 2; they sit between exact matches at 4 and 7 and keep the order, so they are paired. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "cr:GT00378119-GS00378136",
+      "mediaUri": "anilist:169582",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56736",
+      "mediaUri": "anilist:169582",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169582",
+      "mediaUri": "kitsu:47989",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56736",
+      "mediaUri": "kitsu:47989",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378119",
+      "mediaUri": "kitsu:47989",
+      "relation": "PART_OF"
+    },
+    {
+      "handleUri": "mal:56736",
+      "mediaUri": "offline:mal-56736",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169582",
+      "mediaUri": "offline:mal-56736",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47989",
+      "mediaUri": "offline:mal-56736",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56736",
+      "mediaUri": "anizip:18210",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169582",
+      "mediaUri": "anizip:18210",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169582",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47989",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56736",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-56736",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:169582",
+      "mediaUri": "jw:469816-496743",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anizip:18210",
+      "mediaUri": "jw:469816-496743",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "cr:GT00378119-GS00378136",
+      "mediaUri": "jw:469816-496743",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:47989",
+      "mediaUri": "jw:469816-496743",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:56736",
+      "mediaUri": "jw:469816-496743",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:mal-56736",
+      "mediaUri": "jw:469816-496743",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "357156",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357156"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "357157",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357157"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "357158",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357158"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "357159",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357159"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "357160",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357160"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "357161",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357161"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "357162",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357162"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "357163",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357163"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "357164",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357164"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "357165",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357165"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "357166",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357166"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "357167",
+      "mediaUri": "kitsu:47989",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:357167"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "18210-1",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-07-06T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Insipid Prince"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "出涸らし皇子"
+        }
+      ],
+      "uri": "anizip:18210-1"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "18210-2",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-07-13T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Date at the Capital?"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "帝都でデート?"
+        }
+      ],
+      "uri": "anizip:18210-2"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "18210-3",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-07-20T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Elna Attacks"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "エルナ襲来"
+        }
+      ],
+      "uri": "anizip:18210-3"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "18210-4",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-07-27T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "In Town, the Night Before the Knights` Festival of the Hunt"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "騎士狩猟祭, 前夜の町で"
+        }
+      ],
+      "uri": "anizip:18210-4"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "18210-5",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-08-03T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Knights` Festival of the Hunt Part 1"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "騎士狩猟祭・前編"
+        }
+      ],
+      "uri": "anizip:18210-5"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "18210-6",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-08-10T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Knights` Festival of the Hunt Part 2"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "騎士狩猟祭・後編"
+        }
+      ],
+      "uri": "anizip:18210-6"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "18210-7",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-08-17T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Furtive Activities and Engagements"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "暗躍と婚約"
+        }
+      ],
+      "uri": "anizip:18210-7"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "18210-8",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-08-24T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Shelter from the Rain"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "雨宿り"
+        }
+      ],
+      "uri": "anizip:18210-8"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "18210-9",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-08-31T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Switching Places, and the Struggles of Arnold"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "入れ替わりと, アルノルトの苦悩"
+        }
+      ],
+      "uri": "anizip:18210-9"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "18210-10",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-09-07T12:00:00Z",
+      "score": 0.9,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "Each of Their Roles"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "それぞれの役割"
+        }
+      ],
+      "uri": "anizip:18210-10"
+    },
+    {
+      "episodeNumber": 11,
+      "id": "18210-11",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-09-14T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18210-11"
+    },
+    {
+      "episodeNumber": 12,
+      "id": "18210-12",
+      "mediaUri": "anizip:18210",
+      "origin": "anizip",
+      "releaseDate": "2026-09-21T12:00:00Z",
+      "score": 0.9,
+      "titles": [],
+      "uri": "anizip:18210-12"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "GT00378119-GS00378136-GE00378647JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-07-06T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Insipid Prince"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378647JAJP"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "GT00378119-GS00378136-GE00378648JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-07-13T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Date at the Capital?"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378648JAJP"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "GT00378119-GS00378136-GE00378649JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-07-20T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Elna Attacks"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378649JAJP"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "GT00378119-GS00378136-GE00378650JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-07-27T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "In Town, the Night Before the Knights' Festival of the Hunt"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378650JAJP"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "GT00378119-GS00378136-GE00378651JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-08-03T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Knights' Festival of the Hunt Part 1"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378651JAJP"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "GT00378119-GS00378136-GE00378652JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-08-10T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Knights' Festival of the Hunt Part 2"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378652JAJP"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "GT00378119-GS00378136-GE00378653JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-08-17T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Furtive Activities and Engagements"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378653JAJP"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "GT00378119-GS00378136-GE00378654JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-08-24T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Shelter from the Rain"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378654JAJP"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "GT00378119-GS00378136-GE00378655JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-08-31T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Switching Places, and the Struggles of Arnold"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378655JAJP"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "GT00378119-GS00378136-GE00378656JAJP",
+      "mediaUri": "cr:GT00378119-GS00378136",
+      "origin": "cr",
+      "releaseDate": "2026-09-07T00:00:00.000Z",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "Each of their Roles"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136-GE00378656JAJP"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "9161989",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Insipid Prince"
+        }
+      ],
+      "uri": "jw:9161989"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10710025",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Date at the Capital?"
+        }
+      ],
+      "uri": "jw:10710025"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10710019",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Elna Attacks"
+        }
+      ],
+      "uri": "jw:10710019"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10710023",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "In Town, the Night Before the Knights’ Festival of the Hunt"
+        }
+      ],
+      "uri": "jw:10710023"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10710028",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Knights' Festival of the Hunt (1)"
+        }
+      ],
+      "uri": "jw:10710028"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10710027",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Knights' Festival of the Hunt (2)"
+        }
+      ],
+      "uri": "jw:10710027"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10710021",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Furtive Activities and Engagements"
+        }
+      ],
+      "uri": "jw:10710021"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10710024",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Shelter from the Rain"
+        }
+      ],
+      "uri": "jw:10710024"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10710026",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Switching Places, and the Struggles of Arnold"
+        }
+      ],
+      "uri": "jw:10710026"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "10710022",
+      "mediaUri": "jw:469816-496743",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Each of their Roles"
+        }
+      ],
+      "uri": "jw:10710022"
+    }
+  ],
+  "expect": {
+    "apart": [],
+    "episodeApart": [],
+    "episodePairs": [
+      {
+        "a": "anizip:18210-1",
+        "b": "cr:GT00378119-GS00378136-GE00378647JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378647JAJP",
+        "b": "jw:9161989"
+      },
+      {
+        "a": "anizip:18210-2",
+        "b": "cr:GT00378119-GS00378136-GE00378648JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378648JAJP",
+        "b": "jw:10710025"
+      },
+      {
+        "a": "anizip:18210-3",
+        "b": "cr:GT00378119-GS00378136-GE00378649JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378649JAJP",
+        "b": "jw:10710019"
+      },
+      {
+        "a": "anizip:18210-4",
+        "b": "cr:GT00378119-GS00378136-GE00378650JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378650JAJP",
+        "b": "jw:10710023"
+      },
+      {
+        "a": "anizip:18210-5",
+        "b": "cr:GT00378119-GS00378136-GE00378651JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378651JAJP",
+        "b": "jw:10710028"
+      },
+      {
+        "a": "anizip:18210-6",
+        "b": "cr:GT00378119-GS00378136-GE00378652JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378652JAJP",
+        "b": "jw:10710027"
+      },
+      {
+        "a": "anizip:18210-7",
+        "b": "cr:GT00378119-GS00378136-GE00378653JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378653JAJP",
+        "b": "jw:10710021"
+      },
+      {
+        "a": "anizip:18210-8",
+        "b": "cr:GT00378119-GS00378136-GE00378654JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378654JAJP",
+        "b": "jw:10710024"
+      },
+      {
+        "a": "anizip:18210-9",
+        "b": "cr:GT00378119-GS00378136-GE00378655JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378655JAJP",
+        "b": "jw:10710026"
+      },
+      {
+        "a": "anizip:18210-10",
+        "b": "cr:GT00378119-GS00378136-GE00378656JAJP"
+      },
+      {
+        "a": "cr:GT00378119-GS00378136-GE00378656JAJP",
+        "b": "jw:10710022"
+      }
+    ],
+    "includes": [],
+    "partOf": [
+      {
+        "part": "anilist:169582",
+        "whole": "cr:GT00378119"
+      }
+    ],
+    "together": [
+      [
+        "anilist:169582",
+        "kitsu:47989",
+        "mal:56736",
+        "offline:mal-56736",
+        "anizip:18210",
+        "cr:GT00378119-GS00378136",
+        "jw:469816-496743"
+      ]
+    ],
+    "unrelated": []
+  },
+  "name": "The Insipid Prince's Furtive Grab for the Throne",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "169582",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Mon, 06 Jul 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.8,
+          "title": "The Insipid Prince's Furtive Grab for the Throne"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "Saikyou Degarashi Ouji no Anyaku Teii Arasoi: Munou wo Enjiru SS Rank Ouji wa Koui Keishou-sen wo Kage kara Shihai suru"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "最強出涸らし皇子の暗躍帝位争い 無能を演じるSSランク皇子は皇位継承戦を影から支配する"
+        }
+      ],
+      "type": "TV",
+      "uri": "anilist:169582"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "47989",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Insipid Prince's Furtive Grab for the Throne"
+        },
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Saikyou Degarashi Ouji no Anyaku Teii Arasoi: Munou wo Enjiru SS Rank Ouji wa Koui Keishou-sen wo Kage kara Shihai suru"
+        },
+        {
+          "language": "ja",
+          "score": 0.3,
+          "title": "最強出涸らし皇子の暗躍帝位争い 無能を演じるSSランク皇子は皇位継承戦を影から支配する"
+        }
+      ],
+      "type": "TV",
+      "uri": "kitsu:47989"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "56736",
+      "origin": "mal",
+      "scope": "RUN",
+      "score": 0.9,
+      "startDate": "2026-07-06",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Insipid Prince's Furtive Grab for The Throne"
+        },
+        {
+          "language": "jp-en",
+          "score": 0.9,
+          "title": "Saikyou Degarashi Ouji no Anyaku Teii Arasoi"
+        }
+      ],
+      "type": "TV",
+      "uri": "mal:56736"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "mal-56736",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Saikyou Degarashi Ouji no Anyaku Teii Arasoi"
+        }
+      ],
+      "type": "TV",
+      "uri": "offline:mal-56736"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 12,
+      "id": "18210",
+      "origin": "anizip",
+      "scope": "RUN",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.9,
+          "title": "The Insipid Prince`s Furtive Grab for the Throne"
+        },
+        {
+          "language": "ja",
+          "score": 0.9,
+          "title": "最強出涸らし皇子の暗躍帝位争い 無能を演じるSSランク皇子は皇位継承戦を影から支配する"
+        }
+      ],
+      "uri": "anizip:18210"
+    },
+    {
+      "id": "GT00378119",
+      "origin": "cr",
+      "scope": "CONTAINER",
+      "titles": [],
+      "uri": "cr:GT00378119"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "GT00378119-GS00378136",
+      "origin": "cr",
+      "scope": "RUN",
+      "score": 0.5,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.5,
+          "title": "The Insipid Prince's Furtive Grab for the Throne"
+        }
+      ],
+      "uri": "cr:GT00378119-GS00378136"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 10,
+      "id": "469816-496743",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:469816-496743"
+    }
+  ],
+  "source": {
+    "answers": [
+      "80877b47be28d04662e88790ed88ad02a4157d0cbaf811676600f4959c800a5c",
+      "92dd4ffbceb6290074b50820989eaaaeab2753a10364089c2a6c7862ade3e22d",
+      "04b7c14f834d23ddf4fad10c73bc59fd1ca37e4933b11c678c00726a147ccd25",
+      "13626b6df635d24e61f0cb02a1c472ff9455afff6143212d558f4da39134c362",
+      "457f80ca3275614573a64dcb29b10d5a43d273bafe1e66d9a7b04fd8bbc038ea",
+      "17cfe6358758fb44a8d2c4240cb302ad31297e6980656e733e60647215ef443a",
+      "758455257ea070106bfaad0fafcfb7654142e1f73f8be18ce3dbb25f5cb8d2df",
+      "fac060b6f9aec8b57287fcc6d5792795fc37f2ab836e499d02c0e08489e2324b",
+      "3407c90b7d5e5766cfcedcc9f1567105f9d994e7edab6acaa08ad3bdb3a6752d"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:169582,kitsu:47989,mal:56736,offline:mal-56736)"
+  },
+  "why": "The Insipid Prince's Furtive Grab for the Throne (Saikyou Degarashi Ouji no Anyaku Teii Arasoi) is a 12 episode summer 2026 TV run that started 2026-07-06 and is still airing, with anilist giving an end of 2026-09-21. anizip:18210 is the same run: it carries SAME_AS ids to anilist:169582 and mal:56736, lists the same 12 episodes, and its weekly dates are the run's own days. cr:GT00378119-GS00378136 is the same run: it carries SAME_AS ids to all four members and its 10 listed episodes match the anizip dates day for day (2026-07-06 through 2026-09-07) under the same titles, with none past the run's end. jw:469816-496743 is the same run: it carries SAME_AS ids to all four members, to anizip:18210 and to the Crunchyroll season itself, and lists the same 10 episodes by title. cr:GT00378119 is the bare Crunchyroll series container for the show, with no dates and no episodes of its own, so it holds the run. Episodes 1 to 10 are paired between anizip and Crunchyroll on identical release days and identical titles, and between Crunchyroll and JustWatch on the same titles, where episodes 5 and 6 read \"The Knights' Festival of the Hunt (1)\" and \"(2)\" on JustWatch against \"Part 1\" and \"Part 2\" elsewhere, in the same order and between two episodes that match exactly on either side. anizip's episodes 11 and 12 have no titles and kitsu's twelve episode rows carry neither titles nor dates, so neither is paired."
+}

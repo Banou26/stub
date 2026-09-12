@@ -1,0 +1,599 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute",
+    "notes": "Neither side carries episode dates, so the pairing rests on titles alone; six of the nine differ only in capitalisation, a hyphen before Part I and II, an ampersand spelled out as and, or a typographic apostrophe, which are the same titles. JustWatch's 2026-01-01 start is a year placeholder and was not used. refuted: 0 marks overturned."
+  },
+  "claims": [
+    {
+      "handleUri": "kitsu:50758",
+      "mediaUri": "offline:kitsu-50758",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50758",
+      "mediaUri": "jw:317435-369873",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:kitsu-50758",
+      "mediaUri": "jw:317435-369873",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "403973",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Days of Past Future"
+        }
+      ],
+      "uri": "kitsu:403973"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "403974",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "A Force To Be Reckoned With"
+        }
+      ],
+      "uri": "kitsu:403974"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "403975",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Rise of Apocalypse Part I"
+        }
+      ],
+      "uri": "kitsu:403975"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "403976",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Rise of Apocalypse Part II"
+        }
+      ],
+      "uri": "kitsu:403976"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "403977",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Weapon X, Lies & DVDs"
+        }
+      ],
+      "uri": "kitsu:403977"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "403978",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Danger.Exe"
+        }
+      ],
+      "uri": "kitsu:403978"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "403979",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Strange Land, Savage Heart"
+        }
+      ],
+      "uri": "kitsu:403979"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "403980",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "The Dead Man’s Hand"
+        }
+      ],
+      "uri": "kitsu:403980"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "403981",
+      "mediaUri": "kitsu:50758",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "Survival of the Fittest"
+        }
+      ],
+      "uri": "kitsu:403981"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "6798996",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Days of Past Future"
+        }
+      ],
+      "uri": "jw:6798996"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "10454663",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "A Force to Be Reckoned With"
+        }
+      ],
+      "uri": "jw:10454663"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "10454664",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rise of Apocalypse - Part I"
+        }
+      ],
+      "uri": "jw:10454664"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "10454665",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Rise of Apocalypse - Part II"
+        }
+      ],
+      "uri": "jw:10454665"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "10454666",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Weapon X, Lies and DVDs"
+        }
+      ],
+      "uri": "jw:10454666"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "10454667",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Danger.exe"
+        }
+      ],
+      "uri": "jw:10454667"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "10454668",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Strange Land, Savage Heart"
+        }
+      ],
+      "uri": "jw:10454668"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "10454669",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Dead Man's Hand"
+        }
+      ],
+      "uri": "jw:10454669"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "10454670",
+      "mediaUri": "jw:317435-369873",
+      "origin": "jw",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Survival of the Fittest"
+        }
+      ],
+      "uri": "jw:10454670"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81946765",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Copulatory Tie"
+        }
+      ],
+      "uri": "nf:81946765"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81946766",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Dating Sites"
+        }
+      ],
+      "uri": "nf:81946766"
+    },
+    {
+      "episodeNumber": 3,
+      "id": "81946767",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Lull"
+        }
+      ],
+      "uri": "nf:81946767"
+    },
+    {
+      "episodeNumber": 4,
+      "id": "81946768",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Truth About Canada"
+        }
+      ],
+      "uri": "nf:81946768"
+    },
+    {
+      "episodeNumber": 5,
+      "id": "81946769",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Hot Mess"
+        }
+      ],
+      "uri": "nf:81946769"
+    },
+    {
+      "episodeNumber": 6,
+      "id": "81946770",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Horse Who Loved Me"
+        }
+      ],
+      "uri": "nf:81946770"
+    },
+    {
+      "episodeNumber": 7,
+      "id": "81946771",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Polycule"
+        }
+      ],
+      "uri": "nf:81946771"
+    },
+    {
+      "episodeNumber": 8,
+      "id": "81946772",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Passion of Raynal Skidski"
+        }
+      ],
+      "uri": "nf:81946772"
+    },
+    {
+      "episodeNumber": 9,
+      "id": "81946773",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The All-Nighter"
+        }
+      ],
+      "uri": "nf:81946773"
+    },
+    {
+      "episodeNumber": 10,
+      "id": "81946774",
+      "mediaUri": "nf:81772673",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "The Wolf Wedding"
+        }
+      ],
+      "uri": "nf:81946774"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "kitsu:50758",
+        "nf:81772673"
+      ]
+    ],
+    "episodePairs": [
+      {
+        "a": "kitsu:403973",
+        "b": "jw:6798996"
+      },
+      {
+        "a": "kitsu:403974",
+        "b": "jw:10454663"
+      },
+      {
+        "a": "kitsu:403975",
+        "b": "jw:10454664"
+      },
+      {
+        "a": "kitsu:403976",
+        "b": "jw:10454665"
+      },
+      {
+        "a": "kitsu:403977",
+        "b": "jw:10454666"
+      },
+      {
+        "a": "kitsu:403978",
+        "b": "jw:10454667"
+      },
+      {
+        "a": "kitsu:403979",
+        "b": "jw:10454668"
+      },
+      {
+        "a": "kitsu:403980",
+        "b": "jw:10454669"
+      },
+      {
+        "a": "kitsu:403981",
+        "b": "jw:10454670"
+      }
+    ],
+    "together": [
+      [
+        "kitsu:50758",
+        "offline:kitsu-50758",
+        "jw:317435-369873"
+      ]
+    ],
+    "unrelated": [
+      "nf:81772673"
+    ]
+  },
+  "name": "X-Men '97 Season 2",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "50758",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-07-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "X-Men '97 Season 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "kitsu:50758"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "kitsu-50758",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "X-Men '97 Season 2"
+        }
+      ],
+      "type": "ONA",
+      "uri": "offline:kitsu-50758"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "episodeCount": 9,
+      "id": "317435-369873",
+      "origin": "jw",
+      "scope": "RUN",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [],
+      "uri": "jw:317435-369873"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81772673",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2026-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Mating Season"
+        }
+      ],
+      "uri": "nf:81772673"
+    }
+  ],
+  "source": {
+    "answers": [
+      "58b562abc438b3885af972ccc0716128afa8a7591fb5068721ddb3edccee7ca0",
+      "a6ee196e7b00df7f2e0519533f0023427cbeeb47841335058a5ab1fc9a68db88",
+      "89e73bb31a445e1399febda454c6597cf76884ba6e7b2164484d4bd49c72cba4",
+      "24a084355133d5d11f6dc21aa4801e4eaca1f13c0677aa712462d0098bfe4de4",
+      "8221310f6371d9ec99112aea646653ac710f5d72f2fe991c81ad73c7e608fc30",
+      "f9f89059bf352605e3d0a036d525ad35917b53b58402af6e92a53e2838b388c7",
+      "8813f1d180c832704737bf2e4b053e2d9b149c41333353dfd911e42f724de3de",
+      "577324b9d2188243e4028db60a8570057c9f6eea41836f797c6329941d0935e4",
+      "48bb727b5a0e9f02a177736c2f38a2909367a17ce16fc7e554f42f370b13d63b",
+      "9eff3b9dc8f5e7755c49c05c5eeec1933b8364f62d74a1d59444657d6b02303a",
+      "7c5a5f93ec2d9b2e61c89c5c97a7d2d1c203cf052d037d4de3a1a4ca3cfbeca3",
+      "247fca1e3d70e1d4b1d63524119b7e9fd0a1b6d318b48ee030b1cd7588e48744",
+      "4ce6a21be8ebc732fb1b069d7255c880d11fcca61bb0aa116485dbfbdfecb1e5",
+      "54977c8637a25ba3bc68827018f58911a7e201ed26a0e2d064deb6cc3a8d09f8"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(kitsu:50758,offline:kitsu-50758)"
+  },
+  "why": "X-Men '97 Season 2 is a 9 episode run running 2026-07-01 to 2026-08-12, carried by kitsu:50758 and offline:kitsu-50758. jw:317435-369873 is the same run: same episodeCount of 9, the same nine episode titles in the same order (Days of Past Future, Strange Land, Savage Heart and Survival of the Fittest byte for byte, the rest differing only in case, a hyphen or an ampersand written out), and its own handle names kitsu:50758. Those nine episodes therefore pair one for one on title. nf:81772673 is Mating Season, a ten episode show whose episode titles (The Copulatory Tie, The Polycule, The Wolf Wedding) share nothing with this run and whose own handles point at a different set of ids (anilist:213097, kitsu:50802, mal:64357), so it is a different work."
+}

@@ -1,0 +1,218 @@
+{
+  "checked": {
+    "at": "2026-09-12",
+    "by": "agent:opus:label+refute+repair",
+    "notes": "The only row to judge was a Netflix container that claims SAME_AS to every member yet is plainly another show; its episode titles and its 2022 date settle it. refuted: 0 marks overturned repair 2026-09-12: removed from together, no source answered about them: mal:64429"
+  },
+  "claims": [
+    {
+      "handleUri": "anilist:213343",
+      "mediaUri": "kitsu:50776",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64429",
+      "mediaUri": "kitsu:50776",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213343",
+      "mediaUri": "offline:anilist-213343",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50776",
+      "mediaUri": "offline:anilist-213343",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "anilist:213343",
+      "mediaUri": "nf:81663074",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "kitsu:50776",
+      "mediaUri": "nf:81663074",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "mal:64429",
+      "mediaUri": "nf:81663074",
+      "relation": "SAME_AS"
+    },
+    {
+      "handleUri": "offline:anilist-213343",
+      "mediaUri": "nf:81663074",
+      "relation": "SAME_AS"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "id": "404271",
+      "mediaUri": "kitsu:50776",
+      "origin": "kitsu",
+      "score": 0.3,
+      "titles": [],
+      "uri": "kitsu:404271"
+    },
+    {
+      "episodeNumber": 1,
+      "id": "81662513",
+      "mediaUri": "nf:81663074",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kath & Kim, Our Effluent Life - With Extra Effluent"
+        }
+      ],
+      "uri": "nf:81662513"
+    },
+    {
+      "episodeNumber": 2,
+      "id": "81662514",
+      "mediaUri": "nf:81663074",
+      "origin": "nf",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kath & Kim, 20 Preposterous Years - Warts & All"
+        }
+      ],
+      "uri": "nf:81662514"
+    }
+  ],
+  "expect": {
+    "apart": [
+      [
+        "anilist:213343",
+        "nf:81663074"
+      ]
+    ],
+    "together": [
+      [
+        "anilist:213343",
+        "kitsu:50776",
+        "offline:anilist-213343"
+      ]
+    ],
+    "unrelated": [
+      "nf:81663074"
+    ]
+  },
+  "name": "MAPPA 15th Anniversary Movie",
+  "pending": "new store",
+  "rows": [
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "213343",
+      "origin": "anilist",
+      "scope": "RUN",
+      "score": 0.8,
+      "startDate": "Fri, 19 Jun 2026 00:00:00 GMT",
+      "titles": [
+        {
+          "language": "jp-en",
+          "score": 0.8,
+          "title": "MAPPA 15th Anniversary Movie"
+        },
+        {
+          "language": "jp",
+          "score": 0.8,
+          "title": "MAPPA 15th Anniversary Movie"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "anilist:213343"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "50776",
+      "origin": "kitsu",
+      "scope": "RUN",
+      "score": 0.3,
+      "startDate": "2026-06-19",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.3,
+          "title": "MAPPA 15th Anniversary Movie"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "kitsu:50776"
+    },
+    {
+      "id": "64429",
+      "origin": "mal",
+      "scope": "RUN",
+      "titles": [],
+      "uri": "mal:64429"
+    },
+    {
+      "categories": [
+        "ANIME",
+        "SERIES"
+      ],
+      "episodeCount": 1,
+      "id": "anilist-213343",
+      "origin": "offline",
+      "scope": "RUN",
+      "score": 0.2,
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "MAPPA 15th Anniversary Movie"
+        }
+      ],
+      "type": "SPECIAL",
+      "uri": "offline:anilist-213343"
+    },
+    {
+      "categories": [
+        "SERIES"
+      ],
+      "id": "81663074",
+      "origin": "nf",
+      "scope": "CONTAINER",
+      "score": 0.2,
+      "startDate": "2022-01-01",
+      "titles": [
+        {
+          "language": "en",
+          "score": 0.2,
+          "title": "Kath & Kim: 20th Anniversary Specials"
+        }
+      ],
+      "uri": "nf:81663074"
+    }
+  ],
+  "source": {
+    "answers": [
+      "72535bf71a377c6d9f60bf4a29b18b7081c5517273fe0d9938adb5946c4c6da0",
+      "2d9a8cac368cdbc985c385de633e1f4ecc5f3efb57a8c01d8bc6e7e725e21a53",
+      "8bf4fdf322a8501de9c81f1166c5e77d18c5224d7cb38cd15af7f9ef8e744834",
+      "488417acce74d0d54c9012ea58136f79ca6f91ad33439adab53070ef7f5d9081",
+      "47143751747b4afe497651374f73af44764f639a8eb799e8c7de400ba999ecb1",
+      "0307a4d242328daf93f2d557f992d466269a38d2ef997994328b14b59c4685ba",
+      "b3c12ed32e211a9a356d75cb0f6d3b9802d0d5ff35e85b2eb850acf8ad7e0ab7"
+    ],
+    "file": "corpus/season/summer-2026/answers.jsonl",
+    "test": "ag:(anilist:213343,kitsu:50776,mal:64429,offline:anilist-213343)"
+  },
+  "why": "MAPPA 15th Anniversary Movie is a one episode special dated 2026-06-19, and all four catalogue rows (AniList, Kitsu, MyAnimeList, offline) are already members of the run's address. nf:81663074 Kath & Kim: 20th Anniversary Specials is a different work: it is a 2022 Australian comedy title whose two episodes are named Kath & Kim, Our Effluent Life - With Extra Effluent and Kath & Kim, 20 Preposterous Years - Warts & All, sharing nothing with this run but the word Anniversary, and its 2022 start is four years before the run's single 2026-06-19 date."
+}
