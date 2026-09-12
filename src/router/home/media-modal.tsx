@@ -22,6 +22,7 @@ import MediaRelations from '../../components/media-relations'
 import MediaFranchise from '../../components/media-franchise'
 import { gql } from '../../generated'
 import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri, shouldGrowAddress } from '../../utils/uri'
+import { listedMediaFor } from './modal-media'
 import { nextThumbnail } from '../../utils/thumbnails'
 import { getRoutePath, Route } from '../path'
 import { releaseDateAttribute, releaseDateDisplay } from '../../utils/release-date'
@@ -598,7 +599,11 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   // wouter hands the segment through undecoded, and an encoded uri is a page that never subscribes
   const params = { ...rawParams, uri: decodeRouteUri(rawParams.uri) }
   const [, navigate] = useLocation()
-  const foundMedia = mediaNodes.find(media => matchAggregatedUris(media.uri as AggregatedUri, params.uri as AggregatedUri))
+  // The listing is a SOURCE OF DRAWING, never the gate: `namesSameWork` asks whether the address and
+  // a card share a source handle, because a shared link names whatever sources the store had folded
+  // in when it was copied and the card names whatever it has now. Compared for equality the two are
+  // different works, and the modal opened over a blank box (open problem 22).
+  const foundMedia = listedMediaFor(params.uri, mediaNodes)
 
   const [uri, setUri] = useState(params.uri)
   useEffect(() => {
@@ -679,7 +684,12 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
     setBannedTrailerUris([...bannedTrailerUris, selectedTrailer.uri])
   }, [selectedTrailer, bannedTrailerUris])
 
-  const [open, onOpenChange] = useState(Boolean(params))
+  // THE ROUTE IS WHAT OPENS THIS, and nothing else gets a vote. Not `foundMedia`, since a link to a
+  // work the current season listing does not carry is still a link to a work the store answers for,
+  // and not `params.uri` either: on a browser popstate this renders a beat before wouter's `<Switch>`
+  // does, holding the previous route's empty params, so gating on the uri would redirect home on
+  // every back and forward (see `fromAggregatedUri` in utils/uri.ts).
+  const [open, onOpenChange] = useState(true)
   const { refs, context } = useFloating({
     open,
     onOpenChange: (_, ev) => {
