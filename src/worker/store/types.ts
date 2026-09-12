@@ -29,6 +29,16 @@ export const handleRelationEnum = ['SAME_AS', 'PART_OF'] as const
 export type HandleRelation = typeof handleRelationEnum[number]
 
 /**
+ * What a handle may SAY, which is the GraphQL enum and is wider than what this store can act on.
+ *
+ * `MediaHandleRelation` gained `INCLUDES` as an OUTPUT value: a run's page lists the catalogue seasons
+ * that hold it. This store has no edge for that direction and never will, since the graph store
+ * replaces it, so a claim carrying it is refused at `upsertMedia` rather than at every caller. The
+ * type exists so the refusal is visible in the signature instead of being a cast at four call sites.
+ */
+export type ClaimedRelation = HandleRelation | 'INCLUDES'
+
+/**
  * How one work relates to another as a STORY, mirroring `MediaRelation` in the graphql schema.
  *
  * The OTHER axis from `HandleRelation`, and the distinction is load bearing: nothing here may ever

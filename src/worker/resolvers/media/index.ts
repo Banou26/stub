@@ -9,7 +9,8 @@ import { findAggregatedMedia, findAllAggregatedMedia, findAggregatedEpisodesForM
 import { applyMediaFilters, applyMediaSorts } from '../../store/filter'
 import { fuzzyMergeMediaClusters } from '../../store/fuzzy-merge'
 import { aggregateMedia, aggregateEpisode, sameAsHandleUris } from '../../store/aggregate'
-import { listenMultipleIterator, debouncedListenIterator } from '../../store/events'
+import { createMediaReader, createPageReader, episodesOf, readStore } from '../../graph'
+import { listen, listenIterator, listenMultipleIterator, debouncedListenIterator } from '../../store/events'
 import { parseHTMLDescription, parseTextDescription } from '../utils'
 import { searchRelevance } from '../../../sources/utils'
 import { MediaDescriptionContentType } from '../../../generated/graphql'
@@ -37,7 +38,14 @@ export const resolvers = {
           return
         }
         const { subscriptions, close, askOrigins, root } = proxyRequestToExtractors(ctx, 'MEDIA')
-        const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
+        // THE READ STORE IS READ ONCE, at subscribe time: a flag that moved mid subscription would
+        // give one generator two shapes of wake, and the flag only ever moves at boot.
+        const reader = readStore() === 'graph' ? createMediaReader(requestedUri) : undefined
+        const iterator: AsyncIterableIterator<unknown> =
+          reader
+            // 6.6: one event, named, so the wake test below can refuse the ones that are not ours
+            ? listenIterator('view:changed', { abortSignal: ctx.request.signal })
+            : listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: ctx.request.signal })
 
         /**
          * The uri the sources were asked about is the one the caller had at subscribe time, and a card
@@ -64,7 +72,23 @@ export const resolvers = {
           askOrigins(unasked, { ...variables, input: { ...variables?.input, uri: mediaUri } })
         }
 
+        // a MEDIA root by construction: only this resolver runs it, so a listing never asks. The
+        // consumer still reads the OLD store's cluster, which is what spec step 4 rewires; skipping
+        // it here would take the `containing` asks the fold depends on down for a whole step.
+        const askSimilarRuns = (cluster: Awaited<ReturnType<typeof findMediaForPage>>) => {
+          if (cluster.length) void resolveSimilarRuns(cluster, root, { ask: askSimilar, implemented: implementsSimilarMedia })
+        }
+
         const read = async () => {
+          if (reader) {
+            // 6.2 resolves and then looks up: membership before publication, the container's
+            // `preferredRun` followed, and nothing hidden, because the hide rule is a listing rule.
+            const media = await reader.read()
+            if (!media) return undefined
+            askUnasked(String(media.uri))
+            void findMediaForPage(requestedUri).then(askSimilarRuns)
+            return media as unknown as Media
+          }
           // A show whose run is in the store is shown as that run: see `preferAttachedRun` in
           // store/db.ts, where the choice lives so it can be pinned (this module reaches urql and
           // cannot load under vitest).
@@ -72,8 +96,7 @@ export const resolvers = {
           if (!cluster.length) return undefined
           const media = aggregateMedia(cluster, location.origin)
           askUnasked(media.uri)
-          // a MEDIA root by construction: only this resolver runs it, so a listing never asks
-          void resolveSimilarRuns(cluster, root, { ask: askSimilar, implemented: implementsSimilarMedia })
+          askSimilarRuns(cluster)
           return media
         }
 
@@ -81,7 +104,11 @@ export const resolvers = {
           const first = await read()
           if (first) yield first
 
-          for await (const _ of iterator) {
+          for await (const detail of iterator) {
+            // An empty cluster yields nothing and WAITS, on its requested uris until one resolves and
+            // on its cluster id after that. Every other cluster's event is refused here rather than
+            // costing a read that answers the same row.
+            if (reader && !reader.wakes(detail as { clusters: string[], uris: string[] })) continue
             const next = await read()
             if (next) yield next
           }
@@ -105,36 +132,30 @@ export const resolvers = {
                 ?.nodes
                 ?.map(({ uri }) => uri)
           )
-        const iterator = debouncedListenIterator(['media:changed'], 100, { abortSignal: ctx.request.signal })
+        const page = readStore() === 'graph' ? createPageReader() : undefined
+        // THE DEBOUNCE STAYS AT 100 ms and the NAMES are collected beside it, because the debounced
+        // iterator coalesces events into one wake and drops their payloads with them. A page must
+        // re-read every cluster named since its last read, not the clusters of the last event.
+        const named = new Set<string>()
+        const unlisten = page
+          ? listen('view:changed', detail => { for (const id of detail.clusters) named.add(id) })
+          : undefined
+        const iterator = debouncedListenIterator([page ? 'view:changed' : 'media:changed'], 100, { abortSignal: ctx.request.signal })
 
-        const getPage = async () => {
-          const uris = [...insertedUris]
-          // THE WHOLE-STORE FALLBACK IS LOAD BEARING, and it does not look it.
-          //
-          // `insertedUris` is empty until a source answers, so this is the first yield's only content.
-          // Refusing it and answering [] instead is the obvious way to keep a filtered page from
-          // opening on the previous page's results, and it BREAKS the page outright: this generator
-          // only re-runs on `media:changed`, and a second subscription over a warm store changes
-          // nothing, because `graph.set` is idempotent (tests/unit/worker/store/edge-idempotence.test.ts).
-          // So no event ever fires and the page stays empty. Measured 2026-09-06 on the search page:
-          // picking a format on a loaded season sat at 0 cards for 60 seconds, where the same url
-          // opened cold answered 24.
-          //
-          // What keeps the fallback honest is `applyMediaFilters` below, which runs on it like any
-          // other page: a stale row from an earlier query only survives if it genuinely matches the
-          // season, format, genres and tags now being asked for.
-          let clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
-          if (await fuzzyMergeMediaClusters(clusters)) {
-            clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
-          }
-          clusters = hideAttachedContainers(clusters)
-          let aggregated = clusters.map(cluster => aggregateMedia(cluster, location.origin))
+        // How many uris the last SEED read. The seed of 6.1 is a function of `insertedUris`, so a
+        // grown fan-out is a new seed rather than an increment: an incremental re-read only ever
+        // names clusters that moved, and a uri answered late names a cluster that did not.
+        let seeded = -1
 
-          // Everything decidable from the aggregated row, in one pinned place. It runs AFTER
-          // `hideAttachedContainers` above: dropping a run cluster before that leaves its container
-          // behind as an orphan card, because a container is only hidden when a run cluster in the
-          // same list points at it.
-          aggregated = applyMediaFilters(aggregated, args.input)
+        /**
+         * Everything decidable from an aggregated row or a card, in one pinned place and VERBATIM on
+         * both stores: the graph's page is the same three functions over the same fields, which is
+         * what makes the two paths comparable at all.
+         */
+        const sortPage = async (rows: Media[]) => {
+          // It runs AFTER the hide, which on the graph path is store-wide and written into the
+          // cluster: dropping a run before the hide leaves its container behind as an orphan card.
+          let aggregated = applyMediaFilters(rows, args.input)
 
           const search = args.input.search
           if (search) {
@@ -155,8 +176,40 @@ export const resolvers = {
           // carries everywhere else, this app's own AniList calls included. Both members pointed the
           // other way until 2026-09-12. The home row and the search page ask for `POPULARITY_DESC` and
           // render the list in the order given, so this is what puts the most popular card first.
-          aggregated = applyMediaSorts(aggregated, args.input.sorts)
-          return aggregated
+          return applyMediaSorts(aggregated, args.input.sorts)
+        }
+
+        const getPage = async () => {
+          const uris = [...insertedUris]
+          if (page) {
+            const ids = [...named]
+            named.clear()
+            const cards = uris.length === seeded ? await page.apply(ids, uris) : await page.read(uris)
+            seeded = uris.length
+            return sortPage(cards as unknown as Media[])
+          }
+          // THE WHOLE-STORE FALLBACK IS LOAD BEARING, and it does not look it.
+          //
+          // `insertedUris` is empty until a source answers, so this is the first yield's only content.
+          // Refusing it and answering [] instead is the obvious way to keep a filtered page from
+          // opening on the previous page's results, and it BREAKS the page outright: this generator
+          // only re-runs on `media:changed`, and a second subscription over a warm store changes
+          // nothing, because `graph.set` is idempotent (tests/unit/worker/store/edge-idempotence.test.ts).
+          // So no event ever fires and the page stays empty. Measured 2026-09-06 on the search page:
+          // picking a format on a loaded season sat at 0 cards for 60 seconds, where the same url
+          // opened cold answered 24.
+          //
+          // What keeps the fallback honest is `applyMediaFilters` below, which runs on it like any
+          // other page: a stale row from an earlier query only survives if it genuinely matches the
+          // season, format, genres and tags now being asked for.
+          let clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
+          if (await fuzzyMergeMediaClusters(clusters)) {
+            clusters = await findAllAggregatedMedia(uris.length ? uris : undefined)
+          }
+          clusters = hideAttachedContainers(clusters)
+          // a container is only hidden when a run cluster in the SAME LIST points at it, which is why
+          // the hide runs here and the filter runs inside `sortPage`
+          return sortPage(clusters.map(cluster => aggregateMedia(cluster, location.origin)))
         }
 
         try {
@@ -165,6 +218,7 @@ export const resolvers = {
             yield await getPage()
           }
         } finally {
+          unlisten?.()
           close()
           await Promise.allSettled(subscriptions.map(subscription => subscription.unsubscribe()))
         }
@@ -175,6 +229,12 @@ export const resolvers = {
     _id: (parent) => parent._id,
     categories: (parent) => parent.categories ?? [],
     episodes: async (parent) => {
+      if (readStore() === 'graph') {
+        // ONE LOOKUP of the cluster's own materialized list (6.4), never a walk from a media uri, so
+        // it can never be handed a container's flat list of every season at once. A HANDLE NODE
+        // answers `[]` for free: its `_id` is the member's own uri and matches no `Cluster.id`.
+        return await episodesOf(String(parent._id ?? '')) as unknown as NonNullable<typeof parent.episodes>
+      }
       // SAME_AS ONLY. See `sameAsHandleUris`, which carries the reasoning and the test: this module
       // cannot be imported under vitest, so the rule lives where it can be pinned.
       const handleUris = sameAsHandleUris(parent.handles)

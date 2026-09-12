@@ -95,6 +95,30 @@ enum MediaHandleRelation {
   other end is a bigger thing, and its episode list is every run's at once.
   """
   PART_OF
+  """
+  This media HOLDS what the handle names: a season of this run, a part of this compilation, a range
+  of episodes another packaging carries. The inverse direction of `PART_OF`, and it unions nothing.
+
+  A run's page lists the catalogue seasons that hold it, a run split across seasons lists them all,
+  and a container page lists its own seasons. It renders as a LINK and never as a button: the badge
+  reader takes "SAME_AS first then anything" and playback takes SAME_AS only, so nothing here can
+  place a play button on a row the store has not proven.
+  """
+  INCLUDES
+}
+
+"""
+Which PAGE a row draws, as distinct from which identity space it lives in.
+
+`MediaScope` answers "what does SAME_AS mean here"; this answers "what does this page look like". A
+`FOLD` is a catalogue season whose every member is a part or an inclusion of some run: it draws its
+OWN rows in its OWN numbering rather than following to the run, which is what a bookmark on such a
+season has to open. `RUN` and `CONTAINER` mean what they mean on `MediaScope`.
+"""
+enum MediaKind {
+  RUN
+  CONTAINER
+  FOLD
 }
 
 """
@@ -238,6 +262,43 @@ type MediaHandle {
   cluster. No other value is defined; an unknown one reads as unset.
   """
   provenance: String
+  """
+  WHY this handle is here, in the deriving rule's own word: `member`, `placeholder`, or the reason a
+  containment link carried (`asserted`, `span`, `contested`, `prefix`). Null on a handle no plugin
+  derived. Display and diagnosis only; nothing may branch on it.
+  """
+  via: String
+  """Which plugin put it here, e.g. `plugin:aggregate`. Null outside the graph store."""
+  by: String
+}
+
+"""
+Where ONE field of an aggregated media got its value, and under which rule.
+
+Read by the trace panel, so a wrong field is a question with an answer instead of a screenshot. A
+per-field rule names one `uri`; a vote names every `uris` that backed it with the deciding `tier` and
+its `witnesses`. `answerSeq` is the supplying member's `fieldSeq[field]`, which is the exact answer
+behind the value.
+"""
+type MediaFieldProvenance {
+  field: String!
+  uri: String
+  uris: [String!]
+  answerSeq: Int
+  tier: Float
+  witnesses: Int
+  rule: String!
+}
+
+"""
+One rule the store evaluated over the whole graph that this media's cluster does not satisfy.
+
+Reported, never repaired: an anomaly is a statement about the sources disagreeing, and hiding it
+would make the disagreement look like a decision.
+"""
+type MediaAnomaly {
+  rule: String!
+  detail: String!
 }
 
 type Media {
@@ -275,6 +336,20 @@ type Media {
   franchise: MediaFranchise
   """Which identity space this row lives in. An absent value reads as RUN."""
   scope: MediaScope
+  """
+  Which page this row draws (`MediaKind`). Null from a store that does not compute it, which reads as
+  `scope`.
+  """
+  kind: MediaKind
+  """
+  Which member supplied each field, and under which rule. Null from a store that records none.
+
+  NULLABLE on purpose, like `franchise`: a non-null list absent from a payload nulls the media
+  carrying it, and a listing card records no provenance.
+  """
+  provenance: [MediaFieldProvenance!]
+  """Every anomaly the store filed against this row's cluster. Null where none were evaluated."""
+  anomalies: [MediaAnomaly!]
   score: Float
   titles: [MediaTitle!]!
   type: MediaType

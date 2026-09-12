@@ -3,7 +3,7 @@
 // whatever AniList alone knew and nothing more. Wrapping it as a cluster is what starts the fan out.
 import { describe, expect, test } from 'vitest'
 
-import { asAggregatedUri, isAggregatedUri, shouldGrowAddress } from '../../../src/utils/uri'
+import { asAggregatedUri, isAggregatedUri, matchAggregatedUris, shouldGrowAddress } from '../../../src/utils/uri'
 
 describe('asAggregatedUri', () => {
   test('a single source becomes a cluster of one, which is a routable form', () => {
@@ -69,5 +69,34 @@ describe('shouldGrowAddress', () => {
     expect(shouldGrowAddress(undefined, known)).toBe(false)
     expect(shouldGrowAddress(full, undefined)).toBe(false)
     expect(shouldGrowAddress(undefined, undefined)).toBe(false)
+  })
+})
+
+// The SINGLETON PATH IS GONE on both types (migration step 3), so a one-source work is addressed
+// `ag:(mal:39535)` where the store used to publish `mal:39535`. Both spellings are live at once: the
+// new address is what every page mints, and the old one is in every bookmark, party link and shared
+// `/watch` path already out there. `asAggregatedUri` is what makes them converge, so a comparison
+// that runs it on both sides accepts either, which is what `media-modal.tsx` and `watch/index.tsx`
+// now do.
+describe('both spellings of a one-source address', () => {
+  test('converge on the SAME aggregated form, whichever way round they arrive', () => {
+    expect(asAggregatedUri('mal:39535')).toBe(asAggregatedUri('ag:(mal:39535)'))
+    expect(asAggregatedUri('mal:39535')).toBe('ag:(mal:39535)')
+  })
+
+  test('so a bare uri and the address the store mints for it MATCH as the same work', () => {
+    const bare = 'mal:39535'
+    const minted = 'ag:(mal:39535)'
+    // the comparison the modal and the watch page make, with both sides normalized
+    expect(matchAggregatedUris(asAggregatedUri(bare) as never, asAggregatedUri(minted) as never)).toBe(true)
+    // and the control that proves the comparison can still say no: a different work does not match
+    expect(matchAggregatedUris(asAggregatedUri(bare) as never, asAggregatedUri('mal:60059') as never)).toBe(false)
+  })
+
+  test('and the same for a one-row EPISODE uri, which took the same change', () => {
+    expect(asAggregatedUri('anizip:14758-1')).toBe('ag:(anizip:14758-1)')
+    expect(
+      matchAggregatedUris(asAggregatedUri('anizip:14758-1') as never, asAggregatedUri('ag:(anizip:14758-1)') as never)
+    ).toBe(true)
   })
 })

@@ -21,7 +21,7 @@ import Collapsible from '../../components/collapsible'
 import MediaRelations from '../../components/media-relations'
 import MediaFranchise from '../../components/media-franchise'
 import { gql } from '../../generated'
-import { AggregatedUri, fromAggregatedUri, isAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri, shouldGrowAddress } from '../../utils/uri'
+import { AggregatedUri, asAggregatedUri, fromAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri, shouldGrowAddress } from '../../utils/uri'
 import { listedMediaFor } from './modal-media'
 import { nextThumbnail } from '../../utils/thumbnails'
 import { getRoutePath, Route } from '../path'
@@ -607,8 +607,12 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
 
   const [uri, setUri] = useState(params.uri)
   useEffect(() => {
+    // BOTH SPELLINGS, since a one-source page is addressed `mal:39535` by an old bookmark or party
+    // link and `ag:(mal:39535)` by every address the store mints now that the singleton path is gone.
+    // Compared as written the two are different works, so the subscription would restart on a
+    // navigation that changed nothing.
     setUri(prev =>
-      prev && isAggregatedUri(prev) && isAggregatedUri(params.uri) && matchAggregatedUris(prev, params.uri)
+      prev && matchAggregatedUris(asAggregatedUri(prev) as AggregatedUri, asAggregatedUri(params.uri ?? '') as AggregatedUri)
         ? prev
         : params.uri
     )

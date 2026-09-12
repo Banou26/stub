@@ -3,7 +3,7 @@ import type { Exchange } from 'urql'
 
 import type { Episode, Media, Origin, Resolvers, SimilarMediaInput } from '../generated/schema/types.generated'
 import type { Uri } from 'src/utils/uri'
-import type { Episode as StoreEpisode, Origin as StoreOrigin, HandleRelation } from './store/types'
+import type { Episode as StoreEpisode, Origin as StoreOrigin, ClaimedRelation } from './store/types'
 
 import { useOnResolve } from '@envelop/on-resolve'
 import { createSchema, createYoga } from 'graphql-yoga'
@@ -28,6 +28,8 @@ import { normalizeToStoreMedia } from './store/normalize'
 import { listenMultipleIterator } from './store/events'
 import { readPluginPayload, readPluginSources } from './plugin-sources'
 import { recordAnswers } from './graph/answers'
+// `./graph/read` and not `./graph`, which would drag every plugin in behind a flag that is off
+import { readStore, resolveMedia } from './graph/read'
 import { describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
 import { SIMILAR_MEDIA_DOCUMENT } from './similar-document'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
@@ -80,6 +82,9 @@ const normalizeOrigin = (origin: { id: string; url?: string | null; name: string
 })
 
 const findAggregatedMediaForContext = async (uri: string): Promise<Media | undefined> => {
+  // The seven `waitForMedia` callers block on this, so it follows the read store rather than the old
+  // one: a source waiting on a row the app is no longer reading waits forever.
+  if (readStore() === 'graph') return await resolveMedia(uri) as unknown as Media | undefined
   let cluster = await findAggregatedMedia(uri)
   if (!cluster.length && isAggregatedUri(uri)) {
     const parsed = fromAggregatedUri(uri as AggregatedUri)
@@ -98,7 +103,11 @@ const listenForMediaChangesForContext = async function* (
 ) {
   yield await findAggregatedMediaForContext(params.uri)
 
-  const iterator = listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: options?.abortSignal })
+  // `view:changed` fires AFTER the pass wrote the row this re-reads, where the other two fire at the
+  // commit before it (4.5): a caller woken by those on the graph store reads the state it already had.
+  const iterator = readStore() === 'graph'
+    ? listenMultipleIterator(['view:changed'], { abortSignal: options?.abortSignal })
+    : listenMultipleIterator(['media:changed', 'episode:changed'], { abortSignal: options?.abortSignal })
   for await (const _ of iterator) {
     yield await findAggregatedMediaForContext(params.uri)
   }
@@ -111,7 +120,7 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
   // unions the cluster and PART_OF hangs a directed edge that unions nothing. Deduping on the RELATION
   // too, not just the pair, so one media may hold both kinds for one origin without either silently
   // winning on arrival order.
-  const handlePairs: { mediaUri: string; handleUri: string; relation: HandleRelation }[] = []
+  const handlePairs: { mediaUri: string; handleUri: string; relation: ClaimedRelation }[] = []
   const seen = new Set<string>()
   for (const media of allUnwrapped) {
     for (const handle of media.handles ?? []) {
@@ -135,7 +144,7 @@ const mediaInserter = new DataLoader<Media, Media>(async (medias) => {
 })
 
 const episodeInserter = new DataLoader<Episode, Episode>(async (episodes) => {
-  const handlePairs: { episodeUri: string; handleUri: string; relation: HandleRelation }[] = []
+  const handlePairs: { episodeUri: string; handleUri: string; relation: ClaimedRelation }[] = []
   for (const episode of episodes as Episode[]) {
     for (const handle of episode.handles ?? []) {
       if (!handle?.node) continue

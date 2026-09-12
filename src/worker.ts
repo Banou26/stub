@@ -29,7 +29,7 @@ expose<typeof resolvers>(
   }
 )
 
-const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease, exportStore, exportAnswers, exportAsks, graphCounts, setGraphEnabled } = await expose<WorkerResolvers>(
+const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource, remotePicker, remotePlayer, selectRemoteRelease, exportStore, exportAnswers, exportAsks, graphCounts, setGraphEnabled, setReadStore } = await expose<WorkerResolvers>(
   {},
   {
     transport: worker,
@@ -38,8 +38,15 @@ const { handleRequest, setUserKeys, registerRemoteSource, unregisterRemoteSource
 )
 
 // The graph engine is opt in while the store migration runs. The worker has no view of the page's
-// query string, so the flag is read here and handed over as soon as the osra channel is up.
-void setGraphEnabled(new URLSearchParams(location.search).has('graph'))
+// query string, so the flags are read here and handed over as soon as the osra channel is up.
+//
+// TWO FLAGS. `?graph` warms the engine, runs the ingest tee and the pass, and changes nothing a user
+// sees; `?store=graph` switches the reads onto it and implies the first, which the worker side
+// enforces so a page cannot ask for the reads without the engine under them.
+const flags = new URLSearchParams(location.search)
+const readsGraph = flags.get('store') === 'graph'
+if (readsGraph) void setReadStore('graph')
+else void setGraphEnabled(flags.has('graph'))
 
 export {
   handleRequest,

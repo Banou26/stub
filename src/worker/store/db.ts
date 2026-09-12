@@ -1,4 +1,4 @@
-import type { Media, Episode, Origin, HandleRelation, MediaScope } from './types'
+import type { Media, Episode, Origin, ClaimedRelation, MediaScope } from './types'
 import { createGraph, lastWriteLongestArray } from './graph'
 import { emit } from './events'
 import { alignRunEpisodes, runEpisodes } from './consensus'
@@ -107,7 +107,7 @@ const isPlaceholder = (media: Media) =>
   && Object.entries(media).every(([field, value]) =>
     IDENTITY_FIELDS.has(field) || value == null || (Array.isArray(value) && value.length === 0))
 
-type Claim = { mediaUri: string; handleUri: string; relation?: HandleRelation }
+type Claim = { mediaUri: string; handleUri: string; relation?: ClaimedRelation }
 const claimKey = ({ mediaUri, handleUri, relation }: Claim) => `${mediaUri}\0${handleUri}\0${relation ?? 'SAME_AS'}`
 
 /**
@@ -176,6 +176,10 @@ export async function upsertMedia(
   // stop, since the two records can go new at different times.
   for (const claim of claims) {
     const { mediaUri, handleUri, relation } = claim
+    // `INCLUDES` is an OUTPUT value of `MediaHandleRelation` (6.3): a run's page lists the catalogue
+    // seasons that hold it. This store has no edge for that direction, and reading it as PART_OF
+    // would point the containment the wrong way round, so it is refused here rather than guessed.
+    if (relation === 'INCLUDES') continue
     const undescribed = [mediaUri, handleUri].filter(uri => !graph.has(uri))
     if (undescribed.length) {
       for (const uri of undescribed) defer(uri, claim)
@@ -399,7 +403,7 @@ export function hideAttachedContainers(clusters: Media[][]): Media[][] {
 
 export async function upsertEpisodes(
   newEpisodes: Episode[],
-  handles: { episodeUri: string; handleUri: string; relation?: HandleRelation }[]
+  handles: { episodeUri: string; handleUri: string; relation?: ClaimedRelation }[]
 ) {
   for (const episode of newEpisodes) {
     graph.set(episode.uri, episode, { addLabels: ['episode'] })
@@ -407,6 +411,8 @@ export async function upsertEpisodes(
   }
 
   for (const { episodeUri, handleUri, relation } of handles) {
+    // as in `upsertMedia`: this store has no edge pointing from the whole at its part
+    if (relation === 'INCLUDES') continue
     if ((relation ?? 'SAME_AS') === 'SAME_AS') graph.link(episodeUri, handleUri, EPISODE_SAME_AS)
     else graph.edge(episodeUri, handleUri, EPISODE_PART_OF)
   }

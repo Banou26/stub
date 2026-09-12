@@ -15,7 +15,7 @@ import SourceSelector from '../../components/source-selector'
 import PluginPlayer from '../../components/plugin-player'
 import PartyPlayback from '../../components/party-playback'
 import { attachPlaybackBridge, type PlaybackLink } from '../../party/bridge'
-import { AggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
+import { AggregatedUri, asAggregatedUri, fromAggregatedUri, fromUri, matchAggregatedUris, decodeRouteUri } from '../../utils/uri'
 import { getRoutePath, Route } from '../path'
 
 /**
@@ -195,8 +195,13 @@ const Watch = () => {
   const episode = useMemo(
     () =>
       media?.episodes?.find(ep =>
+        // BOTH SPELLINGS: a one-row episode's uri is `ag:(<row uri>)` now that the singleton path is
+        // gone, while a saved or shared `/watch` path still names the row itself
         ep.uri && params.episodeUri
-          ? matchAggregatedUris(ep.uri as AggregatedUri, params.episodeUri as AggregatedUri)
+          ? matchAggregatedUris(
+            asAggregatedUri(ep.uri) as AggregatedUri,
+            asAggregatedUri(params.episodeUri) as AggregatedUri
+          )
           : false
       ),
     [media?.episodes, params.episodeUri]

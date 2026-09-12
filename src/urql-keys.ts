@@ -34,6 +34,10 @@ export const keyResolvers = {
   MediaCover: () => null,
   MediaBanner: () => null,
   MediaAiringEpisode: () => null,
+  // The trace pair: one entry is a statement ABOUT a field of the media carrying it, so it has no
+  // identity away from that media and is embedded in it like every title and cover above.
+  MediaFieldProvenance: () => null,
+  MediaAnomaly: () => null,
   MediaTrailer: (trailer) => (trailer as MediaTrailer).uri,
   Episode: (episode) => (episode as Episode)._id,
   EpisodeTitle: () => null,

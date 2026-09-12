@@ -9,7 +9,7 @@ import { typeDefs } from '../generated/schema/typeDefs.generated'
 import { resolvers } from './resolvers'
 import { extractors, setUserKeys, registerRemoteExtractor, unregisterRemoteExtractor, remotePicker, remotePlayer, selectRemoteRelease } from './extractor'
 import { exportStore } from './store/export'
-import { enableGraph, exportAnswers, exportAsks, graphCounts } from './graph'
+import { enableGraph, exportAnswers, exportAsks, graphCounts, setReadStore } from './graph'
 
 export type ServerContext = YogaInitialContext & {
 
@@ -46,6 +46,14 @@ export const osraResolvers = {
   // THE ONE PLACE THE LIVE PASS IS WIRED: `scheduler` is off by default so a caller driving
   // `runPlugins` itself can never race a pass woken by the bus (`./graph/index.ts`).
   setGraphEnabled: (enabled: boolean) => enableGraph(enabled, { scheduler: true }),
+  // `?store=graph` IMPLIES `?graph`, and this is the one place that implication lives: a read path
+  // over an engine nobody booted answers an empty page forever, and the failure looks like an empty
+  // store rather than like a missing flag. The engine is awaited before the switch moves, so the
+  // first read of the session cannot land between the two.
+  setReadStore: async (store: 'graph' | 'legacy') => {
+    if (store === 'graph') await enableGraph(true, { scheduler: true })
+    setReadStore(store)
+  },
   registerRemoteSource: async (port: MessagePort, pluginUri: string): Promise<{ ok: { sources: { origin: string, name: string }[], rejected: { origin: string, reason: string }[] } } | { error: string }> => {
     try {
       return { ok: await registerRemoteExtractor(port, pluginUri) }

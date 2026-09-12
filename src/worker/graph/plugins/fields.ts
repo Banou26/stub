@@ -120,18 +120,45 @@ export type AggregatedEpisode = Record<string, unknown> & {
 }
 
 /**
+ * One handle of a CARD: `MediaFragment`'s five node fields and nothing else (6.1).
+ *
+ * The aggregated row's handle node is the member's whole `raw`, which is the page payload's single
+ * largest term. A listing document selects exactly these five, so the card carries exactly these
+ * five; `via` and `by` are the detail view's and stay off the card.
+ */
+export type CardHandle = {
+  relation: 'SAME_AS' | 'PART_OF' | 'INCLUDES'
+  node: { _id: string, uri: string, origin: string, id: string, url: string | null }
+}
+
+/**
  * The listing's CLOSED field set (6.1).
  *
  * A listing document selecting a field outside this set is a schema change that adds it here, which
  * is what keeps a page read to one lookup: nothing about a card is computed at read time.
+ *
+ * It is the union of `MediaFragment` and the two listing documents' own selections, which is also
+ * every field `applyMediaFilters`, `searchRelevance` and `applyMediaSorts` read. `handles` is on it
+ * because `Media.handles` is `[MediaHandle!]!` and `MediaPage.nodes` is `[Media!]!`: a card without
+ * it nulls the WHOLE PAGE rather than one field.
  */
 export type ClusterCard = {
   _id: string
   uri: string
+  origin: string
+  id: string
+  url: string | null
+  handles: CardHandle[]
+  score: number | null
   titles: unknown[]
+  shortDescriptions: unknown[]
   covers: unknown[]
+  banners: unknown[]
+  trailers: unknown[]
   popularity: number | null
+  averageScore: number | null
   episodeCount: number | null
+  nextAiringEpisode: Record<string, unknown> | null
   type: string | null
   status: string | null
   season: string | null
@@ -214,6 +241,23 @@ export const aggregatedIdentity = (uris: readonly string[]): { uri: string, id: 
   const routable = uris.filter(isRoutableUri)
   const sorted = [...(routable.length ? routable : uris)].sort()
   return { uri: `ag:(${sorted.join(',')})`, id: `(${sorted.join(',')})` }
+}
+
+/**
+ * A node's `origin` and `id`, taken from the node where it carries them and from its uri where it
+ * does not.
+ *
+ * `MediaRelationEdge.node` is `Media!` whose `origin` and `id` are `String!`, and `relations` is
+ * `[MediaRelationEdge!]!`, so ONE relation node missing either nulls the whole media. The stored node
+ * is the naming source's own nested byte (`ingest.ts`), and nothing on the write path forces those
+ * two onto it: the ingest only proves the uri parses. So the address is re-derived here, where the
+ * node is built, rather than defended at the read.
+ */
+const addressOf = (uri: string, node: Record<string, unknown>): { origin: string, id: string } => {
+  const colon = uri.indexOf(':')
+  const origin = typeof node.origin === 'string' && node.origin ? node.origin : uri.slice(0, Math.max(colon, 0))
+  const id = typeof node.id === 'string' && node.id ? node.id : uri.slice(colon + 1)
+  return { origin, id }
 }
 
 /** The member row as a handle node: its own uri is its `_id`, never the cluster's (6.3). */
@@ -354,7 +398,10 @@ export const aggregateFields = (options: {
       relation: edge.relation,
       format: edge.format,
       claimer: edge.claimer,
-      node: { ...edge.node, _id: edge.toUri, uri: edge.toUri },
+      // the empty lists come FIRST, so a node that carries its own keeps them: `Media.titles` and
+      // `Media.covers` are `[X!]!`, and a naming source that omits either nulls the whole media the
+      // same way a missing `origin` does
+      node: { titles: [], covers: [], ...edge.node, _id: edge.toUri, uri: edge.toUri, ...addressOf(edge.toUri, edge.node) },
     }))
 
   row.handles = [
@@ -379,8 +426,27 @@ export const aggregateFields = (options: {
 export const cardOf = (media: AggregatedMedia, members: readonly string[]): ClusterCard => ({
   _id: media._id,
   uri: media.uri,
+  origin: String(media.origin ?? 'ag'),
+  id: String(media.id ?? ''),
+  url: (media.url as string | null) ?? null,
+  handles: media.handles.map((handle): CardHandle => ({
+    relation: handle.relation,
+    node: {
+      _id: String(handle.node._id ?? handle.node.uri ?? ''),
+      uri: String(handle.node.uri ?? ''),
+      origin: String(handle.node.origin ?? ''),
+      id: String(handle.node.id ?? ''),
+      url: (handle.node.url as string | null) ?? null,
+    },
+  })),
+  score: (media.score as number | null) ?? null,
   titles: listOf(media.titles),
+  shortDescriptions: listOf(media.shortDescriptions),
   covers: listOf(media.covers),
+  banners: listOf(media.banners),
+  trailers: listOf(media.trailers),
+  averageScore: (media.averageScore as number | null) ?? null,
+  nextAiringEpisode: (media.nextAiringEpisode as Record<string, unknown> | null) ?? null,
   popularity: (media.popularity as number | null) ?? null,
   episodeCount: (media.episodeCount as number | null) ?? null,
   type: (media.type as string | null) ?? null,
