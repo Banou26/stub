@@ -42,8 +42,21 @@ export type Ask = {
    * The cluster the question was asked FOR, as its aggregated uri (`ag:(anilist:1,kitsu:2)`), which
    * is the id the page carries today. The `Cluster` table's own ids arrive with `plugin:aggregate`
    * (5.4 P5) and this column takes them when they do.
+   *
+   * IT IS NOT A `Cluster.aggUri`. The consumer builds it over its own member list, placeholders
+   * included, where `aggUri` is built from `published`, which excludes them, so the two spellings of
+   * one cluster differ by exactly its placeholders. A reader matching asks to a cluster has to
+   * INTERSECT the two addresses rather than compare them (`./trace.ts` does, after a string equality
+   * missed 2 of 2 rows on a live page, 2026-09-13).
    */
   clusterId: string
+  /**
+   * The run the question was asked about: the lowest member uri of the run cluster
+   * (`planSimilarAsks`), which is the one spelling of this cluster that does not move as sources are
+   * folded in. Declared in 2.1 and written by nobody until 2026-09-13, which made 7.5's own
+   * `WHERE k.runUri IN $members` a statement that could only ever return no rows.
+   */
+  runUri: string
   /** The origin that was asked, and the show id it was asked about. */
   origin: string
   showId: string
@@ -98,7 +111,7 @@ const write = async (batch: AskRow[]): Promise<void> => {
   // two asks can never collide on the primary key and two identical questions are two rows
   await query(
     `UNWIND $rows AS r
-     CREATE (:Ask {key: r.key, clusterId: r.clusterId, origin: r.origin, showId: r.showId,
+     CREATE (:Ask {key: r.key, clusterId: r.clusterId, runUri: r.runUri, origin: r.origin, showId: r.showId,
                    questionHash: r.questionHash, outcome: r.outcome, reason: r.reason,
                    answerUri: CASE WHEN r.answerUri = '' THEN cast(NULL AS STRING) ELSE r.answerUri END,
                    seq: cast(r.seq AS INT64)})`,
@@ -141,6 +154,7 @@ const queue = async (ask: Ask): Promise<void> => {
     key,
     seq: next,
     clusterId: ask.clusterId,
+    runUri: ask.runUri,
     origin: ask.origin,
     showId: ask.showId,
     questionHash,
@@ -197,9 +211,9 @@ export const exportAsks = async (): Promise<AskRow[]> => {
   const { query } = await graphReady()
   const rows = await query(
     `MATCH (k:Ask)
-     RETURN k.key AS key, k.seq AS seq, k.clusterId AS clusterId, k.origin AS origin,
-            k.showId AS showId, k.questionHash AS questionHash, k.outcome AS outcome,
-            k.reason AS reason, k.answerUri AS answerUri
+     RETURN k.key AS key, k.seq AS seq, k.clusterId AS clusterId, k.runUri AS runUri,
+            k.origin AS origin, k.showId AS showId, k.questionHash AS questionHash,
+            k.outcome AS outcome, k.reason AS reason, k.answerUri AS answerUri
      ORDER BY k.seq`
   )
   return rows as AskRow[]

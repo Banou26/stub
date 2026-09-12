@@ -76,7 +76,7 @@ export const SOURCE_NODE_TABLES = [
     at TIMESTAMP DEFAULT current_timestamp()
   )`,
   `CREATE NODE TABLE IF NOT EXISTS Ask(
-    key STRING PRIMARY KEY,    // sha-256 over (runUri, origin, showId, questionHash)
+    key STRING PRIMARY KEY,    // sha-256 over (clusterId, origin, showId, questionHash, seq)
     runUri STRING, clusterId STRING, origin STRING, showId STRING,
     questionHash STRING,       // the normalised SimilarMediaInput
     outcome STRING,            // 'answered' | 'containing' | 'refused' | 'declined' | 'refused-by-title' | 'refused-other-run'

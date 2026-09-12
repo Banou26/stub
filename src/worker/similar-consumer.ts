@@ -164,6 +164,9 @@ const note = (question: Question, outcome: AskOutcome, reason: string): void => 
   try {
     void recordAsk({
       clusterId: question.clusterId,
+      // the run's own uri, which is the column 7.5's ask query reads and the only spelling of this
+      // cluster that a later fold cannot change (`Ask.runUri`)
+      runUri: question.ask.runUri,
       origin: question.ask.origin,
       showId: question.ask.showId,
       question: question.fingerprint,

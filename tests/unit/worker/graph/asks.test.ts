@@ -15,6 +15,7 @@ const QUESTION = 'cr\u0000G24H1N3MP\u00002026-07-04\u000012\u00003\u0000\u0000Al
 
 const ask = (fields: Partial<Ask> = {}): Ask => ({
   clusterId: 'ag:(anilist:1,kitsu:2)',
+  runUri: 'anilist:1',
   origin: 'cr',
   showId: 'G24H1N3MP',
   question: QUESTION,
@@ -45,6 +46,9 @@ describe('the Ask log', () => {
     expect(rows).toHaveLength(1)
     expect(rows[0]).toMatchObject({
       clusterId: 'ag:(anilist:1,kitsu:2)',
+      // Mutation: drop `runUri: ask.runUri` from `queue` and this reads back null. The column is
+      // declared in 2.1 and 7.5 asks over it, so an unwritten one makes that query permanently empty.
+      runUri: 'anilist:1',
       origin: 'cr',
       showId: 'G24H1N3MP',
       outcome: 'declined',

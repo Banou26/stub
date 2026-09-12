@@ -20,6 +20,7 @@ import TextEllipsis from '../../components/text-ellipsis'
 import Collapsible from '../../components/collapsible'
 import MediaRelations from '../../components/media-relations'
 import MediaFranchise from '../../components/media-franchise'
+import TraceLink from '../debug/link'
 import { gql } from '../../generated'
 import { AggregatedUri, asAggregatedUri, fromAggregatedUri, isUri, matchAggregatedUris, decodeRouteUri, shouldGrowAddress } from '../../utils/uri'
 import { listedMediaFor } from './modal-media'
@@ -720,7 +721,13 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
   // it, since a bare uri is not aggregated and the effect returned early.
   useEffect(() => {
     if (shouldGrowAddress(media?.uri, params.uri)) {
-      navigate(getRoutePath(Route.MEDIA, { uri: media!.uri }), { replace: true })
+      // THE QUERY STRING COMES ALONG. This replace is the reason a media url loses its flags: opened
+      // at `/media/...?graph=1&trace=1`, the address grows a beat later and the url it is replaced
+      // with carried the path alone, so `location.search` was empty for the rest of the session and
+      // the url a reader copied out of the address bar no longer reproduced their page (measured
+      // 2026-09-13). The flags the worker read at load are unaffected, which is what made this
+      // invisible.
+      navigate(`${getRoutePath(Route.MEDIA, { uri: media!.uri })}${location.search}`, { replace: true })
     }
   }, [media?.uri, params.uri])
 
@@ -772,6 +779,9 @@ const MediaModal = ({ mediaNodes }: { mediaNodes: GetReleasingMediaPageSubscript
             <div className="content">
               <div className="header">
                 <span className="title">{title}</span>
+                {/* 7.5's trace, behind `?trace=1`: nothing at all without the flag. The uri is the
+                    address the store has grown to, which is the one the graph knows this work by. */}
+                <TraceLink uri={media?.uri}/>
                 <span className="origins">
                   {
                     originData

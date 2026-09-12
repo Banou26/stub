@@ -482,6 +482,9 @@ describe('the Ask log', () => {
     expect(rows).toHaveLength(1)
     expect(rows[0]).toMatchObject({
       clusterId: 'ag:(anilist:1,kitsu:2)',
+      // Mutation: drop `runUri` from the `recordAsk` call in `note` and this reads back null. 7.5's
+      // ask query matches on this column, and the consumer is its only writer.
+      runUri: 'anilist:1',
       origin: 'cr',
       showId: 'X',
       outcome: 'answered',
