@@ -1,0 +1,233 @@
+/**
+ * The writer of 5.2, driven the way the runner drives it: an output in, a diff out.
+ *
+ * Against the REAL engine, because every assertion here is about a statement the binder either takes
+ * or refuses, and a mocked connection would pass whatever it was handed (the whole class of failure
+ * `docs/design-inputs/00-engine-facts.md` exists to record).
+ */
+import { afterAll, beforeAll, expect, test } from 'vitest'
+
+import type { PluginId, PluginOutput, Scope } from '../../../../../src/worker/graph/plugins/contract'
+
+import { enableGraph } from '../../../../../src/worker/graph'
+import { closeGraph } from '../../../../../src/worker/graph/engine'
+import { ingestAnswers } from '../../../../../src/worker/graph/ingest'
+import { SOURCE_NODE_TABLES } from '../../../../../src/worker/graph/schema'
+import { applyPluginOutput, columnsOf, retractPlugin } from '../../../../../src/worker/graph/plugins/writer'
+import { answer, media, rowsOf, title } from './fixtures'
+
+const PLUGIN = {
+  id: 'plugin:test' as PluginId,
+  version: 1,
+  produces: {
+    nodes: ['MediaProfile' as const, 'TitleKey' as const],
+    edges: ['PROFILE_OF' as const, 'HAS_KEY' as const, 'LINK' as const],
+  },
+}
+
+const output = (scope: Scope, parts: Partial<PluginOutput> = {}): PluginOutput =>
+  ({ scope, nodes: [], edges: [], links: [], episodeLinks: [], ...parts })
+
+const apply = (out: PluginOutput) => applyPluginOutput({ ...PLUGIN, output: out })
+
+const profileRow = async (uri: string) =>
+  (await rowsOf(
+    `MATCH (n:MediaProfile {uri: $uri})
+     RETURN n.uri AS uri, n.by AS by, n.version AS version, n.scope AS scope, n.scopeFrom AS scopeFrom,
+       n.titleKeys AS titleKeys, n.companion AS companion, n.year AS year, n.countStated AS countStated`,
+    { uri }
+  ))[0]
+
+beforeAll(async () => {
+  await enableGraph(true)
+  await ingestAnswers([
+    await answer('media', media('mal:1', { titles: [title('en', 'Frieren')] })),
+    await answer('media', media('mal:2', { titles: [title('en', 'Ranking of Kings')] })),
+    await answer('media', media('mal:3')),
+  ])
+})
+
+afterAll(async () => {
+  await closeGraph()
+})
+
+const profile = (uri: string, fields: Record<string, unknown> = {}) => ({
+  uri, scope: 'RUN', scopeFrom: [], titleKeys: [{ key: 'frieren', score: 1 }],
+  companion: false, year: 2026, countStated: null, ...fields,
+})
+
+// (a) THE DIFF. Three operations out of one comparison: what is new is created, what moved is SET,
+// and what the plugin no longer desires inside the scope is deleted.
+// Mutation: drop the `moved` test in `applyPluginOutput` (every desired row then reports `update`, so
+// the second apply below reports two rather than none), or drop the `toDelete` branch (mal:2 stands).
+test('a desired set becomes create, update and delete against what this plugin wrote before', async () => {
+  const first = await apply(output({ full: true }, {
+    nodes: [{ table: 'MediaProfile', rows: [profile('mal:1'), profile('mal:2')] }],
+  }))
+  expect(first.counts.MediaProfile).toEqual({ created: 2, updated: 0, deleted: 0 })
+  expect((await profileRow('mal:1'))!.by).toBe('plugin:test')
+  expect((await profileRow('mal:1'))!.version).toBe(1)
+
+  const second = await apply(output({ full: true }, {
+    nodes: [{ table: 'MediaProfile', rows: [profile('mal:1', { year: 2025 }), profile('mal:2')] }],
+  }))
+  expect(second.counts.MediaProfile, 'only the row whose property moved').toEqual({ created: 0, updated: 1, deleted: 0 })
+  expect((await profileRow('mal:1'))!.year).toBe(2025)
+  expect((await profileRow('mal:2'))!.year, 'the row that did not move is untouched').toBe(2026)
+
+  const third = await apply(output({ full: true }, { nodes: [{ table: 'MediaProfile', rows: [profile('mal:1', { year: 2025 })] }] }))
+  expect(third.counts.MediaProfile).toEqual({ created: 0, updated: 0, deleted: 1 })
+  expect(await profileRow('mal:2'), 'a row the plugin stopped desiring is retracted').toBeUndefined()
+})
+
+// (b) IDEMPOTENCE, which is the contract itself: same graph, same scope, same output. It has to hold
+// across every column TYPE, since the comparison is against what the column READ BACK, and two of
+// those do not read back what was written (an empty STRING[] is NULL, a JSON column is text).
+// Mutation: normalize an empty `STRING[]` to `[]` rather than to null in `canonical` (the engine
+// reads one back as NULL) and every row carrying an empty list reports as changed on every pass,
+// forever, which on a live page is a re-render per flush.
+test('the same output applied twice writes nothing the second time', async () => {
+  const rows = [profile('mal:3', {
+    scopeFrom: ['answer:mal', 'claim:kitsu'],
+    titleKeys: [{ key: 'frieren', score: 0.5, language: 'en', class: 'MAIN' }],
+    companion: true,
+    countStated: 12,
+  })]
+  const first = await apply(output({ full: true }, {
+    nodes: [{ table: 'MediaProfile', rows: [profile('mal:1', { year: 2025 }), ...rows] }],
+  }))
+  expect(first.counts.MediaProfile!.created).toBe(1)
+
+  const again = await apply(output({ full: true }, {
+    nodes: [{ table: 'MediaProfile', rows: [profile('mal:1', { year: 2025 }), ...rows] }],
+  }))
+  expect(again.changes, 'not one statement had a row to write').toEqual([])
+  expect(again.counts).toEqual({})
+
+  const stored = (await profileRow('mal:3'))!
+  expect(stored.scopeFrom).toEqual(['answer:mal', 'claim:kitsu'])
+  expect(JSON.parse(stored.titleKeys as string)).toEqual([{ key: 'frieren', score: 0.5, language: 'en', class: 'MAIN' }])
+  expect(stored.companion).toBe(true)
+  expect(stored.countStated).toBe(12)
+})
+
+// (c) THE SCOPE. A scoped run retracts inside its scope and nowhere else, which is what makes an
+// incremental pass safe: a plugin that recomputed one uri may not touch the other thousand.
+// Mutation: make `inScopeNode` return true (or delete the `!scope.full &&` guard in the delete
+// branch) and the mal:3 profile disappears with mal:1's, on a scope that never named it.
+test('an empty desired set inside a scope retracts that scope and leaves the rest standing', async () => {
+  const scoped = await apply(output({ full: false, uris: ['mal:1'], clusters: [], pairs: [] }))
+  expect(scoped.counts.MediaProfile).toEqual({ created: 0, updated: 0, deleted: 1 })
+  expect(await profileRow('mal:1')).toBeUndefined()
+  expect(await profileRow('mal:3'), 'outside the scope, so outside the diff').toBeTruthy()
+})
+
+// (d) THE EDGES, and the one trap the engine set: a node that still carries an edge cannot be
+// deleted with a plain DELETE ("has connected edges in table PROFILE_OF", measured 2026-09-12), so a
+// retract has to reach the edge first. A `LINK` is written here WITHOUT guards, which is step 2b.
+// Mutation: change the node delete to a plain `DELETE n` and the retract throws on the profile that
+// still carries ANOTHER plugin's PROFILE_OF; drop `applyEdgeDelete` from the apply order and every
+// retract throws the same way.
+test('edges are written and retracted with their nodes, and a retract empties the plugin', async () => {
+  const written = await apply(output({ full: true }, {
+    nodes: [
+      { table: 'MediaProfile', rows: [profile('mal:1'), profile('mal:2')] },
+      { table: 'TitleKey', rows: [{ key: 'frieren' }, { key: 'ranking of kings' }] },
+    ],
+    edges: [
+      { table: 'PROFILE_OF', rows: [{ from: 'mal:1', to: 'mal:1' }, { from: 'mal:2', to: 'mal:2' }] },
+      { table: 'HAS_KEY', rows: [{ from: 'mal:1', to: 'frieren', key: 'frieren', score: 1, language: 'en', class: 'MAIN' }] },
+    ],
+    links: [{ kind: 'SAME_AS', fromUri: 'mal:1', toUri: 'mal:2', reason: 'test', confidence: 0.9, supports: ['a', 'b'] }],
+  }))
+  expect(written.counts.PROFILE_OF).toEqual({ created: 2, updated: 0, deleted: 0 })
+  expect(written.counts.HAS_KEY!.created).toBe(1)
+  expect(written.counts.LINK!.created).toBe(1)
+  expect(await rowsOf('MATCH (a:Media)-[e:LINK]->(b:Media) RETURN a.uri AS from, b.uri AS to, e.status AS status, e.supports AS supports'))
+    .toEqual([{ from: 'mal:1', to: 'mal:2', status: 'active', supports: ['a', 'b'] }])
+
+  // and the same output again is still a no-op, edges included
+  const again = await apply(output({ full: true }, {
+    nodes: [
+      { table: 'MediaProfile', rows: [profile('mal:1'), profile('mal:2')] },
+      { table: 'TitleKey', rows: [{ key: 'frieren' }, { key: 'ranking of kings' }] },
+    ],
+    edges: [
+      { table: 'PROFILE_OF', rows: [{ from: 'mal:1', to: 'mal:1' }, { from: 'mal:2', to: 'mal:2' }] },
+      { table: 'HAS_KEY', rows: [{ from: 'mal:1', to: 'frieren', key: 'frieren', score: 1, language: 'en', class: 'MAIN' }] },
+    ],
+    links: [{ kind: 'SAME_AS', fromUri: 'mal:1', toUri: 'mal:2', reason: 'test', confidence: 0.9, supports: ['a', 'b'] }],
+  }))
+  expect(again.changes).toEqual([])
+
+  // A SECOND PLUGIN'S EDGE onto this plugin's node, which is the case that decides the delete
+  // spelling: `plugin:aggregate` retracting a `Cluster` that `plugin:containment` attached to is the
+  // same shape. Plain DELETE dies here ("has connected edges in table PROFILE_OF", measured
+  // 2026-09-12) and DETACH DELETE takes the foreign edge with it, which is correct because an edge
+  // cannot outlive its endpoint: the pass recomputes the other plugin on its next iteration.
+  await applyPluginOutput({
+    id: 'plugin:other' as PluginId,
+    version: 1,
+    produces: { nodes: [], edges: ['PROFILE_OF'] },
+    output: output({ full: true }, { edges: [{ table: 'PROFILE_OF', rows: [{ from: 'mal:1', to: 'mal:1' }] }] }),
+  })
+  expect(await rowsOf('MATCH ()-[e:PROFILE_OF]->() RETURN count(e) AS total'), 'two plugins, one pair').toEqual([{ total: 3 }])
+
+  const retracted = await retractPlugin(PLUGIN)
+  expect(retracted.counts.MediaProfile!.deleted).toBe(2)
+  expect(retracted.counts.PROFILE_OF!.deleted).toBe(2)
+  expect(retracted.counts.LINK!.deleted).toBe(1)
+  expect(await rowsOf('MATCH (n:MediaProfile) RETURN count(n) AS total')).toEqual([{ total: 0 }])
+  expect(await rowsOf('MATCH ()-[e:PROFILE_OF]->() RETURN count(e) AS total'), 'the other plugin\'s edge went with its endpoint')
+    .toEqual([{ total: 0 }])
+  expect(await rowsOf('MATCH ()-[e:LINK]->() RETURN count(e) AS total')).toEqual([{ total: 0 }])
+  expect(await rowsOf('MATCH (m:Media) RETURN count(m) AS total'), 'and the source rows are untouched')
+    .toEqual([{ total: 3 }])
+})
+
+// (e) THE TWO REFUSALS of isolation layer 1, evaluated at RUNTIME rather than only in the type: the
+// output type has no member that can name `Media`, and a plugin written in JS, or cast through an
+// `as`, has one anyway.
+// Mutation: delete the `desiredNodes.get(table)` check and the Media row is written into the source
+// table the ingest owns, which the audit would then have to catch after the fact.
+test('a row naming a source table, or a table outside produces, is refused with the plugin named', async () => {
+  const sourceRow = output({ full: true }, {
+    nodes: [{ table: 'Media' as never, rows: [{ uri: 'mal:1', scope: 'CONTAINER' }] }],
+  })
+  await expect(apply(sourceRow)).rejects.toThrow(/plugin:test may not write Media: a source table/)
+
+  const undeclared = output({ full: true }, { nodes: [{ table: 'Cluster', rows: [{ id: 'c1' }] }] })
+  await expect(apply(undeclared)).rejects.toThrow(/plugin:test may not write Cluster: it declares produces/)
+
+  const undeclaredEdge = output({ full: true }, { episodeLinks: [{ fromUri: 'a', toUri: 'b', reason: 'r', confidence: 1, fromNumber: 1, toNumber: 1, supports: [] }] })
+  await expect(apply(undeclaredEdge)).rejects.toThrow(/plugin:test may not write EPISODE_LINK/)
+
+  // and a plugin that DECLARED a source table is refused before it can hand over a row at all
+  const declaresSource = applyPluginOutput({
+    ...PLUGIN,
+    produces: { nodes: ['Media' as never], edges: [] },
+    output: output({ full: true }),
+  })
+  await expect(declaresSource).rejects.toThrow(/plugin:test may not write Media: a source table/)
+
+  expect((await rowsOf('MATCH (m:Media {uri: "mal:1"}) RETURN m.scope AS scope'))[0]!.scope, 'nothing landed')
+    .toBe('RUN')
+})
+
+// (f) THE COLUMN PARSER, which is why the writer cannot disagree with the DDL about a type. `Media`
+// is the statement that carries both traps: a `MAP(STRING, INT64)` whose comma is inside parentheses,
+// and `//` comments on most lines.
+// Mutation: split the DDL on ',' without counting depth and `fieldSeq` becomes two columns named
+// `fieldSeq MAP(STRING` and `INT64)`, which writes a binder error rather than a row.
+test('the column parser reads the DDL, nested commas and comments included', () => {
+  const columns = columnsOf(SOURCE_NODE_TABLES.find(statement => statement.includes('TABLE IF NOT EXISTS Media'))!)
+  const byName = new Map(columns.map(column => [column.name, column]))
+  expect(byName.get('uri')).toMatchObject({ kind: 'STRING', primary: true })
+  expect(byName.get('owned')).toMatchObject({ kind: 'BOOLEAN' })
+  expect(byName.get('categories')).toMatchObject({ kind: 'LIST', element: 'STRING', type: 'STRING[]' })
+  expect(byName.get('fieldSeq'), 'the MAP survives its own comma').toMatchObject({
+    kind: 'MAP', element: 'INT64', type: 'MAP(STRING, INT64)',
+  })
+  expect(byName.get('raw')).toMatchObject({ kind: 'JSON' })
+  expect(columns.filter(column => column.primary).length, 'exactly one primary key').toBe(1)
+})

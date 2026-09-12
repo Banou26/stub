@@ -55,7 +55,7 @@ const MS_PER_DAY = 86_400_000
  * either of those two, so restricting here costs nothing today and keeps the comparison meaningful
  * if one of them starts.
  */
-const WORK_KINDS = new Set<MediaType>(['TV', 'MOVIE', 'SPECIAL', 'OVA', 'ONA'])
+export const WORK_KINDS = new Set<MediaType>(['TV', 'MOVIE', 'SPECIAL', 'OVA', 'ONA'])
 
 /**
  * The type a media presents to the MERGE, which spells a short as the TV it used to be.
@@ -71,7 +71,7 @@ const WORK_KINDS = new Set<MediaType>(['TV', 'MOVIE', 'SPECIAL', 'OVA', 'ONA'])
  * jikan types TV would then share no work kind and veto each other, refusing a merge that is correct.
  * Folding it back keeps every profile byte-identical to before the member existed.
  */
-const mergeType = (type: MediaType | null): MediaType | null => type === 'TV_SHORT' ? 'TV' : type
+export const mergeType = (type: MediaType | null): MediaType | null => type === 'TV_SHORT' ? 'TV' : type
 
 /**
  * The trailing phrases that name companion content rather than a work, measured one at a time rather
@@ -89,7 +89,7 @@ const mergeType = (type: MediaType | null): MediaType | null => type === 'TV_SHO
  *   ./node_modules/.bin/vitest run --config vitest.probe.config.ts \
  *     scripts/measure-companion-marker.probe.ts --disableConsoleIntercept --reporter=verbose
  */
-const COMPANION_MARKERS = [
+export const COMPANION_MARKERS = [
   'specials', 'special', 'picture drama', 'recap', 'ova', 'ona', 'bonus', 'mini anime',
   'episode 0', 'trailer',
 ]
@@ -361,8 +361,12 @@ export const profileCluster = (cluster: Media[]): ClusterProfile => {
   }
 }
 
-// exact upper bound on titleSimilarity - skips the WASM alignment for pairs that can never reach the threshold
-const maxPossibleSimilarity = (a: string, b: string) => {
+/**
+ * The exact upper bound on `titleSimilarity`, which skips the wasm alignment for a pair that can
+ * never reach the threshold. Shared with the plugin contract (`PluginContext.maxPossibleSimilarity`)
+ * so every rule prices a pair the same way.
+ */
+export const maxPossibleSimilarity = (a: string, b: string) => {
   const counts = new Map<string, number>()
   for (const char of a) counts.set(char, (counts.get(char) ?? 0) + 1)
   let common = 0

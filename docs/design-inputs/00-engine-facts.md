@@ -96,3 +96,14 @@ corrupted a WHOLE batch rather than one row.
   `ABOUT` 824. Replaying 800 recorded rows of one page costs 1,444 ms in one batch, 2,608 ms over the
   22 flush-sized batches a live page actually writes, and 150 ms on a second identical pass, which
   writes nothing.
+
+## Measured on 2026-09-12 while building the plugin runtime (step 2a)
+
+- **An empty `UNWIND` list dies at runtime** (`Trying to create a vector with ANY type`): never run a
+  statement with no rows; skip it.
+- **A node that still carries an edge cannot be deleted with `DELETE n`**; use `DETACH DELETE` when a
+  plugin retracts a node another plugin's edge may hang off.
+- **`json_extract` returns a JSON string WITH its quotes** (`"RUN"`, not `RUN`); parse it.
+- The writer parses column types and FROM/TO pairs out of `GRAPH_SCHEMA` itself, so it cannot disagree
+  with `schema.ts` about a type. A pass over 800 recorded rows: 1,188 ms the first time (audit 181 ms of
+  it), 307 ms the second, which writes nothing.

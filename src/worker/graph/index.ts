@@ -18,6 +18,14 @@ export type { AnswerKind, AnswerRow } from './answers'
 export { graphCounts } from './counts'
 export { ingestAnswers, replayAnswers } from './ingest'
 export type { IngestChanged, IngestQuarantine, IngestReport } from './ingest'
+// Section 5: the contract, the writer and the pass. Nothing subscribes to `graph:changed` yet, so a
+// pass runs only when a caller asks for one; the scheduler of 5.3 is step 2c.
+export type { Plugin, PluginContext, PluginOutput, Scope } from './plugins/contract'
+export { applyPluginOutput, retractPlugin } from './plugins/writer'
+export type { WriterChange, WriterReport } from './plugins/writer'
+export { auditSources, PASS_CAP, runPlugins } from './plugins/runner'
+export type { AuditReport, PassReport } from './plugins/runner'
+export { profilePlugin } from './plugins/profile'
 
 let booting: Promise<void> | undefined
 
