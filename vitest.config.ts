@@ -49,6 +49,11 @@ export default defineConfig({
     // joined the pool, green alone and on every warm run since. 300 s is what the two newest suites
     // already pass per file; here it covers the older ones too.
     hookTimeout: 300_000,
+    // The same suites run a whole pass inside a test body, and under the pool's parallel engine load
+    // one such test hit the 5 s default (2026-09-12, a refused episode pair flipping to active: green
+    // alone, red beside sixty other files). A hang in a plain unit test now costs two minutes to
+    // surface instead of five seconds, which is the cheaper of the two mistakes.
+    testTimeout: 120_000,
     // seeds sacha's wasm, which cannot self-init under node. See the file for why it is not inlined.
     setupFiles: ['./vitest.setup.ts'],
     // TWO GRAPHQL REALMS, or a yoga server cannot execute a document here. Externalized, yoga and
