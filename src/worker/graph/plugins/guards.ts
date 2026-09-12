@@ -1,0 +1,628 @@
+/**
+ * The nine guards of 5.2, the downgrade they write instead, and the `partOf` guards beside them.
+ *
+ * EVERY `SAME_AS` PROPOSAL PASSES THESE, whatever plugin made it, and the writer is the one caller
+ * (`./writer.ts`). A guard never edits a proposal: it returns a verdict, and a refusal carries both
+ * the row that records it (`LINK {status: 'refused', reason}`) and, for six of the nine, the
+ * containment edge the writer writes instead. A wrong CONTAINER is a missing `SAME_AS`, recoverable
+ * by a later proof; a wrong `SAME_AS` is a lie about what the user is about to watch
+ * (`db.ts:142-145`), so a refusal costs a button and never a badge.
+ *
+ * WHAT IS READ, AND WHEN. A batch is PREPARED once (`prepareGuards`) with every pair the writer is
+ * about to weigh: five reads, then every verdict is computed in JS off that snapshot. Two of the
+ * guards say what they read in their own rule:
+ * - guard 4 is evaluated against the GRAPH AS IT STANDS, never within one pass, so the snapshot is
+ *   taken before the first verdict and no proposal of this pass can move it,
+ * - guard 5 is evaluated over every CLAIM rather than over active links, so two claimants landing in
+ *   different flushes meet anyway and the verdict is the same on every later pass.
+ *
+ * THE SNAPSHOT IS TAKEN BEFORE THE DIFF, so it holds rows this same apply is about to delete. That is
+ * the rule's own wording ("the graph as it stands") and it is deliberate, but it surprises a reader
+ * twice: a pair the previous apply joined with a `PART_OF` is `contained` in the apply that retracts
+ * that `PART_OF`, and a weld the previous apply wrote can move the verdict on a neighbouring pair
+ * from guard 7 to guard 4. Neither is a cycle, because the next iteration reads the moved graph and
+ * agrees with itself; the pass's own fixed-point loop is what absorbs them (2 iterations on a
+ * recorded page, 2026-09-12).
+ *
+ * THE COMPONENT READ IS AN EDGE LIST, NOT A WALK PER URI. `MATCH (a)-[e:LINK*0..8 (r, _ | WHERE
+ * r.kind = 'SAME_AS' AND r.status = 'active')]-(b)` is the spelling of 3.5 and it is what the test
+ * asserts this agrees with, uri by uri; issuing it once per endpoint would be one recursive walk per
+ * proposal (6.8 ms each on a session sized graph, 2026-09-11). One read of the active `SAME_AS`
+ * edges plus a union-find in JS is the same relation for the whole batch.
+ *
+ * THE 2C HOOKS, both marked where they sit: the component read is whole-graph and becomes a
+ * delta-scoped read when `delta` arrives, and guard 7 reads the run side's own profile count because
+ * `Cluster.runLength` (the witnessed figure of 5.4 P5) does not exist until `plugin:aggregate` lands.
+ */
+import type { Refusal } from './contract'
+
+/** The read handle the guards are given: Cypher in, rows out, exactly the writer's own handle. */
+export type GuardQuery = (cypher: string, params?: Record<string, unknown>) => Promise<Record<string, unknown>[]>
+
+/** One pair the writer is about to weigh, with the claim and link keys it was derived from. */
+export type SameAsSubject = { fromUri: string, toUri: string, supports: string[] }
+
+/** The containment edge a refusal is written as (5.2, "the downgrade"). */
+export type Downgrade = { fromUri: string, toUri: string, reason: Refusal, evidence: { theirs: unknown, ours: unknown } }
+
+/**
+ * What a guard concluded about one proposal.
+ *
+ * `write` is false for `unknown-scope` alone: the proposal WAITS for the next pass and nothing is
+ * written, so a claim whose endpoint has no effective scope yet leaves no row behind to explain
+ * (5.2 guard 1, the mermaid's "the claim edge stays, nothing is written, replayed next pass").
+ */
+export type SameAsVerdict =
+  | { ok: true }
+  | { ok: false, reason: Refusal, write: boolean, evidence: unknown, downgrade?: Downgrade }
+
+/** The `partOf` guards: `unknown-scope`, `self` and `inverted`, and nothing else (5.2). */
+export type PartOfVerdict =
+  | { ok: true }
+  | { ok: false, reason: 'unknown-scope' | 'self' | 'inverted', write: boolean, evidence: unknown }
+
+/** Every fact a guard reads about one row, all of it off `MediaProfile` and its own `Media` row. */
+export type ProfileFacts = {
+  uri: string
+  origin: string
+  scope: 'RUN' | 'CONTAINER' | null
+  idParent: string | null
+  folding: boolean
+  countStated: number | null
+  countDistinct: number | null
+  format: string | null
+  showLevelOrigin: boolean
+  /** `Media.status`, which is what the FINISHED gate of guard 7 reads. Not a profile column (2.2). */
+  status: string | null
+}
+
+/** The guards in the order 5.2 states them. Exported so a test walks the rule rather than a list. */
+export const SAME_AS_GUARDS = [
+  'unknown-scope', 'cross-scope', 'address-only', 'disagreeing-ids', 'contested',
+  'contained', 'count-mismatch', 'no-length', 'kind-mismatch',
+] as const satisfies readonly Refusal[]
+
+/**
+ * The refusal reasons the writer itself puts on a downgrade edge.
+ *
+ * Guard 6 must not read one: a `PART_OF` written BECAUSE a `SAME_AS` was refused is the refusal, not
+ * an independent containment fact, and treating it as one flips the reason of the refused row from
+ * `cross-scope` to `contained` on the next pass, drops the downgrade, and puts the pair back to
+ * `cross-scope` on the pass after that. That is a cycle the state hash reports rather than a verdict.
+ */
+export const DOWNGRADE_REASONS = new Set<string>([
+  'cross-scope', 'disagreeing-ids', 'contested', 'count-mismatch', 'no-length', 'kind-mismatch',
+])
+
+const asBoolean = (value: unknown): boolean => value === true
+const asText = (value: unknown): string | null => typeof value === 'string' && value ? value : null
+const asNumber = (value: unknown): number | null =>
+  value === null || value === undefined ? null : Number.isFinite(Number(value)) ? Number(value) : null
+
+const originOf = (uri: string): string => uri.slice(0, uri.indexOf(':'))
+const idOf = (uri: string): string => uri.slice(uri.indexOf(':') + 1)
+
+const unknownProfile = (uri: string): ProfileFacts => ({
+  uri,
+  origin: originOf(uri),
+  scope: null,
+  idParent: null,
+  folding: false,
+  countStated: null,
+  countDistinct: null,
+  format: null,
+  showLevelOrigin: false,
+  status: null,
+})
+
+/**
+ * Whether two ids of one origin are one id at two precisions, which is not a disagreement.
+ *
+ * `idParent` first, because that is the column 5.2 guard 4 names, and it is the CONFIRMED form: the
+ * profile writes it only when the parent row exists, so `offline:mal-59193` never claims a parent
+ * nobody named. The literal test beside it is the specificity rule itself (`src/utils/uri.ts:23-34`,
+ * prefix extension and never length), and it is what answers `cr:A-1-2` against `cr:A` when the
+ * intermediate `cr:A-1` was never a row: with no chain to climb the two ids still stand in the one
+ * relation the rule is about.
+ */
+export const prefixRelated = (a: string, b: string, parentOf: (uri: string) => string | null): boolean => {
+  if (a === b) return true
+  if (originOf(a) !== originOf(b)) return false
+  const climbs = (from: string, to: string): boolean => {
+    let current: string | null = from
+    for (let hop = 0; hop < 8 && current; hop += 1) {
+      current = parentOf(current)
+      if (current === to) return true
+    }
+    return false
+  }
+  if (climbs(a, b) || climbs(b, a)) return true
+  return idOf(a).startsWith(`${idOf(b)}-`) || idOf(b).startsWith(`${idOf(a)}-`)
+}
+
+/** The first pair of one origin's ids in `uris` that are not one id at two precisions. */
+const disagreementIn = (uris: string[], parentOf: (uri: string) => string | null): [string, string] | undefined => {
+  const byOrigin = new Map<string, string[]>()
+  for (const uri of [...new Set(uris)].sort()) {
+    const list = byOrigin.get(originOf(uri))
+    if (list) list.push(uri)
+    else byOrigin.set(originOf(uri), [uri])
+  }
+  for (const [, list] of [...byOrigin].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+    for (let i = 0; i < list.length; i += 1) {
+      for (let j = i + 1; j < list.length; j += 1) {
+        if (!prefixRelated(list[i]!, list[j]!, parentOf)) return [list[i]!, list[j]!]
+      }
+    }
+  }
+  return undefined
+}
+
+/** The same test across two sides: only a pair that STRADDLES them is a disagreement the union adds. */
+const straddlingDisagreement = (
+  left: string[],
+  right: string[],
+  parentOf: (uri: string) => string | null
+): [string, string] | undefined => {
+  const rightSet = new Set(right)
+  for (const a of [...new Set(left)].sort()) {
+    // a uri on both sides carries no disagreement ACROSS them: it is one row, in one component
+    if (rightSet.has(a)) continue
+    for (const b of [...new Set(right)].sort()) {
+      if (originOf(a) !== originOf(b)) continue
+      if (!prefixRelated(a, b, parentOf)) return [a, b]
+    }
+  }
+  return undefined
+}
+
+// ---------------------------------------------------------------------------------------------
+// The component relation: active SAME_AS, both directions, and nothing else (3.5).
+
+/** A union-find over the active `SAME_AS` edges: the closure of 3.5, computed once for a batch. */
+export type Components = {
+  /** The component key of one uri: its lowest member, so two uris agree iff their keys do. */
+  keyOf: (uri: string) => string
+  /** Every member of one uri's component, the uri included. */
+  membersOf: (uri: string) => string[]
+}
+
+/**
+ * Read every active `SAME_AS` link and group the rows it joins.
+ *
+ * THE 2C HOOK: this is the whole-graph form. With `delta` the read narrows to the links an endpoint
+ * of the delta touches, which is the scoping 5.2's last paragraph describes, and `runPlugin` then
+ * asserts the two forms retract the same links.
+ */
+export const readComponents = async (query: GuardQuery): Promise<Components> => {
+  const parent = new Map<string, string>()
+  const find = (uri: string): string => {
+    let root = uri
+    while (parent.get(root) && parent.get(root) !== root) root = parent.get(root)!
+    let walk = uri
+    while (parent.get(walk) && parent.get(walk) !== walk) {
+      const next = parent.get(walk)!
+      parent.set(walk, root)
+      walk = next
+    }
+    return root
+  }
+  const union = (a: string, b: string) => {
+    parent.set(a, parent.get(a) ?? a)
+    parent.set(b, parent.get(b) ?? b)
+    const rootA = find(a)
+    const rootB = find(b)
+    if (rootA === rootB) return
+    // the lower uri is always the root, so a component key is stable whatever order the edges arrive
+    if (rootA < rootB) parent.set(rootB, rootA)
+    else parent.set(rootA, rootB)
+  }
+  const rows = await query(
+    `MATCH (a:Media)-[l:LINK]->(b:Media)
+     WHERE l.kind = 'SAME_AS' AND l.status = 'active'
+     RETURN a.uri AS fromUri, b.uri AS toUri`
+  )
+  for (const row of rows) union(String(row.fromUri), String(row.toUri))
+
+  const members = new Map<string, string[]>()
+  for (const uri of parent.keys()) {
+    const root = find(uri)
+    const list = members.get(root)
+    if (list) list.push(uri)
+    else members.set(root, [uri])
+  }
+  return {
+    keyOf: uri => (parent.has(uri) ? find(uri) : uri),
+    membersOf: uri => (parent.has(uri) ? [...members.get(find(uri))!].sort() : [uri]),
+  }
+}
+
+// ---------------------------------------------------------------------------------------------
+// The prepared batch.
+
+/** One consumed `SAME_AS` claim into a row: who made it, and from which row. */
+type ClaimIn = { claimant: string, claimer: string }
+
+/** The snapshot every verdict in one batch is computed against. */
+export type GuardPass = {
+  sameAs: (subject: SameAsSubject) => SameAsVerdict
+  partOf: (part: string, whole: string) => PartOfVerdict
+  /** What the batch read, so a test can assert on the evidence rather than only on the verdict. */
+  profileOf: (uri: string) => ProfileFacts
+  components: Components
+}
+
+const chunked = <T>(values: T[], size: number): T[][] => {
+  const chunks: T[][] = []
+  for (let index = 0; index < values.length; index += size) chunks.push(values.slice(index, index + size))
+  return chunks
+}
+
+const CHUNK = 2000
+
+/**
+ * Read everything the nine guards need for `subjects`, then answer each of them without a round trip.
+ *
+ * Five statements, each written once and parameterized, and none of them ever runs with an empty
+ * `UNWIND` list (that dies at runtime on this engine, 2026-09-12).
+ */
+export const prepareGuards = async (
+  query: GuardQuery,
+  subjects: { fromUri: string, toUri: string, supports: string[] }[]
+): Promise<GuardPass> => {
+  const endpoints = new Set<string>()
+  const supports = new Set<string>()
+  for (const subject of subjects) {
+    endpoints.add(subject.fromUri)
+    endpoints.add(subject.toUri)
+    for (const key of subject.supports) supports.add(key)
+  }
+
+  // (5) the claims INTO each endpoint, which is guard 5's whole evidence: every consumed SAME_AS
+  // claim in the graph, never the active links, so two claimants in different flushes still meet
+  const claimsInto = new Map<string, ClaimIn[]>()
+  for (const chunk of chunked([...endpoints], CHUNK)) {
+    if (!chunk.length) continue
+    const rows = await query(
+      `UNWIND $uris AS u
+       MATCH (a:Media)-[c:CLAIMS]->(b:Media {uri: u})
+       WHERE c.kind = 'SAME_AS' AND c.provenance <> 'address'
+       RETURN DISTINCT u AS target, a.uri AS claimant, c.claimer AS claimer ORDER BY target, claimant, claimer`,
+      { uris: chunk }
+    )
+    for (const row of rows) {
+      const target = String(row.target)
+      const list = claimsInto.get(target) ?? []
+      list.push({ claimant: String(row.claimant), claimer: String(row.claimer) })
+      claimsInto.set(target, list)
+    }
+  }
+
+  // (4) the component relation, over the graph as it stands
+  const components = await readComponents(query)
+
+  // (1, 2, 7, 8, 9) one profile read over every uri a verdict can name: the endpoints, every member
+  // of their components and every claimant guard 5 will weigh
+  const profileSubjects = new Set(endpoints)
+  for (const uri of endpoints) {
+    for (const member of components.membersOf(uri)) profileSubjects.add(member)
+    for (const claim of claimsInto.get(uri) ?? []) {
+      profileSubjects.add(claim.claimant)
+      for (const member of components.membersOf(claim.claimant)) profileSubjects.add(member)
+    }
+  }
+  const profiles = new Map<string, ProfileFacts>()
+  for (const chunk of chunked([...profileSubjects], CHUNK)) {
+    if (!chunk.length) continue
+    const rows = await query(
+      `UNWIND $uris AS u
+       MATCH (p:MediaProfile {uri: u}), (m:Media {uri: u})
+       RETURN p.uri AS uri, m.origin AS origin, p.scope AS scope, p.idParent AS idParent,
+         p.folding AS folding, p.countStated AS countStated, p.countDistinct AS countDistinct,
+         p.format AS format, p.showLevelOrigin AS showLevelOrigin, m.status AS status`,
+      { uris: chunk }
+    )
+    for (const row of rows) {
+      const uri = String(row.uri)
+      profiles.set(uri, {
+        uri,
+        origin: asText(row.origin) ?? originOf(uri),
+        scope: asText(row.scope) === 'CONTAINER' ? 'CONTAINER' : asText(row.scope) === 'RUN' ? 'RUN' : null,
+        idParent: asText(row.idParent),
+        folding: asBoolean(row.folding),
+        countStated: asNumber(row.countStated),
+        countDistinct: asNumber(row.countDistinct),
+        format: asText(row.format),
+        showLevelOrigin: asBoolean(row.showLevelOrigin),
+        status: asText(row.status),
+      })
+    }
+  }
+
+  // (3) which of the supports are ADDRESS claims: a pointer, whoever the claimer (3.3)
+  const addressKeys = new Set<string>()
+  for (const chunk of chunked([...supports], CHUNK)) {
+    if (!chunk.length) continue
+    const rows = await query(
+      `UNWIND $keys AS k MATCH (a:Media)-[c:CLAIMS {key: k}]->(b:Media)
+       WHERE c.provenance = 'address' RETURN DISTINCT c.key AS key`,
+      { keys: chunk }
+    )
+    for (const row of rows) addressKeys.add(String(row.key))
+  }
+
+  // (6) the containment edges already joining a pair, the query of 3.5 with the one exclusion the
+  // writer's own downgrade forces (see DOWNGRADE_REASONS)
+  const contained = new Set<string>()
+  const pairs = subjects.map(subject => ({ a: subject.fromUri, b: subject.toUri }))
+  for (const chunk of chunked(pairs, CHUNK)) {
+    if (!chunk.length) continue
+    const rows = await query(
+      `UNWIND $pairs AS p
+       MATCH (a:Media {uri: p.a})-[l:LINK {status: 'active'}]-(b:Media {uri: p.b})
+       WHERE l.kind IN ['PART_OF', 'INCLUDES']
+       RETURN DISTINCT p.a AS a, p.b AS b, l.reason AS reason`,
+      { pairs: chunk }
+    )
+    for (const row of rows) {
+      if (DOWNGRADE_REASONS.has(String(row.reason))) continue
+      contained.add(pairKey(String(row.a), String(row.b)))
+    }
+  }
+
+  const profileOf = (uri: string): ProfileFacts => profiles.get(uri) ?? unknownProfile(uri)
+  const parentOf = (uri: string): string | null => profiles.get(uri)?.idParent ?? null
+
+  return {
+    profileOf,
+    components,
+    sameAs: subject => sameAsVerdict(subject, { profileOf, parentOf, components, claimsInto, addressKeys, contained }),
+    partOf: (part, whole) => partOfVerdict(part, whole, profileOf),
+  }
+}
+
+const pairKey = (a: string, b: string): string => (a < b ? `${a} ${b}` : `${b} ${a}`)
+
+/** How the writer builds one batch of verdicts. `prepareGuards` is the only one that reads a rule. */
+export type GuardsFactory = (query: GuardQuery, subjects: SameAsSubject[]) => Promise<GuardPass>
+
+/**
+ * A prepared batch that accepts every pair, for the one caller that wants a `LINK` row written with
+ * no rule applied: a test pinning the DIFF itself rather than a verdict.
+ *
+ * It is the default nowhere. The writer guards unless a caller hands this over, because a chokepoint
+ * a plugin cannot route around is the whole argument for having one (5.2).
+ */
+export const acceptEveryPair: GuardsFactory = async () => ({
+  sameAs: () => ({ ok: true }),
+  partOf: () => ({ ok: true }),
+  profileOf: unknownProfile,
+  components: { keyOf: uri => uri, membersOf: uri => [uri] },
+})
+
+type Facts = {
+  profileOf: (uri: string) => ProfileFacts
+  parentOf: (uri: string) => string | null
+  components: Components
+  claimsInto: Map<string, ClaimIn[]>
+  addressKeys: Set<string>
+  contained: Set<string>
+}
+
+/** The episode figure a count guard reads: what the graph holds, else what the source stated (5.2). */
+export const countOf = (facts: ProfileFacts): number | null => facts.countDistinct ?? facts.countStated
+
+/**
+ * Which endpoint a downgrade points AT when the rule itself does not name one.
+ *
+ * The run or shorter side goes to the container or longer side (5.2), and `kind-mismatch` is the one
+ * refusal where neither side is a container and neither is longer (`tmdb:550` is a film to one
+ * answer and a series to another). The order below is the rule's own, and the last step is a
+ * tie-break rather than a reading: it only has to be the SAME answer on every pass, since a
+ * containment edge that changed direction between passes would be written twice forever.
+ */
+const containerSideOf = (a: ProfileFacts, b: ProfileFacts): ProfileFacts => {
+  if (a.scope !== b.scope) return a.scope === 'CONTAINER' ? a : b
+  const countA = countOf(a)
+  const countB = countOf(b)
+  if (countA !== null && countB !== null && countA !== countB) return countA > countB ? a : b
+  if (a.showLevelOrigin !== b.showLevelOrigin) return a.showLevelOrigin ? a : b
+  return a.uri > b.uri ? a : b
+}
+
+const downgradeTo = (
+  whole: ProfileFacts,
+  part: ProfileFacts,
+  reason: Refusal,
+  evidence: { theirs: unknown, ours: unknown }
+): Downgrade => ({ fromUri: part.uri, toUri: whole.uri, reason, evidence })
+
+/** The nine guards, in the order of 5.2's table, over one prepared batch. */
+const sameAsVerdict = (subject: SameAsSubject, facts: Facts): SameAsVerdict => {
+  const a = facts.profileOf(subject.fromUri)
+  const b = facts.profileOf(subject.toUri)
+
+  // 1. unknown-scope (db.ts:113-123): the claim that took the RUN default before its row landed
+  if (a.scope === null || b.scope === null) {
+    return {
+      ok: false,
+      reason: 'unknown-scope',
+      write: false,
+      evidence: { theirs: b.scope, ours: a.scope },
+    }
+  }
+
+  // 2. cross-scope (db.ts:166-169): an edge run to container, whatever was claimed
+  if (a.scope !== b.scope) {
+    const container = a.scope === 'CONTAINER' ? a : b
+    const run = container === a ? b : a
+    return {
+      ok: false,
+      reason: 'cross-scope',
+      write: true,
+      evidence: { theirs: container.scope, ours: run.scope },
+      downgrade: downgradeTo(container, run, 'cross-scope', { theirs: container.scope, ours: run.scope }),
+    }
+  }
+
+  // 3. address-only (3.3): a pointer, whoever the claimer. Refused and NOT downgraded, because the
+  // address asserts nothing about how its uris relate; the row still renders as a badge (6.2)
+  const address = subject.supports.filter(key => facts.addressKeys.has(key))
+  if (address.length) {
+    return { ok: false, reason: 'address-only', write: true, evidence: { theirs: address, ours: subject.supports } }
+  }
+
+  // 4. disagreeing-ids (anomalies.ts:18-25, similar-consumer.ts:239-245). Evaluated against the graph
+  // as it stands: the target's current active SAME_AS component is what the union is tested against.
+  //
+  // A pair already in ONE component is NOT refused here, and that is the difference between a guard
+  // and a cycle: the disagreement it would report is not one this proposal adds, the rule is about
+  // what the union WOULD put together, and refusing every link of a component whose ids disagree
+  // empties the component, which passes the same guard on the next iteration and welds it back. The
+  // shape that must retract is two claimants into one row, and guard 5 catches that over CLAIMS,
+  // where no link status can move it. The standing disagreement is reported by 5.5 instead.
+  const membersA = facts.components.membersOf(a.uri)
+  const membersB = facts.components.membersOf(b.uri)
+  if (facts.components.keyOf(a.uri) !== facts.components.keyOf(b.uri)) {
+    const straddle = straddlingDisagreement(membersA, membersB, facts.parentOf)
+    if (straddle) {
+      const [ours, theirs] = straddle
+      // the shared row is the endpoint that INHERITED the disagreeing id from its component rather
+      // than being it: `mal:51535` holding AoT Part 1 while Part 2's own anilist id arrives (8.6).
+      // When both inherited it, or neither did, no side is the claimant and the stable tie-break
+      // decides, the same one `kind-mismatch` uses.
+      const shared =
+        a.uri === ours && b.uri !== theirs ? b
+        : b.uri === theirs && a.uri !== ours ? a
+        : containerSideOf(a, b)
+      const claimant = shared === a ? b : a
+      return {
+        ok: false,
+        reason: 'disagreeing-ids',
+        write: true,
+        evidence: { theirs, ours },
+        downgrade: downgradeTo(shared, claimant, 'disagreeing-ids', { theirs, ours }),
+      }
+    }
+  }
+
+  // 5. contested (NEW as a store rule): two or more components hold consumed SAME_AS claims into one
+  // target and disagree with each other by guard 4. Every such proposal is refused and downgraded,
+  // and the active link among them is retracted, because every pass re-proposes it and meets this.
+  for (const target of [b, a]) {
+    const other = target === a ? b : a
+    const claimants = [...new Set((facts.claimsInto.get(target.uri) ?? []).map(claim => claim.claimant))]
+      .filter(uri => uri !== target.uri)
+      .sort()
+    if (claimants.length < 2) continue
+    const otherKey = facts.components.keyOf(other.uri)
+    for (let i = 0; i < claimants.length; i += 1) {
+      for (let j = i + 1; j < claimants.length; j += 1) {
+        const left = facts.components.membersOf(claimants[i]!)
+        const right = facts.components.membersOf(claimants[j]!)
+        if (facts.components.keyOf(claimants[i]!) === facts.components.keyOf(claimants[j]!)) continue
+        const straddle = straddlingDisagreement(left, right, facts.parentOf)
+        if (!straddle) continue
+        // this proposal is one of the contesting claims only when its other end is one of the two
+        // components: a third row that agrees with neither is refused on its own evidence, not here
+        const ourSideIsLeft = facts.components.keyOf(claimants[i]!) === otherKey
+        const ourSideIsRight = facts.components.keyOf(claimants[j]!) === otherKey
+        if (!ourSideIsLeft && !ourSideIsRight) continue
+        const evidence = {
+          theirs: ourSideIsLeft ? straddle[1] : straddle[0],
+          ours: ourSideIsLeft ? straddle[0] : straddle[1],
+        }
+        return {
+          ok: false,
+          reason: 'contested',
+          write: true,
+          evidence,
+          downgrade: downgradeTo(target, other, 'contested', evidence),
+        }
+      }
+    }
+  }
+
+  // 6. contained (the owner's rule, 3.5): the containment edge already exists, so the downgrade is a
+  // no-op and none is written
+  if (facts.contained.has(pairKey(a.uri, b.uri))) {
+    return { ok: false, reason: 'contained', write: true, evidence: { theirs: b.uri, ours: a.uri } }
+  }
+
+  // 7. count-mismatch (foldVetoed, similar.ts:147-150). THE 2C HOOK: the run side's length is its own
+  // profile count here, because `Cluster.runLength` and its witnesses are `plugin:aggregate`'s (5.4
+  // P5) and land in step 2c. The rule and its two directions do not change when the figure improves.
+  const folding = a.folding && b.folding ? containerSideOf(a, b) : a.folding ? a : b.folding ? b : null
+  if (folding) {
+    const run = folding === a ? b : a
+    const theirs = countOf(folding)
+    const ours = countOf(run)
+    if (theirs !== null && ours !== null && theirs !== ours) {
+      // LONGER always, zero tolerance; SHORTER only on a FINISHED run, because twelve sources set
+      // `episodeCount = episodes.length` and a short fetched list on a RELEASING run is not evidence
+      // (consensus.ts:164-168, and the Elusive Samurai row with 8 of 12 aired stays a member)
+      const longer = theirs > ours ? folding : run
+      const shorter = longer === folding ? run : folding
+      if (theirs > ours || run.status === 'FINISHED') {
+        return {
+          ok: false,
+          reason: 'count-mismatch',
+          write: true,
+          evidence: { theirs, ours },
+          downgrade: downgradeTo(longer, shorter, 'count-mismatch', { theirs, ours }),
+        }
+      }
+    }
+
+    // 8. no-length: "no count" is not zero (2026-09-09), so a folding season facing a run with no
+    // length at all is never welded on a guess
+    if (ours === null) {
+      return {
+        ok: false,
+        reason: 'no-length',
+        write: true,
+        evidence: { theirs, ours },
+        downgrade: downgradeTo(folding, run, 'no-length', { theirs, ours }),
+      }
+    }
+  }
+
+  // 9. kind-mismatch (NEW as a guard on id claims): `tmdb:550` is Fight Club as a film and Till Death
+  // Us Do Part as a series, and one uri whose answers disagree about its kind is an anomaly (5.5)
+  if (a.format && b.format && a.format !== b.format && (a.format === 'MOVIE' || b.format === 'MOVIE')) {
+    const whole = containerSideOf(a, b)
+    const part = whole === a ? b : a
+    const evidence = { theirs: whole.format, ours: part.format }
+    return {
+      ok: false,
+      reason: 'kind-mismatch',
+      write: true,
+      evidence,
+      downgrade: downgradeTo(whole, part, 'kind-mismatch', evidence),
+    }
+  }
+
+  return { ok: true }
+}
+
+/**
+ * The `partOf` guards (5.2): `unknown-scope`, `self` and `inverted`.
+ *
+ * A CONTAINER proposed as a part of a RUN is refused rather than flipped, because "a caller that got
+ * the order wrong may have the scopes wrong too" (`db.ts:244-245`). A catalogue season as a part of a
+ * longer run is RUN into RUN, which passes.
+ */
+const partOfVerdict = (part: string, whole: string, profileOf: (uri: string) => ProfileFacts): PartOfVerdict => {
+  if (part === whole) {
+    return { ok: false, reason: 'self', write: true, evidence: { theirs: whole, ours: part } }
+  }
+  const partFacts = profileOf(part)
+  const wholeFacts = profileOf(whole)
+  if (partFacts.scope === null || wholeFacts.scope === null) {
+    return { ok: false, reason: 'unknown-scope', write: false, evidence: { theirs: wholeFacts.scope, ours: partFacts.scope } }
+  }
+  if (partFacts.scope === 'CONTAINER' && wholeFacts.scope === 'RUN') {
+    return { ok: false, reason: 'inverted', write: true, evidence: { theirs: wholeFacts.scope, ours: partFacts.scope } }
+  }
+  return { ok: true }
+}

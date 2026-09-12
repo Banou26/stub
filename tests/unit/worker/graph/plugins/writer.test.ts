@@ -13,6 +13,7 @@ import { enableGraph } from '../../../../../src/worker/graph'
 import { closeGraph } from '../../../../../src/worker/graph/engine'
 import { ingestAnswers } from '../../../../../src/worker/graph/ingest'
 import { SOURCE_NODE_TABLES } from '../../../../../src/worker/graph/schema'
+import { acceptEveryPair } from '../../../../../src/worker/graph/plugins/guards'
 import { applyPluginOutput, columnsOf, retractPlugin } from '../../../../../src/worker/graph/plugins/writer'
 import { answer, media, rowsOf, title } from './fixtures'
 
@@ -28,7 +29,10 @@ const PLUGIN = {
 const output = (scope: Scope, parts: Partial<PluginOutput> = {}): PluginOutput =>
   ({ scope, nodes: [], edges: [], links: [], episodeLinks: [], ...parts })
 
-const apply = (out: PluginOutput) => applyPluginOutput({ ...PLUGIN, output: out })
+// `acceptEveryPair` rather than the nine guards of 5.2: every case here is about the DIFF, and the
+// rows it writes carry no profile, so the real guards would refuse each of them `unknown-scope` and
+// this file would be testing `./guards.ts` instead. The guards have their own suite.
+const apply = (out: PluginOutput) => applyPluginOutput({ ...PLUGIN, output: out, prepare: acceptEveryPair })
 
 const profileRow = async (uri: string) =>
   (await rowsOf(
@@ -124,7 +128,8 @@ test('an empty desired set inside a scope retracts that scope and leaves the res
 
 // (d) THE EDGES, and the one trap the engine set: a node that still carries an edge cannot be
 // deleted with a plain DELETE ("has connected edges in table PROFILE_OF", measured 2026-09-12), so a
-// retract has to reach the edge first. A `LINK` is written here WITHOUT guards, which is step 2b.
+// retract has to reach the edge first. The `LINK` here is written through `acceptEveryPair`: what
+// the nine guards do with a proposal is `guards.test.ts`.
 // Mutation: change the node delete to a plain `DELETE n` and the retract throws on the profile that
 // still carries ANOTHER plugin's PROFILE_OF; drop `applyEdgeDelete` from the apply order and every
 // retract throws the same way.
@@ -170,6 +175,7 @@ test('edges are written and retracted with their nodes, and a retract empties th
     version: 1,
     produces: { nodes: [], edges: ['PROFILE_OF'] },
     output: output({ full: true }, { edges: [{ table: 'PROFILE_OF', rows: [{ from: 'mal:1', to: 'mal:1' }] }] }),
+    prepare: acceptEveryPair,
   })
   expect(await rowsOf('MATCH ()-[e:PROFILE_OF]->() RETURN count(e) AS total'), 'two plugins, one pair').toEqual([{ total: 3 }])
 
@@ -207,6 +213,7 @@ test('a row naming a source table, or a table outside produces, is refused with 
     ...PLUGIN,
     produces: { nodes: ['Media' as never], edges: [] },
     output: output({ full: true }),
+    prepare: acceptEveryPair,
   })
   await expect(declaresSource).rejects.toThrow(/plugin:test may not write Media: a source table/)
 

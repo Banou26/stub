@@ -42,7 +42,7 @@ import { titleSimilarity } from '../../../sources/utils'
 import { maxPossibleSimilarity } from '../../store/fuzzy-merge'
 import { contentHash, sha256Hex } from '../hash'
 import { graphReady } from '../schema'
-import { acceptEveryProposal, applyPluginOutput } from './writer'
+import { applyPluginOutput, graphGuards } from './writer'
 
 /** The cap of 5.3. Two or three iterations is the normal depth on the walkthroughs of section 8. */
 export const PASS_CAP = 4
@@ -322,6 +322,9 @@ export const runPlugins = async (
   const auditBefore = Date.now() - auditStarted
 
   const ordered = afterOrder(plugins)
+  // the plugin-facing form of the guards (5.2): a plugin may ask before it proposes, and the writer
+  // asks again in a batch, so not asking cannot slip a proposal past a rule
+  const guards = graphGuards()
   const runs: PluginRun[] = []
   const changes: WriterChange[] = []
   const stateHashes: string[] = []
@@ -342,7 +345,7 @@ export const runPlugins = async (
         passStart,
         // step 2c fills these; until then every plugin recomputes its whole scope
         delta: { media: [], episodes: [], claims: [], links: [], clusters: [], full: true },
-        guards: acceptEveryProposal,
+        guards,
         previous: previousOutput.get(plugin.id) ?? { nodes: {}, edges: {} },
         titleSimilarity,
         maxPossibleSimilarity,
@@ -358,7 +361,6 @@ export const runPlugins = async (
           version: plugin.version,
           produces: plugin.produces,
           output,
-          guards: context.guards,
         })
         previousOutput.set(plugin.id, report.index)
         lastCompleted.set(plugin.id, passStart)

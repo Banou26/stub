@@ -107,3 +107,28 @@ corrupted a WHOLE batch rather than one row.
 - The writer parses column types and FROM/TO pairs out of `GRAPH_SCHEMA` itself, so it cannot disagree
   with `schema.ts` about a type. A pass over 800 recorded rows: 1,188 ms the first time (audit 181 ms of
   it), 307 ms the second, which writes nothing.
+
+## Measured on 2026-09-12 while building the guards and `plugin:direct` (step 2b)
+
+Every spelling the nine guards of 5.2 needed, each exercised by
+`tests/unit/worker/graph/plugins/guards.test.ts` against 0.20.4:
+
+- **A SELF LOOP is legal on a rel table.** `MATCH (a:Media {uri: $x}), (b:Media {uri: $x}) CREATE
+  (a)-[:LINK {...}]->(b)` creates an edge whose `_src` and `_dst` are one node, and it reads back
+  with `a.uri = b.uri`. So the `self` refusal of 5.2 is a ROW rather than a silence.
+- **An UNDIRECTED match with a struct param under `UNWIND`**:
+  `UNWIND $pairs AS p MATCH (a:Media {uri: p.a})-[l:LINK {status: 'active'}]-(b:Media {uri: p.b})`.
+  Both fields are STRINGs in every row, which is what keeps the struct out of the `LIST(ANY)` trap.
+  It matches a self loop for `p.a = p.b`.
+- **A list literal in a `WHERE`**: `WHERE l.kind IN ['PART_OF', 'INCLUDES']`.
+- **Two comma-separated patterns under `UNWIND`**, which is how a profile and its own `Media` row are
+  read in one statement: `UNWIND $uris AS u MATCH (p:MediaProfile {uri: u}), (m:Media {uri: u})`.
+- **`RETURN DISTINCT` over a named filtered variable-length path under `UNWIND`**:
+  `UNWIND $uris AS u MATCH (a:Media {uri: u})-[e:LINK*0..8 (r, _ | WHERE r.kind = 'SAME_AS' AND
+  r.status = 'active')]-(b:Media) RETURN DISTINCT u AS uri, b.uri AS member`. One walk per uri is
+  6.8 ms on a session sized graph, so the guards read the active `SAME_AS` edge list once instead and
+  union them in JS; the test asserts the two agree uri by uri.
+
+Costs, on the same 800 recorded rows the ingest and the profile were measured on: a pass of
+`plugin:profile` then `plugin:direct` is **1,880 ms over 2 iterations** (the audit 178 ms of it), and
+the second pass over the same graph is **560 ms in 1 iteration and writes nothing**.

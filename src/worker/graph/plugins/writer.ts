@@ -19,10 +19,11 @@
  * - any row naming a SOURCE table (2.1), whoever declared it,
  * - any row naming a table outside the plugin's own `produces`.
  *
- * WHAT IS NOT HERE YET. A `LinkProposal` is accepted and written as a `LINK` row WITHOUT the nine
- * guards of 5.2: `acceptEveryProposal` below is a stub that accepts everything, so every proposal
- * lands as `status: 'active'` and no refusal is ever downgraded. Step 2b replaces the stub and adds
- * the precedence ordering; the hook is the one call site, marked where the proposals are converted.
+ * WHAT A PROPOSAL MEETS HERE. Every `LinkProposal` passes the nine guards of 5.2 (`./guards.ts`) in
+ * the precedence order of `./sameness.ts`, and a refusal is WRITTEN rather than dropped: the refused
+ * row keeps its reason so it can be queried, and six of the nine also write the downgrade, a
+ * `PART_OF` from the run or shorter side to the container or longer side. The guards are asked in one
+ * batch per apply, so the snapshot every verdict is computed against is the same one.
  *
  * THE ENGINE FACTS THAT SHAPE EVERY STATEMENT, on `@ladybugdb/wasm-core` 0.20.4, the first four from
  * `docs/design-inputs/00-engine-facts.md` and the last two measured here on 2026-09-12:
@@ -40,12 +41,18 @@
 import type {
   Guards, Plugin, PluginEdgeTable, PluginId, PluginNodeTable, PluginOutput, PluginOutputIndex, PluginRow, Scope,
 } from './contract'
+import type { GuardsFactory } from './guards'
+import type { DesiredLink } from './sameness'
 
 import { emptyOutput } from './contract'
 import { sha256Hex } from '../hash'
 import {
   graphReady, PLUGIN_NODE_TABLES, PLUGIN_REL_TABLES, SOURCE_NODE_TABLES, SOURCE_REL_TABLES, tableNameOf,
 } from '../schema'
+import { prepareGuards } from './guards'
+import {
+  isRefusedProposal, mergeDesired, orderLinkProposals, readStickyLinks, rowsForVerdict, verdictFor,
+} from './sameness'
 
 /** Every table a plugin may name, and every table it may not, read off the DDL rather than retyped. */
 const PLUGIN_TABLES = new Set([...PLUGIN_NODE_TABLES, ...PLUGIN_REL_TABLES].map(tableNameOf))
@@ -389,18 +396,26 @@ const paramsOf = (columns: Column[], desired: DesiredRow): Record<string, unknow
 // The guard hook.
 
 /**
- * The guards of 5.2, as the stub step 2a ships: every proposal is accepted.
+ * The nine guards of 5.2 over the open graph, as the writer asks them.
  *
- * The nine guards, the precedence classes and the downgrade are step 2b. They slot in HERE and
- * nowhere else, because `applyPluginOutput` asks this object about every `SAME_AS` and every
- * `PART_OF` proposal before it builds a row. Until then a `LINK` row is written with
- * `status: 'active'` whatever the evidence, and a refusal drops the proposal rather than writing its
- * downgrade, which is why no read path consumes `LINK` yet.
+ * The plugin-facing `Guards` of the contract is this object narrowed: a plugin is told whether a
+ * proposal passes and whether a refusal downgrades, and the writer reads the full verdict (the
+ * downgrade's direction and its `{theirs, ours}`) from the same evaluation.
  */
-export const acceptEveryProposal: Guards = {
-  sameAs: async () => ({ ok: true }),
-  partOf: async () => ({ ok: true }),
-}
+export const graphGuards = (): Guards => ({
+  sameAs: async (a, b, proposal) => {
+    const { query } = await graphReady()
+    const pass = await prepareGuards(query, [{ fromUri: a, toUri: b, supports: proposal.supports }])
+    const verdict = pass.sameAs({ fromUri: a, toUri: b, supports: proposal.supports })
+    return verdict.ok ? { ok: true } : { ok: false, reason: verdict.reason, downgrade: Boolean(verdict.downgrade) }
+  },
+  partOf: async (part, whole) => {
+    const { query } = await graphReady()
+    const pass = await prepareGuards(query, [{ fromUri: part, toUri: whole, supports: [] }])
+    const verdict = pass.partOf(part, whole)
+    return verdict.ok ? { ok: true } : { ok: false, reason: verdict.reason }
+  },
+})
 
 // ---------------------------------------------------------------------------------------------
 
@@ -435,11 +450,12 @@ export const applyPluginOutput = async (options: {
   version: number
   produces: Plugin['produces']
   output: PluginOutput
-  guards?: Guards
+  /** How the batch of verdicts is built. The default is the nine guards; a test may pass another. */
+  prepare?: GuardsFactory
 }): Promise<WriterReport> => {
   const started = Date.now()
   const { id, version, produces, output } = options
-  const guards = options.guards ?? acceptEveryProposal
+  const prepare = options.prepare ?? prepareGuards
   const { query } = await graphReady()
   const scope = expandScope(output.scope)
   const changes: WriterChange[] = []
@@ -499,28 +515,74 @@ export const applyPluginOutput = async (options: {
     }
   }
 
-  // THE PROPOSALS, and the one place the guards are asked (see `acceptEveryProposal`).
+  // THE PROPOSALS, and the one place the guards are asked (5.2).
+  //
+  // Every proposal of this output is weighed in ONE batch: the guards read the graph once, and every
+  // verdict is computed against that one snapshot, which is what "evaluated against the graph as it
+  // stands, never within one pass" means for guard 4. The order is the precedence of 5.2, so two
+  // proposals reaching one key are resolved by the rule rather than by the array.
   if (output.links.length && !desiredEdges.has('LINK')) throw refusal(id, 'LINK', produces)
-  for (const proposal of output.links) {
-    const verdict = proposal.kind === 'SAME_AS'
-      ? await guards.sameAs(proposal.fromUri, proposal.toUri, { reason: proposal.reason, supports: proposal.supports })
-      : proposal.kind === 'PART_OF' ? await guards.partOf(proposal.fromUri, proposal.toUri)
-      : { ok: true as const }
-    if (!verdict.ok) continue
-    const key = await linkKey(proposal.fromUri, proposal.toUri, proposal.kind, id)
-    const diffKey = `${proposal.fromUri}${LIST_SEPARATOR}${proposal.toUri}${LIST_SEPARATOR}${key}`
+  const ordered = orderLinkProposals(output.links)
+  const reproposed = new Set(ordered.map(proposal => `${proposal.fromUri} ${proposal.toUri}`))
+  // THE STICKY RULE's other half: the active links this plugin owns that this pass did NOT re-propose,
+  // which a scoped run would otherwise leave un-rechecked (`readStickyLinks`, and the 2c hook in it)
+  const sticky = output.links.length || !scope.full
+    ? await readStickyLinks(query, id, reproposed)
+    : []
+  const pass = await prepare(query, [
+    ...ordered.map(proposal => ({ fromUri: proposal.fromUri, toUri: proposal.toUri, supports: proposal.supports })),
+    ...sticky.map(link => ({ fromUri: link.fromUri, toUri: link.toUri, supports: link.supports })),
+  ])
+
+  const desiredLinks = new Map<string, DesiredLink>()
+  const put = async (row: Omit<DesiredLink, 'key'>) => {
+    mergeDesired(desiredLinks, await linkKey(row.fromUri, row.toUri, row.kind, id), row)
+  }
+  for (const proposal of ordered) {
+    // a row the PLUGIN already refused under a rule it owns (5.4 P1) is written as it stands: the
+    // guards weigh proposals, and a refusal is not one
+    if (isRefusedProposal(proposal)) {
+      await put({
+        fromUri: proposal.fromUri, toUri: proposal.toUri, kind: proposal.kind, status: 'refused',
+        reason: proposal.reason, confidence: proposal.confidence, evidence: proposal.evidence ?? null,
+        gates: proposal.gates ?? null, range: proposal.range ?? null, supports: proposal.supports,
+      })
+      continue
+    }
+    for (const row of rowsForVerdict({ ...proposal, evidence: proposal.evidence ?? null }, verdictFor(pass, proposal))) {
+      await put(row)
+    }
+  }
+  for (const link of sticky) {
+    const verdict = pass.sameAs({ fromUri: link.fromUri, toUri: link.toUri, supports: link.supports })
+    if (verdict.ok) continue
+    // the pair enters the SCOPE as well as the desired set: the diff reads the current row inside the
+    // scope, and a flip the read never saw would be a create the create statement refuses (the edge
+    // is already there), so the retraction would silently not happen
+    scope.pairs.add(pairKey(link.fromUri, link.toUri))
+    scope.endpoints.push(link.fromUri, link.toUri)
+    for (const row of rowsForVerdict({
+      fromUri: link.fromUri, toUri: link.toUri, kind: 'SAME_AS', reason: link.reason,
+      confidence: 1, evidence: null, supports: link.supports,
+    }, verdict)) {
+      await put(row)
+    }
+  }
+
+  for (const row of desiredLinks.values()) {
+    const diffKey = `${row.fromUri}${LIST_SEPARATOR}${row.toUri}${LIST_SEPARATOR}${row.key}`
     desiredEdges.get('LINK')!.set(diffKey, {
       key: diffKey,
-      from: proposal.fromUri,
-      to: proposal.toUri,
+      from: row.fromUri,
+      to: row.toUri,
       row: {
-        key, kind: proposal.kind, by: id, version, status: 'active',
-        reason: proposal.reason, confidence: proposal.confidence,
-        evidence: proposal.evidence ?? null, gates: proposal.gates ?? null,
-        fromStart: proposal.range?.fromStart ?? null, fromEnd: proposal.range?.fromEnd ?? null,
-        toStart: proposal.range?.toStart ?? null, toEnd: proposal.range?.toEnd ?? null,
-        contiguous: proposal.range?.contiguous ?? null, aligned: proposal.range?.aligned ?? null,
-        total: proposal.range?.total ?? null, supports: proposal.supports,
+        key: row.key, kind: row.kind, by: id, version, status: row.status,
+        reason: row.reason, confidence: row.confidence,
+        evidence: row.evidence ?? null, gates: row.gates ?? null,
+        fromStart: row.range?.fromStart ?? null, fromEnd: row.range?.fromEnd ?? null,
+        toStart: row.range?.toStart ?? null, toEnd: row.range?.toEnd ?? null,
+        contiguous: row.range?.contiguous ?? null, aligned: row.range?.aligned ?? null,
+        total: row.range?.total ?? null, supports: row.supports,
       },
     })
   }

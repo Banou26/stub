@@ -65,6 +65,13 @@ export type LinkProposal = {
   kind: LinkKind
   fromUri: string
   toUri: string
+  /**
+   * `refused` for a rule the PLUGIN owns and has already decided: `plugin:direct`'s `inverted`,
+   * `foreign-includes` and same-origin `disagreeing-ids` (5.4 P1). The guards are not asked about a
+   * row that is already a refusal, and a plugin may not use this to write an ACTIVE row past them.
+   * Absent means `active`, which is a proposal and meets every guard of 5.2.
+   */
+  status?: 'active' | 'refused'
   reason: string
   confidence: number
   evidence?: unknown
@@ -108,8 +115,9 @@ export type PluginOutput = {
  * The one evaluation path for sameness (5.2), exposed so a plugin can ask before it proposes.
  *
  * The writer asks again, so a plugin that does not ask cannot slip a proposal past a guard. The nine
- * guards land in step 2b; the stub this step ships accepts everything and is documented as such at
- * its definition.
+ * guards are `./guards.ts`; the verdict here is the plugin-facing shape (did it pass, and would a
+ * refusal be downgraded), while the writer reads the full one, which carries the downgrade's own
+ * direction and evidence.
  */
 export type Guards = {
   sameAs: (
