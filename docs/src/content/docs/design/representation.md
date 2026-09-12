@@ -1377,7 +1377,7 @@ RETURN c.id AS runCluster, h.claimer AS claimer,
 | --- | --- | --- | --- |
 | 1 | by DATE | reference episodes are those of members whose count equals `runLength`, grouped by origin, never by which row an episode hangs off (`alignRunEpisodes`, `consensus.ts:265-273`); `runByDay` holds DISTINCT numbers per UTC day; for each of theirs, look at day-1, day, day+1 and pair only when exactly one reference number is reachable; a day naming two reference numbers disqualifies that day. The day of slack is the Tokyo boundary: ani.zip stamps `2021-01-10T15:00:00Z`, the 11th in Tokyo, and Crunchyroll publishes the Tokyo date (`consensus.ts:136-140`). Each pair is an `EPISODE_LINK` with `evidence: {day, slack}`. Minimum `MIN_ALIGNED = 2` pairs (`consensus.ts:111`) or nothing | `consensus.ts:113-155` |
 | 2 | by TITLE | refused outright when `retranslates` (Netflix, 4 exact of 25, the best wrong pair outscoring the true one). Otherwise exact key equality after `stripTitle`, both non-generic, a key present more than once on either side skipped; the bar to mint anything is `MIN_EPISODE_TITLE_MATCHES = 3` and coverage `>= EPISODE_TITLE_COVERAGE = 0.6` of the candidate's non-generic titles (`similar.ts:67,69`), so a fold of two equal cours at 12/24 mints no title pairs and only the date rule can prove a fold | `similar.ts:59-69`; episode titles are decisive between two metadata catalogues and nowhere else (2026-09-10) |
-| 3 | by SEQUENCE | **ALLOWED where rule 2 is refused**, including a `retranslates` origin, and 3.4a says why. **THE GATE, added 2026-09-12 after implementation showed the rule as first written contradicted 8.3:** rule 3 mints only when ORDER places at least one row, that is at least one bracket-forced or closure pair. Anchors alone mint NOTHING, because an anchor is an exact title match and that is rule 2's evidence, which rule 2 admits only above its own count and coverage bar. Without the gate a candidate handing us our own exact titles pairs on titles alone through rule 3 and walks straight past that bar, which is measurable: 8.3's Netflix fixture carries our exact titles deliberately, and an ungated rule 3 pairs 25 of its 26 rows where 8.3 requires nothing. A monotone alignment (longest common subsequence) over exact `stripTitle` keys, both non-generic and unique on each side, gives ANCHORS; a row strictly between two anchors whose gap length is EQUAL on both sides is then FORCED, because order permits exactly one bijection and no title evidence is consulted for it. Two anchors minimum, since one brackets nothing. An unequal gap refuses its own region and keeps its anchors. Nothing outside the outermost anchors is paired unless 3.4a's closure applies | measured 2026-09-12 on Mushoku Tensei's Netflix season 2, 25 rows against 24 canonical: 4 anchors, 3 forced, 0 refused, and the forced three are `Unwilling to Die` onto `I Don't Want to Die`, `This Feeling` onto `These Feelings` and one accent difference, none of which any title rule could reach |
+| 3 | by SEQUENCE | **ALLOWED where rule 2 is refused**, including a `retranslates` origin, and 3.4a says why. **THE GATE, added 2026-09-12 after implementation showed the rule as first written contradicted 8.3:** rule 3 mints only when ORDER places at least one row, that is at least one bracket-forced or closure pair. Anchors alone mint NOTHING, because an anchor is an exact title match and that is rule 2's evidence, which rule 2 admits only above its own count and coverage bar. Without the gate a candidate handing us our own exact titles pairs on titles alone through rule 3 and walks straight past that bar, which is measurable: 8.3's Netflix fixture carries our exact titles deliberately, and an ungated rule 3 pairs 25 of its 26 rows where 8.3 requires nothing. A monotone alignment (longest common subsequence) over exact `stripTitle` keys, both non-generic and unique on each side, gives ANCHORS; a row strictly between two anchors whose gap length is EQUAL on both sides is then FORCED, because order permits exactly one bijection and no title evidence is consulted for it. Two anchors minimum, since one brackets nothing. An unequal gap refuses its own region and keeps its anchors. Nothing outside the outermost anchors is paired unless 3.4a's closure applies. **THE ANCHOR TEST IS SCORED AS A FALLBACK, 2026-09-13, and 3.4a point 6 carries the calibration.** Where fewer than `MIN_ALIGNED` EXACT anchors exist, which is exactly where everything above mints nothing, an unanchored row of theirs may anchor on a similarity instead: token Dice over the same `stripTitle` keys, clearing `SCORED_ANCHOR_FLOOR = 0.6` and beating its own runner-up across all canonical numbers by `SCORED_ANCHOR_MARGIN = 0.15`. The margin REFUSES an ambiguous row rather than resolving it, and order then places that row anyway if a bracket reaches it. Exact equality never consults either constant, so the change can only ADD ANCHORS and can never remove one: an exact anchor is never refused by the margin, a scored anchor may not take a number an exact match reached, and one that crosses an exact anchor is dropped before the monotone filter could prefer it. **A WELD DOES WRITE ITS OWN PAIR, and the gate is not what stops a wrong one.** The gate is necessary (order must still place a row, inside `1..runLength`, before anything is minted) and it is not sufficient, which an executed probe settled on 2026-09-13: with zero exact anchors, two welds at one offset and an equal gap between them, rule 3 minted four `EPISODE_LINK` rows, two of them the welds and two of them forced by an offset that came only from those two scores. So a third constant, `MIN_SCORED_ANCHORS = 3`: an alignment that no exact equality holds down needs three anchors rather than two, which is rule 2's own bar for a title claim. One exact anchor is enough to drop back to `MIN_ALIGNED`, since an equality then corroborates the offset the welds agree on. What separates this from the title-vote rule 3 replaced is therefore not "a score places nothing": it is that the offset needs three agreeing welds or one equality, each weld has to clear the floor and the margin and take a number nothing else reached, every bracket has to count the same number of rows on each side, and `scheduleSkew` is asked about the answer | measured 2026-09-12 on Mushoku Tensei's Netflix season 2, 25 rows against 24 canonical: 4 anchors, 3 forced, 0 refused, and the forced three are `Unwilling to Die` onto `I Don't Want to Die`, `This Feeling` onto `These Feelings` and one accent difference, none of which any title rule could reach. The scored anchor was calibrated 2026-09-13 over two sweeps: 65 seasons across 33 shows, 1109 truth row pairs derived without any scorer, 68 same-show hard negatives and 790 pairings live (Netflix unOGS titles against ani.zip canonical), plus 190 oriented list pairs over 59 labelled corpus cases carrying 1624 exact anchors. It is a FALLBACK rather than a replacement because a replacement cuts rule 3's OWN contribution by two thirds (250 rows placed by order become 87, 46 of 65 pairings speaking become 17) for no precision gain, the exact rule already being at 0 wrong, while the fallback keeps all 43 truth pairings the exact rule speaks on and unlocks 5 it cannot bracket at all |
 
 #### 3.4a Closing an alignment with the specials list
 
@@ -1410,6 +1410,90 @@ alignment into a total one, and refuses rather than extrapolating when it cannot
    show: every one of its 24 titles is the placeholder `Episode N`, so no anchor exists, nothing is
    forced, and the season yields no pair. That is the correct outcome and the reason no positional
    fallback is admitted anywhere in this rule.
+6. **The anchor test is SCORED where the exact one cannot bracket** (2026-09-13, calibrated from two
+   sweeps). A retranslated title keeps most of its tokens while an unrelated episode shares almost
+   none, so a similarity discriminates well between them, and no row is ever placed by comparing its
+   own title to anything: the anchors still have to bracket, and the gate still refuses to mint
+   unless order placed a row inside `1..runLength`. What a weld DOES write is its own anchor pair,
+   exactly as an exact match writes one, so the guards below are the safety argument and the gate is
+   only a necessary condition. Five constants and guards, each measured:
+
+   - **The scorer is token Dice** over the same `stripTitle` keys, and the choice is not incidental.
+     Against the corpus episode labels, Dice contradicted a label at none of 91 cells, margin 0
+     included, while `titleSimilarity` (frizbee) contradicted 5, every one of them a single-token
+     romaji key against an English one (`kaisan` onto `sea` at 0.293), which is a shape episode
+     titles take far more often than show titles do. `bestTitleScore` was ruled out outright: over
+     400 distinct Netflix episode titles its `franchiseTitle` pass rewrites 36 and COLLAPSES 19 onto
+     another title of the same show (`The Nijimura Brothers, Part 1` == `Part 2` == `Part 3`),
+     deleting the only thing separating two episodes. Dice is also the only candidate that keeps rule
+     3 a pure synchronous function of its two lists.
+   - **The floor is 0.6.** Below it the cliff is on the NEGATIVES and not on the truth set: floor 0.55
+     or lower with margin 0.05 or lower lets up to 3 wrong pairings speak and mints up to 28 wrong
+     pairs (Sword Art Online season 3 welded onto the season 1 run, 2 anchors and 2 rows placed, at
+     0.50/0.05), while 0.60 or more is 0 wrong at every margin tried. Above it the cliff is recall:
+     novel anchor recall 60.6% at 0.60, 56.7% at 0.70, 50.6% at 0.80, 27.7% at 0.90. Truth-set
+     precision is 100% from 0.40 up, so precision alone would have picked a much lower floor and the
+     negatives are what forbid it. Those figures are frizbee's, which is what the
+     live grid was swept on, and the same 98 cells were then swept on **token Dice**, the scorer that
+     actually ships: Dice is the safer of the two by a wide margin, 0 wrong anchors and 0 negatives
+     speaking at every cell whose margin is 0.05 or more, the only damage anywhere being margin 0 at
+     floors 0.35 and 0.40 (one wrong pairing, 6 wrong pairs). At 0.60/0.15 Dice proposes 1000 anchors,
+     0 wrong, novel recall 57.1% of the 231 truth pairs no exact anchor reaches, 0 of 68 negatives
+     speaking. So the cell sits inside Dice's clean region rather than on its edge. The hazard table
+     is still the only thing measured on both scorers: the share of the recorded page's 2416 titled
+     episode rows whose own NEIGHBOUR clears the floor is Dice 18.5% at 0.50, 10.6% at 0.60 and 4.8%
+     at 0.70 against frizbee's 16.6%, 10.0% and 4.9%. It is also why a floor near the hand-measured
+     0.34 was refused: 21.8% of rows have a neighbour clearing it, and 42% of the Netflix ones do,
+     Netflix being the most internally confusable source on the page by a factor of two.
+   - **The margin is 0.15, and it refuses rather than resolves.** Mushoku Tensei's Netflix season 3
+     is the case it was measured from: `Rage, Mad Dog` scores 0.667 against our `Howl, Mad Dog` and
+     0.571 against our `Burn Bright, Mad Dog`, so the higher score is the WRONG neighbour and a
+     tie-break took it. Refused, the row is placed by the bracket onto the slot the score ranked
+     second, so the ambiguity costs the pairing nothing. A gap of 0.095 is also why 0.05 was not
+     enough. It is a second guard rather than a necessary one: at floor 0.60 the live sweep is already
+     0 wrong at every margin, and both are kept because a wrong weld is permanent, union-find having
+     no unlink, and the two fail independently. 0.15 and not 0.10: margin 0.10 still lets one wrong
+     pairing speak and mints 7 wrong pairs at floors 0.30, 0.35 and 0.40.
+   - **An offset no equality corroborates needs three welds** (`MIN_SCORED_ANCHORS = 3`), which is
+     rule 2's own bar for a title claim and the bar the calibration's conservative closure demanded
+     before it would trust an offset at all. A row between two anchors is placed by arithmetic that
+     reads no title, but the OFFSET that arithmetic works in is the anchors', so where every anchor
+     is a weld the offset came from scores alone, and two votes for one offset is not a measurement.
+     It costs nothing measurable: all five pairings the fallback unlocks on the live corpus stand
+     under it, four of them on welds alone with 20, 9, 8 and 6 anchors agreeing.
+   - **Exact equality wins, structurally.** It never consults the floor or the margin, a scored anchor
+     may not take a canonical number an exact match reached (including one the monotone filter
+     dropped), and a scored anchor that crosses an exact one is dropped before the alignment could
+     prefer it. Without the first, a scored rule loses 23 of 1600 exact agreements on the corpus axis,
+     because the margin refuses a row whose true slot is an exact match with a near-tied neighbour
+     (`The Knight's Festival of the Hunt (Part 1)` against `(Part 2)`, Dice 0.857, gap 0.143). Without
+     the second, 15 correct exact anchors are lost at margin 0 through the one-claim-per-number rule
+     killing both rows, which is a regression through the ALIGNMENT rather than through a wrong
+     placement.
+
+   **What the calibration cannot say**, stated because the gap is the interesting part. A season with
+   NO exact anchor can never be certified by the conservative closure the truth set was built from,
+   so the upside on fully retranslated seasons is unmeasured, and Mushoku Tensei's season 3 is exactly
+   that shape. The weak tier of one or two exact anchors contributed no certified pairing at all,
+   which is to say the seasons this fallback is FOR are the ones no conservative closure can judge.
+   The corpus labels carry no title-bearing Netflix episode list anywhere, so the source the hazard
+   scan names as most confusable is the one the label axis is silent about. And the recorded 800 row
+   page yields no candidate the fallback engages on, so the replay measures that the change is inert
+   there and nothing more. The 901 human episode-pair labels are not silent, though: the fallback
+   proposes 66 welds over 16 labelled list pairs that sit below the bracket minimum, contradicts no
+   label, and mints not one pair there, so on labelled data the change is additive on anchors and
+   inert on pairs.
+
+   **What it buys, measured on the shipped code rather than on an emulation of it** (2026-09-13, the
+   whole 790 pairing cross product, `alignByTitle` against an exact-only alignment over the same two
+   lists, both through the gate). On the 65 truth pairings and the 68 hard negatives the two are
+   IDENTICAL: 43 pairings speaking, 162 rows placed by order, 769 pairs minted, 0 wrong, 0 negatives
+   speaking either way. The whole of the difference is 5 pairings the exact rule cannot bracket at
+   all and 78 pairs on them: Attack on Titan season 1 onto anilist 16498 (20 welds agreeing on offset
+   0, 25 pairs), Naruto seasons 6 and 8 onto anilist 20 (offsets 135 and 186, 21 and 18 pairs), Mob
+   Psycho 100 season 3 onto 140439 (11), Blue Exorcist season 3 onto 158931 (3). None is a hard
+   negative, and each one's offset independently closes the count surplus and covers every surplus
+   row with a dated special, which is the one judge available that reads no title at all.
 
 **A second, independent derivation of the surplus, from counts alone** (2026-09-12, the owner's
 reading). A catalogue that lists only canonical episodes and a provider that also lists specials
