@@ -28,6 +28,18 @@ export const readExportFlag = (url: string, base?: string): boolean => asks(url,
  */
 export const readAnswersExportFlag = (url: string, base?: string): boolean => asks(url, EXPORT_ANSWERS_VALUE, base)
 
+export const EXPORT_QUERY_VALUE = 'query'
+
+/**
+ * Whether this url asks for the GRAPHQL PROBE hook, exactly `?export=query`.
+ *
+ * Its own value on the same param, so a page can carry it beside the other two and none reads
+ * another's flag. What it publishes is a way to put a document through the worker exactly as the
+ * app's own client does, which is the only way to compare the two read stores on what they ANSWER
+ * rather than on what a page happens to render.
+ */
+export const readQueryProbeFlag = (url: string, base?: string): boolean => asks(url, EXPORT_QUERY_VALUE, base)
+
 export const NO_SEED_PARAM = 'seed'
 export const NO_SEED_VALUE = 'off'
 
