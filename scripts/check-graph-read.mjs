@@ -90,7 +90,17 @@ const documentNamed = (file, name) => {
 const MEDIA_FRAGMENT = documentNamed('../src/worker/resolvers/media/fragment.ts', 'MediaFragment')
 const EPISODE_FRAGMENT = documentNamed('../src/worker/resolvers/episode/fragment.ts', 'EpisodeFragment')
 const MEDIA_MODAL = documentNamed('../src/router/home/media-modal.tsx', 'GetMediaModal')
+const HOME_PAGE = documentNamed('../src/router/home/index.tsx', 'GetReleasingMediaPage')
 const MODAL_DOCUMENT = [MEDIA_MODAL, MEDIA_FRAGMENT, EPISODE_FRAGMENT].join('\n')
+const PAGE_DOCUMENT = [HOME_PAGE, MEDIA_FRAGMENT].join('\n')
+
+// the season the home row asks for, by `animeSeasonOf`'s own rule (`src/sources/season.ts:26-29`,
+// three months per season from January), so this check follows the clock the way the page does
+// rather than pinning a season that goes stale in December
+const SEASONS = ['WINTER', 'SPRING', 'SUMMER', 'FALL']
+const now = new Date()
+const SEASON = SEASONS[Math.floor(now.getMonth() / 3)]
+const SEASON_YEAR = now.getFullYear()
 
 const chrome = process.env.CHROME_PATH ?? execFileSync('which', ['google-chrome-stable'], { encoding: 'utf-8' }).trim()
 // headless because nothing here watches a transfer, and muted because this is the owner's machine
@@ -116,24 +126,30 @@ const arm = async (label, query) => {
     return { label, installed: false, errors, installedMs }
   }
 
-  // the variables the CLIENT passes for this document (`src/router/home/media-modal.tsx`), not a
-  // guess: `descriptionInput` is non-null, and omitting it fails the document before it reaches a
-  // resolver, which looks exactly like a store that answered nothing
-  const result = await page.evaluate(async ([document, uri, settleMs]) => {
+  // the variables the CLIENT passes for each document, not a guess: both carry a non-null input
+  // besides the main one, and omitting it fails the document before it reaches a resolver, which
+  // looks exactly like a store that answered nothing (walked into on this check's first real run)
+  const result = await page.evaluate(async ([modal, pageDoc, uri, settleMs, season, seasonYear]) => {
     try {
       const answer = await window.__stubGraphQL(
-        document,
+        modal,
         { input: { uri }, descriptionInput: { type: 'HTML' } },
         { settleMs }
       )
-      return { answer }
+      const listing = await window.__stubGraphQL(
+        pageDoc,
+        { input: { season, seasonYear, sorts: ['POPULARITY_DESC'] }, shortDescriptionInput: { count: 1 } },
+        { settleMs: Math.min(settleMs, 15_000) }
+      )
+      return { answer, listing }
     } catch (error) {
       return { failed: String(error?.message ?? error) }
     }
-  }, [MODAL_DOCUMENT, URI, SETTLE_MS])
+  }, [MODAL_DOCUMENT, PAGE_DOCUMENT, URI, SETTLE_MS, SEASON, SEASON_YEAR])
 
   await context.close()
 
+  const nodes = result.listing?.last?.data?.mediaPage?.nodes
   const media = result.answer?.last?.data?.media
   return {
     label,
@@ -142,7 +158,15 @@ const arm = async (label, query) => {
     errors,
     failed: result.failed,
     payloads: result.answer?.payloads ?? 0,
-    graphqlErrors: result.answer?.last?.errors,
+    graphqlErrors: result.answer?.last?.errors ?? result.listing?.last?.errors,
+    listing: {
+      nodes: nodes?.length ?? 0,
+      // a card that nulls one non-null field nulls the whole page, so counting cards that ARRIVED
+      // with a title is the closed set's real test on live data rather than on a fixture
+      titled: (nodes ?? []).filter(node => node?.titles?.[0]?.title).length,
+      withHandles: (nodes ?? []).filter(node => (node?.handles?.length ?? 0) > 0).length,
+      uris: (nodes ?? []).map(node => String(node?.uri ?? '')),
+    },
     media: media && {
       _id: media._id,
       uri: media.uri,
@@ -184,6 +208,7 @@ const report = (result) => {
   } else {
     console.log('  media: NULL')
   }
+  console.log(`  listing (${SEASON} ${SEASON_YEAR}): ${result.listing?.nodes ?? 0} cards, ${result.listing?.titled ?? 0} titled, ${result.listing?.withHandles ?? 0} with handles`)
   if (result.errors.length) console.log(`  console errors: ${result.errors.slice(0, 5).join(' | ')}`)
 }
 
@@ -215,8 +240,27 @@ if (graph.media && legacy.media) {
   const ratio = legacy.media.episodes ? graph.media.episodes / legacy.media.episodes : 1
   if (ratio < 0.5) failures.push(`the store=graph arm listed ${graph.media.episodes} episodes against the legacy ${legacy.media.episodes}`)
   if (!graph.media.handles) failures.push('the store=graph arm carries no handles, so the page draws no source badge')
+  // the LISTING is the other half of the read path and the first thing a user sees
+  if (!graph.listing.nodes) failures.push('the store=graph arm listed no cards at all on the home row')
+  if (graph.listing.nodes && graph.listing.titled < graph.listing.nodes) {
+    failures.push(`the store=graph arm listed ${graph.listing.nodes} cards of which only ${graph.listing.titled} carry a title`)
+  }
+  if (legacy.listing.nodes && graph.listing.nodes < legacy.listing.nodes / 2) {
+    failures.push(`the store=graph arm listed ${graph.listing.nodes} cards against the legacy ${legacy.listing.nodes}`)
+  }
   // membership is the whole point of a cluster, so a member the old store found and the new one did
   // not is reported by NAME rather than as a count: it is the shape every merging bug takes
+  // the two stores are EXPECTED to differ here: 6.1's hide rule is store-wide where the old store's
+  // `hideAttachedContainers` only hid inside the list it was given, so the graph drawing fewer cards
+  // is the rule working. Naming the difference is what tells that apart from cards going missing.
+  const graphUris = new Set(graph.listing.uris)
+  const onlyLegacy = legacy.listing.uris.filter(uri => !graphUris.has(uri))
+  const legacyUris = new Set(legacy.listing.uris)
+  const onlyGraph = graph.listing.uris.filter(uri => !legacyUris.has(uri))
+  console.log(`\nlisting: ${onlyLegacy.length} card(s) only the legacy store drew, ${onlyGraph.length} only the graph drew`)
+  if (onlyLegacy.length) console.log(`  legacy only, first 8: ${onlyLegacy.slice(0, 8).join(' ')}`)
+  if (onlyGraph.length) console.log(`  graph only, first 8: ${onlyGraph.slice(0, 8).join(' ')}`)
+
   const missing = legacy.media.members.filter(member => !graph.media.members.includes(member))
   const extra = graph.media.members.filter(member => !legacy.media.members.includes(member))
   if (missing.length) console.log(`\nmembers the legacy store found and the graph did not: ${missing.join(' ')}`)
