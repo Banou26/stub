@@ -10,11 +10,19 @@
  * rather than shifting every later one (3.4). The title-vote offset that put 13 of 25 Blue Exorcist
  * rows on the wrong Netflix episode (2026-09-10) has no successor: there is no offset anywhere.
  *
- * IT MINTS NO `SAME_AS` BETWEEN MEDIA. Rule 3 and the "every episode paired, therefore the same
- * thing" upgrade were both deleted from 5.4 P4: a season that holds this run is a container whatever
+ * IT MINTS NO `SAME_AS` BETWEEN MEDIA. The "every episode paired, therefore the same thing" upgrade
+ * was deleted from 5.4 P4, along with the rule that carried it, which is why the sequence rule below
+ * is a NEW rule 3 and not the restored one: a season that holds this run is a container whatever
  * share of it pairs, and 8.4 is the case that says so, five Netflix seasons each `PART_OF` one run
  * with no upgrade at any coverage. The `PART_OF` that reached a candidate stays exactly as it was in
  * every branch below, including the one that mints a range.
+ *
+ * RULE 3 IS ALLOWED WHERE RULE 2 IS REFUSED, `retranslates` INCLUDED, and 3.4a gives the argument:
+ * rule 2 is refused for a retranslating origin because it mints on a COVERAGE SCORE, and a score can
+ * be wrong while looking strong (Netflix, 4 exact of 25, the best wrong pair outscoring the true one,
+ * 2026-09-10). Rule 3 consults titles only for EXACT, UNIQUE, NON-GENERIC equality and places every
+ * pair beyond those by ORDER, so a retranslated title cannot produce a pair: it can only fail to
+ * become an anchor.
  *
  * PAIRS ARE ONLY EVER ONTO AN EXISTING MEMBER EPISODE, inside `1..runLength`. That is what lets a
  * date pair skip the two-witness bar a count-based loan needed (`consensus.ts:171,234`): the loan was
@@ -54,12 +62,12 @@
  */
 import type { EpisodeLinkProposal, LinkProposal, Plugin, PluginContext, PluginOutput } from './contract'
 
-import { EPISODE_TITLE_COVERAGE, MIN_EPISODE_TITLE_MATCHES } from '../../../sources/similar'
+import { EPISODE_TITLE_COVERAGE, isGenericEpisodeTitle, MIN_EPISODE_TITLE_MATCHES } from '../../../sources/similar'
 import { stripTitle } from '../../../sources/utils'
 import { RETRANSLATING_ORIGINS } from './origins'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const RANGE_VERSION = 2
+export const RANGE_VERSION = 3
 
 /**
  * Two pairs or nothing (`consensus.ts:111`).
@@ -78,8 +86,15 @@ export const MIN_ALIGNED = 2
  */
 export const DAY_SLACK = 1
 
-/** Why nothing was minted for a candidate, written onto its refused `LINK` row so it is queryable. */
-export type RangeRefusal = 'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles' | 'date-skew'
+/**
+ * Why nothing was minted for a candidate, written onto its refused `LINK` row so it is queryable.
+ *
+ * `no-anchors` and `unequal-gap` are rule 3's own two, and they say which half of the alignment
+ * failed: no anchor to bracket from (Netflix's season 1, 24 placeholder titles, 3.4a point 4), or
+ * anchors whose bracket counted a different number of rows on each side.
+ */
+export type RangeRefusal =
+  'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles' | 'date-skew' | 'no-anchors' | 'unequal-gap'
 
 /** One episode of either side, as both rules read it. */
 export type SideEpisode = {
@@ -95,13 +110,29 @@ export type SideEpisode = {
   hung: string
 }
 
+/**
+ * HOW one pair was placed, which is the whole of a trace's answer to "why is this button here" (3.2).
+ *
+ * One shape per rule, and rule 3 carries three of its own because it places a row three different
+ * ways: `day` and `slack` are rule 1's, `key` is rule 2's exact title match, `anchor` is rule 3's
+ * (the key that anchored it), `between` names the two anchors whose equal-gap bracket forced a row
+ * that no title reached, and `closed` names the specials whose location closed the alignment (3.4a),
+ * which is empty for nothing, since a closure needs at least one.
+ */
+export type PairEvidence =
+  | { day: number, slack: number }
+  | { key: string }
+  | { anchor: string }
+  | { between: [string, string] }
+  | { closed: string[] }
+
 /** One proven pair: their row, our row, and what proved it. */
 export type Pair = {
   from: SideEpisode
   to: SideEpisode
   fromNumber: number
   toNumber: number
-  evidence: { day: number, slack: number } | { key: string }
+  evidence: PairEvidence
 }
 
 const compare = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0)
@@ -276,6 +307,392 @@ export const pairsByTitle = (
   return { pairs, titled, coverage: titled ? pairs.length / titled : 0 }
 }
 
+// ---------------------------------------------------------------------------------------------
+// Rule 3 of 5.4 P4, by SEQUENCE, and its closure (3.4a). Three pure steps: the anchors, the rows an
+// equal-gap bracket forces between two of them, and the specials that close what is left.
+
+/**
+ * The keys rule 3 may anchor on: one row's, non-generic, stripped, deduplicated and ordered.
+ *
+ * The generic filter is applied HERE and not read off `EpisodeProfile.generic`, for `keysOf`'s own
+ * reason: 3.4a's anchor is defined as non-generic, so the rule that needs the property is the rule
+ * that has to check it. It is idempotent against today's column, which already drops them
+ * (`profile.ts`, `similar.ts:104`), and without it Netflix's season 1 of 24 rows titled `Episode N`
+ * would anchor all 24 of them onto ours.
+ */
+const anchorKeysOf = (episode: SideEpisode): string[] =>
+  keysOf(episode).filter(key => !isGenericEpisodeTitle(key))
+
+/** One episode of the run as rule 3 counts it: a number, and every reference row that carries it. */
+export type CanonicalEpisode = {
+  number: number
+  /**
+   * Every reference row at this number, lowest uri first. Several origins describe one broadcast, so
+   * the same title on anizip's row 5 and kitsu's row 5 is ONE episode rather than a duplicated key,
+   * which is the difference between rule 3's index and rule 2's (`uniqueKeys` would drop both).
+   */
+  rows: SideEpisode[]
+}
+
+/** One ANCHOR: their row and our number, joined by a key that is exact, unique and non-generic on both sides. */
+export type Anchor = {
+  from: SideEpisode
+  /** The reference row whose title carried the key, which is the row the pair NAMES. */
+  to: SideEpisode
+  /** Position in the alignment's own two lists. Order, and nothing else, places every other pair. */
+  fromIndex: number
+  toIndex: number
+  key: string
+}
+
+/** The two ordered lists rule 3 reads, the anchors it found in them, and the run's specials. */
+export type Alignment = {
+  /** Their NUMBERED rows, ascending: an unnumbered row of theirs is in no sequence at all. */
+  theirs: SideEpisode[]
+  /** The run's own numbering, ascending, one entry per distinct number. */
+  canonical: CanonicalEpisode[]
+  /** The run's rows with NO number: 3.4a's insertions, and never a pair of their own. */
+  specials: SideEpisode[]
+  anchors: Anchor[]
+  /** Exact unique matches before the monotone filter, so a crossing one is countable rather than silent. */
+  matches: number
+}
+
+const pairOnto = (from: SideEpisode, slot: CanonicalEpisode, evidence: PairEvidence): Pair => ({
+  from,
+  to: slot.rows[0]!,
+  fromNumber: from.number!,
+  toNumber: slot.number,
+  evidence,
+})
+
+/**
+ * The longest strictly increasing run of matches, which is the monotone alignment of rule 3.
+ *
+ * Patience by binary search over the matches in THEIR order, reconstructed through parent pointers,
+ * so a crossing match is dropped rather than allowed to bend the alignment around it: two matches
+ * that cross leave a run of one, which is below the two-anchor minimum and mints nothing.
+ */
+const longestMonotone = (matches: readonly Anchor[]): Anchor[] => {
+  const tails: number[] = []
+  const parent: number[] = []
+  matches.forEach((match, index) => {
+    let low = 0
+    let high = tails.length
+    while (low < high) {
+      const mid = (low + high) >> 1
+      if (matches[tails[mid]!]!.toIndex < match.toIndex) low = mid + 1
+      else high = mid
+    }
+    parent[index] = low > 0 ? tails[low - 1]! : -1
+    tails[low] = index
+  })
+  const anchors: Anchor[] = []
+  for (let index = tails.length ? tails[tails.length - 1]! : -1; index >= 0; index = parent[index]!) {
+    anchors.push(matches[index]!)
+  }
+  return anchors.reverse()
+}
+
+/**
+ * Rule 3's first step: the ANCHORS, and the two ordered lists they sit in.
+ *
+ * An anchor is exact `stripTitle` equality, non-generic, and unique on each side, then MONOTONE: the
+ * anchors are the longest increasing subsequence of those matches, so an alignment never crosses
+ * itself. Three ways a match is dropped, each of them an identity question order cannot answer:
+ *
+ * - a key their side carries twice, exactly as rule 2 drops it;
+ * - a key naming two different numbers of OURS (a key several rows of one number carry is that
+ *   number's, however many origins spell it);
+ * - a canonical number two of their rows reach, which is one row too many for one episode.
+ *
+ * Every list is sorted before it is read (their rows by number then uri, ours by number, the
+ * specials by uri), so the alignment is a function of the two lists and not of the scan's order.
+ */
+export const alignByTitle = (
+  reference: readonly SideEpisode[],
+  theirs: readonly SideEpisode[]
+): Alignment => {
+  const ordered = [...theirs]
+    .filter(episode => episode.number !== null)
+    .sort((a, b) => a.number! - b.number! || compare(a.uri, b.uri))
+
+  const byNumber = new Map<number, SideEpisode[]>()
+  for (const row of [...reference].sort(byUri)) {
+    if (row.number === null) continue
+    byNumber.set(row.number, [...byNumber.get(row.number) ?? [], row])
+  }
+  const canonical: CanonicalEpisode[] = [...byNumber.keys()]
+    .sort((a, b) => a - b)
+    .map(number => ({ number, rows: byNumber.get(number)! }))
+  const specials = [...reference].filter(episode => episode.number === null).sort(byUri)
+
+  const ourKey = new Map<string, { index: number, row: SideEpisode } | null>()
+  canonical.forEach((entry, index) => {
+    for (const row of entry.rows) {
+      for (const key of anchorKeysOf(row)) {
+        const held = ourKey.get(key)
+        if (held === undefined) ourKey.set(key, { index, row })
+        else if (held && held.index !== index) ourKey.set(key, null)
+      }
+    }
+  })
+  const theirKey = new Map<string, SideEpisode | null>()
+  for (const row of ordered) {
+    for (const key of anchorKeysOf(row)) {
+      if (theirKey.has(key)) theirKey.set(key, null)
+      else theirKey.set(key, row)
+    }
+  }
+
+  const matches: Anchor[] = []
+  ordered.forEach((row, fromIndex) => {
+    const reached = new Map<number, { row: SideEpisode, key: string }>()
+    for (const key of anchorKeysOf(row)) {
+      if (theirKey.get(key) !== row) continue
+      const ours = ourKey.get(key)
+      if (!ours) continue
+      if (!reached.has(ours.index)) reached.set(ours.index, { row: ours.row, key: key })
+    }
+    // two different numbers of ours through two keys is an ambiguity, not two matches
+    if (reached.size !== 1) return
+    const entry = [...reached.entries()][0]!
+    matches.push({ from: row, to: entry[1].row, fromIndex, toIndex: entry[0], key: entry[1].key })
+  })
+  const claims = new Map<number, number>()
+  for (const match of matches) claims.set(match.toIndex, (claims.get(match.toIndex) ?? 0) + 1)
+  const single = matches.filter(match => claims.get(match.toIndex) === 1)
+
+  return { theirs: ordered, canonical, specials, anchors: longestMonotone(single), matches: single.length }
+}
+
+/**
+ * Rule 3's second step: the rows an EQUAL-GAP BRACKET forces between two anchors.
+ *
+ * A row strictly between two anchors is forced when the number of rows between them is the same on
+ * both sides, because order then permits exactly one bijection and no title evidence is consulted
+ * for it. That is where the three Mushoku pairs no title rule could reach come from (`Unwilling to
+ * Die` onto `I Don't Want to Die`, `This Feeling` onto `These Feelings`, and one accent difference,
+ * measured 2026-09-12).
+ *
+ * ROWS ARE COUNTED, NEVER NUMBERS. A pair needs two rows, so a side that skips a number has one row
+ * fewer to place and not one gap more; counting the numbers instead would refuse a region over a
+ * hole that has no row in it.
+ *
+ * An unequal gap refuses ITS OWN REGION and keeps its anchors: one side carries a row the other does
+ * not, and which row that is is exactly what order cannot say. `unequal` counts those regions so a
+ * refusal can name what it saw.
+ */
+export const forcedByBracket = (alignment: Alignment): { pairs: Pair[], unequal: number } => {
+  const { anchors, theirs, canonical } = alignment
+  if (anchors.length < 2) return { pairs: [], unequal: 0 }
+  const pairs: Pair[] = []
+  let unequal = 0
+  for (let index = 1; index < anchors.length; index += 1) {
+    const lower = anchors[index - 1]!
+    const upper = anchors[index]!
+    const rows = theirs.slice(lower.fromIndex + 1, upper.fromIndex)
+    const slots = canonical.slice(lower.toIndex + 1, upper.toIndex)
+    if (!rows.length && !slots.length) continue
+    if (rows.length !== slots.length) {
+      unequal += 1
+      continue
+    }
+    const between: [string, string] = [lower.from.uri, upper.from.uri]
+    rows.forEach((row, offset) => pairs.push(pairOnto(row, slots[offset]!, { between })))
+  }
+  return { pairs, unequal }
+}
+
+/**
+ * The token level match of 3.4a, and the ONE place rule 3 does not demand exact equality.
+ *
+ * A retranslating origin REORDERS words: Netflix's `Fitz the Guardian` against ani.zip's special
+ * `Guardian Fitz` (`S1`, aired 2023-07-03, a week before canonical episode 1). So the smaller token
+ * set must be CONTAINED in the larger and carry at least two tokens. A one word title decides
+ * nothing and is refused rather than guessed, which is also what keeps `Recap` off every special a
+ * run has.
+ *
+ * It is admitted here and nowhere else because a located insertion places NO pair of its own: it
+ * only has to account for a surplus the anchors already measured, and the closure it enables is then
+ * checked against those anchors.
+ */
+const MIN_SPECIAL_TOKENS = 2
+
+const tokenSetsOf = (episode: SideEpisode): Set<string>[] =>
+  anchorKeysOf(episode).map(key => new Set(key.split(' ').filter(Boolean)))
+
+const tokensMatch = (a: SideEpisode, b: SideEpisode): boolean =>
+  tokenSetsOf(a).some(left => tokenSetsOf(b).some(right => {
+    const [small, large] = left.size <= right.size ? [left, right] : [right, left]
+    if (small.size < MIN_SPECIAL_TOKENS) return false
+    return [...small].every(token => large.has(token))
+  }))
+
+/** One insertion LOCATED (3.4a point 2): their unanchored row, and the special that explains it. */
+export type LocatedSpecial = { from: SideEpisode, special: SideEpisode }
+
+const dayRank = (episode: SideEpisode): number => episode.day ?? Number.MAX_SAFE_INTEGER
+
+/**
+ * Which of their rows are insertions the run's own specials explain.
+ *
+ * A special carries its own air date, so where two specials could both explain a row the EARLIER
+ * DATE decides; two on one day decide nothing and the whole location is refused (`ambiguous`). A
+ * special two different rows reach names neither of them, for the same reason a duplicated title is
+ * no anchor.
+ */
+const locateInsertions = (
+  rows: readonly SideEpisode[],
+  specials: readonly SideEpisode[]
+): { located: LocatedSpecial[], ambiguous: boolean } => {
+  const reach = rows.map(row => ({ row, matched: specials.filter(special => tokensMatch(row, special)) }))
+  const claims = new Map<string, number>()
+  for (const entry of reach) {
+    for (const special of entry.matched) claims.set(special.uri, (claims.get(special.uri) ?? 0) + 1)
+  }
+  const located: LocatedSpecial[] = []
+  let ambiguous = false
+  for (const entry of reach) {
+    const reachable = entry.matched.filter(special => claims.get(special.uri) === 1)
+    if (reachable.length !== entry.matched.length) ambiguous = true
+    if (!reachable.length) continue
+    const ordered = [...reachable].sort((a, b) => dayRank(a) - dayRank(b) || compare(a.uri, b.uri))
+    if (ordered.length > 1 && dayRank(ordered[0]!) === dayRank(ordered[1]!)) {
+      ambiguous = true
+      continue
+    }
+    located.push({ from: entry.row, special: ordered[0]! })
+  }
+  return { located, ambiguous }
+}
+
+/**
+ * Rule 3's third step, 3.4a: CLOSING the alignment with the specials list.
+ *
+ * Nothing outside the outermost anchors is paired unless this closes, and it closes only when the
+ * alignment PROVES ITSELF: every region between anchors has an equal gap, the surplus is at least
+ * one row, the located insertions account for it EXACTLY, and each of the head and the tail balances
+ * once its own insertions are removed. Measured on Mushoku Tensei's Netflix season 2 (2026-09-12):
+ * locating one special at row 1 forces rows 2 to 25 onto canonical 1 to 24, and the four anchors
+ * then sit where the closure predicts.
+ *
+ * A SURPLUS OF ZERO CLOSES NOTHING, and that is the load bearing refusal rather than a shortcut.
+ * With no surplus there is no insertion to locate, so the only thing left saying the tail lines up is
+ * that the two counts agree, and "there is no rule by COUNT" (5.4 P4): a count-exact season with no
+ * other evidence is the Demon Slayer shape, two runs of eleven under `nf:81091393-3` which no count
+ * axis can separate (2026-09-04). So the anchors keep whatever their brackets forced and the ends
+ * stay unpaired.
+ *
+ * `unequal` is `forcedByBracket`'s count, passed in rather than recomputed: a region the bracket
+ * refused is a row one side carries and the other does not, which is the same surplus the closure is
+ * trying to account for, and accounting for it twice is how an extrapolation gets in.
+ */
+export const closeWithSpecials = (options: {
+  alignment: Alignment
+  unequal: number
+}): { pairs: Pair[], located: LocatedSpecial[], closed: boolean } => {
+  const { alignment, unequal } = options
+  const { anchors, theirs, canonical, specials } = alignment
+  const refused = { pairs: [], located: [], closed: false }
+  if (anchors.length < 2 || unequal) return refused
+  const surplus = theirs.length - canonical.length
+  if (surplus < 1) return refused
+
+  const first = anchors[0]!
+  const last = anchors[anchors.length - 1]!
+  const regions = [
+    { rows: theirs.slice(0, first.fromIndex), slots: canonical.slice(0, first.toIndex) },
+    { rows: theirs.slice(last.fromIndex + 1), slots: canonical.slice(last.toIndex + 1) },
+  ]
+
+  const located: LocatedSpecial[] = []
+  const forced: { row: SideEpisode, slot: CanonicalEpisode }[] = []
+  for (const region of regions) {
+    const extra = region.rows.length - region.slots.length
+    if (extra < 0) return refused
+    const spent = new Set(located.map(entry => entry.special.uri))
+    const found = locateInsertions(region.rows, specials.filter(special => !spent.has(special.uri)))
+    if (found.ambiguous || found.located.length !== extra) return refused
+    located.push(...found.located)
+    const inserted = new Set(found.located.map(entry => entry.from.uri))
+    const remaining = region.rows.filter(row => !inserted.has(row.uri))
+    remaining.forEach((row, offset) => forced.push({ row, slot: region.slots[offset]! }))
+  }
+  // the surplus of 3.4a point 1, stated again over the whole alignment rather than region by region:
+  // the two are equal while every inner gap is equal, and this is the sentence the rule promises
+  if (located.length !== surplus) return refused
+
+  const closed = located.map(entry => entry.special.uri).sort(compare)
+  return { pairs: forced.map(entry => pairOnto(entry.row, entry.slot, { closed })), located, closed: true }
+}
+
+/** What rule 3 came to: the pairs, and every count a refusal or a trace needs to explain them. */
+export type SequencePairing = {
+  alignment: Alignment
+  /** One pair per anchor, in their own order. Empty below the two anchor minimum, since one brackets nothing. */
+  anchored: Pair[]
+  /** The rows an equal-gap bracket forced between two anchors. */
+  forced: Pair[]
+  /** The rows 3.4a's closure forced outside the outermost anchors. */
+  closure: Pair[]
+  /** Regions between two anchors whose row counts disagreed: each keeps its anchors and pairs nothing. */
+  unequal: number
+  located: LocatedSpecial[]
+  closed: boolean
+  /** `anchored`, `forced` and `closure` together, ordered, or NOTHING when order placed no row. */
+  pairs: Pair[]
+}
+
+/**
+ * Rule 3 of 5.4 P4, by SEQUENCE: anchors, the rows their brackets force, and 3.4a's closure.
+ *
+ * RULE 3 SPEAKS ONLY WHEN ORDER PLACES A ROW. With two or more anchors and nothing forced, every
+ * pair it could write is an exact title match and nothing else, which is rule 2's evidence and is
+ * governed by rule 2's bar (three matches and 0.6 coverage of the candidate, `similar.ts:59-69`).
+ * That bar is what makes "a fold of two equal cours at 12/24 mints no title pairs and only the date
+ * rule can prove a fold" true, and a rule 3 that minted its anchors alone would repeal it for every
+ * fold whose titles happen to be shared. So the anchors ride out with the forced rows or not at all:
+ * what rule 3 adds, and the only thing it adds, is the rows no title reaches.
+ *
+ * The three steps are separate exported functions because each is a different kind of claim: the
+ * anchors are a title measurement, the brackets are arithmetic over one order, and the closure is an
+ * argument about a surplus. `reference` is the run's own rows, exactly as rules 1 and 2 read them,
+ * and the specials come out of it: a row of the run with no number is an insertion candidate and a
+ * pair target never, since there is no slot for it inside `1..runLength` (5.4 P5).
+ */
+export const pairsBySequence = (
+  reference: readonly SideEpisode[],
+  theirs: readonly SideEpisode[]
+): SequencePairing => {
+  const alignment = alignByTitle(reference, theirs)
+  const anchored = alignment.anchors.length < 2
+    ? []
+    : alignment.anchors.map(anchor => ({
+      from: anchor.from,
+      to: anchor.to,
+      fromNumber: anchor.from.number!,
+      toNumber: anchor.to.number!,
+      evidence: { anchor: anchor.key },
+    } satisfies Pair))
+  const bracket = forcedByBracket(alignment)
+  const closure = closeWithSpecials({ alignment, unequal: bracket.unequal })
+  const placed = [...bracket.pairs, ...closure.pairs]
+  const pairs = anchored.length && placed.length
+    ? [...anchored, ...placed].sort((a, b) => a.fromNumber - b.fromNumber || compare(a.from.uri, b.from.uri))
+    : []
+  return {
+    alignment,
+    anchored,
+    forced: bracket.pairs,
+    closure: closure.pairs,
+    unequal: bracket.unequal,
+    located: closure.located,
+    closed: closure.closed,
+    pairs,
+  }
+}
+
 /** One thing to be proven against one run: a season row, a lend, or a member that numbers differently. */
 export type Candidate = {
   clusterId: string
@@ -299,7 +716,19 @@ export type Candidate = {
 
 /** What one candidate came to: the pairs and the rule that proved them, or the reason for nothing. */
 export type Verdict =
-  | { ok: true, rule: 'dates' | 'titles', pairs: Pair[], coverage: number }
+  | {
+    ok: true
+    rule: 'dates' | 'titles' | 'sequence'
+    pairs: Pair[]
+    coverage: number
+    /**
+     * The shape of rule 3's alignment, for the `INCLUDES` evidence, and absent for the other rules.
+     *
+     * Counted BEFORE the window, where `pairs` is counted after it: the numbers describe what the
+     * alignment found, and `Hull.aligned` is what was minted out of it.
+     */
+    sequence?: { anchors: number, forced: number, closure: number, unequal: number, closed: boolean }
+  }
   | { ok: false, reason: RangeRefusal }
 
 /**
@@ -309,11 +738,27 @@ export type Verdict =
  * | --- | --- |
  * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window and they are not a skew |
  * | `titles` | rule 1 did not, the candidate's origin does not retranslate, and rule 2 cleared both halves of its bar |
- * | `date-skew` | rule 1's pairs were a constant offset the candidate's own numbering cannot absorb (`scheduleSkew`) and rule 2 did not clear its bar |
- * | `retranslates` | rule 1 proved nothing and rule 2 was refused outright (Netflix, 4 exact of 25, the best wrong pair above the true one, 2026-09-10) |
+ * | `sequence` | neither did, and rule 3's alignment placed a row by ORDER: two or more anchors, at least one row forced by a bracket or by 3.4a's closure, `MIN_ALIGNED` pairs inside the window, and not the same offset rule 1 refused as a skew |
+ * | `retranslates` | nothing was proven and rule 2 was refused outright (Netflix, 4 exact of 25, the best wrong pair above the true one, 2026-09-10) |
+ * | `date-skew` | rule 1's pairs were a constant offset the candidate's own numbering cannot absorb (`scheduleSkew`) and neither rule 2 nor rule 3 minted |
  * | `ambiguous-day` | rule 1 reached reference days and a day named two reference numbers |
- * | `no-titles` | both sides carry non-generic titles and rule 2 still missed its bar |
- * | `no-dates` | everything else: the date rule could not run or its days met nothing, and the title rule had no material either |
+ * | `unequal-gap` | rule 3 anchored and a bracket counted a different number of rows on each side, so order placed nothing |
+ * | `no-anchors` | both sides carry non-generic titles and rule 3 found fewer than two anchors (Netflix's season 1, 3.4a point 4) |
+ * | `no-titles` | both sides carry non-generic titles, rule 2 missed its bar, and rule 3 anchored with nothing to force |
+ * | `no-dates` | everything else: the date rule could not run or its days met nothing, and the title rules had no material either |
+ *
+ * RULE 3 RUNS THIRD, and where rule 2 is REFUSED rather than merely short of its bar. Two things fix
+ * that position. It is the weakest evidence of the three, since a bracket consults no evidence at all
+ * for the row it forces, and the rules are ordered by what they measure. And it is the only one that
+ * may read a retranslating origin's titles, because it reads them for exact equality rather than for
+ * a score (see the header), so putting it before rule 2 would let an alignment answer where a
+ * coverage that cleared both halves of its bar was available.
+ *
+ * A PAIRING RULE 1 REFUSED AS A SKEW IS NOT RESURRECTED BY RULE 3. `scheduleSkew` is asked again
+ * about rule 3's own pairs: an alignment that reproduces the offset the dates were refused for is
+ * refused for the same reason, and one that disagrees with it (the usual case, since the anchors are
+ * exact titles) stands. A candidate longer than the run reaches that guard's last clause and is never
+ * a skew, which is why the Netflix season of 25 against a run of 24 is admitted.
  *
  * THE WINDOW IS APPLIED BEFORE THE BAR. A pair whose `toNumber` falls outside `1..runLength` is
  * dropped rather than counted (`consensus.ts:185-191`): a season containing this run brings episodes
@@ -337,24 +782,57 @@ export const decideCandidate = (options: {
     : null
   if (skew === null && dated.length >= MIN_ALIGNED) return { ok: true, rule: 'dates', pairs: dated, coverage: 1 }
 
-  if (candidate.retranslates) return { ok: false, reason: 'retranslates' }
-
-  const titles = pairsByTitle(reference, candidate.episodes)
-  const titled = inWindow(titles.pairs)
-  if (titled.length >= MIN_EPISODE_TITLE_MATCHES && titles.coverage >= EPISODE_TITLE_COVERAGE) {
-    return { ok: true, rule: 'titles', pairs: titled, coverage: titles.coverage }
+  // rule 2, refused OUTRIGHT for a retranslating origin, where rule 3 below is not (3.4a)
+  const titles = candidate.retranslates ? null : pairsByTitle(reference, candidate.episodes)
+  if (titles) {
+    const titled = inWindow(titles.pairs)
+    if (titled.length >= MIN_EPISODE_TITLE_MATCHES && titles.coverage >= EPISODE_TITLE_COVERAGE) {
+      return { ok: true, rule: 'titles', pairs: titled, coverage: titles.coverage }
+    }
   }
 
-  // the skew is the most specific thing that happened, and the only refusal that says the dates DID
-  // meet: nothing rather than a guess, with what was seen written down (`consensus.ts:105-110`)
+  const sequence = pairsBySequence(reference, candidate.episodes)
+  const sequenced = inWindow(sequence.pairs)
+  const sequenceSkew = sequenced.length >= MIN_ALIGNED
+    ? scheduleSkew({ runLength, episodes: candidate.episodes, pairs: sequenced })
+    : null
+  if (sequenceSkew === null && sequenced.length >= MIN_ALIGNED) {
+    return {
+      ok: true,
+      rule: 'sequence',
+      pairs: sequenced,
+      // NOT A SCORE, deliberately: every anchor is exact unique non-generic equality and every other
+      // pair is placed by order, so there is no ratio to report and a coverage here would be the one
+      // thing 3.4a says not to trust
+      coverage: 1,
+      sequence: {
+        anchors: sequence.anchored.length,
+        forced: sequence.forced.length,
+        closure: sequence.closure.length,
+        unequal: sequence.unequal,
+        closed: sequence.closed,
+      },
+    }
+  }
+
+  // `retranslates` stays the most specific refusal for the origin it names, above the skew it
+  // outranked before rule 3 existed: rule 2 was refused before it was weighed, which is a fact about
+  // the source rather than about this candidate's dates
+  if (candidate.retranslates) return { ok: false, reason: 'retranslates' }
+  // the skew is the most specific thing that happened to the DATES, and the only refusal that says
+  // they did meet: nothing rather than a guess, with what was seen written down (`consensus.ts:105-110`)
   if (skew !== null) return { ok: false, reason: 'date-skew' }
   if (dates.ambiguous) return { ok: false, reason: 'ambiguous-day' }
+  // rule 3's own two, in the same most-specific-first order: a bracket that counted two different
+  // numbers of rows is a measurement, where a missing anchor is an absence
+  if (sequence.unequal) return { ok: false, reason: 'unequal-gap' }
   // `no-titles` says the title rule had material on both sides and missed its bar, which is the more
   // specific of the two; `no-dates` is the fallback, and it covers both "one side carries no day" and
   // "the days met nothing", since neither rule then had anything to be refused ON
   const titledBothSides = reference.some(episode => keysOf(episode).length)
     && candidate.episodes.some(episode => keysOf(episode).length)
-  return { ok: false, reason: titledBothSides ? 'no-titles' : 'no-dates' }
+  if (!titledBothSides) return { ok: false, reason: 'no-dates' }
+  return { ok: false, reason: sequence.alignment.anchors.length < 2 ? 'no-anchors' : 'no-titles' }
 }
 
 /** The `INCLUDES` range of 3.4, as literal properties: the hull of the pairs on both sides. */
@@ -650,6 +1128,7 @@ export const rangePlugin: Plugin = {
     const episodeLinks: EpisodeLinkProposal[] = []
     let dated = 0
     let titled = 0
+    let sequenced = 0
     let refused = 0
 
     for (const cluster of clusterRows) {
@@ -725,7 +1204,8 @@ export const rangePlugin: Plugin = {
         }
 
         if (verdict.rule === 'dates') dated += verdict.pairs.length
-        else titled += verdict.pairs.length
+        else if (verdict.rule === 'titles') titled += verdict.pairs.length
+        else sequenced += verdict.pairs.length
         for (const pair of verdict.pairs) {
           episodeLinks.push({
             fromUri: pair.from.uri,
@@ -753,7 +1233,9 @@ export const rangePlugin: Plugin = {
           toUri: candidate.memberUri,
           reason: verdict.rule,
           confidence: verdict.rule === 'dates' ? 1 : verdict.coverage,
-          evidence: { rule: verdict.rule, theirs: total, ours: runLength },
+          // a sequence range carries the SHAPE of its alignment, since "why these rows" is a
+          // different question from "how many", and the two counts behind it are what answer it
+          evidence: { rule: verdict.rule, theirs: total, ours: runLength, ...verdict.sequence ?? {} },
           supports: candidate.via,
           range: hull,
         })
@@ -814,12 +1296,12 @@ export const rangePlugin: Plugin = {
       })
     }
 
-    if (dated || titled || refused || asserted || foreign) {
+    if (dated || titled || sequenced || refused || asserted || foreign) {
       ctx.log({
         level: 'info',
         rule: 'range',
-        detail: `${dated} pairs by date, ${titled} by title, ${refused} candidates refused, `
-          + `${asserted} claims asserted, ${foreign} refused as foreign`,
+        detail: `${dated} pairs by date, ${titled} by title, ${sequenced} by sequence, `
+          + `${refused} candidates refused, ${asserted} claims asserted, ${foreign} refused as foreign`,
       })
     }
 

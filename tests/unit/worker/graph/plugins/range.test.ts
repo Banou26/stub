@@ -28,9 +28,10 @@ import { directPlugin } from '../../../../../src/worker/graph/plugins/direct'
 import { aggregatePlugin } from '../../../../../src/worker/graph/plugins/aggregate'
 import { containmentPlugin } from '../../../../../src/worker/graph/plugins/containment'
 import {
-  decideCandidate, hullOf, MIN_ALIGNED, numbersOutsideRun, pairsByDay, pairsByTitle, placesClaim, rangePlugin,
-  scheduleSkew,
+  alignByTitle, closeWithSpecials, decideCandidate, forcedByBracket, hullOf, MIN_ALIGNED, numbersOutsideRun,
+  pairsByDay, pairsBySequence, pairsByTitle, placesClaim, rangePlugin, scheduleSkew,
 } from '../../../../../src/worker/graph/plugins/range'
+import { stripTitle } from '../../../../../src/sources/utils'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
 import { alignmentOffset } from '../../../../../src/worker/store/consensus'
 import type { Episode } from '../../../../../src/worker/store/types'
@@ -40,6 +41,17 @@ const CORPUS = new URL('../../../../../corpus/season/summer-2026/answers.jsonl',
 
 const MS_PER_DAY = 86_400_000
 const dayOf = (date: string): number => Math.floor(Date.parse(date) / MS_PER_DAY)
+
+/**
+ * What a REPORTING case prints, and never `console`.
+ *
+ * vitest 4 intercepts `console` and its default reporter drops every line a PASSING test wrote
+ * (measured 2026-09-12: a `console.info` in a green case is invisible with the default reporter and
+ * stays invisible under `--silent=false`, while a `process.stdout.write` from the same case shows).
+ * The corpus case below exists to report numbers, so a reporting channel the reporter hides makes it
+ * a case that runs and says nothing.
+ */
+const report = (line: string): void => void process.stdout.write(`${line}\n`)
 
 /** `count` weekly days from `from`, as `YYYY-MM-DD`: the shape a named day arrives in (5.4 P0). */
 const weekly = (from: string, count: number, skip = 0): string[] =>
@@ -454,6 +466,128 @@ const claimAnswers = async () => [
   })),
 ]
 
+// RULE 3, BY SEQUENCE, AND 3.4a's CLOSURE, measured live on 2026-09-12 against Mushoku Tensei's
+// Netflix season 2: 25 Netflix rows against 24 canonical episodes, 14 of the Netflix rows carrying a
+// real title, 4 anchors, 3 rows forced by an equal-gap bracket, 0 regions refused, and 18 rows
+// outside the outermost anchors (5 before the first, 13 after the last). With ani.zip's special `S1`
+// located at Netflix's row 1 the surplus of one is accounted and rows 2 to 25 are forced onto
+// canonical 1 to 24, which is the closure.
+//
+// The seven titles the measurement names are verbatim; the rows it does not name carry an invented
+// title, so that the count of titled rows is the measured 14 and none of the unnamed ones matches
+// anything on the other side. The canonical side is ani.zip's own 1 to 24 across S2's two parts
+// (8.1's table: part 2's rows carry `episodeNumber` 13 to 24), which is the numbering the 25 Netflix
+// rows were measured against.
+
+/** ani.zip's titles by canonical number. 5 to 11 are the record's; 1 to 4 and 12 to 24 are invented. */
+const CANON_S2 = [
+  'Turning Point Four', 'The Water God Festival', 'A Sisters Reunion', 'The Labyrinth City of Rapan',
+  // 5, an anchor
+  'Ranoa University of Magic',
+  // 6, forced: Netflix says `Unwilling to Die`, which no title rule can reach
+  'I Don\'t Want to Die',
+  // 7, an anchor
+  'The Kidnapping and Confinement of Beast Girls',
+  // 8, forced: Netflix drops the accent, so the keys differ by one letter
+  'The Fiancé of Despair',
+  // 9, an anchor
+  'The White Mask',
+  // 10, forced: Netflix says `This Feeling`
+  'These Feelings',
+  // 11, an anchor
+  'To You',
+  ...Array.from({ length: 13 }, (_, index) => `Canonical Chapter ${index + 12}`),
+]
+
+/** Netflix's rows by position. NULL is the placeholder `Episode N`, which anchors nothing (3.4a). */
+const NETFLIX_S2: (string | null)[] = [
+  // 1, the insertion: ani.zip's special `S1` reads `Guardian Fitz`, the same words reordered
+  'Fitz the Guardian',
+  'A Letter From Home', 'The Ruins of Rapan', 'Two Sisters', 'The Magic City',
+  'Ranoa University of Magic',
+  'Unwilling to Die',
+  'The Kidnapping and Confinement of Beast Girls',
+  'The Fiance of Despair',
+  'The White Mask',
+  'This Feeling',
+  'To You',
+  'The Doldia Village', 'A Quiet Homecoming',
+  ...Array.from({ length: 11 }, () => null),
+]
+
+/** The special's own title, and its own air date: 2023-07-03, a week before canonical episode 1. */
+const SPECIAL_S2 = 'Guardian Fitz'
+const SPECIAL_DAY = '2023-07-03'
+
+const SEQUENCE_DAYS = weekly('2023-07-09', 24)
+const sequenceAnswers = async () => [
+  await answer('media', media('anilist:146065', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 24, startDate: SEQUENCE_DAYS[0],
+    titles: [title('en', 'Mushoku Tensei Jobless Reincarnation Season 2')],
+    handles: [sameAs(media('anizip:18103', {})), partOf(media('nf:80987039-2', { score: 0.2 }))],
+  })),
+  await answer('media', media('anizip:18103', {
+    type: 'TV', episodeCount: 24, titles: [title('en', 'Mushoku Tensei Jobless Reincarnation Season 2')],
+    episodes: [
+      ...CANON_S2.map((name, index) => episode(`anizip:18103-${index + 1}`, 'anizip:18103', {
+        episodeNumber: index + 1, releaseDate: anizipDay(SEQUENCE_DAYS[index]!), titles: [title('en', name)],
+      })),
+      // the special, keyed `S1` and NUMBERED BY NOBODY, which is how ani.zip's `specials=1` fetch
+      // reaches the graph (3.4a): it is an insertion candidate and a pair target never
+      episode('anizip:18103-S1', 'anizip:18103', {
+        releaseDate: anizipDay(SPECIAL_DAY), titles: [title('en', SPECIAL_S2)],
+      }),
+    ],
+  })),
+  // Netflix's season 2: 25 positional rows, no date at any level, its own translations
+  await answer('media', media('nf:80987039-2', {
+    score: 0.2, type: 'TV', status: 'FINISHED', episodeCount: 25,
+    titles: [title('en', 'Mushoku Tensei Jobless Reincarnation Season 2')],
+    episodes: NETFLIX_S2.map((name, index) => episode(`nf:80987039-2-${index + 1}`, 'nf:80987039-2', {
+      episodeNumber: index + 1, titles: [title('en', name ?? `Episode ${index + 1}`)],
+    })),
+  })),
+]
+
+// RULE 3'S TWO OWN REFUSALS, on an origin whose titles rule 2 is NOT refused for, since a
+// retranslating origin reports `retranslates` before either of them is reached. JustWatch publishes
+// titles and a year (`justwatch/extractor.ts:387`), so rule 1 has nothing on their side and the
+// verdict is rule 3's.
+const REFUSAL_DAYS = weekly('2026-04-08', 8)
+const refusalAnswers = async () => [
+  await answer('media', media('anilist:930', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 8, startDate: REFUSAL_DAYS[0],
+    titles: [title('en', 'Refused Alignment')],
+    handles: [
+      sameAs(media('anizip:930', {})),
+      partOf(media('jw:930-770001', { score: 0.4 })),
+      partOf(media('jw:930-770002', { score: 0.4 })),
+    ],
+  })),
+  await answer('media', media('anizip:930', {
+    type: 'TV', episodeCount: 8, titles: [title('en', 'Refused Alignment')],
+    episodes: REFUSAL_DAYS.map((day, index) => episode(`anizip:930-${index + 1}`, 'anizip:930', {
+      episodeNumber: index + 1, releaseDate: anizipDay(day), titles: [title('en', `Refused ${index + 1}`)],
+    })),
+  })),
+  // nine rows, nine titles, not one of them ours: titles on both sides and no anchor at all
+  await answer('media', media('jw:930-770001', {
+    score: 0.4, type: 'TV', status: 'FINISHED', episodeCount: 9, titles: [title('en', 'Refused Alignment Season 1')],
+    episodes: Array.from({ length: 9 }, (_, index) => episode(`jw:930-770001-${index + 1}`, 'jw:930-770001', {
+      episodeNumber: index + 1, titles: [title('en', `Provider Cut ${index + 1}`)],
+    })),
+  })),
+  // two anchors, and SEVEN rows between them where ours has six: one side carries a row the other
+  // does not, and which row that is is exactly what order cannot say
+  await answer('media', media('jw:930-770002', {
+    score: 0.4, type: 'TV', status: 'FINISHED', episodeCount: 9, titles: [title('en', 'Refused Alignment Season 1 Again')],
+    episodes: Array.from({ length: 9 }, (_, index) => episode(`jw:930-770002-${index + 1}`, 'jw:930-770002', {
+      episodeNumber: index + 1,
+      titles: [title('en', index === 0 ? 'Refused 1' : index === 8 ? 'Refused 8' : `Provider Take ${index + 1}`)],
+    })),
+  })),
+]
+
 beforeAll(async () => {
   await enableGraph(true)
   await ingestAnswers([
@@ -466,6 +600,8 @@ beforeAll(async () => {
     ...await skewAnswers(),
     ...await skewSeasonAnswers(),
     ...await claimAnswers(),
+    ...await sequenceAnswers(),
+    ...await refusalAnswers(),
   ])
   resetPassState()
   await runPass()
@@ -732,6 +868,100 @@ test('plugin:range never mints a SAME_AS between media', async () => {
     "MATCH (a:Media)-[l:LINK]->(b:Media) WHERE l.by = 'plugin:range' AND l.kind <> 'INCLUDES' RETURN l.kind AS kind"
   )
   expect(minted).toEqual([])
+})
+
+// ---------------------------------------------------------------------------------------------
+// Rule 3, by SEQUENCE, and 3.4a's closure, through the graph.
+
+// THE CLOSURE OF 3.4a, END TO END, on the measured Netflix season 2: no date on their side and
+// retranslated titles, so rule 1 cannot fire and rule 2 is refused outright, and what places all
+// twenty-four buttons is four exact titles, three equal-gap brackets and ONE located special.
+// Mutation: drop the `closeWithSpecials` call from `pairsBySequence` and this falls to the seven
+// pairs the anchors and their brackets prove, with rows 2 to 5 and 13 to 25 unpaired; compare the
+// special's title EXACTLY rather than by tokens and `Fitz the Guardian` stops locating `Guardian
+// Fitz`, so the surplus is unaccounted and the same seven are all that is left.
+test('3.4a the located special closes the alignment, and the anchors agree with the closure', async () => {
+  const pairs = await pairsFrom('nf:80987039-2')
+  expect(pairs).toHaveLength(24)
+  // rows 2 to 25 onto canonical 1 to 24: the whole packaging, one row late, proven rather than shifted
+  expect(pairs.map(row => [Number(row.fromNumber), Number(row.toNumber)]))
+    .toEqual(Array.from({ length: 24 }, (_, index) => [index + 2, index + 1]))
+  expect(pairs.every(row => row.reason === 'sequence' && row.status === 'active')).toBe(true)
+  expect(pairs.every(row => Number(row.confidence) === 1), 'order is not a score').toBe(true)
+  // the insertion itself pairs with NOTHING: a special has no number, so no slot admits it (5.4 P5)
+  expect(pairs.some(row => Number(row.fromNumber) === 1)).toBe(false)
+
+  // THE FOUR ANCHORS SIT WHERE THE CLOSURE PREDICTS, which is the alignment proving itself
+  const anchors = pairs.filter(row => 'anchor' in evidenceOf(row))
+  expect(anchors.map(row => [Number(row.fromNumber), Number(row.toNumber)]))
+    .toEqual([[6, 5], [8, 7], [10, 9], [12, 11]])
+  expect(evidenceOf(anchors[0]!)).toEqual({ anchor: stripTitle('Ranoa University of Magic') })
+  // the three an equal-gap bracket forced, each naming the two anchors it sits between
+  const forced = pairs.filter(row => 'between' in evidenceOf(row))
+  expect(forced.map(row => [Number(row.fromNumber), Number(row.toNumber)])).toEqual([[7, 6], [9, 8], [11, 10]])
+  expect(evidenceOf(forced[0]!)).toEqual({ between: ['nf:80987039-2-6', 'nf:80987039-2-8'] })
+  // and the seventeen the closure placed, each naming the special that accounted for the surplus
+  const closure = pairs.filter(row => 'closed' in evidenceOf(row))
+  expect(closure).toHaveLength(17)
+  expect(evidenceOf(closure[0]!)).toEqual({ closed: ['anizip:18103-S1'] })
+  expect(closure.map(row => Number(row.fromNumber)), 'the head and the untitled tail alike')
+    .toEqual([2, 3, 4, 5, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])
+
+  // THE RANGE OF 3.4, with the shape of the alignment written beside it
+  const range = (await rangeLinks()).find(row => row.fromUri === 'nf:80987039-2')
+  expect({
+    kind: range?.kind, status: range?.status, reason: range?.reason,
+    fromStart: Number(range?.fromStart), fromEnd: Number(range?.fromEnd),
+    toStart: Number(range?.toStart), toEnd: Number(range?.toEnd),
+    contiguous: range?.contiguous, aligned: Number(range?.aligned), total: Number(range?.total),
+  }).toEqual({
+    kind: 'INCLUDES', status: 'active', reason: 'sequence',
+    fromStart: 2, fromEnd: 25, toStart: 1, toEnd: 24, contiguous: true, aligned: 24, total: 25,
+  })
+  expect(evidenceOf(range!)).toEqual({
+    rule: 'sequence', theirs: 25, ours: 24, anchors: 4, forced: 3, closure: 17, unequal: 0, closed: true,
+  })
+  // the `PART_OF` that reached it is untouched, in this branch as in every other
+  expect((await linksBetween('anilist:146065', 'nf:80987039-2'))
+    .some(row => row.kind === 'PART_OF' && row.status === 'active')).toBe(true)
+
+  // WHAT THE PAIRS ARE FOR (5.4 P5): twenty-four Netflix buttons on the run's own rows, and none on
+  // a row the run does not have
+  // the season row is a RUN cluster of its own and draws its own 25 rows there, so the fills are
+  // filtered to the run's cluster, and sorted by position because `-10` sorts before `-2` by uri
+  const position = (uri: string): number => Number(uri.slice('nf:80987039-2-'.length))
+  const cluster = await clusterIdOf('anilist:146065')
+  const fills = (await fillsFrom('nf:80987039-2-'))
+    .filter(fill => fill.slot.startsWith(`${cluster}#`))
+    .sort((a, b) => position(a.uri) - position(b.uri))
+  expect(fills).toHaveLength(24)
+  expect(fills.every(fill => fill.via === 'aligned')).toBe(true)
+  expect(fills.map(fill => [position(fill.uri), fill.number]))
+    .toEqual(Array.from({ length: 24 }, (_, index) => [index + 2, index + 1]))
+  expect(fills.every(fill => fill.supports.length === 2), 'its own hang and the pair').toBe(true)
+})
+
+// RULE 3'S TWO REFUSALS ARE ROWS, not silences, on the `LINK` that reached the candidate.
+// Mutation: drop the `unequal-gap` branch of `decideCandidate` and the second one reads `no-titles`,
+// which says the titles missed a bar rather than that the counting refused; force a region whatever
+// its gap and it mints seven pairs instead; mint the anchors whenever there are two of them and it
+// mints its two, which is an exact title placing a button with rule 2's bar unmet.
+test('rule 3 writes down which half of its alignment failed', async () => {
+  const links = await rangeLinks()
+  const noAnchor = links.find(row => row.fromUri === 'jw:930-770001')
+  expect({ kind: noAnchor?.kind, status: noAnchor?.status, reason: noAnchor?.reason })
+    .toEqual({ kind: 'INCLUDES', status: 'refused', reason: 'no-anchors' })
+  expect(evidenceOf(noAnchor!)).toEqual({ reason: 'no-anchors', theirs: 9, ours: 8 })
+
+  const unequal = links.find(row => row.fromUri === 'jw:930-770002')
+  expect({ kind: unequal?.kind, status: unequal?.status, reason: unequal?.reason })
+    .toEqual({ kind: 'INCLUDES', status: 'refused', reason: 'unequal-gap' })
+  expect(evidenceOf(unequal!)).toEqual({ reason: 'unequal-gap', theirs: 9, ours: 8 })
+
+  // and NEITHER pairs anything: the two anchors of the second one are kept as anchors and minted as
+  // nothing, since order placed no row and an exact title is rule 2's evidence, held to rule 2's bar
+  expect(await pairsFrom('jw:930-770001')).toEqual([])
+  expect(await pairsFrom('jw:930-770002')).toEqual([])
 })
 
 // ---------------------------------------------------------------------------------------------
@@ -1226,6 +1456,325 @@ test('a skew whose titles cannot rescue it refuses date-skew', () => {
 })
 
 // ---------------------------------------------------------------------------------------------
+// Rule 3 itself, without an engine: the measured alignment, and each way it refuses.
+
+/** The two sides of the measured fixture, with the run's special list present or absent. */
+const mushokuSides = (options: { special?: boolean } = {}) => ({
+  reference: [
+    ...CANON_S2.map((name, index) => side(`anizip:18103-${index + 1}`, index + 1, null, [name])),
+    ...options.special ? [side('anizip:18103-S1', null, SPECIAL_DAY, [SPECIAL_S2])] : [],
+  ],
+  theirs: NETFLIX_S2.map((name, index) => side(
+    `nf:80987039-2-${index + 1}`,
+    index + 1,
+    null,
+    [name ?? `Episode ${index + 1}`]
+  )),
+})
+
+// THE MEASURED ALIGNMENT (2026-09-12): 4 anchors, 3 rows forced by an equal-gap bracket, 0 regions
+// refused, and 18 rows outside the outermost anchors that are NOT extrapolated. Netflix
+// `retranslates`, so this is also the case that proves rule 3 runs where rule 2 is refused (3.4a).
+// Mutation: refuse a `retranslates` candidate before rule 3 runs (rule 2's own refusal, moved back
+// above it) and the verdict below reads `retranslates` with no pairs at all, which is the whole of
+// Netflix's lane; return no pairs from `forcedByBracket` and the three rows no title reaches are lost
+// and the four anchors ride out with them, since rule 3 speaks only when order places a row.
+test('rule 3 anchors the four Netflix rows the titles prove and forces exactly the three between them', () => {
+  const { reference, theirs } = mushokuSides()
+  const sequence = pairsBySequence(reference, theirs)
+
+  expect(sequence.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number, anchor.key])).toEqual([
+    [6, 5, stripTitle('Ranoa University of Magic')],
+    [8, 7, stripTitle('The Kidnapping and Confinement of Beast Girls')],
+    [10, 9, stripTitle('The White Mask')],
+    [12, 11, stripTitle('To You')],
+  ])
+  // the three the record names, none of which any title rule could reach: `Unwilling to Die` onto
+  // `I Don't Want to Die`, one accent difference, and `This Feeling` onto `These Feelings`
+  expect(sequence.forced.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[7, 6], [9, 8], [11, 10]])
+  expect(sequence.forced.map(pair => pair.evidence)).toEqual([
+    { between: ['nf:80987039-2-6', 'nf:80987039-2-8'] },
+    { between: ['nf:80987039-2-8', 'nf:80987039-2-10'] },
+    { between: ['nf:80987039-2-10', 'nf:80987039-2-12'] },
+  ])
+  expect(sequence.unequal, 'no region disagreed').toBe(0)
+  // WITHOUT the run's special list the surplus of one is unaccounted, so the closure refuses and the
+  // 18 rows outside the outermost anchors stay unpaired: 5 before the first, 13 after the last
+  expect({ closed: sequence.closed, located: sequence.located, closure: sequence.closure })
+    .toEqual({ closed: false, located: [], closure: [] })
+  expect(sequence.pairs.map(pair => pair.fromNumber)).toEqual([6, 7, 8, 9, 10, 11, 12])
+
+  const verdict = decideCandidate({ runLength: 24, reference, candidate: { retranslates: true, episodes: theirs } })
+  expect(verdict.ok && verdict.rule, 'rule 3 runs where rule 2 is refused outright').toBe('sequence')
+  expect(verdict.ok && verdict.pairs).toHaveLength(7)
+  expect(verdict.ok && verdict.sequence).toEqual({ anchors: 4, forced: 3, closure: 0, unequal: 0, closed: false })
+})
+
+// THE CLOSURE, at the level the specials rule lives at: the same two sides plus ani.zip's `S1`.
+// Mutation: compare the special's title EXACTLY rather than by tokens and `Fitz the Guardian` stops
+// locating `Guardian Fitz`, so the surplus is unaccounted and the closure refuses; drop the
+// `located.length !== extra` test and a region closes on a special that explains nothing.
+test('3.4a locating one special accounts for the surplus and forces every remaining row', () => {
+  const { reference, theirs } = mushokuSides({ special: true })
+  const sequence = pairsBySequence(reference, theirs)
+
+  expect(sequence.closed).toBe(true)
+  expect(sequence.located.map(entry => [entry.from.uri, entry.special.uri]))
+    .toEqual([['nf:80987039-2-1', 'anizip:18103-S1']])
+  // rows 2 to 25 onto canonical 1 to 24, the untitled tail included
+  expect(sequence.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual(Array.from({ length: 24 }, (_, index) => [index + 2, index + 1]))
+  // and the four anchors sit exactly where that counting predicts, which is the alignment proving
+  // itself rather than being trusted
+  expect(sequence.alignment.anchors.every(anchor => anchor.from.number! - 1 === anchor.to.number!)).toBe(true)
+  expect(sequence.closure).toHaveLength(17)
+  expect(sequence.located).toHaveLength(1)
+  // the located row itself pairs with NOTHING: the special carries no number and no slot admits it
+  expect(sequence.pairs.some(pair => pair.from.uri === 'nf:80987039-2-1')).toBe(false)
+  expect(sequence.pairs.some(pair => pair.to.uri === 'anizip:18103-S1')).toBe(false)
+
+  // THE SURPLUS IS DERIVED FROM THE FIRST ANCHOR (3.4a point 1): their row 6 against our 5 states
+  // that exactly one extra row sits in the first six, and one is what was located
+  const first = sequence.alignment.anchors[0]!
+  expect(first.fromIndex - first.toIndex).toBe(1)
+  expect(sequence.located).toHaveLength(first.fromIndex - first.toIndex)
+})
+
+// A SURPLUS OF ZERO CLOSES NOTHING, because the only thing left saying the ends line up is that the
+// two counts agree, and there is no rule by COUNT (5.4 P4, the Demon Slayer shape).
+// Mutation: admit `surplus === 0` in `closeWithSpecials` and a 24 row season with two anchors is
+// paired end to end on its count, which is exactly what "a fold of two equal cours mints no title
+// pairs" forbids.
+test('a count that merely agrees closes no alignment', () => {
+  const reference = Array.from({ length: 8 }, (_, index) => side(`anizip:c-${index + 1}`, index + 1, null, [`real ${index + 1}`]))
+  const theirs = Array.from({ length: 8 }, (_, index) =>
+    side(`jw:c-${index + 1}`, index + 1, null, [index === 2 || index === 4 ? `real ${index + 1}` : `their ${index + 1}`]))
+  const sequence = pairsBySequence(reference, theirs)
+
+  expect(sequence.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number])).toEqual([[3, 3], [5, 5]])
+  expect(sequence.closed).toBe(false)
+  // the row between the two anchors IS forced, since a bracket needs no surplus accounted
+  expect(sequence.forced.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[4, 4]])
+  expect(sequence.pairs.map(pair => pair.fromNumber), 'and the ends stay unpaired').toEqual([3, 4, 5])
+})
+
+// ZERO ANCHORS MINTS NOTHING AT ALL (3.4a point 4): Netflix's season 1 of the same show, 24 rows
+// titled `Episode N`, which is the correct outcome and the reason no positional fallback exists here.
+// OUR side carries a placeholder too, at number 13, because ani.zip does that for a row nobody has
+// titled yet: it is the same string on both sides at the same number, and the only thing refusing it
+// is that a position is not a title.
+// Mutation: drop the `isGenericEpisodeTitle` filter in `anchorKeysOf` and row 13 anchors on a number
+// spelled the same way twice; make the last refusal unconditionally `no-titles` and "why no button"
+// stops distinguishing titles that missed a bar from titles that carried no identity at all.
+test('Netflix season 1 placeholders anchor nothing, and the refusal says so', () => {
+  const reference = CANON_S2.map((name, index) =>
+    side(`anizip:s1-${index + 1}`, index + 1, null, [index === 12 ? 'Episode 13' : name]))
+  const theirs = Array.from({ length: 24 }, (_, index) =>
+    side(`nf:80987039-1-${index + 1}`, index + 1, null, [`Episode ${index + 1}`]))
+
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.anchors).toEqual([])
+  expect(sequence.pairs).toEqual([])
+  expect(decideCandidate({ runLength: 24, reference, candidate: { retranslates: true, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'retranslates' })
+  // the same rows from an origin rule 2 is not refused for name rule 3's own reason
+  expect(decideCandidate({ runLength: 24, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-anchors' })
+
+  // THE CONTROL: one real title in the same position on both sides, and this rig anchors it
+  const titled = [...theirs]
+  titled[4] = side('nf:80987039-1-5', 5, null, [CANON_S2[4]!])
+  expect(alignByTitle(reference, titled).anchors.map(anchor => [anchor.from.number, anchor.to.number]))
+    .toEqual([[5, 5]])
+})
+
+// A GENERIC TITLE IS NEVER AN ANCHOR, even where both sides spell the position identically, which is
+// the case the control above cannot make (there our side carries no placeholder at all).
+// Mutation: drop the `isGenericEpisodeTitle` filter in `anchorKeysOf` and all six anchor.
+test('a generic title is never an anchor, however exactly it matches', () => {
+  const reference = Array.from({ length: 6 }, (_, index) => side(`anizip:p-${index + 1}`, index + 1, null, [`Episode ${index + 1}`]))
+  const theirs = Array.from({ length: 6 }, (_, index) => side(`nf:p-${index + 1}`, index + 1, null, [`Episode ${index + 1}`]))
+  expect(alignByTitle(reference, theirs).anchors).toEqual([])
+  expect(alignByTitle(reference, theirs).matches).toBe(0)
+
+  // and the control, the same six rows with one real title each at the same number
+  const real = (prefix: string) => Array.from({ length: 6 }, (_, index) =>
+    side(`${prefix}-${index + 1}`, index + 1, null, [`Chapter of the Deep ${index + 1}`]))
+  expect(alignByTitle(real('anizip:q'), real('nf:q')).anchors).toHaveLength(6)
+})
+
+// ONE ANCHOR BRACKETS NOTHING, so it mints nothing: the minimum is two, and rule 3 adds only what
+// ORDER places, never an exact title on its own (that is rule 2's evidence, held to rule 2's bar).
+// Mutation: mint the anchors whenever there are two or more of them and a fold of two equal cours at
+// 12/24 pairs its twelve, which is what only the date rule may prove (5.4 P4 rule 2).
+test('a single anchor forces nothing', () => {
+  const reference = Array.from({ length: 6 }, (_, index) => side(`anizip:o-${index + 1}`, index + 1, null, [`real ${index + 1}`]))
+  const theirs = Array.from({ length: 6 }, (_, index) =>
+    side(`jw:o-${index + 1}`, index + 1, null, [index === 2 ? 'real 3' : `their ${index + 1}`]))
+
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.anchors).toHaveLength(1)
+  expect(sequence.anchored, 'below the two anchor minimum, so not even the anchor is a pair').toEqual([])
+  expect(sequence.pairs).toEqual([])
+  expect(decideCandidate({ runLength: 6, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-anchors' })
+})
+
+// AN UNEQUAL GAP REFUSES ITS OWN REGION AND KEEPS ITS ANCHORS. One side carries a row the other does
+// not, and which row that is is exactly what order cannot say.
+// Mutation: force a region whose gaps differ by pairing its rows in order and the three rows between
+// anchors 4 and 8 land on canonical 5, 6 and 7 while our 5 is the only slot there.
+test('an unequal gap refuses its own region and keeps its anchors', () => {
+  const reference = Array.from({ length: 6 }, (_, index) => side(`anizip:u-${index + 1}`, index + 1, null, [`real ${index + 1}`]))
+  // their 1 = ours 1, two rows and two slots between it and their 4 = ours 4, then THREE rows against
+  // one slot before their 8 = ours 6
+  const name = (position: number): string =>
+    position === 1 ? 'real 1' : position === 4 ? 'real 4' : position === 8 ? 'real 6' : `their ${position}`
+  const theirs = Array.from({ length: 8 }, (_, index) => side(`jw:u-${index + 1}`, index + 1, null, [name(index + 1)]))
+
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.anchors.map(anchor => [anchor.from.number, anchor.to.number]))
+    .toEqual([[1, 1], [4, 4], [8, 6]])
+  expect(sequence.unequal).toBe(1)
+  expect(sequence.forced.map(pair => [pair.fromNumber, pair.toNumber]), 'the equal region only')
+    .toEqual([[2, 2], [3, 3]])
+  expect(sequence.pairs.map(pair => [pair.fromNumber, pair.toNumber]), 'three anchors and two forced rows')
+    .toEqual([[1, 1], [2, 2], [3, 3], [4, 4], [8, 6]])
+  expect(sequence.pairs.some(pair => [5, 6, 7].includes(pair.fromNumber)), 'the refused region pairs nothing')
+    .toBe(false)
+  expect(sequence.closed, 'and an unequal gap refuses the closure with it').toBe(false)
+  const verdict = decideCandidate({ runLength: 6, reference, candidate: { retranslates: false, episodes: theirs } })
+  expect(verdict.ok && verdict.rule).toBe('sequence')
+
+  // WHERE THE UNEQUAL REGION IS THE ONLY ONE, order places nothing and the refusal names it
+  const two = [
+    side('jw:v-1', 1, null, ['real 1']), side('jw:v-2', 2, null, ['their 2']),
+    side('jw:v-3', 3, null, ['their 3']), side('jw:v-4', 4, null, ['real 6']),
+  ]
+  const alone = pairsBySequence(reference, two)
+  expect(alone.alignment.anchors).toHaveLength(2)
+  expect(alone.pairs).toEqual([])
+  expect(decideCandidate({ runLength: 6, reference, candidate: { retranslates: false, episodes: two } }))
+    .toEqual({ ok: false, reason: 'unequal-gap' })
+})
+
+// AN ALIGNMENT NEVER CROSSES ITSELF. Two matches that cross leave a monotone run of one, which
+// brackets nothing, so a swapped pair of titles costs both of them rather than bending the sequence
+// around them.
+// Mutation: take every candidate match as an anchor rather than the longest increasing subsequence,
+// and the crossing pair mints two pairs whose order contradicts each other, plus a region between
+// them whose row counts happen to agree.
+test('two candidate matches that cross cannot bend the alignment', () => {
+  const reference = Array.from({ length: 6 }, (_, index) => side(`anizip:x-${index + 1}`, index + 1, null, [`real ${index + 1}`]))
+  const crossed = Array.from({ length: 6 }, (_, index) =>
+    side(`jw:x-${index + 1}`, index + 1, null, [index === 1 ? 'real 5' : index === 4 ? 'real 2' : `their ${index + 1}`]))
+
+  const sequence = pairsBySequence(reference, crossed)
+  expect(sequence.alignment.matches, 'two exact unique matches, and they disagree about the order').toBe(2)
+  expect(sequence.alignment.anchors).toHaveLength(1)
+  expect(sequence.pairs).toEqual([])
+
+  // THE CONTROL: the same two titles the other way round, which do not cross, and the rows between
+  // them are forced
+  const straight = Array.from({ length: 6 }, (_, index) =>
+    side(`jw:y-${index + 1}`, index + 1, null, [index === 1 ? 'real 2' : index === 4 ? 'real 5' : `their ${index + 1}`]))
+  const ordered = pairsBySequence(reference, straight)
+  expect(ordered.alignment.anchors).toHaveLength(2)
+  expect(ordered.pairs.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[2, 2], [3, 3], [4, 4], [5, 5]])
+})
+
+// A TITLE PRESENT TWICE ON EITHER SIDE IS NO ANCHOR, and a canonical number two of their rows reach
+// is one row too many for one episode.
+// Mutation: keep the first row a duplicated key names and `Recap` anchors whichever of the two the
+// scan reached first, which is an arrival-order answer to an identity question.
+test('a duplicated title anchors nothing, on either side', () => {
+  // ours: numbers 2 and 5 are both titled `recap`; theirs: rows 3 and 6 are both titled `twin`
+  const reference = [
+    side('anizip:d-1', 1, null, ['first']), side('anizip:d-2', 2, null, ['recap']),
+    side('anizip:d-3', 3, null, ['twin']), side('anizip:d-4', 4, null, ['alpha', 'beta']),
+    side('anizip:d-5', 5, null, ['recap']), side('anizip:d-6', 6, null, ['last']),
+  ]
+  const theirs = [
+    side('jw:d-1', 1, null, ['recap']), side('jw:d-2', 2, null, ['alpha']),
+    side('jw:d-3', 3, null, ['twin']), side('jw:d-4', 4, null, ['beta']),
+    side('jw:d-5', 5, null, ['twin']), side('jw:d-6', 6, null, ['unshared']),
+  ]
+  // `recap` is twice on ours, `twin` twice on theirs, and `alpha` and `beta` reach one number of ours
+  // from two different rows of theirs
+  expect(alignByTitle(reference, theirs).anchors).toEqual([])
+  expect(alignByTitle(reference, theirs).matches).toBe(0)
+
+  // THE CONTROL: the same shape with each title carried once, which anchors both
+  const once = [
+    side('jw:e-1', 1, null, ['first']), side('jw:e-2', 2, null, ['unshared']),
+    side('jw:e-3', 3, null, ['last']),
+  ]
+  expect(alignByTitle(reference, once).anchors.map(anchor => [anchor.from.number, anchor.to.number]))
+    .toEqual([[1, 1], [3, 6]])
+})
+
+// A PAIRING RULE 1 REFUSED AS A SKEW IS NOT RESURRECTED BY RULE 3, which is the guard's whole point:
+// the anchors can reproduce the very offset the dates were refused for, and an alignment is not
+// better evidence about a schedule than the schedule was.
+// Mutation: drop the `scheduleSkew` call on rule 3's own pairs and the five pairs below are minted
+// one late, which is the video on the wrong row that guard was written for (`anilist:208044`).
+test('rule 3 does not resurrect a pairing rule 1 refused as a skew', () => {
+  // `Broadcast N` rather than `Chapter N`, because `chapter 3` is a GENERIC episode title
+  // (`similar.ts:104`) and rule 3 drops every generic key before it anchors anything
+  const broadcast = weekly('2026-07-01', 12).map(anizipDay)
+  const reference = broadcast.map((day, index) =>
+    side(`anizip:k-${index + 1}`, index + 1, day, [`Broadcast ${index + 1}`]))
+  // streamed six days early, and only TWO of its titles match, so rule 2 misses its bar and rule 3
+  // reaches an alignment. Both anchors carry the skew's own offset, and so do the three rows their
+  // bracket forces
+  const skewed = weekly('2026-06-25', 12).map((day, index) => side(
+    `cr:k-${index + 1}`,
+    index + 1,
+    day,
+    [index === 3 ? 'Broadcast 3' : index === 7 ? 'Broadcast 7' : `Stream ${index + 1}`]
+  ))
+
+  const sequence = pairsBySequence(reference, skewed)
+  expect(sequence.pairs.map(pair => [pair.fromNumber, pair.toNumber]), 'rule 3 DID find them, one late')
+    .toEqual([[4, 3], [5, 4], [6, 5], [7, 6], [8, 7]])
+  expect(decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: skewed } }))
+    .toEqual({ ok: false, reason: 'date-skew' })
+
+  // THE CONTROL: the same two sides with the anchors at the offset the numbering claims, which
+  // disagrees with the skew, and rule 3 stands
+  const agreeing = skewed.map((row, index) => side(
+    row.uri,
+    row.number,
+    weekly('2026-06-25', 12)[index]!,
+    [index === 3 ? 'Broadcast 4' : index === 7 ? 'Broadcast 8' : `Stream ${index + 1}`]
+  ))
+  const verdict = decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: agreeing } })
+  expect(verdict.ok && verdict.rule).toBe('sequence')
+  expect(verdict.ok && verdict.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual([[4, 4], [5, 5], [6, 6], [7, 7], [8, 8]])
+})
+
+// THE THREE STEPS COMPOSE, and each is a different kind of claim: a title measurement, arithmetic
+// over one order, and an argument about a surplus. Asked separately they agree with the whole.
+// Mutation: make `closeWithSpecials` ignore its `unequal` argument and a region the bracket refused
+// stops refusing the closure, so the same surplus is accounted twice.
+test('the alignment, the bracket and the closure are three separate claims', () => {
+  const { reference, theirs } = mushokuSides({ special: true })
+  const alignment = alignByTitle(reference, theirs)
+  expect(alignment.theirs).toHaveLength(25)
+  expect(alignment.canonical).toHaveLength(24)
+  expect(alignment.specials.map(special => special.uri)).toEqual(['anizip:18103-S1'])
+
+  const bracket = forcedByBracket(alignment)
+  expect(bracket.pairs.map(pair => pair.fromNumber)).toEqual([7, 9, 11])
+  expect(bracket.unequal).toBe(0)
+
+  expect(closeWithSpecials({ alignment, unequal: bracket.unequal }).closed).toBe(true)
+  expect(closeWithSpecials({ alignment, unequal: 1 }), 'a refused region refuses the closure')
+    .toEqual({ pairs: [], located: [], closed: false })
+})
+
+// ---------------------------------------------------------------------------------------------
 
 // A REAL RECORDED PAGE, the only case here that meets shapes nobody chose. It REPORTS its numbers
 // rather than asserting a threshold on them, because a figure pinned to one walk fails on the next
@@ -1233,7 +1782,7 @@ test('a skew whose titles cannot rescue it refuses date-skew', () => {
 // the invariants, no `SAME_AS` from this plugin, and every pair inside its run's window.
 test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
   if (!existsSync(CORPUS)) {
-    console.warn(`no corpus at ${CORPUS}: run \`npm run corpus:walk\` to record one. This case did not run.`)
+    report(`no corpus at ${CORPUS}: run \`npm run corpus:walk\` to record one. This case did not run.`)
     return
   }
   const rows: AnswerRow[] = []
@@ -1303,7 +1852,7 @@ test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
   )
   expect(outside).toEqual([])
 
-  console.info('plugin:range over 800 corpus rows:', JSON.stringify({
+  report('plugin:range over 800 corpus rows: ' + JSON.stringify({
     pairsByRule: Object.fromEntries(byRule.map(row => [`${String(row.reason)} ${String(row.status)}`, Number(row.total)])),
     ranges: Object.fromEntries(ranges.map(row => [String(row.kind), Number(row.total)])),
     refusals: Object.fromEntries(refusals.map(row => [String(row.reason), Number(row.total)])),
@@ -1348,5 +1897,5 @@ test('the 800 recorded rows pair, refuse and hold the invariants', async () => {
 
   const again = await runPass()
   expect(again.changes, 'the same page twice is the same view').toEqual([])
-  console.info(`the second pass over the same graph: ${again.ms} ms, ${again.iterations} iteration(s), nothing written`)
+  report(`the second pass over the same graph: ${again.ms} ms, ${again.iterations} iteration(s), nothing written`)
 }, 600_000)
