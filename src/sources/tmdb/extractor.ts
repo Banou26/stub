@@ -36,7 +36,45 @@ const meta = (html: string, property: string): string | undefined =>
   html.match(new RegExp(`<meta property="${property}" content="([^"]*)"`))?.[1]
 
 type TmdbMedia = { id: string, title: string, overview?: string, poster?: string, banner?: string, score?: number, year?: number }
-type TmdbEpisode = { number: number, title?: string, overview?: string, still?: string }
+/** `releaseDate` is `YYYY-MM-DD`, the day the card named, or absent when the card named none. */
+type TmdbEpisode = { number: number, title?: string, overview?: string, still?: string, releaseDate?: string }
+
+// The month names TMDB writes, ENGLISH, and English only because every page this source fetches
+// carries `language=en-US`. Asked in another language the same span comes back as "10 juillet 2023"
+// and this table refuses it, which is the intended answer: the parse is coupled to the query
+// parameter above, so the two must be changed together.
+const MONTHS = [
+  'january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december'
+]
+
+/**
+ * The day an episode card names, as `YYYY-MM-DD`, or undefined when it names none this can read.
+ *
+ * TMDB dates a card in a LOCALIZED LONG FORM and SPACE PADS the day to two columns, so the season
+ * page carries both `July 10, 2023` and `August  7, 2023` with two spaces (measured 2026-09-12 on
+ * /tv/94664/season/2: 24 cards, all dated, 8 of them padded). Any separating whitespace is therefore
+ * accepted, and nothing else is.
+ *
+ * IT REFUSES RATHER THAN GUESSES, which is why `new Date(text)` is not used even though V8 happens to
+ * parse this shape: that reads the string in the RUNTIME's zone, so the day it returns is not the day
+ * the page named anywhere west of Greenwich, and it accepts enough near-misses (a day of 31 in a 30
+ * day month, a month name it half-recognises) to turn an unreadable card into a confident wrong date.
+ * A day is emitted as a DAY, never widened to an instant, for the reason ../../utils/release-date.ts
+ * records.
+ */
+const parseCardDate = (text: string | undefined): string | undefined => {
+  const match = text ? /^([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})$/.exec(text.trim()) : undefined
+  if (!match) return undefined
+  const month = MONTHS.indexOf(match[1]!.toLowerCase())
+  if (month < 0) return undefined
+  const day = Number(match[2])
+  const year = Number(match[3])
+  // a real calendar day, so `February 30, 2023` is refused rather than emitted as `2023-02-30`
+  const at = new Date(Date.UTC(year, month, day))
+  if (at.getUTCMonth() !== month || at.getUTCDate() !== day) return undefined
+  return `${String(year).padStart(4, '0')}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
 
 const parseSearchYear = (html: string, id: string): number | undefined => {
   const span = html.match(new RegExp(`href="/tv/${id}(?![0-9])[^"]*"><h2[\\s\\S]{0,400}?class="release_date[^"]*">([^<]*)<`))?.[1]
@@ -86,6 +124,8 @@ const parseSeason = (html: string): TmdbEpisode[] => {
       title: title ? decode(title) : undefined,
       overview: overview ? decode(overview.replace(/<[^>]+>/g, '')).trim() : undefined,
       still: card.match(/src="(https:\/\/media\.themoviedb\.org\/t\/p\/[^"]+)"/)?.[1],
+      // the air date, which sits in the card this already downloaded and was skipped until 2026-09-12
+      releaseDate: parseCardDate(card.match(/<span class="date">([^<]*)<\/span>/)?.[1]),
     })
   }
   return out
@@ -133,6 +173,12 @@ const normalizeEpisode = (episode: TmdbEpisode, season: number, tvId: string, me
     thumbnails: img(episode.still, SCORE),
     seasonNumber: season,
     episodeNumber: episode.number,
+    // The day the card named, and the reason it is worth more here than the position it sits at: TMDB
+    // packages anime the way Netflix and JustWatch do, folding two cours into one season (season 2 of
+    // 94664 is 24 episodes, 1 to 12 across July to September 2023 and 13 to 24 across April to July
+    // 2024), so a stub run that IS the second cour numbers its episodes 1 to 12 against TMDB's 13 to
+    // 24. The date is what pairs those rows through `plugin:range`; the number cannot.
+    releaseDate: episode.releaseDate,
   })
 
 const seasonEpisodeCounts = async (id: string, seasons: number[], ctx: ExtractorServerContext) =>

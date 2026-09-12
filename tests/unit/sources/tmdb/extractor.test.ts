@@ -23,6 +23,33 @@ ${seasons.map(n => `<a href="/tv/${id}/season/${n}">Season ${n}</a>`).join('\n')
 const seasonHtml = (episodes: number) =>
   Array.from({ length: episodes }, (_, i) => `<div class="card" data-episode-number="${i + 1}"><h3><a href="#">Episode ${i + 1}</a></h3></div>`).join('\n')
 
+// THE AIR DATE, which sits in the card this source already downloads and was skipped until 2026-09-12.
+// Every shape below is how TMDB really writes the span, measured that day on /tv/94664/season/2 asked
+// with `language=en-US`: 24 cards, all dated, and 8 of them with the DAY SPACE PADDED to two columns,
+// so `August  7, 2023` and `July  1, 2024` arrive with two spaces. The month name is English only
+// because of that query parameter, which is why the parse is pinned to it rather than to a locale.
+const DATED_CARDS: { number: number, date?: string }[] = [
+  { number: 1, date: 'July 10, 2023' },
+  { number: 2, date: 'August  7, 2023' },
+  // a card TMDB dates with something this cannot read, and a day that is not in that month. Both are
+  // refused rather than coerced: `new Date` would take the second and answer March 2.
+  { number: 3, date: 'sometime in 2023' },
+  { number: 4, date: 'February 30, 2023' },
+  // a card with NO date span at all, which is 0 of 24 on that page and 25 of 180 on other sources
+  { number: 5 },
+]
+
+// the real card nesting: the span sits inside a `<div class="date">` beside the runtime, and the outer
+// div must not look like a card boundary to `parseSeason`'s split
+const datedSeasonHtml = () => DATED_CARDS.map(card => `
+<div class="card" data-episode-number="${card.number}">
+  <h3><a href="#">Episode ${card.number}</a></h3>
+  <div class="date">
+    ${card.date === undefined ? '' : `<span class="date">${card.date}</span>`}
+    &bull; <span class="runtime">24m</span>
+  </div>
+</div>`).join('\n')
+
 // misses are COLLECTED rather than thrown: `fetchHtml` swallows a rejection with `.catch(() => undefined)`,
 // so a drifted fixture would return no media and fail on a line that says nothing about the fixture.
 const context = (misses: string[]) => ({
@@ -34,12 +61,14 @@ const context = (misses: string[]) => ({
     if (url.startsWith(`${BASE}/tv/94664/season/3?`)) return html(seasonHtml(24))
     // a show page with no season links: nothing to pick, so the bare id comes back
     if (url.startsWith(`${BASE}/tv/777?`)) return html(showHtml('777', []))
+    if (url.startsWith(`${BASE}/tv/555?`)) return html(showHtml('555', [1]))
+    if (url.startsWith(`${BASE}/tv/555/season/1?`)) return html(datedSeasonHtml())
     misses.push(url)
     return { ok: false, status: 404, text: async () => '' }
   },
 }) as never
 
-type Row = { uri: string, scope?: string, episodes?: unknown[] }
+type Row = { uri: string, scope?: string, episodes?: { episodeNumber?: number, releaseDate?: string }[] }
 
 const mediaFor = async (uri: string): Promise<Row> => {
   const misses: string[] = []
@@ -80,4 +109,46 @@ test('a media-path row that falls back to the bare show id is a CONTAINER', asyn
 
   expect(media.uri).toBe('tmdb:777')
   expect(media.scope).toBe('CONTAINER')
+})
+
+// THE AIR DATE. TMDB's season page carries it in the same card this source already parses for the
+// title, the overview and the still, and `normalizeEpisode` emitted no `releaseDate` at all, so this
+// source contributed nothing to the date alignment `store/consensus.ts` pairs episodes by.
+//
+// The date matters more here than on a source that numbers episodes the way a run does: TMDB PACKAGES
+// ANIME AS NETFLIX AND JUSTWATCH DO, folding two cours into one season (season 2 of 94664 is 24
+// episodes, 1 to 12 across July to September 2023 and 13 to 24 across April to July 2024), so a stub
+// run that IS the second cour numbers its episodes 1 to 12 against TMDB's 13 to 24. The day is what
+// pairs those rows; the position cannot.
+//
+// Mutations, one per test: drop `releaseDate` from `normalizeEpisode`; narrow the `\s+` in
+// `parseCardDate` to one literal space; return `text` on a regex miss, or drop the calendar
+// round-trip; `continue` on a card with no date span.
+test('an episode carries the day the card named', async () => {
+  const media = await mediaFor('tmdb:555-s1')
+
+  expect((media.episodes ?? [])[0]!.releaseDate, 'the day stays a day, never widened to an instant').toBe('2023-07-10')
+})
+
+test('a space padded day parses, which is how TMDB writes every single digit day', async () => {
+  const media = await mediaFor('tmdb:555-s1')
+
+  expect((media.episodes ?? [])[1]!.releaseDate, '`August  7, 2023`, with two spaces').toBe('2023-08-07')
+})
+
+test('a date this cannot read is refused rather than guessed at', async () => {
+  const dates = (await mediaFor('tmdb:555-s1')).episodes ?? []
+
+  expect(dates[2]!.releaseDate, 'a shape the parse does not know').toBeUndefined()
+  // `new Date('February 30, 2023')` is March 2 in V8, which is a confident wrong answer rather than
+  // an absent one, and the only thing separating them is the calendar check
+  expect(dates[3]!.releaseDate, 'a day that is not in that month').toBeUndefined()
+})
+
+test('a card with no date at all is still an episode', async () => {
+  const media = await mediaFor('tmdb:555-s1')
+
+  expect(media.episodes, 'five cards, five episodes: the date is a field and never a filter').toHaveLength(5)
+  expect((media.episodes ?? [])[4]!.episodeNumber).toBe(5)
+  expect((media.episodes ?? [])[4]!.releaseDate).toBeUndefined()
 })
