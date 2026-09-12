@@ -6,6 +6,7 @@ import './worker.ts'
 import './plugins.ts'
 import client from './urql'
 import Router from './router'
+import ErrorBoundary from './components/error-boundary'
 import { party } from './party'
 import './plugin-url.ts'
 import './store-export.ts'
@@ -84,8 +85,11 @@ root.id = 'stub-root'
 
 render(
   <Provider value={client}>
+    {/* outside the boundary, so the base styles the fallback renders against survive a caught error */}
     <Global styles={style}/>
-    <Router/>
+    <ErrorBoundary>
+      <Router/>
+    </ErrorBoundary>
   </Provider>,
   document.body.appendChild(root)
 )
