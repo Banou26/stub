@@ -407,7 +407,7 @@ export const prepareGuards = async (
   }
 }
 
-const pairKey = (a: string, b: string): string => (a < b ? `${a} ${b}` : `${b} ${a}`)
+const pairKey = (a: string, b: string): string => (a < b ? `${a}\u0000${b}` : `${b}\u0000${a}`)
 
 /** How the writer builds one batch of verdicts. `prepareGuards` is the only one that reads a rule. */
 export type GuardsFactory = (query: GuardQuery, subjects: SameAsSubject[]) => Promise<GuardPass>

@@ -345,7 +345,7 @@ export const aggregateFields = (options: {
   row.relations = options.relations
     .filter(edge => {
       if (inside.has(edge.toUri)) return false
-      const key = `${edge.relation} ${edge.toUri}`
+      const key = `${edge.relation}\u0000${edge.toUri}`
       if (seenRelation.has(key)) return false
       seenRelation.add(key)
       return true
