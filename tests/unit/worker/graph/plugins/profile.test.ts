@@ -333,6 +333,37 @@ test('running the profile twice over the same graph writes nothing', async () =>
   expect(again.audit.ok).toBe(true)
 })
 
+// (l2) THE SCOPED PASS, which is the whole of what this plugin does with a delta: a wake naming two
+// EPISODE uris profiles those two episodes and nothing else, and the profiles outside the scope
+// stand. `delta.episodes` holds uris; when it held `HAS_EPISODE` edge keys the `UNWIND $uris AS u
+// MATCH (e:Episode {uri: u})` form matched nothing and the scoped pass wrote no episode profile at
+// all, while reporting a clean pass.
+// Mutation: drop `ctx.delta.episodes` from this plugin's `subjectsOf`, which is what a delta of edge
+// keys amounts to (a list matching no row), and this reports zero new profiles with no error
+// anywhere.
+test('a scoped pass over a wake naming only episode uris profiles those episodes', async () => {
+  await ingestAnswers([
+    await answer('media', media('tvdb:500', { titles: [title('en', 'Frieren')] })),
+    await answer('episode', episode('tvdb:500-1', 'tvdb:500', { episodeNumber: 1, releaseDate: '2023-09-29' })),
+    await answer('episode', episode('tvdb:500-2', 'tvdb:500', { episodeNumber: 2, releaseDate: '2023-10-06' })),
+  ])
+  const before = Number((await rowsOf('MATCH (n:EpisodeProfile) RETURN count(n) AS total'))[0]!.total)
+
+  const pass = await runPlugins([profilePlugin], {
+    reason: 'graph:changed', seq: 1, episodes: ['tvdb:500-1', 'tvdb:500-2'],
+  })
+
+  expect(pass.anomalies).toEqual([])
+  expect(pass.audit.ok).toBe(true)
+  expect(pass.changes.filter(change => change.table === 'EpisodeProfile').map(change => change.key).sort())
+    .toEqual(['tvdb:500-1', 'tvdb:500-2'])
+  expect((await episodeProfileOf('tvdb:500-1'))!.day, 'and it really derived one').toBe(day('2023-09-29'))
+  // THE CONTROL, the other half of a scope: nothing outside it moved, retracted or otherwise
+  const after = Number((await rowsOf('MATCH (n:EpisodeProfile) RETURN count(n) AS total'))[0]!.total)
+  expect(after - before, 'two new profiles, and not one row retracted').toBe(2)
+  expect(await episodeProfileOf('cr:GX1-GS1-1'), 'a profile outside the scope stands').toBeDefined()
+})
+
 // (m) A REAL RECORDED PAGE, which is the only case that meets the shapes 24 sources actually produce:
 // nested nodes four deep, handles naming no node, a source that answers about another origin's uri.
 // Skipped with a message where the corpus has not been walked, because a session with no corpus and a

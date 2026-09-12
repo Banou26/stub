@@ -62,11 +62,25 @@ export type IngestQuarantine = {
 
 /** What moved, in the four classes 4.2 step 8 names. Empty everywhere means an idempotent batch. */
 export type IngestChanged = {
-  /** Uris created, or whose merged row changed in a projected column. */
+  /**
+   * Uris created, whose merged row changed in a projected column, or that a NEW answer was written
+   * `ABOUT`.
+   *
+   * The third is not a row that moved and is a delta all the same: a profile reads the answers about
+   * its subject (the effective scope of 5.4 P0 is partly a vote of who said what), and a source
+   * answering about another origin's uri writes an `ABOUT` edge without touching the row it names,
+   * since only the owning origin writes `raw` (4.3). A scan scoped to the rows that moved would miss
+   * it, and a replay writes no new answer at all, so this costs an idempotent batch nothing.
+   */
   media: string[]
   /** Keys of `CLAIMS` edges that were new. */
   claims: string[]
-  /** Keys of `HAS_EPISODE` edges that were new. */
+  /**
+   * `Episode.uri` for every new `HAS_EPISODE`, never the edge key.
+   *
+   * A uri is what a scan looks a row up by (`UNWIND $uris AS u MATCH (e:Episode {uri: u})`), and an
+   * edge key matches nothing there: `plugin:profile` unions this list into its subjects.
+   */
   episodes: string[]
   /** Uris whose `raw` changed in an unprojected field only, and targets of a re-asserted claim. */
   raw: string[]
@@ -975,7 +989,9 @@ const ingestBatch = async (rows: AnswerRow[]): Promise<IngestReport> => {
     const key = hasEpisodeKeys.get(composite)!
     if (existingHasEpisode.has(key)) continue
     newHasEpisode.push({ key, fromUri: draft.fromUri, toUri: draft.toUri, claimer: draft.claimer, answerSeq: String(draft.answerSeq), seq })
-    changed.episodes.push(key)
+    // the EPISODE's uri, which is what a scan looks its row up by; the media is a delta too, since
+    // its own profile counts the episodes it owns
+    changed.episodes.push(draft.toUri)
     changed.media.push(draft.fromUri)
   }
   if (newHasEpisode.length) {
@@ -1044,6 +1060,10 @@ const ingestBatch = async (rows: AnswerRow[]): Promise<IngestReport> => {
        WHERE NOT EXISTS { MATCH (a)-[:ABOUT]->(n) }
        CREATE (a)-[:ABOUT]->(n)`,
       rowsFor.map(entry => ({ key: entry.key, uri: entry.uri })))
+    // a new answer about a media row is a delta for it even when the row itself did not move, since
+    // a profile reads the answers about its subject (`IngestChanged.media`). An episode profile
+    // reads its own row only, and an origin has no profile, so only this target names one.
+    if (target.kind === 'media') for (const entry of rowsFor) changed.media.push(entry.uri)
   }
 
   // EVENTS, inert while the flag is off because nothing listens yet (step 2 is the first listener).
@@ -1051,9 +1071,12 @@ const ingestBatch = async (rows: AnswerRow[]): Promise<IngestReport> => {
   // so a uri that moved structurally is never also reported as raw-only.
   const structural = new Set(changed.media)
   changed.media = [...structural]
+  changed.episodes = [...new Set(changed.episodes)]
   changed.raw = [...new Set(changed.raw)].filter(uri => !structural.has(uri))
   if (changed.media.length || changed.claims.length || changed.episodes.length) {
-    emit('graph:changed', { seq: commitSeq, uris: changed.media })
+    // the three lists a scoped pass takes its subjects from, not the uris alone: a commit whose only
+    // change is a claim or an episode carries an EMPTY `uris` and still has to say what moved
+    emit('graph:changed', { seq: commitSeq, uris: changed.media, episodes: changed.episodes, claims: changed.claims })
   }
   if (changed.raw.length) emit('row:changed', { uris: changed.raw })
 

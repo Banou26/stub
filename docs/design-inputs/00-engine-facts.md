@@ -227,3 +227,52 @@ the second pass over the same graph is **560 ms in 1 iteration and writes nothin
 - **A worker keeps nothing across a reload, so the boot pass of 5.3 always runs over an EMPTY graph**
   and always costs nothing. There is no stored version to compare against and nothing to retract on
   boot; code for either would be code for a state that cannot occur.
+
+## Measured on 2026-09-12 while scoping the pass (step 2i-a)
+
+The delta now carries SUBJECTS rather than nothing: iteration 1 of a `graph:changed` pass is the
+wake's union of media uris, episode uris and claim keys; iteration 2 and later is what the writer
+applied in the iteration before, mapped through each plugin's `consumes`. `plugin:profile` and
+`plugin:direct` scope themselves on it; `aggregate`, `containment`, `title` and `range` still declare
+`scope.full` and scan the whole graph, which is why the change is modest.
+
+- The same replay as step 2h (`GRAPH_MEASURE_ROWS=800`, 32 windows of 25, real timers, audit at its
+  live cadence so none of these passes was audited), three runs:
+
+  | | step 2h | step 2i-a |
+  | --- | --- | --- |
+  | wakes / passes | 34 / 3 | 30 / 5 |
+  | total pass | 16,938 / 17,488 / 17,929 ms | 16,280 / 15,967 / 16,605 ms |
+  | **longest single pass** | **7,765 / 7,913 / 8,096 ms** | **5,031 / 4,977 / 5,272 ms** |
+  | ingest, scheduler live | 11,795 / 12,145 / 12,362 ms | 11,697 / 11,484 / 11,291 ms |
+  | ingest, scheduler stopped | 4,926 / 5,056 / 5,264 ms | 4,962 / 4,795 / 5,082 ms |
+  | longest single window | 736 / 787 / 759 ms | 760 / 730 / 669 ms |
+
+  So a pass is **a third shorter** and the resolve pays what it paid. More passes, not fewer: a
+  cheaper pass finishes inside fewer windows, so fewer commits coalesce into it.
+- **Where the 5 s goes**, per plugin per iteration of the last pass (the three runs agree to about
+  10%): profile 372 to 467 ms then SKIPPED, direct 246 to 301 ms, aggregate 244 to 456 ms,
+  containment 67 to 85 ms, title 355 to 504 ms, range 121 to 127 ms. The four whole-graph plugins are
+  **about 85% of it** and none of them reads the delta yet.
+- **`plugin:profile` is skipped from iteration 2 onward**, and that is most of the saving. Everything
+  it consumes is a SOURCE table, which no plugin can write, so nothing a pass does can move its
+  output. `plugin:direct` is skipped whenever no `MediaProfile` and no `CLAIMS` moved.
+- **AN `UNWIND` WHOSE `MATCH` CARRIES THREE PATTERNS COSTS ABOUT 19 ms PER ROW OF THE LIST.**
+  `plugin:direct`'s scoped scan read a claim and both `MediaProfile` rows in one statement:
+  **545 ms for 28 subjects**, and the same 545 ms whichever end the claim was anchored by, against
+  **326 to 358 ms for the whole-graph form over every claim in the graph**. Split into a claim read
+  plus one keyed profile read joined in JS, the same work is **246 to 301 ms**. It is the same
+  measurement `plugin:profile`'s scan was already built around (three `OPTIONAL MATCH`es off one row
+  multiply before they aggregate), and it means a scoped scan is not automatically cheaper than the
+  whole-graph one: the shape of the statement decides.
+- **A delta naming most of the table reads whole-graph and says `scope.full`** (`plugin:direct`'s
+  `WHOLE_GRAPH_FRACTION`, a quarter). A full scope re-derives every row, so it is never narrower than
+  the scan, and the crossover was measured rather than guessed: it fired on the iteration whose delta
+  named 181 of 683 `Media` rows.
+- **The equivalence case is the one that makes any of this safe.** A stream of scoped
+  `graph:changed` passes, one per ingest batch through the scheduler with `audit: true`, produces the
+  same clusters, links, episode links, attachments, slots and fills as ONE full pass over the same
+  final graph, compared cluster by cluster keyed on sorted membership rather than on cluster id
+  (`tests/unit/worker/graph/plugins/delta.test.ts`). Two scoping bugs were found by it and by nothing
+  else: a scope wider than the scan (the writer then retracts every link the run did not re-derive)
+  and a profile whose subject list missed the target of a new claim.

@@ -262,6 +262,41 @@ test('an episode arriving before its media lands with a placeholder media and a 
   expect(await rowsOf('MATCH (m:Media {uri: $uri})-[h:HAS_EPISODE]->(e:Episode) RETURN count(h) AS total', { uri: 'cr:GX1' })).toEqual([{ total: 1 }])
 })
 
+// THE WAKE'S SUBJECTS. `graph:changed` is what a scoped pass takes its scans from (5.3), so the
+// three lists have to be what a scan looks a row up BY: `Media.uri`, `Episode.uri` and `CLAIMS.key`.
+// The episode half is the one that was wrong: `changed.episodes` held `HAS_EPISODE` edge KEYS, which
+// `UNWIND $uris AS u MATCH (e:Episode {uri: u})` matches nothing at all, so a scoped profile pass
+// silently profiled fewer episodes than the delta named.
+// Mutation: push `key` rather than `draft.toUri` at the `HAS_EPISODE` write and the episode list
+// below is two hashes, matching no row in the table the control reads.
+test('the wake names episode URIS and claim keys, which is what a scan looks a row up by', async () => {
+  const rows = [
+    await answer('media', media('tmdb:900', { titles: [title('en', 'Frieren')], handles: [partOf(media('tmdb:901'))] })),
+    await answer('episode', { uri: 'tmdb:900-1', origin: 'tmdb', id: '900-1', mediaUri: 'tmdb:900', episodeNumber: 1 }),
+    await answer('episode', { uri: 'tmdb:900-2', origin: 'tmdb', id: '900-2', mediaUri: 'tmdb:900', episodeNumber: 2 }),
+  ]
+  const details: { uris: string[], episodes?: string[], claims?: string[] }[] = []
+  const stop = listen('graph:changed', detail => { details.push(detail) })
+  const report = await ingestAnswers(rows)
+  stop()
+
+  expect(details.length, 'one commit, one wake').toBe(1)
+  expect(details[0]!.episodes, 'episode uris, in the order the edges were written')
+    .toEqual(['tmdb:900-1', 'tmdb:900-2'])
+  expect(report.changed.episodes).toEqual(['tmdb:900-1', 'tmdb:900-2'])
+  // THE CONTROL: every uri the event named is a row the scoped scan's own statement finds
+  const found = await rowsOf('UNWIND $uris AS u MATCH (e:Episode {uri: u}) RETURN e.uri AS uri ORDER BY e.uri', { uris: details[0]!.episodes })
+  expect(found.map(row => row.uri), 'the list is a key into the table it names').toEqual(['tmdb:900-1', 'tmdb:900-2'])
+
+  expect(details[0]!.claims, 'and the claim keys the commit wrote').toEqual(report.changed.claims)
+  expect(details[0]!.claims!.length, 'the control: the batch carried a claim').toBeGreaterThan(0)
+  const claims = await rowsOf(
+    'UNWIND $keys AS k MATCH (a:Media)-[c:CLAIMS {key: k}]->(b:Media) RETURN count(c) AS total',
+    { keys: details[0]!.claims }
+  )
+  expect(Number(claims[0]!.total), 'and so are those').toBe(details[0]!.claims!.length)
+})
+
 // THE LIST TRAP, which cost a real page 148 of its 816 answers. An `UNWIND` struct field is typed
 // from the FIRST row only, so a list that is empty in row one and filled in row two binds as
 // LIST(ANY) and the whole statement dies at runtime, after the binder passed it. The order is the

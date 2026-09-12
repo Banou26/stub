@@ -3,10 +3,14 @@
  * (section 5.3).
  *
  * `runPlugins` is the whole of the scheduler's inner loop. It does NOT subscribe to `graph:changed`
- * and it does not coalesce emits: wiring it to the ingest's event is step 2c, together with the
- * deltas, and until then every call runs every plugin with `delta.full`.
+ * and it does not coalesce emits: `./scheduler.ts` owns the wake, and hands what that wake named to
+ * the trigger here.
  *
  * WHAT IT PROMISES.
+ * - A plugin is handed SUBJECTS, never a seq range. Iteration 1 of a `graph:changed` pass carries the
+ *   wake's own uris, episode uris and claim keys; iteration 2 and later carry what the writer applied
+ *   in the iteration before, mapped through each plugin's `consumes`. A `boot` or a `manual` trigger
+ *   is a FULL pass, and so is a `graph:changed` trigger that named nothing.
  * - A plugin runs at most `PASS_CAP` times per call. Hitting the cap is an anomaly, never a warning,
  *   so a graph that keeps hitting it is visible rather than merely slow.
  * - A repeated state hash ends the loop and is reported. The hash is taken over the deltas the writer
@@ -33,7 +37,7 @@
  * and is outside the window by construction, which is the second control.
  */
 import type { Graph } from '../engine'
-import type { Plugin, PluginContext, PluginId, PluginLogEvent, PluginOutputIndex } from './contract'
+import type { Delta, Plugin, PluginContext, PluginId, PluginLogEvent, PluginOutputIndex } from './contract'
 import type { WriterChange } from './writer'
 
 import { isOnlySeasonLabel, parseSeasonNumber } from '../../../sources/season'
@@ -50,8 +54,15 @@ export const PASS_CAP = 4
 /** One rule that fired about the pass itself, written the way `Cluster.anomalies` will carry it. */
 export type PassAnomaly = { rule: string, detail: string, uris?: string[] }
 
-/** What one plugin did in one iteration. */
-export type PluginRun = { id: PluginId, iteration: number, ms: number, changes: number, failed?: string }
+/** What one plugin did in one iteration. `skipped` is a plugin the delta gave nothing to read. */
+export type PluginRun = {
+  id: PluginId
+  iteration: number
+  ms: number
+  changes: number
+  failed?: string
+  skipped?: boolean
+}
 
 /** What a pass came to. */
 export type PassReport = {
@@ -289,24 +300,198 @@ export const afterOrder = (plugins: Plugin[]): Plugin[] => {
   return ordered
 }
 
-/** What woke the pass. `delta` is step 2c; today every call is a full pass. */
-export type PassTrigger = { reason: 'boot' | 'graph:changed' | 'manual', seq?: number }
+/**
+ * What woke the pass, and what it named.
+ *
+ * A `boot` or a `manual` pass is FULL whatever else it carries: nothing is known to be unchanged on a
+ * boot, and `manual` is the caller asking for everything. A `graph:changed` pass is scoped when it
+ * names at least one of the three lists, and full when it names none of them, which is what keeps a
+ * caller that only has the reason (a test, an older call site) asking for the pass it used to get.
+ */
+export type PassTrigger = {
+  reason: 'boot' | 'graph:changed' | 'manual'
+  seq?: number
+  /** `Media.uri`: rows created, projections that moved, and rows a new answer was written ABOUT. */
+  uris?: string[]
+  /** `Episode.uri`, never a `HAS_EPISODE` key. */
+  episodes?: string[]
+  /** `CLAIMS.key`. */
+  claims?: string[]
+}
+
+// ---------------------------------------------------------------------------------------------
+// The delta.
+
+// The writer joins an edge's diff key as `from`, `to` and the table's own key on this separator
+// (`./writer.ts`), and a node's diff key is its primary key alone. A change is mapped to the subjects
+// it names by splitting that key rather than by a second query per change.
+const KEY_SEPARATOR = '\u0000'
+
+/** A `Slot` id is `<clusterId>#<number>` or `<clusterId>#s:<uri>` (2.2), so the cluster is its head. */
+const clusterOfSlot = (id: string): string => {
+  const hash = id.indexOf('#')
+  return hash < 0 ? id : id.slice(0, hash)
+}
+
+type Subjects = { media: Set<string>, episodes: Set<string>, claims: Set<string>, links: Set<string>, clusters: Set<string> }
+
+/**
+ * What moved, PER TABLE, which is the form a plugin's `consumes` can be matched against.
+ *
+ * A table present with no subjects still counts as a delta for its consumers: `TitleKey`, `Alias` and
+ * `PROFILE_OF` name no uri or cluster their key can be read back as, and a consumer of one has to
+ * hear that it moved even when the pass cannot say which subject moved with it.
+ */
+type TableDelta = Map<string, Subjects>
+
+const subjectsOf = (delta: TableDelta, table: string): Subjects => {
+  const found = delta.get(table)
+  if (found) return found
+  const fresh: Subjects = { media: new Set(), episodes: new Set(), claims: new Set(), links: new Set(), clusters: new Set() }
+  delta.set(table, fresh)
+  return fresh
+}
+
+const name = (delta: TableDelta, table: string, kind: keyof Subjects | 'none', value?: string): void => {
+  const subjects = subjectsOf(delta, table)
+  if (kind !== 'none' && value) subjects[kind].add(value)
+}
+
+/**
+ * The wake's own delta: what the commits behind this pass named, attributed to the tables that
+ * carry them.
+ *
+ * `Answer` and `ABOUT` take the media and episode uris because a wake IS new answers about those
+ * rows: the ingest writes one `ABOUT` per new answer, and a profile reads both, so a plugin
+ * consuming them has a delta whenever one of its subjects was answered about.
+ */
+const wakeDelta = (trigger: PassTrigger): TableDelta | undefined => {
+  if (trigger.reason !== 'graph:changed') return undefined
+  if (!trigger.uris && !trigger.episodes && !trigger.claims) return undefined
+  const delta: TableDelta = new Map()
+  for (const uri of trigger.uris ?? []) {
+    name(delta, 'Media', 'media', uri)
+    name(delta, 'Answer', 'media', uri)
+    name(delta, 'ABOUT', 'media', uri)
+  }
+  for (const uri of trigger.episodes ?? []) {
+    name(delta, 'Episode', 'episodes', uri)
+    name(delta, 'HAS_EPISODE', 'episodes', uri)
+    name(delta, 'Answer', 'episodes', uri)
+    name(delta, 'ABOUT', 'episodes', uri)
+  }
+  for (const key of trigger.claims ?? []) name(delta, 'CLAIMS', 'claims', key)
+  return delta
+}
+
+/**
+ * The intra-pass delta of 5.3: what the writer APPLIED in the iteration before, as subjects.
+ *
+ * It cannot come from `seq > since` the way the spec's prose writes it: `lastCompleted` is set to
+ * `passStart` inside the plugin loop, so from iteration 2 every plugin's `since` already equals the
+ * bound and the scan would read nothing, ending the fixed point for the wrong reason.
+ */
+const changeDelta = (changes: WriterChange[]): TableDelta => {
+  const delta: TableDelta = new Map()
+  for (const change of changes) {
+    const [from = '', to = ''] = change.key.split(KEY_SEPARATOR)
+    const table = change.table
+    switch (table) {
+      case 'MediaProfile': name(delta, table, 'media', change.key); break
+      case 'EpisodeProfile': name(delta, table, 'episodes', change.key); break
+      case 'Cluster': name(delta, table, 'clusters', change.key); break
+      case 'Slot': name(delta, table, 'clusters', clusterOfSlot(change.key)); break
+      case 'HAS_KEY': name(delta, table, 'media', from); break
+      case 'MEMBER_OF':
+        name(delta, table, 'media', from)
+        name(delta, table, 'clusters', to)
+        break
+      case 'ATTACHED_TO':
+        name(delta, table, 'clusters', from)
+        name(delta, table, 'clusters', to)
+        break
+      case 'SLOT_OF':
+        name(delta, table, 'clusters', to)
+        name(delta, table, 'clusters', clusterOfSlot(from))
+        break
+      case 'FILLS':
+        name(delta, table, 'media', from)
+        name(delta, table, 'episodes', from)
+        name(delta, table, 'clusters', clusterOfSlot(to))
+        break
+      case 'LINK':
+        name(delta, table, 'media', from)
+        name(delta, table, 'media', to)
+        name(delta, table, 'links', change.key)
+        break
+      case 'EPISODE_LINK':
+        name(delta, table, 'episodes', from)
+        name(delta, table, 'episodes', to)
+        name(delta, table, 'links', change.key)
+        break
+      // `TitleKey` is one node per key across the whole store, `Alias` is placed by a column its key
+      // does not carry, and a `PROFILE_OF` uri is a Media or an Episode with nothing to say which:
+      // the table moved, and no subject can be read off the key
+      default: name(delta, table, 'none'); break
+    }
+  }
+  return delta
+}
+
+/**
+ * The delta this plugin may read, or `undefined` when not one table it consumes carries anything.
+ *
+ * This is what `consumes` is FOR (5.1): a plugin runs when one of the tables it reads moved, and the
+ * subjects it is handed are the ones that moved in those tables only, so a delta about clusters does
+ * not send a profile plugin looking for uris that are not in it.
+ */
+const deltaFor = (plugin: Plugin, tables: TableDelta): Delta | undefined => {
+  const consumed = [...plugin.consumes.nodes, ...plugin.consumes.edges].filter(table => tables.has(table))
+  if (!consumed.length) return undefined
+  const delta: Delta = { media: [], episodes: [], claims: [], links: [], clusters: [], full: false }
+  const union: Subjects = { media: new Set(), episodes: new Set(), claims: new Set(), links: new Set(), clusters: new Set() }
+  for (const table of consumed) {
+    const subjects = tables.get(table)!
+    for (const kind of ['media', 'episodes', 'claims', 'links', 'clusters'] as const) {
+      for (const value of subjects[kind]) union[kind].add(value)
+    }
+  }
+  for (const kind of ['media', 'episodes', 'claims', 'links', 'clusters'] as const) delta[kind] = [...union[kind]]
+  return delta
+}
+
+// Fresh per plugin rather than shared: a plugin is handed the arrays, and one that sorts its own
+// delta in place would sort every later plugin's.
+const FULL_DELTA = (): Delta => ({ media: [], episodes: [], claims: [], links: [], clusters: [], full: true })
+
+const EMPTY_DELTA = (): Delta => ({ media: [], episodes: [], claims: [], links: [], clusters: [], full: false })
 
 const lastCompleted = new Map<PluginId, number>()
 const previousOutput = new Map<PluginId, PluginOutputIndex>()
+// Whether a plugin's last output declared `scope.full`. A whole-graph plugin scans tables it never
+// declared, so a delta that names none of its `consumes` is not evidence that its output stands;
+// only a plugin that scoped ITSELF has said that its output is a function of the delta.
+const wholeGraph = new Map<PluginId, boolean>()
 
 /** Forgets what every plugin last wrote, so a test starts from the state a fresh worker starts in. */
 export const resetPassState = (): void => {
   lastCompleted.clear()
   previousOutput.clear()
+  wholeGraph.clear()
 }
 
 /**
  * Run one pass over `plugins`, and say what it did.
  *
- * Every plugin runs on every call: `consumes` is read and reported, but the delta that would let a
- * plugin be SKIPPED is step 2c, so `ctx.delta.full` is true and `ctx.delta`'s lists are empty. The
- * fixed point, the cap, the state hash, the failure handling and the audit are all live.
+ * ITERATION 1 takes its delta from the TRIGGER: the wake's union for a `graph:changed` pass that
+ * named anything, and `full` for a boot pass, a manual pass and a `graph:changed` pass that named
+ * nothing. ITERATION 2 AND LATER take it from what the writer applied in the iteration before,
+ * mapped through each plugin's `consumes`, which is the only source available (see `changeDelta`).
+ *
+ * A plugin whose `consumes` carries nothing in the delta is SKIPPED for that iteration, unless its
+ * last output declared `scope.full`: a whole-graph plugin reads tables it never declared, so the
+ * delta is not evidence about its output. The fixed point, the cap, the state hash, the failure
+ * handling and the audit are unchanged by any of this.
  */
 export const runPlugins = async (
   plugins: Plugin[],
@@ -332,19 +517,24 @@ export const runPlugins = async (
   const logs: PluginLogEvent[] = []
   const seen = new Set<string>()
   let iterations = 0
+  let tables = wakeDelta(trigger)
 
   for (let iteration = 1; iteration <= PASS_CAP; iteration += 1) {
     iterations = iteration
     const applied: WriterChange[] = []
     for (const plugin of ordered) {
+      const scoped = tables ? deltaFor(plugin, tables) : undefined
+      if (tables && !scoped && wholeGraph.get(plugin.id) === false) {
+        runs.push({ id: plugin.id, iteration, ms: 0, changes: 0, skipped: true })
+        continue
+      }
       const runStarted = Date.now()
       const context: PluginContext = {
         id: plugin.id,
         query: readOnlyQuery(plugin.id, query),
         since: lastCompleted.get(plugin.id) ?? 0,
         passStart,
-        // step 2c fills these; until then every plugin recomputes its whole scope
-        delta: { media: [], episodes: [], claims: [], links: [], clusters: [], full: true },
+        delta: tables ? scoped ?? EMPTY_DELTA() : FULL_DELTA(),
         guards,
         previous: previousOutput.get(plugin.id) ?? { nodes: {}, edges: {} },
         titleSimilarity,
@@ -356,11 +546,13 @@ export const runPlugins = async (
       }
       try {
         const output = await plugin.run(context)
+        wholeGraph.set(plugin.id, output.scope.full)
         const report = await applyPluginOutput({
           id: plugin.id,
           version: plugin.version,
           produces: plugin.produces,
           output,
+          previous: previousOutput.get(plugin.id),
         })
         previousOutput.set(plugin.id, report.index)
         lastCompleted.set(plugin.id, passStart)
@@ -377,6 +569,9 @@ export const runPlugins = async (
 
     changes.push(...applied)
     if (!applied.length) break
+    // the next iteration reads what THIS one wrote, and nothing else: a plugin whose inputs did not
+    // move has already produced the output that stands
+    tables = changeDelta(applied)
     const hash = await stateHashOf(applied)
     stateHashes.push(hash)
     if (seen.has(hash)) {

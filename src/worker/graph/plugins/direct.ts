@@ -22,6 +22,20 @@
  */
 import type { LinkProposal, Plugin, PluginContext, PluginOutput } from './contract'
 
+import { claimEndpoints } from './profile'
+
+/**
+ * How much of the table a delta may name before the whole-graph scan is the cheaper one.
+ *
+ * A scoped scan is two keyed lookups PER SUBJECT and the whole-graph form is one statement, so a
+ * delta naming most of the table is both cheaper and more honestly described as a full pass. Measured
+ * on the 800 recorded rows of one real page, 2026-09-12: the by-uri form over ~778 subjects cost
+ * 1,534 to 1,632 ms per iteration against 326 to 358 ms whole-graph, and the page's ingest ran 17.5 s
+ * with the scoped form against 13.7 s with the whole-graph one. That is a crossover near a quarter of
+ * the table, which is what this is.
+ */
+const WHOLE_GRAPH_FRACTION = 4
+
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
 export const DIRECT_VERSION = 1
 
@@ -44,43 +58,107 @@ export type Candidate = {
 const asText = (value: unknown): string | null => (typeof value === 'string' && value ? value : null)
 
 /**
- * The candidate scan of 5.4 P1, verbatim, with the one shape change the step needs: `delta.claims`
- * arrives in 2c, so the whole-graph form runs until it does and the keyed form is kept beside it.
+ * The candidate scan of 5.4 P1, verbatim, in its whole-graph form and its keyed form.
+ *
+ * A SCOPED run reads EVERY claim at every subject uri, in both directions, rather than the claims the
+ * delta named. That is not thrift, it is the invariant: the scope this run declares is its subjects,
+ * so the writer may retract any `LINK` with a subject at either end, and a run that read one claim at
+ * a uri and re-derived one link would have the writer delete every other link that uri carries.
+ * Reading by uri also covers the second consumer, `MediaProfile`: every decision below reads the
+ * effective scope and the id parent off the two profiles, so a claim whose key never moved still has
+ * to be re-decided when a profile at either end did.
+ *
+ * THE PROFILES ARE A SECOND STATEMENT, joined in JS, and only in the scoped form. Measured on the 800
+ * recorded rows of one page, 2026-09-12: the claim read and the two `PROFILE_OF` joins in ONE
+ * `UNWIND` statement cost 545 ms for 28 subjects, about 19 ms per subject, against 326 ms for the
+ * whole-graph form over every claim in the graph. Split, the same 28 subjects cost single-digit ms.
+ * It is the same reason `plugin:profile`'s own scan is one statement per relation: an `UNWIND` whose
+ * MATCH carries three patterns multiplies before it aggregates.
+ *
+ * The two directions are merged on the claim key, which is unique (2.1), and the merged rows are
+ * sorted back into the order each read was asked in.
  */
-const scan = async (ctx: PluginContext, claimKeys: string[] | undefined): Promise<Candidate[]> => {
-  const projection = `RETURN a.uri AS fromUri, b.uri AS toUri, a.origin AS fromOrigin, b.origin AS toOrigin,
-       c.kind AS kind, c.claimer AS claimer, c.provenance AS provenance, c.key AS claimKey,
-       pa.scope AS fromScope, pb.scope AS toScope, pa.idParent AS fromParent, pb.idParent AS toParent
-     ORDER BY fromUri, toUri, kind, claimer`
-  const rows = claimKeys === undefined
-    ? await ctx.query<Record<string, unknown>>(
+const scan = async (ctx: PluginContext, uris: string[] | undefined): Promise<Candidate[]> => {
+  const claimColumns = `RETURN a.uri AS fromUri, b.uri AS toUri, a.origin AS fromOrigin, b.origin AS toOrigin,
+       c.kind AS kind, c.claimer AS claimer, c.provenance AS provenance, c.key AS claimKey`
+  const order = 'ORDER BY fromUri, toUri, kind, claimer'
+  let rows: Record<string, unknown>[] = []
+  const profiles = new Map<string, { scope: string | null, idParent: string | null }>()
+
+  if (uris === undefined) {
+    // the whole-graph form keeps the profiles in the one statement: there is no per-subject cost to
+    // multiply, and the join is what makes it one read rather than two over the same rows
+    rows = await ctx.query<Record<string, unknown>>(
       `MATCH (a:Media)-[c:CLAIMS]->(b:Media)
        MATCH (pa:MediaProfile)-[:PROFILE_OF]->(a), (pb:MediaProfile)-[:PROFILE_OF]->(b)
-       ${projection}`
+       ${claimColumns}, pa.scope AS fromScope, pb.scope AS toScope,
+         pa.idParent AS fromParent, pb.idParent AS toParent
+       ${order}`
     )
-    // an empty `UNWIND` list dies at runtime on this engine, so an empty delta asks nothing
-    : claimKeys.length === 0 ? []
-    : await ctx.query<Record<string, unknown>>(
-      `UNWIND $claimKeys AS k
-       MATCH (a:Media)-[c:CLAIMS {key: k}]->(b:Media)
-       MATCH (pa:MediaProfile)-[:PROFILE_OF]->(a), (pb:MediaProfile)-[:PROFILE_OF]->(b)
-       ${projection}`,
-      { claimKeys }
-    )
-  return rows.map(row => ({
-    fromUri: String(row.fromUri),
-    toUri: String(row.toUri),
-    fromOrigin: String(row.fromOrigin),
-    toOrigin: String(row.toOrigin),
-    kind: String(row.kind),
-    claimer: String(row.claimer),
-    provenance: String(row.provenance),
-    claimKey: String(row.claimKey),
-    fromScope: asText(row.fromScope),
-    toScope: asText(row.toScope),
-    fromParent: asText(row.fromParent),
-    toParent: asText(row.toParent),
-  }))
+  } else if (uris.length) {
+    // an empty `UNWIND` list dies at runtime on this engine, so an empty scope asks nothing
+    const found = new Map<string, Record<string, unknown>>()
+    for (const end of ['(a:Media {uri: u})-[c:CLAIMS]->(b:Media)', '(a:Media)-[c:CLAIMS]->(b:Media {uri: u})']) {
+      const touched = await ctx.query<Record<string, unknown>>(
+        `UNWIND $uris AS u MATCH ${end} ${claimColumns} ${order}`,
+        { uris }
+      )
+      for (const row of touched) found.set(String(row.claimKey), row)
+    }
+    rows = [...found.values()].sort((one, two) =>
+      ['fromUri', 'toUri', 'kind', 'claimer', 'claimKey']
+        .reduce((verdict, column) => verdict || String(one[column]).localeCompare(String(two[column])), 0))
+    const ends = [...new Set(rows.flatMap(row => [String(row.fromUri), String(row.toUri)]))]
+    if (ends.length) {
+      const read = await ctx.query<{ uri: string, scope: string | null, idParent: string | null }>(
+        `UNWIND $uris AS u MATCH (p:MediaProfile {uri: u})
+         RETURN p.uri AS uri, p.scope AS scope, p.idParent AS idParent`,
+        { uris: ends }
+      )
+      for (const row of read) profiles.set(row.uri, { scope: row.scope, idParent: row.idParent })
+    }
+    // a claim whose two rows are not BOTH profiled is not a candidate: the whole-graph form drops it
+    // by not matching, and the scoped form has to drop it the same way or the two disagree
+    rows = rows.filter(row => profiles.has(String(row.fromUri)) && profiles.has(String(row.toUri)))
+  }
+
+  return rows.map(row => {
+    const from = profiles.get(String(row.fromUri))
+    const to = profiles.get(String(row.toUri))
+    return {
+      fromUri: String(row.fromUri),
+      toUri: String(row.toUri),
+      fromOrigin: String(row.fromOrigin),
+      toOrigin: String(row.toOrigin),
+      kind: String(row.kind),
+      claimer: String(row.claimer),
+      provenance: String(row.provenance),
+      claimKey: String(row.claimKey),
+      fromScope: asText(from ? from.scope : row.fromScope),
+      toScope: asText(to ? to.scope : row.toScope),
+      fromParent: asText(from ? from.idParent : row.fromParent),
+      toParent: asText(to ? to.idParent : row.toParent),
+    }
+  })
+}
+
+/**
+ * The uris a scoped run recomputes, or `undefined` for a whole-graph run.
+ *
+ * The subjects are the rows whose profile moved plus both ends of every claim the delta named. The
+ * SCOPE a run declares is exactly this set and never the endpoints of what the scan happened to
+ * return: a uri outside it carries claims this run did not read, and every `LINK` it holds is one the
+ * writer would then retract for never having been re-derived.
+ *
+ * A delta naming most of the table reads whole-graph instead (`WHOLE_GRAPH_FRACTION`), which is a
+ * cheaper way to say the same thing: a full scope re-derives every row, so it is never narrower than
+ * the scan.
+ */
+const subjectsOf = async (ctx: PluginContext): Promise<string[] | undefined> => {
+  if (ctx.delta.full) return undefined
+  const subjects = [...new Set([...ctx.delta.media, ...await claimEndpoints(ctx, ctx.delta.claims)])]
+  const [row] = await ctx.query<{ total: number }>('MATCH (m:Media) RETURN count(m) AS total')
+  return subjects.length * WHOLE_GRAPH_FRACTION >= Number(row?.total ?? 0) ? undefined : subjects
 }
 
 const proposal = (
@@ -198,21 +276,13 @@ export const directPlugin: Plugin = {
   after: ['plugin:profile'],
   version: DIRECT_VERSION,
   run: async (ctx: PluginContext): Promise<PluginOutput> => {
-    // step 2c fills `delta`; until then `full` is true and the scan takes every claim in the graph
-    const claimKeys = ctx.delta.full ? undefined : ctx.delta.claims
-    const candidates = await scan(ctx, claimKeys)
+    const subjects = await subjectsOf(ctx)
+    const candidates = await scan(ctx, subjects)
     const links: LinkProposal[] = []
     for (const candidate of candidates) links.push(...decide(candidate))
 
-    // the scope: the claims this run read, both endpoints of each, so a scoped pass retracts exactly
-    // what it recomputed and nothing about the rest of the graph (5.1)
-    const uris = new Set<string>()
-    for (const candidate of candidates) {
-      uris.add(candidate.fromUri)
-      uris.add(candidate.toUri)
-    }
     return {
-      scope: claimKeys === undefined ? { full: true } : { full: false, uris: [...uris], clusters: [], pairs: [] },
+      scope: subjects === undefined ? { full: true } : { full: false, uris: subjects, clusters: [], pairs: [] },
       nodes: [],
       edges: [],
       links,

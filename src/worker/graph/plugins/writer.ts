@@ -348,7 +348,15 @@ export type WriterReport = {
   changes: WriterChange[]
   /** Per table, how many rows were created, updated and deleted. Only tables that moved appear. */
   counts: Record<string, { created: number, updated: number, deleted: number }>
-  /** The output as the writer keyed it, which is what `ctx.previous` hands the next run. */
+  /**
+   * The plugin's full output as the writer keys it, which is what `ctx.previous` hands the next run.
+   *
+   * Under `scope.full` that is this run's desired set and nothing else. Under a partial scope it is
+   * the `previous` index the caller handed in, with the keys this run DELETED dropped and this run's
+   * desired rows written over it, so a plugin that recomputed three clusters still sees the other
+   * thousand (5.3, and `plugin:aggregate`'s id carry, which mints a fresh id for every cluster
+   * missing from it).
+   */
   index: PluginOutputIndex
   ms: number
 }
@@ -450,6 +458,11 @@ export const applyPluginOutput = async (options: {
   version: number
   produces: Plugin['produces']
   output: PluginOutput
+  /**
+   * What this plugin desired LAST time, so a scoped run's report carries its full output rather than
+   * the slice it recomputed. Absent means there is none, which is the first run.
+   */
+  previous?: PluginOutputIndex
   /** How the batch of verdicts is built. The default is the nine guards; a test may pass another. */
   prepare?: GuardsFactory
 }): Promise<WriterReport> => {
@@ -771,7 +784,48 @@ export const applyPluginOutput = async (options: {
   for (const { spec, rows } of createEdges) await applyEdgeCreate(query, id, spec, rows)
   for (const { spec, rows } of updateEdges) await applyEdgeUpdate(query, id, spec, rows)
 
-  return { id, version, changes, counts, index, ms: Date.now() - started }
+  return {
+    id, version, changes, counts, ms: Date.now() - started,
+    index: retain(options.previous, index, scope, changes),
+  }
+}
+
+/**
+ * The plugin's full previous output after a run: what it kept, minus what this run retracted, plus
+ * what it now desires.
+ *
+ * A full scope is authoritative on its own, so the desired set IS the index. Under a partial scope
+ * the desired set is only the slice the run recomputed, and handing that back as `ctx.previous` is
+ * what breaks `plugin:aggregate`: `previousStateOf` takes a non-empty index as the whole of the
+ * previous state and skips its graph fallback, so every cluster the scope did not name loses its id.
+ *
+ * What is dropped is what the DIFF deleted, which is exactly the rows inside the scope this run no
+ * longer wants. A key the index held that is inside the scope, is no longer desired and was not
+ * deleted is a key whose row was already absent from the graph, so it lingers here; the graph, not
+ * this index, is what a plugin's output is diffed against.
+ */
+const retain = (
+  previous: PluginOutputIndex | undefined,
+  index: PluginOutputIndex,
+  scope: ExpandedScope,
+  changes: WriterChange[]
+): PluginOutputIndex => {
+  if (scope.full || !previous) return index
+  const deleted = new Set(changes.filter(change => change.operation === 'delete').map(change => `${change.table} ${change.key}`))
+  const merge = (table: string, kept: Map<string, PluginRow> | undefined, desired: Map<string, PluginRow>): Map<string, PluginRow> => {
+    const rows = new Map(kept ?? [])
+    for (const key of [...rows.keys()]) if (deleted.has(`${table} ${key}`)) rows.delete(key)
+    for (const [key, row] of desired) rows.set(key, row)
+    return rows
+  }
+  const merged: PluginOutputIndex = { nodes: {}, edges: {} }
+  for (const [table, desired] of Object.entries(index.nodes)) {
+    merged.nodes[table as PluginNodeTable] = merge(table, previous.nodes[table as PluginNodeTable], desired)
+  }
+  for (const [table, desired] of Object.entries(index.edges)) {
+    merged.edges[table as PluginEdgeTable] = merge(table, previous.edges[table as PluginEdgeTable], desired)
+  }
+  return merged
 }
 
 /** The one MATCH an edge update or delete opens with, per declared FROM/TO pair. */

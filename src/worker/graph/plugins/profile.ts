@@ -432,6 +432,35 @@ const scan = async (ctx: PluginContext, uris: string[] | undefined) => {
   return { media, claims, said, owns, episodes }
 }
 
+/**
+ * Both ends of every claim in `delta.claims`, as uris.
+ *
+ * The one thing a delta of claim keys cannot state, and the two plugins that scope themselves both
+ * need it: a claim is written between two rows that may not have moved themselves, and a scan looks
+ * a row up by uri. One keyed statement, which is the scan shape 5.3 allows. Exported because
+ * `plugin:direct` asks the same question about the same list, and two spellings of it could disagree
+ * about which end of a claim is a subject.
+ */
+export const claimEndpoints = async (ctx: PluginContext, keys: string[]): Promise<string[]> => {
+  // an empty `UNWIND` list dies at runtime on this engine
+  if (!keys.length) return []
+  const rows = await ctx.query<{ fromUri: string, toUri: string }>(
+    `UNWIND $keys AS k MATCH (a:Media)-[c:CLAIMS {key: k}]->(b:Media)
+     RETURN a.uri AS fromUri, b.uri AS toUri`,
+    { keys }
+  )
+  return [...new Set(rows.flatMap(row => [row.fromUri, row.toUri]))]
+}
+
+/**
+ * The uris a scoped run recomputes: the delta's own rows, plus both ends of every claim in it.
+ *
+ * A profile reads the claims INTO its subject (the effective scope vote of 5.4 P0 is partly a vote of
+ * who claimed it), so a new claim about a row that did not otherwise move is a delta for that row.
+ */
+const subjectsOf = async (ctx: PluginContext): Promise<string[]> =>
+  [...new Set([...ctx.delta.media, ...ctx.delta.episodes, ...await claimEndpoints(ctx, ctx.delta.claims)])]
+
 /** The `MediaProfile` row for one subject: every rule of 5.4 P0, in the order the table lists them. */
 const mediaProfileRow = (
   row: MediaRow,
@@ -524,8 +553,7 @@ export const profilePlugin: Plugin = {
   after: [],
   version: PROFILE_VERSION,
   run: async (ctx: PluginContext): Promise<PluginOutput> => {
-    // step 2c fills `delta`; until then `full` is always true and the scan takes the whole graph
-    const subjects = ctx.delta.full ? undefined : [...new Set([...ctx.delta.media, ...ctx.delta.episodes])]
+    const subjects = ctx.delta.full ? undefined : await subjectsOf(ctx)
     const { media, claims, said, owns, episodes } = await scan(ctx, subjects)
 
     const claimsByUri = new Map(claims.map(row => [row.uri, row.claims ?? []]))

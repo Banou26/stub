@@ -10,8 +10,9 @@
  *   calls would interleave on the runner's module state (`lastCompleted`, `previousOutput`), so the
  *   gate is the whole point rather than an optimization. A wake landing mid-pass merges into the
  *   pending wake: never a queue, so a burst of twenty commits costs one more pass and not twenty.
- * - The pending wake carries the UNION of the uris every merged wake named and the HIGHEST `seq`,
- *   which is what a scoped pass will read once scoping lands (step 2, `delta.full` is still true).
+ * - The pending wake carries the UNION of the media uris, episode uris and claim keys every merged
+ *   wake named, and the HIGHEST `seq`. That union IS the scoped pass's delta: `runPlugins` takes
+ *   iteration 1's subjects from the trigger and every later iteration's from what it just applied.
  * - `view:changed` fires AFTER a pass that applied something, naming the clusters it touched and
  *   every member uri of those clusters. A pass that applied nothing emits nothing, which is the
  *   second half of the idempotence contract of 6.6 (the first is the ingest's, which emits no
@@ -21,9 +22,8 @@
  *
  * WHAT IT DOES NOT DO YET. `row:changed` is a plain wake, the same as `graph:changed`: the cheaper
  * re-materialization of 4.5 (the touched clusters' JSON only, no guards and no links) is a later
- * step, and until it exists a raw-only change is served by a full pass rather than not at all.
- * Scoping is the same story: the trigger carries the uris, and `runPlugins` still runs every plugin
- * with `delta.full`.
+ * step, and until it exists a raw-only change is served by an ordinary scoped pass over the uris it
+ * named rather than not at all.
  */
 import type { Plugin } from './plugins/contract'
 import type { PassReport, PassTrigger } from './plugins/runner'
@@ -58,12 +58,14 @@ export const DEFAULT_PLUGINS: Plugin[] = [
 export const AUDIT_EVERY = 16
 
 /**
- * What a pass was woken by.
+ * What a pass was woken by: the reason, the highest seq merged into the wake, and what it named.
  *
- * `PassTrigger` carries the reason and the seq; the uris ride alongside them here, because
- * `runner.ts` owns that type and does not declare them yet. The object handed to `runPlugins` IS
- * this one, so a report's `trigger` carries the uris at runtime and a reader that wants them casts
- * the report's trigger to this type.
+ * The object handed to `runPlugins` IS this one, so a report's `trigger` carries the wake's subjects
+ * at runtime and a reader that wants them casts the report's trigger to this type.
+ *
+ * `episodes` and `claims` are present only when the wake named any, which is deliberate: the runner
+ * reads a `graph:changed` trigger naming NONE of the three lists as a full pass, so an empty list and
+ * an absent one would be the same statement written two ways, and a trigger says what it knows.
  */
 export type ScheduledTrigger = PassTrigger & { seq: number, uris: string[] }
 
@@ -90,7 +92,10 @@ type Claim = { resolve: (report: PassReport) => void, reject: (error: unknown) =
 type Wake = {
   reason: PassTrigger['reason']
   seq: number
+  /** `Media.uri`, `Episode.uri` and `CLAIMS.key`: the union of every commit merged into this wake. */
   uris: Set<string>
+  episodes: Set<string>
+  claimKeys: Set<string>
   /** The `schedulePass` callers this wake answers. */
   claims: Claim[]
 }
@@ -187,7 +192,13 @@ const drain = async (): Promise<void> => {
       counters.passes += 1
       const audit = auditEveryPass || counters.passes % AUDIT_EVERY === 0
       if (audit) counters.audits += 1
-      const trigger: ScheduledTrigger = { reason: wake.reason, seq: wake.seq, uris: [...wake.uris].sort() }
+      const trigger: ScheduledTrigger = {
+        reason: wake.reason,
+        seq: wake.seq,
+        uris: [...wake.uris].sort(),
+        ...wake.episodes.size ? { episodes: [...wake.episodes].sort() } : {},
+        ...wake.claimKeys.size ? { claims: [...wake.claimKeys].sort() } : {},
+      }
       try {
         const report = await runPlugins(plugins, trigger, { audit })
         last = report
@@ -216,11 +227,18 @@ const drain = async (): Promise<void> => {
   }
 }
 
-const request = (reason: PassTrigger['reason'], detail: { seq?: number, uris?: string[] }, claim?: Claim): void => {
+const request = (
+  reason: PassTrigger['reason'],
+  detail: { seq?: number, uris?: string[], episodes?: string[], claims?: string[] },
+  claim?: Claim
+): void => {
   counters.wakes += 1
-  const wake = pending ?? { reason, seq: 0, uris: new Set<string>(), claims: [] }
+  const wake = pending
+    ?? { reason, seq: 0, uris: new Set<string>(), episodes: new Set<string>(), claimKeys: new Set<string>(), claims: [] }
   wake.seq = Math.max(wake.seq, detail.seq ?? 0)
   for (const uri of detail.uris ?? []) wake.uris.add(uri)
+  for (const uri of detail.episodes ?? []) wake.episodes.add(uri)
+  for (const key of detail.claims ?? []) wake.claimKeys.add(key)
   if (claim) wake.claims.push(claim)
   pending = wake
   running ??= drain()

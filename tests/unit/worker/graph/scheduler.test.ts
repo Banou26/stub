@@ -463,6 +463,13 @@ test('the recorded page through a live scheduler: wakes, passes, and what it cos
     `ingest ${withPass.ms} ms with the scheduler (longest window ${withPass.longest} ms)`,
     `against ${alone.ms} ms with it stopped (longest window ${alone.longest} ms).`,
   ].join(' '))
+  // WHERE THE PASS GOES, per plugin per iteration of the LAST pass, so the next step reads the cost
+  // off a measurement rather than off an assumption about which scan is the expensive one. A skipped
+  // plugin is printed as `skipped` rather than as 0 ms: not running and running for nothing are
+  // different facts about the same number.
+  console.info('the last pass, per plugin per iteration:', JSON.stringify(
+    (settled?.runs ?? []).map(run => `${run.iteration} ${run.id} ${run.skipped ? 'skipped' : `${run.ms} ms, ${run.changes} changes`}`)
+  ))
 
   expect(stats.passes, 'a burst of commits coalesces rather than queueing').toBeLessThan(stats.wakes)
   expect(stats.passes).toBeGreaterThan(0)

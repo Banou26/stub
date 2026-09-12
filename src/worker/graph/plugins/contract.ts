@@ -160,22 +160,65 @@ export type PluginOutputIndex = {
 export type PluginLogEvent = { level: 'info' | 'warn', rule: string, detail: string, uris?: string[] }
 
 /**
+ * What moved, as the subjects a scan looks its rows up BY (5.1).
+ *
+ * Every list is a key, never a row and never a seq range: the pass takes its subjects from here by
+ * `UNWIND $keys AS k MATCH (... {column: k})`, which is the one scan shape 5.3 allows. There is no
+ * `seq > since` form, because the two counters a pass sees (the answer log's and the ingest's commit
+ * sequence) are independent and no single number bounds both.
+ *
+ * Where the lists come from: iteration 1 of a `graph:changed` pass is the wake, which is the union of
+ * every commit that landed since the last pass started; iteration 2 and later is what the writer
+ * APPLIED in the iteration before, mapped through each plugin's `consumes`, so a plugin sees only the
+ * tables it reads. `full` is the first run, a version bump, a boot pass and a manual pass, and it
+ * means the lists say nothing: the scan reads the whole graph.
+ */
+export type Delta = {
+  /** `Media.uri`. A row created, a projected column that moved, or a new answer written ABOUT it. */
+  media: string[]
+  /** `Episode.uri`, never a `HAS_EPISODE` key: the profile of an episode is looked up by its uri. */
+  episodes: string[]
+  /** `CLAIMS.key`, which is what `plugin:direct` anchors its candidate scan on. */
+  claims: string[]
+  /** The writer's `LINK` and `EPISODE_LINK` diff keys, `from`, `to` and the edge's own key joined. */
+  links: string[]
+  /** `Cluster.id`, for the plugins that recompute per cluster. */
+  clusters: string[]
+  /** True when the lists are empty because everything moved, rather than because nothing did. */
+  full: boolean
+}
+
+/**
  * Everything a plugin is given. It is a READ handle plus the shared scorers, and nothing more.
  *
  * `query` is Cypher over the whole graph, other plugins' output included, and refuses every write
- * verb outside a string literal (5.3 isolation 2). Scans filter on `seq > since` or take their
- * subjects from `delta` by key lookup, never by a membership list thousands long.
+ * verb outside a string literal (5.3 isolation 2). Scans take their subjects from `delta` by key
+ * lookup, never by a membership list thousands long.
  */
 export type PluginContext = {
   id: PluginId
   query: <Row>(cypher: string, params?: Record<string, unknown>) => Promise<Row[]>
-  /** The ingest seq this plugin last completed at. 0 before its first run. */
+  /**
+   * The audit bound this plugin last completed at, and an AUDIT bound only: 0 before its first run.
+   *
+   * No scan may filter on it. It is `max(seq)` across tables carrying two independent counters (the
+   * answer log's and the ingest's commit sequence), so `seq > since` is not comparable to either, and
+   * from iteration 2 of a pass it already equals `passStart` and would read nothing. The subjects are
+   * in `delta`.
+   */
   since: number
   /** The ingest seq this pass started at: the audit bound of 5.3. */
   passStart: number
-  /** What moved since `since`. `full` on the first run, after a version bump and on a boot pass. */
-  delta: { media: string[], episodes: string[], claims: string[], links: string[], clusters: string[], full: boolean }
+  /** What moved, in the tables this plugin `consumes`. `full` means the lists say nothing. */
+  delta: Delta
   guards: Guards
+  /**
+   * This plugin's FULL previous output, across passes, even when the last pass scoped itself.
+   *
+   * The runner retains it by merging each scoped desired set into the one it kept, so a plugin that
+   * carries state across passes (`plugin:aggregate` and its cluster ids) sees every row it owns
+   * rather than the slice one wake happened to name.
+   */
   previous: PluginOutputIndex
   /**
    * The shared scorers, so every plugin scores exactly as the record measured. `titleSimilarity` is

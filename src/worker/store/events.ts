@@ -5,8 +5,15 @@ type StoreEventMap = {
   'media:changed': { uris?: string[] }
   'episode:changed': { uris?: string[] }
   'origin:changed': { ids?: string[] }
-  /** A new row, a new claim, a new HAS_EPISODE, or a projected column that moved. Wakes a pass. */
-  'graph:changed': { seq: number, uris: string[] }
+  /**
+   * A new row, a new claim, a new HAS_EPISODE, or a projected column that moved. Wakes a pass.
+   *
+   * `uris` is `Media.uri`, `episodes` is `Episode.uri` (never a `HAS_EPISODE` key) and `claims` is
+   * `CLAIMS.key`: the three the pass scopes its scans by. The two additions are optional because an
+   * emitter that knows only what moved in `Media` still describes a legal wake, and a trigger naming
+   * none of the three is a FULL pass.
+   */
+  'graph:changed': { seq: number, uris: string[], episodes?: string[], claims?: string[] }
   /** Unprojected `raw` fields only, or a re-asserted claim's node. Wakes a re-materialization. */
   'row:changed': { uris: string[] }
   /**

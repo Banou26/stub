@@ -246,6 +246,44 @@ test('a second pass over the same graph writes nothing', async () => {
   expect(again.changes).toEqual([])
 })
 
+// THE SCOPED PATH, against the full pass that is its definition: a wake naming one new claim and the
+// two rows it joined has to leave the graph exactly where a full pass leaves it.
+// The scan is by URI and not by claim key on purpose, and this case is why: the scope a scoped run
+// declares is its subject uris, so the writer may retract any link with a subject at either end, and
+// a run that read only the claims the delta named would have every OTHER link those uris carry
+// deleted for never having been re-derived.
+// Mutation: read only `delta.claims` in `plugin:direct`'s scan (drop the two by-uri reads) and the
+// histogram below loses the links the wake did not name, while the pass reports no anomaly at all.
+test('a scoped pass over one new claim leaves the graph where a full pass leaves it', async () => {
+  await runPass()
+  const before = await histogramOf()
+
+  // a new source claiming an existing pair: one new claim, two rows whose profiles move with it
+  const rows = [
+    await answer('media', media('simkl:70', { titles: [title('en', 'Frieren')], handles: [sameAs(media('anilist:1'))] })),
+  ]
+  const committed = await ingestAnswers(rows)
+  expect(committed.changed.claims.length, 'the control: the batch wrote a claim').toBeGreaterThan(0)
+
+  const scoped = await runPlugins([profilePlugin, directPlugin], {
+    reason: 'graph:changed',
+    seq: 1,
+    uris: committed.changed.media,
+    claims: committed.changed.claims,
+  })
+  expect(scoped.anomalies.filter(anomaly => anomaly.rule === 'plugin-failed')).toEqual([])
+  expect(scoped.audit.ok, scoped.audit.differences.join('; ')).toBe(true)
+  const after = await histogramOf()
+  expect([...after].length, 'the scoped pass added the pair it was woken for').not.toEqual(0)
+  expect(after.get('SAME_AS active asserted'), 'and it is one more than before')
+    .toBe((before.get('SAME_AS active asserted') ?? 0) + 1)
+
+  // THE DEFINITION: a full pass over the same graph agrees, row for row, and writes nothing
+  const full = await runPass()
+  expect(full.changes, 'a full pass has nothing to add to what the scoped pass built').toEqual([])
+  expect(await histogramOf()).toEqual(after)
+})
+
 // A REAL RECORDED PAGE, which is the only case here that meets shapes nobody chose. It reports the
 // histogram rather than asserting a threshold on it: a number pinned to one walk fails on the next
 // walk rather than on the next bug. What IS asserted is what must hold whatever the page contains:
