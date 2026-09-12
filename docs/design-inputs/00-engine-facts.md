@@ -189,3 +189,41 @@ the second pass over the same graph is **560 ms in 1 iteration and writes nothin
   pass 1.2 to 1.7 s in 1 iteration writing nothing. The recorded page contributes 7 pairs, 0 ranges
   and 0 refusals on its own (no source ships `containing` yet, so class 1 is nearly empty on a real
   page and the transitional lend of 4.4 carries what there is).
+
+## Measured on 2026-09-12 while building the scheduler (step 2h)
+
+- **A wake is the ingest's event, and a pass is single flight, so a burst costs ONE more pass rather
+  than one per commit.** The 800 recorded answers fed through `recordAnswers` in 32 windows of 25,
+  on the real 50 ms flush with real timers, raised **34 wakes and ran 3 passes**. Three runs,
+  identical counts. A wake landing mid-pass merges into the one pending wake, which carries the union
+  of the uris and the highest seq.
+- **What the pass costs the resolve it shares a lane with**, the same replay three times with
+  `DEFAULT_PLUGINS` (profile, direct, title, containment, range, aggregate) and the audit at its live
+  cadence, which at three passes means none of them was audited:
+
+  | | scheduler live | scheduler stopped |
+  | --- | --- | --- |
+  | ingest, 32 windows, end to end | 11,795 / 12,145 / 12,362 ms | 4,926 / 5,056 / 5,264 ms |
+  | the longest single window | 736 / 787 / 759 ms | 216 / 217 / 232 ms |
+
+  So a pass does NOT starve the resolve, and it does slow it by about 2.4x: the worst a single flush
+  waited was **0.74 to 0.79 s against 0.22 to 0.23 s**. The passes themselves were 16,938 / 17,488 /
+  17,929 ms over three passes, the longest single pass **7,765 / 7,913 / 8,096 ms**, which is why
+  three passes and not thirty: a pass costs more than the window that wakes it, so every commit during
+  it coalesces. The control arm runs FIRST and each arm starts from an emptied graph (`DETACH DELETE`
+  over the node tables, the only reset this engine has), so the control is the colder of the two and
+  the figure above is the smaller of the two ways to state the gap.
+- **That case is 22 s of solid CPU, which is enough to redden a NEIGHBOURING file.** Inside the whole
+  `tests/unit/worker/graph` run it pushed `range.test.ts` past vitest's 5 s default on two runs out
+  of two, while that file is green alone and green with this case at 200 rows. So the suite replays
+  200 and `GRAPH_MEASURE_ROWS=800` reproduces the figures above; the row count is printed in the line
+  the case logs, so a number is never read without its size.
+- **The audit is off on the live path and on for every sixteenth pass** (`AUDIT_EVERY`), because it
+  reads every row of nine tables twice and re-hashes each in JS. On the page above that cadence never
+  came due; a test or the corpus harness passes `audit: true` and gets every pass audited.
+- **`row:changed` is a plain wake today**: it runs the same full pass as `graph:changed`, under the
+  same reason, because `PassTrigger` has no third one. The cheaper re-materialization 4.5 asks for
+  (the touched clusters' JSON only, no guards and no links) is a later step.
+- **A worker keeps nothing across a reload, so the boot pass of 5.3 always runs over an EMPTY graph**
+  and always costs nothing. There is no stored version to compare against and nothing to retract on
+  boot; code for either would be code for a state that cannot occur.

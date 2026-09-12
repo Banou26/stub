@@ -9,6 +9,7 @@ import { setAnswerSink } from './answers'
 import { graphEnabled, setGraphEnabled } from './engine'
 import { ingestAnswers } from './ingest'
 import { graphReady, GRAPH_TABLES } from './schema'
+import { schedulePass, startScheduler } from './scheduler'
 import { seedOrigins } from './seed-origins'
 
 export { closeGraph, graphEnabled, openGraph, setGraphEnabled } from './engine'
@@ -22,8 +23,8 @@ export type { Ask, AskOutcome, AskRow } from './asks'
 export { graphCounts } from './counts'
 export { ingestAnswers, replayAnswers } from './ingest'
 export type { IngestChanged, IngestQuarantine, IngestReport } from './ingest'
-// Section 5: the contract, the writer and the pass. Nothing subscribes to `graph:changed` yet, so a
-// pass runs only when a caller asks for one; the scheduler of 5.3 is step 2c.
+// Section 5: the contract, the writer and the pass. `./scheduler` is what subscribes to
+// `graph:changed`; `runPlugins` on its own runs a pass only when a caller asks for one.
 export type { Plugin, PluginContext, PluginOutput, Scope } from './plugins/contract'
 export { applyPluginOutput, graphGuards, retractPlugin } from './plugins/writer'
 export type { WriterChange, WriterReport } from './plugins/writer'
@@ -50,10 +51,16 @@ export { checkInvariants, INVARIANTS } from './plugins/invariants'
 export { readAnomalies } from './plugins/anomalies'
 export type { Anomaly } from './plugins/anomalies'
 export { seedOrigins } from './seed-origins'
+// Section 5.3: when a pass runs, and the `view:changed` it ends in.
+export {
+  AUDIT_EVERY, DEFAULT_PLUGINS, passSettled, schedulePass, schedulerStats, startScheduler,
+  stopScheduler, viewOf,
+} from './scheduler'
+export type { ScheduledTrigger, SchedulerStats } from './scheduler'
 
 let booting: Promise<void> | undefined
 
-const boot = async () => {
+const boot = async (scheduler: boolean) => {
   const started = performance.now()
   // THE ONE PLACE THE LIVE INGEST IS WIRED, and only behind the flag. The log hands it the rows a
   // flush wrote, so the tee runs after `recordAnswers` and after the old store's own inserters, and
@@ -66,11 +73,33 @@ const boot = async () => {
   // (`imdb`) answers nothing at all, so its row can only ever come from here
   const origins = await seedOrigins()
   console.info(`graph: engine ready in ${Math.round(performance.now() - started)} ms, version ${graph.version}, ${GRAPH_TABLES.length} tables, ${origins} origins`)
+  if (!scheduler) return
+  // the pass wakes on the ingest's events from here on, and the seeding above is inside the boot
+  // pass rather than behind it, so nothing that landed before the subscription is missed
+  startScheduler()
+  try {
+    // THE BOOT PASS of 5.3. A worker keeps nothing across a reload, so the graph it starts on is
+    // always empty and the boot pass is always free: there is no stored version to compare and
+    // nothing to retract, and adding either would be code for a state that cannot occur.
+    const report = await schedulePass('boot')
+    console.info(`graph: boot pass in ${report.ms} ms, ${report.iterations} iterations, ${report.changes.length} changes`)
+  } catch (error) {
+    // a boot pass that failed leaves the plugins' previous output standing, which on a cold worker is
+    // nothing at all; the next commit wakes another pass, so this must not fail `enableGraph`
+    console.error(new Error('graph: the boot pass failed', { cause: error }))
+  }
 }
 
-/** Carries the page's flag in, and opens the engine once when it is on. */
-export const enableGraph = (enabled: boolean): Promise<void> => {
+/**
+ * Carries the page's flag in, and opens the engine once when it is on.
+ *
+ * `scheduler` wires the live pass, and it is OFF by default because a caller that drives
+ * `runPlugins` itself must not race one: the runner keeps what each plugin last wrote in module
+ * state, so two overlapping passes interleave there. The live worker asks for it in the one place
+ * that owns the flag (`../yoga.ts`), and a test that wants the pass starts the scheduler itself.
+ */
+export const enableGraph = (enabled: boolean, options: { scheduler?: boolean } = {}): Promise<void> => {
   setGraphEnabled(enabled)
   if (!graphEnabled()) return Promise.resolve()
-  return (booting ??= boot())
+  return (booting ??= boot(options.scheduler === true))
 }

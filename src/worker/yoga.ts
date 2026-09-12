@@ -43,7 +43,9 @@ export const osraResolvers = {
     yoga.handleRequest(new Request(input, init), {}),
   setUserKeys: (keys: Record<string, string>) => setUserKeys(keys),
   // The page owns the `?graph` flag and hands it over once, right after spawning the worker.
-  setGraphEnabled: (enabled: boolean) => enableGraph(enabled),
+  // THE ONE PLACE THE LIVE PASS IS WIRED: `scheduler` is off by default so a caller driving
+  // `runPlugins` itself can never race a pass woken by the bus (`./graph/index.ts`).
+  setGraphEnabled: (enabled: boolean) => enableGraph(enabled, { scheduler: true }),
   registerRemoteSource: async (port: MessagePort, pluginUri: string): Promise<{ ok: { sources: { origin: string, name: string }[], rejected: { origin: string, reason: string }[] } } | { error: string }> => {
     try {
       return { ok: await registerRemoteExtractor(port, pluginUri) }

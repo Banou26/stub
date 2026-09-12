@@ -1,6 +1,6 @@
-// The graph's two write events (4.5) share this bus so a later step can listen without a second one.
-// They are INERT while the `?graph` flag is off, since the ingest that emits them does not run, and
-// they have no listener yet either: the plugin scheduler of step 2 is the first.
+// The graph's write events (4.5) share this bus so a later step can listen without a second one.
+// They are INERT while the `?graph` flag is off, since neither the ingest that emits the first two
+// nor the scheduler that listens to them and emits the third runs at all.
 type StoreEventMap = {
   'media:changed': { uris?: string[] }
   'episode:changed': { uris?: string[] }
@@ -9,6 +9,12 @@ type StoreEventMap = {
   'graph:changed': { seq: number, uris: string[] }
   /** Unprojected `raw` fields only, or a re-asserted claim's node. Wakes a re-materialization. */
   'row:changed': { uris: string[] }
+  /**
+   * After a pass that applied something (6.6): the clusters whose membership, slots, attachments,
+   * run length, anomalies or JSON moved, and every member uri of those clusters. The read path's
+   * wake, so a reader is woken once the row it reads exists rather than at the commit before it.
+   */
+  'view:changed': { clusters: string[], uris: string[] }
 }
 
 const eventBus = new EventTarget()
