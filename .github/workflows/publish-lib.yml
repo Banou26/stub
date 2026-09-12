@@ -36,7 +36,11 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # The two retry windows below are ten minutes each, so twenty of this is spent waiting on npm
+    # before the build is counted at all. A timeout that expires PAST the publish spends a version
+    # whose published bytes are then never read: a workflow_dispatch re-run reads changed=false from
+    # the gate and runs none of the release steps, so the one step that reads the CDN never happens.
+    timeout-minutes: 45
     permissions:
       # the OIDC token npm exchanges for short lived publish credentials
       id-token: write
