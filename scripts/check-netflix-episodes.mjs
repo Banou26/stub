@@ -206,7 +206,12 @@ for (const [name, uri] of ROUTES) {
 const READ_SCREEN = () => ({
   address: location.pathname + location.search,
   title: document.querySelector('.content > .header > .title')?.textContent ?? null,
-  relations: [...document.querySelectorAll('a.relation-card')].map(node => node.getAttribute('href')),
+  // the TEXT beside the href, because a walk names a card by what it reads and a walk that names one
+  // the page does not draw has to be able to say what WAS drawn instead of only that it missed
+  relations: [...document.querySelectorAll('a.relation-card')].map(node => ({
+    href: node.getAttribute('href'),
+    text: (node.textContent ?? '').replace(/\s+/g, ' ').trim(),
+  })),
   episodes: [...document.querySelectorAll('.episodes > .episode')].map(node =>
     [...node.querySelectorAll('[title]')].map(entry => entry.getAttribute('title')).filter(Boolean)),
 })
@@ -262,6 +267,8 @@ for (const spec of (process.env.CLICKS ?? '').split(';').filter(Boolean)) {
     const link = page.locator('a.relation-card').filter({ hasText: step }).first()
     const href = await link.getAttribute('href').catch(() => null)
     if (href === null) {
+      const drawn = (stops[stops.length - 1]?.relations ?? []).map(card => card.text)
+      console.log(`  no card reads ${JSON.stringify(step)}. The page draws: ${drawn.map(text => JSON.stringify(text)).join(', ') || '(no cards)'}`)
       stops.push({ step: `click ${step}`, missing: true, address: null, title: null, relations: [], episodes: [] })
       break
     }
@@ -314,6 +321,14 @@ if (walks.length) {
       const nf = Object.entries(tally).filter(([name]) => /netflix/i.test(name)).reduce((sum, [, n]) => sum + n, 0)
       const cr = Object.entries(tally).filter(([name]) => /crunchyroll/i.test(name)).reduce((sum, [, n]) => sum + n, 0)
       console.log(`| ${walk.spec.split('|')[0]} | ${stop.missing ? `${stop.step} NO SUCH CARD` : stop.step} | ${stop.address ?? '-'} | ${stop.title ?? '-'} | ${stop.episodes.length} | ${nf} | ${cr} |`)
+    }
+  }
+  // the cards each stop drew, which is what the NEXT step of a walk has to name. Printed every run
+  // rather than only on a miss, so one run maps a whole chain instead of one hop per run
+  for (const walk of walks) {
+    console.log(`\n[walk] ${walk.spec}`)
+    for (const stop of walk.stops) {
+      console.log(`  ${stop.step}: ${(stop.relations ?? []).map(card => JSON.stringify(card.text)).join(', ') || '(no cards)'}`)
     }
   }
 }
