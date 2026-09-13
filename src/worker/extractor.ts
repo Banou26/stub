@@ -30,7 +30,7 @@ import { readPluginPayload, readPluginSources } from './plugin-sources'
 import { recordAnswers } from './graph/answers'
 // `./graph/read` and not `./graph`, which would drag every plugin in behind a flag that is off
 import { readStore, resolveMedia } from './graph/read'
-import { describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
+import { canBeContained, describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
 import { CONTAINING_MEDIA_DOCUMENT, SIMILAR_MEDIA_DOCUMENT } from './similar-document'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
 
@@ -338,6 +338,15 @@ const containingOutcome = async (
 ): Promise<SimilarOutcome<Media> | undefined> => {
   const { showId } = input
   if (!implementsContainingMedia(origin)) return undefined
+  // THE SECOND WALK IS THE COST, so the evidence is read before it is paid rather than after. Every
+  // containment axis is a comparison against our own length, so a run with no count is inside nothing
+  // and the source would walk the whole show again only to say so (`canBeContained`,
+  // sources/similar.ts). Undefined and never a decline: the first question's refusal is the outcome,
+  // and a decline would have the consumer re-ask the whole pair on the next read.
+  if (!canBeContained(input)) {
+    console.warn(`containingMedia: not asked ${origin} ${showId} for '${caller}' (${describeEvidence(input)} carries no count to be longer than)`)
+    return undefined
+  }
   console.warn(`containingMedia: asked ${origin} ${showId} by '${caller}' with ${describeEvidence(input)}`)
   const delivered = await firstSimilarMedia(extractor, input, 'containingMedia')
   if (delivered.kind === 'media') {

@@ -280,8 +280,8 @@ const isAsked = (record: AskRecord, question: Question): boolean =>
   record.fingerprints.has(question.fingerprint) || record.refusedTitles.has(question.titles)
 
 /**
- * The asks a run page owes right now: one per container origin that can answer and has no run in the
- * cluster. Whether each is actually asked is decided per record in `resolveSimilarRuns`.
+ * The asks a run page owes right now: one per CONTAINER-scoped origin that can answer and has no run
+ * in the cluster. Whether each is actually asked is decided per record in `resolveSimilarRuns`.
  */
 export const planSimilarAsks = (
   cluster: Media[],
@@ -302,6 +302,15 @@ export const planSimilarAsks = (
   for (const container of containers) {
     if (seen.has(container.uri)) continue
     seen.add(container.uri)
+    // ONLY A CONTAINER IS A SHOW, and `container.id` is put to the source as a show id. Every
+    // `PART_OF` target used to be taken for one, which was true until this file started minting them:
+    // a `containing` answer hangs a season-scoped RUN off the cluster, and the next read then asked
+    // Netflix about show `80987039-1`, an id only this app has ever spelled. unOGS answers `{}` for
+    // it (measured 2026-09-12) so the round trip is refused at the far end of two network calls, and
+    // a source more lenient about ids would answer the question rather than the premise. Measured on
+    // the 6 arm Mushoku Tensei run, 2026-09-13: 4 of 11 `containingMedia` asks were about that id,
+    // each behind a `similarMedia` ask, so 8 walks of a show nobody asked about.
+    if (container.scope !== 'CONTAINER') continue
     if (!implemented(container.origin)) continue
     if (origins.has(container.origin)) continue
     asks.push({ runUri, origin: container.origin, showId: container.id, containerUri: container.uri })
@@ -405,15 +414,30 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
       if (present) {
         record.settled = true
         // the two spellings of the design's `refused-other-run` (7.3): the answer either names the
-        // run the cluster already holds, which is an answer and claims nothing new, or names a
+        // run the cluster already holds, which is an answer about a row already here, or names a
         // second run of one origin, which is the weld the ask exists to avoid
         if (present.uri === result.media.uri) {
-          console.warn(`similarMedia: consumer settled ${ask.origin} ${ask.showId} for ${ask.runUri} (${present.uri} is already the cluster's ${ask.origin} run)`)
-          // CLAIMED IN THIS ARM TOO, which is 1a. A row the cluster already holds is held on somebody
-          // else's evidence, and this ask is a second, independent source of it: the claim is what
-          // makes the answer a fact the rules may use, where the log row only records that it was
-          // given. `writeAskClaim` reads its own key back, so a pair already carrying this claim
-          // writes and emits nothing and the arm costs one lookup.
+          // CLAIMED IN THIS ARM TOO, which is 1a, and the two shapes mean OPPOSITE things here.
+          //
+          // A SAME_AS answer is confirmation: the row the cluster already holds is held on somebody
+          // else's evidence, and this ask is a second, independent source of it. The claim is what
+          // makes that a fact the rules may use, where the log row only records that it was given.
+          //
+          // A CONTAINING answer is a CONTRADICTION, and is written for that reason rather than in
+          // spite of it. The source has just said the row HOLDS our run, and the cluster says it IS
+          // our run, so the two cannot both stand. The claim is how the disagreement gets into the
+          // graph at all: `containing` is not in `DOWNGRADE_REASONS` (graph/plugins/guards.ts), so
+          // `invariantRepairs` (graph/plugins/containment.ts) reads the resulting `PART_OF` between
+          // two members of one cluster and retracts the `SAME_AS` that joined them, which is 3.5's
+          // repair and the outcome this arm exists to reach. Swallowing it would leave the weld
+          // standing on evidence the source itself has withdrawn. Reachable as the evidence grows: a
+          // cold ask answers a season by date with no count, the count arrives, the fold veto then
+          // fires and the second ask answers that same season as a container.
+          //
+          // `writeAskClaim` reads its own key back, so a pair already carrying this claim writes and
+          // emits nothing and the arm costs one lookup.
+          const shape = accepted === 'containing' ? 'contradicted' : 'settled'
+          console.warn(`similarMedia: consumer ${shape} ${ask.origin} ${ask.showId} for ${ask.runUri} (${present.uri} is already the cluster's ${ask.origin} run, claimed ${kind})`)
           await claim(ask, result.media, kind)
           note(question, accepted, result.media.uri)
         } else {
@@ -432,7 +456,15 @@ const drive = async (start: AskRecord, context: RequestContext, deps: SimilarDep
         continue
       }
       record.settled = true
-      await upsertMedia([], [{ mediaUri: ask.runUri, handleUri: result.media.uri, relation: kind }])
+      // THE OLD STORE TAKES SAMENESS AND NOTHING ELSE, which is what it took before `containing`
+      // existed. A containment is this migration's own fact: the graph is where it is read, and the
+      // old store is the CONTROL every measurement of the graph is made against, so landing a new
+      // kind of handle there moves the arm the comparison is against for a fact nothing over there
+      // reads. Measured 2026-09-13 on `ag:(anilist:108465)`: writing it gave the legacy page
+      // `PART_OF:nf:80987039 PART_OF:nf:80987039-1` where it had carried the first alone, at 0 of 11
+      // Netflix episodes either way, since the old store has no placement that reads a container.
+      // Same reason `resolveSimilarRuns` reads `heldRuns` only when the graph is what is served.
+      if (kind === 'SAME_AS') await upsertMedia([], [{ mediaUri: ask.runUri, handleUri: result.media.uri, relation: kind }])
       await claim(ask, result.media, kind)
       console.warn(`similarMedia: consumer claimed ${result.media.uri} as ${kind} of ${ask.runUri}`)
       note(question, accepted, result.media.uri)

@@ -381,6 +381,10 @@ export type ContainingVerdict<T> = { season: T, rule: ContainingRule, theirs: nu
  * which is the shape rule 2 admits as SAMENESS when it can see the titles; with only counts to go on
  * the two are indistinguishable, so nothing is answered rather than a container that is really the run.
  *
+ * AXIS 2 ALSO REQUIRES EVERY SIBLING TO CARRY A COUNT, at or below the ceiling, because "turned down
+ * only for being longer" is a statement about the OTHER candidates and a season nobody measured was
+ * turned down for something else. The clause and what it was measured against are on the line itself.
+ *
  * The year is the weakest thing here and it is only ever offered by a source that knows what it means:
  * unOGS publishes one year for a whole title, which is its FIRST season's, and `netflixCandidates`
  * hands it to season 1 alone for that reason. So "dated our year" reads as "our run started in the
@@ -399,10 +403,14 @@ export const pickContainingSeason = <T>(
   // outright refusal rule 3 makes
   if (ordinals.size > 1) return undefined
   const ceiling = ordinals.size === 1 && !titles.some(namesAPart) ? [...ordinals][0] : undefined
+  // A season numbered above ours cannot hold our run and cannot BE it either, so it is out of every
+  // question below. An unnumbered season is on this side of the line, since nothing places it.
+  const belowCeiling = (candidate: SeasonCandidate<T>): boolean =>
+    ceiling === undefined || candidate.seasonNumber == null || candidate.seasonNumber <= ceiling
   const longer = candidates.filter(candidate => {
     const theirs = countOf(candidate)
     if (theirs == null || theirs <= ours) return false
-    return ceiling === undefined || candidate.seasonNumber == null || candidate.seasonNumber <= ceiling
+    return belowCeiling(candidate)
   })
   if (!longer.length) return undefined
 
@@ -429,12 +437,47 @@ export const pickContainingSeason = <T>(
     pool = longer.filter(candidate => !refuted.has(candidate))
   }
 
+  // AXIS 2 NEEDS EVERY SIBLING MEASURED, and this is the clause that says so. Its premise is that the
+  // season turned down ONLY for being longer is the season the run is in, and a candidate whose
+  // length nobody published was turned down for a different reason: `longer` drops it silently, so it
+  // is invisible to the axis while being exactly the thing that could be the run's own season. That
+  // is not hypothetical. A season list that is a PREFIX and a season answered in part both publish no
+  // count (`SeasonListing.truncated` and `NetflixSeason.truncated` in unogs/extractor.ts), and
+  // Netflix's landing query caps the season list at ten.
+  //
+  // Measured 2026-09-13: a run of 12 dated 2021 against season 1 of 24 dated 2021 plus a truncated
+  // season 2 took season 1 as its container, and the same listing with season 2 answered in full
+  // gives that run season 2 as its own season and no container at all. Our own episode titles cannot
+  // rescue it, because the seasons this axis fires on are the ones that NUMBER their episodes and so
+  // can be measured about nothing.
+  //
+  // The recall cost is the whole containment for a show whose listing has one unmeasurable season
+  // anywhere at or below the ceiling, which is the price of never naming a season the run is not in.
+  // Axis 1 above is untouched: a title overlap is positive evidence about the candidate itself, not
+  // an inference from what the other candidates were refused for.
+  if (candidates.some(candidate => countOf(candidate) == null && belowCeiling(candidate))) return undefined
+
   const evidenceYear = yearOf(evidence.startDate)
   if (evidenceYear == null) return undefined
   const dated = pool.filter(candidate =>
     candidateYear(candidate) === evidenceYear && ours / countOf(candidate)! < EPISODE_TITLE_COVERAGE)
   return dated.length === 1 ? held(dated[0]!, 'year') : undefined
 }
+
+/**
+ * Whether ANY container could be established from this evidence, so a caller can decline the second
+ * question instead of paying a second walk of the same show to be refused.
+ *
+ * It is the first line of `pickContainingSeason` read from outside: every axis there is a comparison
+ * against OUR length (a candidate strictly longer, a share of our run, `ours / theirs` below the
+ * line), so a run whose own length nobody published can be inside nothing and the picker refuses it
+ * before looking at a single candidate. That is the whole gate; nothing about the CANDIDATES can be
+ * known before the walk that fetches them, which is why this cannot be tighter.
+ *
+ * A source answering `containingMedia` on some other axis would need this loosened, and there is none
+ * today: this module is the one place a containment is decided (`worker/extractor.ts` is the caller).
+ */
+export const canBeContained = (evidence: RunEvidence): boolean => (evidence.episodeCount ?? 0) > 0
 
 const compareNumbers = (a: number, b: number) => a - b
 

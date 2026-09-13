@@ -8,6 +8,7 @@ import { expect, test } from 'vitest'
 import {
   answerNamesOurShow,
   bestRunStartDate,
+  canBeContained,
   describeEvidence,
   foldVetoed,
   hasEvidence,
@@ -470,18 +471,59 @@ test('a season only a little longer than the run is our run plus extras, and hol
 // and a fold only ever COMPRESSES, so the season holding our run is numbered at or below ours.
 //
 // Mutation: drop the `candidate.seasonNumber <= ceiling` clause and season 3 takes this run.
+//
+// SEASON 1 PUBLISHES A LENGTH HERE, and did not until 2026-09-13. A season nobody measured is now
+// refused by the sibling clause of the case below, which would make this pass for a reason that is
+// not the ceiling and leave the mutation above green. So it is longer than the run, which is the fold
+// veto and not this rule, and it carries no year, which is the only thing keeping the year axis off
+// it: everything refusing season 3 is the ordinal and nothing else.
 test('a run whose titles agree on season 1 is never put inside the source\'s season 3', () => {
   const late: SeasonCandidate<number>[] = [
-    { season: 1, seasonNumber: 1, episodeCount: undefined, year: 2021 },
+    { season: 1, seasonNumber: 1, episodeCount: 30 },
     { season: 3, seasonNumber: 3, episodeCount: 24, year: 2021 },
   ]
   const run = { titles: ['Show Season 1'], episodeCount: 11, startDate: '2021-01-11' }
-  expect(pickSimilarSeason(run, late), 'the control: a season with no count settles nothing').toBeUndefined()
+  expect(pickSimilarSeason(run, late), 'the control: 30 over 11 is a fold, not our run').toBeUndefined()
   expect(pickContainingSeason(run, late)).toBeUndefined()
   expect(
     pickContainingSeason({ ...run, titles: ['Show'] }, late),
     'the control: the same evidence with no ordinal to read is held by that season'
   ).toEqual({ season: 3, rule: 'year', theirs: 24, ours: 11 })
+})
+
+// FINDING 1 OF THE 2026-09-13 REVIEW, and the shape the case above used to carry. Axis 2 reads "the
+// one season dated our year, turned down ONLY for being longer, is the one the run is in". A season
+// whose length nobody published was turned down for something else entirely, `longer` drops it before
+// any axis sees it, and it is the one candidate that could be the run's own season. A listing that is
+// a PREFIX and a season answered in part both publish exactly that (`SeasonListing.truncated`), and
+// Netflix's landing query caps the season list at ten, so it is reachable rather than theoretical.
+//
+// Mutation: drop the `countOf(candidate) == null && belowCeiling(candidate)` refusal from the year
+// axis and the run is put inside a season it is not in, while every case above stays green.
+test('a season nobody could measure could be the run itself, so the year axis answers nothing', () => {
+  const truncated: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 24, episodeTitles: NUMBERED(1, 24), year: 2021 },
+    // what a prefix answers: a season that exists, with no count and no titles
+    { season: 2, seasonNumber: 2 },
+  ]
+  const run = { titles: ['Show 2nd Season'], episodeCount: 12, startDate: '2021-10-04' }
+  expect(pickSimilarSeason(run, truncated), 'the control: no season IS this run either').toBeUndefined()
+  expect(pickContainingSeason(run, truncated)).toBeUndefined()
+
+  // THE CONTROL THAT MAKES IT A FINDING: the same listing with season 2 answered in full does not
+  // want a container at all, because season 2 IS the run. So the refusal above is not caution about a
+  // season the run is in, it is the difference between naming that season and naming another one.
+  const answered: SeasonCandidate<number>[] = [
+    truncated[0]!,
+    { season: 2, seasonNumber: 2, episodeCount: 12, episodeTitles: NUMBERED(1, 12) },
+  ]
+  expect(pickSimilarSeason(run, answered)).toEqual({ season: 2, rule: 'ordinal' })
+  expect(pickContainingSeason(run, answered), 'and a run that has a season is never also given a container').toBeUndefined()
+
+  // and a season numbered ABOVE ours is not our run either, so it never blocks the axis: the same
+  // listing whose unmeasurable season is a season 3 still answers
+  const above: SeasonCandidate<number>[] = [truncated[0]!, { season: 3, seasonNumber: 3 }]
+  expect(pickContainingSeason(run, above)).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 12 })
 })
 
 // The same removal rule 2 makes, for the same reason: a season that lists real episode names, none of
@@ -526,4 +568,25 @@ test('a season with no count, and a season no longer than the run, hold nothing'
     pickContainingSeason({ ...run, episodeCount: undefined }, [{ season: 1, seasonNumber: 1, episodeCount: 24, year: 2021 }]),
     'and a run whose own length is unknown is not inside anything either'
   ).toBeUndefined()
+})
+
+// FINDING 5 OF THE 2026-09-13 REVIEW. The second question costs a SECOND full walk of the same show,
+// and the two run in sequence so the source's in-flight dedupe is already gone by then. This is what
+// `containingOutcome` (worker/extractor.ts) reads before paying it, and the test that matters is not
+// that the gate refuses but that it never refuses a question the rule would have ANSWERED.
+//
+// Mutation: `(evidence.episodeCount ?? 0) > 0` to `true` and the loop's first assertion reddens; to
+// `false` and the run that has a container reddens.
+test('the gate on the second question never refuses one the rule would have answered', () => {
+  const fold: SeasonCandidate<number>[] = [{ season: 1, seasonNumber: 1, episodeCount: 24, year: 2021 }]
+  const run = { titles: ['Show'], episodeCount: 12, startDate: '2021-01-11' }
+  expect(canBeContained(run), 'a run with a length of its own could be inside something').toBe(true)
+  expect(pickContainingSeason(run, fold), 'and this one is').toEqual({ season: 1, rule: 'year', theirs: 24, ours: 12 })
+
+  // every spelling of "nobody published a length", since the gate reads the raw input a source sends
+  for (const missing of [undefined, null, 0]) {
+    const blind = { ...run, episodeCount: missing }
+    expect(canBeContained(blind), `episodeCount ${String(missing)} is no length to be longer than`).toBe(false)
+    expect(pickContainingSeason(blind, fold), 'which is what the rule answers for it anyway').toBeUndefined()
+  }
 })

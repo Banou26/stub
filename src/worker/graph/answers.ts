@@ -54,15 +54,25 @@ export type AnswerRow = {
  *
  * `similarMedia` is a `Media` today (`schema.gql:551`). When decision 2 lands and it answers a
  * payload, its `media` and `containing` join this list, and so do their `episodes`.
+ *
+ * `containingMedia` IS AN ANSWER TOO, and was missing here until 2026-09-13 (4.4). It is the same
+ * shape as `similarMedia`: a source's own description of a season, episodes included. What differs is
+ * only what the CONSUMER claims off it, `PART_OF` rather than `SAME_AS`, which is decided in
+ * `similar-consumer.ts` and is no business of this whitelist. While it was absent the season's 24
+ * episodes reached the old store through the position-blind inserters and the graph not at all, and
+ * the graph got them one round trip later only because `askAddressOf` re-asked the claim's unowned
+ * target as an ordinary `media`; `?export=answers` could not carry one, so no corpus could replay it.
  */
 const ANSWER_POSITIONS: Record<string, string> = {
   'media': 'Media',
   'similarMedia': 'Media',
+  'containingMedia': 'Media',
   'mediaPage.nodes': 'Media',
   'origin': 'Origin',
   'originPage.nodes': 'Origin',
   'media.episodes': 'Episode',
   'similarMedia.episodes': 'Episode',
+  'containingMedia.episodes': 'Episode',
   'mediaPage.nodes.episodes': 'Episode',
 }
 

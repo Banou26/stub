@@ -909,6 +909,12 @@ const containingSeason = async (input: SimilarMediaInput, ctx: ExtractorServerCo
   if (detail?.vtype !== 'series') return undefined
   const listing = await fetchEpisodes(input.showId, ctx)
   if (!listing.seasons.length) return undefined
+  // A SEASON LIST THAT IS A PREFIX SAYS NOTHING ABOUT WHICH SEASON HOLDS THE RUN: the run's own season
+  // may be one of the ones that never came back, and the picker would then hand the run the earliest
+  // season sharing its year. The same refusal `assembleMedia` makes for a season a prefix never showed
+  // (:775), and reachable the same way: Netflix's landing query caps the SEASON list at ten whenever
+  // unOGS is the one that could not answer, so One Piece answers ten of its forty.
+  if (listing.truncated) return undefined
   const verdict = pickContainingSeason(input, netflixCandidates(listing.seasons, detail.year))
   if (!verdict) return undefined
   console.warn(`similarMedia: nf season ${verdict.season.season} of ${input.showId} holds this run by ${verdict.rule} (${verdict.theirs} episodes over ${verdict.ours})`)

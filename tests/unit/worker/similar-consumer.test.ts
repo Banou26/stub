@@ -654,24 +654,86 @@ describe('the Ask log and the ask claim', () => {
     expect(await added(before)).toMatchObject([{ outcome: 'containing', reason: 'cr:X-S1', answerUri: 'cr:X-S1' }])
   })
 
-  // THE OLD STORE'S HALF OF THE SAME FACT, and the two writes must never disagree about which kind of
-  // answer arrived. A container hangs off the cluster and a same run joins it; reading one as the other
-  // here welds the fold into the run, which is the exact damage the ask exists to avoid.
+  // THE OLD STORE TAKES SAMENESS AND NOTHING ELSE, which is what it took before `containing` existed.
+  // A containment is the graph's fact: nothing in the old store reads one, since it has no placement
+  // that lays a container's episodes over a run, and that store is the CONTROL every measurement of
+  // this migration is made against, so a new kind of handle landing there moves the arm the
+  // comparison is with. It welds nothing either way, `upsertMedia` putting a claimed `PART_OF` on a
+  // deletable edge; what it costs is the control.
   //
-  // Mutation: pass 'SAME_AS' to `upsertMedia` in the accept branch rather than `kind`, and the first
-  // assertion reddens while the claim cases above stay green, since they read the graph and not this.
-  test('a containing answer hangs off the cluster and never joins it', async () => {
+  // Mutation: drop the `kind === 'SAME_AS'` condition from the accept branch's `upsertMedia` and the
+  // last assertion reddens, `cr:X-S1` appearing beside the two containers. Delete that write outright
+  // and 'a session with the graph off records nothing' reddens instead, since the sameness answer is
+  // what unions `cr:X-S3` into that cluster.
+  test('a containing answer leaves the old store exactly as it found it', async () => {
     const cluster = await storeRun()
+    const before = uris(findPartOfMedia(await findAggregatedMedia('anilist:1')))
 
     await resolveSimilarRuns(cluster, root, { ask: vi.fn(async () => containing()), implemented })
     // the answering source's own row, landing after the claim exactly as it does in the app
     await upsertMedia([media('cr:X-S1', 'RUN', { startDate: '2021-01-11', episodeCount: 24 })], [])
 
     expect(uris(await findAggregatedMedia('anilist:1')), 'the container is not a member of the run').toEqual(['anilist:1', 'kitsu:2'])
+    expect(before, 'the containers the page had before the ask').toEqual(['cr:X', 'imdb:tt1'])
     expect(
       uris(findPartOfMedia(await findAggregatedMedia('anilist:1'))),
-      'it hangs where the containers hang, beside the series the run was asked about'
-    ).toEqual(['cr:X', 'cr:X-S1', 'imdb:tt1'])
+      'and the ones it has after it: the season is claimed in the graph and nowhere here'
+    ).toEqual(before)
+  })
+
+  // FINDING 2 OF THE 2026-09-13 REVIEW. The season a containing answer mints is a season-scoped RUN
+  // hanging off the cluster on a `PART_OF`, and the plan used to read every `PART_OF` target as a
+  // show: the next page then asked the source about show `cr:X-S1`, an id only this app has spelled,
+  // at the far end of two network calls.
+  //
+  // Mutation: drop `if (container.scope !== 'CONTAINER') continue` from `planSimilarAsks` and the
+  // last assertion gains a second ask, about that season.
+  test('the season a containing answer minted is never asked as if it were a show', async () => {
+    await storeRun()
+    // the answering source's own row, and the PART_OF the claim becomes once the row describes itself
+    await upsertMedia([media('cr:X-S1', 'RUN', { startDate: '2021-01-11', episodeCount: 24 })], [])
+    await upsertMedia([], [{ mediaUri: 'anilist:1', handleUri: 'cr:X-S1', relation: 'PART_OF' }])
+
+    const cluster = await findAggregatedMedia('anilist:1')
+    const containers = findPartOfMedia(cluster)
+    expect(uris(containers), 'the season IS a part-of target, so nothing else keeps it out').toEqual(['cr:X', 'cr:X-S1', 'imdb:tt1'])
+    expect(
+      planSimilarAsks(cluster, containers, implemented).map(ask => ask.showId),
+      'and only the CONTAINER-scoped ones are shows'
+    ).toEqual(['X'])
+  })
+
+  // FINDING 6 OF THE 2026-09-13 REVIEW. The cluster already holds the answering origin's run and a
+  // CONTAINING answer names that very row, so the source has said it HOLDS the run where the cluster
+  // says it IS the run. The claim is written for that reason rather than in spite of it: `containing`
+  // is not a downgrade reason, so `invariantRepairs` reads the `PART_OF` between two members of one
+  // cluster and retracts the `SAME_AS` that joined them (3.5). Swallowing it would leave the weld
+  // standing on evidence the source itself has withdrawn.
+  //
+  // Mutation: pass 'SAME_AS' rather than `kind` to `claim` in this arm and the kind reddens; drop the
+  // `claim` call from the arm and the row disappears entirely.
+  test('a containing answer naming the cluster\'s own run is claimed PART_OF, never read as confirmation', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+    let settle!: (outcome: SimilarOutcome) => void
+    const ask = vi.fn((): Promise<SimilarOutcome> => new Promise<SimilarOutcome>(resolve => { settle = resolve }))
+
+    // the only way into this arm, and the one the design names: the row joins the cluster on somebody
+    // else's evidence WHILE the ask is in flight, since a cluster that already holds the origin's run
+    // is never asked at all
+    const running = resolveSimilarRuns(cluster, root, { ask, implemented })
+    await vi.waitFor(() => expect(ask).toHaveBeenCalledTimes(1))
+    await upsertMedia([media('cr:X-S1', 'RUN', { titles: ['Show'] })], [{ mediaUri: 'anilist:1', handleUri: 'cr:X-S1' }])
+    settle(containing())
+    await running
+
+    expect(uris(await findAggregatedMedia('anilist:1')), 'the answer names a row the cluster now holds').toContain('cr:X-S1')
+    expect(await claimsFrom('anilist:1'), 'the contradiction reaches the graph as a containment claim').toEqual([
+      { toUri: 'cr:X-S1', kind: 'PART_OF', provenance: 'ask', claimer: 'cr' },
+    ])
+    expect(await added(before), 'and the log says a container is what arrived').toMatchObject([
+      { outcome: 'containing', reason: 'cr:X-S1', answerUri: 'cr:X-S1' },
+    ])
   })
 
   // Mutation: drop the `await claim(...)` line from the accept branch and this reddens while every

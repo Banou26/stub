@@ -422,6 +422,13 @@ const askSimilar = async (input: Record<string, unknown>, ctx: ExtractorServerCo
   return (value?.similarMedia ?? null) as GQLMedia | null
 }
 
+/** The other half of the fold (4.4): which season HOLDS the run, asked the same way. */
+const askContaining = async (input: Record<string, unknown>, ctx: ExtractorServerContext) => {
+  const { subscribe } = (resolvers.Subscription as { containingMedia: { subscribe: Function } }).containingMedia
+  const { value } = await subscribe(undefined, { input }, ctx).next()
+  return (value?.containingMedia ?? null) as GQLMedia | null
+}
+
 beforeEach(() => {
   resetUnogsCaches()
   vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -684,6 +691,39 @@ test('a season a prefix listing never showed is refused, never published as zero
   expect(complete?.uri, 'a complete listing still answers').toBe('nf:12345678-15')
   expect(complete?.episodes?.length).toBe(0)
   expect(complete?.episodeCount, 'zero is not a count this source may invent').toBeUndefined()
+})
+
+// FINDING 1 OF THE 2026-09-13 REVIEW, the half that is about the LISTING rather than the picker. The
+// containment year axis reads "the one season dated our year, turned down ONLY for being longer, is
+// the one the run is in", and a season list that is a PREFIX may not carry the run's own season at
+// all: the run is then handed the earliest season sharing its year, which is a season it is not in,
+// and the placement lays that season's episodes over it. The same refusal `assembleMedia` makes for a
+// season a prefix never showed, and reachable the same way, since the landing query pages the SEASON
+// list at ten whenever unOGS is the one that could not answer.
+//
+// Mutation: drop `if (listing.truncated) return undefined` from `containingSeason` and the second
+// assertion answers `nf:12345678-1` off a listing that said there was more of it.
+test('a container is never named off a season list that is a prefix', async () => {
+  // NINE episodes, because this listing is the fallback's: `isPrefix` reads any season at or over
+  // NETFLIX_PAGE_SIZE as a prefix whatever its flag says, so a longer season would carry no count and
+  // both arms would refuse for that reason instead of for the one under test.
+  const ask = async (seasonsHaveNextPage: boolean) => {
+    resetUnogsCaches()
+    const { ctx } = rig({
+      ...unogsRoutes('12345678', status(503)),
+      [NETFLIX_GRAPHQL_URL]: json(netflixPayload(
+        [{ videoId: 900001, title: 'Season 1', numberLabelV2: 'Season 1', hasNextPage: false, episodes: stubEpisodes(500001, 9) }],
+        seasonsHaveNextPage
+      ))
+    })
+    return await askContaining({ showId: '12345678', titles: ['A Show'], episodeCount: 4, startDate: '2021-10-04' }, ctx)
+  }
+
+  // the control, and it must pass: the same one season list declared COMPLETE holds the run, on the
+  // year unOGS publishes for the title. The arms differ in nothing else.
+  expect((await ask(false))?.uri, 'nine over a run of four, with no other season it could be').toBe('nf:12345678-1')
+
+  expect(await ask(true), 'the season this run is in may be one the listing never showed').toBeNull()
 })
 
 // Before the fallback existed this could not happen: a failed episodes call rejected the resolver and

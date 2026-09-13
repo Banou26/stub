@@ -46,6 +46,17 @@ const PAGE_ORIGIN = { id: 'kitsu', url: 'https://kitsu.app', name: 'Kitsu', icon
 // only when its CONTENT is new: the same object served through a narrower document is the same answer
 const PAGE_NODE = { uri: 'mal:2', origin: 'mal', id: '2', titles: [{ language: 'en', title: 'Ranking of Kings', score: 1 }] }
 const SIMILAR_NODE = { uri: 'cr:GRJ', origin: 'cr', id: 'GRJ', titles: [{ language: 'en', title: 'Frieren', score: 1 }] }
+// the fold's answer (4.4): a season that HOLDS the run, carrying its own episodes, which is the whole
+// reason the position has to be here rather than being reached by a second ask
+const CONTAINING_EPISODE = { uri: 'cr:GRJ-S1-1', origin: 'cr', id: 'GRJ-S1-1', mediaUri: 'cr:GRJ-S1', episodeNumber: 1 }
+const CONTAINING_NODE = {
+  uri: 'cr:GRJ-S1',
+  origin: 'cr',
+  id: 'GRJ-S1',
+  episodeCount: 24,
+  titles: [{ language: 'en', title: 'Frieren', score: 1 }],
+  episodes: [CONTAINING_EPISODE],
+}
 
 // the payload the fixture source answers with, so one test can change a single byte of it
 let payload = mediaFixture('Frieren')
@@ -75,6 +86,7 @@ const server = createYoga({
         media: { subscribe: async function* () { yield { media: payload } } },
         mediaPage: { subscribe: async function* () { yield { mediaPage: { nodes: [PAGE_NODE] } } } },
         similarMedia: { subscribe: async function* () { yield { similarMedia: SIMILAR_NODE } } },
+        containingMedia: { subscribe: async function* () { yield { containingMedia: CONTAINING_NODE } } },
         origin: { subscribe: async function* () { yield { origin: ORIGIN } } },
         originPage: { subscribe: async function* () { yield { originPage: { nodes: [PAGE_ORIGIN] } } } },
       },
@@ -136,6 +148,17 @@ const MEDIA_PAGE_DOCUMENT = `
 const SIMILAR_DOCUMENT = `
   subscription SimilarMedia($input: SimilarMediaInput!) {
     similarMedia(input: $input) { uri origin id titles { language title score } }
+  }`
+
+// the shape `CONTAINING_MEDIA_DOCUMENT` asks for (worker/similar-document.ts): the shared selection
+// plus the container's own count, and its episodes
+const CONTAINING_DOCUMENT = `
+  subscription ContainingMedia($input: SimilarMediaInput!) {
+    containingMedia(input: $input) {
+      uri origin id episodeCount
+      titles { language title score }
+      episodes { uri origin id mediaUri episodeNumber }
+    }
   }`
 
 const ORIGIN_DOCUMENT = `
@@ -236,6 +259,28 @@ describe('the Answer log', () => {
     ])
     expect(added[0]!.selection).toEqual(['id', 'origin', 'titles', 'uri'])
     expect(JSON.parse(added[2]!.raw)).toEqual(ORIGIN)
+  })
+
+  // FINDING 3 OF THE 2026-09-13 REVIEW. `containingMedia` was not in the whitelist, so a season a
+  // source answered as holding a run produced no `Answer` row at all: its episodes reached the old
+  // store through the position-blind inserters and the graph not at all, `?export=answers` could
+  // never carry one so no corpus could replay one, and the graph only got the season because the
+  // claim's unowned target was re-asked as an ordinary `media` one round trip later.
+  //
+  // Mutation: remove either `containingMedia` key from `ANSWER_POSITIONS` and the matching half of
+  // this reddens, the media row or the episode row.
+  test('a containing answer is an answer, episodes and all', async () => {
+    const before = new Set((await exportAnswers()).map(row => row.key))
+
+    await run(CONTAINING_DOCUMENT, 'SIMILAR_MEDIA', { showId: 'GRJ' })
+
+    const added = (await exportAnswers()).filter(row => !before.has(row.key))
+    expect(added.map(row => [row.kind, row.uri, row.operation])).toEqual([
+      ['media', 'cr:GRJ-S1', 'SIMILAR_MEDIA'],
+      ['episode', 'cr:GRJ-S1-1', 'SIMILAR_MEDIA'],
+    ])
+    expect(added[0]!.selection, 'the count the placement reads is in the row').toEqual(['episodeCount', 'episodes', 'id', 'origin', 'titles', 'uri'])
+    expect(JSON.parse(added[1]!.raw)).toEqual(CONTAINING_EPISODE)
   })
 
   // The log is awaited by the resolve hook, so a value it cannot read has to be dropped there and
