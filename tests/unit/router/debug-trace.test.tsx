@@ -13,6 +13,8 @@ import { Router } from 'wouter'
 import { memoryLocation } from 'wouter/memory-location'
 
 import Debug from '../../../src/router/debug'
+import { TraceEdge } from '../../../src/router/debug/graph'
+import { traceFlowGraph } from '../../../src/router/debug/flow'
 import TraceLink from '../../../src/router/debug/link'
 import { carriedSearch, traceUriFromSearch } from '../../../src/router/debug/trace'
 
@@ -233,20 +235,45 @@ describe('the uri it traces', () => {
 })
 
 describe('a link the graph refused', () => {
+  // ASKED OF `traceFlowGraph` AND OF THE EDGE COMPONENT, not of the rendered graph, and that is a
+  // property of the harness rather than a softening: `@xyflow/react` derives every edge from measured
+  // handle boxes and linkedom has no box model, so a whole graph renders its nodes and NO edges here.
+  // Measured both ways 2026-09-13, and pinned in tests/unit/components/xyflow-env.test.tsx. One edge
+  // handed its props renders fine, which is what the second half below uses.
+  // MUTATED: make `traceFlowGraph` read `isActive` the other way round and the first half fails; drop
+  // the `cross-mark` block from `TraceEdge` and the second half does.
   test('is drawn, and drawn as refused rather than left out', async () => {
-    const { host } = await page(bundle())
+    const { edges } = traceFlowGraph(bundle())
 
-    const refused = host.querySelector('[data-edge="L2"]')
-    expect(refused, 'the refused link has an edge of its own in the svg').toBeTruthy()
-    expect(refused!.getAttribute('data-status')).toBe('refused')
-    expect(refused!.querySelector('.edge')?.getAttribute('class')).toContain('refused')
-    expect(refused!.querySelector('.edge')?.getAttribute('class')).not.toContain('active')
+    const refused = edges.find(edge => edge.id === 'L2')
+    expect(refused, 'the refused link has an edge of its own').toBeTruthy()
+    expect(refused!.data!.status).toBe('refused')
+    expect(refused!.data!.active, 'and is not drawn as an active one').toBe(false)
+    expect(edges.find(edge => edge.id === 'L1')!.data!.active).toBe(true)
+
     // the cross is the part that reads without any text at all
-    expect(refused!.querySelector('.cross-mark'), 'a refused edge carries a cross').toBeTruthy()
+    const drawn = (active: boolean) => {
+      const host = mount(
+        <svg>
+          <TraceEdge
+            {...({ id: 'e', source: 'a', target: 'b', sourceX: 0, sourceY: 0, targetX: 100, targetY: 0 } as never)}
+            data={{ spread: 0, active, status: active ? 'active' : 'refused', label: 'SAME_AS', tooltip: 't' }}
+          />
+        </svg>
+      )
+      const result = {
+        edgeClass: host.querySelector('.edge')?.getAttribute('class') ?? '',
+        cross: Boolean(host.querySelector('.cross-mark')),
+      }
+      unmount(host)
+      return result
+    }
 
-    const active = host.querySelector('[data-edge="L1"]')
-    expect(active!.querySelector('.edge')?.getAttribute('class')).toContain('active')
-    expect(active!.querySelector('.cross-mark'), 'an active edge carries none').toBeFalsy()
+    expect(drawn(false).edgeClass).toContain('refused')
+    expect(drawn(false).edgeClass).not.toContain('active')
+    expect(drawn(false).cross, 'a refused edge carries a cross').toBe(true)
+    expect(drawn(true).edgeClass).toContain('active')
+    expect(drawn(true).cross, 'an active edge carries none').toBe(false)
   })
 
   test('is in the links table as refused, with the rule that refused it', async () => {
@@ -267,15 +294,35 @@ describe('a link the graph refused', () => {
     expect(stranger!.getAttribute('data-kind')).toBe('named')
   })
 
+  // MUTATED: return a constant 0 from `edgeLanes`' lane index and the two spreads collapse to one
+  // number, which is the bug this case exists for: two rows between one pair drawn on top of each
+  // other, where a reader sees one link and cannot tell which of the two they are looking at.
   test('is not merged with the active link between the same pair', async () => {
-    const { host } = await page(bundle())
+    const { edges } = traceFlowGraph(bundle())
 
     // L1 active and L3 refused join the same two uris. Two rows, two edges, two lanes.
-    expect(host.querySelector('[data-edge="L1"]')).toBeTruthy()
-    expect(host.querySelector('[data-edge="L3"]')).toBeTruthy()
-    const paths = [...host.querySelectorAll('[data-edge="L1"] .edge, [data-edge="L3"] .edge')]
-      .map(path => path.getAttribute('d'))
-    expect(new Set(paths).size, 'the two are drawn along different curves').toBe(2)
+    const one = edges.find(edge => edge.id === 'L1')
+    const three = edges.find(edge => edge.id === 'L3')
+    expect([Boolean(one), Boolean(three)]).toEqual([true, true])
+    expect(one!.source).toBe(three!.source)
+    expect(one!.target).toBe(three!.target)
+    expect(one!.data!.spread, 'the two bow apart rather than overlapping').not.toBe(three!.data!.spread)
+
+    // and the spread really is what moves the curve, which is the half a lane number alone cannot say
+    const path = (spread: number) => {
+      const host = mount(
+        <svg>
+          <TraceEdge
+            {...({ id: 'e', source: 'a', target: 'b', sourceX: 0, sourceY: 0, targetX: 100, targetY: 0 } as never)}
+            data={{ spread, active: true, status: 'active', label: 'SAME_AS', tooltip: 't' }}
+          />
+        </svg>
+      )
+      const d = host.querySelector('.edge')?.getAttribute('d') ?? ''
+      unmount(host)
+      return d
+    }
+    expect(new Set([path(one!.data!.spread), path(three!.data!.spread)]).size, 'two curves').toBe(2)
   })
 })
 

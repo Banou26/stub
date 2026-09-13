@@ -37,6 +37,11 @@ export default defineConfig({
       // NODE_ENV branch, which no alias and no inlining can reach under node. preact/compat exports the
       // same hook, and is what the browser build runs there anyway once react is aliased.
       'use-sync-external-store/shim/index.js': 'preact/compat',
+      // the SELECTOR entry cannot point at preact/compat the way its sibling above does, because
+      // compat exports `useSyncExternalStore` and not the selector wrapper zustand 4 destructures
+      // off it. @xyflow/react reaches it through zustand. See the shim for why the browser build
+      // needs none of this.
+      'use-sync-external-store/shim/with-selector.js': './tests/shims/use-sync-external-store-with-selector.ts',
     },
   },
   ssr: { resolve: { conditions: ['module', 'browser', 'development', 'import', 'default'] } },
@@ -62,6 +67,6 @@ export default defineConfig({
     // every field errors with "Cannot use GraphQLNonNull \"String!\" from another module or realm",
     // which reads as a duplicate install and is not one (there is exactly one graphql in the tree).
     // Inlining these makes vite resolve them, so the whole run shares one graphql.
-    server: { deps: { inline: [/graphql-yoga/, /@envelop\//, /@graphql-tools\//, /@whatwg-node\//, /@emotion\//, /wouter/, /use-sync-external-store/] } },
+    server: { deps: { inline: [/graphql-yoga/, /@envelop\//, /@graphql-tools\//, /@whatwg-node\//, /@emotion\//, /wouter/, /use-sync-external-store/, /@xyflow\//, /zustand/, /classcat/] } },
   },
 })

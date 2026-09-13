@@ -53,6 +53,7 @@
     "@videojs/core": "10.0.0-beta.26",
     "@videojs/media": "10.0.0-beta.26",
     "@videojs/react": "10.0.0-beta.26",
+    "@xyflow/react": "^12.11.6",
     "dataloader": "^2.2.3",
     "dompurify": "^3.2.6",
     "frizbee": "^0.13.0",
