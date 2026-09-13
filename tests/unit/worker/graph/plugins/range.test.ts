@@ -28,15 +28,17 @@ import { directPlugin } from '../../../../../src/worker/graph/plugins/direct'
 import { aggregatePlugin } from '../../../../../src/worker/graph/plugins/aggregate'
 import { containmentPlugin } from '../../../../../src/worker/graph/plugins/containment'
 import {
-  alignByTitle, closeWithSpecials, decideCandidate, forcedByBracket, hullOf, MIN_ALIGNED, numbersOutsideRun,
-  MIN_SCORED_ANCHORS, pairsByDay, pairsBySequence, pairsByTitle, placesClaim, rangePlugin, scheduleSkew,
-  SCORED_ANCHOR_FLOOR, SCORED_ANCHOR_MARGIN, titleDice,
+  alignByTitle, closeDatesWithTitles, closeWithSpecials, decideCandidate, forcedByBracket, hullOf, MIN_ALIGNED,
+  numbersOutsideRun, MIN_CONSENSUS_ANCHORS, MIN_CONSENSUS_GAP, MIN_SCORED_ANCHORS, offsetConsensus, pairsByDay,
+  pairsBySequence, pairsByTitle, placesClaim, rangePlugin, ruleOfPair, scheduleSkew, SCORED_ANCHOR_FLOOR,
+  SCORED_ANCHOR_MARGIN, synopsisAnchors, titleDice,
 } from '../../../../../src/worker/graph/plugins/range'
 import { stripTitle } from '../../../../../src/sources/utils'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
 import { alignmentOffset } from '../../../../../src/worker/store/consensus'
 import type { Episode } from '../../../../../src/worker/store/types'
 import { answer, episode, media, rowsOf, title } from './fixtures'
+import { MUSHOKU_SYNOPSES } from './synopses'
 
 const CORPUS = new URL('../../../../../corpus/season/summer-2026/answers.jsonl', import.meta.url).pathname
 
@@ -589,6 +591,65 @@ const refusalAnswers = async () => [
   })),
 ]
 
+// ONE WRONG UPSTREAM DATE, AND THE TWO ROWS IT COSTS. Measured on `ag:(anilist:127720)` (Mushoku
+// Tensei cour 2) on 2026-09-13, through the trace panel and then against ani.zip itself: ani.zip
+// publishes episode 12 with EPISODE 1's air date (`airDate 2021-10-04` on both rows of
+// `api.ani.zip/mappings?anidb_id=15954`), and it is the run's ONLY dated origin, because Kitsu ships
+// neither a date nor a title for any of its twelve. Crunchyroll's season carries all 24 rows with the
+// right dates and the run's own titles.
+//
+// Rule 1 then loses the FIRST and LAST row of the run to that one date, two different ways: their row
+// 12 reaches the doubled day, where `{1, 12}` is reachable and the row is refused as ambiguous, and
+// their row 23 reaches nothing at all, because the reference row numbered 12 is stamped in October.
+// Ten of twelve paired, and on the page that is no Crunchyroll button on episode 1 or episode 12.
+const GAP_COUR1 = weekly('2021-01-11', 11)
+const GAP_COUR2 = weekly('2021-10-04', 12)
+const GAP_BROADCAST = weekly('2021-10-03', 12)
+const GAP_TITLES = [
+  'The Woman with the Demon Eyes', 'Missed Connections', 'No Such Thing As a Free Lunch',
+  'Slow Life in the Doldia Village', 'Family Squabble', 'Reunion', 'Separate Journeys',
+  'Route Selection', 'The Birth of My Little Sister the Maid', 'Turning Point 2',
+  'Dreams and Reality', 'Wake Up and Take a Step',
+]
+const gapAnswers = async () => [
+  await answer('media', media('anilist:940', {
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 12, startDate: GAP_BROADCAST[0],
+    titles: [title('en', 'One Bad Date Part 2')],
+    handles: [sameAs(media('anizip:940', {})), sameAs(media('kitsu:940', {}))],
+  })),
+  await answer('media', media('anizip:940', {
+    type: 'TV', episodeCount: 12, titles: [title('en', 'One Bad Date Part 2')],
+    episodes: GAP_BROADCAST.map((day, index) => episode(`anizip:940-${index + 1}`, 'anizip:940', {
+      episodeNumber: index + 1,
+      // THE BAD ROW, verbatim: the last episode carries the first one's day
+      releaseDate: anizipDay(index === 11 ? GAP_BROADCAST[0]! : day),
+      titles: [title('en', GAP_TITLES[index]!)],
+    })),
+  })),
+  // Kitsu's real answer on this run: twelve rows, no date and no title on any of them, so it can
+  // neither break the doubled day nor supply the missing one
+  await answer('media', media('kitsu:940', {
+    score: 0.7, type: 'TV', status: 'FINISHED', episodeCount: 12, titles: [title('en', 'One Bad Date Part 2')],
+    episodes: Array.from({ length: 12 }, (_, index) =>
+      episode(`kitsu:940-${index + 1}`, 'kitsu:940', { episodeNumber: index + 1 })),
+  })),
+  // the lend: one Crunchyroll season of 24, its rows 12 to 23 being this run's 1 to 12, plus an OVA
+  await answer('media', media('cr:G940', {
+    score: 0.5, type: 'TV', status: 'FINISHED', titles: [title('en', 'One Bad Date')],
+    episodes: [
+      ...GAP_COUR1.map((day, index) => episode(`cr:G940-${index + 1}`, 'anilist:940', {
+        episodeNumber: index + 1, releaseDate: day, titles: [title('en', `Cour One ${index + 1} of the Same Show`)],
+      })),
+      ...GAP_COUR2.map((day, index) => episode(`cr:G940-${index + 12}`, 'anilist:940', {
+        episodeNumber: index + 12, releaseDate: day, titles: [title('en', GAP_TITLES[index]!)],
+      })),
+      episode('cr:G940-24', 'anilist:940', {
+        episodeNumber: 24, releaseDate: '2022-03-16', titles: [title('en', 'Eris the Goblin Slayer')],
+      }),
+    ],
+  })),
+]
+
 beforeAll(async () => {
   await enableGraph(true)
   await ingestAnswers([
@@ -603,6 +664,7 @@ beforeAll(async () => {
     ...await claimAnswers(),
     ...await sequenceAnswers(),
     ...await refusalAnswers(),
+    ...await gapAnswers(),
   ])
   resetPassState()
   await runPass()
@@ -919,11 +981,12 @@ test('3.4a the located special closes the alignment, and the anchors agree with 
     kind: 'INCLUDES', status: 'active', reason: 'sequence',
     fromStart: 2, fromEnd: 25, toStart: 1, toEnd: 24, contiguous: true, aligned: 24, total: 25,
   })
-  // `scored: 0` is the whole of what the 2026-09-13 anchor change did to this walkthrough: four exact
-  // anchors bracket it, so the scored fallback was never consulted and the range is an equality's
+  // `scored: 0` and `synopsis: 0` are the whole of what the two 2026-09-13 anchor changes did to this
+  // walkthrough: four exact anchors bracket it, so neither fallback was consulted and the range is an
+  // equality's. `consensus: null` says the synopsis anchors were never asked for an offset
   expect(evidenceOf(range!)).toEqual({
-    rule: 'sequence', theirs: 25, ours: 24, anchors: 4, scored: 0, forced: 3, closure: 17,
-    unequal: 0, closed: true,
+    rule: 'sequence', theirs: 25, ours: 24, anchors: 4, scored: 0, synopsis: 0, consensus: null,
+    forced: 3, closure: 17, unequal: 0, closed: true,
   })
   // the `PART_OF` that reached it is untouched, in this branch as in every other
   expect((await linksBetween('anilist:146065', 'nf:80987039-2'))
@@ -1002,6 +1065,35 @@ test('a lent season is paired by day and given no range', async () => {
   )
   expect(pairs.every(row => String(row.toUri).startsWith('anizip:18104'))).toBe(true)
   expect((await rangeLinks()).filter(row => row.fromUri === 'cr:GSP1'), 'no season row, no label').toEqual([])
+})
+
+// THE SAME SHAPE THROUGH THE WHOLE PLUGIN, which is where a pair becomes a play button. This is the
+// page-visible half of the defect: on `?store=graph` the first and last episode of the season carried
+// no Crunchyroll handle while every episode between them did (2026-09-13, both stores measured).
+// Mutation: return `[]` from `closeDatesWithTitles` and the twelve rows become ten, slots 1 and 12
+// lose their `aligned` fill, and the reason column loses both `dates-gap` rows.
+test('the two rows a bad upstream date cost are paired, labelled and filled', async () => {
+  const pairs = await rowsOf(
+    `MATCH (a:Episode)-[l:EPISODE_LINK]->(b:Episode)
+     WHERE l.by = 'plugin:range' AND a.uri STARTS WITH 'cr:G940-'
+     RETURN a.uri AS fromUri, b.uri AS toUri, l.fromNumber AS fromNumber, l.toNumber AS toNumber,
+       l.reason AS reason, l.status AS status, l.evidence AS evidence
+     ORDER BY l.toNumber`
+  )
+  expect(pairs.map(row => [Number(row.fromNumber), Number(row.toNumber)]))
+    .toEqual(Array.from({ length: 12 }, (_, index) => [index + 12, index + 1]))
+  expect(pairs.map(row => String(row.reason)))
+    .toEqual(['dates-gap', ...Array.from({ length: 10 }, () => 'dates'), 'dates-gap'])
+  expect(pairs.every(row => String(row.status) === 'active')).toBe(true)
+  expect(evidenceOf(pairs[0]!)).toEqual({ gap: stripTitle(GAP_TITLES[0]!) })
+  expect(evidenceOf(pairs[11]!)).toEqual({ gap: stripTitle(GAP_TITLES[11]!) })
+  // the eleven cour 1 rows and the OVA are reached by nothing, which is the right answer for them
+  expect(pairs).toHaveLength(12)
+
+  // WHAT THE PAIR IS FOR: every slot of the run carries the Crunchyroll row, the ends included
+  const fills = await fillsFrom('cr:G940-')
+  expect(fills.map(fill => [fill.uri, fill.number, fill.via]))
+    .toEqual(Array.from({ length: 12 }, (_, index) => [`cr:G940-${index + 12}`, index + 1, 'aligned']))
 })
 
 // THE SCHEDULE SKEW, AND THE VIDEO IT PUT ON THE WRONG ROW. Crunchyroll streams from a Thursday and
@@ -1152,8 +1244,8 @@ test('a refused episode claim flips to active when the two rows become one clust
 // The rules themselves, without an engine: every refusal `consensus.ts:105-110` records, and the two
 // halves of rule 2's bar.
 
-const side = (uri: string, number: number | null, day: string | null, keys: string[] = []): SideEpisode =>
-  ({ uri, origin: uri.slice(0, uri.indexOf(':')), number, day: day === null ? null : dayOf(day), keys, hung: `h:${uri}` })
+const side = (uri: string, number: number | null, day: string | null, keys: string[] = [], synopsis: string[] = []): SideEpisode =>
+  ({ uri, origin: uri.slice(0, uri.indexOf(':')), number, day: day === null ? null : dayOf(day), keys, synopsis, hung: `h:${uri}` })
 
 const listed = (prefix: string, from: number, days: string[]): SideEpisode[] =>
   days.map((day, index) => side(`${prefix}-${from + index}`, from + index, day))
@@ -1245,6 +1337,183 @@ test('rule 2 skips a key present twice, on either side', () => {
   const { pairs } = pairsByTitle(reference, theirs)
   // 'recap' is twice on ours, and 'third'/'fourth' are each twice on theirs once cr:9-4 carries both
   expect(pairs.map(pair => [pair.from.uri, pair.to.uri])).toEqual([])
+})
+
+// ---------------------------------------------------------------------------------------------
+// RULE 1'S GAP CLOSURE. The shape below is the measured one, built from `SideEpisode` rows so the
+// rule is asked directly rather than through a graph: ten pairs the days proved, and the two rows at
+// the ENDS of the run that one wrong upstream date put out of the days' reach.
+
+/** The measured Mushoku cour 2 shape: ours dated, with episode 12 carrying episode 1's day. */
+const gapReference = (): SideEpisode[] =>
+  GAP_BROADCAST.map((day, index) =>
+    side(`anizip:940-${index + 1}`, index + 1, index === 11 ? GAP_BROADCAST[0]! : day, [GAP_TITLES[index]!]))
+
+/** Their side: a season of 24 whose rows 12 to 23 are this run's 1 to 12, with the run's own titles. */
+const gapTheirs = (): SideEpisode[] => [
+  ...GAP_COUR1.map((day, index) =>
+    side(`cr:G940-${index + 1}`, index + 1, day, [`Cour One ${index + 1} of the Same Show`])),
+  ...GAP_COUR2.map((day, index) => side(`cr:G940-${index + 12}`, index + 12, day, [GAP_TITLES[index]!])),
+  side('cr:G940-24', 24, '2022-03-16', ['Eris the Goblin Slayer']),
+]
+
+// Mutation: return `[]` from `closeDatesWithTitles` and the verdict drops to ten pairs with `gaps`
+// gone, which is the defect this case was written from. Mutation: drop the `inWindow` around the
+// closure in `decideCandidate` and nothing here moves, because every equality it takes is inside the
+// run already; the window is proven by its own case below.
+test('rule 1 closes the two rows one wrong upstream date cost it, and says which rule placed them', () => {
+  const reference = gapReference()
+  const theirs = gapTheirs()
+
+  const dates = pairsByDay(reference, theirs)
+  expect(dates.pairs.map(pair => [pair.fromNumber, pair.toNumber]),
+    'the days reach ten of twelve, and neither end of the run')
+    .toEqual(Array.from({ length: 10 }, (_, index) => [index + 13, index + 2]))
+  expect(dates.ambiguous, 'their row 12 is refused on the doubled day rather than missed').toBe(1)
+
+  const verdict = decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: theirs } })
+  expect(verdict.ok && verdict.rule).toBe('dates')
+  expect(verdict.ok && verdict.gaps, 'two rows placed by an equality and not by a day').toBe(2)
+  expect(verdict.ok && verdict.pairs.map(pair => [pair.fromNumber, pair.toNumber]).sort((a, b) => a[0]! - b[0]!))
+    .toEqual(Array.from({ length: 12 }, (_, index) => [index + 12, index + 1]))
+
+  const closed = closeDatesWithTitles({ reference, theirs, pairs: dates.pairs })
+  expect(closed.map(pair => [pair.from.uri, pair.to.uri, (pair.evidence as { gap: string }).gap]))
+    .toEqual([
+      ['cr:G940-12', 'anizip:940-1', stripTitle(GAP_TITLES[0]!)],
+      ['cr:G940-23', 'anizip:940-12', stripTitle(GAP_TITLES[11]!)],
+    ])
+  // and the trace says so per ROW, since the verdict that carries them is the date rule's
+  expect(closed.map(pair => ruleOfPair(pair, 'dates'))).toEqual(['dates-gap', 'dates-gap'])
+  expect(dates.pairs.map(pair => ruleOfPair(pair, 'dates'))).toEqual(dates.pairs.map(() => 'dates'))
+})
+
+// THE DATES KEEP A VETO OVER THE ANSWER, and one monotone test carries all of it because a TIE is a
+// crossing: a restatement ties on `fromNumber`, an overwrite ties on `toNumber`, and an out-of-order
+// equality crosses outright. Each of the three is the difference between adding a row and moving a
+// proven one.
+// Mutation: relax `crosses` from `<= 0` to `< 0` and the first two assertions go red, which is the
+// tie half of the guard; delete the `crosses` filter outright and the third goes red with them; drop
+// the `tangled` clause and the last one takes two equalities that cross each other.
+test('the gap closure may not restate, overwrite or cross a pair the days proved', () => {
+  const NAMES = [
+    'first of the run', 'second of the run', 'third of the run', 'fourth of the run',
+    'fifth of the run', 'sixth of the run', 'seventh of the run', 'eighth of the run',
+  ]
+  const days = weekly('2026-07-01', 8)
+  const reference = NAMES.map((name, index) => side(`anizip:941-${index + 1}`, index + 1, days[index]!, [name]))
+  const dated = [
+    side('cr:941-4', 4, days[3]!, [NAMES[3]!]),
+    side('cr:941-5', 5, days[4]!, [NAMES[4]!]),
+  ]
+  const pairs = pairsByDay(reference, dated).pairs
+  expect(pairs.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[4, 4], [5, 5]])
+
+  // A RESTATEMENT ties on `fromNumber`: their row 4 is the days' own, whatever else its title says
+  const restating = side('cr:941-4', 4, days[3]!, [NAMES[7]!])
+  expect(closeDatesWithTitles({ reference, theirs: [...dated, restating], pairs })).toEqual([])
+
+  // AN OVERWRITE ties on `toNumber`: our row 5 is the days' own, and a second claimant is refused
+  const doubling = side('cr:941-9', 9, null, [NAMES[4]!])
+  expect(closeDatesWithTitles({ reference, theirs: [...dated, doubling], pairs })).toEqual([])
+
+  // A CROSSING is out of sequence outright: their 3 is before their 4, so it cannot land on our 8
+  const crossing = side('cr:941-3', 3, null, [NAMES[7]!])
+  expect(closeDatesWithTitles({ reference, theirs: [...dated, crossing], pairs })).toEqual([])
+
+  // TWO EQUALITIES THAT CROSS EACH OTHER take neither, even though both agree with the days: nothing
+  // rather than a guess about which of the two is the real one
+  const agreeing = [side('cr:941-6', 6, null, [NAMES[5]!]), side('cr:941-7', 7, null, [NAMES[6]!])]
+  expect(closeDatesWithTitles({ reference, theirs: [...dated, ...agreeing], pairs })
+    .map(pair => [pair.fromNumber, pair.toNumber]), 'the control: the same two rows, in sequence')
+    .toEqual([[6, 6], [7, 7]])
+  const swapped = [side('cr:941-6', 6, null, [NAMES[6]!]), side('cr:941-7', 7, null, [NAMES[5]!])]
+  expect(closeDatesWithTitles({ reference, theirs: [...dated, ...swapped], pairs })).toEqual([])
+})
+
+// THE ANCHOR BAR IS RULE 3'S, NOT RULE 2'S: exact, non-generic and carried once on each side.
+// Nothing here is placed by a coverage score, by a count or by a position.
+// Mutation: replace all three `anchorKeysOf` in `closeDatesWithTitles` with `keysOf` and the generic
+// pair is taken (the index alone is not enough: the loop reads the keys, so both have to move). Drop
+// `if (mine.get(key) !== episode)` and the row their side names twice is placed on whichever of the
+// two happened to survive the crossing test. Drop `if (matched.size !== 1)` and a row reaching two of
+// our rows is placed on the lower uri. Make `uniqueKeys` keep the FIRST row rather than nulling a
+// repeated key and the key ours carries twice is placed too, plus rule 2's own case goes red.
+test('the gap closure anchors on an exact non-generic key carried once on each side', () => {
+  const NAMES = [
+    'a first of its own', 'a second of its own', 'a third of its own', 'a fourth of its own',
+    'a fifth of its own', 'a sixth of its own', 'a seventh of its own', 'an eighth of its own',
+  ]
+  const days = weekly('2026-07-01', 8)
+  const reference = NAMES.map((name, index) => side(`anizip:942-${index + 1}`, index + 1, days[index]!, [name]))
+  const dated = [
+    side('cr:942-4', 4, days[3]!, [NAMES[3]!]),
+    side('cr:942-5', 5, days[4]!, [NAMES[4]!]),
+  ]
+  const pairs = pairsByDay(reference, dated).pairs
+  expect(pairs.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[4, 4], [5, 5]])
+  const close = (theirs: SideEpisode[]) => closeDatesWithTitles({ reference, theirs: [...dated, ...theirs], pairs })
+
+  // THE CONTROL, and it has to come first: the same shape with an ordinary title IS taken, so every
+  // empty list below is a refusal rather than a rule that never reached anything
+  expect(close([side('cr:942-7', 7, null, [NAMES[6]!])]).map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual([[7, 7]])
+
+  // A GENERIC TITLE anchors nothing, even exact and unique on both sides: Netflix's `Episode N` rows
+  // would otherwise close a whole season onto ours (3.4a point 4)
+  const generic = [...reference]
+  generic[6] = side('anizip:942-7', 7, days[6]!, ['episode 7'])
+  expect(closeDatesWithTitles({
+    reference: generic, pairs, theirs: [...dated, side('cr:942-7', 7, null, ['episode 7'])],
+  })).toEqual([])
+
+  // A KEY THEIR SIDE CARRIES TWICE says nothing about which of their rows is meant, and the point is
+  // that one of the two would otherwise survive alone: their row 1 crosses a proven pair on the way
+  // to our 7 and is dropped, leaving their row 7 to be placed on a key that names two rows
+  expect(close([side('cr:942-1', 1, null, [NAMES[6]!]), side('cr:942-7', 7, null, [NAMES[6]!])])).toEqual([])
+
+  // A KEY OUR SIDE CARRIES TWICE is dropped for the same reason, on our side
+  const repeated = [...reference]
+  repeated[7] = side('anizip:942-8', 8, days[7]!, [NAMES[6]!])
+  expect(closeDatesWithTitles({
+    reference: repeated, pairs, theirs: [...dated, side('cr:942-7', 7, null, [NAMES[6]!])],
+  })).toEqual([])
+
+  // AND A ROW REACHING TWO OF OUR ROWS through two different keys is an ambiguity, not two matches
+  expect(close([side('cr:942-7', 7, null, [NAMES[6]!, NAMES[7]!])])).toEqual([])
+})
+
+// IT CLOSES A STANDING ALIGNMENT AND CAN NEVER CREATE ONE, and the window still bounds what it adds.
+// Mutation: delete the `if (!pairs.length) return []` head and the first assertion places two rows on
+// a candidate the days never spoke about; drop the `inWindow` around the closure in `decideCandidate`
+// and the second assertion gains a pair onto our number 13.
+test('the gap closure needs a standing date alignment, and its rows go through the window too', () => {
+  const reference = [
+    side('anizip:943-1', 1, '2026-07-01', ['first of the run']),
+    side('anizip:943-2', 2, '2026-07-08', ['second of the run']),
+  ]
+  const theirs = [
+    side('cr:943-1', 1, null, ['first of the run']),
+    side('cr:943-2', 2, null, ['second of the run']),
+  ]
+  expect(pairsByDay(reference, theirs).pairs, 'their side carries no day at all').toEqual([])
+  expect(closeDatesWithTitles({ reference, theirs, pairs: [] })).toEqual([])
+  expect(decideCandidate({ runLength: 12, reference, candidate: { retranslates: false, episodes: theirs } }).ok,
+    'rule 2 and rule 3 decide it exactly as they did before')
+    .toBe(false)
+
+  // and a row an equality reaches OUTSIDE `1..runLength` is dropped exactly as a dated one is
+  const wide = [
+    side('anizip:944-1', 1, '2026-07-01', ['a first']), side('anizip:944-2', 2, '2026-07-08', ['a second']),
+    side('anizip:944-3', 3, '2026-07-15', ['a third']), side('anizip:944-13', 13, '2026-09-23', ['a thirteenth']),
+  ]
+  const reaching = [
+    side('cr:944-1', 1, '2026-07-01', ['a first']), side('cr:944-2', 2, '2026-07-08', ['a second']),
+    side('cr:944-13', 13, null, ['a thirteenth']),
+  ]
+  const verdict = decideCandidate({ runLength: 3, reference: wide, candidate: { retranslates: false, episodes: reaching } })
+  expect(verdict.ok && verdict.pairs.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[1, 1], [2, 2]])
+  expect(verdict.ok && verdict.gaps, 'the equality onto our 13 was found and then windowed out').toBe(0)
 })
 
 // THE PORTED RULE AND THE ONE IT REPLACES AGREE WHEREVER THE OLD ONE ANSWERS (`consensus.test.ts`'s
@@ -1512,7 +1781,9 @@ test('rule 3 anchors the four Netflix rows the titles prove and forces exactly t
   expect(verdict.ok && verdict.rule, 'rule 3 runs where rule 2 is refused outright').toBe('sequence')
   expect(verdict.ok && verdict.pairs).toHaveLength(7)
   expect(verdict.ok && verdict.sequence)
-    .toEqual({ anchors: 4, scored: 0, forced: 3, closure: 0, unequal: 0, closed: false })
+    .toEqual({
+      anchors: 4, scored: 0, synopsis: 0, consensus: null, forced: 3, closure: 0, unequal: 0, closed: false,
+    })
   // AND THE SCORE WAS NEVER CONSULTED, because four exact anchors bracket this season by themselves
   // (2026-09-13). Mutation: run the scored fallback unconditionally and their row 9
   // `The Fiance of Despair` welds onto our 8 `The Fiancé of Despair` at Dice 0.75, which turns a row
@@ -2114,6 +2385,323 @@ test('the floor and the margin are the calibrated pair, on token Dice', () => {
   const over = titledSide('nf:fm', ['Unshared One', 'I Do Not Want to Die', 'Unshared Three'])
   expect(alignByTitle(reference, over).anchors.map(anchor => [anchor.from.number, anchor.to.number, anchor.scored?.score]))
     .toEqual([[2, 2, 0.727]])
+})
+
+// ---------------------------------------------------------------------------------------------
+// Rule 3's THIRD anchor source: the episode SYNOPSIS, and the offset consensus that gates it.
+
+/**
+ * One side of a measured season, as it arrives from `plugin:profile`.
+ *
+ * TITLES ARE DELIBERATELY ABSENT on both sides, which is not a convenience: it is the population the
+ * source exists for. Netflix titles season 1 and season 3 `Episode N`, which `anchorKeysOf` drops as
+ * generic, and retranslates season 2, so the exact and the scored anchors reach nothing on any of
+ * the three and every anchor below is a synopsis anchor. A case that let a title through would be
+ * measuring the title rules with extra steps.
+ */
+const synopsisSide = (prefix: string, keys: readonly string[]): SideEpisode[] =>
+  keys.map((key, index) => side(`${prefix}-${index + 1}`, index + 1, null, [], key ? [key] : []))
+
+const measuredSeason = (name: keyof typeof MUSHOKU_SYNOPSES) => ({
+  reference: synopsisSide(`anizip:mt-${name}`, MUSHOKU_SYNOPSES[name].ours),
+  theirs: synopsisSide(`nf:mt-${name}`, MUSHOKU_SYNOPSES[name].theirs),
+})
+
+/** The offsets a set of anchors implies, as `{offset: count}`, which is what the consensus votes on. */
+const offsetsOf = (anchors: readonly { from: SideEpisode, to: SideEpisode }[]): Record<string, number> => {
+  const counts: Record<string, number> = {}
+  for (const anchor of anchors) {
+    const offset = String(anchor.to.number! - anchor.from.number!)
+    counts[offset] = (counts[offset] ?? 0) + 1
+  }
+  return counts
+}
+
+// THE HEADLINE MEASUREMENT (2026-09-13), reproduced from the recorded rows of all three seasons: the
+// floor and the margin propose 10, 9 and 9 anchors carrying 1, 2 and 1 WRONG ones, and the consensus
+// leaves 9, 7 and 8 with none wrong. The truth offsets are 0, -1 and 0, season 2's because Netflix
+// numbers a special as its episode 1.
+// Mutation: return `{ offset, anchors: [...anchors] }` from `offsetConsensus` rather than filtering,
+// and each season keeps its outliers: season 1 anchors `24 onto 18`, season 2 `12 onto 5` and
+// `22 onto 20`, season 3 `4 onto 9`, which is a play button on the wrong episode.
+test('the three measured seasons propose the same anchors and agree on the true offset', () => {
+  const measured = {
+    s1: { proposed: 10, offsets: { '0': 9, '-6': 1 }, consensus: 0, kept: 9 },
+    s2: { proposed: 9, offsets: { '-1': 7, '-7': 1, '-2': 1 }, consensus: -1, kept: 7 },
+    s3: { proposed: 9, offsets: { '0': 8, '5': 1 }, consensus: 0, kept: 8 },
+  } as const
+
+  for (const name of ['s1', 's2', 's3'] as const) {
+    const { reference, theirs } = measuredSeason(name)
+    const alignment = alignByTitle(reference, theirs)
+    expect(alignment.anchors.length - alignment.synopsis, `${name}: no title reaches this season`).toBe(0)
+    const proposal = synopsisAnchors({
+      ordered: alignment.theirs, canonical: alignment.canonical, taken: [], anchors: [],
+    })
+    expect({
+      proposed: proposal.proposed.length,
+      offsets: offsetsOf(proposal.proposed),
+      consensus: proposal.consensus,
+      kept: proposal.anchors.length,
+    }, name).toEqual(measured[name])
+    // and what survives is EXACTLY the consensus offset, which is the sentence the gate promises
+    expect(offsetsOf(proposal.anchors), name).toEqual({ [String(measured[name].consensus)]: measured[name].kept })
+    expect(proposal.anchors.every(anchor => anchor.synopsis!.consensus === measured[name].consensus), name).toBe(true)
+  }
+})
+
+// WHAT THE WHOLE RULE THEN MINTS, which is the reason the source was added: three Netflix seasons
+// that reach rule 1 with no dates, rule 2 refused for retranslating, and rule 3's two title anchors
+// with nothing to bracket. Season 3 is the one the app shows zero sources on today.
+// Mutation: drop `synopsisAnchors` from `alignByTitle`'s union and all three seasons refuse
+// `no-anchors` with no pairs at all.
+test('the synopsis anchors carry all three measured seasons through rule 3', () => {
+  const minted = { s1: { anchors: 9, forced: 11, pairs: 20 }, s2: { anchors: 7, forced: 16, pairs: 23 }, s3: { anchors: 8, forced: 2, pairs: 10 } } as const
+  for (const name of ['s1', 's2', 's3'] as const) {
+    const { reference, theirs } = measuredSeason(name)
+    const sequence = pairsBySequence(reference, theirs)
+    expect({
+      anchors: sequence.anchored.length, forced: sequence.forced.length, pairs: sequence.pairs.length,
+    }, name).toEqual(minted[name])
+    expect(sequence.unequal, `${name}: no region disagreed`).toBe(0)
+    // every pair sits on the consensus offset, anchors and bracket-forced rows alike
+    const offset = sequence.alignment.consensus!
+    expect(sequence.pairs.every(pair => pair.toNumber - pair.fromNumber === offset), name).toBe(true)
+
+    const verdict = decideCandidate({
+      runLength: reference.length, reference, candidate: { retranslates: true, episodes: theirs },
+    })
+    expect(verdict.ok && verdict.rule, `${name}: rule 3 runs where rule 2 is refused`).toBe('sequence')
+    expect(verdict.ok && verdict.sequence?.synopsis, name).toBe(minted[name].anchors)
+    expect(verdict.ok && verdict.sequence?.consensus, name).toBe(offset)
+  }
+  // and the evidence names the score and the offset rather than two paragraphs of prose
+  const { reference, theirs } = measuredSeason('s3')
+  expect(pairsBySequence(reference, theirs).anchored[0]!.evidence).toEqual({ synopsisScore: 0.286, consensus: 0 })
+})
+
+// THE MONOTONE-BUT-WRONG SHAPE, which is the whole reason the gate is a consensus and not a second
+// monotone pass. Season 1's `11 onto 13` INTERLEAVES with the true anchors instead of crossing them,
+// so every longest increasing chain of the set contains it and an LIS-only filter keeps it.
+//
+// IT IS SEEDED RATHER THAN SCORED, and that is stated in `MIN_CONSENSUS_ANCHORS` too: the shape was
+// recorded on 2026-09-13 at a coarser content-word cut, and at the cut this file ships Netflix's
+// episode 11 scores 0.188 against TMDB's 13 and 0.188 against its 19, so the margin and the floor
+// both refuse it. What is asserted here is therefore the GATE and not the scorer.
+// Mutation: replace `offsetConsensus`'s body with the longest-increasing-subsequence filter below and
+// the wrong anchor survives, with nine correct anchors standing behind it.
+test('an outlier that is monotone against the true anchors is caught by consensus and not by LIS', () => {
+  const anchor = (from: number, to: number) => ({
+    from: side(`nf:s1-${from}`, from, null), to: side(`anizip:s1-${to}`, to, null),
+    fromIndex: from - 1, toIndex: to - 1, key: `k${from}`, synopsis: { score: 0.2, consensus: 0 },
+  })
+  // season 1's nine true anchors, plus the one that reads Netflix's episode 11 as TMDB's episode 13
+  const truthful = [3, 7, 8, 10, 14, 17, 18, 19, 22].map(number => anchor(number, number))
+  const anchors = [...truthful, anchor(11, 13)].sort((a, b) => a.fromIndex - b.fromIndex)
+
+  // THE CONTROL, and it must pass or this case proves nothing: a longest increasing subsequence over
+  // the same ten anchors keeps all ten, because 11 onto 13 sits strictly inside 10 onto 10 and
+  // 14 onto 14 in BOTH indices and therefore extends the chain
+  const lis = (input: readonly { fromIndex: number, toIndex: number }[]) => {
+    const best: number[] = []
+    for (const entry of input) {
+      let at = best.findIndex(value => value >= entry.toIndex)
+      if (at < 0) at = best.length
+      best[at] = entry.toIndex
+    }
+    return best.length
+  }
+  expect(lis(anchors), 'LIS keeps the wrong anchor').toBe(10)
+  expect(lis(truthful), 'and the true chain alone is nine').toBe(9)
+
+  const agreed = offsetConsensus(anchors)
+  expect(agreed?.offset).toBe(0)
+  expect(agreed?.anchors.map(entry => [entry.from.number, entry.to.number]))
+    .toEqual(truthful.map(entry => [entry.from.number, entry.to.number]))
+  expect(agreed!.anchors.some(entry => entry.from.number === 11), 'the +2 anchor is gone').toBe(false)
+})
+
+// NO MAJORITY MEANS NOTHING IS MINTED, in each of the three shapes that can fail to be one. A rule
+// that took the best offset available would mint on all three.
+// Mutation: drop the `top * 2 <= anchors.length` clause and the plurality case below anchors on
+// 4 of 11 votes and the TIE below anchors on 4 of 8; drop the `top < MIN_CONSENSUS_ANCHORS` clause
+// and two agreeing anchors out of three carry a season.
+test('a season with no majority of one offset mints nothing', () => {
+  const anchor = (from: number, to: number) => ({
+    from: side(`nf:n-${from}`, from, null), to: side(`anizip:n-${to}`, to, null),
+    fromIndex: from - 1, toIndex: to - 1, key: `k${from}`, synopsis: { score: 0.2, consensus: 0 },
+  })
+  const at = (offset: number, count: number, base = 0) =>
+    Array.from({ length: count }, (_, index) => anchor(base + index + 1, base + index + 1 + offset))
+
+  // too few anchors to take a majority of, however unanimous they are
+  expect(offsetConsensus(at(0, MIN_CONSENSUS_ANCHORS - 1))).toBe(null)
+  expect(offsetConsensus(at(0, MIN_CONSENSUS_ANCHORS))?.offset, 'the control: one more agrees').toBe(0)
+  // a TIE names no majority: four and four. It needs no clause of its own, and that is worth
+  // asserting rather than assuming: two offsets tied at the top hold k of at least 2k anchors, so
+  // the majority test below refuses every tie there can be
+  expect(offsetConsensus([...at(0, 4), ...at(3, 4, 10)])).toBe(null)
+  // three against two is a majority and is REFUSED anyway, because it does not clear
+  // `MIN_CONSENSUS_GAP`: this line read `?.offset).toBe(0)` until 2026-09-13
+  expect(offsetConsensus([...at(0, 3), ...at(3, 2, 10)])).toBe(null)
+  // the smallest set a majority admits is the one nothing contests
+  expect(offsetConsensus(at(0, MIN_CONSENSUS_ANCHORS))?.offset).toBe(0)
+  // while two agreeing is not a measurement however lonely the other one is
+  expect(offsetConsensus([...at(0, 2), ...at(3, 1, 10)])).toBe(null)
+  // a bare PLURALITY is not a majority either: 4 of 11, which is the shape a five letter token cut
+  // makes of season 2 (`MIN_SYNOPSIS_TOKEN`)
+  expect(offsetConsensus([...at(0, 4), ...at(3, 3, 10), ...at(-5, 2, 20), ...at(7, 2, 30)])).toBe(null)
+  // THE CONTROL, one vote moved across so the top offset holds more than half AND clears the gap
+  expect(offsetConsensus([...at(0, 6), ...at(3, 3, 10), ...at(-5, 2, 20)])?.offset).toBe(0)
+
+  // and a season whose synopses meet no majority anchors NOTHING and refuses in writing, rather than
+  // anchoring on the best offset it saw
+  const noise = ['alpha bravo charlie delta echo foxtrot', 'golf hotel india juliet kilo lima',
+    'mike november oscar papa quebec romeo', 'sierra tango uniform victor whisky xray']
+  const reference = synopsisSide('anizip:q', noise)
+  const theirs = synopsisSide('nf:q', [...noise].reverse())
+  const alignment = alignByTitle(reference, theirs)
+  expect({ synopsis: alignment.synopsis, consensus: alignment.consensus }).toEqual({ synopsis: 0, consensus: null })
+  // `retranslates: false`, because that refusal is about the ORIGIN and outranks every rule 3 one
+  expect(decideCandidate({ runLength: 4, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-anchors' })
+})
+
+// A MAJORITY IS NOT A CORRECTNESS PROOF, and this is the shape that proves it: four anchors agreeing
+// on a WRONG offset against three agreeing on the right one. Every clause the rule had before
+// 2026-09-13 passes it (7 anchors, top holds 4, 4 * 2 > 7), so a bare majority answers `offset 5`
+// and mints four wrong pairs. `MIN_CONSENSUS_GAP` is the clause that refuses it.
+// Mutation: delete the `top - (ranked[1]?.[1] ?? 0) < gap` line and the first expectation below
+// answers `{ offset: 5, anchors: 4 }` instead of null.
+test('a wrong offset that outnumbers the right one is refused, not minted', () => {
+  const anchor = (from: number, to: number) => ({
+    from: side(`nf:g-${from}`, from, null), to: side(`anizip:g-${to}`, to, null),
+    fromIndex: from - 1, toIndex: to - 1, key: `k${from}`, synopsis: { score: 0.2, consensus: 0 },
+  })
+  const wrong = [1, 2, 3, 4].map(number => anchor(number, number + 5))
+  const right = [10, 11, 12].map(number => anchor(number, number))
+  expect(offsetConsensus([...wrong, ...right])).toBe(null)
+  // THE CONTROL, and it has to pass or the case proves only that the function can return null: two
+  // more anchors on the wrong offset and the gap is met, so the vote answers again AND ANSWERS
+  // WRONG. The rule is a heuristic either way, which is what the doc on `MIN_CONSENSUS_GAP` says out
+  // loud: the gap buys distance from the shapes that have been seen, never correctness
+  const decisive = offsetConsensus([...wrong, anchor(5, 10), anchor(6, 11), ...right])
+  expect({ offset: decisive?.offset, kept: decisive?.anchors.length }).toEqual({ offset: 5, kept: 6 })
+  // and the mirror image, the majority on the RIGHT offset, is kept: the refusal above is about the
+  // vote's shape and not about these particular rows
+  const other = [10, 11, 12, 13, 14, 15].map(number => anchor(number, number))
+  expect(offsetConsensus([...[1, 2, 3].map(number => anchor(number, number + 5)), ...other])?.offset).toBe(0)
+})
+
+// TWO CLAIMS THE DOC ON `offsetConsensus` MAKES, pinned rather than left as an argument, because the
+// reviewer asked for a monotone filter and a contiguity test on top of the vote and the answer is
+// that the first is already implied and the second would refuse every real season.
+// Mutation: none is possible for the monotone half, and that is the point: it is a property of one
+// offset, so no line can be deleted to break it. The contiguity half fails if a span test is added.
+test('a kept consensus set is already monotone, and is never contiguous', () => {
+  const anchor = (from: number, to: number) => ({
+    from: side(`nf:m-${from}`, from, null), to: side(`anizip:m-${to}`, to, null),
+    fromIndex: from - 1, toIndex: to - 1, key: `k${from}`, synopsis: { score: 0.2, consensus: 0 },
+  })
+  // deliberately scrambled, and carrying two outliers that a monotone filter would have to judge
+  const scrambled = [
+    anchor(7, 7), anchor(2, 9), anchor(1, 1), anchor(12, 12), anchor(4, 4), anchor(9, 3), anchor(3, 3),
+  ]
+  const agreed = offsetConsensus(scrambled)!
+  expect(agreed.offset).toBe(0)
+  const kept = agreed.anchors
+  expect(kept.map(entry => entry.from.number)).toEqual([7, 1, 12, 4, 3])
+  // MONOTONE IN VALUE, whatever order the input arrived in: one offset means to = from + offset, so
+  // sorting by `from` sorts by `to` as well and a longest increasing subsequence returns everything
+  const byFrom = [...kept].sort((a, b) => a.from.number! - b.from.number!)
+  expect(byFrom.map(entry => entry.to.number)).toEqual([1, 3, 4, 7, 12])
+  expect(byFrom.every((entry, index) => index === 0 || entry.to.number! > byFrom[index - 1]!.to.number!)).toBe(true)
+  // AND NOT CONTIGUOUS: 5 anchors spanning rows 1 to 12. The seven rows between them are exactly
+  // what order places, so a rule demanding a contiguous span would refuse this and every season the
+  // corpus measured (2026-09-13: 466 anchors over 216 order-placed rows on 21 pairings)
+  expect(byFrom[byFrom.length - 1]!.from.number! - byFrom[0]!.from.number! + 1).toBe(12)
+  expect(kept).toHaveLength(5)
+})
+
+// AN ANCHOR WITH NO NUMBER IS REFUSED RATHER THAN READ AS NaN. Inside `alignByTitle` both lists are
+// number filtered and this cannot arise; `offsetConsensus` is exported, so an external caller used to
+// get `to.number!` on a null and every unnumbered anchor collapsed onto the one NaN key.
+// Mutation: drop the `numbered` filter and the first expectation answers `{ offset: NaN }`.
+test('offsetConsensus refuses an anchor with no number instead of answering NaN', () => {
+  const anchor = (from: number | null, to: number | null, index: number) => ({
+    from: side(`nf:u-${index}`, from, null), to: side(`anizip:u-${index}`, to, null),
+    fromIndex: index, toIndex: index, key: `k${index}`, synopsis: { score: 0.2, consensus: 0 },
+  })
+  expect(offsetConsensus([anchor(null, 1, 0), anchor(null, 2, 1), anchor(null, 3, 2)])).toBe(null)
+  expect(offsetConsensus([anchor(1, null, 0), anchor(2, null, 1), anchor(3, null, 2)])).toBe(null)
+  // THE CONTROL: the same three anchors with numbers answer, so the refusal is the null and not the
+  // count. And an unnumbered anchor mixed into a real set is dropped rather than counted
+  expect(offsetConsensus([anchor(1, 1, 0), anchor(2, 2, 1), anchor(3, 3, 2)])?.offset).toBe(0)
+  const mixed = offsetConsensus([anchor(1, 1, 0), anchor(2, 2, 1), anchor(3, 3, 2), anchor(null, 9, 3)])
+  expect({ offset: mixed?.offset, kept: mixed?.anchors.length }).toEqual({ offset: 0, kept: 3 })
+})
+
+// RULE 3'S STANDING PROPERTY, restated for the new source: an anchor PROPOSES and order PLACES, so a
+// set of synopsis anchors with nothing between them mints nothing at all. This is the same case the
+// scored anchor has one screen up, and it is repeated because the gate is a property of the rule
+// rather than of one anchor source.
+// Mutation: return `[...anchored, ...placed]` unconditionally from `pairsBySequence` and the three
+// anchors below ride out as three pairs proven by a synopsis similarity and by nothing else.
+test('a synopsis anchor alone never places a row', () => {
+  const keys = MUSHOKU_SYNOPSES.s3.ours.slice(0, 3)
+  const reference = synopsisSide('anizip:a', keys)
+  const theirs = synopsisSide('nf:a', keys)
+  const sequence = pairsBySequence(reference, theirs)
+  expect(sequence.alignment.synopsis, 'all three rows anchor on their own synopsis').toBe(3)
+  expect(sequence.alignment.consensus).toBe(0)
+  expect({ forced: sequence.forced, closure: sequence.closure, pairs: sequence.pairs })
+    .toEqual({ forced: [], closure: [], pairs: [] })
+  expect(decideCandidate({ runLength: 3, reference, candidate: { retranslates: false, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-titles' })
+  // THE CONTROL: a fourth row, with one row of theirs left unanchored BETWEEN two anchors so order
+  // can place it, and the three surviving anchors then ride out with it. Four rather than three
+  // because `minAnchorsFor` asks three anchors of an alignment no equality holds down, so an
+  // unanchored row has to be paid for with one more anchor
+  const wider = MUSHOKU_SYNOPSES.s3.ours.slice(0, 4)
+  const widerReference = synopsisSide('anizip:b', wider)
+  const gapped = synopsisSide('nf:b', [wider[0]!, 'entirely unrelated words nobody ever wrote', wider[2]!, wider[3]!])
+  const placed = pairsBySequence(widerReference, gapped)
+  expect(placed.alignment.synopsis, 'rows 1, 3 and 4 anchor').toBe(3)
+  expect(placed.forced.map(pair => [pair.fromNumber, pair.toNumber])).toEqual([[2, 2]])
+  expect(placed.pairs).toHaveLength(4)
+})
+
+// THE SYNOPSIS IS THE WEAKEST SOURCE AND IS OFFERED LAST, so a row or a number a title already
+// reached is never scored against a paragraph. `taken` carries EVERY exact match, including one the
+// monotone filter dropped, which is why it is asked for rather than read off `anchors`.
+// Mutation: drop the `takenRows.has(row.uri)` return in `synopsisAnchors` and row 4 proposes again;
+// drop the `takenSlots.has(best.index)` return and row 5 proposes onto the number row 4's title
+// already holds, which the one-claim-per-number filter would then charge to whichever row kept it.
+test('a synopsis never takes a row or a number a title already reached', () => {
+  const keys = MUSHOKU_SYNOPSES.s1.ours.slice(0, 6)
+  const sides = (prefix: string) => keys.map((key, index) => side(`${prefix}-${index + 1}`, index + 1, null, [], [key]))
+  const reference = sides('anizip:t')
+  const theirs = sides('nf:t')
+  const alignment = alignByTitle(reference, theirs)
+  const propose = (taken: Parameters<typeof synopsisAnchors>[0]['taken']) =>
+    synopsisAnchors({ ordered: alignment.theirs, canonical: alignment.canonical, taken, anchors: [] })
+      .proposed.map(anchor => [anchor.from.number, anchor.to.number])
+
+  // THE CONTROL: with nothing taken all six rows propose, one onto its own number
+  expect(propose([])).toEqual([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]])
+
+  // their row 4 matched our number 4 exactly, so neither the row nor the number is on offer: row 4
+  // is not scored at all, and row 5 may not be given number 4 either
+  const held = {
+    from: theirs[3]!, to: reference[3]!, fromIndex: 3, toIndex: 3, key: 'the shared marker title',
+  }
+  expect(propose([held])).toEqual([[1, 1], [2, 2], [3, 3], [5, 5], [6, 6]])
+  // and the number is refused even when the row that holds it is elsewhere: an equality on their
+  // row 6 taking our number 4 leaves our 4 unavailable and their 6 unscored
+  const crossed = {
+    from: theirs[5]!, to: reference[3]!, fromIndex: 5, toIndex: 3, key: 'the shared marker title',
+  }
+  expect(propose([crossed])).toEqual([[1, 1], [2, 2], [3, 3], [5, 5]])
 })
 
 // ---------------------------------------------------------------------------------------------

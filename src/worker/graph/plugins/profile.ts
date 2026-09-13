@@ -34,7 +34,7 @@ import {
 } from './origins'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const PROFILE_VERSION = 1
+export const PROFILE_VERSION = 2
 
 const MS_PER_DAY = 86_400_000
 
@@ -119,6 +119,116 @@ export const foldedKeysOf = (keys: TitleKeyEntry[]): TitleKeyEntry[] => {
     folded.set(key, { ...entry, key })
   }
   return [...folded.values()]
+}
+
+/**
+ * The words a synopsis reduction drops because they sit in every synopsis ever written.
+ *
+ * Function words only, and every one of them four letters or longer, because `MIN_SYNOPSIS_TOKEN`
+ * already drops everything shorter: `the`, `and`, `of`, `to` and the rest of the short half never
+ * reach this set and are not listed in it. Nothing here names a person, a place or an event, which
+ * is the whole test for membership: a word that could tell two episodes of one show apart is not a
+ * stopword however often it appears.
+ */
+export const SYNOPSIS_STOPWORDS = new Set([
+  'with', 'from', 'into', 'were', 'been', 'they', 'them', 'their', 'this', 'that',
+  'when', 'then', 'than', 'what', 'which', 'while', 'where', 'after', 'before', 'have', 'over',
+  'will', 'would', 'could', 'should', 'there', 'about', 'also', 'only', 'more', 'most', 'some',
+  'such', 'very', 'just', 'these', 'those', 'upon', 'onto', 'because', 'through', 'during',
+  'against', 'between', 'again', 'once', 'both', 'each',
+])
+
+/**
+ * The shortest token a synopsis key keeps: 4.
+ *
+ * Measured 2026-09-13 over Mushoku Tensei's three Netflix seasons against TMDB's episode overviews
+ * (61 rows of theirs, 61 of ours), scored and gated exactly as `plugin:range` rule 3 does it. The
+ * three cuts either side, run through the shipped rule, as anchors PROPOSED, the count that
+ * disagrees with the majority offset, and the anchors KEPT after the consensus gate:
+ *
+ * | cut | season 1 | season 2 | season 3 | kept in all |
+ * | --- | --- | --- | --- | --- |
+ * | 3 | 8, 1 wrong, 7 kept | 6, 0, 6 | 6, 1, 5 | 18 |
+ * | 4 | 10, 1 wrong, 9 kept | 9, 2, 7 | 9, 1, 8 | 24 |
+ * | 5 | 10, 0 wrong, 10 kept | 12, 7, NONE | 7, 0, 7 | 17 |
+ *
+ * FIVE IS NOT SAFER THAN FOUR, which is what the wrong column looks like it says. Season 2 at 5
+ * splits 5 of 12 onto the true offset and the other 7 onto seven different wrong ones, which is a
+ * bare PLURALITY and not a majority, so the consensus gate refuses the whole season and it keeps
+ * nothing at all: the cut throws away `eris`, `paul` and `roxy`, the four letter tokens that
+ * identify an episode of this show, and what is left is the vocabulary every synopsis shares. Three
+ * costs recall for nothing, 18 anchors kept against 24, since consensus already removes every wrong
+ * anchor at 4.
+ *
+ * WHAT IS AND IS NOT CORPUS-BACKED, said plainly because the rest of this rule now is. The FLOOR and
+ * the MARGIN rule 3 anchors at were swept on 2026-09-13 over 63 shows, 189 Netflix seasons and 1037
+ * true pairs (`SYNOPSIS_ANCHOR_FLOOR`, `scripts/calibrate-episode-anchors.test.ts`). THIS CUT was
+ * not: the table above is still three seasons of one show, and the corpus sweep runs at the shipped
+ * cut rather than across it. It is the weakest-evidenced constant on the synopsis path, and a sweep
+ * of it is the obvious next measurement rather than a gap that has been argued away.
+ */
+export const MIN_SYNOPSIS_TOKEN = 4
+
+/**
+ * The fewest content words a synopsis key may carry and still be worth scoring: 5.
+ *
+ * A guard rather than a measurement, and it costs nothing measured: across the same 61 plus 61 rows
+ * every non-empty key carries at least 6 content words, and the one key it refuses is empty (Netflix
+ * season 3 episode 12, whose `contextualSynopsis` is a single space). It exists because token Dice
+ * over two short keys is a coincidence rather than a similarity: two three-word keys sharing one
+ * word score 0.333, which clears the 0.20 floor rule 3 anchors at while saying nothing at all.
+ */
+export const MIN_SYNOPSIS_KEY_TOKENS = 5
+
+/**
+ * One synopsis as a KEY: its content words, deduplicated, sorted, joined by a space.
+ *
+ * Sorted because a key is a bag of words and never a sentence: token Dice reads it as a set, so the
+ * order carries no information, and a canonical order is what makes the column byte-stable across
+ * passes and greppable in a trace. Empty when the text has fewer than `MIN_SYNOPSIS_KEY_TOKENS`
+ * content words, so a caller never has to re-apply that bar.
+ */
+export const synopsisKeyOf = (text: string): string => {
+  const tokens = [...new Set(
+    stripTitle(text).split(' ').filter(token => token.length >= MIN_SYNOPSIS_TOKEN && !SYNOPSIS_STOPWORDS.has(token))
+  )].sort()
+  return tokens.length >= MIN_SYNOPSIS_KEY_TOKENS ? tokens.join(' ') : ''
+}
+
+/** One synopsis key with the score and language of the description it came from (`synopsisKeys`). */
+export type SynopsisKeyEntry = { key: string, score: number | null, language: string | null }
+
+type RawDescription = { description?: unknown, shortDescription?: unknown, language?: unknown, score?: unknown }
+
+/**
+ * The synopsis keys of one episode, off `descriptions` and `shortDescriptions` alike.
+ *
+ * BOTH FIELDS, because a source that has one synopsis writes it to both: `desc` (`utils.ts:153`)
+ * emits the same text as a `description` and as a `shortDescription`, so reading one of the two
+ * would silently halve the population for no reason anyone could find later. Identical texts
+ * collapse to one key, which is what dedupe by key is for.
+ *
+ * Best score per distinct key, then key ascending, exactly as `titleKeysOf` orders its own, so two
+ * passes over one row produce the same column in the same order.
+ */
+export const synopsisKeysOf = (descriptions: unknown, shortDescriptions: unknown): SynopsisKeyEntry[] => {
+  const entries = new Map<string, SynopsisKeyEntry>()
+  const read = (value: unknown, field: 'description' | 'shortDescription') => {
+    for (const entry of Array.isArray(value) ? value as RawDescription[] : []) {
+      if (!entry || typeof entry[field] !== 'string') continue
+      const key = synopsisKeyOf(entry[field] as string)
+      if (!key) continue
+      const score = typeof entry.score === 'number' && Number.isFinite(entry.score) ? entry.score : null
+      const language = typeof entry.language === 'string' ? entry.language : null
+      const existing = entries.get(key)
+      if (existing && (existing.score ?? -1) >= (score ?? -1)) continue
+      entries.set(key, { key, score, language })
+    }
+  }
+  read(descriptions, 'description')
+  read(shortDescriptions, 'shortDescription')
+  return [...entries.values()].sort((a, b) =>
+    (b.score ?? -1) - (a.score ?? -1) || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0))
 }
 
 /** What the titles say about which season and which part this row is (NULL when they are silent). */
@@ -534,6 +644,9 @@ const episodeProfileRow = (row: EpisodeRow, ctx: PluginContext): PluginRow => {
     // an episode's keys carry no score tier of their own to defend, so they are the same strip rule
     // with the generic titles dropped: 'Episode 13' carries no identity (`similar.ts:104`)
     titleKeys: titleKeysOf(titles).filter(entry => !ctx.isGenericEpisodeTitle(entry.key)),
+    // the synopsis as a bag of content words, which is the third thing rule 3 may anchor on (5.4 P4).
+    // `Episode` carries no description column of its own, so the only place the text exists is `raw`
+    synopsisKeys: synopsisKeysOf(raw.descriptions, raw.shortDescriptions),
     // a row with no title at all is as anonymous as one titled by its own number
     generic: !list.length || list.every(entry => typeof entry.title !== 'string' || ctx.isGenericEpisodeTitle(entry.title)),
   }

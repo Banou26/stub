@@ -44,7 +44,7 @@ const episodeProfileOf = async (uri: string) =>
   (await rowsOf(
     `MATCH (n:EpisodeProfile {uri: $uri})
      RETURN n.uri AS uri, n.day AS day, n.dayPrecision AS dayPrecision, n.numberSpace AS numberSpace,
-       n.titleKeys AS titleKeys, n.generic AS generic`,
+       n.titleKeys AS titleKeys, n.synopsisKeys AS synopsisKeys, n.generic AS generic`,
     { uri }
   ))[0]
 
@@ -54,6 +54,18 @@ const keysOf = async (uri: string): Promise<string[]> => {
 }
 
 const day = (date: string) => Math.floor(Date.parse(date) / 86_400_000)
+
+/** One real `contextualSynopsis`, Netflix season 3 episode 1 of Mushoku Tensei (recorded 2026-09-13). */
+const NETFLIX_SYNOPSIS =
+  'Leaving Rudeus, Eris goes with Ghislaine to the Holy Land of Swords. '
+  + 'There, Eris trains under Sword God Gal Farion alongside fellow Sword Saint Nina.'
+
+/** Netflix season 3 episode 2, written to `descriptions` alone, and episode 5, to the short field alone. */
+const LONG_ONLY =
+  'A skeptical Nina investigates after hearing Eris talk about Rudeus. '
+  + 'Later, Water God Reida and her disciple Isolde arrive at the training grounds.'
+const SHORT_ONLY =
+  'Rudeus brings Roxy into his happy home. She begins teaching at the Ranoa University of Magic.'
 
 beforeAll(async () => {
   await enableGraph(true)
@@ -91,10 +103,35 @@ beforeAll(async () => {
       titles: [title('ja', '転生したらスライムだった件'), title('en', '2026'), title('en', 'Season 3')],
       synonyms: ['minna no uta'],
     })),
-    // netflix: folding and retranslating, with an episode numbered by position
+    // netflix: folding and retranslating, with an episode numbered by position. Its rows carry the
+    // shape a synopsis arrives in: `desc` (`utils.ts:153`) writes one text to BOTH description fields
     await answer('media', media('nf:81091393-3', {
       titles: [title('en', 'Demon Slayer')],
-      episodes: [episode('nf:8109-1', 'nf:81091393-3', { episodeNumber: 1, titles: [title('en', 'Episode 1')] })],
+      episodes: [
+        episode('nf:8109-1', 'nf:81091393-3', {
+          episodeNumber: 1,
+          titles: [title('en', 'Episode 1')],
+          descriptions: [{ language: 'en', description: NETFLIX_SYNOPSIS, score: 0.5 }],
+          shortDescriptions: [{ language: 'en', shortDescription: NETFLIX_SYNOPSIS, score: 0.5 }],
+        }),
+        // a source that writes ONE of the two fields, one each way, since both are read
+        episode('nf:8109-2', 'nf:81091393-3', {
+          episodeNumber: 2,
+          titles: [title('en', 'Episode 2')],
+          descriptions: [{ language: 'en', description: LONG_ONLY, score: 0.5 }],
+        }),
+        episode('nf:8109-3', 'nf:81091393-3', {
+          episodeNumber: 3,
+          titles: [title('en', 'Episode 3')],
+          shortDescriptions: [{ language: 'en', shortDescription: SHORT_ONLY, score: 0.5 }],
+        }),
+        // a synopsis with too few content words to say anything, which is a placeholder and not a row
+        episode('nf:8109-4', 'nf:81091393-3', {
+          episodeNumber: 4,
+          titles: [title('en', 'Episode 4')],
+          descriptions: [{ language: 'en', description: 'Rudeus meets Eris again today.', score: 0.5 }],
+        }),
+      ],
     })),
     await answer('media', media('anizip:1', { titles: [title('en', 'Frieren')], episodes: [episode('anizip:1-1', 'anizip:1', { episodeNumber: 1 })] })),
     // the coercion table, one row per origin that builds a date out of a bare year
@@ -305,6 +342,43 @@ test('an episode day is precise about how it was named, and a generic title carr
   expect([undated.day, undated.dayPrecision, undated.numberSpace], 'anizip numbers by its map key').toEqual([null, 'none', 'entry'])
   expect((await episodeProfileOf('nf:8109-1'))!.numberSpace, 'unogs numbers by list position').toBe('position')
   expect((await episodeProfileOf('cr:GX1-GS1-1'))!.numberSpace, 'everyone else numbers within a season').toBe('season')
+})
+
+// (j2) THE SYNOPSIS KEY, which is rule 3's third anchor source (5.4 P4) and the one column an
+// episode carries that no title rule reads. It is the content words of the synopsis, deduplicated,
+// sorted and joined: four letters or longer, function words dropped, and NOTHING at all below
+// `MIN_SYNOPSIS_KEY_TOKENS`, because token Dice over two short bags is a coincidence rather than a
+// similarity.
+// Mutation: read `shortDescriptions` alone and episode 2 below stops being empty, since its source
+// wrote only a description; drop the `MIN_SYNOPSIS_KEY_TOKENS` bar and its four content words become
+// the key `eris meets rudeus today`, which scores 0.5 against any other key naming those two people;
+// drop the sort and the column stops being byte-stable across passes.
+test('an episode synopsis is stored as its content words, sorted, and a short one is stored as nothing', async () => {
+  const first = (await episodeProfileOf('nf:8109-1'))!
+  // the real Netflix `contextualSynopsis` above: `with`, `to`, `the`, `of`, `there`, `god` and `gal`
+  // are gone, `Eris` and `Sword` appear once each however often they were written, and the order is
+  // the alphabet rather than the sentence
+  expect(JSON.parse(first.synopsisKeys as string)).toEqual([{
+    key: 'alongside eris farion fellow ghislaine goes holy land leaving nina rudeus saint sword swords trains under',
+    score: 0.5,
+    language: 'en',
+  }])
+  // ONE ENTRY, not two: `desc` writes the same text as a description and as a shortDescription, so
+  // reading both fields and deduplicating by key is what keeps one synopsis from counting twice
+  expect(JSON.parse(first.synopsisKeys as string)).toHaveLength(1)
+
+  // BOTH FIELDS ARE READ, proven one each way rather than on a row that carries both
+  const longOnly = JSON.parse((await episodeProfileOf('nf:8109-2'))!.synopsisKeys as string)
+  expect(longOnly.map((entry: { key: string }) => entry.key))
+    .toEqual(['arrive disciple eris grounds hearing investigates isolde later nina reida rudeus skeptical talk training water'])
+  const shortOnly = JSON.parse((await episodeProfileOf('nf:8109-3'))!.synopsisKeys as string)
+  expect(shortOnly.map((entry: { key: string }) => entry.key))
+    .toEqual(['begins brings happy home magic ranoa roxy rudeus teaching university'])
+
+  const short = (await episodeProfileOf('nf:8109-4'))!
+  expect(JSON.parse(short.synopsisKeys as string), 'four content words is not a synopsis').toEqual([])
+  // and a row whose source ships no description at all is silent the same way
+  expect(JSON.parse((await episodeProfileOf('cr:GX1-GS1-1'))!.synopsisKeys as string)).toEqual([])
 })
 
 // (k) THE EDGE TO THE ROW IT DESCRIBES, both ways round, since `PROFILE_OF` declares two FROM/TO

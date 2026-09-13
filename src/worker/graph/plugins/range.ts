@@ -10,6 +10,12 @@
  * rather than shifting every later one (3.4). The title-vote offset that put 13 of 25 Blue Exorcist
  * rows on the wrong Netflix episode (2026-09-10) has no successor: there is no offset anywhere.
  *
+ * RULE 1 IS NOT THE LAST WORD ON THE ROWS IT COULD NOT DATE (2026-09-13). A verdict used to be the
+ * whole of a candidate, so a row the days refused as ambiguous, or reached nothing at all, was lost
+ * even where an exact title equality named it. One wrong upstream date costs two rows that way, and
+ * ani.zip supplies exactly one on Mushoku Tensei cour 2: `closeDatesWithTitles` is what gives those
+ * rows rule 3's anchor bar and the dates a veto over the answer.
+ *
  * IT MINTS NO `SAME_AS` BETWEEN MEDIA. The "every episode paired, therefore the same thing" upgrade
  * was deleted from 5.4 P4, along with the rule that carried it, which is why the sequence rule below
  * is a NEW rule 3 and not the restored one: a season that holds this run is a container whatever
@@ -22,9 +28,11 @@
  * be wrong while looking strong (Netflix, 4 exact of 25, the best wrong pair outscoring the true one,
  * 2026-09-10). Rule 3 reads titles to ANCHOR and never to place: an anchor is exact, unique,
  * non-generic equality, or, only where those cannot bracket at all, a scored similarity that clears
- * `SCORED_ANCHOR_FLOOR` by `SCORED_ANCHOR_MARGIN` over its own runner-up (2026-09-13). Every pair
- * beyond the anchors is placed by ORDER: no row is ever paired by comparing its own title to
- * anything, and the gate mints nothing unless order placed a row inside the run.
+ * `SCORED_ANCHOR_FLOOR` by `SCORED_ANCHOR_MARGIN` over its own runner-up (2026-09-13), or, on the
+ * same terms, a SYNOPSIS similarity that clears `SYNOPSIS_ANCHOR_FLOOR` and then agrees with the
+ * offset a majority of its fellows reached (`MIN_CONSENSUS_ANCHORS`, 2026-09-13). Every pair beyond
+ * the anchors is placed by ORDER: no row is ever paired by comparing its own title or its own
+ * synopsis to anything, and the gate mints nothing unless order placed a row inside the run.
  *
  * BE PRECISE ABOUT WHAT THAT DOES NOT SAY, because the first version of this header said the stronger
  * thing and an executed probe disproved it. A weld WRITES ITS OWN ANCHOR PAIR, exactly as an exact
@@ -77,9 +85,10 @@ import type { EpisodeLinkProposal, LinkProposal, Plugin, PluginContext, PluginOu
 import { EPISODE_TITLE_COVERAGE, isGenericEpisodeTitle, MIN_EPISODE_TITLE_MATCHES } from '../../../sources/similar'
 import { stripTitle } from '../../../sources/utils'
 import { RETRANSLATING_ORIGINS } from './origins'
+import { synopsisKeyOf } from './profile'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const RANGE_VERSION = 4
+export const RANGE_VERSION = 6
 
 /**
  * Two pairs or nothing (`consensus.ts:111`).
@@ -102,9 +111,10 @@ export const DAY_SLACK = 1
  * Why nothing was minted for a candidate, written onto its refused `LINK` row so it is queryable.
  *
  * `no-anchors` and `unequal-gap` are rule 3's own two, and they say which half of the alignment
- * failed: no anchor to bracket from, the scored fallback included, so it names a candidate no title
- * reached exactly and none scored clear of its neighbours either (Netflix's season 1, 24 placeholder
- * titles, 3.4a point 4); or anchors whose bracket counted a different number of rows on each side.
+ * failed: no anchor to bracket from, both fallbacks included, so it names a candidate no title
+ * reached exactly, none scored clear of its neighbours, and whose synopses met no offset majority
+ * (Netflix's season 1, 24 placeholder titles, 3.4a point 4); or anchors whose bracket counted a
+ * different number of rows on each side.
  */
 export type RangeRefusal =
   'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles' | 'date-skew' | 'no-anchors' | 'unequal-gap'
@@ -119,6 +129,15 @@ export type SideEpisode = {
   day: number | null
   /** `EpisodeProfile.titleKeys`, which are already stripped and already free of generic titles. */
   keys: string[]
+  /**
+   * `EpisodeProfile.synopsisKeys`: the episode's synopsis as a sorted bag of content words.
+   *
+   * Empty for every origin that ships no episode description, which is most of them, and empty for a
+   * row whose synopsis carries too few content words to say anything (`MIN_SYNOPSIS_KEY_TOKENS`).
+   * Rule 3's third anchor source reads it and nothing else does: no rule PLACES a pair by comparing
+   * two synopses, exactly as no rule places one by comparing two titles.
+   */
+  synopsis: string[]
   /** The `HAS_EPISODE` key it hangs by, which every edge derived from it names in `supports`. */
   hung: string
 }
@@ -126,19 +145,29 @@ export type SideEpisode = {
 /**
  * HOW one pair was placed, which is the whole of a trace's answer to "why is this button here" (3.2).
  *
- * One shape per rule, and rule 3 carries four of its own because it places a row four different
- * ways: `day` and `slack` are rule 1's, `key` is rule 2's exact title match, `anchor` is rule 3's
- * exact one (the key that anchored it), `scored` is rule 3's SCORED anchor (their key, our key, and
- * the token Dice between them, so a trace can tell a weld from an equality at a glance), `between`
- * names the two anchors whose equal-gap bracket forced a row that no title reached, and `closed`
- * names the specials whose location closed the alignment (3.4a), which is empty for nothing, since a
- * closure needs at least one.
+ * One shape per way of placing a row, and rule 3 carries five of them because it places a row five
+ * different ways. `day` and `slack` are rule 1's own, `gap` is its GAP CLOSURE (the exact anchor key
+ * that placed a row no day could reach, `closeDatesWithTitles`), `key` is rule 2's exact title match,
+ * `anchor` is rule 3's exact one (the key that anchored it), `scored` is rule 3's SCORED anchor
+ * (their key, our key, and the token Dice between them, so a trace can tell a weld from an equality
+ * at a glance), `synopsisScore` is rule 3's SYNOPSIS anchor, `between` names the two anchors whose
+ * equal-gap bracket forced a row that no title reached, and `closed` names the specials whose
+ * location closed the alignment (3.4a), which is empty for nothing, since a closure needs at least
+ * one.
+ *
+ * THE SYNOPSIS SHAPE CARRIES NO KEYS, where the scored one carries two. A synopsis key is a whole
+ * paragraph reduced to content words, so two of them per anchor would put a kilobyte of prose on
+ * `evidence` for one season and duplicate a column that is already on the row: a trace that wants
+ * the text reads `EpisodeProfile.synopsisKeys` by uri. What it cannot read anywhere else is the
+ * score this anchor reached and the offset it had to agree with, so those are what the shape holds.
  */
 export type PairEvidence =
   | { day: number, slack: number }
+  | { gap: string }
   | { key: string }
   | { anchor: string }
   | { scored: string, onto: string, score: number }
+  | { synopsisScore: number, consensus: number }
   | { between: [string, string] }
   | { closed: string[] }
 
@@ -257,11 +286,101 @@ export const scheduleSkew = (options: {
   return numbers.every(number => number + offset >= 1 && number + offset <= runLength) ? null : offset
 }
 
+/**
+ * Rule 1's GAP CLOSURE: the rows a standing date alignment could not reach, each placed by an exact
+ * anchor equality, by nothing else, and only where it sits in ORDER with every pair the days proved.
+ *
+ * WHY IT EXISTS, measured on `ag:(anilist:127720)` (Mushoku Tensei cour 2) on 2026-09-13. ani.zip
+ * publishes episode 12 with EPISODE 1's air date (`airDate 2021-10-04` on both, confirmed against
+ * `api.ani.zip/mappings?anidb_id=15954` that day), and it is the run's only dated origin: Kitsu ships
+ * neither dates nor titles here. So one reference day names two episode numbers, and rule 1 loses two
+ * rows to that one bad date, at opposite ends of the run:
+ *
+ * - Crunchyroll's row 12 is dated 2021-10-04 and reaches the doubled day, where `{1, 12}` is reachable
+ *   and the row is refused as `ambiguous`;
+ * - Crunchyroll's row 23 is dated 2021-12-20 and reaches NOTHING, because the reference row that
+ *   carries number 12 is stamped in October.
+ *
+ * Ten of twelve paired, and the verdict is the whole of the candidate, so the two rows were never
+ * offered to any rule below rule 1. The user saw no Crunchyroll button on the FIRST and LAST episode
+ * of that season, on the graph store only, since the old store shifts a whole list by one offset and
+ * therefore places them by position.
+ *
+ * WHAT IT IS NOT. It is not that old offset and it is not rule 2. Nothing here is placed by position,
+ * by a count or by a coverage score: the only thing that places a row is an equality between two
+ * titles that are exact, non-generic, and carried once on each side, which is rule 3's ANCHOR bar
+ * (3.4a) rather than rule 2's minting bar. What the dates then do is VETO, and ONE test carries all
+ * of it: a closing pair must be strictly MONOTONE against every pair the days proved.
+ *
+ * THAT ONE TEST SAYS THREE THINGS, because it counts a tie as a crossing. An equality restating a row
+ * the days already paired shares that pair's `fromNumber`; an equality onto a reference row, or onto
+ * a reference number, the days already filled shares its `toNumber`; and either makes the product
+ * zero. So the days may not be restated, may not be overwritten and may not be crossed, on one line.
+ * The membership sets an earlier draft carried for the first two were provably dead code: a candidate
+ * deduplicates both sides by uri before it is built, so a restatement always ties on a number, and
+ * neither set could be mutated red. A guard that cannot be reddened is a guard nothing is checking.
+ *
+ * Where the survivors cross EACH OTHER, none of them is taken, which is this file's rule everywhere:
+ * nothing rather than a guess (`consensus.ts:105-110`).
+ *
+ * It runs only where rule 1 already stands, so it can add rows to an alignment and can never create
+ * one: with fewer than `MIN_ALIGNED` date pairs there is nothing to be monotone against, and rules 2
+ * and 3 decide the candidate exactly as they do today.
+ */
+export const closeDatesWithTitles = (options: {
+  reference: readonly SideEpisode[]
+  theirs: readonly SideEpisode[]
+  /** The pairs rule 1 proved, which this closure may extend and may never contradict. */
+  pairs: readonly Pair[]
+}): Pair[] => {
+  const { reference, theirs, pairs } = options
+  if (!pairs.length) return []
+
+  const ours = uniqueKeys(reference, anchorKeysOf)
+  const mine = uniqueKeys(theirs, anchorKeysOf)
+
+  const proposed: Pair[] = []
+  for (const episode of [...theirs].sort(byUri)) {
+    if (episode.number === null) continue
+    const matched = new Map<string, { target: SideEpisode, key: string }>()
+    for (const key of anchorKeysOf(episode)) {
+      // a key their own side carries twice says nothing about which of their rows is meant
+      if (mine.get(key) !== episode) continue
+      const target = ours.get(key)
+      if (!target || target.number === null) continue
+      if (!matched.has(target.uri)) matched.set(target.uri, { target, key })
+    }
+    // two different reference rows reached through two keys is an ambiguity, not two matches
+    if (matched.size !== 1) continue
+    const [match] = [...matched.values()]
+    const target = match!.target
+    proposed.push({
+      from: episode,
+      to: target,
+      fromNumber: episode.number,
+      toNumber: target.number!,
+      evidence: { gap: match!.key },
+    })
+  }
+
+  // ZERO COUNTS AS A CROSSING, and that is the whole veto: the product is zero exactly when the two
+  // pairs agree on one side, which is a restatement, an overwrite, or two rows carrying one number
+  const crosses = (a: Pair, b: Pair): boolean =>
+    (a.fromNumber - b.fromNumber) * (a.toNumber - b.toNumber) <= 0
+  const kept = proposed.filter(pair => pairs.every(dated => !crosses(pair, dated)))
+  const tangled = kept.some((pair, index) =>
+    kept.some((other, otherIndex) => otherIndex > index && crosses(pair, other)))
+  return tangled ? [] : kept
+}
+
 /** A key present more than once on a side carries no identity there, so it is dropped rather than guessed. */
-const uniqueKeys = (episodes: readonly SideEpisode[]): Map<string, SideEpisode | null> => {
+const uniqueKeys = (
+  episodes: readonly SideEpisode[],
+  keysFor: (episode: SideEpisode) => string[] = keysOf
+): Map<string, SideEpisode | null> => {
   const index = new Map<string, SideEpisode | null>()
   for (const episode of [...episodes].sort(byUri)) {
-    for (const key of keysOf(episode)) {
+    for (const key of keysFor(episode)) {
       if (index.has(key)) index.set(key, null)
       else index.set(key, episode)
     }
@@ -350,7 +469,7 @@ export type CanonicalEpisode = {
   rows: SideEpisode[]
 }
 
-/** One ANCHOR: their row and our number, joined by a key that is exact, or scored above the floor. */
+/** One ANCHOR: their row and our number, joined by a key that is exact, or scored above a floor. */
 export type Anchor = {
   from: SideEpisode
   /** The reference row whose title carried the key, which is the row the pair NAMES. */
@@ -362,6 +481,12 @@ export type Anchor = {
   key: string
   /** Present only on a SCORED anchor: OUR key it beat the field with, and the token Dice it reached. */
   scored?: { onto: string, score: number }
+  /**
+   * Present only on a SYNOPSIS anchor: the token Dice it reached, and the consensus offset it agrees
+   * with. Both are set at once, because a synopsis anchor that disagrees with the consensus is not
+   * an anchor at all and never reaches this type.
+   */
+  synopsis?: { score: number, consensus: number }
 }
 
 /** The two ordered lists rule 3 reads, the anchors it found in them, and the run's specials. */
@@ -381,6 +506,10 @@ export type Alignment = {
    * anchors is a different claim from one proven off equalities, and a query has to be able to ask.
    */
   scored: number
+  /** How many of `anchors` came from a SYNOPSIS, for `scored`'s reason: it is a weaker claim again. */
+  synopsis: number
+  /** The offset the synopsis anchors agreed on, or NULL where none was asked for or none was found. */
+  consensus: number | null
 }
 
 const pairOnto = (from: SideEpisode, slot: CanonicalEpisode, evidence: PairEvidence): Pair => ({
@@ -540,11 +669,140 @@ export const SCORED_ANCHOR_MARGIN = 0.15
 export const MIN_SCORED_ANCHORS = 3
 
 /**
+ * The token Dice a SYNOPSIS pair must REACH to propose an anchor: 0.20, calibrated 2026-09-13.
+ *
+ * A TENTH OF THE TITLE FLOOR, and that is not a relaxation of the same test: it is a different test.
+ * Two spellings of one episode title share most of their words, so 0.60 there is a near-equality.
+ * Two independently written paragraphs about one episode share the names and the events and nothing
+ * else, so the true pairs land between 0.20 and 0.50 and a floor anywhere near 0.60 accepts none of
+ * them. Measured over Mushoku Tensei's three Netflix seasons against TMDB's episode overviews
+ * (2026-09-13): the 24 true pairs this floor accepts score 0.200 to 0.500, median 0.276.
+ *
+ * THE FLOOR AND THE MARGIN ARE NOT THE GATE HERE, which is the whole difference from
+ * `SCORED_ANCHOR_FLOOR` and the reason `offsetConsensus` below exists. At 0.20 with a margin of 0.05
+ * the three seasons propose 10, 9 and 9 anchors of which 1, 2 and 1 are WRONG, so a rule that minted
+ * on the two of them would put a play button on the wrong episode about one time in seven. The
+ * consensus is what takes that to zero.
+ *
+ * AND IT SURVIVED A REAL CORPUS, which the first version of this constant did not have: three
+ * seasons of one show scored against TMDB was all of it, and both calibration harnesses were running
+ * the rule on an empty synopsis column, so their hard negatives could not speak to it. Swept
+ * 2026-09-13 over 63 shows, 189 Netflix seasons, 65 closed pairings and 1037 true pairs, Netflix's
+ * own `contextualSynopsis` against ani.zip's `overview` (`scripts/calibrate-episode-anchors.test.ts`,
+ * the STANDALONE arm, which asks this source to align the two lists by itself):
+ *
+ * | floor | kept at m0.05 | precision | recall | wrong BEFORE the gate at m0 | negatives fired |
+ * | --- | --- | --- | --- | --- | --- |
+ * | 0.10 | 491 | 100.0% | 47.3% | 356 | 1 of 68 same-show, at m0 and m0.02 |
+ * | 0.15 | 485 | 100.0% | 46.8% | 235 | 0 |
+ * | 0.20 | 466 | 100.0% | 44.9% | 116 | 0 |
+ * | 0.30 | 368 | 100.0% | 35.5% | 14 | 0 |
+ * | 0.45 | 304 | 100.0% | 29.3% | 0 | 0 |
+ *
+ * PRECISION IS 100% AT EVERY ONE OF THE 48 CELLS, which is a statement about the CONSENSUS and not
+ * about the floor: the wrong column above is what the score proposes, and `offsetConsensus` with
+ * `MIN_CONSENSUS_GAP` removes all of it everywhere, including the 356 wrong proposals at the loosest
+ * cell. So the floor is not what keeps a wrong anchor out, and this constant should not be read as
+ * if it were.
+ *
+ * WHAT THE FLOOR IS FOR, then, and why 0.20 rather than 0.15. Across all 48 cells, each run against
+ * 68 same-show and 195 cross-show negatives, exactly ONE negative fires anywhere: floor 0.10 at
+ * margin 0 and 0.02, which mints 9 wrong pairs. 0.15 is already clean and 0.20 is two floors clear
+ * of the only shape that has ever fired, for 1.9 points of recall. That distance is the whole
+ * argument, and it is worth saying that the corpus cannot distinguish 0.15 from 0.20 on anything
+ * else: both are 100% precise and neither lets a negative speak.
+ *
+ * WHAT THIS DOES NOT SAY, because the harness's own bias is stated rather than averaged away: truth
+ * there is closed from EXACT TITLE anchors, so a season Netflix titles `Episode N` can never enter
+ * it however well a synopsis would do, and the precision above is measured on seasons where the
+ * titles happen to agree. The synopsis scores were never consulted in building that truth, which is
+ * what makes the precision informative; the population it is measured over is not the population
+ * this source exists for, and the Mushoku Tensei seasons remain the case for that.
+ */
+export const SYNOPSIS_ANCHOR_FLOOR = 0.20
+
+/**
+ * How far a synopsis pair must BEAT its own runner-up: 0.05, calibrated 2026-09-13.
+ *
+ * Same job as `SCORED_ANCHOR_MARGIN` and a much smaller figure, because the scores themselves are
+ * much smaller: at a median true score of 0.276 a margin of 0.15 would refuse nearly every true pair
+ * the floor admits. It still does real work at this size. Season 1's `11 onto 13` is the case, and
+ * it is the wrong pairing that this file's consensus was written against: Netflix's episode 11
+ * synopsis scores 0.188 against TMDB's episode 13 and 0.188 against TMDB's episode 19, a gap of
+ * exactly zero, so the margin refuses it outright and the floor would have refused it anyway.
+ *
+ * THE CORPUS SWEEP IS WHAT MAKES IT MORE THAN A STORY ABOUT ONE ROW, and it moves the evidence one
+ * cell away from where it ships. At floor 0.20 the margin changes nothing that can be measured: 495
+ * anchors kept at m0 against 466 at m0.05, 0 wrong either way, so it costs 2.8 points of recall for
+ * no visible gain there. Its work is at floor 0.10, where the ONE negative that fires anywhere in
+ * the 48-cell grid fires at m0 and at m0.02 and is REFUSED at m0.05, taking 9 wrong minted pairs
+ * with it. It also halves what the score proposes wrongly for the vote to clean up, 116 down to 46
+ * at the shipped floor. Keeping it is buying the same two floors of distance the floor itself buys
+ * (2026-09-13, 63 shows, 189 Netflix seasons, 1037 true pairs).
+ */
+export const SYNOPSIS_ANCHOR_MARGIN = 0.05
+
+/**
+ * How many synopsis anchors must AGREE ON ONE OFFSET before any of them may anchor anything: 3.
+ *
+ * WHY CONSENSUS IS THE GATE, and why neither the floor nor the margin can be. Scored over Mushoku
+ * Tensei's three Netflix seasons against TMDB's episode overviews (2026-09-13), accepting at
+ * `SYNOPSIS_ANCHOR_FLOOR` with `SYNOPSIS_ANCHOR_MARGIN`, then keeping only the anchors that agree
+ * with the majority offset:
+ *
+ * | season | proposed | offsets seen | consensus | truth | wrong before | kept | wrong after |
+ * | --- | --- | --- | --- | --- | --- | --- | --- |
+ * | 1 | 10 | `{0: 9, -6: 1}` | 0 | 0 | 1 | 9 | 0 |
+ * | 2 | 9 | `{-1: 7, -7: 1, -2: 1}` | -1 | -1 | 2 | 7 | 0 |
+ * | 3 | 9 | `{0: 8, +5: 1}` | 0 | 0 | 1 | 8 | 0 |
+ *
+ * What that is worth downstream, through the whole of rule 3 and against a run of the reference's
+ * own length: 20, 23 and 10 pairs, where the exact and the scored anchor alone reach none of them
+ * (Netflix titles these seasons `Episode N` or retranslates them, which is why this source exists).
+ *
+ * ON THOSE THREE SEASONS the outliers are a minority of one and never agree with each other, and the
+ * property that would make that a rule is a real one: a synopsis that reads like the wrong episode
+ * reads like a DIFFERENT wrong episode each time, where the true pairs all shift by the same amount
+ * because they are the same sequence. IT IS NOT AN INVARIANT, and this file claimed it was until
+ * 2026-09-13. Four outliers that do agree beat three true anchors under a bare majority, which is
+ * executed rather than imagined; the answer is `MIN_CONSENSUS_GAP`, and the corpus that made the
+ * question answerable is the one that constant carries.
+ *
+ * A MONOTONE FILTER IS NOT A SUBSTITUTE, and this is the trap. `longestMonotone` keeps the longest
+ * increasing chain, so it drops an outlier that CROSSES the true ones and keeps one that happens to
+ * interleave with them. Season 1's `11 onto 13` is exactly that: 13 sits between the true anchors
+ * `10 onto 10` and `14 onto 14`, so it extends the chain rather than conflicting with it and every
+ * longest chain contains it. It reads as a real pair because Netflix's episode 11 synopsis opens on
+ * `Roxy arrives ... a notice from Paul`, which is TMDB's episode 13, and closes on a monster, which
+ * is TMDB's episode 11. Only the offset test sees it: +2 where nine others say 0.
+ *
+ * SAY WHAT THE THREE SEASONS DO AND DO NOT PROVE, because the paragraph above is the argument and
+ * not the measurement. That `11 onto 13` was recorded on 2026-09-13 at a COARSER content-word cut
+ * than this file ships; at `MIN_SYNOPSIS_TOKEN` it scores 0.188 against episode 13 and 0.188 against
+ * episode 19, so the floor and the margin refuse it here and it never reaches a filter. Of the four
+ * wrong anchors the three seasons do propose, every one CROSSES the true chain, so a monotone filter
+ * would have reached the same anchor set consensus reaches. What consensus demonstrably buys on
+ * measured data is the ORDER note in `synopsisAnchors`: it removes a wrong anchor before the
+ * one-row-per-number filter can charge a true anchor for it, which is worth 3 of 24 anchors across
+ * the three seasons. The reason it is the gate rather than a second monotone pass is the shape
+ * above, which a monotone pass cannot see by construction.
+ *
+ * WHY THREE. Two votes for one offset is not a measurement, which is `MIN_SCORED_ANCHORS`' own
+ * argument one screen up, and three is rule 2's bar for a title claim (`MIN_EPISODE_TITLE_MATCHES`,
+ * `similar.ts:59`). It costs nothing measured: the smallest majority in the table above is 7, so
+ * every season this rule has been measured on clears three by a factor of two, and what three
+ * refuses is a season carrying less evidence than any of them.
+ */
+export const MIN_CONSENSUS_ANCHORS = 3
+
+/**
  * The anchor minimum THIS alignment has to clear: `MIN_ALIGNED`, or `MIN_SCORED_ANCHORS` where no
- * anchor is an exact equality. `anchors.length > scored` is "at least one exact anchor survives".
+ * anchor is an exact equality. The comparison is "at least one exact anchor survives", and a
+ * synopsis anchor counts as inexact for the same reason a weld does: the offset the brackets then
+ * count in came from a score rather than from an equality.
  */
 const minAnchorsFor = (alignment: Alignment): number =>
-  alignment.anchors.length > alignment.scored ? MIN_ALIGNED : MIN_SCORED_ANCHORS
+  alignment.anchors.length > alignment.scored + alignment.synopsis ? MIN_ALIGNED : MIN_SCORED_ANCHORS
 
 /**
  * The best token Dice between any key of their row and any key of one canonical episode.
@@ -653,6 +911,221 @@ const scoredAnchors = (options: {
 }
 
 /**
+ * The synopsis keys of one row, through `synopsisKeyOf` again.
+ *
+ * `keysOf`'s reason, verbatim: the reduction below IS the comparison, so reading the column raw would
+ * make rule 3 depend on `plugin:profile` having reduced the same way. It is idempotent against
+ * today's column, since a key is already a sorted bag of content words and every token in it clears
+ * the length and the stopword tests by construction.
+ */
+const synopsisKeysOf = (episode: SideEpisode): string[] =>
+  [...new Set(episode.synopsis.map(synopsisKeyOf).filter(Boolean))].sort(compare)
+
+/**
+ * How far the winning offset must OUTNUMBER the runner-up offset: 3, calibrated 2026-09-13.
+ *
+ * A MAJORITY IS A HEURISTIC AND NOT A CORRECTNESS PROOF, which is what this constant exists to say
+ * out loud. `offsetConsensus` below keeps the offset most anchors agree on; nothing in that makes
+ * the majority right. Four wrong anchors that happen to agree beat three right ones and the rule
+ * then mints the four: executed 2026-09-13, an anchor set of four at `+5` against three at `0`
+ * returned `offset 5, kept 4` under a bare majority. This file's earlier argument, that the outliers
+ * are always a minority of one and never agree with each other, was an observation on three seasons
+ * of one show and not something the code enforced.
+ *
+ * WHAT THE GAP COSTS, measured over the live corpus (63 shows, 189 Netflix seasons, 65 closed
+ * pairings, 1037 true pairs, 2026-09-13, `scripts/calibrate-episode-anchors.test.ts`, the synopsis
+ * grid at the shipped floor 0.20 and margin 0.05):
+ *
+ * | gap | pairings speaking | anchors kept | wrong |
+ * | --- | --- | --- | --- |
+ * | 0 (bare majority) to 3 | 21 | 466 | 0 |
+ * | 4 | 18 | 455 | 0 |
+ * | 5 | 15 | 436 | 0 |
+ *
+ * NOTHING, UP TO AND INCLUDING 3. The vote shape is why: of the 21 pairings that reach a consensus
+ * at the shipped cell, the smallest margin of victory is 3 and the distribution runs 3, 4, 6, 7, 9,
+ * 10 and up to 30. A gap of 4 is the first that costs anything, and it costs three pairings.
+ *
+ * WHAT IT BUYS, at the loosest cell in the grid (floor 0.10, margin 0), which is where a wrong
+ * anchor survives the vote at all:
+ *
+ * | gap | pairings speaking | anchors kept | wrong |
+ * | --- | --- | --- | --- |
+ * | 0 to 2 | 18 | 509 | 4 |
+ * | 3 | 17 | 505 | 0 |
+ * | 4 | 16 | 500 | 0 |
+ *
+ * So 3 is the smallest gap that removes every wrong anchor a majority keeps ANYWHERE in the grid,
+ * and it is free at the cell that ships. Below 3 it is measurably worse and above 3 it is measurably
+ * more expensive, which is the whole argument for the number.
+ *
+ * IT IS A GAP AND NOT A RATIO because the populations are small. A ratio of two refuses `3 against
+ * 2` and accepts `8 against 4`, where the second is the shakier of the two; a flat gap asks the same
+ * question of a season with 5 anchors as of one with 30.
+ */
+export const MIN_CONSENSUS_GAP = 3
+
+/**
+ * The OFFSET CONSENSUS of 5.4 P4 rule 3: the shift a set of anchors agrees on, or nothing.
+ *
+ * Every anchor implies an offset, `our number - their number`. The majority offset is taken and every
+ * anchor that disagrees with it is DISCARDED, which is what removes the one or two wrong anchors a
+ * synopsis score accepts per season (`MIN_CONSENSUS_ANCHORS` carries the table).
+ *
+ * THE VOTE IS A HEURISTIC. It says what most of these anchors think, never what is true, and where
+ * the scorer is wrong the same way several times over it is wrong with them (`MIN_CONSENSUS_GAP`
+ * carries the executed case and what the gap recovers). Everything downstream of it is still order
+ * placed inside a bracket, which is the safety argument rule 3 actually rests on.
+ *
+ * Four refusals, and each one is a season that mints nothing rather than a season that mints on the
+ * best guess available:
+ *
+ * - fewer than `MIN_CONSENSUS_ANCHORS` anchors in total, so there is no population to take a
+ *   majority of;
+ * - fewer than `MIN_CONSENSUS_ANCHORS` agreeing on the top offset, however many anchors there are;
+ * - a bare PLURALITY: the top offset must be held by strictly more than half of the anchors. Five of
+ *   twelve is the shape this refuses, and it is a real one (the same three seasons scored with a
+ *   five letter token cut split season 2 that way, `MIN_SYNOPSIS_TOKEN`);
+ * - a CONTESTED majority: the winner must outnumber the runner-up by `MIN_CONSENSUS_GAP`. This is
+ *   the refusal a bare majority does not have, and the one that turns four wrong anchors agreeing
+ *   against three right ones into nothing minted rather than four wrong pairs.
+ *
+ * MONOTONICITY IS NOT TESTED HERE, AND THAT IS NOT AN OMISSION EITHER. Every kept anchor shares one
+ * offset, so `to.number = from.number + offset` for all of them; the caller builds the proposal in
+ * ascending `from.number` and the reference slots are in ascending number, so the kept set is
+ * already increasing in both indices. A monotone filter over one offset can only ever return its
+ * input, which `range.test.ts` pins rather than leaves as an argument. The same goes for asking the
+ * kept anchors to cover a CONTIGUOUS span: a real season anchors 8 rows of 24 and the span between
+ * them is exactly what order is for, so the test would refuse every true season measured.
+ *
+ * THERE IS NO TIE CLAUSE. A tie for the top means two offsets hold k anchors each out of at least
+ * 2k, so `top * 2 <= anchors.length` is true and the majority test has already refused it: a
+ * separate tie test would be a branch nothing can reach. Ties are still broken toward the lowest
+ * offset when the counts are ranked, so the offset named in a refusal that never happens does not
+ * depend on which offset the map held first.
+ *
+ * REFUSES AN ANCHOR WITH NO NUMBER on either side rather than reading one as `NaN`. Inside
+ * `alignByTitle` both lists are number-filtered and the case cannot arise; an external caller gets a
+ * refusal, where the earlier `to.number!` gave every unnumbered anchor the one `NaN` offset key and
+ * then filtered them all back out, answering `consensus: NaN`.
+ *
+ * `gap` and `floor` are the calibration's knobs, defaulted to the shipped constants: the sweep in
+ * `scripts/calibrate-episode-anchors.test.ts` drives THIS function at every cell of its grid rather
+ * than a copy of it, which is the only way a grid can speak about what ships.
+ */
+export const offsetConsensus = (
+  anchors: readonly Anchor[],
+  options: { gap?: number, floor?: number } = {}
+): { offset: number, anchors: Anchor[] } | null => {
+  const floor = options.floor ?? MIN_CONSENSUS_ANCHORS
+  const gap = options.gap ?? MIN_CONSENSUS_GAP
+  const numbered = anchors.filter(anchor => anchor.to.number !== null && anchor.from.number !== null)
+  if (numbered.length < floor) return null
+  const offsetOf = (anchor: Anchor): number => anchor.to.number! - anchor.from.number!
+  const votes = new Map<number, number>()
+  for (const anchor of numbered) votes.set(offsetOf(anchor), (votes.get(offsetOf(anchor)) ?? 0) + 1)
+  const ranked = [...votes.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])
+  const [offset, top] = ranked[0]!
+  if (top < floor) return null
+  if (top * 2 <= numbered.length) return null
+  if (top - (ranked[1]?.[1] ?? 0) < gap) return null
+  return { offset, anchors: numbered.filter(anchor => offsetOf(anchor) === offset) }
+}
+
+/**
+ * Rule 3's SYNOPSIS anchors: the third and weakest anchor source, and the only one behind a consensus.
+ *
+ * Every test `scoredAnchors` applies is applied here too, on the synopsis keys instead of the title
+ * keys and at `SYNOPSIS_ANCHOR_FLOOR` and `SYNOPSIS_ANCHOR_MARGIN`: the best score clears the floor,
+ * it beats the runner-up taken over ALL numbers, the number is not one an exact match or a weld
+ * already reached, the number is reached by one of their rows alone, and it crosses no exact anchor.
+ * Then, and this is the part that is new to this file, `offsetConsensus` throws away every anchor
+ * that disagrees with the majority shift and refuses the whole set when there is no majority to
+ * disagree with.
+ *
+ * `taken` is the rows and numbers the exact matches and the welds already hold, passed in rather than
+ * recomputed, because a synopsis reaching a number a stronger test already reached is the
+ * displacement `scoredAnchors` documents: it would kill both under the one-claim-per-number filter.
+ *
+ * `proposed` is returned beside the answer because the two are different claims and a case that
+ * cannot see both cannot tell a gate that removed an outlier from a scorer that never proposed one.
+ *
+ * `floor`, `margin` and `gap` default to the shipped constants and exist so the calibration grid in
+ * `scripts/calibrate-episode-anchors.test.ts` can sweep THIS function rather than a copy of it. A
+ * grid swept over a re-implementation measures the re-implementation, which is how the first version
+ * of this rule shipped with no negative control at all.
+ */
+export const synopsisAnchors = (options: {
+  ordered: readonly SideEpisode[]
+  canonical: readonly CanonicalEpisode[]
+  taken: readonly Anchor[]
+  anchors: readonly Anchor[]
+  floor?: number
+  margin?: number
+  gap?: number
+}): { proposed: Anchor[], anchors: Anchor[], consensus: number | null } => {
+  const { ordered, canonical, taken, anchors } = options
+  const floor = options.floor ?? SYNOPSIS_ANCHOR_FLOOR
+  const margin = options.margin ?? SYNOPSIS_ANCHOR_MARGIN
+  const takenRows = new Set(taken.map(match => match.from.uri))
+  const takenSlots = new Set(taken.map(match => match.toIndex))
+  const slots = canonical.map(slot => slot.rows.map(row => ({ row, keys: synopsisKeysOf(row) })))
+  const nothing = { proposed: [], anchors: [], consensus: null }
+  if (slots.every(slot => slot.every(entry => !entry.keys.length))) return nothing
+
+  const proposed: Anchor[] = []
+  ordered.forEach((row, fromIndex) => {
+    if (takenRows.has(row.uri)) return
+    const keys = synopsisKeysOf(row)
+    if (!keys.length) return
+    let best = { index: -1, score: 0, key: '', row: null as SideEpisode | null }
+    let second = 0
+    slots.forEach((slot, index) => {
+      const found = bestAgainst(keys, slot)
+      if (found.score > best.score) {
+        second = best.score
+        best = { index, score: found.score, key: found.key, row: found.row }
+      } else if (found.score > second) second = found.score
+    })
+    if (best.score < floor || !best.row) return
+    if (best.score - second < margin) return
+    if (takenSlots.has(best.index)) return
+    const match: Anchor = {
+      from: row,
+      to: best.row,
+      fromIndex,
+      toIndex: best.index,
+      key: best.key,
+      // the consensus is not known yet, so it is stamped below once the majority is taken; rounded
+      // for the trace, and only after both comparisons above, which read the full value
+      synopsis: { score: Math.round(best.score * 1000) / 1000, consensus: 0 },
+    }
+    if (clearsAnchors(match, anchors)) proposed.push(match)
+  })
+  // CONSENSUS FIRST, THEN one row per number, where `scoredAnchors` above does only the second. The
+  // order is worth three anchors of the 24 these three seasons reach, because the two filters
+  // DISAGREE about what a collision means: a wrong anchor landing on a number a true one also
+  // reached is two claims on one number, so the uniqueness filter drops BOTH and the true anchor
+  // pays for the wrong one (season 1 loses `18 onto 18` to `24 onto 18`, season 2 `21 onto 20` to
+  // `22 onto 20`, season 3 `9 onto 9` to `4 onto 9`; measured 2026-09-13). Consensus removes the
+  // wrong one on the evidence of every other anchor, so the number is uncontested by the time
+  // uniqueness reads it. It is safe in that order only because consensus itself is a majority over
+  // offsets rather than a decision about one number: it cannot pick between two claims, it can only
+  // throw away the claims that disagree with the season
+  const agreed = offsetConsensus(proposed, { gap: options.gap })
+  if (!agreed) return { ...nothing, proposed }
+  const claims = new Map<number, number>()
+  for (const match of agreed.anchors) claims.set(match.toIndex, (claims.get(match.toIndex) ?? 0) + 1)
+  return {
+    proposed,
+    anchors: agreed.anchors
+      .filter(match => claims.get(match.toIndex) === 1)
+      .map(match => ({ ...match, synopsis: { ...match.synopsis!, consensus: agreed.offset } })),
+    consensus: agreed.offset,
+  }
+}
+
+/**
  * Rule 3's first step: the ANCHORS, and the two ordered lists they sit in.
  *
  * An anchor is exact `stripTitle` equality, non-generic, and unique on each side, then MONOTONE: the
@@ -664,8 +1137,9 @@ const scoredAnchors = (options: {
  *   number's, however many origins spell it);
  * - a canonical number two of their rows reach, which is one row too many for one episode.
  *
- * THEN, AND ONLY WHERE THOSE CANNOT BRACKET AT ALL, the scored anchors of `scoredAnchors` are added
- * (2026-09-13). It is a FALLBACK and not a replacement, and the live sweep is why: as a replacement
+ * THEN, AND ONLY WHERE THOSE CANNOT BRACKET AT ALL, the scored anchors of `scoredAnchors` are added,
+ * and after them the synopsis anchors of `synopsisAnchors` (2026-09-13). Both are FALLBACKS and
+ * neither is a replacement, and the live sweep is why: as a replacement
  * at these constants the anchor recall rises from 66.0% to 86.5% and rule 3's OWN contribution falls
  * by two thirds, 250 rows placed by order becoming 87, 46 of 65 pairings speaking becoming 17, 810
  * pairs minted becoming 367. Every extra anchor consumes a row a bracket would otherwise have
@@ -687,8 +1161,24 @@ const scoredAnchors = (options: {
  * is the strongest thing said about them.
  *
  * So below `MIN_ALIGNED` exact anchors, which is exactly where the shipped rule mints NOTHING, the
- * score is consulted; at or above it this function returns what it always returned, byte for byte.
- * That is what makes the change purely additive: no pair the exact rule minted can be lost.
+ * scores are consulted; at or above it this function returns what it always returned, byte for byte.
+ * That is what makes both changes purely additive: no pair the exact rule minted can be lost.
+ *
+ * THE THREE SOURCES ARE ORDERED BY STRENGTH AND EACH ONE IS OFFERED WHAT THE LAST DID NOT TAKE. An
+ * exact equality holds its row and its number against both scores, a weld holds its own against the
+ * synopsis, and the synopsis is never asked about a row or a number that is already spoken for. The
+ * union goes through `longestMonotone` exactly as it did, so a crossing anchor from any source is
+ * dropped rather than allowed to bend the alignment.
+ *
+ * CONSENSUS GATES THE SYNOPSIS ANCHORS AND NOT THE WELDS, deliberately, and the two sweeps in
+ * `SCORED_ANCHOR_FLOOR` and `MIN_CONSENSUS_ANCHORS` are the whole argument. The weld is a
+ * near-equality: at floor 0.60 with margin 0.15 it proposed 1000 anchors on the live sweep with 0
+ * wrong and 0 of 68 hard negatives speaking, so a consensus over it would gate a population with no
+ * measured errors in it and could only cost recall. It would cost a specific pairing, too: the fifth
+ * pairing the weld unlocks is Blue Exorcist season 3 onto the Shimane Illuminati Saga, which has ONE
+ * exact anchor and ONE weld, and a three-vote consensus kills it. The synopsis is the opposite
+ * population: at floor 0.20 it is wrong 1 to 2 times per season BEFORE the gate, which is what a
+ * weak test looks like, and consensus is the price of admitting one at all.
  *
  * Every list is sorted before it is read (their rows by number then uri, ours by number, the
  * specials by uri), so the alignment is a function of the two lists and not of the scan's order.
@@ -748,15 +1238,25 @@ export const alignByTitle = (
   const single = matches.filter(match => claims.get(match.toIndex) === 1)
   const exact = longestMonotone(single)
   const found = { theirs: ordered, canonical, specials, matches: single.length }
-  if (exact.length >= MIN_ALIGNED) return { ...found, anchors: exact, scored: 0 }
+  if (exact.length >= MIN_ALIGNED) {
+    return { ...found, anchors: exact, scored: 0, synopsis: 0, consensus: null }
+  }
 
   // THE FALLBACK. `single` rather than `exact` decides what is taken, so a match the monotone filter
   // dropped still holds its row and its number against the score: it is an exact equality, and the
   // reason it is not an anchor is that it crosses another one, which is not a licence to weld it
   const scored = scoredAnchors({ ordered, canonical, matches: single, anchors: exact })
-  const union = [...exact, ...scored].sort((a, b) => a.fromIndex - b.fromIndex)
+  // and the synopsis is offered what the two title tests did not take, in their order of strength
+  const synopsis = synopsisAnchors({ ordered, canonical, taken: [...single, ...scored], anchors: exact })
+  const union = [...exact, ...scored, ...synopsis.anchors].sort((a, b) => a.fromIndex - b.fromIndex)
   const anchors = longestMonotone(union)
-  return { ...found, anchors, scored: anchors.filter(anchor => anchor.scored).length }
+  return {
+    ...found,
+    anchors,
+    scored: anchors.filter(anchor => anchor.scored).length,
+    synopsis: anchors.filter(anchor => anchor.synopsis).length,
+    consensus: synopsis.consensus,
+  }
 }
 
 /**
@@ -977,9 +1477,11 @@ export const pairsBySequence = (
       to: anchor.to,
       fromNumber: anchor.from.number!,
       toNumber: anchor.to.number!,
-      evidence: anchor.scored
-        ? { scored: anchor.key, onto: anchor.scored.onto, score: anchor.scored.score }
-        : { anchor: anchor.key },
+      evidence: anchor.synopsis
+        ? { synopsisScore: anchor.synopsis.score, consensus: anchor.synopsis.consensus }
+        : anchor.scored
+          ? { scored: anchor.key, onto: anchor.scored.onto, score: anchor.scored.score }
+          : { anchor: anchor.key },
     } satisfies Pair))
   const bracket = forcedByBracket(alignment)
   const closure = closeWithSpecials({ alignment, unequal: bracket.unequal })
@@ -1028,6 +1530,12 @@ export type Verdict =
     pairs: Pair[]
     coverage: number
     /**
+     * How many of `pairs` rule 1's GAP CLOSURE placed rather than the days, and absent for the two
+     * rules that have no closure. Zero is a real answer and means the days reached every row an
+     * equality could have added, which is the usual case.
+     */
+    gaps?: number
+    /**
      * The shape of rule 3's alignment, for the `INCLUDES` evidence, and absent for the other rules.
      *
      * Counted BEFORE the window, where `pairs` is counted after it: the numbers describe what the
@@ -1037,6 +1545,9 @@ export type Verdict =
       anchors: number
       /** How many of `anchors` were SCORED rather than exact equalities, which a trace has to know. */
       scored: number
+      /** How many came from a SYNOPSIS, and the offset those agreed on (NULL when none was taken). */
+      synopsis: number
+      consensus: number | null
       forced: number
       closure: number
       unequal: number
@@ -1050,15 +1561,15 @@ export type Verdict =
  *
  * | outcome | when |
  * | --- | --- |
- * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window and they are not a skew |
+ * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window and they are not a skew, plus whatever `closeDatesWithTitles` could close on top of them |
  * | `titles` | rule 1 did not, the candidate's origin does not retranslate, and rule 2 cleared both halves of its bar |
  * | `sequence` | neither did, and rule 3's alignment placed a row by ORDER: `minAnchorsFor` anchors, at least one row forced by a bracket or by 3.4a's closure AND still inside the window, `MIN_ALIGNED` pairs inside the window, and not the same offset rule 1 refused as a skew |
  * | `retranslates` | nothing was proven and rule 2 was refused outright (Netflix, 4 exact of 25, the best wrong pair above the true one, 2026-09-10) |
  * | `date-skew` | rule 1's pairs were a constant offset the candidate's own numbering cannot absorb (`scheduleSkew`) and neither rule 2 nor rule 3 minted |
  * | `ambiguous-day` | rule 1 reached reference days and a day named two reference numbers |
  * | `unequal-gap` | rule 3 anchored and a bracket counted a different number of rows on each side, so order placed nothing |
- * | `no-anchors` | both sides carry non-generic titles and rule 3 found fewer anchors than `minAnchorsFor` asks of it, which is two, or three where no exact equality holds the alignment down (Netflix's season 1, 3.4a point 4) |
- * | `no-titles` | both sides carry non-generic titles, rule 2 missed its bar, and rule 3 anchored with nothing to force, or nothing it forced landed inside the window |
+ * | `no-anchors` | both sides carry non-generic titles or synopses and rule 3 found fewer anchors than `minAnchorsFor` asks of it, which is two, or three where no exact equality holds the alignment down (Netflix's season 1, 3.4a point 4), a synopsis set that met no offset majority included |
+ * | `no-titles` | both sides carry that material, rule 2 missed its bar, and rule 3 anchored with nothing to force, or nothing it forced landed inside the window |
  * | `no-dates` | everything else: the date rule could not run or its days met nothing, and the title rules had no material either |
  *
  * RULE 3 RUNS THIRD, and where rule 2 is REFUSED rather than merely short of its bar. Two things fix
@@ -1095,7 +1606,13 @@ export const decideCandidate = (options: {
   const skew = dated.length >= MIN_ALIGNED
     ? scheduleSkew({ runLength, episodes: candidate.episodes, pairs: dated })
     : null
-  if (skew === null && dated.length >= MIN_ALIGNED) return { ok: true, rule: 'dates', pairs: dated, coverage: 1 }
+  if (skew === null && dated.length >= MIN_ALIGNED) {
+    // THE GAP CLOSURE runs on the pairs the window already kept, and its own output goes through the
+    // window again: a row an equality reaches beyond `1..runLength` is the neighbouring cour's and is
+    // dropped exactly as a dated one is
+    const gaps = inWindow(closeDatesWithTitles({ reference, theirs: candidate.episodes, pairs: dated }))
+    return { ok: true, rule: 'dates', pairs: [...dated, ...gaps], coverage: 1, gaps: gaps.length }
+  }
 
   // rule 2, refused OUTRIGHT for a retranslating origin, where rule 3 below is not (3.4a)
   const titles = candidate.retranslates ? null : pairsByTitle(reference, candidate.episodes)
@@ -1133,6 +1650,8 @@ export const decideCandidate = (options: {
       sequence: {
         anchors: sequence.anchored.length,
         scored: sequence.alignment.scored,
+        synopsis: sequence.alignment.synopsis,
+        consensus: sequence.alignment.consensus,
         forced: sequence.forced.length,
         closure: sequence.closure.length,
         unequal: sequence.unequal,
@@ -1154,15 +1673,29 @@ export const decideCandidate = (options: {
   if (sequence.unequal) return { ok: false, reason: 'unequal-gap' }
   // `no-titles` says the title rule had material on both sides and missed its bar, which is the more
   // specific of the two; `no-dates` is the fallback, and it covers both "one side carries no day" and
-  // "the days met nothing", since neither rule then had anything to be refused ON
-  const titledBothSides = reference.some(episode => keysOf(episode).length)
-    && candidate.episodes.some(episode => keysOf(episode).length)
-  if (!titledBothSides) return { ok: false, reason: 'no-dates' }
+  // "the days met nothing", since neither rule then had anything to be refused ON.
+  //
+  // A SYNOPSIS IS MATERIAL TOO, since 2026-09-13. Rule 3 anchors on one, so a candidate whose rows
+  // carry synopses and no titles at all (Netflix seasons titled `Episode N`) did have something to
+  // be refused on, and calling that `no-dates` would name the one axis that was never consulted
+  const material = (episode: SideEpisode): boolean => Boolean(keysOf(episode).length || episode.synopsis.length)
+  const bothSides = reference.some(material) && candidate.episodes.some(material)
+  if (!bothSides) return { ok: false, reason: 'no-dates' }
   return {
     ok: false,
     reason: sequence.alignment.anchors.length < minAnchorsFor(sequence.alignment) ? 'no-anchors' : 'no-titles',
   }
 }
+
+/**
+ * Which rule placed ONE pair, which is the verdict's own for every pair except a gap closure.
+ *
+ * Read off the evidence rather than off a field, because the evidence IS the rule here: a shape
+ * carrying `gap` was placed by an anchor equality under a standing date alignment and by nothing
+ * else, and the two can never disagree because only `closeDatesWithTitles` writes that shape.
+ */
+export const ruleOfPair = (pair: Pair, rule: 'dates' | 'titles' | 'sequence'): string =>
+  'gap' in pair.evidence ? 'dates-gap' : rule
 
 /** The `INCLUDES` range of 3.4, as literal properties: the hull of the pairs on both sides. */
 export type Hull = {
@@ -1219,7 +1752,8 @@ const OURS_SCAN =
   `MATCH (c:Cluster)<-[:MEMBER_OF]-(o:Media)-[oh:HAS_EPISODE]->(oe:Episode)<-[:PROFILE_OF]-(poe:EpisodeProfile)
    WHERE c.scope = 'RUN' AND oh.claimer = o.origin AND oe.origin = o.origin
    RETURN c.id AS runCluster, o.uri AS memberUri, oe.uri AS uri, oe.origin AS origin,
-     oe.episodeNumber AS number, poe.day AS day, poe.titleKeys AS keys, oh.key AS hung
+     oe.episodeNumber AS number, poe.day AS day, poe.titleKeys AS keys,
+     poe.synopsisKeys AS synopsis, oh.key AS hung
    ORDER BY runCluster, uri`
 
 /**
@@ -1247,7 +1781,7 @@ const SEASON_SCAN =
    RETURN c.id AS runCluster, r.uri AS memberUri, s.uri AS seasonUri, l.key AS via,
      coalesce(ps.countDistinct, ps.countStated) AS theirCount, ps.retranslates AS retranslates,
      se.uri AS uri, se.origin AS origin, se.episodeNumber AS number,
-     pse.day AS day, pse.titleKeys AS keys, h.key AS hung
+     pse.day AS day, pse.titleKeys AS keys, pse.synopsisKeys AS synopsis, h.key AS hung
    ORDER BY runCluster, seasonUri, uri, memberUri, via`
 
 /**
@@ -1260,7 +1794,8 @@ const LEND_SCAN =
   `MATCH (c:Cluster)<-[:MEMBER_OF]-(m:Media)-[h:HAS_EPISODE]->(e:Episode)<-[:PROFILE_OF]-(pe:EpisodeProfile)
    WHERE c.scope = 'RUN' AND h.claimer <> m.origin
    RETURN c.id AS runCluster, m.uri AS memberUri, h.claimer AS claimer, e.uri AS uri, e.origin AS origin,
-     e.episodeNumber AS number, pe.day AS day, pe.titleKeys AS keys, h.key AS hung
+     e.episodeNumber AS number, pe.day AS day, pe.titleKeys AS keys,
+     pe.synopsisKeys AS synopsis, h.key AS hung
    ORDER BY runCluster, claimer, uri, hung`
 
 /** The fourth input: every episode `SAME_AS` a source stated, which is the only reader that table has. */
@@ -1306,7 +1841,13 @@ const asNumber = (value: unknown): number | null =>
 const listOf = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : []
 
-/** `EpisodeProfile.titleKeys` as the keys alone: `[{key, score, language, class}]` read off a JSON column. */
+/**
+ * A profile key column as the keys alone, off a JSON column.
+ *
+ * Both columns it reads are lists of objects carrying a `key`: `titleKeys` is
+ * `[{key, score, language, class}]` and `synopsisKeys` is `[{key, score, language}]`, so one reader
+ * serves both and a column that arrives as anything else reads as no keys rather than as a throw.
+ */
 const keyListOf = (value: unknown): string[] => {
   if (typeof value !== 'string' || !value) return []
   try {
@@ -1328,6 +1869,7 @@ const episodeOf = (row: Record<string, unknown>): SideEpisode => ({
   number: asNumber(row.number),
   day: asNumber(row.day),
   keys: keyListOf(row.keys),
+  synopsis: keyListOf(row.synopsis),
   hung: String(row.hung ?? ''),
 })
 
@@ -1532,14 +2074,18 @@ export const rangePlugin: Plugin = {
           continue
         }
 
-        if (verdict.rule === 'dates') dated += verdict.pairs.length
+        if (verdict.rule === 'dates') dated += verdict.pairs.length - (verdict.gaps ?? 0)
         else if (verdict.rule === 'titles') titled += verdict.pairs.length
         else sequenced += verdict.pairs.length
+        titled += verdict.gaps ?? 0
         for (const pair of verdict.pairs) {
           episodeLinks.push({
             fromUri: pair.from.uri,
             toUri: pair.to.uri,
-            reason: verdict.rule,
+            // THE ROW SAYS WHICH RULE PLACED IT, not which rule decided the candidate. A gap closure
+            // rides a `dates` verdict and is proven by an equality, so a trace that read the verdict
+            // alone would print `dates` over a row no date reached (3.2)
+            reason: ruleOfPair(pair, verdict.rule),
             confidence: verdict.rule === 'dates' ? 1 : verdict.coverage,
             evidence: pair.evidence,
             fromNumber: pair.fromNumber,
