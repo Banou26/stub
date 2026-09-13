@@ -18,9 +18,14 @@
  *   NETFLIX SIDE   every season of the series and every episode title in it, in the order
  *                  `parseUnogsSeasons` would publish (epnum when every episode declares a distinct
  *                  one, else payload order), because the number the app publishes is the POSITION.
+ *                  Plus the episode SYNOPSIS, taken from Netflix's own season query rather than from
+ *                  unOGS, for the reason on `netflixSeason` below.
  *   CANONICAL SIDE every ani.zip episode of every AniList run the franchise search returns, with its
- *                  `en` and `ja` titles (the two the anizip extractor publishes) and its air date.
- *                  `specials=1` is required: 3.4a's insertions are the `S*` keys.
+ *                  `en` and `ja` titles (the two the anizip extractor publishes), its air date and
+ *                  its `overview`, which is the description the anizip extractor publishes
+ *                  (`src/sources/anizip/extractor.ts:68`) and so the text the reference side of rule
+ *                  3's synopsis anchor scores. `specials=1` is required: 3.4a's insertions are the
+ *                  `S*` keys.
  *
  * WHICH (season, run) PAIRS ARE TRUTH IS NOT DECIDED HERE. The harness closes each pairing itself
  * from exact title anchors, the count surplus and the specials' dates, and discards what does not
@@ -165,6 +170,76 @@ const anizip = async anilistId => {
   return undefined
 }
 
+/* ---------------------------------------------------------------------------------------- Netflix */
+
+/**
+ * One Netflix season's own episode list, for the SYNOPSIS the unOGS payload does not carry well.
+ *
+ * WHY NOT unOGS, which is already in hand and free. Its `synopsis` field is a different text in a
+ * different language: measured 2026-09-13 against `src/sources/unogs/netflix.ts`'s own answer for
+ * Mushoku Tensei's three seasons, 6 of 61 rows agree and the rest are Japanese, empty, or the string
+ * `THIS EPISODE'S SYNOPSIS IS COMING SOON`. The app reads `contextualSynopsis` under
+ * `x-netflix.context.locales: en`, so that is what a calibration of the synopsis anchor must score.
+ *
+ * The query, its two variables and the pagination rule are `NETFLIX_SEASON_QUERY`,
+ * `seasonVariablesFor` and `fetchNetflixSeasonEpisodes` restated (`src/sources/unogs/netflix.ts`),
+ * including the trap that the pagination variable is `cursor` and an unknown one is ignored in
+ * silence, so a page bringing nothing new ends the walk rather than looping. The harness controls
+ * this restatement against the shipped source's own recorded answer for those three seasons.
+ */
+const NETFLIX_SEASON_QUERY = { id: '4cf0a279-dd32-454d-9758-486359c0d48b', version: 102 }
+
+const netflixSeasonPage = async (seasonId, cursor) => {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await timed('https://www.netflix.com/graphql', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'x-netflix.context.locales': 'en',
+      },
+      body: JSON.stringify({
+        operationName: 'PreviewModalEpisodeSelectorSeasonEpisodes',
+        variables: { seasonId, count: 40, opaqueImageFormat: 'WEBP', artworkContext: {}, ...(cursor === undefined ? {} : { cursor }) },
+        extensions: { persistedQuery: NETFLIX_SEASON_QUERY },
+      }),
+    }).catch(() => undefined)
+    const body = await res?.json().catch(() => undefined)
+    if (body !== undefined) return body
+    await sleep(1500 * (attempt + 1))
+  }
+  return undefined
+}
+
+const netflixSeason = async seasonId => {
+  const rows = []
+  const seen = new Set()
+  let cursor
+  for (let page = 0; page < 20; page++) {
+    const body = await netflixSeasonPage(seasonId, cursor)
+    const connection = body?.data?.videos?.[0]?.episodes
+    if (!connection) return { rows, stale: Boolean(body?.errors?.length) && !rows.length }
+    const fresh = (connection.edges ?? [])
+      .map(edge => edge?.node)
+      .filter(node => node && typeof node.videoId === 'number' && !seen.has(node.videoId))
+    for (const node of fresh) {
+      seen.add(node.videoId)
+      rows.push({
+        videoId: node.videoId,
+        number: typeof node.number === 'number' ? node.number : null,
+        title: typeof node.title === 'string' ? node.title : '',
+        synopsis: typeof node.contextualSynopsis?.text === 'string' ? node.contextualSynopsis.text : '',
+      })
+    }
+    const info = connection.pageInfo
+    if (info?.hasNextPage === false) return { rows, stale: false }
+    if (!info?.endCursor || info.endCursor === cursor || !fresh.length) return { rows, stale: false }
+    cursor = info.endCursor
+    await sleep(400)
+  }
+  return { rows, stale: false }
+}
+
 /* -------------------------------------------------------------------------------------------- pull */
 
 const strip = text => String(text ?? '')
@@ -213,12 +288,33 @@ for (const franchise of FRANCHISES) {
     .filter(season => typeof season?.season === 'number' && Array.isArray(season.episodes))
     .map(season => ({
       seasonNumber: season.season,
+      // the season's own video id, which is what Netflix's episode query is keyed by; unOGS
+      // republishes it per episode, so it is read off the first row that carries one
+      seasonId: season.episodes.map(episode => episode?.seasid).find(id => typeof id === 'number') ?? null,
       rows: inNetflixOrder(season.episodes.map(episode => ({
         epnum: typeof episode?.epnum === 'number' ? episode.epnum : undefined,
         title: typeof episode?.title === 'string' ? episode.title : '',
-      }))).map((episode, index) => ({ number: index + 1, title: episode.title })),
+      }))).map((episode, index) => ({ number: index + 1, title: episode.title, synopsis: '' })),
     }))
   if (!seasons.length) { console.log(`${franchise}: nf ${hit.nfid}, no readable seasons`); continue }
+
+  // THE SYNOPSIS IS ATTACHED BY POSITION, and only when the two lists are the same length. Both
+  // lists are one Netflix season in Netflix's own order, so position is the join; a length
+  // disagreement means one of the two is not that season and the whole season goes without rather
+  // than carrying a shifted text, which is the one error a calibration of a pairing rule cannot see.
+  for (const season of seasons) {
+    if (season.seasonId === null) { console.log(`  ${franchise} S${season.seasonNumber}: no seasid, no synopses`); continue }
+    const answer = await cached(`nfseason-${season.seasonId}`, async () => {
+      await sleep(600)
+      return await netflixSeason(season.seasonId)
+    })
+    const rows = answer?.rows ?? []
+    if (rows.length !== season.rows.length) {
+      console.log(`  ${franchise} S${season.seasonNumber}: netflix ${rows.length} rows against unOGS ${season.rows.length}, no synopses`)
+      continue
+    }
+    season.rows.forEach((row, index) => { row.synopsis = rows[index]?.synopsis ?? '' })
+  }
 
   const candidates = await cached(`anilist-${franchise}`, async () => {
     await sleep(2000)
@@ -234,6 +330,9 @@ for (const franchise of FRANCHISES) {
       key,
       titles: [episode?.title?.en, episode?.title?.ja].filter(title => typeof title === 'string' && title.trim()),
       airDate: episode?.airDate ?? (episode?.airDateUtc ? String(episode.airDateUtc).slice(0, 10) : null),
+      // the REFERENCE side's synopsis. `overview` is the field the anizip extractor publishes as a
+      // description, so it is the text `EpisodeProfile.synopsisKeys` is built from on that origin
+      overview: typeof episode?.overview === 'string' && episode.overview.trim() ? episode.overview : null,
     }))
     if (!episodes.length) continue
     runs.push({
@@ -257,4 +356,12 @@ for (const franchise of FRANCHISES) {
 
 writeFileSync(OUT, JSON.stringify({ fetched: new Date().toISOString(), shows }))
 const seasonCount = shows.reduce((total, show) => total + show.seasons.length, 0)
+// The synopsis coverage is printed rather than assumed: the harness refuses a corpus that carries
+// none, and a pull that silently attached none must be readable here rather than three commands later
+const theirRows = shows.flatMap(show => show.seasons.flatMap(season => season.rows))
+const ourRows = shows.flatMap(show => show.runs.flatMap(run => run.episodes))
 console.log(`\n${shows.length} shows, ${seasonCount} Netflix seasons -> ${OUT}`)
+console.log(
+  `synopses: ${theirRows.filter(row => row.synopsis).length} of ${theirRows.length} Netflix rows, `
+  + `${ourRows.filter(row => row.overview).length} of ${ourRows.length} ani.zip episodes`
+)

@@ -770,7 +770,7 @@ Smoking Behind the Supermarket with You
 
 PENDING on "new store": the case says this cannot be asked of any store yet.
 
-- the group [anilist:196187, anizip:19479, jw:488719-515179, kitsu:50040, mal:62076, nf:82757039-1, offline:mal-62076] would be held by: claim (other origins), and a guard of 5.2 refused: jw:488719-515179 nf:82757039-1: count-mismatch; jw:488719-515179 nf:82757039-1: no-titles; nf:82757039-1 jw:488719-515179: retranslates
+- the group [anilist:196187, anizip:19479, jw:488719-515179, kitsu:50040, mal:62076, nf:82757039-1, offline:mal-62076] would be held by: claim (other origins), and a guard of 5.2 refused: jw:488719-515179 nf:82757039-1: count-mismatch; jw:488719-515179 nf:82757039-1: no-anchors; nf:82757039-1 jw:488719-515179: retranslates
 
 - the containment [anilist:196187 part of disney:25eb842b-a4c2-4120-9c86-7feec790de08] is claimed by nothing: no source said so, and 3.3 refuses the address echo without downgrading it
 

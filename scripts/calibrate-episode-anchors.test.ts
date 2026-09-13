@@ -80,6 +80,35 @@
  * `titleSimilarity` is frizbee and initialises itself, so its numbers were unchanged under that
  * mutation. `setupFiles` is what the two `franchiseTitle` controls need, and those controls exist to
  * establish why the sweep does not use `bestTitleScore`.
+ *
+ * THE SYNOPSIS AXIS, ADDED 2026-09-13, AND WHY IT IS HERE AT ALL. Rule 3 gained a third anchor
+ * source that scores episode SYNOPSES, and it shipped with no negative control: this file and
+ * `calibrate-anchor-corpus.test.ts` both hardcoded `synopsis: []` to compile, and no case anywhere
+ * carried an episode description, so the sweep, its hard negatives and the 800-row replay all ran
+ * the new rule on empty strings and would have passed whatever it did. The only evidence behind
+ * `SYNOPSIS_ANCHOR_FLOOR` was three seasons of one show scored against TMDB, which is not even the
+ * reference side the app holds.
+ *
+ * What closes it, and each half is a real source rather than a stand-in:
+ *
+ *   THEIR SIDE    Netflix's own `contextualSynopsis`, by season id, through the same persisted query
+ *                 `src/sources/unogs/netflix.ts` sends. NOT unOGS's `synopsis` field, which is a
+ *                 different text in a different language on 55 of Mushoku Tensei's 61 rows.
+ *   OUR SIDE      ani.zip's `overview`, which is the description the anizip extractor publishes and
+ *                 therefore the reference column `EpisodeProfile.synopsisKeys` is built from.
+ *   POPULATION    63 shows, 189 Netflix seasons, 2775 of 3738 Netflix rows and 3666 of 6147 ani.zip
+ *                 episodes carrying a synopsis; 65 closed pairings, 1037 true pairs, 68 same-show
+ *                 hard negatives and 195 cross-show negatives.
+ *
+ * And the guard that keeps it closed: `loadCorpus` REFUSES a corpus whose synopsis column is empty,
+ * with the command that refills it. Proven by running the harness against a corpus with the column
+ * stripped, 2026-09-13: `only 0 of 3738 Netflix rows carry a synopsis key`, no test executed.
+ *
+ * TWO ARMS, because they answer different questions, and both are reported: MARGINAL is what the
+ * plugin does (the synopsis is offered only what the title tests did not take) and STANDALONE asks
+ * this source to align the two lists by itself, which is the arm a precision figure means anything
+ * in. The grid drives the SHIPPED `synopsisAnchors` and `offsetConsensus` at every cell through
+ * their `floor`, `margin` and `gap` options, so no part of the rule is re-implemented here.
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -95,9 +124,14 @@ import {
   closeWithSpecials,
   forcedByBracket,
   MIN_ALIGNED,
+  MIN_CONSENSUS_ANCHORS,
+  MIN_CONSENSUS_GAP,
   pairsBySequence,
   SCORED_ANCHOR_FLOOR,
   SCORED_ANCHOR_MARGIN,
+  SYNOPSIS_ANCHOR_FLOOR,
+  SYNOPSIS_ANCHOR_MARGIN,
+  synopsisAnchors,
   titleDice,
   type Alignment,
   type Anchor,
@@ -105,6 +139,8 @@ import {
   type Pair,
   type SideEpisode,
 } from '../src/worker/graph/plugins/range'
+import { synopsisKeyOf } from '../src/worker/graph/plugins/profile'
+import { MUSHOKU_SYNOPSES } from '../tests/unit/worker/graph/plugins/synopses'
 
 /* ------------------------------------------------------------------------------------------------
  * Corpus
@@ -115,8 +151,14 @@ const CACHE = process.env.EPISODE_ANCHOR_CACHE ?? resolve(ROOT, 'node_modules/.c
 const CORPUS_PATH = process.env.EPISODE_ANCHOR_CORPUS ?? resolve(CACHE, 'corpus.json')
 const OUT_DIR = process.env.EPISODE_ANCHOR_OUT ?? resolve(CACHE, 'report')
 
-/** One ani.zip episode as the corpus keeps it. `key` is numeric for a run episode and `S*` for a special. */
-type CorpusEpisode = { key: string, titles: string[], airDate: string | null }
+/**
+ * One ani.zip episode as the corpus keeps it. `key` is numeric for a run episode and `S*` for a special.
+ *
+ * `overview` is ani.zip's own episode description, which is the text the anizip extractor publishes
+ * (`src/sources/anizip/extractor.ts:68`) and therefore the REFERENCE side of rule 3's synopsis
+ * anchor as the app holds it. Null where ani.zip carries none, which is 2481 of 6147 episodes.
+ */
+type CorpusEpisode = { key: string, titles: string[], airDate: string | null, overview?: string | null }
 /** One AniList run with its ani.zip episode list. */
 type CorpusRun = {
   anilistId: number
@@ -127,8 +169,19 @@ type CorpusRun = {
   startDate: string | null
   episodes: CorpusEpisode[]
 }
-/** One Netflix season as unOGS lists it, rows numbered by POSITION exactly as the source publishes them. */
-type CorpusSeason = { seasonNumber: number, rows: { number: number, title: string }[] }
+/**
+ * One Netflix season as unOGS lists it, rows numbered by POSITION exactly as the source publishes them.
+ *
+ * `synopsis` is Netflix's OWN `contextualSynopsis`, fetched by season id and attached by position
+ * (`scripts/fetch-episode-anchor-corpus.mjs`), never unOGS's `synopsis` field: measured 2026-09-13,
+ * 6 of Mushoku Tensei's 61 rows agree between the two and the rest of unOGS's are Japanese, empty or
+ * a placeholder string. Empty where the season could not be joined or Netflix says nothing.
+ */
+type CorpusSeason = {
+  seasonNumber: number
+  seasonId?: number | null
+  rows: { number: number, title: string, synopsis?: string }[]
+}
 /** One show: a Netflix series and every AniList run the franchise search reached. */
 type CorpusShow = {
   franchise: string
@@ -144,6 +197,16 @@ type Corpus = { fetched: string, shows: CorpusShow[] }
 const MIN_SHOWS = 12
 const MIN_SEASONS = 25
 
+/**
+ * The fewest rows per side that must carry a REDUCED synopsis before the synopsis grid means
+ * anything: 500. The live corpus carries 2775 of 3738 Netflix rows and 3666 of 6147 ani.zip
+ * episodes with SOME text (2026-09-13), of which 2756 and 3613 survive `synopsisKeyOf`'s
+ * `MIN_SYNOPSIS_KEY_TOKENS`, which is what this counts. So the bar is a tenth of what is there and
+ * it fires only on a corpus fetched before the synopsis axis existed, or on one whose Netflix half
+ * never joined.
+ */
+const MIN_SYNOPSIS_ROWS = 500
+
 const loadCorpus = (): Corpus => {
   if (!existsSync(CORPUS_PATH)) {
     throw new Error(
@@ -157,6 +220,30 @@ const loadCorpus = (): Corpus => {
   if (!Array.isArray(corpus.shows) || !corpus.shows.length) {
     throw new Error(`corpus at ${CORPUS_PATH} holds no shows. A truncated pull must not pass as a corpus.`)
   }
+
+  // A HARNESS THAT CANNOT EXPRESS THE PHENOMENON MUST SAY SO. The synopsis anchor first shipped
+  // measured on nothing at all, because both calibration files hardcoded `synopsis: []` to compile
+  // and no case anywhere carried an episode description, so the sweep and its hard negatives were
+  // scoring empty strings and would have passed whatever the rule did. An empty column is now the
+  // loudest failure this file has rather than its quietest pass.
+  const theirRows = corpus.shows.flatMap(show => show.seasons.flatMap(season => season.rows))
+  const ourRows = corpus.shows.flatMap(show => show.runs.flatMap(run => run.episodes))
+  const theirSynopses = theirRows.filter(row => synopsisKeyOf(row.synopsis ?? '')).length
+  const ourSynopses = ourRows.filter(row => synopsisKeyOf(row.overview ?? '')).length
+  const refetch =
+    `\nThe corpus predates the synopsis axis. Refetch it with:\n`
+    + `  node scripts/fetch-episode-anchor-corpus.mjs\n`
+    + `(every other request is cached, so the pull costs only the Netflix season calls.)`
+  if (theirSynopses < MIN_SYNOPSIS_ROWS) {
+    throw new Error(`only ${theirSynopses} of ${theirRows.length} Netflix rows carry a synopsis key, expected ${MIN_SYNOPSIS_ROWS} or more.${refetch}`)
+  }
+  if (ourSynopses < MIN_SYNOPSIS_ROWS) {
+    throw new Error(`only ${ourSynopses} of ${ourRows.length} ani.zip episodes carry a synopsis key, expected ${MIN_SYNOPSIS_ROWS} or more.${refetch}`)
+  }
+  console.log(
+    `corpus synopses: ${theirSynopses} of ${theirRows.length} Netflix rows, `
+    + `${ourSynopses} of ${ourRows.length} ani.zip episodes, both reduced by synopsisKeyOf`
+  )
   return corpus
 }
 
@@ -181,6 +268,19 @@ const dayOf = (date: string | null): number | null => {
 const keysOf = (titles: readonly string[]): string[] =>
   [...new Set(titles.map(stripTitle).filter(Boolean))].filter(key => !isGenericEpisodeTitle(key))
 
+/**
+ * `EpisodeProfile.synopsisKeys` as profile.ts produces them, for one description.
+ *
+ * The plugin is handed the REDUCED column and reduces again (`range.ts:synopsisKeysOf`, idempotent),
+ * so reducing here is what makes the harness score the strings the rule scores rather than a second
+ * reading of the same paragraph. An empty answer is `MIN_SYNOPSIS_KEY_TOKENS` refusing a text with
+ * nothing in it, and the row then carries no synopsis at all, exactly as the graph row would.
+ */
+const synopsisOf = (text: string | null | undefined): string[] => {
+  const key = synopsisKeyOf(text ?? '')
+  return key ? [key] : []
+}
+
 const netflixSide = (show: CorpusShow, season: CorpusSeason): SideEpisode[] =>
   season.rows.map(row => ({
     uri: `nf:${show.netflixId}-${season.seasonNumber}-${row.number}`,
@@ -188,6 +288,8 @@ const netflixSide = (show: CorpusShow, season: CorpusSeason): SideEpisode[] =>
     number: row.number,
     day: null,
     keys: keysOf([row.title]),
+    // Netflix's own contextualSynopsis, which is what the nf episode source publishes
+    synopsis: synopsisOf(row.synopsis),
     hung: `nf:${show.netflixId}-${season.seasonNumber}`,
   }))
 
@@ -198,6 +300,7 @@ const canonicalSide = (run: CorpusRun): SideEpisode[] =>
     number: /^\d+$/.test(episode.key) ? Number(episode.key) : null,
     day: dayOf(episode.airDate),
     keys: keysOf(episode.titles),
+    synopsis: synopsisOf(episode.overview),
     hung: `anizip:${run.anilistId}`,
   }))
 
@@ -893,6 +996,190 @@ const sweepNegativeCell = (
 }
 
 /* ------------------------------------------------------------------------------------------------
+ * The SYNOPSIS axis: rule 3's third anchor source, which shipped with no negative control
+ * ---------------------------------------------------------------------------------------------- */
+
+/**
+ * What one cell of the synopsis grid comes to, on one population.
+ *
+ * `proposed` is what the floor and the margin admit, `kept` is what survives `offsetConsensus`, and
+ * the two are reported separately for the reason `synopsisAnchors` returns both: a case that cannot
+ * see both cannot tell a gate that removed an outlier from a scorer that never proposed one.
+ *
+ * `speaking` counts pairings where the kept anchors reach `MIN_ALIGNED` and order then places at
+ * least one row, which is the only state in which rule 3 emits anything at all.
+ */
+type SynopsisCell = {
+  floor: number
+  margin: number
+  gap: number
+  proposed: number
+  proposedWrong: number
+  kept: number
+  correct: number
+  wrong: number
+  /** Kept anchors on rows NO exact and no scored anchor reached: the population this source exists for. */
+  novel: number
+  speaking: number
+  placed: number
+  placedWrong: number
+  seasonsWithWrong: number
+  failures: Wrong[]
+}
+
+/**
+ * One truth pairing prepared for the synopsis sweep: the rows a stronger anchor source already holds,
+ * which is what `synopsisAnchors` is handed as `taken` inside the shipped `alignByTitle`.
+ *
+ * `taken` is the SHIPPED alignment's exact and scored anchors, not this file's exact-only set,
+ * because that is what the plugin passes: the synopsis is offered only what the two title tests did
+ * not take. Truth never reads it.
+ */
+type PreparedSynopsis = { entry: TruthEntry, taken: Anchor[], exactRows: Set<number> }
+
+const takenBy = (pairing: Pairing): Anchor[] =>
+  pairing.shipped.anchors.filter(anchor => !anchor.synopsis)
+
+/**
+ * One cell, driven through the SHIPPED `synopsisAnchors` with the cell's floor, margin and gap.
+ *
+ * Nothing is re-implemented here. A grid swept over a copy of a rule measures the copy, which is
+ * exactly how the first version of this anchor source came to ship with a calibration that could not
+ * see it: both harnesses hardcoded an empty synopsis column and passed whatever the rule did.
+ */
+const sweepSynopsisCell = (
+  prepared: readonly PreparedSynopsis[],
+  floor: number,
+  margin: number,
+  gap: number,
+  shift = 0
+): SynopsisCell => {
+  const cell: SynopsisCell = {
+    floor, margin, gap,
+    proposed: 0, proposedWrong: 0, kept: 0, correct: 0, wrong: 0, novel: 0,
+    speaking: 0, placed: 0, placedWrong: 0, seasonsWithWrong: 0, failures: [],
+  }
+  for (const { entry, taken, exactRows } of prepared) {
+    const found = synopsisAnchors({
+      ordered: entry.theirs,
+      canonical: entry.alignment.canonical,
+      taken,
+      anchors: taken.filter(anchor => !anchor.scored),
+      floor,
+      margin,
+      gap,
+    })
+    const numberAt = (toIndex: number): number => entry.alignment.canonical[toIndex]!.number
+    // the TRUTH CONTROL shifts every canonical number, so a metric that cannot express a wrong
+    // anchor reports the same precision either way and says so out loud
+    const want = (number: number): number | 'insertion' => {
+      const expected = truthOf(entry, number)
+      return typeof expected === 'number' ? expected + shift : expected
+    }
+    for (const match of found.proposed) {
+      cell.proposed += 1
+      if (want(match.from.number!) !== numberAt(match.toIndex)) cell.proposedWrong += 1
+    }
+    let wrongHere = 0
+    for (const anchor of found.anchors) {
+      cell.kept += 1
+      if (!exactRows.has(anchor.from.number!)) cell.novel += 1
+      const got = numberAt(anchor.toIndex)
+      const expected = want(anchor.from.number!)
+      if (expected === got) cell.correct += 1
+      else {
+        cell.wrong += 1
+        wrongHere += 1
+        cell.failures.push({
+          franchise: entry.franchise,
+          seasonNumber: entry.seasonNumber,
+          kind: 'anchor',
+          netflixNumber: anchor.from.number!,
+          netflixTitle: titleOf(anchor.from.uri),
+          canonicalNumber: got,
+          canonicalTitle: titleOf(anchor.to.uri),
+          truth: truthOf(entry, anchor.from.number!),
+        })
+      }
+    }
+    // What ORDER then does with those anchors, which is the only thing rule 3 emits: the bracket and
+    // the closure are the shipped functions over the union of every anchor source, unmodified.
+    const union = [...taken, ...found.anchors].sort((a, b) => a.fromIndex - b.fromIndex)
+    const alignment = asAlignment(entry, union)
+    const bracket = forcedByBracket(alignment)
+    const closure = closeWithSpecials({ alignment, unequal: bracket.unequal })
+    const placed = [...bracket.pairs, ...closure.pairs]
+    if (found.anchors.length && union.length >= MIN_ALIGNED && placed.length) {
+      cell.speaking += 1
+      for (const pair of placed) {
+        cell.placed += 1
+        if (want(pair.fromNumber) !== pair.toNumber) {
+          cell.placedWrong += 1
+          wrongHere += 1
+          cell.failures.push({
+            franchise: entry.franchise,
+            seasonNumber: entry.seasonNumber,
+            kind: 'placed',
+            netflixNumber: pair.fromNumber,
+            netflixTitle: titleOf(pair.from.uri),
+            canonicalNumber: pair.toNumber,
+            canonicalTitle: titleOf(pair.to.uri),
+            truth: truthOf(entry, pair.fromNumber),
+          })
+        }
+      }
+    }
+    if (wrongHere) cell.seasonsWithWrong += 1
+  }
+  return cell
+}
+
+/**
+ * The same cell on the HARD NEGATIVES: one show's season against a DIFFERENT season's run.
+ *
+ * There is no truth to compare against and none is needed. Both sides were established independently
+ * and they are not the same broadcast, so a consensus that FIRES here is a wrong offset agreed on by
+ * a majority of wrong anchors, which is the exact shape `MIN_CONSENSUS_GAP` is about and the shape
+ * that welded 13 of 25 Blue Exorcist episodes onto the wrong Netflix video.
+ */
+type SynopsisNegativeCell = { fired: number, anchors: number, placed: number, examples: string[] }
+
+const sweepSynopsisNegativeCell = (
+  prepared: readonly { pairing: Pairing, taken: Anchor[] }[],
+  floor: number,
+  margin: number,
+  gap: number
+): SynopsisNegativeCell => {
+  const cell: SynopsisNegativeCell = { fired: 0, anchors: 0, placed: 0, examples: [] }
+  for (const { pairing, taken } of prepared) {
+    const found = synopsisAnchors({
+      ordered: pairing.theirs,
+      canonical: pairing.alignment.canonical,
+      taken,
+      anchors: taken.filter(anchor => !anchor.scored),
+      floor,
+      margin,
+      gap,
+    })
+    if (!found.anchors.length) continue
+    cell.fired += 1
+    cell.anchors += found.anchors.length
+    const union = [...taken, ...found.anchors].sort((a, b) => a.fromIndex - b.fromIndex)
+    const alignment = asAlignment(pairing, union)
+    const bracket = forcedByBracket(alignment)
+    const closure = closeWithSpecials({ alignment, unequal: bracket.unequal })
+    const placed = [...bracket.pairs, ...closure.pairs]
+    cell.placed += placed.length + found.anchors.length
+    cell.examples.push(
+      `${pairing.franchise} S${pairing.seasonNumber} onto anilist ${pairing.anilistId} (${pairing.runTitle}): `
+      + `consensus ${found.consensus}, ${found.anchors.length} anchors of ${found.proposed.length} proposed, `
+      + `${placed.length} rows placed`
+    )
+  }
+  return cell
+}
+
+/* ------------------------------------------------------------------------------------------------
  * Reporting
  * ---------------------------------------------------------------------------------------------- */
 
@@ -913,6 +1200,21 @@ const table = (
 
 const FLOORS = [0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
 const MARGINS = [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+
+/**
+ * The SYNOPSIS grid, which sits an order of magnitude below the title grid on purpose.
+ *
+ * Two independently written paragraphs about one episode share the names and the events and little
+ * else, so a title floor of 0.60 accepts none of them: the hand measurement's true pairs land
+ * between 0.20 and 0.50. The range runs from 0.10, which is below anything defensible, to 0.45,
+ * which is above the median true pair, so the curve has to show its own cliff rather than be
+ * asserted to have one.
+ */
+const SYNOPSIS_FLOORS = [0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45]
+const SYNOPSIS_MARGINS = [0, 0.02, 0.05, 0.08, 0.10, 0.15]
+
+/** How far the winning offset must outnumber the runner-up. 0 is a bare majority, the shipped rule before 2a. */
+const CONSENSUS_GAPS = [0, 1, 2, 3, 4, 5]
 
 /* ------------------------------------------------------------------------------------------------ */
 
@@ -997,12 +1299,12 @@ describe('rule 3 anchor calibration', () => {
     // exists to drop. Titles are distinct on both sides so no uniqueness rule can fire instead.
     const words = ['alpha', 'bravo', 'charlie', 'delta', 'echo']
     const reference: SideEpisode[] = words.map((word, index) => ({
-      uri: `ours:${index + 1}`, origin: 'anizip', number: index + 1, day: null, keys: [word], hung: 'ours',
+      uri: `ours:${index + 1}`, origin: 'anizip', number: index + 1, day: null, keys: [word], synopsis: [], hung: 'ours',
     }))
     // their rows 2 and 4 carry our rows 4 and 2, so those two matches CROSS: every title is still
     // unique on both sides, which leaves the monotone step as the only thing that can drop one
     const theirs: SideEpisode[] = ['alpha', 'delta', 'charlie', 'bravo', 'echo'].map((word, index) => ({
-      uri: `theirs:${index + 1}`, origin: 'nf', number: index + 1, day: null, keys: [word], hung: 'theirs',
+      uri: `theirs:${index + 1}`, origin: 'nf', number: index + 1, day: null, keys: [word], synopsis: [], hung: 'theirs',
     }))
 
     const shipped = alignByTitle(reference, theirs)
@@ -1064,12 +1366,18 @@ describe('rule 3 anchor calibration', () => {
     let exactTotal = 0
     let weldedPairings = 0
     let welds = 0
+    let synopses = 0
     for (const pairing of truth.all) {
       const mine = new Set(pairing.alignment.anchors.map(anchor => `${anchor.from.number}->${anchor.to.number}`))
+      // BOTH inexact sources are excluded, not just the weld. This read `!anchor.scored` alone until
+      // the corpus carried synopses, at which point it reported 368 anchors the harness was
+      // "missing": a synopsis anchor is not scored either, so the control silently counted one as an
+      // equality and would have let the truth set be built off the source it is meant to judge
       const shippedExact = new Set(pairing.shipped.anchors
-        .filter(anchor => !anchor.scored)
+        .filter(anchor => !anchor.scored && !anchor.synopsis)
         .map(anchor => `${anchor.from.number}->${anchor.to.number}`))
       const scored = pairing.shipped.anchors.filter(anchor => anchor.scored).length
+      synopses += pairing.shipped.anchors.filter(anchor => anchor.synopsis).length
       if (scored) {
         weldedPairings += 1
         welds += scored
@@ -1082,17 +1390,20 @@ describe('rule 3 anchor calibration', () => {
     console.log(
       `\nANTI-CIRCULARITY CONTROL: ${exactTotal} shipped EXACT anchors over ${truth.all.length} pairings, `
       + `${missing.length} the harness misses, ${extra.length} the harness invents; `
-      + `the shipped rule welds on ${weldedPairings} pairings (${welds} welds), none of which reach truth`
+      + `the shipped rule welds on ${weldedPairings} pairings (${welds} welds) and anchors `
+      + `${synopses} rows on a SYNOPSIS, none of which reach truth`
     )
     if (missing.length) console.log(`  missing: ${missing.slice(0, 8).join(' | ')}`)
     if (extra.length) console.log(`  extra:   ${extra.slice(0, 8).join(' | ')}`)
     expect(missing).toEqual([])
     expect(extra).toEqual([])
-    // the check can produce a positive: there ARE welds in this corpus for it to have excluded
+    // the check can produce a positive: there ARE welds AND synopsis anchors in this corpus for it
+    // to have excluded. A corpus carrying neither would pass this control while proving nothing
     expect(weldedPairings).toBeGreaterThan(0)
+    expect(synopses).toBeGreaterThan(0)
     // and none of them is in the truth set, the negatives, or any swept alignment
     const swept = [...truth.entries, ...truth.weak, ...truth.negatives, ...truth.all]
-    expect(swept.flatMap(pairing => pairing.alignment.anchors.filter(anchor => anchor.scored))).toEqual([])
+    expect(swept.flatMap(pairing => pairing.alignment.anchors.filter(anchor => anchor.scored || anchor.synopsis))).toEqual([])
     expect(truth.entries.every(entry => entry.exactAnchors === entry.alignment.anchors.length)).toBe(true)
   })
 
@@ -1656,5 +1967,290 @@ describe('rule 3 anchor calibration', () => {
       }, null, 2)
     )
     console.log(`\ngrid -> ${resolve(OUT_DIR, 'episode-anchor-grid.json')}`)
+  })
+
+  /* ---------------------------------------------------------------------------------------------
+   * The SYNOPSIS axis
+   * ------------------------------------------------------------------------------------------- */
+
+  /**
+   * TWO ARMS, and they answer two different questions.
+   *
+   * MARGINAL is the shipped shape: the synopsis is offered only the rows and numbers the exact and
+   * scored title tests did not take, which is what `alignByTitle` hands it. It measures what this
+   * source ADDS, and on a truth set built from exact title anchors that is a thin population by
+   * construction, since a season whose titles match is a season the synopsis is not needed on.
+   *
+   * STANDALONE hands it nothing and asks it to align the two lists by itself. It measures whether
+   * the rule LANDS ON THE RIGHT EPISODE, over every truth pair rather than the leftovers, and it is
+   * the arm a precision figure should be read off. It is also the arm the hard negatives are run in,
+   * because a negative's title anchors are what a wrong pairing does not have.
+   */
+  const preparedSynopsis = (standalone: boolean): PreparedSynopsis[] => entries.map(entry => ({
+    entry,
+    taken: standalone ? [] : takenBy(entry),
+    exactRows: new Set(entry.alignment.anchors.map(anchor => anchor.from.number!)),
+  }))
+
+  const preparedSynopsisNegatives = (standalone: boolean): { pairing: Pairing, taken: Anchor[] }[] =>
+    truth.negatives.map(pairing => ({ pairing, taken: standalone ? [] : takenBy(pairing) }))
+
+  /**
+   * A THIRD negative population: one show's Netflix season against another SHOW's run entirely.
+   *
+   * Easier than the same-show negative and much larger, which is the point of having both: the
+   * same-show one is the shape that welds, and this one is the volume that makes "0 fired" mean
+   * something. Runs are picked by three fixed strides through the show list, so which pairings enter
+   * depends on the corpus order and never on how any of them scored.
+   */
+  const crossShowNegatives = (): Pairing[] => {
+    const shows = corpus.shows.filter(show => show.runs.length)
+    const built: Pairing[] = []
+    for (const entry of entries) {
+      const home = shows.findIndex(show => show.netflixId === entry.netflixId)
+      const season = shows[home]?.seasons.find(item => item.seasonNumber === entry.seasonNumber)
+      if (home < 0 || !season) continue
+      for (const stride of [1, 7, 13]) {
+        const other = shows[(home + stride) % shows.length]!
+        if (other.netflixId === entry.netflixId) continue
+        const run = other.runs[0]
+        if (run) built.push(makePairing(shows[home]!, season, run))
+      }
+    }
+    return built
+  }
+
+  it('control: the synopsis column is real on both sides, and reproduces the shipped nf source', () => {
+    const theirs = entries.flatMap(entry => entry.theirs).filter(row => row.synopsis.length).length
+    const theirRows = entries.reduce((total, entry) => total + entry.theirs.length, 0)
+    const ours = entries.flatMap(entry => entry.alignment.canonical.flatMap(slot => slot.rows))
+      .filter(row => row.synopsis.length).length
+    const ourRows = entries.reduce((total, entry) => total + entry.alignment.canonical.reduce((sum, slot) => sum + slot.rows.length, 0), 0)
+    console.log(
+      `\nSYNOPSIS COLUMN on the truth set: ${theirs} of ${theirRows} Netflix rows, `
+      + `${ours} of ${ourRows} reference rows`
+    )
+    // A rate over an empty column is the failure this whole section exists to close, so it is an
+    // assertion rather than a line in a log
+    expect(theirs).toBeGreaterThan(200)
+    expect(ours).toBeGreaterThan(200)
+
+    // AND THE TEXT IS THE ONE THE APP READS. `MUSHOKU_SYNOPSES.theirs` was recorded through the
+    // shipped `fetchNetflixSeasonEpisodes` (`src/sources/unogs/netflix.ts`); the corpus fetches the
+    // same query itself, so this is the corpus producer checked against the source it restates. It
+    // is also why the corpus does not use unOGS's own `synopsis` field, which disagrees on 55 of
+    // these 61 rows.
+    const mushoku = corpus.shows.find(show => show.franchise === 'Mushoku Tensei')
+    expect(mushoku, 'the corpus carries Mushoku Tensei').toBeTruthy()
+    const recorded = [MUSHOKU_SYNOPSES.s1.theirs, MUSHOKU_SYNOPSES.s2.theirs, MUSHOKU_SYNOPSES.s3.theirs]
+    recorded.forEach((season, index) => {
+      const rows = mushoku!.seasons.find(entry => entry.seasonNumber === index + 1)?.rows ?? []
+      expect(rows.map(row => synopsisKeyOf(row.synopsis ?? ''))).toEqual(season.map(key => synopsisKeyOf(key)))
+    })
+  })
+
+  it('control: the synopsis sweep separates, and can express a wrong anchor', () => {
+    const prepared = preparedSynopsis(true)
+    // SEPARATION. A dead scorer, an empty column or a gate that admits nothing produces one number
+    // at every cell, and a grid like that reports whatever it is asked to report.
+    const loose = sweepSynopsisCell(prepared, 0.10, 0, MIN_CONSENSUS_GAP)
+    const tight = sweepSynopsisCell(prepared, 0.90, 0.30, MIN_CONSENSUS_GAP)
+    console.log(`\nSEPARATION: floor 0.10 margin 0 proposes ${loose.proposed}, floor 0.90 margin 0.30 proposes ${tight.proposed}`)
+    expect(loose.proposed).toBeGreaterThan(tight.proposed)
+    expect(tight.proposed).toBeLessThan(loose.proposed / 2)
+
+    // TRUTH CONTROL. The same cell against a truth shifted by one must be almost entirely wrong. A
+    // metric that reports the same precision under a deliberately wrong truth is not measuring
+    // precision, and every figure in the grid below would be decoration.
+    const shipped = sweepSynopsisCell(prepared, SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN, MIN_CONSENSUS_GAP)
+    const shifted = sweepSynopsisCell(prepared, SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN, MIN_CONSENSUS_GAP, 1)
+    console.log(
+      `TRUTH CONTROL: the shipped cell keeps ${shipped.kept} anchors, ${shipped.correct} correct; `
+      + `against a truth shifted by one, ${shifted.correct} correct of the same ${shifted.kept}`
+    )
+    expect(shipped.kept).toBeGreaterThan(200)
+    expect(shipped.correct).toBeGreaterThan(shifted.correct * 10)
+
+    // THE KNOBS ARE WIRED. The cell at the shipped constants must be what the shipped call with no
+    // options answers, or the grid is measuring a function nobody runs.
+    for (const { entry, taken } of prepared.slice(0, 40)) {
+      const options = { ordered: entry.theirs, canonical: entry.alignment.canonical, taken, anchors: taken.filter(anchor => !anchor.scored) }
+      const byDefault = synopsisAnchors(options)
+      const byKnob = synopsisAnchors({ ...options, floor: SYNOPSIS_ANCHOR_FLOOR, margin: SYNOPSIS_ANCHOR_MARGIN, gap: MIN_CONSENSUS_GAP })
+      expect(byKnob.anchors.map(anchor => `${anchor.fromIndex}->${anchor.toIndex}`))
+        .toEqual(byDefault.anchors.map(anchor => `${anchor.fromIndex}->${anchor.toIndex}`))
+    }
+  })
+
+  it('sweeps the synopsis floor, the margin and the consensus gap, with hard negatives', () => {
+    const prepared = preparedSynopsis(true)
+    const marginal = preparedSynopsis(false)
+    const negatives = preparedSynopsisNegatives(true)
+    const cross = crossShowNegatives().map(pairing => ({ pairing, taken: [] as Anchor[] }))
+
+    // The recall denominator, in the arm it is read in. STANDALONE: every row with a synopsis whose
+    // truth is a real pair, since the source is being asked to align the lists by itself. MARGINAL:
+    // the same, less the rows an exact anchor already reached, because a row the exact rule anchors
+    // is not something this source needs to find.
+    const reachableIn = (population: readonly PreparedSynopsis[], skipExact: boolean): number =>
+      population.reduce((total, { entry, exactRows }) => total + entry.theirs.filter(row =>
+        row.synopsis.length
+        && typeof truthOf(entry, row.number!) === 'number'
+        && !(skipExact && exactRows.has(row.number!))
+      ).length, 0)
+    const reachable = reachableIn(prepared, false)
+    const reachableMarginal = reachableIn(marginal, true)
+
+    const cells = new Map<string, SynopsisCell>()
+    const marginalCells = new Map<string, SynopsisCell>()
+    const negativeCells = new Map<string, SynopsisNegativeCell>()
+    const crossCells = new Map<string, SynopsisNegativeCell>()
+    for (const floor of SYNOPSIS_FLOORS) {
+      for (const margin of SYNOPSIS_MARGINS) {
+        cells.set(`${floor}|${margin}`, sweepSynopsisCell(prepared, floor, margin, MIN_CONSENSUS_GAP))
+        marginalCells.set(`${floor}|${margin}`, sweepSynopsisCell(marginal, floor, margin, MIN_CONSENSUS_GAP))
+        negativeCells.set(`${floor}|${margin}`, sweepSynopsisNegativeCell(negatives, floor, margin, MIN_CONSENSUS_GAP))
+        crossCells.set(`${floor}|${margin}`, sweepSynopsisNegativeCell(cross, floor, margin, MIN_CONSENSUS_GAP))
+      }
+    }
+    const cell = (floor: number, margin: number): SynopsisCell => cells.get(`${floor}|${margin}`)!
+    const marginalCell = (floor: number, margin: number): SynopsisCell => marginalCells.get(`${floor}|${margin}`)!
+    const negativeCell = (floor: number, margin: number): SynopsisNegativeCell => negativeCells.get(`${floor}|${margin}`)!
+    const crossCell = (floor: number, margin: number): SynopsisNegativeCell => crossCells.get(`${floor}|${margin}`)!
+
+    console.log(
+      `\nSYNOPSIS POPULATION: ${prepared.length} truth pairings, `
+      + `${negatives.length} same-show hard negatives, ${cross.length} cross-show negatives, `
+      + `${reachable} true pairs a synopsis anchor could reach standalone (${reachableMarginal} that no exact anchor reaches)`
+    )
+    table('STANDALONE: anchors KEPT after the consensus gate', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => String(cell(floor, margin).kept))
+    table('STANDALONE: anchor PRECISION (correct of kept)', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => pct(cell(floor, margin).correct, cell(floor, margin).kept))
+    table('STANDALONE: anchor RECALL (correct of reachable)', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => pct(cell(floor, margin).correct, reachable))
+    table('STANDALONE: anchors WRONG after the gate', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => String(cell(floor, margin).wrong))
+    table('STANDALONE: anchors WRONG before the gate', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => String(cell(floor, margin).proposedWrong))
+    table('STANDALONE: rows placed by ORDER, wrong ones', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => `${cell(floor, margin).placed}/${cell(floor, margin).placedWrong}`)
+    table('MARGINAL (the shipped shape): kept, wrong', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => `${marginalCell(floor, margin).kept}/${marginalCell(floor, margin).wrong}`)
+    table('MARGINAL: recall over rows no exact anchor reaches', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => pct(marginalCell(floor, margin).correct, reachableMarginal))
+    table('SAME-SHOW NEGATIVES where the consensus FIRES', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => `${negativeCell(floor, margin).fired}/${negatives.length}`)
+    table('SAME-SHOW NEGATIVE pairs minted', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => String(negativeCell(floor, margin).placed))
+    table('CROSS-SHOW NEGATIVES where the consensus FIRES', SYNOPSIS_FLOORS, SYNOPSIS_MARGINS,
+      (floor, margin) => `${crossCell(floor, margin).fired}/${cross.length}`)
+
+    // THE GAP, which is the 2a fix: the winning offset must outnumber the runner-up by this much.
+    // Gap 0 is the shipped rule before this change, a bare majority and nothing else.
+    console.log(`\nCONSENSUS GAP at floor ${SYNOPSIS_ANCHOR_FLOOR} margin ${SYNOPSIS_ANCHOR_MARGIN}, STANDALONE arm:`)
+    console.log('  gap  speaking     kept  correct    wrong  same-show fired  cross-show fired')
+    const gapCells = new Map<number, SynopsisCell>()
+    for (const gap of CONSENSUS_GAPS) {
+      const at = sweepSynopsisCell(prepared, SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN, gap)
+      const against = sweepSynopsisNegativeCell(negatives, SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN, gap)
+      const far = sweepSynopsisNegativeCell(cross, SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN, gap)
+      gapCells.set(gap, at)
+      console.log(
+        `  ${String(gap).padStart(3)}${String(at.speaking).padStart(10)}${String(at.kept).padStart(9)}`
+        + `${String(at.correct).padStart(9)}${String(at.wrong).padStart(9)}`
+        + `  ${String(`${against.fired} of ${negatives.length}`).padStart(14)}`
+        + `  ${String(`${far.fired} of ${cross.length}`).padStart(15)}`
+      )
+    }
+
+    // AND THE GAP AT THE LOOSEST CELL, which is where a wrong anchor survives the gate at all. If a
+    // larger gap cannot remove those either, then the gap is insurance against a shape this corpus
+    // does not contain rather than a fix for one it does, and saying so is the point of the table.
+    console.log(`\nCONSENSUS GAP at floor 0.10 margin 0.00, the loosest cell, STANDALONE arm:`)
+    console.log('  gap  speaking     kept  correct    wrong')
+    for (const gap of CONSENSUS_GAPS) {
+      const at = sweepSynopsisCell(prepared, 0.10, 0, gap)
+      console.log(
+        `  ${String(gap).padStart(3)}${String(at.speaking).padStart(10)}${String(at.kept).padStart(9)}`
+        + `${String(at.correct).padStart(9)}${String(at.wrong).padStart(9)}`
+      )
+    }
+
+    // HOW CONTESTED THE MAJORITIES ACTUALLY ARE. The gap is a claim about the vote's shape, so the
+    // shape is counted rather than argued: every pairing where a consensus was taken, by how far the
+    // winning offset beat the runner-up. A distribution whose minimum is already above the constant
+    // says the constant is free on this corpus, which is a different claim from it being useless.
+    const gaps = new Map<number, number>()
+    for (const { entry, taken } of prepared) {
+      const found = synopsisAnchors({
+        ordered: entry.theirs,
+        canonical: entry.alignment.canonical,
+        taken,
+        anchors: [],
+        floor: SYNOPSIS_ANCHOR_FLOOR,
+        margin: SYNOPSIS_ANCHOR_MARGIN,
+        gap: 0,
+      })
+      if (!found.anchors.length) continue
+      const votes = new Map<number, number>()
+      for (const anchor of found.proposed) {
+        const offset = anchor.to.number! - anchor.from.number!
+        votes.set(offset, (votes.get(offset) ?? 0) + 1)
+      }
+      const ranked = [...votes.values()].sort((a, b) => b - a)
+      const distance = ranked[0]! - (ranked[1] ?? 0)
+      gaps.set(distance, (gaps.get(distance) ?? 0) + 1)
+    }
+    console.log(
+      `\nVOTE SHAPE at the shipped cell: ${[...gaps.entries()].sort((a, b) => a[0] - b[0])
+        .map(([distance, count]) => `${count} pairings win by ${distance}`).join(', ')}`
+    )
+
+    const shipped = cell(SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN)
+    const shippedMarginal = marginalCell(SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN)
+    const shippedNegative = negativeCell(SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN)
+    const shippedCross = crossCell(SYNOPSIS_ANCHOR_FLOOR, SYNOPSIS_ANCHOR_MARGIN)
+    console.log(
+      `\nAT THE SHIPPED CELL (floor ${SYNOPSIS_ANCHOR_FLOOR}, margin ${SYNOPSIS_ANCHOR_MARGIN}, gap ${MIN_CONSENSUS_GAP}, `
+      + `min ${MIN_CONSENSUS_ANCHORS}), STANDALONE: ${shipped.proposed} proposed of which ${shipped.proposedWrong} wrong, `
+      + `${shipped.kept} kept of which ${shipped.wrong} wrong, precision ${pct(shipped.correct, shipped.kept)}, `
+      + `recall ${pct(shipped.correct, reachable)}, ${shipped.speaking} of ${prepared.length} pairings speak, `
+      + `${shipped.placed} rows placed by order (${shipped.placedWrong} wrong), `
+      + `${shippedNegative.fired} of ${negatives.length} same-show and ${shippedCross.fired} of ${cross.length} cross-show negatives fire`
+    )
+    console.log(
+      `AT THE SHIPPED CELL, MARGINAL: ${shippedMarginal.kept} kept of which ${shippedMarginal.wrong} wrong, `
+      + `precision ${pct(shippedMarginal.correct, shippedMarginal.kept)}, recall ${pct(shippedMarginal.correct, reachableMarginal)}, `
+      + `${shippedMarginal.speaking} of ${marginal.length} pairings speak, `
+      + `${shippedMarginal.placed} rows placed by order (${shippedMarginal.placedWrong} wrong)`
+    )
+    for (const failure of shipped.failures.slice(0, 12)) {
+      console.log(
+        `  WRONG (${failure.kind}) ${failure.franchise} S${failure.seasonNumber} nf ${failure.netflixNumber} `
+        + `"${failure.netflixTitle}" -> canonical ${failure.canonicalNumber} "${failure.canonicalTitle}", truth ${failure.truth}`
+      )
+    }
+    for (const example of shippedNegative.examples.slice(0, 6)) console.log(`  NEGATIVE FIRED ${example}`)
+
+    mkdirSync(OUT_DIR, { recursive: true })
+    writeFileSync(
+      resolve(OUT_DIR, 'synopsis-anchor-grid.json'),
+      JSON.stringify({
+        corpus: corpus.fetched,
+        pairings: prepared.length,
+        negatives: negatives.length,
+        crossNegatives: cross.length,
+        reachable,
+        reachableMarginal,
+        shipped: { floor: SYNOPSIS_ANCHOR_FLOOR, margin: SYNOPSIS_ANCHOR_MARGIN, gap: MIN_CONSENSUS_GAP, min: MIN_CONSENSUS_ANCHORS },
+        cells: [...cells.entries()].map(([key, value]) => ({ key, ...value })),
+        marginalCells: [...marginalCells.entries()].map(([key, value]) => ({ key, ...value })),
+        negativeCells: [...negativeCells.entries()].map(([key, value]) => ({ key, ...value })),
+        crossCells: [...crossCells.entries()].map(([key, value]) => ({ key, ...value })),
+        gapCells: [...gapCells.entries()].map(([gap, value]) => ({ ...value, gap })),
+      }, null, 2)
+    )
+    console.log(`\nsynopsis grid -> ${resolve(OUT_DIR, 'synopsis-anchor-grid.json')}`)
   })
 })

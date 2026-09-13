@@ -74,6 +74,13 @@
  *     nothing under any anchor test. This file therefore cannot say whether a scored anchor finds the
  *     truth on Netflix, which is the live sweep's axis, and the live sweep cannot say what this one
  *     says. The two halves are separate measurements and neither substitutes for the other.
+ *   - THE SYNOPSIS ANCHOR. Rule 3 has three anchor sources and this corpus carries evidence for two:
+ *     no case episode holds a description, so the third is inert on every list pair here. That used
+ *     to be a comment beside a hardcoded `synopsis: []`, which is how the synopsis floor came to ship
+ *     with two harnesses that were scoring empty strings; it is now the executed check
+ *     `says in numbers that it cannot measure the synopsis anchor`, which prints the count and
+ *     fails if the corpus ever gains descriptions this file then ignores. The calibration that CAN
+ *     speak to it is `scripts/calibrate-episode-anchors.test.ts`'s synopsis grid.
  *   - the reference side here is ONE media's episode list, where the plugin hands rule 3 the whole
  *     run cluster's rows grouped by number. Unioning a cluster both adds keys and can drop a key that
  *     then reaches two numbers, so this is not a bound in either direction; it is the unit the labels
@@ -90,7 +97,7 @@ import { alignByTitle, MIN_ALIGNED, pairsBySequence } from '../src/worker/graph/
 import type { Anchor, SideEpisode } from '../src/worker/graph/plugins/range'
 import { isGenericEpisodeTitle } from '../src/sources/similar'
 import { stripTitle, titleSimilarity } from '../src/sources/utils'
-import { titleKeysOf } from '../src/worker/graph/plugins/profile'
+import { synopsisKeysOf, titleKeysOf } from '../src/worker/graph/plugins/profile'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const CASES_DIR = process.env.ANCHOR_CASES ?? resolve(ROOT, 'tests/corpus/cases')
@@ -120,6 +127,7 @@ export const MARGINS = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3] as const
  * ---------------------------------------------------------------------------------------------- */
 
 type CaseTitle = { language: string, title: string, score?: number | null }
+type CaseDescription = { language?: string | null, description?: string | null, shortDescription?: string | null, score?: number | null }
 type CaseEpisode = {
   uri: string
   origin: string
@@ -127,6 +135,13 @@ type CaseEpisode = {
   episodeNumber: number
   releaseDate?: string | null
   titles: CaseTitle[]
+  /**
+   * OPTIONAL AND, AS OF 2026-09-13, ABSENT FROM EVERY CASE. Declared so the file reads a description
+   * the moment the corpus carries one, rather than compiling against a hardcoded `[]` the way it did
+   * when the synopsis anchor shipped. `coverage` below is what makes that an executed claim.
+   */
+  descriptions?: CaseDescription[]
+  shortDescriptions?: CaseDescription[]
 }
 type CaseFile = {
   name: string
@@ -176,9 +191,35 @@ const sideOf = (episode: CaseEpisode): SideEpisode => ({
   origin: episode.origin,
   number: Number.isFinite(episode.episodeNumber) ? episode.episodeNumber : null,
   day: episode.releaseDate ? Math.floor(Date.parse(episode.releaseDate) / DAY_MS) : null,
+  // read wherever the case carries one; empty on every case as of 2026-09-13, which `synopsisCoverage`
+  // below counts rather than asserts, so this file can never again sweep an axis that is not there
+  synopsis: synopsisKeysOf(episode.descriptions, episode.shortDescriptions).map(entry => entry.key),
   keys: titleKeysOf(episode.titles).map(entry => entry.key).filter(key => !isGenericEpisodeTitle(key)),
   hung: episode.mediaUri,
 })
+
+/**
+ * WHETHER THIS CORPUS CAN SAY ANYTHING AT ALL ABOUT THE SYNOPSIS ANCHOR, counted rather than assumed.
+ *
+ * The field used to be hardcoded `synopsis: []` with a comment saying the cases carry none, which is
+ * how rule 3's third anchor source came to ship with two calibration harnesses that were both
+ * scoring empty strings: they would have passed whatever the rule did. `sideOf` above now reads a
+ * description wherever one exists, and this counts how many do, so the gap is a NUMBER in the run's
+ * output and reopens loudly rather than silently.
+ */
+const synopsisCoverage = (cases: readonly LoadedCase[]): { episodes: number, described: number, keys: number } => {
+  let episodes = 0
+  let described = 0
+  let keys = 0
+  for (const entry of cases) {
+    for (const episode of entry.file.episodes ?? []) {
+      episodes += 1
+      if ((episode.descriptions ?? []).length || (episode.shortDescriptions ?? []).length) described += 1
+      keys += synopsisKeysOf(episode.descriptions, episode.shortDescriptions).length
+    }
+  }
+  return { episodes, described, keys }
+}
 
 const compare = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0)
 const byUri = (a: SideEpisode, b: SideEpisode): number => compare(a.uri, b.uri)
@@ -785,6 +826,45 @@ const say = (line: string) => {
 }
 
 describe('control: the anchor corpus rig can measure', () => {
+  /**
+   * WHAT THIS FILE CANNOT MEASURE, as a number rather than as a sentence.
+   *
+   * Rule 3 has three anchor sources and this corpus carries evidence for two. Every case episode
+   * holds titles and no description at all, so the SYNOPSIS anchor is inert on every list pair here,
+   * and until this test existed that was a comment next to a hardcoded `synopsis: []` with nothing
+   * checking it. A harness that cannot express a phenomenon has to say so out loud, or its silence
+   * reads as coverage: the 790-pairing sweep and its 68 hard negatives say nothing whatever about
+   * the synopsis floor, and the measurement that does is
+   * `scripts/calibrate-episode-anchors.test.ts`'s synopsis grid, over Netflix's own
+   * `contextualSynopsis` against ani.zip's `overview`.
+   *
+   * It is an ASSERTION and not a print because it has two directions. Zero described episodes means
+   * the shipped rule must anchor zero rows on a synopsis anywhere in this corpus, which is what
+   * makes every number below a title measurement. A corpus that later gains descriptions fails the
+   * other half, and the file is then read rather than trusted.
+   */
+  it('says in numbers that it cannot measure the synopsis anchor', () => {
+    const coverage = synopsisCoverage(state.cases)
+    const anchored = state.units.reduce((total, unit) =>
+      total + alignByTitle(unit.reference.rows, unit.candidate.rows).synopsis, 0)
+    say(
+      `COVERAGE GAP: ${coverage.described} of ${coverage.episodes} corpus episodes carry a description `
+      + `(${coverage.keys} synopsis keys), and the shipped rule anchors ${anchored} rows on a synopsis `
+      + `over ${state.units.length} list pairs. The synopsis floor is calibrated in `
+      + `scripts/calibrate-episode-anchors.test.ts, never here.`
+    )
+    expect(coverage.episodes).toBeGreaterThan(1000)
+    if (coverage.described === 0) {
+      expect(coverage.keys, 'no description can produce a synopsis key').toBe(0)
+      expect(anchored, 'and with no key the shipped rule anchors nothing on a synopsis').toBe(0)
+    } else {
+      // the corpus grew descriptions: `sideOf` already reads them, and this is the line that says
+      // the numbers below are no longer a title-only measurement
+      expect(coverage.keys).toBeGreaterThan(0)
+      expect(state.units.some(unit => unit.candidate.rows.some(row => row.synopsis.length))).toBe(true)
+    }
+  })
+
   it('reproduces the shipped alignByTitle anchors on every measured list pair', () => {
     const shape = (anchors: readonly Anchor[]) =>
       anchors.map(a => `${a.from.uri}->${a.to.uri}@${a.fromIndex}:${a.toIndex}:${a.key}`).join(' | ')
@@ -891,7 +971,7 @@ describe('control: the anchor corpus rig can measure', () => {
     // agreements lost at dice f0.34 m0.00 are claimed-away slots), so they are exercised here on two
     // synthetic list pairs instead, against the shipped function and against an absolute answer.
     const side = (uri: string, number: number, keys: string[]): SideEpisode =>
-      ({ uri, origin: 'probe', number, day: null, keys, hung: 'probe:0' })
+      ({ uri, origin: 'probe', number, day: null, keys, synopsis: [], hung: 'probe:0' })
 
     // a row of theirs whose two keys reach two different numbers of ours is an ambiguity and never
     // two matches, so only the third row anchors
