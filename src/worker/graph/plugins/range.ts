@@ -88,7 +88,7 @@ import { RETRANSLATING_ORIGINS } from './origins'
 import { synopsisKeyOf } from './profile'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const RANGE_VERSION = 6
+export const RANGE_VERSION = 7
 
 /**
  * Two pairs or nothing (`consensus.ts:111`).
@@ -115,9 +115,15 @@ export const DAY_SLACK = 1
  * reached exactly, none scored clear of its neighbours, and whose synopses met no offset majority
  * (Netflix's season 1, 24 placeholder titles, 3.4a point 4); or anchors whose bracket counted a
  * different number of rows on each side.
+ *
+ * `no-reference` is the only one that is not about the candidate at all: the RUN carries no numbered
+ * episode to measure against, so no rule here was ever asked a question. It outranks every other
+ * reason for that reason, and it exists because without it the refusal reads `retranslates`, which
+ * names the candidate's origin for a silence the run owns (`referenceEpisodes`, 2026-09-13).
  */
 export type RangeRefusal =
   'no-dates' | 'ambiguous-day' | 'retranslates' | 'no-titles' | 'date-skew' | 'no-anchors' | 'unequal-gap'
+  | 'no-reference'
 
 /** One episode of either side, as both rules read it. */
 export type SideEpisode = {
@@ -1564,6 +1570,7 @@ export type Verdict =
  * | `dates` | rule 1 left at least `MIN_ALIGNED` pairs inside the window and they are not a skew, plus whatever `closeDatesWithTitles` could close on top of them |
  * | `titles` | rule 1 did not, the candidate's origin does not retranslate, and rule 2 cleared both halves of its bar |
  * | `sequence` | neither did, and rule 3's alignment placed a row by ORDER: `minAnchorsFor` anchors, at least one row forced by a bracket or by 3.4a's closure AND still inside the window, `MIN_ALIGNED` pairs inside the window, and not the same offset rule 1 refused as a skew |
+ * | `no-reference` | the run carries no numbered episode of its own, so no rule was asked anything (2026-09-13) |
  * | `retranslates` | nothing was proven and rule 2 was refused outright (Netflix, 4 exact of 25, the best wrong pair above the true one, 2026-09-10) |
  * | `date-skew` | rule 1's pairs were a constant offset the candidate's own numbering cannot absorb (`scheduleSkew`) and neither rule 2 nor rule 3 minted |
  * | `ambiguous-day` | rule 1 reached reference days and a day named two reference numbers |
@@ -1597,6 +1604,10 @@ export const decideCandidate = (options: {
   candidate: Pick<Candidate, 'retranslates' | 'episodes'>
 }): Verdict => {
   const { runLength, reference, candidate } = options
+  // FIRST, and above `retranslates`: with no numbered row on our side there is nothing for any rule
+  // below to be refused ON, and a reason naming the candidate would be a statement about a comparison
+  // that never happened
+  if (!reference.some(episode => episode.number !== null)) return { ok: false, reason: 'no-reference' }
   const inWindow = (pairs: Pair[]) => pairs.filter(pair => pair.toNumber >= 1 && pair.toNumber <= runLength)
 
   const dates = pairsByDay(reference, candidate.episodes)
@@ -1905,6 +1916,56 @@ export const numbersOutsideRun = (episodes: readonly SideEpisode[], runLength: n
 }
 
 /**
+ * The run's own episodes, which are the left hand side of every rule below.
+ *
+ * THE VOTE'S WINNERS FIRST, which is `runLengthFrom` and is what this was until 2026-09-13. Then the
+ * one thing it never covered: a member may STATE a count without LISTING an episode, so a length
+ * carried by such a member alone leaves this set empty, and an empty reference is not a weak
+ * comparison but no comparison at all. Every rule then reaches nothing, every candidate is refused,
+ * and the refusal names the CANDIDATE's origin (`retranslates` for Netflix) for a silence that is the
+ * run's own.
+ *
+ * Measured that day on `ag:(anilist:146065)`, Mushoku Tensei season 2 cour 1: `runLength 13 from
+ * anilist:146065, tier 0.8, witnesses 1`, and AniList lists no episode row anywhere in the graph. The
+ * 12 rows the cluster draws are anizip's and kitsu's, neither of which states 13, so the reference was
+ * empty and the route placed NOTHING from anybody: Netflix refused `retranslates` and Crunchyroll's
+ * lend refused in silence. Its neighbour `ag:(anilist:166873)` has `12 from anilist, anizip, kitsu`,
+ * witnesses 3, and places 22 pairs against the same two containers.
+ *
+ * THE FALLBACK TAKES ONLY AN ORIGIN THAT NUMBERS IN THE RUN'S OWN SPACE, which is `numbersOutsideRun`
+ * read the other way round, so nothing can be a reference here and a class 3 candidate at the same
+ * time, and a pair still lands on `1..runLength` where the window expects it. It is not a lowered bar:
+ * every threshold inside `decideCandidate` is untouched, and this only supplies the side of the
+ * comparison that was missing. An origin carrying no numbered row at all is not one of these, since a
+ * list of specials can anchor nothing.
+ *
+ * It is consulted ONLY when the vote's own members list nothing, never to widen a reference that
+ * exists: a run whose length came from a member that does list episodes keeps exactly the reference it
+ * had, which is what leaves the four working routes byte identical.
+ */
+export const referenceEpisodes = (options: {
+  episodes: readonly SideEpisode[]
+  runLengthFrom: readonly string[]
+  runLength: number
+}): { reference: SideEpisode[], origins: Set<string> } => {
+  const { episodes, runLengthFrom, runLength } = options
+  const voted = new Set(runLengthFrom.map(originOf))
+  const byVote = episodes.filter(episode => voted.has(episode.origin))
+  if (byVote.length) return { reference: byVote, origins: voted }
+
+  const byOrigin = new Map<string, SideEpisode[]>()
+  for (const episode of episodes) byOrigin.set(episode.origin, [...byOrigin.get(episode.origin) ?? [], episode])
+  const origins = new Set<string>()
+  for (const origin of [...byOrigin.keys()].sort(compare)) {
+    const own = byOrigin.get(origin)!
+    if (!own.some(episode => episode.number !== null)) continue
+    if (numbersOutsideRun(own, runLength)) continue
+    origins.add(origin)
+  }
+  return { reference: episodes.filter(episode => origins.has(episode.origin)), origins }
+}
+
+/**
  * `plugin:range`, P4 of 5.4.
  *
  * Consumes `Cluster`, `MEMBER_OF`, `LINK` (`PART_OF`), `HAS_EPISODE`, `Episode`, `EpisodeProfile` and
@@ -2009,9 +2070,10 @@ export const rangePlugin: Plugin = {
       const inside = members.get(clusterId) ?? new Set<string>()
       const episodes = ours.get(clusterId) ?? []
       // the reference is the members whose own count equals the length, which is the set
-      // `plugin:aggregate` already wrote as `runLengthFrom` (`consensus.ts:265-273`, 5.4 P5)
-      const referenceOrigins = new Set(listOf(cluster.runLengthFrom).map(originOf))
-      const reference = episodes.filter(episode => referenceOrigins.has(episode.origin))
+      // `plugin:aggregate` already wrote as `runLengthFrom` (`consensus.ts:265-273`, 5.4 P5), and,
+      // where not one of those lists an episode, the members that do (`referenceEpisodes`)
+      const { reference, origins: referenceOrigins } =
+        referenceEpisodes({ episodes, runLengthFrom: listOf(cluster.runLengthFrom), runLength })
 
       const candidates: Candidate[] = []
       for (const candidate of seasons.values()) {

@@ -30,8 +30,8 @@ import { containmentPlugin } from '../../../../../src/worker/graph/plugins/conta
 import {
   alignByTitle, closeDatesWithTitles, closeWithSpecials, decideCandidate, forcedByBracket, hullOf, MIN_ALIGNED,
   numbersOutsideRun, MIN_CONSENSUS_ANCHORS, MIN_CONSENSUS_GAP, MIN_SCORED_ANCHORS, offsetConsensus, pairsByDay,
-  pairsBySequence, pairsByTitle, placesClaim, rangePlugin, ruleOfPair, scheduleSkew, SCORED_ANCHOR_FLOOR,
-  SCORED_ANCHOR_MARGIN, synopsisAnchors, titleDice,
+  pairsBySequence, pairsByTitle, placesClaim, rangePlugin, referenceEpisodes, ruleOfPair, scheduleSkew,
+  SCORED_ANCHOR_FLOOR, SCORED_ANCHOR_MARGIN, synopsisAnchors, titleDice,
 } from '../../../../../src/worker/graph/plugins/range'
 import { stripTitle } from '../../../../../src/sources/utils'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
@@ -650,6 +650,52 @@ const gapAnswers = async () => [
   })),
 ]
 
+// THE RUN WHOSE LENGTH CAME FROM A MEMBER THAT LISTS NOTHING. Measured on `ag:(anilist:146065)`,
+// Mushoku Tensei season 2 cour 1, 2026-09-13: the panel reads `run length 13 from anilist:146065,
+// tier 0.8, witnesses 1`, AniList publishes a count and no episode row, and the twelve rows the
+// cluster draws are ani.zip's and Kitsu's, neither of which states 13. So `runLengthFrom` named the
+// one member with no list, the reference was EMPTY, and the route placed nothing from anybody:
+// Netflix refused `retranslates` and Crunchyroll's lend refused in silence. Its neighbour
+// `ag:(anilist:166873)` reads `12 from anilist, anizip, kitsu`, witnesses 3, and places 22 pairs
+// against the same two containers, which is the contrast that named the cause.
+//
+// The numbers here are that shape and not that show's titles: 13 declared against twelve listed, one
+// catalogue at 0.8 alone at its tier, and a retranslating season of 25 over it.
+const COUNT_ONLY_DAYS = weekly('2023-07-09', 12)
+const countOnlyAnswers = async () => [
+  await answer('media', media('anilist:980', {
+    // NO `episodes` KEY AT ALL, which is the whole case: a catalogue that states a count and lists
+    // nothing can win the vote and can never be a reference
+    score: 0.8, type: 'TV', status: 'FINISHED', episodeCount: 13, startDate: COUNT_ONLY_DAYS[0],
+    titles: [title('en', 'Counted But Never Listed')],
+    handles: [
+      sameAs(media('anizip:980', {})),
+      sameAs(media('kitsu:980', {})),
+      partOf(media('nf:80999970-2', { score: 0.2 })),
+    ],
+  })),
+  await answer('media', media('anizip:980', {
+    type: 'TV', episodeCount: 12, titles: [title('en', 'Counted But Never Listed')],
+    episodes: CANON_S2.slice(0, 12).map((name, index) => episode(`anizip:980-${index + 1}`, 'anizip:980', {
+      episodeNumber: index + 1, releaseDate: anizipDay(COUNT_ONLY_DAYS[index]!), titles: [title('en', name)],
+    })),
+  })),
+  // Kitsu's twelve, dateless and titleless, exactly as it answers on the live route: it numbers in the
+  // run's own space and therefore stands beside ani.zip in the reference, and it anchors nothing
+  await answer('media', media('kitsu:980', {
+    score: 0.3, type: 'TV', status: 'FINISHED', episodeCount: 12, titles: [title('en', 'Counted But Never Listed')],
+    episodes: Array.from({ length: 12 }, (_, index) =>
+      episode(`kitsu:980-${index + 1}`, 'kitsu:980', { episodeNumber: index + 1 })),
+  })),
+  await answer('media', media('nf:80999970-2', {
+    score: 0.2, type: 'TV', status: 'FINISHED', episodeCount: 25,
+    titles: [title('en', 'Counted But Never Listed')],
+    episodes: NETFLIX_S2.map((name, index) => episode(`nf:80999970-2-${index + 1}`, 'nf:80999970-2', {
+      episodeNumber: index + 1, titles: [title('en', name ?? `Episode ${index + 1}`)],
+    })),
+  })),
+]
+
 beforeAll(async () => {
   await enableGraph(true)
   await ingestAnswers([
@@ -665,6 +711,7 @@ beforeAll(async () => {
     ...await sequenceAnswers(),
     ...await refusalAnswers(),
     ...await gapAnswers(),
+    ...await countOnlyAnswers(),
   ])
   resetPassState()
   await runPass()
@@ -1096,6 +1143,51 @@ test('the two rows a bad upstream date cost are paired, labelled and filled', as
     .toEqual(Array.from({ length: 12 }, (_, index) => [`cr:G940-${index + 12}`, index + 1, 'aligned']))
 })
 
+// THE RUN THAT PLACED NOTHING FROM ANYBODY, end to end through the engine. `ag:(anilist:146065)` on
+// 2026-09-13: the container attaches (`nf | PART_OF | active | containing`), the length is 13 from
+// AniList alone, and one plugin later `nf | INCLUDES | refused | retranslates` with `EPISODE_LINK 0`
+// in the counts. The cause is neither the container nor the titles: AniList lists no episode, so the
+// side every rule measures against was empty.
+// Mutation: return `{ reference: byVote, origins: voted }` unconditionally from `referenceEpisodes`
+// and this case reads ZERO pairs and a refused `INCLUDES` (`no-reference` now, and `retranslates`
+// again once the early return in `decideCandidate` goes too, which is the live panel verbatim).
+// Mutate the run length in the first assertion instead and nothing here moves, which is the point:
+// 13 is what the record says and it is not what was wrong.
+test('a run whose length came from a member that lists nothing still places its episodes', async () => {
+  const [length] = await rowsOf(
+    `MATCH (m:Media {uri: 'anilist:980'})-[:MEMBER_OF]->(c:Cluster)
+     RETURN c.runLength AS runLength, c.runLengthFrom AS runLengthFrom, c.runLengthWitnesses AS witnesses`
+  )
+  expect({
+    runLength: Number(length?.runLength),
+    from: length?.runLengthFrom as string[],
+    witnesses: Number(length?.witnesses),
+  }).toEqual({ runLength: 13, from: ['anilist:980'], witnesses: 1 })
+
+  const pairs = await pairsFrom('nf:80999970-2')
+  expect(pairs.map(row => [Number(row.fromNumber), Number(row.toNumber)]))
+    .toEqual([[6, 5], [7, 6], [8, 7], [9, 8], [10, 9], [11, 10], [12, 11]])
+  expect(pairs.every(row => String(row.toUri).startsWith('anizip:980-') && String(row.status) === 'active'))
+    .toBe(true)
+  expect(pairs.map(row => String(row.reason))).toEqual(Array.from({ length: 7 }, () => 'sequence'))
+
+  // and the range the season now carries, where a refusal sat
+  const range = (await rangeLinks()).find(row => row.fromUri === 'nf:80999970-2')
+  expect({ status: range?.status, reason: range?.reason, total: Number(range?.total) })
+    .toEqual({ status: 'active', reason: 'sequence', total: 25 })
+
+  // WHAT A READER SEES: seven of the run's twelve slots carry a Netflix row, and none of the five the
+  // alignment could not reach carries one anyway. Filtered to the RUN's own cluster, since the season
+  // is a cluster of its own and every one of its rows fills a slot there under its own number
+  const runCluster = await clusterIdOf('anilist:980')
+  const fills = (await fillsFrom('nf:80999970-2-'))
+    .filter(fill => fill.slot.startsWith(`${runCluster}#`))
+    // by slot and not by uri, which `fillsFrom` orders on and which puts `-10` before `-6`
+    .sort((a, b) => (a.slotNumber ?? 0) - (b.slotNumber ?? 0))
+  expect(fills.map(fill => [fill.uri, fill.slotNumber]))
+    .toEqual(Array.from({ length: 7 }, (_, index) => [`nf:80999970-2-${index + 6}`, index + 5]))
+})
+
 // THE SCHEDULE SKEW, AND THE VIDEO IT PUT ON THE WRONG ROW. Crunchyroll streams from a Thursday and
 // ani.zip broadcasts from the Wednesday six days later, so Crunchyroll's N+1 falls one day after
 // ani.zip's N: rule 1 minted eleven pairs `N+1` to `N`, Crunchyroll's "Prologue" paired with nothing,
@@ -1274,7 +1366,10 @@ test('rule 1 refuses one shared day, a day naming two references, and an undated
   const undated = [side('cr:3-13', 13, null)]
   expect(pairsByDay(reference, undated).pairs).toEqual([])
   expect(pairsByDay(undated, listed('cr:3', 1, weekly('2026-07-17', 3))).pairs).toEqual([])
-  expect(decideCandidate({ runLength: 12, reference: [], candidate: { retranslates: false, episodes: undated } }))
+  // OUR SIDE IS NUMBERED AND DATELESS, which is what `no-dates` is about. It was `reference: []` until
+  // 2026-09-13, where the reason now reads `no-reference`, and the two are different findings
+  const dateless = [side('anizip:3-1', 1, null), side('anizip:3-2', 2, null)]
+  expect(decideCandidate({ runLength: 12, reference: dateless, candidate: { retranslates: false, episodes: undated } }))
     .toEqual({ ok: false, reason: 'no-dates' })
 })
 
@@ -2054,6 +2149,84 @@ test('the alignment, the bracket and the closure are three separate claims', () 
   expect(closeWithSpecials({ alignment, unequal: bracket.unequal }).closed).toBe(true)
   expect(closeWithSpecials({ alignment, unequal: 1 }), 'a refused region refuses the closure')
     .toEqual({ pairs: [], located: [], closed: false })
+})
+
+// ---------------------------------------------------------------------------------------------
+// THE REFERENCE ITSELF (2026-09-13): the side every rule above measures against, and the one way it
+// came up empty on a real route.
+
+/** The live `ag:(anilist:146065)` shape: two origins list, and neither of them won the length vote. */
+const countOnlySides = (): SideEpisode[] => [
+  ...CANON_S2.slice(0, 12).map((name, index) =>
+    side(`anizip:980-${index + 1}`, index + 1, COUNT_ONLY_DAYS[index]!, [name])),
+  // ani.zip's `specials=1` rows, which carry no number and can be no reference on their own
+  side('anizip:980-S2', null, '2023-07-03'),
+  ...Array.from({ length: 12 }, (_, index) => side(`kitsu:980-${index + 1}`, index + 1, null)),
+]
+
+// A MEMBER MAY STATE A COUNT AND LIST NOTHING, and a length carried by such a member alone left the
+// reference EMPTY, which is no comparison rather than a weak one. Measured on `ag:(anilist:146065)`:
+// `13 from anilist:146065`, witnesses 1, twelve rows drawn from ani.zip and Kitsu, zero episodes
+// placed from ANY origin.
+// Mutation: return `{ reference: byVote, origins: voted }` unconditionally from `referenceEpisodes`
+// (the fallback branch deleted) and the first assertion below reads an empty list, which is the live
+// failure exactly; keep the fallback but drop its `numbersOutsideRun` guard and the Crunchyroll lend
+// numbered 13 to 24 becomes the run's own reference in the third.
+test('a length stated by a member that lists nothing still leaves a reference', () => {
+  const episodes = countOnlySides()
+
+  const voted = referenceEpisodes({ episodes, runLengthFrom: ['anilist:980'], runLength: 13 })
+  expect(voted.reference.length, 'AniList states 13 and lists nothing, so the vote names no lister').toBe(25)
+  expect([...voted.origins].sort()).toEqual(['anizip', 'kitsu'])
+
+  // AND IT IS NEVER A WIDENING. `ag:(anilist:166873)` reads `12 from anilist, anizip, kitsu`, so the
+  // vote already names a lister and the reference is exactly that set, AniList's silence included
+  const listing = referenceEpisodes({
+    episodes, runLengthFrom: ['anilist:980', 'anizip:980'], runLength: 13,
+  })
+  expect(listing.reference.map(episode => episode.origin).every(origin => origin === 'anizip')).toBe(true)
+  expect(listing.reference).toHaveLength(13)
+
+  // A LEND NUMBERS OUTSIDE THE RUN, which is what makes it a candidate, and it may never be promoted
+  // into the reference by this fallback: that would leave an origin proving itself
+  const lent = Array.from({ length: 12 }, (_, index) => side(`cr:G980-${index + 13}`, index + 13, null))
+  expect(numbersOutsideRun(lent, 13), 'the class 3 test, read the other way round').toBe(true)
+  expect(referenceEpisodes({ episodes: lent, runLengthFrom: ['anilist:980'], runLength: 13 }).reference)
+    .toEqual([])
+  // nor may a list of specials, which carries no number to anchor on
+  expect(referenceEpisodes({
+    episodes: [side('anizip:980-S2', null, '2023-07-03')], runLengthFrom: ['anilist:980'], runLength: 13,
+  }).reference).toEqual([])
+})
+
+// A REFUSAL THAT NAMES THE WRONG SIDE IS WHAT HID THIS. With no numbered row of our own, `retranslates`
+// is a statement about a comparison that never happened, and it sent every reading of the trace at
+// Netflix's titles.
+// Mutation: delete the `no-reference` early return from `decideCandidate` and the first verdict below
+// reads `retranslates`, which is what the live panel said for the whole session.
+test('an empty reference refuses as no-reference, and a filled one places the seven rows', () => {
+  const { theirs } = mushokuSides()
+  expect(decideCandidate({ runLength: 13, reference: [], candidate: { retranslates: true, episodes: theirs } }))
+    .toEqual({ ok: false, reason: 'no-reference' })
+  // a reference of specials alone is the same finding: rows, and not one number among them
+  expect(decideCandidate({
+    runLength: 13,
+    reference: [side('anizip:980-S2', null, '2023-07-03', ['Advance Screening Event'])],
+    candidate: { retranslates: true, episodes: theirs },
+  })).toEqual({ ok: false, reason: 'no-reference' })
+
+  // and the same candidate against the reference the fallback recovers: ours 1 to 12 under a run of
+  // 13, theirs 25, so the closure's surplus of 13 is unaccounted and only the anchors and the rows
+  // their brackets force ride out
+  const reference = referenceEpisodes({
+    episodes: countOnlySides(), runLengthFrom: ['anilist:980'], runLength: 13,
+  }).reference
+  const verdict = decideCandidate({ runLength: 13, reference, candidate: { retranslates: true, episodes: theirs } })
+  expect(verdict.ok && verdict.rule).toBe('sequence')
+  expect(verdict.ok && verdict.pairs.map(pair => [pair.fromNumber, pair.toNumber]))
+    .toEqual([[6, 5], [7, 6], [8, 7], [9, 8], [10, 9], [11, 10], [12, 11]])
+  // every pair NAMES ani.zip's row and never Kitsu's, which carries the same number and no title
+  expect(verdict.ok && verdict.pairs.every(pair => pair.to.uri.startsWith('anizip:980-'))).toBe(true)
 })
 
 // ---------------------------------------------------------------------------------------------
