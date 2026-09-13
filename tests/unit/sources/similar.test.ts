@@ -13,9 +13,11 @@ import {
   foldVetoed,
   hasEvidence,
   isRunAnswerFrom,
+  namedSeasonOrdinals,
   namesAPart,
   pickContainingSeason,
   pickSimilarSeason,
+  seasonOrdinals,
   similarAskKey,
   SHOW_TITLE_THRESHOLD,
   type SeasonCandidate,
@@ -472,23 +474,37 @@ test('a season only a little longer than the run is our run plus extras, and hol
 //
 // Mutation: drop the `candidate.seasonNumber <= ceiling` clause and season 3 takes this run.
 //
-// SEASON 1 PUBLISHES A LENGTH HERE, and did not until 2026-09-13. A season nobody measured is now
-// refused by the sibling clause of the case below, which would make this pass for a reason that is
-// not the ceiling and leave the mutation above green. So it is longer than the run, which is the fold
-// veto and not this rule, and it carries no year, which is the only thing keeping the year axis off
-// it: everything refusing season 3 is the ordinal and nothing else.
+// NO SEASON HERE IS NUMBERED OURS, which is what leaves the ceiling the only thing refusing season 3.
+// A listing that HAS a season 1 is the case below, where the ordinal axis answers it and would answer
+// it with the ceiling gone too, so the mutation would stay green on that shape. Both seasons publish
+// a length, so the sibling clause of the axis 3 case is not what refuses either.
 test('a run whose titles agree on season 1 is never put inside the source\'s season 3', () => {
+  const late: SeasonCandidate<number>[] = [
+    { season: 2, seasonNumber: 2, episodeCount: 30 },
+    { season: 3, seasonNumber: 3, episodeCount: 24, year: 2021 },
+  ]
+  const run = { titles: ['Show Season 1'], episodeCount: 11, startDate: '2021-01-11' }
+  expect(pickSimilarSeason(run, late), 'the control: every season is longer, so none of them is our run').toBeUndefined()
+  expect(pickContainingSeason(run, late)).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...run, titles: ['Show'] }, late),
+    'the control: the same evidence with no ordinal to read is held by the season dated its year'
+  ).toEqual({ season: 3, rule: 'year', theirs: 24, ours: 11 })
+})
+
+// The same run against a listing that DOES number a season 1, which is the ordinal axis answering
+// where the year axis could not: this season 1 carries no year at all, so nothing but its number
+// places the run in it.
+//
+// Mutation: delete the `named.size === 1` block and this refuses, while the case above stays green.
+test('a run whose titles agree on season 1 is held by the season the listing numbers 1', () => {
   const late: SeasonCandidate<number>[] = [
     { season: 1, seasonNumber: 1, episodeCount: 30 },
     { season: 3, seasonNumber: 3, episodeCount: 24, year: 2021 },
   ]
   const run = { titles: ['Show Season 1'], episodeCount: 11, startDate: '2021-01-11' }
   expect(pickSimilarSeason(run, late), 'the control: 30 over 11 is a fold, not our run').toBeUndefined()
-  expect(pickContainingSeason(run, late)).toBeUndefined()
-  expect(
-    pickContainingSeason({ ...run, titles: ['Show'] }, late),
-    'the control: the same evidence with no ordinal to read is held by that season'
-  ).toEqual({ season: 3, rule: 'year', theirs: 24, ours: 11 })
+  expect(pickContainingSeason(run, late)).toEqual({ season: 1, rule: 'ordinal', theirs: 30, ours: 11 })
 })
 
 // FINDING 1 OF THE 2026-09-13 REVIEW, and the shape the case above used to carry. Axis 2 reads "the
@@ -589,4 +605,152 @@ test('the gate on the second question never refuses one the rule would have answ
     expect(canBeContained(blind), `episodeCount ${String(missing)} is no length to be longer than`).toBe(false)
     expect(pickContainingSeason(blind, fold), 'which is what the rule answers for it anyway').toBeUndefined()
   }
+})
+
+// THE 2026-09-13 STOP, and the two runs the owner clicked through to on `?store=graph`. Netflix's
+// season 2 of 25 holds anime season 2 (13) and its second part (12), and neither run could be placed
+// on it. Both axes that existed are silent here, for reasons that are facts about the CATALOGUES and
+// not about the rule:
+//
+//   THE YEAR. unOGS publishes one year for a whole title, which is its first season's, so
+//   `netflixCandidates` stamps 2021 on season 1 and nothing on the rest. A run that started in 2023
+//   or 2024 matches no dated candidate, and axis 3 has nothing to single out.
+//
+//   THE EPISODE NAMES. ani.zip and Netflix translate the same episodes independently, so the overlap
+//   is a handful and never a share: measured against the listing in `UNOGS_MUSHOKU`, anime season 2
+//   has 5 of its 13 names in common with Netflix's season 2 and its second part has NONE, because the
+//   names Netflix publishes for the back half of that season are numbers. `The Brokenhearted Mage`
+//   against `The Depressed Magician` is the shape of it the whole way down.
+//
+// What is left is exact on both sides: the run's own titles name season 2 and the listing numbers one
+// season 2, holding 25 where the run holds 13 and 12.
+//
+// Mutation: delete the `named.size === 1` block and both of these return to REFUSED while every case
+// above stays green.
+const ANIZIP_SEASON_2 = [
+  'Guardian Fitz', 'The Brokenhearted Mage', 'The Forest in the Dead of Night', 'Abrupt Approach',
+  'Letter of Invitation', 'Ranoa University of Magic', 'I Don`t Want to Die',
+  'The Kidnapping and Confinement of Beast Girls', 'The Fiance of Despair', 'The White Mask',
+  'These Feelings', 'To You', 'I Want to Tell You',
+]
+const ANIZIP_SEASON_2_PART_2 = [
+  'My Dream Home', 'Wedding Reception', 'Afar', 'Norn and Aisha', 'My Older Brother`s Feelings',
+  'Turning Point 3', 'Desert Journey', 'Into the Labyrinth', 'Magic Circle to the Sixth Stratum',
+  'Parents', 'Let`s Go Home', 'Succession',
+]
+
+test('a run whose titles name a season is held by the season the listing numbers that way', () => {
+  const season2 = {
+    titles: [`${SHOW} Season 2`, 'Mushoku Tensei II: Isekai Ittara Honki Dasu'],
+    episodeCount: 13,
+    startDate: '2023-07-03',
+    episodeTitles: ANIZIP_SEASON_2,
+  }
+  expect(pickSimilarSeason(season2, UNOGS_MUSHOKU), 'the control: 25 over 13 is a fold, not our run').toBeUndefined()
+  expect(pickContainingSeason(season2, UNOGS_MUSHOKU)).toEqual({ season: 2, rule: 'ordinal', theirs: 25, ours: 13 })
+})
+
+// The same season, its second cour, and the case that decides how the ordinal is READ. A part is a
+// position inside a season, so the marker that closes every sameness rule must not close this one,
+// and the number after `Part` must never be mistaken for the season's.
+test('a part of a named season is held by that season, read off the title before the part marker', () => {
+  const part2 = {
+    titles: [`${SHOW} Season 2 Part 2`, 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2'],
+    episodeCount: 12,
+    startDate: '2024-04-08',
+    episodeTitles: ANIZIP_SEASON_2_PART_2,
+  }
+  expect(pickSimilarSeason(part2, UNOGS_MUSHOKU), 'the control').toBeUndefined()
+  expect(pickContainingSeason(part2, UNOGS_MUSHOKU)).toEqual({ season: 2, rule: 'ordinal', theirs: 25, ours: 12 })
+})
+
+// THE TRAP THE HEAD-AWARE READ EXISTS FOR, and the one a `seasonOrdinals` here would walk into.
+// `parseSeasonNumber` reads `Part 2` as 2, so anime season 1's SECOND COUR answers the same number as
+// anime season 2 part 2 above, and the two live in different Netflix seasons: this one is inside
+// season 1 of 24, which is where the year axis puts it.
+//
+// Mutation: swap `namedSeasonOrdinals` for `seasonOrdinals` in axis 2 and this cour is handed Netflix
+// season 2, which holds a run two years later. A wrong container is worse than none.
+test('a cour whose title names a part and no season takes no ordinal from it', () => {
+  const cour2 = {
+    titles: [`${SHOW} Part 2`, `${SHOW} Cour 2`],
+    episodeCount: 12,
+    startDate: '2021-10-04',
+    episodeTitles: episodeTitles(10, 12),
+  }
+  expect(namedSeasonOrdinals(cour2.titles), 'a part number is not a season ordinal').toEqual(new Set())
+  expect(seasonOrdinals(cour2.titles), 'the control: the season-blind read does take it').toEqual(new Set([2]))
+  expect(pickContainingSeason(cour2, UNOGS_MUSHOKU)).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 12 })
+})
+
+// ONCE THE ORDINAL HAS SPOKEN, NOTHING ELSE MAY ANSWER. The season our titles name is here and cannot
+// hold us: 12 of 14 is our run plus extras, which is the same line axis 3 draws. Falling through to
+// the year would then hand a run calling itself season 2 the SEASON 1 that happens to carry the
+// title's year, which is the 2026-09-05 weld pointing the other way.
+//
+// Mutation: replace either `return undefined` inside the `numbered.length === 1` branch with a fall
+// through and this answers `{ season: 1, rule: 'year' }`.
+test('a named season that cannot hold the run is a refusal, never a fall through to the year', () => {
+  const listing: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 24, year: 2021 },
+    { season: 2, seasonNumber: 2, episodeCount: 14 },
+  ]
+  const run = { titles: ['Show Season 2'], episodeCount: 12, startDate: '2021-11-01' }
+  expect(pickSimilarSeason(run, listing), 'the control: 14 over 12 is a fold, so no season IS this run').toBeUndefined()
+  expect(pickContainingSeason(run, listing)).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...run, titles: ['Show'] }, listing),
+    'the control: the same run naming no season is held by the one dated its year'
+  ).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 12 })
+})
+
+// The grammar itself, both sides of the split point. The head is the season's and the tail is the
+// part's, which is `plugin:profile`'s own reading (`ordinalsOf`) shared rather than repeated.
+test('a season ordinal is read off the title before any part marker', () => {
+  expect(namedSeasonOrdinals(['Show Season 3'])).toEqual(new Set([3]))
+  expect(namedSeasonOrdinals(['Show 2nd Season'])).toEqual(new Set([2]))
+  expect(namedSeasonOrdinals(['Show Season 2 Part 3'])).toEqual(new Set([2]))
+  expect(namedSeasonOrdinals(['Show Part 3']), 'a part alone names no season').toEqual(new Set())
+  expect(namedSeasonOrdinals(['Show Cour 2']), 'nor does a cour').toEqual(new Set())
+  expect(namedSeasonOrdinals(['Show Second Half']), 'nor a half').toEqual(new Set())
+  expect(namedSeasonOrdinals(['Show Season 2', 'Show 3rd Season']), 'titles that disagree say both').toEqual(new Set([2, 3]))
+  expect(namedSeasonOrdinals([]), 'and nothing says nothing').toEqual(new Set())
+})
+
+// THE SHORT RUN, and what the corpus sweep behind `MAX_FOLDED_RUNS` found. A one episode promotional
+// short that carries a season marker satisfies every other clause of the ordinal axis, because "the
+// candidate is longer than our run" is true of every season in every listing once our run is one
+// episode. Measured over the 169 runs of `scripts/measure-unogs-season-match.mjs` on 2026-09-13, that
+// handed Netflix's Vinland Saga season 2 to two one episode ONAs, and that season IS the anime season
+// 2 run: a season cannot both be a run and hold a different one.
+//
+// Mutation: drop `ours * MAX_FOLDED_RUNS >= theirs` from `heldShare` and the short takes season 2.
+test('a run too short to be a cour of the season it names is refused', () => {
+  const listing: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 24, year: 2019 },
+    { season: 2, seasonNumber: 2, episodeCount: 24 },
+  ]
+  const short = { titles: ['Show Season 2: A Promotional Short'], episodeCount: 1, startDate: '2023-02-14' }
+  expect(pickSimilarSeason(short, listing), 'the control: 24 over 1 is a fold, not our run').toBeUndefined()
+  expect(pickContainingSeason(short, listing)).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...short, titles: ['Show Season 2'], episodeCount: 12 }, listing),
+    'the control: half of that season is a cour of it'
+  ).toEqual({ season: 2, rule: 'ordinal', theirs: 24, ours: 12 })
+})
+
+// The same floor on the year axis, where the identical defect already shipped: Overlord's one episode
+// ONA took season 1 by year, and season 1 is Overlord itself. Closing it is what takes the corpus
+// from three contradictions to none.
+//
+// Mutation: drop the floor and the ONA is held by the season that is another run.
+test('the fold floor applies to the year axis too', () => {
+  const fold: SeasonCandidate<number>[] = [{ season: 1, seasonNumber: 1, episodeCount: 13, year: 2015 }]
+  const ona = { titles: ['Show: Ple Ple Pleiades'], episodeCount: 1, startDate: '2015-07-07' }
+  expect(pickSimilarSeason(ona, fold), 'the control: 13 over 1 is a fold, not our run').toBeUndefined()
+  expect(pickContainingSeason(ona, fold)).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...ona, episodeCount: 4 }, fold),
+    'the control: four of thirteen is a fold this rule can read'
+  ).toEqual({ season: 1, rule: 'year', theirs: 13, ours: 4 })
 })

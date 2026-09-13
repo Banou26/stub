@@ -26,7 +26,7 @@ import type { MediaType } from '../../store/types'
 import type { Plugin, PluginContext, PluginOutput, PluginRow } from './contract'
 
 import { isOnlySeasonLabel, parseSeasonNumber } from '../../../sources/season'
-import { namesAPart } from '../../../sources/similar'
+import { namesAPart, PART_MARKER } from '../../../sources/similar'
 import { stripTitle } from '../../../sources/utils'
 import { COMPANION_MARKERS, mergeType, WORK_KINDS } from '../../store/fuzzy-merge'
 import {
@@ -46,12 +46,6 @@ const HAS_LETTER = /\p{L}/u
 // `YYYY-MM-DD` is the one shape whose day MEANS a day rather than an instant (`release-date.ts`), and
 // 50 of 439 seed dates are written that way (2026-09-08).
 const NAMED_DAY = /^\d{4}-\d{2}-\d{2}$/
-
-// A SPLIT POINT, not a second grammar: the grammar stays `namesAPart` and `parseSeasonNumber`. A
-// title carrying both a season and a part ("Season 2 Part 3") puts the season before the part in
-// every spelling the sources use, so the head is the season's and the tail is the part's, and
-// `parseSeasonNumber` reads each side with the one parser.
-const PART_MARKER = /\b(?:part|cour|half)\b/i
 
 /** One title key with the score, language and class of the title it came from (2.2, `titleKeys`). */
 export type TitleKeyEntry = { key: string, score: number | null, language: string | null, class: string }
