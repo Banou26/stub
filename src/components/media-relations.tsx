@@ -1,9 +1,10 @@
 import type { ComponentChildren } from 'preact'
 
 import { css } from '@emotion/react'
-import { Link } from 'wouter'
+import { Link, useSearch } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
+import { carriedSearch } from '../router/debug/trace'
 import { asAggregatedUri } from '../utils/uri'
 import { relationLanes, watchableRelations, type RelationEdge } from '../utils/relation-lanes'
 import { relationLabel, workFormatLabel } from '../utils/relation-labels'
@@ -126,7 +127,7 @@ const cardStyle = css`
   }
 `
 
-const RelationCard = ({ edge }: { edge: RelationEdge }) => {
+const RelationCard = ({ edge, search }: { edge: RelationEdge, search: string }) => {
   const cover = useCoverUrl(edge.node.covers)
   const title = edge.node.titles?.at(0)?.title
   // `format` rides on the EDGE rather than the node because `MediaType` is anime formats only and a
@@ -134,7 +135,7 @@ const RelationCard = ({ edge }: { edge: RelationEdge }) => {
   const meta = [workFormatLabel(edge.format), statusLabel(edge.node.status)].filter(Boolean).join(' · ')
 
   return (
-    <Link className="relation-card" css={cardStyle} to={getRoutePath(Route.MEDIA, { uri: asAggregatedUri(edge.node.uri) })}>
+    <Link className="relation-card" css={cardStyle} to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(edge.node.uri) })}${search}`}>
       {cover ? <img className="cover" src={cover} alt=""/> : <div className="cover"/>}
       <div className="body">
         <div className="relation">{relationLabel(edge.relation)}</div>
@@ -149,6 +150,11 @@ const MediaRelations = (
   { relations, action }:
   { relations: readonly RelationEdge[], action?: ComponentChildren }
 ) => {
+  // THE SESSION'S ENGINE FLAGS RIDE ALONG. Read above the early return, because a hook is, and once
+  // per row rather than once per card. A click here is a client-side navigation, so the worker and
+  // its engine survive it either way; what the query buys is an ADDRESS that reproduces this page
+  // when it is reloaded or pasted (`carriedSearch`).
+  const search = carriedSearch(useSearch())
   // Nothing at all rather than an empty heading: only some sources name relations, so most media have
   // none and a "Relations" heading over blank space reads as a page that failed to load. The action
   // goes with it: whatever it opens is built from the same source that named these.
@@ -166,7 +172,7 @@ const MediaRelations = (
         {/* rendered even when empty: an empty lane is what holds the middle in the centre */}
         {(['before', 'middle', 'after'] as const).map(lane => (
           <div className={`lane ${lane}`} key={lane}>
-            {lanes[lane].map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge}/>)}
+            {lanes[lane].map(edge => <RelationCard key={`${edge.relation}:${edge.node.uri}`} edge={edge} search={search}/>)}
           </div>
         ))}
       </div>

@@ -4,9 +4,10 @@ import { css } from '@emotion/react'
 import { FloatingFocusManager, FloatingOverlay, FloatingPortal, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import { Network, X } from 'lucide-react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { Link } from 'wouter'
+import { Link, useSearch } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
+import { carriedSearch } from '../router/debug/trace'
 import { asAggregatedUri } from '../utils/uri'
 import { edgeKey, formatsIn, highlightFor, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
 import type { HoverTarget } from '../utils/franchise-layout'
@@ -267,6 +268,9 @@ const titleLines = (title: string): string[] => {
 const SLOP = 4
 
 const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: readonly string[] }) => {
+  // the session's engine flags, so a node clicked out of this graph lands on an address that
+  // reproduces the page it came from (`carriedSearch`, and the relation cards do the same)
+  const search = carriedSearch(useSearch())
   const formats = useMemo(() => formatsIn(franchise), [franchise])
   // Video by default. Stub aggregates things you watch, so a novel or a manga is context rather than
   // somewhere to go: its page here has no episodes and nothing to read.
@@ -495,7 +499,7 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
                 <Link
                   key={node.uri}
                   className={`node${current.has(node.uri) ? ' current' : ''}${lit.nodes.has(node.uri) ? ' lit' : ''}`}
-                  to={getRoutePath(Route.MEDIA, { uri: asAggregatedUri(node.uri) })}
+                  to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(node.uri) })}${search}`}
                 >
                   <g
                     onPointerEnter={() => setHover({ kind: 'node', uri: node.uri })}
