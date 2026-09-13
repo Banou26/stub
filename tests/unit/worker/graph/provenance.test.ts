@@ -104,6 +104,34 @@ test('an unstamped echo from a source that rebuilds handles is an address claim'
     .toEqual(['nf:9900700-1 SAME_AS source'])
 })
 
+// `ask` IS NOT A STAMP A SOURCE MAY SET. An ask claim is the app consumer's own statement about an
+// answer it accepted, written by `writeAskClaim` with the `Ask` row it belongs to (4.4); a handle
+// inside an answer that carries it is a source calling itself the consumer, and there is no reading
+// of an answer under which that is true. Only `address` is read off the stamp, because that is the
+// one class a source can honestly declare about its own handle.
+//
+// It matters because the two are not weighed alike everywhere: `plugin:direct` refuses to consume an
+// `address` claim at all, so a source that wanted its claim consumed whatever the ingest derived
+// would have exactly this to reach for.
+//
+// Mutation: read `ask` off the stamp in `provenanceOf` (`if (textOf(handle.provenance) === 'ask')
+// return 'ask'`) and the first assertion reddens.
+test('a handle stamping itself an ask claim is still a source claim', async () => {
+  await ingestAnswers([
+    await answer('media', media('anizip:9900710', {
+      titles: [title('en', 'Claims to be an ask')],
+      handles: [{ ...sameAs(media('mal:9900710')), provenance: 'ask' }],
+    })),
+    await answer('media', media('anizip:9900711', {
+      titles: [title('en', 'Stamped an address')], handles: [stamped(media('mal:9900711'))],
+    })),
+  ])
+
+  expect(await claimsFrom('anizip:9900710')).toEqual(['mal:9900710 SAME_AS source'])
+  // the control: the stamp IS read, so the case above is a refusal rather than a stamp nobody reads
+  expect(await claimsFrom('anizip:9900711')).toEqual(['mal:9900711 SAME_AS address'])
+})
+
 // THE STAMP WINS over the table, which is what makes the table a fallback rather than the rule. The
 // claimer here is the strongest case against: ani.zip's whole payload is a mapping onto mal and
 // anilist ids (`anizip/extractor.ts:23,28`), so the derivation would call this a source claim, and

@@ -19,10 +19,11 @@
  *   mention of it is a placeholder plus a claim carrying the claimer's own description (4.3).
  *
  * WHAT IT REFUSES.
- * - `provenance: 'ask'`. An `ask` claim is the app consumer's, not a resolver's: it goes through
- *   `upsertMedia([], [claim])` with no row and therefore no `Answer`, so nothing in the log expresses
- *   it and step 4 writes it with the `Ask` row it belongs to. `address` IS written here, from the
- *   handle's own stamp or from `NATIVE_ID_SPACES` when a recording predates it (`provenanceOf`).
+ * - `provenance: 'ask'` from a decomposed answer. An `ask` claim is the app consumer's, not a
+ *   resolver's: it has no `Answer` to come out of, so nothing in the log expresses it and
+ *   `writeAskClaim` below is the one writer of it, called by `src/worker/similar-consumer.ts` with
+ *   the `Ask` row it belongs to. `address` IS written here, from the handle's own stamp or from
+ *   `NATIVE_ID_SPACES` when a recording predates it (`provenanceOf`).
  * - Everything a plugin writes (2.2). The tables exist and this file never touches them.
  *
  * THE ENGINE FACTS THAT SHAPE EVERY WRITE, all measured on 0.20.4, 2026-09-12. Three of them, and
@@ -180,6 +181,11 @@ const HANDLE_DEPTH = 4
 // what a `stub-source@1` plugin's bare row already means (`plugin-sources.ts:100-103`).
 const CLAIM_KINDS = new Set(['SAME_AS', 'PART_OF', 'INCLUDES'])
 
+// A claim's key is a hash over its composite, and the separator is a character no uri, kind, claimer
+// or provenance can carry, so two different composites cannot spell one key. One constant because
+// `writeAskClaim` keys its own claim the same way the decomposition does.
+const CLAIM_SEPARATOR = '\u0000'
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 
@@ -232,8 +238,12 @@ const isSeedIdentity = (claimer: string, kind: string): boolean => claimer === S
  * Crunchyroll's 52 (2026-09-12). It narrows only origins whose extractor was read line by line, and
  * an origin missing from either table is trusted.
  *
- * `ask` is still a later step and is never stamped here: it goes through `upsertMedia([], [claim])`
- * with no row and therefore no `Answer`, so nothing in the log expresses it.
+ * `ask` IS NEVER STAMPED HERE, and a handle claiming to be one does not become one. An ask claim is
+ * the app consumer's own statement about an answer it accepted, written by `writeAskClaim` with the
+ * `Ask` row it belongs to (4.4, step 4); it reaches no `Answer`, so a handle inside an answer that
+ * carries `provenance: 'ask'` is a source calling itself the consumer, and it stays `source`. Only
+ * `address` is read off the stamp, because that is the one class a source can honestly declare about
+ * its own handle: that it rebuilt it from the address it was asked about.
  */
 const provenanceOf = (claimer: string, kind: string, handle: Record<string, unknown>, targetOrigin: string): string => {
   if (isSeedIdentity(claimer, kind)) return 'seed'
@@ -406,7 +416,7 @@ const quarantine = (batch: Batch, key: string, uri: string, reason: string) => {
 }
 
 const addClaim = (batch: Batch, map: Map<string, EdgeDraft>, draft: Omit<EdgeDraft, 'contributions'>, node: Record<string, unknown>) => {
-  const key = `${draft.fromUri}\0${draft.toUri}\0${draft.kind}\0${draft.claimer}\0${draft.provenance}`
+  const key = [draft.fromUri, draft.toUri, draft.kind, draft.claimer, draft.provenance].join(CLAIM_SEPARATOR)
   const existing = map.get(key)
   if (!existing) {
     map.set(key, { ...draft, contributions: [{ seq: draft.answerSeq, value: node }] })
@@ -1108,3 +1118,135 @@ export const ingestAnswers = (rows: AnswerRow[]): Promise<IngestReport> => {
  * `scripts/replay-answers.mjs` or the fixture corpus can see that nothing about a replay is special.
  */
 export const replayAnswers = (rows: AnswerRow[]): Promise<IngestReport> => ingestAnswers(rows)
+
+/**
+ * One claim the app's own consumer made out of a `similarMedia` answer it accepted (3.3, 4.4).
+ *
+ * `kind` is the whole of the difference the answer carries: a sameness answer is `SAME_AS`, and a
+ * `containing` answer is `PART_OF` from the run to the season that holds it and NEVER sameness.
+ * `claimer` is the origin that answered, so the claim reads like any other statement of that origin's,
+ * and `targetScope` is the scope that origin stamped on its own row rather than anything the consumer
+ * inferred: a containing answer is an edge, not a re-scoping of the season it names.
+ */
+export type AskClaim = {
+  /** The run the question was asked for (`Ask.runUri`). */
+  fromUri: string
+  /** The answering origin's row. */
+  toUri: string
+  kind: 'SAME_AS' | 'PART_OF'
+  claimer: string
+  targetScope: string | null
+  /** The claimer's description of the target, as `CLAIMS.node` (2.1). */
+  node: Record<string, unknown>
+}
+
+/** What one `writeAskClaim` did: false when the pair already carried this exact claim. */
+export type AskClaimReport = { key: string, written: boolean, placeholders: string[] }
+
+const askClaimBatch = async (claim: AskClaim): Promise<AskClaimReport> => {
+  const { query } = await graphReady()
+  // the same composite the ingest keys a claim on, so an ask claim and a source claim about one pair
+  // are two rows rather than one, and re-asking writes neither twice
+  const key = await sha256Hex([claim.fromUri, claim.toUri, claim.kind, claim.claimer, 'ask'].join(CLAIM_SEPARATOR))
+  const [existing] = await query('MATCH (a:Media)-[c:CLAIMS {key: $key}]->(b:Media) RETURN c.key AS key', { key })
+  if (existing) return { key, written: false, placeholders: [] }
+
+  const seq = String(++commitSeq)
+  // Both ends get a placeholder when no answer has described them yet, which is the owner rule of 4.3
+  // read from the other side: a claim may name a row nobody owns, and the anchor is what the answer
+  // merges onto when the answering extractor's own row lands. `scope` is the claimer's stamp and
+  // NULL for the run, whose scope is its owner's word alone.
+  const ends = [
+    { uri: claim.fromUri, scope: null },
+    { uri: claim.toUri, scope: claim.targetScope },
+  ]
+  const present = new Set((await query(
+    'UNWIND $uris AS u MATCH (m:Media {uri: u}) RETURN m.uri AS uri',
+    { uris: ends.map(end => end.uri) }
+  )).map(row => row.uri as string))
+  const placeholders = ends.filter(end => !present.has(end.uri))
+  if (placeholders.length) {
+    await query(
+      `UNWIND $rows AS r
+       MERGE (m:Media {uri: r.uri})
+       ON CREATE SET m.origin = r.origin, m.id = r.id, m.owned = false, m.scope = r.scope, m.seq = cast(r.seq AS INT64)`,
+      { rows: placeholders.map(end => ({ uri: end.uri, origin: originOfUri(end.uri), id: idOfUri(end.uri), scope: end.scope, seq })) }
+    )
+  }
+
+  await query(
+    `UNWIND $rows AS h
+     MATCH (a:Media {uri: h.fromUri}), (b:Media {uri: h.toUri})
+     WHERE NOT EXISTS { MATCH (a)-[:CLAIMS {key: h.key}]->(b) }
+     CREATE (a)-[:CLAIMS {key: h.key, kind: h.kind, provenance: h.provenance, claimer: h.claimer,
+       targetScope: h.targetScope, node: h.node, hash: h.hash,
+       answerSeq: cast(h.answerSeq AS INT64), seq: cast(h.seq AS INT64)}]->(b)`,
+    {
+      rows: [{
+        key, fromUri: claim.fromUri, toUri: claim.toUri, kind: claim.kind, provenance: 'ask',
+        claimer: claim.claimer, targetScope: claim.targetScope, node: JSON.stringify(claim.node),
+        hash: await contentHash(claim.node),
+        // an ask claim came out of NO `Answer`: the consumer made it, and the `Ask` row is its record
+        // (7.3). Zero says so, where any other number would point a trace at somebody else's answer
+        answerSeq: '0',
+        seq,
+      }],
+    }
+  )
+  emit('graph:changed', { seq: commitSeq, uris: placeholders.map(end => end.uri), episodes: [], claims: [key] })
+  return { key, written: true, placeholders: placeholders.map(end => end.uri) }
+}
+
+/**
+ * Every RUN this cluster already holds in the GRAPH, its own member included. Empty when no cluster
+ * has formed for `runUri` yet.
+ *
+ * The gate on the claim above, and it lives beside the writer on purpose. The consumer's gate used to
+ * be `findAggregatedMedia`, which reads the OLD store, so on `?store=graph` the decision and the write
+ * were about two different stores: the old store unions a Netflix season in off the route's address
+ * alone, the graph refuses the same row entry because an address asserts nothing (3.3), and the
+ * consumer therefore concluded the cluster already had what the graph did not have and wrote no claim.
+ * A gate and a writer that disagree about which store is authoritative is the bug; one module is how
+ * it stays fixed.
+ *
+ * A cluster that does not exist yet answers an empty list, which is the safe direction: the question
+ * is asked and the claim written, and the writer's own guards, not this, decide whether the graph
+ * takes the edge.
+ *
+ * CONTAINERS ARE NOT RUNS. A show, the bare `nf:<id>`, is a member of nothing the run is in and is
+ * excluded by scope besides, so a title hanging off the cluster never reads as an answer to "does
+ * this cluster already hold a Netflix run".
+ */
+export const clusterRunsOf = async (runUri: string): Promise<{ uri: string, origin: string }[]> => {
+  const { query } = await graphReady()
+  const rows = await query(
+    `MATCH (m:Media {uri: $runUri})-[:MEMBER_OF]->(c:Cluster)<-[:MEMBER_OF]-(o:Media)
+     WHERE o.scope IS NULL OR o.scope <> 'CONTAINER'
+     RETURN o.uri AS uri, o.origin AS origin`,
+    { runUri }
+  )
+  const seen = new Set<string>()
+  return rows
+    .map(row => ({ uri: String(row.uri), origin: String(row.origin) }))
+    .filter(run => !seen.has(run.uri) && seen.add(run.uri))
+    .sort((a, b) => a.uri < b.uri ? -1 : a.uri > b.uri ? 1 : 0)
+}
+
+/**
+ * Write one `ask` claim, or report that the pair already carries it.
+ *
+ * The one write into the source tables that is NOT the ingest's, and it is here rather than in the
+ * consumer so it shares the serial queue: two writers on the one connection interleave otherwise.
+ * It promises that the claim is consumed exactly as a `source` claim is (`plugin:direct` reads only
+ * `provenance = 'address'` as a reason to skip a claim, and `plugin:profile`'s scope vote counts
+ * `source` and `ask` alike), that re-asking a settled pair writes nothing and emits nothing, and that
+ * it never invents a row: an end no answer has described gets a placeholder and no fields.
+ *
+ * It throws only when the engine refuses a statement. The caller is the app's own consumer, whose
+ * asking must not depend on a database being happy, so it catches.
+ */
+export const writeAskClaim = (claim: AskClaim): Promise<AskClaimReport> => {
+  const next = queue.then(() => askClaimBatch(claim))
+  queue = next.catch(() => undefined)
+  return next
+}

@@ -28,13 +28,15 @@ import { graphReady } from './schema'
 /**
  * What one ask came to.
  *
- * `answered`, `refused` and `declined` are `SimilarOutcome`'s own three (`src/sources/similar.ts`),
- * kept under the same names so a log line and a row read alike: a decline never reached the
- * answering source and may be retried, a refusal did and is final for that evidence. `error` is a
- * throw on the asking path, and `timeout` is an ask a caller gave up waiting on (the funnel reports
- * its own deadline as a decline, `timeout`, so the consumer records that as `declined` today).
+ * `answered`, `containing`, `refused` and `declined` are `SimilarOutcome`'s own four
+ * (`src/sources/similar.ts`), kept under the same names so a log line and a row read alike: a decline
+ * never reached the answering source and may be retried, a refusal did and is final for that
+ * evidence. `containing` is an answer too, and a separate row value because what it came to is a
+ * different claim: a season that holds the run rather than the run (4.4). `error` is a throw on the
+ * asking path, and `timeout` is an ask a caller gave up waiting on (the funnel reports its own
+ * deadline as a decline, `timeout`, so the consumer records that as `declined` today).
  */
-export type AskOutcome = 'answered' | 'refused' | 'declined' | 'error' | 'timeout'
+export type AskOutcome = 'answered' | 'containing' | 'refused' | 'declined' | 'error' | 'timeout'
 
 /** What a caller records: the question it put, and what that question came to. */
 export type Ask = {
@@ -66,7 +68,7 @@ export type Ask = {
   /**
    * Why, in one token: `SimilarOutcome`'s reason for a decline or a source refusal (`no-evidence`,
    * `ceiling`, `null`, `not-a-run`), the consumer's own reason for a refusal it made itself
-   * (`other-run`, `by-title`), and the ANSWER'S URI for an answered one.
+   * (`other-run`, `by-title`), and the ANSWER'S URI for an answered or a containing one.
    */
   reason: string
 }
@@ -79,7 +81,7 @@ export type AskRow = Omit<Ask, 'question'> & {
   seq: number
   /** sha-256 of the normalised question, so two asks that put the same question are comparable. */
   questionHash: string
-  /** The answer's uri for an answered ask, null for every other outcome. */
+  /** The answer's uri for an ask that was answered at all, `containing` included; else null. */
   answerUri: string | null
 }
 
@@ -162,7 +164,7 @@ const queue = async (ask: Ask): Promise<void> => {
     reason: ask.reason,
     // the answered reason IS the answer's uri (see `Ask.reason`), and the trace of 7.5 reads it off
     // this column, so the derivation lives here rather than in every caller
-    answerUri: ask.outcome === 'answered' ? ask.reason : null,
+    answerUri: ask.outcome === 'answered' || ask.outcome === 'containing' ? ask.reason : null,
   })
 }
 

@@ -134,6 +134,7 @@ export const PLUGIN_NODE_TABLES = [
     dayPrecision STRING,           // 'instant' | 'day' | 'none'
     numberSpace STRING,            // 'entry' | 'season' | 'position'
     titleKeys JSON,
+    synopsisKeys JSON,             // [{key, score, language}]: the synopsis as content words (5.4 P4 rule 3)
     generic BOOLEAN                // 'Episode 13' carries no identity
   )`,
   'CREATE NODE TABLE IF NOT EXISTS TitleKey(key STRING PRIMARY KEY, by STRING, version INT64)',

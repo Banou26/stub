@@ -12,6 +12,8 @@ import { MAX_ASKS_PER_PAIR, planSimilarAsks, resetSimilarAsks, resolveSimilarRun
 import { findAggregatedMedia, findPartOfMedia, resetStore, upsertEpisodes, upsertMedia } from '../../../src/worker/store/db'
 import { closeGraph, setGraphEnabled } from '../../../src/worker/graph/engine'
 import { exportAsks } from '../../../src/worker/graph/asks'
+import { graphReady } from '../../../src/worker/graph/schema'
+import { setReadStore } from '../../../src/worker/graph/read'
 
 const media = (
   uri: string,
@@ -71,6 +73,9 @@ const episodeTitlesOfCall = (ask: ReturnType<typeof vi.fn>, index: number) =>
 // the real answer carries the row's titles, which the consumer reads to check the show
 const ANSWER = { uri: 'cr:X-S3', origin: 'cr', id: 'X-S3', scope: 'RUN', titles: [{ title: 'Show' }] }
 const answered = (media: typeof ANSWER = ANSWER): SimilarOutcome => ({ outcome: 'answered', media })
+/** the fold: a season that HOLDS the run without being it (4.4), which claims containment and never identity */
+const CONTAINER_ANSWER = { uri: 'cr:X-S1', origin: 'cr', id: 'X-S1', scope: 'RUN', titles: [{ title: 'Show' }] }
+const containing = (media: typeof ANSWER = CONTAINER_ANSWER): SimilarOutcome => ({ outcome: 'containing', media })
 const REFUSED: SimilarOutcome = { outcome: 'refused', reason: 'null' }
 const implemented = (origin: string) => origin === 'cr' || origin === 'nf'
 const recorder = () => vi.fn(async (): Promise<SimilarOutcome> => answered())
@@ -104,6 +109,38 @@ test('a run page asks each answering container origin once, with the cluster\'s 
   expect(input.episodeCount, 'the highest-scored count').toBe(12)
   expect(input.episodeTitles).toEqual(['Alpha', 'Beta'])
   expect(input.context, 'the page\'s own root, so the callee reads a MEDIA hop').toBe(root)
+})
+
+// THE ANCHOR of every ask and every claim this consumer writes. The old store makes a row out of any
+// uri a claim names, so a cluster routinely carries a member no source has described: the seed's
+// `anidb:14758` handle on `ag:(anilist:108465)`, which sorts ahead of `anilist:108465` and carries no
+// title, no date and no count. The graph calls the same uri a placeholder and clusters nothing onto
+// it, so an ask anchored there claims into nothing.
+//
+// Mutation: go back to `cluster.filter(...).map(media => media.uri).sort()[0]` and both assertions
+// redden, the ask on `anidb:0` and the claim with it.
+test('an ask is anchored on a member a source has described, never on a bare claimed uri', async () => {
+  // `anidb:0` is the shape the seed's `anidb:14758` handle has on the live page: a row carrying a url
+  // and nothing else, which is enough to store (a row of pure identity is refused as a placeholder)
+  // and nothing a rule can read
+  await upsertMedia(
+    [
+      { ...media('anidb:0', 'RUN', { titles: [] }), url: 'https://anidb.net/anime/0' } as any,
+      media('anilist:1', 'RUN', { score: 0.8, startDate: '2026-07-04', episodeCount: 12, titles: ['Show'] }),
+      media('cr:X', 'CONTAINER'),
+    ],
+    [{ mediaUri: 'anilist:1', handleUri: 'anidb:0' }, { mediaUri: 'anilist:1', handleUri: 'cr:X' }]
+  )
+  const ask = recorder()
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  await resolveSimilarRuns(await findAggregatedMedia('anilist:1'), root, { ask, implemented })
+
+  expect(uris(await findAggregatedMedia('anilist:1')), 'the undescribed row IS a member of this cluster').toContain('anidb:0')
+  expect(warn.mock.calls.map(call => String(call[0])), 'and `anidb:0` sorts first, and is not what the ask is keyed on')
+    .toContainEqual(expect.stringMatching(/^similarMedia: consumer asked cr X for anilist:1 /))
+  expect(warn.mock.calls.map(call => String(call[0]))).not.toContainEqual(expect.stringMatching(/ for anidb:0 /))
+  warn.mockRestore()
 })
 
 test('the answer lands as SAME_AS of the run once its row arrives, and the container edge stays', async () => {
@@ -458,11 +495,20 @@ test('a listing root never asks', async () => {
   closeRoot(listing.rootId)
 })
 
+// THE ASK CLAIM (4.4, migration step 4). An answer the consumer ACCEPTS becomes a claim in the graph,
+// stamped `provenance: 'ask'`, beside the log row that records the question. The two are different
+// facts and neither stands in for the other: the log says a question was put and what it came to, the
+// claim says what the graph may now derive, and a question that was declined or refused has the first
+// and never the second.
+//
+// The claims are read straight off `CLAIMS` rather than through a plugin, because this file owns the
+// consumer and the shape of what it writes; that an `ask` claim is then consumed exactly as a `source`
+// claim is lives in `graph/ask-claim.test.ts`, where the plugins run.
 // THE ASK LOG (7.3). One row per question the consumer SENT, carrying what that question came to, so
 // a page with no Crunchyroll button can tell "never asked" from "asked and refused" from "asked and
 // declined". The flag goes up only here, at the end of the file: every test above runs with the graph
 // down and is therefore also the control that the consumer's behaviour does not depend on it.
-describe('the Ask log', () => {
+describe('the Ask log and the ask claim', () => {
   beforeAll(() => { setGraphEnabled(true) })
   afterAll(async () => {
     setGraphEnabled(false)
@@ -570,5 +616,229 @@ describe('the Ask log', () => {
 
     setGraphEnabled(true)
     expect(await exportAsks(), 'and the log is untouched').toEqual(before)
+  })
+
+  // The engine is opened once for the whole file and never torn down (closing it and reopening hangs
+  // the wasm module), so the claim table is the one piece of state that would otherwise carry from
+  // case to case: a pair another case already claimed is a no-op here, and an assertion over it could
+  // not see a leak. Emptied per case instead, which is what lets each one assert the WHOLE set.
+  beforeEach(async () => {
+    const { query } = await graphReady()
+    await query('MATCH ()-[c:CLAIMS]->() DELETE c')
+  })
+
+  const claimsFrom = async (fromUri: string) => {
+    const { query } = await graphReady()
+    return query(
+      `MATCH (a:Media {uri: $uri})-[c:CLAIMS]->(b:Media)
+       RETURN b.uri AS toUri, c.kind AS kind, c.provenance AS provenance, c.claimer AS claimer
+       ORDER BY toUri, kind`,
+      { uri: fromUri }
+    )
+  }
+
+  // Mutation: pass 'SAME_AS' rather than `kind` to `claim` in the consumer's accept branch and the
+  // kind assertion reddens. This is the expensive direction of the two: a wrong containment costs a
+  // badge and a hidden card, a wrong sameness welds two works.
+  test('a containing answer is claimed PART_OF, never SAME_AS', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+
+    await resolveSimilarRuns(cluster, root, { ask: vi.fn(async () => containing()), implemented })
+
+    expect(await claimsFrom('anilist:1')).toEqual([
+      { toUri: 'cr:X-S1', kind: 'PART_OF', provenance: 'ask', claimer: 'cr' },
+    ])
+    // and the log says which kind of answer it was, since `answered` and `containing` come to two
+    // different claims. Mutation: hardcode 'answered' in the accept branch's `note` and this reddens
+    expect(await added(before)).toMatchObject([{ outcome: 'containing', reason: 'cr:X-S1', answerUri: 'cr:X-S1' }])
+  })
+
+  // THE OLD STORE'S HALF OF THE SAME FACT, and the two writes must never disagree about which kind of
+  // answer arrived. A container hangs off the cluster and a same run joins it; reading one as the other
+  // here welds the fold into the run, which is the exact damage the ask exists to avoid.
+  //
+  // Mutation: pass 'SAME_AS' to `upsertMedia` in the accept branch rather than `kind`, and the first
+  // assertion reddens while the claim cases above stay green, since they read the graph and not this.
+  test('a containing answer hangs off the cluster and never joins it', async () => {
+    const cluster = await storeRun()
+
+    await resolveSimilarRuns(cluster, root, { ask: vi.fn(async () => containing()), implemented })
+    // the answering source's own row, landing after the claim exactly as it does in the app
+    await upsertMedia([media('cr:X-S1', 'RUN', { startDate: '2021-01-11', episodeCount: 24 })], [])
+
+    expect(uris(await findAggregatedMedia('anilist:1')), 'the container is not a member of the run').toEqual(['anilist:1', 'kitsu:2'])
+    expect(
+      uris(findPartOfMedia(await findAggregatedMedia('anilist:1'))),
+      'it hangs where the containers hang, beside the series the run was asked about'
+    ).toEqual(['cr:X', 'cr:X-S1', 'imdb:tt1'])
+  })
+
+  // Mutation: drop the `await claim(...)` line from the accept branch and this reddens while every
+  // `Ask` log case above still passes, which is exactly the state the slice started in: the answer
+  // logged, and nothing in the graph saying so.
+  test('a sameness answer is claimed SAME_AS, stamped ask and attributed to the answering origin', async () => {
+    const cluster = await storeRun()
+
+    await resolveSimilarRuns(cluster, root, { ask: recorder(), implemented })
+
+    expect(await claimsFrom('anilist:1')).toEqual([
+      { toUri: 'cr:X-S3', kind: 'SAME_AS', provenance: 'ask', claimer: 'cr' },
+    ])
+  })
+
+  // Mutation, for this case and the one below: claim the pair the consumer ASKED about, by adding
+  // `await claim(ask, { uri: ask.containerUri, origin: ask.origin, id: ask.showId }, 'PART_OF')` after
+  // `record.asks += 1`. Both redden. That is the plausible mistake here, since a question sent is a
+  // pointer at a container and it is tempting to record it: a declined ask never reached the source,
+  // and an ask that was sent asserts nothing until it is answered.
+  test('a declined ask writes its log row and no claim at all', async () => {
+    const cluster = await storeRun()
+    const before = new Set((await exportAsks()).map(row => row.key))
+
+    await resolveSimilarRuns(cluster, root, { ask: decliner('ceiling'), implemented })
+
+    expect((await exportAsks()).filter(row => !before.has(row.key)).map(row => row.outcome)).toEqual(['declined'])
+    expect(await claimsFrom('anilist:1'), 'nothing was answered, so nothing is claimed').toEqual([])
+  })
+
+  // The consumer's own refusal, for the same reason: an answer whose titles do not name our show is
+  // not an answer, and the log row is the whole of what it leaves behind.
+  //
+  // Mutation: the one above, and equally moving `await claim(...)` above the `verdict.ok` check.
+  test('an answer refused by title writes its log row and no claim', async () => {
+    const cluster = await storeRun()
+    const ask = vi.fn(async (): Promise<SimilarOutcome> => answered({ ...ANSWER, titles: [{ title: 'Grand Blue Dreaming' }] }))
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    await resolveSimilarRuns(cluster, root, { ask, implemented })
+
+    expect(await claimsFrom('anilist:1')).toEqual([])
+    warn.mockRestore()
+  })
+
+  // 1a. THE BRANCH THE LIVE PAGE TAKES, and the one the slice shipped without. An answer naming the
+  // run the cluster ALREADY holds was logged `answered` and claimed nowhere, so the Netflix season the
+  // console said had answered existed in the graph as no member of anything. The row being present is
+  // somebody else's evidence for it; this ask is a second, independent one, and the claim is what
+  // makes it a fact the rules may use.
+  //
+  // Mutation: remove the `await claim(...)` line from the `present.uri === result.media.uri` arm and
+  // this reddens while every log case above stays green, which is the exact state that was measured.
+  test('an answer naming the run the cluster already holds is claimed, not merely logged', async () => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+    let settle!: (outcome: SimilarOutcome) => void
+    const pending = new Promise<SimilarOutcome>(resolve => { settle = resolve })
+    const ask = vi.fn((): Promise<SimilarOutcome> => pending)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const first = resolveSimilarRuns(cluster, root, { ask, implemented })
+    await vi.waitFor(() => expect(ask).toHaveBeenCalledTimes(1))
+    // the answering extractor's own row lands while the ask is in flight: the same uri the answer
+    // is about to name, which is an answer and not the weld the other arm refuses
+    await upsertMedia([media('cr:X-S3', 'RUN', { titles: ['Show'] })], [{ mediaUri: 'anilist:1', handleUri: 'cr:X-S3' }])
+    settle(answered())
+    await first
+
+    expect(await added(before), 'the log still says it was answered').toMatchObject([{ outcome: 'answered', answerUri: 'cr:X-S3' }])
+    expect(await claimsFrom('anilist:1')).toEqual([
+      { toUri: 'cr:X-S3', kind: 'SAME_AS', provenance: 'ask', claimer: 'cr' },
+    ])
+    warn.mockRestore()
+  })
+
+  // 1b. THE GATE READS THE STORE THE CLAIM IS WRITTEN INTO. The old store unions a row in off the
+  // route's address alone; the graph refuses the same row entry because an address asserts nothing
+  // (3.3). A gate on the old store therefore reported "this cluster already has a cr run" about a
+  // graph that had none, and the answer was refused `other-run` and claimed nowhere. A route uri
+  // naming a season must never be what silences the ask.
+  //
+  // Mutation: make `presentRun` always read `findAggregatedMedia` (drop its `readStore()` branch) and
+  // this reddens: the row becomes `refused`/`other-run` and the claim set is empty.
+  //
+  // Two arms over one setup, and the second is the control that the gate MOVED rather than being
+  // dropped: a second run of one origin is still the weld the ask exists to avoid, on the store that
+  // can actually see it. The row lands while the ask is in flight, which is the one way to reach the
+  // gate at all once the plan reads the same store.
+  const answerWithAnotherCrRunPresent = async (store: 'graph' | 'legacy') => {
+    const cluster = await storeRun()
+    const before = keysOf(await exportAsks())
+    let settle!: (outcome: SimilarOutcome) => void
+    const pending = new Promise<SimilarOutcome>(resolve => { settle = resolve })
+    const ask = vi.fn((): Promise<SimilarOutcome> => pending)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    setReadStore(store)
+    try {
+      const run = resolveSimilarRuns(cluster, root, { ask, implemented })
+      await vi.waitFor(() => expect(ask).toHaveBeenCalledTimes(1))
+      // the OLD store gains a different cr run; the graph gains nothing at all
+      await upsertMedia([media('cr:X-S1', 'RUN', { titles: ['Show'] })], [{ mediaUri: 'anilist:1', handleUri: 'cr:X-S1' }])
+      settle(answered())
+      await run
+    } finally {
+      setReadStore('legacy')
+      warn.mockRestore()
+    }
+    return { rows: await added(before), claims: await claimsFrom('anilist:1') }
+  }
+
+  test('on the graph store a run only the OLD store holds does not refuse the answer', async () => {
+    const { rows, claims } = await answerWithAnotherCrRunPresent('graph')
+    expect(rows).toMatchObject([{ outcome: 'answered', answerUri: 'cr:X-S3' }])
+    expect(claims).toEqual([{ toUri: 'cr:X-S3', kind: 'SAME_AS', provenance: 'ask', claimer: 'cr' }])
+  })
+
+  test('on the legacy store the same second run of one origin is still refused and claimed nowhere', async () => {
+    const { rows, claims } = await answerWithAnotherCrRunPresent('legacy')
+    expect(rows).toMatchObject([{ outcome: 'refused', reason: 'other-run' }])
+    expect(claims).toEqual([])
+  })
+
+  // The plan half of the same rule, and the one the fifth measured row of the review took: with
+  // `nf:80987039-3` in the ROUTE the old store unions it in, so the consumer saw the origin present
+  // and never asked at all. An address asserts nothing, so on the graph store the ask is still owed.
+  //
+  // Mutation: drop the `heldOrigins` argument from the `planSimilarAsks` call in `resolveSimilarRuns`
+  // and this reddens with no ask made.
+  test('on the graph store an origin only the OLD store holds is still asked', async () => {
+    const cluster = await storeRun()
+    await upsertMedia([media('cr:X-S1', 'RUN', { titles: ['Show'] })], [{ mediaUri: 'anilist:1', handleUri: 'cr:X-S1' }])
+    const withCr = await findAggregatedMedia('anilist:1')
+    expect(withCr.map(m => m.origin), 'the old store really does hold a cr run now').toContain('cr')
+    const ask = refuser()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    setReadStore('graph')
+    try {
+      await resolveSimilarRuns(withCr, root, { ask, implemented })
+    } finally {
+      setReadStore('legacy')
+    }
+    expect(ask).toHaveBeenCalledTimes(1)
+
+    // the control on the same cluster: the legacy store's own membership DOES silence it
+    resetSimilarAsks()
+    const legacyAsk = refuser()
+    await resolveSimilarRuns(withCr, root, { ask: legacyAsk, implemented })
+    expect(legacyAsk).toHaveBeenCalledTimes(0)
+    warn.mockRestore()
+  })
+
+  // THE CONTROL, and the same one the log keeps: the consumer does its whole job with the flag down
+  // and writes no claim, so a session that never asked for a graph pays nothing for one.
+  //
+  // Mutation: drop the `graphEnabled()` line from `claim` and this reddens by opening the engine and
+  // writing a claim in a session that asked for neither.
+  test('a session with the graph off claims nothing', async () => {
+    const cluster = await storeRun()
+    setGraphEnabled(false)
+
+    await resolveSimilarRuns(cluster, root, { ask: recorder(), implemented })
+    await upsertMedia([media('cr:X-S3', 'RUN', { startDate: '2026-07-04' })], [])
+    expect(uris(await findAggregatedMedia('anilist:1')), 'the consumer did its whole job').toEqual(['anilist:1', 'cr:X-S3', 'kitsu:2'])
+
+    setGraphEnabled(true)
+    expect(await claimsFrom('anilist:1')).toEqual([])
   })
 })
