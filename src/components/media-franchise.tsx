@@ -1,20 +1,26 @@
 import type { GetMediaModalSubscription } from '../generated/graphql'
 
+import type { EdgeProps, NodeProps } from '@xyflow/react'
+
 import { css } from '@emotion/react'
+import { Background, BackgroundVariant, Handle, Position, ReactFlow } from '@xyflow/react'
 import { FloatingFocusManager, FloatingOverlay, FloatingPortal, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import { Network, X } from 'lucide-react'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { createContext } from 'preact'
+import { useCallback, useContext, useMemo, useState } from 'preact/hooks'
 import { Link, useSearch } from 'wouter'
 
 import { getRoutePath, Route } from '../router/path'
 import { carriedSearch } from '../router/debug/trace'
 import { asAggregatedUri } from '../utils/uri'
-import { edgeKey, formatsIn, highlightFor, isVideoFormat, layoutFranchise, nodeTitle, onlyFormats } from '../utils/franchise-layout'
+import { formatsIn, isVideoFormat, layoutFranchise, onlyFormats } from '../utils/franchise-layout'
 import type { HoverTarget } from '../utils/franchise-layout'
-import { IDENTITY, fit, panBy, zoomAt } from '../utils/viewport'
-import type { View } from '../utils/viewport'
-import { relationLabel, workFormatLabel } from '../utils/relation-labels'
+import { franchiseFlowGraph, NODE_H, NODE_W } from '../utils/franchise-flow'
+import type { FranchiseFlowEdge, FranchiseFlowNode } from '../utils/franchise-flow'
+import { workFormatLabel } from '../utils/relation-labels'
 import { layer } from '../layers'
+
+import '@xyflow/react/dist/style.css'
 
 /**
  * Every work in a series, drawn left to right IN THE ORDER IT HAPPENED.
@@ -37,13 +43,6 @@ import { layer } from '../layers'
 
 type Franchise = NonNullable<NonNullable<GetMediaModalSubscription['media']>['franchise']>
 
-const NODE_W = 190
-const NODE_H = 74
-const COL_GAP = 90
-const ROW_GAP = 24
-const PAD = 40
-const COL_W = NODE_W + COL_GAP
-const ROW_H = NODE_H + ROW_GAP
 
 const triggerStyle = css`
   display: inline-flex;
@@ -181,19 +180,17 @@ const overlayStyle = css`
        every direction and at every zoom. */
     overflow: hidden;
     position: relative;
-    touch-action: none;
-    /* dragged rather than scrolled, so the pointer says so before it is pressed */
-    cursor: grab;
-    background-color: rgb(9, 9, 10);
-    /* the paper the graph is drawn on: one faint dot every 24px, which gives the panning something to
-       move against. The local attachment is load bearing: the default pins the grid to the viewport,
-       and the graph would then appear to slide over a field that never moves */
-    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.14) 1px, transparent 0);
-    background-size: 24px 24px;
-    background-attachment: local;
-
-    &.dragging { cursor: grabbing; }
   }
+
+  /* the library paints its own surface, so the app's dark ground is stated rather than inherited:
+     its default is a light one and the modal around this box is not. The dot grid is the library's
+     own Background component now, registered with the transform by it rather than by hand. */
+  .react-flow { background-color: rgb(9, 9, 10); }
+  .react-flow__pane { cursor: grab; }
+  .react-flow__pane.dragging { cursor: grabbing; }
+  .react-flow__attribution { background: rgba(0, 0, 0, 0.4); a { color: rgba(255, 255, 255, 0.4); } }
+  /* the handles carry the geometry and nothing else: nobody connects this graph by hand */
+  .react-flow__handle { opacity: 0; pointer-events: none; }
 
   /* a relationship a source stated */
   .edge {
@@ -218,23 +215,45 @@ const overlayStyle = css`
     text-anchor: middle;
   }
 
-  .node rect {
-    fill: rgb(28, 28, 30);
-    stroke: rgba(255, 255, 255, 0.14);
-    rx: 6;
+  /* An HTML box rather than an SVG one, which is what the move to xyflow bought here. The old
+     version avoided foreignObject on purpose, since it is the one thing that renders differently
+     across engines, and paid for it by breaking every title into lines by CHARACTER COUNT. The lines
+     are still computed (see titleLines), because two of them is a deliberate cap rather than a
+     limitation, but they are laid out by the browser now. */
+  .work-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    box-sizing: border-box;
+    width: ${NODE_W}px;
+    height: ${NODE_H}px;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    background: rgb(28, 28, 30);
+    text-align: center;
+    text-decoration: none;
+    overflow: hidden;
+
+    &:hover { background: rgb(42, 42, 46); border-color: rgba(255, 255, 255, 0.35); }
+    &.current { border-color: rgb(61, 180, 242); border-width: 2px; }
+
+    .title { color: rgba(255, 255, 255, 0.95); font-size: 12px; font-weight: 700; line-height: 1.25; }
+    .meta { color: rgba(255, 255, 255, 0.5); font-size: 10px; }
   }
-
-  .node:hover rect { fill: rgb(42, 42, 46); stroke: rgba(255, 255, 255, 0.35); }
-  .node.current rect { stroke: rgb(61, 180, 242); stroke-width: 2; }
-
-  .node .title { fill: rgba(255, 255, 255, 0.95); font-size: 12px; font-weight: 700; text-anchor: middle; }
-  .node .meta { fill: rgba(255, 255, 255, 0.5); font-size: 10px; text-anchor: middle; }
 
   /* One colour for "what the pointer is talking about", amber so it never reads as the blue that
      means "the work you came from". Both hovering a work and hovering an arrow use it, which is what
      makes the two gestures feel like the same question asked from either end. */
-  .node.lit rect { stroke: rgb(255, 176, 62); stroke-width: 2; fill: rgb(52, 42, 26); }
-  .node.lit .title { fill: #fff; }
+  .work-node.lit {
+    border-color: rgb(255, 176, 62);
+    border-width: 2px;
+    background: rgb(52, 42, 26);
+
+    .title { color: #fff; }
+  }
   .edge.lit { stroke: rgb(255, 176, 62); stroke-width: 2.5; stroke-dasharray: none; }
   .chain.lit { stroke: rgb(255, 176, 62); stroke-width: 3; }
   .edge-label.lit { fill: rgb(255, 176, 62); }
@@ -243,29 +262,81 @@ const overlayStyle = css`
   .label-hit { fill: transparent; cursor: pointer; }
 `
 
-/** A title broken into at most two lines that fit the box, measured in characters. */
-const LINE = 24
-const titleLines = (title: string): string[] => {
-  const words = title.split(/\s+/).filter(Boolean)
-  const lines: string[] = []
-  let line = ''
-  for (const word of words) {
-    const next = line ? `${line} ${word}` : word
-    if (next.length <= LINE) { line = next; continue }
-    if (lines.length === 1) break
-    if (line) lines.push(line)
-    line = word
-  }
-  if (line && lines.length < 2) lines.push(line)
-  const shown = lines.slice(0, 2)
-  if (shown.join(' ').length < title.length && shown.length) {
-    shown[shown.length - 1] = `${shown[shown.length - 1]!.slice(0, LINE - 1)}…`
-  }
-  return shown.length ? shown : [title.slice(0, LINE)]
+/**
+ * Which of the two things the pointer is on, shared with the custom node and edge components.
+ *
+ * A CONTEXT rather than a field on each node's `data`, because `data` is compared by identity: a
+ * callback rebuilt each render would re-mount every box on every pointer move, and the hover would
+ * fight the thing it is trying to highlight.
+ */
+const Hover = createContext<(target: HoverTarget) => void>(() => {})
+
+const WorkNode = ({ data }: NodeProps<FranchiseFlowNode>) => {
+  const search = useContext(Search)
+  return (
+    <Link
+      className={`work-node${data.current ? ' current' : ''}${data.lit ? ' lit' : ''}`}
+      to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(data.uri) })}${search}`}
+      title={data.title}
+    >
+      <Handle type="target" position={Position.Left}/>
+      <div className="title">{data.lines.map(line => <div key={line}>{line}</div>)}</div>
+      {data.meta ? <div className="meta">{data.meta}</div> : undefined}
+      <Handle type="source" position={Position.Right}/>
+    </Link>
+  )
 }
 
-/** How far the pointer may travel and still count as a click rather than a drag. */
-const SLOP = 4
+/** The session's engine flags, so a work clicked out of this graph lands on a reproducible address. */
+const Search = createContext('')
+
+/** A curve from one box's right edge to the next box's left edge, which is both arrow kinds' shape. */
+const curve = (sourceX: number, sourceY: number, targetX: number, targetY: number) => {
+  const forward = targetX >= sourceX
+  const bend = Math.max(20, Math.abs(targetX - sourceX) / 2) * (forward ? 1 : -1)
+  return `M ${sourceX} ${sourceY} C ${sourceX + bend} ${sourceY}, ${targetX - bend} ${targetY}, ${targetX} ${targetY}`
+}
+
+/** The reading order, derived from the dates: solid, brighter, and never labelled. */
+const ChainEdge = ({ data, sourceX, sourceY, targetX, targetY }: EdgeProps<FranchiseFlowEdge>) => (
+  <path className={`chain${data?.lit ? ' lit' : ''}`} d={curve(sourceX, sourceY, targetX, targetY)}/>
+)
+
+const RelationEdge = ({ id, data, sourceX, sourceY, targetX, targetY }: EdgeProps<FranchiseFlowEdge>) => {
+  const setHover = useContext(Hover)
+  const label = data?.label ?? ''
+  const on = data?.lit ? ' lit' : ''
+  // a third of the way along rather than the midpoint: everything pointing AT one work converges
+  // there, so midpoint labels land on each other in a stack
+  const ALONG = 0.34
+  const at = (a: number, b: number) => a + (b - a) * ALONG
+  const labelX = at(sourceX, targetX)
+  const labelY = at(sourceY, targetY) - 6
+  // Measured in CHARACTERS, since measuring text needs a live layout and this redraws on every store
+  // update. It only has to be big enough to catch a pointer aimed at the word.
+  const hitWidth = label.length * 6.4 + 12
+
+  return (
+    <>
+      <path className={`edge${on}`} d={curve(sourceX, sourceY, targetX, targetY)}/>
+      {/* The pad and the word are ONE target. With the handlers on the pad alone the word sits above
+          it and takes the hit itself, so the pointer never enters the pad and nothing ever lights:
+          measured 2026-09-09, every label dead to the pointer. */}
+      <g
+        className="label"
+        onPointerEnter={() => setHover({ kind: 'edge', key: id })}
+        onPointerLeave={() => setHover(undefined)}
+      >
+        <rect className="label-hit" x={labelX - hitWidth / 2} y={labelY - 11} width={hitWidth} height={15}/>
+        <text className={`edge-label${on}`} x={labelX} y={labelY}>{label}</text>
+      </g>
+    </>
+  )
+}
+
+// module scope: xyflow re-mounts every node and edge when these object identities change
+const nodeTypes = { work: WorkNode }
+const edgeTypes = { chain: ChainEdge, relation: RelationEdge }
 
 const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: readonly string[] }) => {
   // the session's engine flags, so a node clicked out of this graph lands on an address that
@@ -290,55 +361,16 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
     () => layoutFranchise(onlyFormats(franchise, node => !node.format || shown.has(node.format)), mode),
     [franchise, shown, mode],
   )
-  const current = new Set(currentUris)
-
-  const canvas = useRef<HTMLDivElement>(null)
-  const grab = useRef<{ x: number, y: number, view: View, id: number } | undefined>(undefined)
-  const [dragging, setDragging] = useState(false)
-  const [view, setView] = useState<View>(IDENTITY)
-  // Remembered past the pointerup, because the CLICK fires after it: a drag that ends over a work
-  // would otherwise navigate to it, and every attempt to pan the graph would leave the page.
-  const moved = useRef(false)
-
-  const width = Math.max(1, layout.columns) * COL_W - COL_GAP + PAD * 2
-  const height = Math.max(1, layout.rows) * ROW_H - ROW_GAP + PAD * 2
-  const placed = new Map(layout.nodes.map(node => [node.uri, node]))
-  const centre = (uri: string) => {
-    const node = placed.get(uri)
-    if (!node) return undefined
-    return { x: PAD + node.column * COL_W + NODE_W / 2, y: PAD + node.row * ROW_H + NODE_H / 2 }
-  }
-
-  // Framed once per layout, so switching a filter re-centres on what is now shown rather than leaving
-  // the viewer looking at empty canvas where the books used to be.
-  useLayoutEffect(() => {
-    const box = canvas.current
-    if (!box) return
-    setView(fit({ width, height }, { width: box.clientWidth, height: box.clientHeight }))
-  }, [width, height])
-
-  // Wheel is bound by hand because it has to be NON-PASSIVE: the default cannot call preventDefault,
-  // so the dialog underneath would scroll, and on a trackpad the browser would page-zoom instead.
-  useEffect(() => {
-    const box = canvas.current
-    if (!box) return
-    const onWheel = (event: WheelEvent) => {
-      event.preventDefault()
-      const rect = box.getBoundingClientRect()
-      // a fixed step per notch rather than one proportional to deltaY, which differs by an order of
-      // magnitude between a mouse wheel and a trackpad
-      const factor = Math.exp(-Math.sign(event.deltaY) * 0.18)
-      setView(previous => zoomAt(previous, event.clientX - rect.left, event.clientY - rect.top, factor))
-    }
-    box.addEventListener('wheel', onWheel, { passive: false })
-    return () => box.removeEventListener('wheel', onWheel)
-  }, [])
 
   const [hover, setHover] = useState<HoverTarget>(undefined)
-  const lit = useMemo(() => highlightFor(hover, layout.edges), [hover, layout.edges])
-  /** A chain step is lit by the work at either end of it, the same way a relation arrow is. */
-  const chainLit = (step: { from: string, to: string }) =>
-    hover?.kind === 'node' && (step.from === hover.uri || step.to === hover.uri)
+  const current = useMemo(() => new Set(currentUris), [currentUris])
+  const { nodes, edges } = useMemo(
+    () => franchiseFlowGraph(layout, { current, hover }),
+    [layout, current, hover],
+  )
+
+  const onNodeEnter = useCallback((_: unknown, node: { id: string }) => setHover({ kind: 'node', uri: node.id }), [])
+  const onLeave = useCallback(() => setHover(undefined), [])
 
   const toggle = (format: string) =>
     setShown(previous => {
@@ -353,60 +385,14 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
       <div className="bar">
         <div className="title">Series</div>
       </div>
-      <div
-        className={`canvas${dragging ? ' dragging' : ''}`}
-        ref={canvas}
-        data-canvas
-        style={{
-          // the grid is drawn by the canvas rather than the svg, so it is moved and scaled by hand to
-          // stay registered with the drawing: without this the graph slides over a field that never moves
-          backgroundPosition: `${view.x}px ${view.y}px`,
-          backgroundSize: `${24 * view.k}px ${24 * view.k}px`,
-        }}
-        onPointerDown={event => {
-          const box = canvas.current
-          if (!box || event.button !== 0) return
-          grab.current = { x: event.clientX, y: event.clientY, view, id: event.pointerId }
-          moved.current = false
-          setDragging(true)
-        }}
-        onPointerMove={event => {
-          const from = grab.current
-          if (!from) return
-          const dx = event.clientX - from.x
-          const dy = event.clientY - from.y
-          if (!moved.current && (Math.abs(dx) > SLOP || Math.abs(dy) > SLOP)) {
-            moved.current = true
-            // CAPTURED HERE, not on the press. Capturing up front retargets the click that follows a
-            // press onto this element, so every click on a work landed on the canvas and the graph
-            // navigated nowhere (measured 2026-09-09). Taken only once the pointer has actually
-            // travelled, which is the point where a click is no longer what is happening.
-            canvas.current?.setPointerCapture?.(event.pointerId)
-          }
-          setView(panBy(from.view, dx, dy))
-        }}
-        onPointerUp={event => {
-          canvas.current?.releasePointerCapture?.(event.pointerId)
-          grab.current = undefined
-          setDragging(false)
-        }}
-        onPointerCancel={() => { grab.current = undefined; setDragging(false) }}
-        onPointerLeave={() => setHover(undefined)}
-        onClickCapture={event => {
-          // captured, so it never reaches the link underneath
-          if (!moved.current) return
-          event.preventDefault()
-          event.stopPropagation()
-          moved.current = false
-        }}
-      >
+      <div className="canvas" data-canvas>
         {
           formats.length
             ? (
               <div
                 className="kinds"
-                /* the panel is not part of the surface: a press here must not start a drag, and the
-                   pointer capture the canvas takes would otherwise swallow the click entirely */
+                /* the panel is not part of the surface: `nopan` is what stops a press here from
+                   dragging the graph out from under the checkbox being aimed at */
                 onPointerDown={event => event.stopPropagation()}
               >
                 <div className="legend">Show</div>
@@ -422,106 +408,27 @@ const Graph = ({ franchise, currentUris }: { franchise: Franchise, currentUris: 
             )
             : undefined
         }
-        <svg width="100%" height="100%" role="img" aria-label="Every work in this series, in order">
-          <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
-          {
-            layout.chain.map(step => {
-              const from = centre(step.from)
-              const to = centre(step.to)
-              if (!from || !to) return null
-              const x1 = from.x + NODE_W / 2
-              const x2 = to.x - NODE_W / 2
-              const bend = Math.max(20, (x2 - x1) / 2)
-              return (
-                <path
-                  key={`chain-${step.from}-${step.to}`}
-                  className={`chain${chainLit(step) ? ' lit' : ''}`}
-                  d={`M ${x1} ${from.y} C ${x1 + bend} ${from.y}, ${x2 - bend} ${to.y}, ${x2} ${to.y}`}
-                />
-              )
-            })
-          }
-          {
-            layout.edges.map(edge => {
-              const from = centre(edge.from)
-              const to = centre(edge.to)
-              if (!from || !to) return null
-              const forward = to.x >= from.x
-              const x1 = from.x + (forward ? NODE_W / 2 : -NODE_W / 2)
-              const x2 = to.x + (forward ? -NODE_W / 2 : NODE_W / 2)
-              const bend = Math.max(20, Math.abs(x2 - x1) / 2) * (forward ? 1 : -1)
-              // a third of the way along rather than the midpoint: everything pointing AT one work
-              // converges there, so midpoint labels land on each other in a stack
-              const ALONG = 0.34
-              const on = (a: number, b: number) => a + (b - a) * ALONG
-              const key = edgeKey(edge)
-              const on_ = lit.edges.has(key) ? ' lit' : ''
-              const label = relationLabel(edge.relation).toUpperCase()
-              const labelX = on(x1, x2)
-              const labelY = on(from.y, to.y) - 6
-              // Measured in CHARACTERS, since measuring text needs a live layout and this redraws on
-              // every store update. It only has to be big enough to catch a pointer aimed at the word.
-              const hitWidth = label.length * 6.4 + 12
-              return (
-                <g key={key}>
-                  <path className={`edge${on_}`} d={`M ${x1} ${from.y} C ${x1 + bend} ${from.y}, ${x2 - bend} ${to.y}, ${x2} ${to.y}`}/>
-                  {/* The pad and the word are ONE target. With the handlers on the pad alone the word
-                      sits above it and takes the hit itself, so the pointer never enters the pad and
-                      nothing ever lights: measured 2026-09-09, every label dead to the pointer. */}
-                  <g
-                    className="label"
-                    onPointerEnter={() => setHover({ kind: 'edge', key })}
-                    onPointerLeave={() => setHover(undefined)}
-                  >
-                    <rect
-                      className="label-hit"
-                      x={labelX - hitWidth / 2}
-                      y={labelY - 11}
-                      width={hitWidth}
-                      height={15}
-                    />
-                    <text className={`edge-label${on_}`} x={labelX} y={labelY}>{label}</text>
-                  </g>
-                </g>
-              )
-            })
-          }
-          {
-            layout.nodes.map(node => {
-              const spot = centre(node.uri)!
-              const title = nodeTitle(node)
-              const lines = titleLines(title)
-              const meta = [workFormatLabel(node.format), node.episodeCount ? `${node.episodeCount} ep` : undefined]
-                .filter(Boolean).join(' · ')
-              const left = spot.x - NODE_W / 2
-              const top = spot.y - NODE_H / 2
-              return (
-                <Link
-                  key={node.uri}
-                  className={`node${current.has(node.uri) ? ' current' : ''}${lit.nodes.has(node.uri) ? ' lit' : ''}`}
-                  to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(node.uri) })}${search}`}
-                >
-                  <g
-                    onPointerEnter={() => setHover({ kind: 'node', uri: node.uri })}
-                    onPointerLeave={() => setHover(undefined)}
-                  >
-                    <rect x={left} y={top} width={NODE_W} height={NODE_H}/>
-                    {
-                      lines.map((line, index) => (
-                        <text key={line + index} className="title" x={spot.x} y={top + (lines.length === 1 ? 32 : 26) + index * 15}>
-                          {line}
-                        </text>
-                      ))
-                    }
-                    {meta ? <text className="meta" x={spot.x} y={top + NODE_H - 14}>{meta}</text> : undefined}
-                    <title>{title}</title>
-                  </g>
-                </Link>
-              )
-            })
-          }
-          </g>
-        </svg>
+        <Search.Provider value={search}>
+          <Hover.Provider value={setHover}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              onNodeMouseEnter={onNodeEnter}
+              onNodeMouseLeave={onLeave}
+              nodesDraggable={false}
+              nodesConnectable={false}
+              elementsSelectable={false}
+              fitView
+              minZoom={0.05}
+              maxZoom={20}
+              aria-label="Every work in this series, in order"
+            >
+              <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgba(255, 255, 255, 0.14)"/>
+            </ReactFlow>
+          </Hover.Provider>
+        </Search.Provider>
       </div>
     </>
   )

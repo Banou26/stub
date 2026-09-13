@@ -15,6 +15,16 @@ import { memoryLocation } from 'wouter/memory-location'
 import Debug from '../../../src/router/debug'
 import { TraceEdge } from '../../../src/router/debug/graph'
 import { traceFlowGraph } from '../../../src/router/debug/flow'
+
+/**
+ * `TraceEdge` handed the props xyflow would hand it, which is the only way to render ONE edge here:
+ * a whole graph draws none, because linkedom has no box model to measure (see xyflow-env.test.tsx).
+ * The geometry is a straight 100px to the right, so the only thing that varies between calls is what
+ * the case is actually about.
+ */
+const edgeProps = (data: Record<string, unknown>) => ({
+  id: 'e', source: 'a', target: 'b', sourceX: 0, sourceY: 0, targetX: 100, targetY: 0, data,
+} as unknown as Parameters<typeof TraceEdge>[0])
 import TraceLink from '../../../src/router/debug/link'
 import { carriedSearch, traceUriFromSearch } from '../../../src/router/debug/trace'
 
@@ -256,8 +266,7 @@ describe('a link the graph refused', () => {
       const host = mount(
         <svg>
           <TraceEdge
-            {...({ id: 'e', source: 'a', target: 'b', sourceX: 0, sourceY: 0, targetX: 100, targetY: 0 } as never)}
-            data={{ spread: 0, active, status: active ? 'active' : 'refused', label: 'SAME_AS', tooltip: 't' }}
+            {...edgeProps({ spread: 0, active, status: active ? 'active' : 'refused', label: 'SAME_AS', tooltip: 't' })}
           />
         </svg>
       )
@@ -313,8 +322,7 @@ describe('a link the graph refused', () => {
       const host = mount(
         <svg>
           <TraceEdge
-            {...({ id: 'e', source: 'a', target: 'b', sourceX: 0, sourceY: 0, targetX: 100, targetY: 0 } as never)}
-            data={{ spread, active: true, status: 'active', label: 'SAME_AS', tooltip: 't' }}
+            {...edgeProps({ spread, active: true, status: 'active', label: 'SAME_AS', tooltip: 't' })}
           />
         </svg>
       )
@@ -915,9 +923,12 @@ describe('the query string an in-app link carries', () => {
       fileURLToPath(new URL('../../../src/components/media-franchise.tsx', import.meta.url)),
       'utf-8',
     )
+    // `data.uri` rather than `node.uri` since 2026-09-13: the link moved into the custom xyflow node,
+    // which is handed a node's `data` rather than the node. The property is the same one.
     expect(graph, 'and every node of the franchise graph carries it too')
-      .toContain('to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(node.uri) })}${search}`}')
+      .toContain('to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(data.uri) })}${search}`}')
     expect(graph).toContain('carriedSearch(useSearch())')
+    expect(graph, 'the control: this probe can miss too').not.toContain('carriedSearchThatIsNotThere')
   })
 })
 
