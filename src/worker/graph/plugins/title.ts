@@ -37,6 +37,15 @@
  * being every id, which is the form the spec states for the full pass: a key lookup per cluster
  * rather than a list scan per row.
  *
+ * THE SECOND CANDIDATE AXIS, and the only thing here that does not go through a year bucket. A
+ * catalogue's show row carries the SHOW's title and the SHOW's date, and a show's date is its FIRST
+ * run's, so every later run of every multi-run show sat in a different bucket from its own show and
+ * attached to no streaming container at all. `containerKeyOf` reads the show title out of a run title
+ * that carries a season marker of 2 or more, and gate 3 goes silent for exactly that pair, because a
+ * show's debut and a second season's premiere are two different runs' dates and the 45 days were
+ * never a figure about those. Both are narrow on purpose and both are measured
+ * (`scripts/calibrate-container-ordinal.test.ts`).
+ *
  * THE KNOWN GAP SURVIVES, deliberately. Both silent-side vetoes only ever block on a DISAGREEMENT, so
  * `86` and `86 Part 2`, one naming a season and one not, both dated by a year alone, still weld on
  * their shared label. Closing it costs one wrong weld stopped per 37 correct merges destroyed
@@ -45,13 +54,60 @@
  */
 import type { Gate, LinkProposal, Plugin, PluginContext, PluginOutput } from './contract'
 
+import { parseSeasonNumber, SEASON_MARKER } from '../../../sources/season'
+import { stripTitle } from '../../../sources/utils'
 import {
   differOnlyByTrailingNumber, MAX_TITLES_PER_CLUSTER, namesCompanionContent, selectByScore,
   SIMILARITY_THRESHOLD, START_DATE_WINDOW_DAYS,
 } from '../../store/fuzzy-merge'
 
 /** The version of 5.1: bumped when a rule below changes, which retracts and recomputes every row. */
-export const TITLE_VERSION = 1
+export const TITLE_VERSION = 2
+
+/** The ordinal at which a run stops being the one a show's own date is about. Two, and never one. */
+export const LATER_RUN_ORDINAL = 2
+
+/**
+ * The ORDINAL AXIS: the container title a run key names, or nothing when the key names no later run.
+ *
+ * WHAT IT IS FOR. A catalogue's show row carries the SHOW's title and the SHOW's date, and the show's
+ * date is its FIRST run's. So `jw:222366` is "Mushoku Tensei: Jobless Reincarnation", dated
+ * 2021-01-11, and every later run of that show sits in a different year bucket from it and 903 days
+ * away from it. The year bucket of gate 0 never pairs them and gate 3 would refuse them if it did, so
+ * the second, third and fourth run of EVERY multi-run show attached to no JustWatch, no Netflix and
+ * no Disney row at all. This is the second axis the same cause needed, `pickContainingSeason`'s
+ * ordinal reading being the first (5.4 P5).
+ *
+ * THREE CONDITIONS, each priced separately over the manami database (41537 records, 2026-27,
+ * `scripts/calibrate-container-ordinal.test.ts`):
+ * - the key reads an ordinal of 2 or more, so a first run never takes this route and keeps the year
+ *   bucket as its only one. Dropping the floor to 1 raises the cross-franchise count 360 to 370 while
+ *   buying nothing the bucket does not already pair.
+ * - removing the season markers has to CHANGE the key. This one buys NOTHING measurable there, and
+ *   the harness says so: allowing it adds 16 pairs and 0 cross-franchise pairs. It is kept because
+ *   the pairs it admits are a key naming ITSELF, which is a run and a container agreeing on a title
+ *   ACROSS two year buckets, and manami holds no container rows for that shape to be priced against.
+ *   The keys that reach it are a bare `N期` or `N기`, which `parseSeasonNumber` reads and
+ *   `SEASON_MARKER` deliberately declines to delete.
+ * - what is left is not empty, since a title that is nothing but a season label names a POSITION and
+ *   never a show (`isOnlySeasonLabel`, and it is what welded Grand Blue into Mushoku Tensei once).
+ *
+ * WHAT IT COSTS, under one identical non-lexical label (manami's `related` graph, unioned over shared
+ * source urls, which has no title in it anywhere): 5,946 pairs of which 360 cross a franchise, 6.05%.
+ * The exact-key route this store already ships scores 71.58% on the same corpus under the same label
+ * and the same route with the year bucket removed scores 97.54%, so the axis is an order of magnitude
+ * cleaner than the mechanism it sits beside rather than a widening of it. The corpus model is wider
+ * than production in both directions that matter (every synonym is a key where a cluster ships six,
+ * and every record is an available container where a real container is one show-level row out of a
+ * handful of catalogues), so 6.05% is an upper bound.
+ */
+export const containerKeyOf = (key: string): string | undefined => {
+  const ordinal = parseSeasonNumber(key)
+  if (ordinal === undefined || ordinal < LATER_RUN_ORDINAL) return undefined
+  const stripped = stripTitle(SEASON_MARKER.reduce((text, marker) => text.replace(marker, ' '), key))
+  if (!stripped || stripped === key) return undefined
+  return stripped
+}
 
 /**
  * The bound on the decision cache, and the one thing about it that is new (5.4 P3).
@@ -115,6 +171,16 @@ export type ClusterTitleProfile = {
   seasons: Set<number>
   /** Whether any member title ends in a companion marker: the cheap half of gate 4's premise. */
   companion: boolean
+  /**
+   * The container titles this cluster's own titles name, by `containerKeyOf`: empty for a container
+   * cluster, and empty for a run that declares no ordinal of 2 or more in any of its six titles.
+   */
+  containerKeys: Set<string>
+  /**
+   * Whether this cluster says it is the show's second run or later, which is the premise gate 3 needs
+   * and the only thing that makes a container's date incomparable rather than merely distant.
+   */
+  laterRun: boolean
   /** The five fields the gates read plus the cluster's identity: the decision cache's key half. */
   cacheKey: string
 }
@@ -125,8 +191,21 @@ export type TitleGates = { format: Gate, season: Gate, date: Gate, companion: Ga
 /** Which gate refused, if one did: the `reason` a refused row is written with. */
 export type TitleGateName = keyof TitleGates
 
-/** The two titles a pair matched on, and what they scored. */
-export type TitleMatch = { titleA: string, titleB: string, similarity: number, exact: boolean }
+/**
+ * The two titles a pair matched on, what they scored, and WHICH ROUTE agreed.
+ *
+ * `via` is `title` for the two the fuzzy pass has always had, an identical key or a 0.9 alignment, and
+ * `ordinal` when `titleA`'s season marker had to come off before the two keys were identical, which
+ * is a run naming its own show (`containerKeyOf`). A reader of the row can tell the two apart, and so
+ * can the confidence: an ordinal match is an EXACT agreement on the stripped key, never an alignment.
+ */
+export type TitleMatch = {
+  titleA: string
+  titleB: string
+  similarity: number
+  exact: boolean
+  via?: 'title' | 'ordinal'
+}
 
 /** One pair's verdict, exactly as it is cached and as it is emitted. */
 export type TitleDecision = {
@@ -228,6 +307,16 @@ export const profileClusters = (rows: TitleMemberRow[]): Map<string, ClusterTitl
       if (member.companion === true) companion = true
     }
     const titles = selectByScore(bestScore)
+    // THE ORDINAL AXIS is read off the SIX, never off every key the cluster holds, because the six are
+    // what every other rule here compares and a seventh title naming a container nothing else can see
+    // would make the pair depend on a title the evidence never names
+    const containerKeys = new Set<string>()
+    if (scope === 'RUN') {
+      for (const title of titles) {
+        const container = containerKeyOf(title)
+        if (container) containerKeys.add(container)
+      }
+    }
     const uris = members.map(member => member.uri).sort(compare)
     const linkUri =
       members
@@ -246,11 +335,15 @@ export const profileClusters = (rows: TitleMemberRow[]): Map<string, ClusterTitl
       workKinds,
       seasons,
       companion,
+      containerKeys,
+      laterRun: [...seasons].some(season => season >= LATER_RUN_ORDINAL),
       // the same five fields and the same joins as `fuzzy-merge.ts:344-360`: the key has to identify
       // the SET the verdict depends on, so one logical cluster keeps one entry however its members
       // arrived. A separator can never appear inside a key, because a key is letters, numbers and
-      // single spaces and nothing else (`stripTitle`)
-      cacheKey: `${id}#${[...titles].sort(compare).join(',')}#${[...formats].sort(compare).join(',')}#${
+      // single spaces and nothing else (`stripTitle`). The SCOPE joined at the head is this file's
+      // own addition: gate 3 and the ordinal axis both read it, so a cluster that flips CONTAINER
+      // while holding its id would otherwise be answered from a verdict about its other shape
+      cacheKey: `${id}#${scope}#${[...titles].sort(compare).join(',')}#${[...formats].sort(compare).join(',')}#${
         [...seasons].sort((a, b) => a - b).join(',')}#${[...days].sort((a, b) => a - b).join(',')}#${
         [...workKinds].sort(compare).join(',')}`,
     })
@@ -259,6 +352,41 @@ export const profileClusters = (rows: TitleMemberRow[]): Map<string, ClusterTitl
 }
 
 const disjoint = <T>(a: Set<T>, b: Set<T>): boolean => ![...a].some(entry => b.has(entry))
+
+/**
+ * The RUN of a run-against-container pair whose two dates are about DIFFERENT RUNS, or nothing.
+ *
+ * A container's start day is its first run's premiere, because that is the only date a show-level row
+ * has: `jw:222366` is dated 2021-01-11, which is when Mushoku Tensei's FIRST season started. Against a
+ * cluster that says it is the show's second run or later, the 45 day window is therefore being asked
+ * to compare two different runs' premieres, which is a question it was never calibrated on: the 45
+ * days are `measure-start-date-window`'s figure for how far apart two sources place ONE run.
+ *
+ * So gate 3's PREMISE fails there and the gate is silent, which is this file's own reading of silence
+ * ("a gate whose rule needs both sides to say something and meets a side that says nothing has
+ * NOTHING TO SAY"). It is not a widened window: every other pair, a first run included, still meets
+ * the 45 days unchanged, and a first run's date and its show's date are the same date anyway.
+ *
+ * THE RUN HAS TO NAME THAT CONTAINER, and the premise above is why rather than a tightening bolted on
+ * top of it: "a container's start day is its first run's premiere" is a fact about THE CONTAINER THE
+ * RUN BELONGS TO, and says nothing about a container the run merely shares a year bucket with. Keyed
+ * on the run alone the gate fell silent for every container a later run could reach, so a cluster
+ * declaring season 2 had the 45 days lifted against an unrelated show it reached at 0.9, and one
+ * ordinal on a title neither gate reads was the whole difference between `refused date` and a weld.
+ * Measured as `negative-control.probe.ts` NC3: 181 days apart, similarity 0.908, and the run names
+ * `totally other show`. The naming test is `ordinalMatch`'s, so the gate is silent over exactly the
+ * pairs the ordinal axis is willing to propose.
+ */
+export const laterRunAgainstContainer = (
+  a: ClusterTitleProfile,
+  b: ClusterTitleProfile
+): ClusterTitleProfile | undefined => {
+  const names = (run: ClusterTitleProfile, container: ClusterTitleProfile) =>
+    [...run.containerKeys].some(key => container.keys.has(key))
+  if (a.scope === 'RUN' && b.scope === 'CONTAINER' && a.laterRun && names(a, b)) return a
+  if (b.scope === 'RUN' && a.scope === 'CONTAINER' && b.laterRun && names(b, a)) return b
+  return undefined
+}
 
 /**
  * The four gates of 5.4 P3 that are recorded, each as `passed`, `refused` or `silent`.
@@ -279,7 +407,7 @@ export const gatesFor = (a: ClusterTitleProfile, b: ClusterTitleProfile): TitleG
   season:
     a.seasons.size && b.seasons.size ? (disjoint(a.seasons, b.seasons) ? 'refused' : 'passed') : 'silent',
   date:
-    a.days.size && b.days.size
+    a.days.size && b.days.size && !laterRunAgainstContainer(a, b)
       ? ([...a.days].some(dayA => [...b.days].some(dayB => Math.abs(dayA - dayB) <= START_DATE_WINDOW_DAYS))
         ? 'passed'
         : 'refused')
@@ -317,6 +445,36 @@ export const titleMatch = async (
       const similarity = await ctx.titleSimilarity(titleA, titleB)
       if (similarity >= SIMILARITY_THRESHOLD) return { titleA, titleB, similarity, exact: false }
     }
+  }
+  return ordinalMatch(a, b)
+}
+
+/**
+ * The ordinal route, tried only once the two loops above have found nothing.
+ *
+ * LAST rather than first, and that ordering is the whole of its safety: a pair the fuzzy pass already
+ * answers keeps the answer it had, byte for byte, so this can only ever ADD a match where there was
+ * none. It fires for a RUN against a CONTAINER and for nothing else, since a run naming its own show
+ * is the only relation `containerKeyOf` states, and it reads the run's titles in the cluster's own
+ * order so the pair has one answer whichever side the scan reached first.
+ *
+ * WHAT SURVIVES ONTO THE ROW, which is less than what is returned here, and deliberately. A run
+ * against a container is guard 2's `cross-scope` every time, so the writer's downgrade replaces both
+ * the reason and the evidence with the guard's (`sameness.ts` `rowsForVerdict`) and the `PART_OF` it
+ * writes reads `cross-scope`, exactly as a 0.9 alignment between the same two would. What IS on the
+ * row is the `gates` column, where the date reads `silent`, and the confidence of 1. So the route is
+ * read off `proposalFor` in a test rather than off the table, and that is what its case asserts.
+ */
+const ordinalMatch = (a: ClusterTitleProfile, b: ClusterTitleProfile): TitleMatch | undefined => {
+  const run = a.scope === 'RUN' && b.scope === 'CONTAINER' ? a
+    : b.scope === 'RUN' && a.scope === 'CONTAINER' ? b
+      : undefined
+  if (!run || !run.containerKeys.size) return undefined
+  const container = run === a ? b : a
+  for (const titleA of run.titles) {
+    const stripped = containerKeyOf(titleA)
+    if (!stripped || !container.keys.has(stripped)) continue
+    return { titleA, titleB: stripped, similarity: 1, exact: false, via: 'ordinal' }
   }
   return undefined
 }
@@ -437,15 +595,20 @@ export const proposalFor = (
   decision: TitleDecision
 ): LinkProposal | undefined => {
   if (!decision.match) return undefined
-  const { titleA, titleB, similarity, exact } = decision.match
+  const { titleA, titleB, similarity, exact, via } = decision.match
   return {
     kind: 'SAME_AS',
     fromUri: first.linkUri,
     toUri: second.linkUri,
     ...decision.refusedBy ? { status: 'refused' as const } : {},
-    reason: decision.refusedBy ?? (exact ? 'exact' : 'similar'),
+    reason: decision.refusedBy ?? (via === 'ordinal' ? 'ordinal' : exact ? 'exact' : 'similar'),
     confidence: similarity,
-    evidence: { titleA, titleB, similarity, year: decision.year, daysDelta: decision.daysDelta },
+    // `via` is written only for the ORDINAL route, so every evidence blob the fuzzy route has ever
+    // written stays byte identical and a diff of this table shows the new axis alone
+    evidence: {
+      titleA, titleB, similarity, ...via === 'ordinal' ? { via } : {},
+      year: decision.year, daysDelta: decision.daysDelta,
+    },
     gates: decision.gates,
     // the two `HAS_KEY` keys, which for this edge table IS the title (`plugin:profile` keys a
     // `HAS_KEY` row on the key itself), so a trace descends from the link to the two rows that hold it
@@ -527,11 +690,44 @@ export const titlePlugin: Plugin = {
       }
     }
 
+    // THE ORDINAL AXIS of `containerKeyOf`, which is the one thing here that does NOT go through a
+    // year bucket. A container carries its first run's date, so a show and its later runs never share
+    // a bucket and the bucket is not the right index for them: this one is keyed on the container
+    // title a run names, so a run reaches the show it says it belongs to whatever year either carries
+    const containerByKey = new Map<string, string[]>()
+    for (const profile of profiles.values()) {
+      if (profile.scope !== 'CONTAINER') continue
+      for (const key of profile.keys) {
+        const holders = containerByKey.get(key)
+        if (holders) holders.push(profile.id)
+        else containerByKey.set(key, [profile.id])
+      }
+    }
+
     const pairs = new Map<string, [string, string]>()
     for (const year of [...buckets.keys()].sort((a, b) => a - b)) {
       const bucket = [...buckets.get(year)!].sort(compare)
       for (let i = 0; i < bucket.length; i += 1) {
         for (let j = i + 1; j < bucket.length; j += 1) pairs.set(pairKey(bucket[i]!, bucket[j]!), [bucket[i]!, bucket[j]!])
+      }
+    }
+
+    // counted as what the axis ADDED, never as what it proposed: a run can share a year bucket with
+    // the very container it names, and a count including those would price the axis at pairs the
+    // shipped pass was already making. It is also the only auditable number the axis has, because a
+    // run against a container is guard 2's `cross-scope` every time and the downgrade replaces the
+    // proposal's evidence with the guard's, so `via: 'ordinal'` never reaches the link table
+    let ordinalPairs = 0
+    for (const id of [...profiles.keys()].sort(compare)) {
+      const profile = profiles.get(id)!
+      if (!profile.containerKeys.size) continue
+      for (const key of [...profile.containerKeys].sort(compare)) {
+        for (const container of containerByKey.get(key) ?? []) {
+          if (container === profile.id) continue
+          const pair = pairKey(profile.id, container)
+          if (!pairs.has(pair)) ordinalPairs += 1
+          pairs.set(pair, [profile.id, container])
+        }
       }
     }
 
@@ -593,7 +789,7 @@ export const titlePlugin: Plugin = {
     ctx.log({
       level: 'info',
       rule: 'title-scan',
-      detail: `${profiles.size} clusters, ${buckets.size} year buckets, ${pairs.size} pairs (${exactPairs} through the exact key), ${links.length - carried} proposals of which ${refusals} refused by a gate, ${carried} carried, cache ${titleDecisions.size}`,
+      detail: `${profiles.size} clusters, ${buckets.size} year buckets, ${pairs.size} pairs (${exactPairs} through the exact key, ${ordinalPairs} through the ordinal axis), ${links.length - carried} proposals of which ${refusals} refused by a gate, ${carried} carried, cache ${titleDecisions.size}`,
     })
 
     // THE 2C HOOK: with no `delta` the scan is every cluster, so the scope is every row this plugin

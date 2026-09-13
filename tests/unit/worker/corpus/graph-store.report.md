@@ -13,14 +13,14 @@ Every line below carries a VERDICT (see Triage), and a line with none fails the 
 - cases: 249, of which 197 report nothing at all
 - cases with at least one line: 52
 - `PART_OF` lines a source CLAIMED, which is the store's debt: 0
-- `PART_OF` lines no claim carries: 8
+- `PART_OF` lines no claim carries: 7
 - `WELD` cases: 0
 
 | kind | 2d | now | what it means |
 | --- | --- | --- | --- |
 | SPLIT | 106 | 280 | a `together` group came back as more than one cluster |
 | WELD | 15 | 0 | an `apart` pair came back as one cluster |
-| PART_OF | 0 | 8 | a container attachment the labels state and the store does not hold |
+| PART_OF | 0 | 7 | a container attachment the labels state and the store does not hold |
 | INCLUDES | 2 | 0 | an episode range, which `plugin:range` writes (5.4 P4) |
 | EPISODE_PAIR | 162 | 710 | two rows that are one broadcast episode, or two that must never be one |
 | UNRELATED | 169 | 0 | a row that must stand alone and does not |
@@ -66,7 +66,7 @@ failures, so this section cannot rot quietly.
 | STORE BUG | 0 | 0 | 0 |
 | LABEL DOUBTED | 8 | 1 | 3 |
 | RECORDING | 982 | 3 | 44 |
-| EXPECTED GAP | 8 | 1 | 8 |
+| EXPECTED GAP | 7 | 1 | 7 |
 | (untriaged) | 0 | 0 | 0 |
 
 ### STORE BUG
@@ -101,11 +101,11 @@ Cases: `a-season-nobody-splits-still-brings-its-episodes`
 
 ### EXPECTED GAP
 
-**`a-containing-answer-no-source-ships-yet`**, 8 lines over 8 cases, kinds PART_OF.
+**`a-containing-answer-no-source-ships-yet`**, 7 lines over 7 cases, kinds PART_OF.
 
-Each line wants a run attached to a Netflix or Disney TITLE row that no source claimed: containmentClaimed is false for all eight. Three things could write it and none may. A source claim: the only one is the address echo, which 3.3 refuses and deliberately does NOT downgrade, because "the address names WHICH sources to ask and asserts nothing about how they relate", and the row is drawn as a plain badge carrying its own url instead (6.2). plugin:containment's span rule: it needs the season's own episode DAYS to cover the run's start and Netflix publishes no date at any level (5.4 P4, failure mode). An ask: 4.4 defines the `containing` answer that will carry exactly this and no source ships one yet (4.6). So no plugin owes these today and the gap is named rather than owned.
+Each line wants a run attached to a Netflix or Disney TITLE row that no source claimed: containmentClaimed is false for every one of them. Three things could write it and none may. A source claim: the only one is the address echo, which 3.3 refuses and deliberately does NOT downgrade, because "the address names WHICH sources to ask and asserts nothing about how they relate", and the row is drawn as a plain badge carrying its own url instead (6.2). plugin:containment's span rule: it needs the season's own episode DAYS to cover the run's start and Netflix publishes no date at any level (5.4 P4, failure mode). An ask: 4.4 defines the `containing` answer that will carry exactly this and no source ships one yet (4.6). So no plugin owes these today and the gap is named rather than owned.
 
-Cases: `anilist-185874`, `anilist-196187`, `anilist-209983`, `anilist-210032`, `anilist-211711`, `anilist-212994`, `mal-61649`, `mal-62707`
+Cases: `anilist-185874`, `anilist-196187`, `anilist-210032`, `anilist-211711`, `anilist-212994`, `mal-61649`, `mal-62707`
 
 ## The known disagreements
 
@@ -1552,10 +1552,8 @@ PENDING on "new store": the case says this cannot be asked of any store yet.
 
 - the group [anilist:209983, kitsu:50760, mal:63817, offline:mal-63817, anizip:19978, jw:504764-574803] would be held by: claim (other origins)
 
-- the containment [anilist:209983 part of nf:82703566] is claimed by nothing: no source said so, and 3.3 refuses the address echo without downgrading it
 
-
-VERDICTS: the-echo-was-the-only-evidence-and-the-row-has-no-title-or-no-date, a-containing-answer-no-source-ships-yet
+VERDICTS: the-echo-was-the-only-evidence-and-the-row-has-no-title-or-no-date
 
 ```
 SPLIT: anilist:209983 should share a cluster with jw:504764-574803 but its cluster is [anilist:209983, anizip:19978, kitsu:50760, mal:63817, offline:mal-63817]
@@ -1564,7 +1562,6 @@ SPLIT: mal:63817 should share a cluster with jw:504764-574803 but its cluster is
 SPLIT: offline:mal-63817 should share a cluster with jw:504764-574803 but its cluster is [anilist:209983, anizip:19978, kitsu:50760, mal:63817, offline:mal-63817]
 SPLIT: anizip:19978 should share a cluster with jw:504764-574803 but its cluster is [anilist:209983, anizip:19978, kitsu:50760, mal:63817, offline:mal-63817]
 SPLIT: jw:504764-574803 should share a cluster with anilist:209983, kitsu:50760, mal:63817, offline:mal-63817, anizip:19978 but its cluster is [jw:504764-574803]
-PART_OF: anilist:209983 must be attached to nf:82703566 as a container. containersOf(anilist:209983) is [nothing]
 EPISODE_PAIR: anizip:19978-1 and jw:10550096 are one broadcast episode. episodePairsOf(anizip:19978-1) is [kitsu:403996]
 EPISODE_PAIR: jw:10550096 and anizip:19978-1 are one broadcast episode. episodePairsOf(jw:10550096) is [nothing]
 EPISODE_PAIR: anizip:19978-2 and jw:10576713 are one broadcast episode. episodePairsOf(anizip:19978-2) is [kitsu:403997]

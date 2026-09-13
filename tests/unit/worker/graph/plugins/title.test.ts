@@ -32,9 +32,11 @@ import { profilePlugin } from '../../../../../src/worker/graph/plugins/profile'
 import { directPlugin } from '../../../../../src/worker/graph/plugins/direct'
 import { aggregatePlugin } from '../../../../../src/worker/graph/plugins/aggregate'
 import {
-  createDecisionCache, EXACT_SCAN, MEMBER_SCAN, profileClusters, titleDecisions, titlePlugin,
+  containerKeyOf, createDecisionCache, decide, EXACT_SCAN, MEMBER_SCAN, orderPair, profileClusters,
+  proposalFor, titleDecisions, titlePlugin,
 } from '../../../../../src/worker/graph/plugins/title'
 import { checkInvariants } from '../../../../../src/worker/graph/plugins/invariants'
+import { parseSeasonNumber } from '../../../../../src/sources/season'
 import { answer, media, rowsOf, sameAs, title } from './fixtures'
 
 const CORPUS = new URL('../../../../../corpus/season/summer-2026/answers.jsonl', import.meta.url).pathname
@@ -300,6 +302,41 @@ beforeAll(async () => {
     // has no day for the date gate to read
     await answer('media', show('anilist:8601', [['86', 0.8], ['86 -不存在的战区-', 0.9]], '1929-01-01')),
     await answer('media', show('kitsu:8602', [['86 Part 2', 0.8], ['86 -不存在的战区-', 0.9]], dated(1929, 7, 6))),
+
+    // 1930 against 1933, THE ORDINAL AXIS. The container carries the SHOW's date, which is its first
+    // run's, so the two share no year bucket and sit 1095 days apart: nothing in the shipped pass
+    // ever compares them. The run names its own show by dropping its season marker, and that is the
+    // only thing that pairs them
+    await answer('media', show('jw:ordinalprobe', [['Ordinal Probe', 0.2]], dated(1930), { scope: 'CONTAINER' })),
+    await answer('media', show('anilist:8310', [['Ordinal Probe Season 2', 0.8]], dated(1933))),
+
+    // 1934, the date gate's own half: ONE year, 181 days apart, which is the same distance the two
+    // Date Probes are refused on. Between a show and its second season the two dates are about two
+    // different runs, so the gate has nothing to say rather than a verdict
+    await answer('media', show('jw:ordinalsame', [['Ordinal Same', 0.2]], dated(1934, 1, 6), { scope: 'CONTAINER' })),
+    await answer('media', show('anilist:8330', [['Ordinal Same Part 2', 0.8]], dated(1934, 7, 6))),
+
+    // 1935, the CONTROL for that silence, and the narrowness of it: a FIRST run against its show, the
+    // same 181 days, where the two dates really are about the same run and the window still refuses
+    await answer('media', show('jw:ordinalfirst', [['Ordinal First', 0.2]], dated(1935, 1, 6), { scope: 'CONTAINER' })),
+    await answer('media', show('anilist:8350', [['Ordinal First', 0.8]], dated(1935, 7, 6))),
+
+    // 1936 against 1937, the remake shape: a run that declares an ordinal on ONE title and names the
+    // container on ANOTHER, which carries no marker. The axis is a rule about a KEY and not about a
+    // cluster, so the unmarked key names no container and the two years keep them apart
+    await answer('media', show('jw:ordinalmixed', [['Ordinal Elsewhere', 0.2]], dated(1936), { scope: 'CONTAINER' })),
+    await answer('media', show('anilist:8370', [
+      ['Ordinal Mixed Season 3', 0.8], ['Ordinal Elsewhere', 0.8],
+    ], dated(1937))),
+
+    // 1940, GATE 3 AGAINST A CONTAINER THE RUN NEVER NAMED, which is the premise read off the run
+    // alone rather than off the pair. The run declares a second season of `totally other show` and
+    // reaches this container only by the ordinary fuzzy pass at 0.9, on a title one letter short of
+    // it. Same year, 182 days apart because 1940 is a leap year, and the ordinal is another show's
+    await answer('media', show('jw:ncwindow', [['Neg Control Window', 0.2]], dated(1940, 1, 6), { scope: 'CONTAINER' })),
+    await answer('media', show('anilist:9451', [
+      ['Neg Control Windo', 0.8], ['Totally Other Show Season 2', 0.8],
+    ], dated(1940, 7, 6))),
 
     // 1950 and up, one year per permutation so no two permutations can ever be compared with each
     // other: the same component and the same JustWatch row, assembled in 24 different orders
@@ -610,6 +647,173 @@ test('the year bucket never compares two years, and never buckets a cluster with
   expect(await welded('anilist:9270', 'kitsu:9271'), 'no year at all on one side').toBe(false)
   expect(await clusterOf('anilist:9260'), 'the control: the same title inside ONE year')
     .toEqual(['anilist:9260', 'kitsu:9261'])
+})
+
+// THE ORDINAL AXIS, the one candidate route that does NOT go through a year bucket, and the whole of
+// what it is for: a show container's date is its FIRST run's, so the 1930 container and the 1933 run
+// share no bucket and are 1095 days apart, which is every stop the shipped pass has. The run names
+// its own show by dropping its season marker and reaches it.
+// MUTATED: delete the `containerByKey` loop that seeds `ordinalPairs` and the pair is gone, the
+// `PART_OF` with it. Take the year-bucket loop away instead and this case is unchanged, which is what
+// says the axis and not the bucket is what carried it.
+test('a later run reaches its show container across two year buckets', async () => {
+  const links = await titleLinks('anilist:8310')
+  expect(links.map(link => [link.pair, link.kind, link.status, link.reason])).toEqual([
+    ['anilist:8310 jw:ordinalprobe', 'PART_OF', 'active', 'cross-scope'],
+    ['anilist:8310 jw:ordinalprobe', 'SAME_AS', 'refused', 'cross-scope'],
+  ])
+  expect(await welded('anilist:8310', 'jw:ordinalprobe'), 'an edge, never a union').toBe(false)
+  const [, refused] = links
+  expect(refused!.gates, 'the container names no ordinal, and its date is about a different run')
+    .toEqual({ format: 'passed', season: 'silent', date: 'silent', companion: 'passed' })
+  expect(refused!.supports, 'both keys are real TitleKey rows, so a trace descends to them')
+    .toEqual(['ordinal probe', 'ordinal probe season 2'])
+  const profile = await profileOf('anilist:8310')
+  expect([...profile.containerKeys]).toEqual(['ordinal probe'])
+  expect(profile.laterRun).toBe(true)
+})
+
+// THE DATE GATE'S PREMISE, which is the second half of the same cause. 181 days apart inside ONE year
+// is exactly the distance the two Date Probes above are refused on; between a show and its second
+// season the two dates are about two DIFFERENT runs, so the gate is silent rather than lenient.
+// MUTATED: drop `!laterRunAgainstContainer(a, b)` from gate 3 and this reads `date: 'refused'` with
+// no `PART_OF` at all, which is the state this whole slice started from.
+test('the date gate is silent between a show and a run that says it is not the first', async () => {
+  const links = await titleLinks('anilist:8330')
+  expect(links.map(link => [link.kind, link.status, link.reason])).toEqual([
+    ['PART_OF', 'active', 'cross-scope'], ['SAME_AS', 'refused', 'cross-scope'],
+  ])
+  expect(links[1]!.gates!.date).toBe('silent')
+  expect(links[1]!.evidence, 'the guard\'s evidence replaces the proposal\'s on a downgrade')
+    .toEqual({ theirs: 'CONTAINER', ours: 'RUN' })
+})
+
+// AND IT IS NARROW: a FIRST run against its own show is two readings of ONE run's premiere, so the 45
+// days still mean what they were measured to mean and still refuse. Same 181 days, same shape, and
+// the only difference is the ordinal the run declares.
+// MUTATED: make gate 3 silent for every run-against-container pair rather than for a later run and
+// this goes green with a `PART_OF`, which is the widening this change deliberately is not.
+test('a first run against its show still meets the 45 day window', async () => {
+  const links = await titleLinks('anilist:8350')
+  expect(links.map(link => [link.kind, link.status, link.reason])).toEqual([['SAME_AS', 'refused', 'date']])
+  expect(links[0]!.gates!.date).toBe('refused')
+  expect(links[0]!.evidence).toMatchObject({ daysDelta: 181 })
+  expect((await profileOf('anilist:8350')).laterRun, 'it declares no ordinal').toBe(false)
+})
+
+// WHAT THE AXIS IS WORTH is a number that has to mean pairs NOTHING ELSE WAS MAKING, because a run
+// routinely shares a year bucket with the very container it names and the bucket pass has already
+// paired those. It is also the axis's ONLY audit surface: a run against a container is guard 2's
+// `cross-scope` every time, and the downgrade replaces the proposal's evidence with the guard's, so
+// no `via: 'ordinal'` ever reaches the link table to be counted there.
+// The expectation is recomputed from the profiles rather than written as a literal, so a fixture
+// added later moves both sides together instead of turning this red for an unrelated reason.
+// MUTATED: count every proposal rather than the ones `pairs` did not already hold, and the reported
+// figure rises above the recomputed one, which is the axis taking credit for the bucket pass's work.
+test('the ordinal axis reports the pairs it ADDS, not the ones it proposes', async () => {
+  const profiles = await profilesNow()
+  const containers = [...profiles.values()].filter(profile => profile.scope === 'CONTAINER')
+  const disjointYears = (a: Set<number>, b: Set<number>) => ![...a].some(year => b.has(year))
+  const added = new Set<string>()
+  let proposed = 0
+  for (const profile of profiles.values()) {
+    for (const key of profile.containerKeys) {
+      for (const container of containers) {
+        if (container.id === profile.id || !container.keys.has(key)) continue
+        proposed += 1
+        // `pairs` holds only the year buckets when the axis runs, so "added" is "shares no year"
+        if (disjointYears(profile.years, container.years)) added.add([profile.id, container.id].sort().join(' '))
+      }
+    }
+  }
+  expect(added.size, 'the axis has to be adding something, or this asserts nothing').toBeGreaterThan(0)
+  expect(proposed, 'and some of what it proposes the bucket pass already had').toBeGreaterThan(added.size)
+
+  const pass = await runPass()
+  const detail = pass.logs.find(event => event.rule === 'title-scan')!.detail
+  expect(detail).toContain(`${added.size} through the ordinal axis`)
+})
+
+// AND THE PREMISE IS ABOUT THE PAIR, not about the run. "A container's start day is its first run's
+// premiere" is a fact about THE CONTAINER THE RUN BELONGS TO and says nothing about one it merely
+// shares a year with, so the run has to NAME the container for the gate to have lost its footing.
+// Keyed on the run alone, a cluster declaring a second season had the 45 days lifted against every
+// container the fuzzy pass could reach it, and one ordinal on a title neither gate reads was the
+// whole difference between a refusal and a weld.
+// MUTATED: drop `&& names(a, b)` from both arms of `laterRunAgainstContainer` and this reads
+// `PART_OF active cross-scope` with `date: 'silent'`, an unrelated show attached to a season page.
+test('gate 3 is silent only against the container the run actually names', async () => {
+  const links = await titleLinks('anilist:9451')
+  expect(links.map(link => [link.kind, link.status, link.reason])).toEqual([['SAME_AS', 'refused', 'date']])
+  expect(links[0]!.gates!.date).toBe('refused')
+  expect(links[0]!.evidence).toMatchObject({ daysDelta: 182 })
+
+  // the two halves of the premise, side by side: BOTH clusters say they are a later run, and only one
+  // of them says it about the show it is being compared with
+  const unrelated = await profileOf('anilist:9451')
+  expect([unrelated.laterRun, [...unrelated.containerKeys]]).toEqual([true, ['totally other show']])
+  const named = await profileOf('anilist:8330')
+  expect([named.laterRun, [...named.containerKeys]]).toEqual([true, ['ordinal same']])
+})
+
+// THE AXIS IS A RULE ABOUT A KEY, never about the cluster the key sits in, and that is what keeps a
+// remake out: `anilist:8370` declares season 3 on one title and carries the container's exact name on
+// another, which loses no marker and therefore names nothing. Two years apart, they stay apart.
+// MUTATED: build `containerKeys` from every key of a cluster whose `laterRun` is true, which is the
+// obvious cluster-shaped spelling, and 'Ordinal Elsewhere' attaches to a show it never named.
+test('a key that loses no season marker names no container, whatever its cluster declares', async () => {
+  expect(await titleLinks('anilist:8370')).toEqual([])
+  const profile = await profileOf('anilist:8370')
+  expect(profile.laterRun, 'the cluster does declare a third season').toBe(true)
+  expect([...profile.containerKeys], 'and names only the show THAT title belongs to').toEqual(['ordinal mixed'])
+})
+
+// WHAT THE ROUTE PUTS ON THE PROPOSAL, which is more than survives onto the row: a run against a
+// container is guard 2's `cross-scope` every time, so the writer replaces the reason and the evidence
+// with the guard's. `proposalFor` is where the route is readable, and this is the only case that
+// reads it.
+// MUTATED: drop `via` from `ordinalMatch`'s return and the reason falls back to 'similar' with a
+// confidence of 1, which reads as a 1.0 alignment and is not one.
+test('an ordinal match proposes reason ordinal at confidence 1', async () => {
+  const profiles = await profilesNow()
+  const [run] = await rowsOf('MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster) RETURN c.id AS id', { uri: 'anilist:8310' })
+  const [container] = await rowsOf('MATCH (m:Media {uri: $uri})-[:MEMBER_OF]->(c:Cluster) RETURN c.id AS id', { uri: 'jw:ordinalprobe' })
+  const first = profiles.get(String(run!.id))!
+  const second = profiles.get(String(container!.id))!
+  const decision = await decide(first, second, {
+    titleSimilarity: async () => 0, maxPossibleSimilarity: () => 0,
+  }, createDecisionCache(8))
+  expect(decision.match).toEqual({
+    titleA: 'ordinal probe season 2', titleB: 'ordinal probe', similarity: 1, exact: false, via: 'ordinal',
+  })
+  const proposal = proposalFor(first, second, decision)!
+  expect([proposal.kind, proposal.reason, proposal.confidence]).toEqual(['SAME_AS', 'ordinal', 1])
+  expect(proposal.evidence).toMatchObject({ via: 'ordinal' })
+  expect(orderPair(second, first)[0]!.scope, 'the run is named first whichever side the scan reached')
+    .toBe('RUN')
+})
+
+// THE THREE CONDITIONS of `containerKeyOf`, each stated on a key and each measured over the manami
+// database in `scripts/calibrate-container-ordinal.test.ts`.
+// MUTATED, the three separately, because one key can only ever reach one of them: drop the ordinal
+// floor and 'yofukashi no uta season 1' starts naming a container the year bucket already pairs; drop
+// the `stripped === key` refusal and '無職転生 2期' names ITSELF, because `SEASON_MARKER` deliberately
+// declines to delete a bare `N期` that carries no 第 and a key that loses nothing is a key with no
+// marker in it; drop the emptiness refusal and 'season 2' names the container '' that every
+// season-labelled row in the graph would then share.
+test('a container key needs an ordinal of two, a marker that comes off, and something left', () => {
+  expect(containerKeyOf('mushoku tensei jobless reincarnation season 2')).toBe('mushoku tensei jobless reincarnation')
+  expect(containerKeyOf('mushoku tensei jobless reincarnation season 2 part 2'), 'both markers, one pass')
+    .toBe('mushoku tensei jobless reincarnation')
+  expect(containerKeyOf('無職転生 異世界行ったら本気だす 第2期')).toBe('無職転生 異世界行ったら本気だす')
+  expect(containerKeyOf('fruits basket'), 'no ordinal to read').toBeUndefined()
+  expect(containerKeyOf('yofukashi no uta season 1'), 'the show\'s own first run').toBeUndefined()
+  // the ordinal is READ off `N期` and `N기` and the marker is NOT removed from either, which is the
+  // one shape where the second condition is the only thing standing between a key and itself
+  expect(parseSeasonNumber('無職転生 2期'), 'the ordinal really is read').toBe(2)
+  expect(containerKeyOf('無職転生 2期'), 'and nothing comes off, so it names no show').toBeUndefined()
+  expect(containerKeyOf('무직전생 2기')).toBeUndefined()
+  expect(containerKeyOf('season 2'), 'nothing but a position').toBeUndefined()
 })
 
 // THE CAP, read off the profile and proven by what it costs: seven titles tie at 0.9, the tier is

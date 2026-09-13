@@ -250,12 +250,15 @@ const TRIAGE: TriageRule[] = [
     id: 'a-containing-answer-no-source-ships-yet',
     verdict: 'EXPECTED GAP',
     cases: [
-      'anilist-185874', 'anilist-196187', 'anilist-209983', 'anilist-210032', 'anilist-211711',
+      // `anilist-209983` was here until 2026-09-13 and is CLOSED: the ordinal axis attaches it to
+      // `nf:82703566`, so it reports no line. Left in the list it would triage a regression as an
+      // expected gap, which is the one thing this list must never do
+      'anilist-185874', 'anilist-196187', 'anilist-210032', 'anilist-211711',
       'anilist-212994', 'mal-61649', 'mal-62707',
     ],
     kinds: ['PART_OF'],
     why: 'Each line wants a run attached to a Netflix or Disney TITLE row that no source claimed: '
-      + 'containmentClaimed is false for all eight. Three things could write it and none may. A source claim: '
+      + 'containmentClaimed is false for every one of them. Three things could write it and none may. A source claim: '
       + 'the only one is the address echo, which 3.3 refuses and deliberately does NOT downgrade, because "the '
       + 'address names WHICH sources to ask and asserts nothing about how they relate", and the row is drawn '
       + 'as a plain badge carrying its own url instead (6.2). plugin:containment\'s span rule: it needs the '
