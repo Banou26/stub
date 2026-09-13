@@ -283,6 +283,30 @@ export const debugTracePath = ({ uri, search }: { uri?: string, search?: string 
 }
 
 /**
+ * The query string an IN-APP LINK to another media should carry, `?graph=1&store=graph` or empty.
+ *
+ * The same `CARRIED_PARAMS` a trace link copies, and for the same reason read one step further: a
+ * relation card is a wouter `<Link>`, so the click keeps the worker and the engine it already has,
+ * but the ADDRESS it lands on is what a reader reloads, bookmarks or pastes to the owner. Measured
+ * 2026-09-13 on a real build: opening `/media/ag:(anilist:178789)?store=graph` and clicking through
+ * to the earlier seasons left every address after the first click with no query at all, so a reload
+ * anywhere along that walk silently came up on the legacy store.
+ *
+ * `sessionSearch` and not the route alone, because the media view rewrites its own url without the
+ * query as the cluster's address grows: `useSearch()` is empty a beat after load, which is what made
+ * this invisible.
+ */
+export const carriedSearch = (routeSearch?: string): string => {
+  const carried = searchParams(sessionSearch(routeSearch))
+  const params = new URLSearchParams()
+  for (const name of CARRIED_PARAMS) {
+    for (const value of carried.getAll(name)) params.append(name, value)
+  }
+  const query = params.toString()
+  return query ? `?${query}` : ''
+}
+
+/**
  * This page's own url with the graph engine turned on, for the one message that has advice to give.
  *
  * A reload is what it takes: the flags are read once in `src/worker.ts`, right after the worker is

@@ -14,7 +14,7 @@ import { memoryLocation } from 'wouter/memory-location'
 
 import Debug from '../../../src/router/debug'
 import TraceLink from '../../../src/router/debug/link'
-import { traceUriFromSearch } from '../../../src/router/debug/trace'
+import { carriedSearch, traceUriFromSearch } from '../../../src/router/debug/trace'
 
 // Driven against a HAND BUILT bundle, never a live worker. The page's whole job is to render what the
 // graph says without softening it, and the cases worth pinning are exactly the ones a real graph will
@@ -832,6 +832,45 @@ describe('the way into this page from the app', () => {
       'utf-8',
     )
     expect(link).toContain('sessionSearch(useSearch())')
+  })
+})
+
+describe('the query string an in-app link carries', () => {
+  // THE OWNER'S OWN CLICK PATH, 2026-09-13. Opening `/media/ag:(anilist:178789)?store=graph` and
+  // clicking the relation cards through to the earlier seasons left every address after the first
+  // click with no query at all, so a reload or a pasted link anywhere along that walk came up on the
+  // legacy store while the page you were looking at was on the graph.
+  test('is the session flags and nothing else', () => {
+    expect(carriedSearch('?store=graph&graph=1')).toBe('?graph=1&store=graph')
+    expect(carriedSearch('?store=graph'), 'one flag on its own').toBe('?store=graph')
+    expect(carriedSearch('?trace=1&export=query'), 'and only the flags a full load has to come up with').toBe('')
+    expect(carriedSearch(''), 'nothing to carry is an empty string, never a bare ?').toBe('')
+    expect(carriedSearch(), 'and a caller with no route search at all').toBe('')
+  })
+
+  // Mutation: drop `${search}` from the card's `to`, which is the shape it had until 2026-09-13, and
+  // the first assertion fails. Read off the source for the same reason as the modal case above: the
+  // component reaches the media modal's dependency tree, which cannot be imported here.
+  test('rides on every relation card, read off the route rather than the address', () => {
+    const source = readFileSync(
+      fileURLToPath(new URL('../../../src/components/media-relations.tsx', import.meta.url)),
+      'utf-8',
+    )
+    expect(source, 'the card appends it to the media path')
+      .toContain('to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(edge.node.uri) })}${search}`}')
+    expect(source, 'and the flags are the session\'s, since the media view rewrites its own url')
+      .toContain('carriedSearch(useSearch())')
+    expect(source, 'the control: this probe can miss').not.toContain('carriedSearchThatIsNotThere')
+
+    // the franchise graph is the modal's other way out to another work, and it drops the flags the
+    // same way a relation card did
+    const graph = readFileSync(
+      fileURLToPath(new URL('../../../src/components/media-franchise.tsx', import.meta.url)),
+      'utf-8',
+    )
+    expect(graph, 'and every node of the franchise graph carries it too')
+      .toContain('to={`${getRoutePath(Route.MEDIA, { uri: asAggregatedUri(node.uri) })}${search}`}')
+    expect(graph).toContain('carriedSearch(useSearch())')
   })
 })
 

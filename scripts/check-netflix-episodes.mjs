@@ -14,7 +14,9 @@
  *   node_modules/.bin/vp build && node scripts/check-netflix-episodes.mjs
  *
  * Env: SETTLE_MS (per document), ROUTES (semicolon separated uris; an aggregated uri carries commas), CONSOLE=1 to dump the page's
- * similarMedia lines, which is how every stop in this chain was found.
+ * similarMedia lines, which is how every stop in this chain was found, and CLICKS for the walk below
+ * (semicolon separated `startUri|card text|card text`), which is the only arm that measures what a
+ * person actually does.
  */
 import { execFileSync } from 'node:child_process'
 import { createReadStream, readFileSync, statSync } from 'node:fs'
@@ -172,6 +174,13 @@ const arm = async (label, uri, query) => {
     nfProbed: (result.detail?.last?.data?.media?.episodes ?? []).filter(episode =>
       (episode?.handles ?? []).some(handle => handle?.node?.origin === 'nf')
     ).length,
+    // WHICH Netflix episode landed on which row, by id. A count cannot tell a right placement from a
+    // wrong one, and a wrong Netflix episode is worse than none: this is what a reader checks against
+    // the season payload the id belongs to.
+    nfMap: (result.detail?.last?.data?.media?.episodes ?? []).map((episode, index) => {
+      const handle = (episode?.handles ?? []).map(entry => entry?.node).find(node => node?.origin === 'nf')
+      return handle && `${index + 1}->${handle.uri}${handle.episodeNumber == null ? '' : `#${handle.episodeNumber}`} ${JSON.stringify(handle.titles?.[0]?.title ?? '')}`
+    }).filter(Boolean),
     // THE CONTROL for the column above: an origin that does describe its episodes. A probe that
     // reports zero for both is a broken probe, not a missing synopsis.
     crDescribed: (result.detail?.last?.data?.media?.episodes ?? []).filter(episode =>
@@ -190,6 +199,81 @@ for (const [name, uri] of ROUTES) {
   rows.push({ name, uri, graph, legacy })
 }
 
+/**
+ * What is on screen: the address, the title, the relation cards and the SOURCE BADGE of every
+ * episode row. Evaluated in the page, so it reads the rendered DOM and never a document of our own.
+ */
+const READ_SCREEN = () => ({
+  address: location.pathname + location.search,
+  title: document.querySelector('.content > .header > .title')?.textContent ?? null,
+  relations: [...document.querySelectorAll('a.relation-card')].map(node => node.getAttribute('href')),
+  episodes: [...document.querySelectorAll('.episodes > .episode')].map(node =>
+    [...node.querySelectorAll('[title]')].map(entry => entry.getAttribute('title')).filter(Boolean)),
+})
+
+const tallyOf = (episodes) => {
+  const tally = {}
+  for (const sources of episodes) for (const source of new Set(sources)) tally[source] = (tally[source] ?? 0) + 1
+  return tally
+}
+
+/** Wait until the screen stops changing, or `SETTLE_MS`, whichever comes first. */
+const settle = async (page) => {
+  const start = Date.now()
+  let last = ''
+  let stable = 0
+  while (Date.now() - start < SETTLE_MS) {
+    await page.waitForTimeout(3_000)
+    const shot = await page.evaluate(READ_SCREEN)
+    const key = JSON.stringify([shot.address, shot.episodes])
+    stable = key === last ? stable + 1 : 0
+    if (stable >= 3) break
+    last = key
+  }
+  return await page.evaluate(READ_SCREEN)
+}
+
+/**
+ * THE OWNER'S OWN PATH, and the reason this file exists twice over.
+ *
+ * Every arm above PASTES a route uri and drives `window.__stubGraphQL` with it. A person does not:
+ * they open one page and CLICK the relation cards, and until 2026-09-13 no measurement in this repo
+ * had ever done that, which is how two of this show's five runs went a whole round unmeasured. A
+ * click is also the only thing that can see a defect of the click itself, such as an href that drops
+ * the store flag.
+ *
+ * `CLICKS` is one walk per entry, `startUri|card text|card text`, the text being whatever the
+ * relation card reads (wouter renders the href, playwright matches the text). The Netflix count is
+ * read off the RENDERED EPISODE ROWS, with the Crunchyroll count beside it as the control: a walk
+ * reporting zero for both has a broken reader, not a missing badge.
+ */
+const walks = []
+for (const spec of (process.env.CLICKS ?? '').split(';').filter(Boolean)) {
+  const [start, ...steps] = spec.split('|')
+  const context = await browser.newContext({ viewport: { width: 1600, height: 1200 } })
+  const page = await context.newPage()
+  const lines = []
+  page.on('console', message => lines.push(message.text()))
+  page.on('pageerror', error => lines.push(`pageerror: ${String(error?.message ?? error)}`))
+  await page.goto(`${origin}/media/${start}?graph=1&store=graph&export=query`, { waitUntil: 'domcontentloaded' })
+  await page.waitForSelector('.episodes, .content > .header > .title', { timeout: 30_000 }).catch(() => {})
+  const stops = [{ step: `open ${start}`, ...await settle(page) }]
+  for (const step of steps) {
+    const link = page.locator('a.relation-card').filter({ hasText: step }).first()
+    const href = await link.getAttribute('href').catch(() => null)
+    if (href === null) {
+      stops.push({ step: `click ${step}`, missing: true, address: null, title: null, relations: [], episodes: [] })
+      break
+    }
+    await link.scrollIntoViewIfNeeded()
+    await link.click()
+    await page.waitForTimeout(2_000)
+    stops.push({ step: `click ${step}`, href, ...await settle(page) })
+  }
+  await context.close()
+  walks.push({ spec, stops, lines })
+}
+
 await browser.close()
 server.close()
 
@@ -200,10 +284,10 @@ const cell = (result) =>
         : `${result.nf} of ${result.episodes}`
 
 console.log('')
-console.log('| route | graph nf | legacy nf | graph cr | legacy cr | graph nf described | legacy nf described |')
-console.log('| --- | --- | --- | --- | --- | --- | --- |')
+console.log('| route | graph nf | legacy nf | graph cr | legacy cr | graph anizip | legacy anizip | graph nf described | legacy nf described |')
+console.log('| --- | --- | --- | --- | --- | --- | --- | --- | --- |')
 for (const row of rows) {
-  console.log(`| ${row.name} | ${cell(row.graph)} | ${cell(row.legacy)} | ${row.graph.cr} | ${row.legacy.cr} | ${row.graph.nfDescribed} of ${row.graph.nfProbed} (cr control ${row.graph.crDescribed}) | ${row.legacy.nfDescribed} of ${row.legacy.nfProbed} (cr control ${row.legacy.crDescribed}) |`)
+  console.log(`| ${row.name} | ${cell(row.graph)} | ${cell(row.legacy)} | ${row.graph.cr} | ${row.legacy.cr} | ${row.graph.anizip} | ${row.legacy.anizip} | ${row.graph.nfDescribed} of ${row.graph.nfProbed} (cr control ${row.graph.crDescribed}) | ${row.legacy.nfDescribed} of ${row.legacy.nfProbed} (cr control ${row.legacy.crDescribed}) |`)
 }
 
 for (const row of rows) {
@@ -211,12 +295,36 @@ for (const row of rows) {
   for (const arm of [row.graph, row.legacy]) {
     console.log(`  ${arm.label}: _id ${arm.media?._id} cluster ${arm.media?.uri}`)
     console.log(`    handles: ${(arm.media?.handleUris ?? []).join(' ')}`)
+    console.log(`    nf episode map: ${(arm.nfMap ?? []).join(' | ') || '(none)'}`)
     if (DUMP_CONSOLE) {
       const pattern = new RegExp(process.env.CONSOLE_GREP ?? 'DIAG|Netflix|netflix|nf:|unogs')
       const interesting = arm.lines.filter(line => pattern.test(line))
       for (const line of interesting.slice(0, 400)) console.log(`    | ${line}`)
     }
   }
+}
+
+if (walks.length) {
+  console.log('')
+  console.log('| walk | step | address | title | episodes | nf | cr (control) |')
+  console.log('| --- | --- | --- | --- | --- | --- | --- |')
+  for (const walk of walks) {
+    for (const stop of walk.stops) {
+      const tally = tallyOf(stop.episodes)
+      const nf = Object.entries(tally).filter(([name]) => /netflix/i.test(name)).reduce((sum, [, n]) => sum + n, 0)
+      const cr = Object.entries(tally).filter(([name]) => /crunchyroll/i.test(name)).reduce((sum, [, n]) => sum + n, 0)
+      console.log(`| ${walk.spec.split('|')[0]} | ${stop.missing ? `${stop.step} NO SUCH CARD` : stop.step} | ${stop.address ?? '-'} | ${stop.title ?? '-'} | ${stop.episodes.length} | ${nf} | ${cr} |`)
+    }
+  }
+}
+
+// A WALK THAT COULD NOT BE WALKED IS NOT A RESULT. A card the page never drew reports as zero
+// episodes on every row after it, which reads exactly like a missing badge and is a broken rig.
+const unwalked = walks.filter(walk => walk.stops.some(stop => stop.missing))
+if (unwalked.length) {
+  console.log(`FAIL: ${unwalked.length} walk(s) named a relation card the page does not draw: ${
+    unwalked.map(walk => walk.spec).join(' ; ')}`)
+  process.exit(1)
 }
 
 const zeroed = rows.filter(row => row.graph.nf === 0)
