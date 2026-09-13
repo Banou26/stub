@@ -14,7 +14,7 @@ import { buildASTSchema, parse, validate } from 'graphql'
 import { expect, test } from 'vitest'
 
 import { typeDefs } from '../../../src/generated/schema/typeDefs.generated'
-import { SIMILAR_MEDIA_DOCUMENT } from '../../../src/worker/similar-document'
+import { CONTAINING_MEDIA_DOCUMENT, SIMILAR_MEDIA_DOCUMENT } from '../../../src/worker/similar-document'
 
 const fieldsOf = (selection: { selectionSet?: { selections: readonly unknown[] } | null | undefined }) =>
   (selection.selectionSet?.selections ?? []).filter((node): node is FieldNode => (node as FieldNode).kind === 'Field')
@@ -63,4 +63,30 @@ test('every array on an episode is selected whole', () => {
   expect(names(sub('descriptions')).sort(), 'EpisodeDescription').toEqual(['description', 'language', 'score'])
   expect(names(sub('shortDescriptions')).sort(), 'EpisodeShortDescription').toEqual(['language', 'score', 'shortDescription'])
   expect(names(sub('thumbnails')).sort(), 'EpisodeThumbnail').toEqual(['color', 'height', 'language', 'score', 'url', 'width'])
+})
+
+// THE SECOND DOCUMENT (4.4). A `containing` answer is the season that HOLDS the run, and the funnel
+// reads it off a field of its own: `similarMedia` returns `Media`, so a source cannot say "this holds
+// your run" through it without every answering source changing what it returns.
+const containingMedia = () => {
+  const operation = parse(CONTAINING_MEDIA_DOCUMENT).definitions[0] as OperationDefinitionNode
+  return fieldsOf(operation).find(field => field.name.value === 'containingMedia')
+}
+
+test('the container selection is valid against the schema, and is the same answer plus its length', () => {
+  expect(validate(buildASTSchema(typeDefs), parse(CONTAINING_MEDIA_DOCUMENT))).toEqual([])
+
+  const container = containingMedia()
+  // Mutation: select `similarMedia` here and this reddens while the validation above still passes,
+  // which is the whole failure mode: a valid document the funnel reads nothing out of.
+  expect(container, 'the funnel reads this field name off the payload and would read undefined').toBeDefined()
+  expect(names(container!)).toEqual([...names(similarMedia()), 'episodeCount'])
+})
+
+// The count is the one difference, and it is on the container's document alone on purpose: a container
+// is claimed PART_OF, so its row never joins the run's cluster and its count never reaches the run's
+// length vote, where a `similarMedia` answer's row does join and would.
+test('the count is asked for on the container alone', () => {
+  expect(names(similarMedia())).not.toContain('episodeCount')
+  expect(names(containingMedia()!)).toContain('episodeCount')
 })

@@ -1,5 +1,9 @@
-// The document the `similarMedia` funnel subscribes with, in its own module so a test can parse and
-// validate it: worker/extractor.ts reaches urql and cannot load under vitest.
+// The two documents the `similarMedia` funnel subscribes with, in their own module so a test can parse
+// and validate them: worker/extractor.ts reaches urql and cannot load under vitest.
+//
+// They share one selection because they select the same thing about the same kind of answer: what
+// differs between a run and the season holding it is what the CALLER may claim about it, never what
+// the row carries. The one field only the container's document asks for says why it is the exception.
 
 /**
  * What an ask selects off an answer. The caller needs enough to build a handle, the scope the answer
@@ -28,9 +32,7 @@
  * `{ title }` alone cost crunchyroll's rows their language and score (2026-09-05). Every field of
  * `MediaTitle` is here so that row is complete whoever writes it.
  */
-export const SIMILAR_MEDIA_DOCUMENT = `
-  subscription SimilarMedia($input: SimilarMediaInput!) {
-    similarMedia(input: $input) {
+const ANSWER_SELECTION = `
       uri
       origin
       id
@@ -54,7 +56,31 @@ export const SIMILAR_MEDIA_DOCUMENT = `
         episodeNumber
         absoluteEpisodeNumber
         runtime
-      }
+      }`
+
+export const SIMILAR_MEDIA_DOCUMENT = `
+  subscription SimilarMedia($input: SimilarMediaInput!) {
+    similarMedia(input: $input) {${ANSWER_SELECTION}
+    }
+  }
+`
+
+/**
+ * What the funnel selects off a `containing` answer: the selection above, plus the container's own
+ * episode count.
+ *
+ * THE COUNT IS THE DIFFERENCE, and it is here and not in the shared selection on purpose. A container
+ * is claimed `PART_OF` and never `SAME_AS` (4.4), so its row never joins the run's cluster and its
+ * count never reaches the run's length vote; the season a `similarMedia` answer names DOES join, so
+ * adding a count to that selection would put a new number into a vote that decides what every page
+ * prints. The placement needs it: a run being laid over a container has to know how many rows it is
+ * choosing among, and reading it back off `episodes` would count what one region published rather
+ * than what the season holds.
+ */
+export const CONTAINING_MEDIA_DOCUMENT = `
+  subscription ContainingMedia($input: SimilarMediaInput!) {
+    containingMedia(input: $input) {${ANSWER_SELECTION}
+      episodeCount
     }
   }
 `

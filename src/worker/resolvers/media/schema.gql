@@ -634,4 +634,24 @@ extend type Subscription {
   season the evidence merely fails to contradict, recreates the weld the caller asked in order to avoid.
   """
   similarMedia(input: SimilarMediaInput!): Media
+  """
+  The one run of `showId` that HOLDS the caller's run without being it, or null.
+
+  The other half of the fold, and a SEPARATE FIELD rather than a widened `similarMedia` payload: this
+  answer means something different about the same evidence, and every source that answers `similarMedia`
+  today returns `Media` from it. A source that cannot tell a container from a run simply never
+  implements this one and is asked nothing.
+
+  Netflix is the worked example. Its season 1 of Mushoku Tensei holds 24 episodes over anime's 11 and
+  12, so `similarMedia` refuses it for both runs and is right to: a season longer than the run is not
+  the run. It is still where the run is, and this is how the run gets to say so. The answer is the
+  CONTAINER SEASON as a run of the answering origin, carrying its own episodes and its own count,
+  because a caller claiming `PART_OF` from it needs both to place anything on the run.
+
+  Null is the expected answer and never an error. The evidence is `pickContainingSeason` in
+  `src/sources/similar.ts`, which refuses anything a count alone would have to guess at, and which
+  answers nothing at all for a run `similarMedia` could answer: a run that has a season is never also
+  given a container.
+  """
+  containingMedia(input: SimilarMediaInput!): Media
 }

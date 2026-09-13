@@ -31,7 +31,7 @@ import { recordAnswers } from './graph/answers'
 // `./graph/read` and not `./graph`, which would drag every plugin in behind a flag that is off
 import { readStore, resolveMedia } from './graph/read'
 import { describeEvidence, hasEvidence, isRunAnswerFrom, printableToken, similarAskKey, type SimilarOutcome } from '../sources/similar'
-import { SIMILAR_MEDIA_DOCUMENT } from './similar-document'
+import { CONTAINING_MEDIA_DOCUMENT, SIMILAR_MEDIA_DOCUMENT } from './similar-document'
 import { closeRoot, descend, openRoot, readContext, stamp, type RequestContext, type RootOperation } from './request-context'
 
 export type ExtractorServerContext = YogaInitialContext & {
@@ -261,7 +261,9 @@ type Delivered = { kind: 'media', media: Media } | { kind: 'null' } | { kind: 'e
 
 const firstSimilarMedia = (
   extractor: ReturnType<typeof makeExtractor>,
-  input: SimilarMediaInput
+  input: SimilarMediaInput,
+  /** which question is being put: the two documents differ only in the field they select. */
+  field: 'similarMedia' | 'containingMedia' = 'similarMedia'
 ): Promise<Delivered> =>
   new Promise(resolve => {
     let settled = false
@@ -278,18 +280,18 @@ const firstSimilarMedia = (
     try {
       subscription =
         extractor.client
-          .subscription(SIMILAR_MEDIA_DOCUMENT, { input })
+          .subscription(field === 'containingMedia' ? CONTAINING_MEDIA_DOCUMENT : SIMILAR_MEDIA_DOCUMENT, { input })
           .subscribe(result => {
             if (result.error) return finish({ kind: 'error' })
             // any DELIVERED payload settles this, including an explicit null. A source that cannot
             // answer yields null once and ends, and waiting out the timeout for that would turn the
             // ordinary refusal into the slowest path in the system.
             if (!result.data) return
-            const media = (result.data as { similarMedia?: Media | null }).similarMedia
+            const media = (result.data as Record<string, Media | null | undefined>)[field]
             finish(media ? { kind: 'media', media } : { kind: 'null' })
           })
     } catch (error) {
-      console.error(new Error(`Extractor ${extractor.name} failed to answer similarMedia`, { cause: error }))
+      console.error(new Error(`Extractor ${extractor.name} failed to answer ${field}`, { cause: error }))
       finish({ kind: 'error' })
     }
   })
@@ -303,6 +305,63 @@ export const implementsSimilarMedia = (origin: string): boolean =>
   extractors.some(entry =>
     entry.extractor.origin === origin
     && Boolean((entry.extractor.resolvers.Subscription as { similarMedia?: unknown } | undefined)?.similarMedia))
+
+/**
+ * Whether a source answers `containingMedia`, read the same way and for a sharper reason: the second
+ * question costs a second walk of the same show, and a source that cannot answer it must not be made
+ * to walk anything at all. Four of the five sources answering `similarMedia` implement nothing here
+ * and are never asked.
+ */
+export const implementsContainingMedia = (origin: string): boolean =>
+  extractors.some(entry =>
+    entry.extractor.origin === origin
+    && Boolean((entry.extractor.resolvers.Subscription as { containingMedia?: unknown } | undefined)?.containingMedia))
+
+/**
+ * The SECOND question, put only where the first came to nothing: "does one of your seasons HOLD this
+ * run" (4.4).
+ *
+ * It is a separate subscription because it is a separate field, and it is asked AFTER the first rather
+ * than beside it because the two answers are mutually exclusive and the first is the one worth having:
+ * a run that has a season needs no container, and a source that answered one must not be walked twice.
+ * Undefined means "nothing to say here", so the caller keeps the refusal the first question earned; a
+ * timeout or an error is a DECLINE, because it never reached the source and the pair is not settled.
+ *
+ * A source that does not implement the field is never subscribed to at all, which is what keeps this
+ * free for the four `similarMedia` answerers that do not ship it.
+ */
+const containingOutcome = async (
+  extractor: ReturnType<typeof makeExtractor>,
+  origin: string,
+  input: SimilarMediaInput,
+  caller: string
+): Promise<SimilarOutcome<Media> | undefined> => {
+  const { showId } = input
+  if (!implementsContainingMedia(origin)) return undefined
+  console.warn(`containingMedia: asked ${origin} ${showId} by '${caller}' with ${describeEvidence(input)}`)
+  const delivered = await firstSimilarMedia(extractor, input, 'containingMedia')
+  if (delivered.kind === 'media') {
+    // the SHOW is not a container answer either: the bare title is already what the run hangs under,
+    // it asserts nothing about where the run is, and a `PART_OF` onto it would claim a fact nobody
+    // measured. Only a season of that show can hold a run.
+    if (!isRunAnswerFrom(origin, showId, delivered.media)) {
+      console.warn(`containingMedia: refused ${origin} ${showId} to '${caller}' (not-a-run ${delivered.media.uri} scope ${delivered.media.scope ?? 'RUN'})`)
+      return { outcome: 'refused', reason: 'not-a-run' }
+    }
+    console.warn(`containingMedia: containing ${delivered.media.uri} to '${caller}' for ${origin} ${showId} (${delivered.media.episodeCount ?? '-'} episodes)`)
+    return { outcome: 'containing', media: delivered.media }
+  }
+  if (delivered.kind === 'timeout') {
+    console.warn(`containingMedia: declined ${origin} ${showId} to '${caller}' (timeout ${SIMILAR_MEDIA_TIMEOUT_MS}ms)`)
+    return { outcome: 'declined', reason: 'timeout' }
+  }
+  if (delivered.kind === 'error') {
+    console.warn(`containingMedia: declined ${origin} ${showId} to '${caller}' (error)`)
+    return { outcome: 'declined', reason: 'error' }
+  }
+  console.warn(`containingMedia: refused ${origin} ${showId} to '${caller}' (null)`)
+  return undefined
+}
 
 /**
  * The ask, bound to the origin doing the asking so a budget can be attributed to it, answering with
@@ -374,7 +433,7 @@ export const similarOutcomeFrom = (caller: string) =>
     console.warn(`similarMedia: asked ${origin} ${showId} by '${caller}' with ${describeEvidence(input)}`)
     const ask =
       firstSimilarMedia(extractor, input)
-        .then((delivered): SimilarOutcome<Media> => {
+        .then(async (delivered): Promise<SimilarOutcome<Media>> => {
           if (delivered.kind === 'media') {
             // the show itself, a container, or another origin's row is not an answer: claiming any of
             // them as SAME_AS of the caller's run is the weld the caller asked in order to avoid
@@ -386,6 +445,10 @@ export const similarOutcomeFrom = (caller: string) =>
             return { outcome: 'answered', media: delivered.media }
           }
           if (delivered.kind === 'null') {
+            // the second question, and the only place it is ever put: no season IS the run, so ask
+            // whether one HOLDS it (4.4)
+            const container = await containingOutcome(extractor, origin, input, caller)
+            if (container) return container
             console.warn(`similarMedia: refused ${origin} ${showId} to '${caller}' (null)`)
             return { outcome: 'refused', reason: 'null' }
           }
@@ -470,7 +533,11 @@ const makeExtractor = (extractor: ExtractorDefinition) => {
               // than end: a subscription generator that completes without yielding makes yoga respond
               // 204 No Content, which the caller would sit on until its timeout instead of reading a
               // refusal off the first payload
-              similarMedia: { subscribe: async function* (_parent) { yield { similarMedia: null } } }
+              similarMedia: { subscribe: async function* (_parent) { yield { similarMedia: null } } },
+              // and the same default for the second question, for the same reason: `implementsContainingMedia`
+              // keeps the funnel off a source that ships no resolver, and any other caller of the field
+              // reads a refusal rather than waiting out a 204
+              containingMedia: { subscribe: async function* (_parent) { yield { containingMedia: null } } }
             }
           } satisfies Resolvers,
           extractor.resolvers
@@ -587,18 +654,21 @@ type RemotePluginSource = {
       media?: { subscribe?: RemotePluginSubscribe }
       mediaPage?: { subscribe?: RemotePluginSubscribe }
       similarMedia?: { subscribe?: RemotePluginSubscribe }
+      containingMedia?: { subscribe?: RemotePluginSubscribe }
     }
   }
 }
 
 // nested handles stay untouched: cross-origin handles are how clustering works (accepted residual, bounded by the aggregation score threshold)
-type PluginField = 'media' | 'mediaPage' | 'similarMedia'
+type PluginField = 'media' | 'mediaPage' | 'similarMedia' | 'containingMedia'
 
 const enforcePluginOrigin = (origin: string, field: PluginField, payload: any): any => {
   // similarMedia answers with one media, exactly as `media` does, so it is held to the same rule: a
   // plugin may only ever name ITS OWN run. Without this a plugin asked about its own show could
-  // answer with someone else's uri and have it linked as an identity.
-  if (field === 'media' || field === 'similarMedia') {
+  // answer with someone else's uri and have it linked as an identity. containingMedia answers with
+  // one media too, and the rule is the same one for the same reason: an origin naming another
+  // origin's row as the season holding our run is claiming something it cannot know.
+  if (field === 'media' || field === 'similarMedia' || field === 'containingMedia') {
     if (payload?.[field] && payload[field].origin !== origin) {
       console.warn(`Plugin source '${origin}' yielded media from origin '${payload[field].origin}', dropped`)
       return { [field]: null }
@@ -647,6 +717,7 @@ const makeDelegatingResolvers = (origin: string, remote: RemotePluginSource): Re
       ...(subscription?.media?.subscribe ? { media: delegate('media') } : {}),
       ...(subscription?.mediaPage?.subscribe ? { mediaPage: delegate('mediaPage') } : {}),
       ...(subscription?.similarMedia?.subscribe ? { similarMedia: delegate('similarMedia') } : {}),
+      ...(subscription?.containingMedia?.subscribe ? { containingMedia: delegate('containingMedia') } : {}),
     }
   } as Resolvers
 }

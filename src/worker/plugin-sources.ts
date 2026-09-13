@@ -128,8 +128,8 @@ export const readPluginHandles = <T>(media: T, depth = 4): T => {
   return { ...media, handles: readHandles(media.handles, depth), episodes } as T
 }
 
-/** One plugin payload (`media`, `similarMedia`, or `mediaPage`) with every media it carries read by `readPluginHandles`. */
-export const readPluginPayload = (field: 'media' | 'mediaPage' | 'similarMedia', payload: any): any => {
+/** One plugin payload (`media`, `similarMedia`, `containingMedia` or `mediaPage`) with every media it carries read by `readPluginHandles`. */
+export const readPluginPayload = (field: 'media' | 'mediaPage' | 'similarMedia' | 'containingMedia', payload: any): any => {
   if (!isObject(payload)) return payload
   if (field === 'mediaPage') {
     const nodes = (payload.mediaPage as { nodes?: unknown } | undefined)?.nodes
