@@ -50,9 +50,19 @@ export type SimilarAnswerMedia = {
 }
 export type SimilarDeclineReason = 'not-implemented' | 'bad-show-id' | 'no-evidence' | 'ceiling' | 'timeout' | 'error'
 export type SimilarRefusalReason = 'null' | 'not-a-run'
-/** What one ask came to. `declined` never reached the source and may be retried; `refused` did and is final for that evidence. */
+/**
+ * What one ask came to. `declined` never reached the source and may be retried; `refused` did and is
+ * final for that evidence.
+ *
+ * `containing` is a season that HOLDS the asked run without being it (4.4 of the representation
+ * design): the fold, where the answerer's season covers the run's start and is longer than it. It is
+ * its own outcome rather than a flag on `answered` so that nothing reading `outcome === 'answered'`
+ * can mistake a container for the run, which is the weld the whole ask exists to avoid: the caller
+ * that wants a season claims `PART_OF` from it, and every other caller gets nothing.
+ */
 export type SimilarOutcome<M extends SimilarAnswerMedia = SimilarAnswerMedia> =
   | { outcome: 'answered', media: M }
+  | { outcome: 'containing', media: M }
   | { outcome: 'refused', reason: SimilarRefusalReason }
   | { outcome: 'declined', reason: SimilarDeclineReason }
 
@@ -191,22 +201,48 @@ export const pickSimilarSeason = <T>(
     return { season: within[0]!.season, rule: 'date' }
   }
 
-  // Rule 2, EPISODE TITLES: decisive both ways. Two catalogues carrying three or more real episode
-  // titles each for one run agree on most of them; two runs of one show share none.
+  // Rule 2, EPISODE TITLES: decisive about the seasons it can MEASURE, and silent about the rest.
+  // Two catalogues carrying three or more real episode titles each for one run agree on most of them;
+  // two runs of one show share none.
+  //
+  // A candidate carrying fewer than `MIN_EPISODE_TITLE_MATCHES` real titles is UNMEASURABLE, and the
+  // difference between unmeasurable and refuted is the whole of what this rule got wrong. It used to
+  // refuse outright whenever some candidate could be measured and none passed, which reads "our run
+  // is none of these seasons" off evidence that only ever spoke about some of them. Mushoku Tensei is
+  // the worked example, measured live 2026-09-13 on `?store=graph`: unOGS lists Netflix season 2 with
+  // 13 real titles and season 3, the right answer, with two ("Rage, Mad Dog", "Howl, Mad Dog"), so
+  // season 3 was never even looked at, season 2 failed at 0 matches, and the run was refused a season
+  // it had an ordinal and a count for. The same run with NO episode titles answered season 3 by
+  // ordinal, which is the tell: more evidence must never establish less.
+  //
+  // So a measured candidate that fails is REMOVED, never fallen through to, which is strictly safer
+  // than the old refusal on the fold it was written for: a 12 of 24 cover no longer merely stops this
+  // rule, it takes that season out of every rule below. What is left is the seasons this rule could
+  // not speak about, and rule 3 onwards decide among those on their own axes.
+  let pool = candidates
   const ours = new Set(realTitles(evidence.episodeTitles).map(stripTitle))
   if (ours.size >= MIN_EPISODE_TITLE_MATCHES) {
-    const titled = candidates
+    const measurable = candidates
       .map(candidate => ({ candidate, theirs: realTitles(candidate.episodeTitles) }))
       .filter(({ theirs }) => theirs.length >= MIN_EPISODE_TITLE_MATCHES)
-    if (titled.length) {
-      const passing = titled.filter(({ theirs }) => {
+    if (measurable.length) {
+      const passing = measurable.filter(({ theirs }) => {
         const matched = theirs.filter(title => ours.has(stripTitle(title))).length
         return matched >= MIN_EPISODE_TITLE_MATCHES && matched / theirs.length >= EPISODE_TITLE_COVERAGE
       })
-      if (passing.length !== 1) return undefined
-      const pick = passing[0]!.candidate
-      if (foldVetoed(evidence, pick) || yearVetoed(evidence, pick)) return undefined
-      return { season: pick.season, rule: 'episode-titles' }
+      // more than one season carrying our episode titles is a catalogue listing our run twice, and
+      // there is no axis below that could tell the copies apart: that stays a refusal
+      if (passing.length > 1) return undefined
+      if (passing.length === 1) {
+        const pick = passing[0]!.candidate
+        if (foldVetoed(evidence, pick) || yearVetoed(evidence, pick)) return undefined
+        return { season: pick.season, rule: 'episode-titles' }
+      }
+      const refuted = new Set(measurable.map(({ candidate }) => candidate))
+      pool = candidates.filter(candidate => !refuted.has(candidate))
+      // every season could be measured and every one of them disagreed: the run is none of them, and
+      // this is the decisive refusal the rule was written for
+      if (!pool.length) return undefined
     }
   }
 
@@ -216,7 +252,7 @@ export const pickSimilarSeason = <T>(
   if (ordinals.size > 1) return undefined
   if (ordinals.size === 1 && !partNamed && evidence.episodeCount != null) {
     const [ordinal] = ordinals
-    const matches = candidates.filter(candidate => candidate.seasonNumber === ordinal)
+    const matches = pool.filter(candidate => candidate.seasonNumber === ordinal)
     if (matches.length > 1) return undefined
     if (matches.length === 1 && countOf(matches[0]!) != null) {
       const pick = matches[0]!
@@ -237,7 +273,7 @@ export const pickSimilarSeason = <T>(
   // so the one season dated our year with no count is a refusal, never a pick (Apple offers no
   // counts, JustWatch lists a season as 0 until it airs).
   if (unnumberedWithCount && evidenceYear != null && candidates.some(candidate => candidateYear(candidate) != null)) {
-    const dated = candidates.filter(candidate => candidateYear(candidate) === evidenceYear)
+    const dated = pool.filter(candidate => candidateYear(candidate) === evidenceYear)
     if (dated.length === 1) {
       const pick = dated[0]!
       if (countOf(pick) == null || foldVetoed(evidence, pick)) return undefined
@@ -249,13 +285,18 @@ export const pickSimilarSeason = <T>(
   // 24 !== 11 rather than finding the 11 further down. A lone season shorter than our run is a season
   // still listing (most of the homepage); with several seasons a shorter first season may be one half
   // of our run (the Fullmetal Alchemist split), so only exactness counts.
+  //
+  // `first` is read off the WHOLE list and never off what rule 2 left, because being first is a fact
+  // about the source's season list and not about the survivors: taking the lowest-numbered SURVIVOR
+  // is the fall-through that put anime season 1 on Netflix season 3 once season 1 was excluded. A
+  // first season rule 2 refuted therefore refuses here rather than promoting the season behind it.
   if (unnumberedWithCount) {
     const numbered = candidates.filter(candidate => candidate.seasonNumber != null)
     const first =
       candidates.length === 1 ? candidates[0]
       : numbered.length ? numbered.reduce((lowest, candidate) => candidate.seasonNumber! < lowest.seasonNumber! ? candidate : lowest)
       : undefined
-    if (!first) return undefined
+    if (!first || !pool.includes(first)) return undefined
     if (foldVetoed(evidence, first) || yearVetoed(evidence, first)) return undefined
     const theirs = countOf(first)
     const fits =
@@ -266,6 +307,133 @@ export const pickSimilarSeason = <T>(
   }
 
   return undefined
+}
+
+/** Which axis singled a container out: the run's episode titles inside it, or the year it is dated. */
+export type ContainingRule = 'episode-titles' | 'year'
+
+/**
+ * The one season that HOLDS the run, with the two lengths that say so.
+ *
+ * `theirs` is the container's episode count and `ours` the run's, carried out of the pick because
+ * both are read again downstream and neither is worth asking the source twice for: the claim records
+ * them as its evidence (4.4) and a placement needs the container's length to know how many rows it is
+ * choosing among.
+ */
+export type ContainingVerdict<T> = { season: T, rule: ContainingRule, theirs: number, ours: number }
+
+/**
+ * The one season of a show that HOLDS the caller's run without being it, or undefined (4.4).
+ *
+ * This is the other half of the fold, and it exists because `foldVetoed` is right and unhelpful on its
+ * own: Netflix's season 1 of Mushoku Tensei is 24 episodes over anime's 11 and 12, so `pickSimilarSeason`
+ * refuses the only season either run could match, correctly, and the run is then left with no Netflix
+ * anything. A season longer than the run is not the run; it may still be where the run is.
+ *
+ * IT IS NEVER SAMENESS AND CANNOT BECOME IT. The first thing it does is run `pickSimilarSeason`: a run
+ * that HAS a season is never also given a container, so the two answers are mutually exclusive by
+ * construction rather than by the caller remembering to ask in the right order. A caller writes a
+ * `containing` answer as `PART_OF` and never as `SAME_AS` (`worker/similar-consumer.ts`), which is why
+ * a wrong answer here costs a badge and a hidden card where a wrong sameness welds two works.
+ *
+ * WHAT IT REQUIRES, and each one is a way the count alone lies.
+ *
+ * - BOTH COUNTS, and a candidate STRICTLY LONGER than the run. A season whose length is unknown (a
+ *   truncated listing, an unaired season) could be any length at all, and one no longer than the run
+ *   has no room to hold it and something else.
+ * - AN ORDINAL CEILING, when the titles agree on a season number and name no part: a fold only ever
+ *   compresses, so the container's own ordinal is at or below ours. This is the direction of the
+ *   2026-09-05 weld, anime season 1 landing on `nf:80987039-3`, closed here rather than left to a
+ *   count. A part-named run is exempt, because a part is a position INSIDE a season and its number is
+ *   not a season ordinal at all: "Part 2" of anime season 1 lives in Netflix's season 1.
+ * - THEN ONE OF TWO AXES, in order, each of which must single out EXACTLY ONE candidate.
+ *
+ * AXIS 1, EPISODE TITLES, decisive wherever it can measure: at least `MIN_EPISODE_TITLE_MATCHES` of
+ * the candidate's real episode titles are ours, they cover at least `EPISODE_TITLE_COVERAGE` of OUR
+ * run, and they cover LESS than `EPISODE_TITLE_COVERAGE` of the candidate. That is rule 2's own
+ * measurement read from both sides at once: above the line against our run means it holds the run,
+ * below the line against the candidate means it holds more than the run, and a candidate above the
+ * line on both is the sameness rule 2 would already have taken. A fold of two equal cours scores
+ * 12/24 = 0.50 against the candidate and 12/12 = 1.00 against the run, which is exactly the shape.
+ *
+ * BOTH SHARES ARE MEASURED AGAINST COUNTS, and neither against a title list, which is where this
+ * differs from rule 2 and has to. Against the run, because the caller sends every title of every
+ * episode in every language it holds (`runEvidence`) and a set three times the run's length would put
+ * every share below any threshold. Against the CANDIDATE, because a listing names only some of a
+ * season's episodes: unOGS gives Netflix's season 2 of Mushoku Tensei 14 real names over its 25
+ * episodes, so the 13 an anime run matches score 13/14 = 0.93 against the names and 13/25 = 0.52
+ * against the season. The first reads as identity and is how a fold gets called a match; only the
+ * second is a statement about the season.
+ *
+ * A measured candidate that fails is REMOVED, as in rule 2: a season listing real episode titles, none
+ * of which are ours, is not where our run is. What is left for axis 2 is the seasons nothing could be
+ * measured about, which is the common Netflix case: `nf:80987039-1` titles all 23 of its episodes
+ * `Episode N` and one `Special Episode`, so it carries ONE real title and is unmeasurable, while
+ * `nf:80987039-2` carries 24 and can be both measured and refuted.
+ *
+ * AXIS 2, YEAR: the one candidate dated our year, holding more than `1 / EPISODE_TITLE_COVERAGE` of
+ * our run. The first half is rule 4 with the fold veto inverted, the very veto that refused the pick:
+ * the one season dated our year, turned down only for being longer than the run, is the season the run
+ * is in. The second half is the same constant as axis 1 with the containment premise standing in for
+ * the matches it cannot make: if the container holds our run then our count IS the matched count, so
+ * `ours / theirs` is the coverage against the candidate, and it has to be below the line for the same
+ * reason. It is what tells a fold from a season carrying our run plus a bonus block, 12/16 = 0.75,
+ * which is the shape rule 2 admits as SAMENESS when it can see the titles; with only counts to go on
+ * the two are indistinguishable, so nothing is answered rather than a container that is really the run.
+ *
+ * The year is the weakest thing here and it is only ever offered by a source that knows what it means:
+ * unOGS publishes one year for a whole title, which is its FIRST season's, and `netflixCandidates`
+ * hands it to season 1 alone for that reason. So "dated our year" reads as "our run started in the
+ * year this source's first season did", which is true of every cour a first season folded in.
+ */
+export const pickContainingSeason = <T>(
+  evidence: RunEvidence,
+  candidates: readonly SeasonCandidate<T>[]
+): ContainingVerdict<T> | undefined => {
+  if (pickSimilarSeason(evidence, candidates)) return undefined
+  const ours = evidence.episodeCount
+  if (ours == null || ours <= 0) return undefined
+  const titles = evidence.titles ?? []
+  const ordinals = seasonOrdinals(titles)
+  // titles that disagree about which season this run is describe no position at all, the same
+  // outright refusal rule 3 makes
+  if (ordinals.size > 1) return undefined
+  const ceiling = ordinals.size === 1 && !titles.some(namesAPart) ? [...ordinals][0] : undefined
+  const longer = candidates.filter(candidate => {
+    const theirs = countOf(candidate)
+    if (theirs == null || theirs <= ours) return false
+    return ceiling === undefined || candidate.seasonNumber == null || candidate.seasonNumber <= ceiling
+  })
+  if (!longer.length) return undefined
+
+  const held = (candidate: SeasonCandidate<T>, rule: ContainingRule): ContainingVerdict<T> =>
+    ({ season: candidate.season, rule, theirs: countOf(candidate)!, ours })
+
+  let pool = longer
+  const ourTitles = new Set(realTitles(evidence.episodeTitles).map(stripTitle))
+  if (ourTitles.size >= MIN_EPISODE_TITLE_MATCHES) {
+    const measurable = longer
+      .map(candidate => ({ candidate, theirs: realTitles(candidate.episodeTitles) }))
+      .filter(({ theirs }) => theirs.length >= MIN_EPISODE_TITLE_MATCHES)
+    const holding = measurable.filter(({ candidate, theirs }) => {
+      const matched = theirs.filter(title => ourTitles.has(stripTitle(title))).length
+      return matched >= MIN_EPISODE_TITLE_MATCHES
+        && matched / ours >= EPISODE_TITLE_COVERAGE
+        && matched / countOf(candidate)! < EPISODE_TITLE_COVERAGE
+    })
+    // two seasons each holding most of our run is a catalogue listing the run twice, and no axis below
+    // can tell the copies apart: the same refusal rule 2 makes
+    if (holding.length > 1) return undefined
+    if (holding.length === 1) return held(holding[0]!.candidate, 'episode-titles')
+    const refuted = new Set(measurable.map(({ candidate }) => candidate))
+    pool = longer.filter(candidate => !refuted.has(candidate))
+  }
+
+  const evidenceYear = yearOf(evidence.startDate)
+  if (evidenceYear == null) return undefined
+  const dated = pool.filter(candidate =>
+    candidateYear(candidate) === evidenceYear && ours / countOf(candidate)! < EPISODE_TITLE_COVERAGE)
+  return dated.length === 1 ? held(dated[0]!, 'year') : undefined
 }
 
 const compareNumbers = (a: number, b: number) => a - b

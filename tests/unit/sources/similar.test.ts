@@ -13,6 +13,7 @@ import {
   hasEvidence,
   isRunAnswerFrom,
   namesAPart,
+  pickContainingSeason,
   pickSimilarSeason,
   similarAskKey,
   SHOW_TITLE_THRESHOLD,
@@ -297,4 +298,232 @@ test('a caller-supplied id prints as one log token', () => {
   expect(printableToken('x'.repeat(200))).toHaveLength(128)
   expect(printableToken('')).toBe('-')
   expect(printableToken(undefined)).toBe('-')
+})
+
+// THE LIVE SHAPE, taken off `?store=graph` on 2026-09-13 and the reason rule 2 was changed.
+// unOGS lists Netflix's Mushoku Tensei with 24 numbered titles on season 1, 13 real names on season 2
+// and TWO on season 3, which is the season the run actually is. Rule 2 could therefore measure only
+// season 2, season 2 shares none of our names, and the rule refused OUTRIGHT: the run was denied a
+// season it had an ordinal and a count for, while the identical run carrying no episode titles
+// answered season 3 by ordinal. More evidence must never establish less.
+const NUMBERED = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => `Episode ${from + i}`)
+const UNOGS_MUSHOKU: SeasonCandidate<number>[] = [
+  { season: 1, seasonNumber: 1, episodeCount: 24, episodeTitles: NUMBERED(1, 24), year: 2021 },
+  {
+    season: 2,
+    seasonNumber: 2,
+    episodeCount: 25,
+    episodeTitles: [
+      'Fitz the Guardian', 'The Depressed Magician', 'The Midnight Forest', 'Fast Approach',
+      'Letter of Recommendation', 'Ranoa University of Magic', 'Unwilling to Die',
+      'The Kidnapping and Confinement of Beast Girls', 'The Fiance of Despair', 'The White Mask',
+      'This Feeling', 'To You', 'I Want to Convey',
+      ...NUMBERED(14, 21), 'The Magic Circle on the Sixth Floor', ...NUMBERED(23, 25),
+    ],
+  },
+  { season: 3, seasonNumber: 3, episodeCount: 12, episodeTitles: ['Rage, Mad Dog', 'Howl, Mad Dog', ...NUMBERED(3, 12)] },
+]
+const RUN_TITLES = [`${SHOW} Season 3`, 'Mushoku Tensei III: Isekai Ittara Honki Dasu', SHOW]
+const RUN_EPISODES = [
+  'Burn Bright, Mad Dog', 'Howl, Mad Dog', 'Life Back at Home', 'A King-Class Water Mage',
+  'Celebrations', 'Another Domestic Disaster?', 'Phase Four', 'The Flying Fortress', 'Lament',
+  'Episode 10', 'Episode 11',
+]
+
+test('a season rule 2 could not measure is left to the rules below, and the run keeps its ordinal', () => {
+  const evidence = { titles: RUN_TITLES, episodeCount: 14, startDate: '2026-07-04', episodeTitles: RUN_EPISODES }
+  expect(pickSimilarSeason(evidence, UNOGS_MUSHOKU)).toEqual({ season: 3, rule: 'ordinal' })
+  // the control, and the statement in one line: the SAME run with no episode titles at all reaches
+  // the same season, so carrying evidence cannot cost a match
+  expect(pickSimilarSeason({ ...evidence, episodeTitles: [] }, UNOGS_MUSHOKU)).toEqual({ season: 3, rule: 'ordinal' })
+})
+
+test('a season rule 2 measured and refuted is removed, and no later rule may promote it', () => {
+  // season 2 is the only measurable candidate and shares none of our names, so it is out of every
+  // rule below: asking for ordinal 2 with its exact count now refuses where the count alone fit
+  const asSeasonTwo = { titles: [`${SHOW} Season 2`], episodeCount: 25, episodeTitles: RUN_EPISODES }
+  expect(pickSimilarSeason(asSeasonTwo, UNOGS_MUSHOKU), 'refuted by title, so not reachable by ordinal').toBeUndefined()
+  expect(
+    pickSimilarSeason({ ...asSeasonTwo, episodeTitles: [] }, UNOGS_MUSHOKU),
+    'the control: with nothing to refute it, the ordinal answers'
+  ).toEqual({ season: 2, rule: 'ordinal' })
+
+  // and the first-season rule reads the SOURCE's first season, never the first survivor: a refuted
+  // season 1 refuses rather than promoting the season behind it
+  const refutedFirst: SeasonCandidate<string>[] = [
+    { season: 'one', seasonNumber: 1, episodeCount: 12, episodeTitles: episodeTitles(8, 12) },
+    { season: 'two', seasonNumber: 2, episodeCount: 12, episodeTitles: NUMBERED(1, 12) },
+  ]
+  expect(pickSimilarSeason({ titles: ['Show'], episodeCount: 12, episodeTitles: episodeTitles(9, 12) }, refutedFirst)).toBeUndefined()
+  expect(
+    pickSimilarSeason({ titles: ['Show'], episodeCount: 12 }, refutedFirst),
+    'the control: with no episode titles the first season answers on its count'
+  ).toEqual({ season: 'one', rule: 'first' })
+})
+
+test('rule 2 still refuses decisively when every season could be measured', () => {
+  // nothing was left unmeasured, so "none of these" is a fact about all of them and the ordinal below
+  // must not rescue it. This is the refusal the rule was written for and it is unchanged.
+  const measurable: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 12, episodeTitles: episodeTitles(1, 12) },
+    { season: 2, seasonNumber: 2, episodeCount: 12, episodeTitles: episodeTitles(2, 12) },
+  ]
+  expect(pickSimilarSeason({ titles: ['Show Season 2'], episodeCount: 12, episodeTitles: episodeTitles(9, 12) }, measurable)).toBeUndefined()
+  expect(
+    pickSimilarSeason({ titles: ['Show Season 2'], episodeCount: 12, episodeTitles: episodeTitles(2, 12) }, measurable),
+    'the control: our own titles still pick the season carrying them'
+  ).toEqual({ season: 2, rule: 'episode-titles' })
+})
+
+// WHERE THE OTHER TWO SEASONS STOP, pinned so nobody "fixes" it by loosening a guard. Netflix folds
+// Mushoku Tensei's five anime runs into three seasons, so anime season 1 (11 episodes, January 2021)
+// and its second cour (12 episodes, October 2021) are both INSIDE Netflix season 1, which holds 24.
+// Neither of them IS a Netflix season, and there is no honest verdict here: the fold veto refuses the
+// only season either could be matched to, and the year rule and the part marker close the rest.
+//
+// What they need is the `containing` answer of 4.4, which no source emits yet and which this picker
+// has no verdict for. An episode placed on evidence we do not have is worse than no episode.
+test('a run Netflix folded into a longer season is refused, not placed on the fold', () => {
+  const cour1 = { titles: [SHOW], episodeCount: 11, startDate: '2021-01-11', episodeTitles: episodeTitles(9, 11) }
+  expect(pickSimilarSeason(cour1, UNOGS_MUSHOKU), 'season 1 holds 24 where the run holds 11').toBeUndefined()
+  expect(foldVetoed(cour1, UNOGS_MUSHOKU[0]!), 'and the fold veto is what says so').toBe(true)
+
+  const cour2 = { titles: [`${SHOW} Part 2`], episodeCount: 12, startDate: '2021-10-04', episodeTitles: episodeTitles(10, 12) }
+  expect(pickSimilarSeason(cour2, UNOGS_MUSHOKU), 'a part names a position inside a season, not a season').toBeUndefined()
+})
+
+// THE OTHER HALF OF THE FOLD, and the two runs above are what it is for. `pickContainingSeason` never
+// says a season IS the run; it says one HOLDS it, which is what a caller writes as PART_OF (4.4). The
+// fixture is the live unOGS shape: season 1 numbers all 24 of its episodes and so can be measured
+// about nothing, season 2 names 14 of its 25, season 3 names 2 of its 12.
+test('the fold read from the other side: the season refused for being longer is the one holding the run', () => {
+  const cour1 = { titles: [SHOW], episodeCount: 11, startDate: '2021-01-11' }
+  expect(pickSimilarSeason(cour1, UNOGS_MUSHOKU), 'the control: no season IS this run').toBeUndefined()
+  // Mutation: drop the `candidateYear(candidate) === evidenceYear` clause and Netflix's season 2 is
+  // admitted beside season 1, so the pick becomes a refusal. The year is the whole axis here, because
+  // seasons 1 and 2 are both more than twice this run's length.
+  expect(pickContainingSeason(cour1, UNOGS_MUSHOKU)).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 11 })
+  expect(
+    pickContainingSeason({ ...cour1, episodeTitles: episodeTitles(9, 11) }, UNOGS_MUSHOKU),
+    'and the same run carrying its own episode names, which are none of Netflix\'s, reaches the same season'
+  ).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 11 })
+})
+
+// A part is a position INSIDE a season, which is the fold seen from our side, so the marker that
+// closes every sameness rule must not close this one. Mutation: add `|| titles.some(namesAPart)` to
+// the early refusals and this reddens while every case above stays green.
+test('a part-named run is given the season that holds it, where it is refused a season of its own', () => {
+  const cour2 = { titles: [`${SHOW} Part 2`], episodeCount: 12, startDate: '2021-10-04', episodeTitles: episodeTitles(10, 12) }
+  expect(pickSimilarSeason(cour2, UNOGS_MUSHOKU), 'the control').toBeUndefined()
+  expect(pickContainingSeason(cour2, UNOGS_MUSHOKU)).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 12 })
+})
+
+// The axis unOGS' season 2 can be measured on. Our 13 episode names are 13 of the 14 it lists, which
+// reads as identity against the NAMES (0.93) and as a fold against the SEASON (13/25 = 0.52). Rule 2
+// scores the first, passes the season, and is saved only by the fold veto; this scores the second.
+//
+// Mutation: measure the candidate's share against `theirs.length` rather than `countOf(candidate)` and
+// 0.93 is above the line, so the verdict disappears.
+test('a season naming most of our episodes among twice as many of its own holds the run', () => {
+  const ours = UNOGS_MUSHOKU[1]!.episodeTitles!.filter(title => !title.startsWith('Episode'))
+  const run = { titles: [`${SHOW} Season 2`], episodeCount: 13, startDate: '2023-07-02', episodeTitles: ours }
+  expect(pickSimilarSeason(run, UNOGS_MUSHOKU), 'the control: 25 over 13 is a fold, not our run').toBeUndefined()
+  expect(pickContainingSeason(run, UNOGS_MUSHOKU)).toEqual({ season: 2, rule: 'episode-titles', theirs: 25, ours: 13 })
+})
+
+// THE INVARIANT THE WHOLE OUTCOME EXISTS FOR: the two answers are mutually exclusive, and that is
+// enforced here rather than left to a caller asking in the right order. A wrong containment costs a
+// badge and a hidden card; a wrong sameness welds two works, so nothing may ever hold both.
+//
+// Mutation: delete the leading `if (pickSimilarSeason(evidence, candidates)) return undefined` and
+// this run gets season 1 by date AND season 2 as its container.
+test('a run that HAS a season is never also given a container', () => {
+  const dated: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 11, premiere: '2021-01-11', year: 2021 },
+    { season: 2, seasonNumber: 2, episodeCount: 24, premiere: '2021-06-01', year: 2021 },
+  ]
+  const run = { titles: ['Show'], episodeCount: 11, startDate: '2021-01-11' }
+  expect(pickSimilarSeason(run, dated), 'season 1 premiered within the window').toEqual({ season: 1, rule: 'date' })
+  expect(pickContainingSeason(run, dated), 'and season 2 is longer and dated our year, and holds nothing').toBeUndefined()
+})
+
+// A season carrying our run plus a four episode bonus block is 12/16 = 0.75, which rule 2 ADMITS as
+// sameness when it can see the titles. With counts alone the two are indistinguishable, so nothing is
+// answered rather than a container that is really the run.
+//
+// Mutation: drop `ours / countOf(candidate)! < EPISODE_TITLE_COVERAGE` from the year axis and the
+// bonus block becomes a container.
+test('a season only a little longer than the run is our run plus extras, and holds nothing', () => {
+  const bonus: SeasonCandidate<number>[] = [{ season: 1, seasonNumber: 1, episodeCount: 16, year: 2021 }]
+  const run = { titles: ['Show'], episodeCount: 12, startDate: '2021-01-11' }
+  expect(pickSimilarSeason(run, bonus), 'the control: the fold veto refuses it as the run').toBeUndefined()
+  expect(pickContainingSeason(run, bonus)).toBeUndefined()
+
+  const fold: SeasonCandidate<number>[] = [{ season: 1, seasonNumber: 1, episodeCount: 24, year: 2021 }]
+  expect(
+    pickContainingSeason(run, fold),
+    'the control: the same run against a season twice its length is held by it'
+  ).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 12 })
+})
+
+// The 2026-09-05 weld, closed on the containment side too: anime season 1 took `nf:80987039-3` once,
+// and a fold only ever COMPRESSES, so the season holding our run is numbered at or below ours.
+//
+// Mutation: drop the `candidate.seasonNumber <= ceiling` clause and season 3 takes this run.
+test('a run whose titles agree on season 1 is never put inside the source\'s season 3', () => {
+  const late: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: undefined, year: 2021 },
+    { season: 3, seasonNumber: 3, episodeCount: 24, year: 2021 },
+  ]
+  const run = { titles: ['Show Season 1'], episodeCount: 11, startDate: '2021-01-11' }
+  expect(pickSimilarSeason(run, late), 'the control: a season with no count settles nothing').toBeUndefined()
+  expect(pickContainingSeason(run, late)).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...run, titles: ['Show'] }, late),
+    'the control: the same evidence with no ordinal to read is held by that season'
+  ).toEqual({ season: 3, rule: 'year', theirs: 24, ours: 11 })
+})
+
+// The same removal rule 2 makes, for the same reason: a season that lists real episode names, none of
+// which are ours, is not where our run is, and the year must not pick it up afterwards.
+//
+// Mutation: drop the `pool = longer.filter(...)` line and the year axis answers this season.
+test('a measured season sharing none of our episode names is removed, not left to the year', () => {
+  const named: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 24, year: 2021, episodeTitles: episodeTitles(1, 24) },
+  ]
+  const run = { titles: ['Show'], episodeCount: 11, startDate: '2021-01-11', episodeTitles: episodeTitles(9, 11) }
+  expect(pickSimilarSeason(run, named), 'the control: rule 2 refuses it outright').toBeUndefined()
+  expect(pickContainingSeason(run, named)).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...run, episodeTitles: [] }, named),
+    'the control: with nothing to refute it, the year holds the run'
+  ).toEqual({ season: 1, rule: 'year', theirs: 24, ours: 11 })
+})
+
+// Two seasons each carrying most of our run is a catalogue listing it twice, and no axis below can
+// tell the copies apart. Mutation: take `holding[0]` instead of refusing and one of the two is picked.
+test('two seasons holding our run is a refusal, exactly as two seasons being it is', () => {
+  // and the third season is what makes the refusal load bearing: without it the two measured seasons
+  // are merely removed, and with it a fall-through would answer a season nothing was measured about
+  const twice: SeasonCandidate<number>[] = [
+    { season: 1, seasonNumber: 1, episodeCount: 24, episodeTitles: episodeTitles(9, 24) },
+    { season: 2, seasonNumber: 2, episodeCount: 25, episodeTitles: episodeTitles(9, 25) },
+    { season: 3, seasonNumber: 3, episodeCount: 24, episodeTitles: NUMBERED(1, 24), year: 2021 },
+  ]
+  const run = { titles: ['Show'], episodeCount: 12, startDate: '2021-01-11', episodeTitles: episodeTitles(9, 12) }
+  expect(pickSimilarSeason(run, twice), 'the control').toBeUndefined()
+  expect(pickContainingSeason(run, twice)).toBeUndefined()
+})
+
+// Nothing to measure is not a container. A season whose length nobody published could be any length,
+// and one no longer than the run has no room to hold it and something else.
+test('a season with no count, and a season no longer than the run, hold nothing', () => {
+  const run = { titles: ['Show'], episodeCount: 12, startDate: '2021-01-11' }
+  expect(pickContainingSeason(run, [{ season: 1, seasonNumber: 1, year: 2021 }])).toBeUndefined()
+  expect(pickContainingSeason(run, [{ season: 1, seasonNumber: 1, episodeCount: 12, year: 2021 }])).toBeUndefined()
+  expect(
+    pickContainingSeason({ ...run, episodeCount: undefined }, [{ season: 1, seasonNumber: 1, episodeCount: 24, year: 2021 }]),
+    'and a run whose own length is unknown is not inside anything either'
+  ).toBeUndefined()
 })
