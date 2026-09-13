@@ -379,8 +379,8 @@ const rig = (routes: Record<string, Answer>) => {
       const answer = routes[key]
       if (!answer) throw new Error(`unstubbed url: ${key}`)
       if (answer.kind === 'unreachable') throw new Error(`network is down: ${key}`)
-      if (answer.kind === 'status') return { ok: false, status: answer.status, json: async () => ({}) }
-      return { ok: true, status: 200, json: async () => answer.body }
+      if (answer.kind === 'status') return new Response('{}', { status: answer.status })
+      return new Response(JSON.stringify(answer.body), { status: 200 })
     }) as unknown as ExtractorServerContext['fetch']
   } as unknown as ExtractorServerContext
   return { ctx, calls }
@@ -396,7 +396,17 @@ const unogsRoutes = (id: string, episodes: Answer): Record<string, Answer> => ({
   [`${UNOGS}/title/episodes?netflixid=${id}`]: episodes
 })
 
-const netflixCalls = (calls: Call[]) => calls.filter(call => call.url === NETFLIX_GRAPHQL_URL)
+// Netflix's two operations share ONE url, so a count of calls to that url says nothing about which of
+// them ran. The landing query is the season INDEX and the fallback this file is about; the season
+// query is the episode source, asked for whichever season is being published.
+const netflixOperation = (call: Call) =>
+  JSON.parse(String((call.init as { body?: string } | undefined)?.body ?? '{}')).operationName as string | undefined
+
+const netflixCalls = (calls: Call[]) =>
+  calls.filter(call => call.url === NETFLIX_GRAPHQL_URL && netflixOperation(call) === 'LodpTitleAndPlansPageQuery')
+
+const netflixSeasonCalls = (calls: Call[]) =>
+  calls.filter(call => call.url === NETFLIX_GRAPHQL_URL && netflixOperation(call) === 'PreviewModalEpisodeSelectorSeasonEpisodes')
 const unogsEpisodeCalls = (calls: Call[]) => calls.filter(call => call.url.startsWith(`${UNOGS}/title/episodes`))
 
 /** `resolvers.Media.episodes`, the path an already-known `nf:` media takes to fill its episode list. */
@@ -504,7 +514,10 @@ test('the fallback does NOT run when unOGS answers', async () => {
 
   expect(media?.episodes?.length).toBe(2)
   expect(media?.episodes?.[0]?.id, 'unOGS answered, so these are unOGS episodes').toBe('81402901')
-  expect(netflixCalls(calls).length, 'unOGS is the primary and a working primary is the whole answer').toBe(0)
+  expect(netflixCalls(calls).length, 'unOGS is the primary INDEX and a working primary is the whole season list').toBe(0)
+  // the season endpoint is asked for the published season either way, and it is the one url the rig
+  // refuses, so this is also the control that a failed episode call leaves unOGS' episodes standing
+  expect(netflixSeasonCalls(calls).length, 'the episodes still come from Netflix, one request').toBe(1)
 })
 
 test('the fallback DOES run when unOGS fails', async () => {
@@ -514,7 +527,7 @@ test('the fallback DOES run when unOGS fails', async () => {
   })
   const media = await getMedia('80987039', ctx, 1, true)
 
-  expect(netflixCalls(calls).length).toBe(1)
+  expect(netflixCalls(calls).length, 'one landing query for the season index').toBe(1)
   expect(media?.episodes?.map(episode => episode.id).slice(0, 3)).toEqual(['81402901', '81402902', '81402903'])
 })
 
@@ -562,6 +575,7 @@ test('an empty but well formed unOGS answer never counts as unOGS being down', a
 
   expect(unogsEpisodeCalls(calls).length, 'the second title still asks unOGS first').toBe(2)
   expect(netflixCalls(calls).length, 'and an empty answer is still worth a second opinion').toBe(1)
+  expect(netflixSeasonCalls(calls).length, 'one season published per title, one episode call each').toBe(2)
 })
 
 // Loud where a human can act on it: the id is hardcoded and only a person re-reading Netflix's bundle
@@ -919,6 +933,7 @@ test('concurrent asks for one title make one fallback call, not one per row', as
 
   expect(unogsEpisodeCalls(calls).length, 'the primary already collapsed a burst').toBe(1)
   expect(netflixCalls(calls).length, 'and the fallback now collapses with it').toBe(1)
+  expect(netflixSeasonCalls(calls).length, 'and so does the season call, which is keyed by season id').toBe(1)
   // the control: sharing one call must not starve any of the rows that waited on it
   expect(rows.map(row => row?.episodes?.length), 'every row still gets its episodes').toEqual([10, 10, 10, 10, 10])
 })

@@ -2,10 +2,10 @@ import type { ExtractorServerContext } from '../../worker/extractor'
 import type { Resolvers, Media as GQLMedia, Episode as GQLEpisode, MediaScope, SimilarMediaInput } from '../../generated/schema/types.generated'
 import { extractAggregatedUriOrigin, isAggregatedUri, isUri, toUri } from '../../utils/uri'
 import { makeMedia, makeEpisode, makeMovieEpisode, isMovie, desc, img, getFirstTitle, simplifyTitle, buildHandlesFromUri, waitForMedia, pickTitleMatch, declaredEpisodeCount } from '../utils'
-import { pickSimilarSeason, type SeasonCandidate } from '../similar'
+import { pickContainingSeason, pickSimilarSeason, type SeasonCandidate } from '../similar'
 import { yearAppearsInShow } from '../catalogue-gate'
 import { percentScore } from '../average-score'
-import { fetchNetflixTitle, type NetflixTitle } from './netflix'
+import { fetchNetflixSeasonEpisodes, fetchNetflixTitle, NETFLIX_EMPTY_FACT, NETFLIX_FAILURE_FACT, type NetflixEpisode, type NetflixTitle } from './netflix'
 
 const SCORE = 0.2
 
@@ -204,6 +204,13 @@ interface UnogsEpisode {
   synopsis: string
   title: string
   img: string
+  /**
+   * The episode's length in SECONDS, when the upstream that answered published one.
+   *
+   * unOGS publishes no runtime at any level, so this is only ever set by Netflix's own season
+   * endpoint. `normalizeEpisode` converts it, because the schema's `runtime` is in minutes.
+   */
+  runtimeSec?: number
 }
 
 /**
@@ -216,16 +223,21 @@ type NetflixSeason = {
   /**
    * The Netflix SEASON id, when the upstream that answered published one.
    *
-   * DELIBERATELY UNREAD, and not dead: the season uri stays an ordinal because switching to
-   * `nf:<seasid>` is a store migration rather than an edit (`assembleMedia` carries the cost), and
-   * this is the id that migration would need, next to the ordinal it would replace.
+   * IT IS WHAT THE EPISODE CALL IS MADE WITH: Netflix's season endpoint is keyed by this and nothing
+   * else, so a season that reaches `withNetflixEpisodes` without one keeps unOGS' episodes.
+   *
+   * It is still NOT what this source's season uri is built from: that stays an ordinal, because
+   * switching to `nf:<seasid>` is a store migration rather than an edit (`assembleMedia` carries the
+   * cost), and this is the id that migration would need, next to the ordinal it would replace.
    */
   seasonId?: number
   /**
-   * True when `episodes` is a PREFIX of the season rather than the season. Only the Netflix fallback
-   * can set it: that operation caps a season at ten episodes and takes no pagination variable, so a
-   * 24 episode season comes back as 10 with `hasNextPage`. A truncated season's length is not an
-   * episode count and must never be offered as one (`netflixCandidates`, `assembleMedia`).
+   * True when `episodes` is a PREFIX of the season rather than the season. unOGS never sets it, since
+   * it pages nothing; Netflix's LANDING query always does past ten, because it caps a season at ten
+   * episodes and takes no pagination variable. `withNetflixEpisodes` is the one thing that CLEARS it:
+   * the season endpoint pages, so a season it answered in full is a season, and one it could not
+   * finish says so. A truncated season's length is not an episode count and must never be offered as
+   * one (`netflixCandidates`, `assembleMedia`).
    */
   truncated?: boolean
 }
@@ -442,24 +454,134 @@ const netflixFallbackSeasons = (id: string, ctx: ExtractorServerContext): Promis
   })
 
 /**
- * Every season of a Netflix title, from unOGS when it can answer and from Netflix's own endpoint when
- * it cannot. Never throws: a title nobody can answer for has no seasons, which every caller already
- * handles, and a throw here would take the whole subscription with it.
+ * WHICH SEASONS a Netflix title has, from unOGS when it can answer and from Netflix's landing query
+ * when it cannot. The INDEX, not the episode data: `withNetflixEpisodes` replaces the episodes of the
+ * season being published. Never throws: a title nobody can answer for has no seasons, which every
+ * caller already handles, and a throw here would take the whole subscription with it.
  *
- * UNOGS STAYS PRIMARY. It answers all 61 episodes of a show in one 1.2 to 1.8 s call and it is the
- * only one of the two that can SEARCH, so the fallback is a floor and never a replacement: Netflix's
- * own endpoint caps a season at ten episodes (see `NetflixSeason.truncated`).
+ * UNOGS STAYS PRIMARY FOR THE INDEX. It answers every season of a title in one 1.2 to 1.8 s call that
+ * pages nothing, it carries the real `seasid` the episode call is made with, and it is the only one of
+ * the two that can SEARCH. Netflix's landing query caps the SEASON list at ten (see
+ * `NetflixTitle.seasonsTruncated`), so as an index it is a floor and never a replacement.
  *
  * The fallback also runs when unOGS answers an empty list for a title, because an empty list is
  * exactly what a caller cannot act on, and a second opinion that costs half a second is worth having
  * before concluding a show has no episodes. That path does NOT mark unOGS down.
  */
-const fetchEpisodes = async (id: string, ctx: ExtractorServerContext): Promise<SeasonListing> => {
+const fetchSeasonIndex = async (id: string, ctx: ExtractorServerContext): Promise<SeasonListing> => {
   const seasons = await unogsSeasons(id, ctx)
   // unOGS pages nothing: an answer from it is the whole title's season list, never a prefix
   if (seasons?.some(season => season.episodes.length)) return { seasons, truncated: false }
   return await netflixFallbackSeasons(id, ctx) ?? { seasons: seasons ?? [], truncated: false }
 }
+
+/** A title Netflix numbers rather than names: no title at all, spelled the way this payload spells one. */
+const PLACEHOLDER_EPISODE_TITLE = /^episode\s+\d+$/i
+
+/**
+ * Netflix's own episodes in this source's shape, with the unOGS season they replace as a cross-check.
+ *
+ * Every field is Netflix's except one. The TITLE keeps unOGS' when Netflix numbers the episode rather
+ * than naming it and unOGS has a real name for the same id: Netflix answers "Episode 1" through
+ * "Episode 24" for Mushoku Tensei season 1 and real names for season 2 (measured 2026-09-13), and a
+ * replacement that lost a name it already had would be a regression on the only axis unOGS is not
+ * worse on. Matched by episode id, which both sides spell as Netflix's own video id.
+ */
+const netflixEpisodes = (episodes: NetflixEpisode[], season: NetflixSeason): UnogsEpisode[] => {
+  const known = new Map(season.episodes.map(episode => [String(episode.epid), episode]))
+  return episodes.map((episode, index): UnogsEpisode => {
+    const named = known.get(String(episode.videoId))?.title
+    return {
+      epid: episode.videoId,
+      seasid: season.seasonId,
+      epnum: episode.number ?? index + 1,
+      seasnum: season.season,
+      synopsis: episode.synopsis ?? '',
+      title: PLACEHOLDER_EPISODE_TITLE.test(episode.title) && named && !PLACEHOLDER_EPISODE_TITLE.test(named)
+        ? named
+        : episode.title,
+      img: episode.thumbnail ?? '',
+      runtimeSec: episode.runtimeSec
+    }
+  })
+}
+
+/**
+ * The listing with ONE season's episodes taken from Netflix instead of unOGS, when Netflix can answer.
+ *
+ * WHY NETFLIX AND NOT UNOGS, for the episodes alone: unOGS republishes one placeholder image repeated
+ * across a whole season (231 of its 276 image pairs near-identical for Mushoku Tensei season 1,
+ * against 0 of 45 for Netflix's own) and 4 synopses of 24 where Netflix answers 24 of 24. The synopsis
+ * is what the episode anchor scores against, so a season of 4 is not a weak anchor, it is no anchor.
+ *
+ * WHY UNOGS STILL ANSWERS FIRST, so this is a replacement and never a search: unOGS is the only one of
+ * the two that can SEARCH, and its episodes call answers the WHOLE title, every season, in one request
+ * that pages nothing, where Netflix's own season index caps at ten seasons (One Piece answers ten of
+ * its forty). That call is what supplies the season ordinals and the real `seasid` this asks with.
+ *
+ * ONE SEASON, never the title. Netflix's endpoint is per season, so enriching a title costs one
+ * request per season, and the only season whose episodes are published is the one the caller named.
+ * The season picker is deliberately left on unOGS' lists (`matchNetflixSeason`): it reads counts and
+ * titles across EVERY season, which unOGS answers correctly in the one request already made.
+ *
+ * NEVER DESTRUCTIVE. A failure, a season nobody can match to an id, and an empty answer all return the
+ * listing untouched, so the worst case is exactly what this source published before.
+ */
+const withNetflixEpisodes = async (
+  listing: SeasonListing,
+  seasonNumber: number | undefined,
+  ctx: ExtractorServerContext
+): Promise<SeasonListing> => {
+  if (seasonNumber == null) return listing
+  const target = listing.seasons.find(season => season.season === seasonNumber)
+  const seasonId = target?.seasonId
+  // SAID OUT LOUD, because this is the one exit that used to be silent. A failure logs, an empty
+  // answer is visible as no episodes, but a season unOGS answered with no `seasid` skipped the whole
+  // Netflix slice with nothing to read anywhere: the page then carries unOGS' 4 synopses of 24 and its
+  // one repeated placeholder still, and looks exactly like a Netflix call that was never worth making.
+  // Which of the two conditions fired is named, since "no such season in this listing" and "this
+  // season carries no Netflix id" are different faults with different fixes, and BOTH ARE OURS: the
+  // sentence says so, because every silent exit in this function was read as Netflix's once already.
+  if (!target || seasonId == null) {
+    console.warn(`Netflix episodes for season ${seasonNumber} skipped (ours, off unOGS' own listing: ${target ? 'the listing carries no seasid for it' : `no season ${seasonNumber} in a listing of ${listing.seasons.length}`}); unOGS' own episodes stand`)
+    return listing
+  }
+  const answer = await dedupe(`netflix-season:${seasonId}`, () => fetchNetflixSeasonEpisodes(seasonId, ctx))
+  if (!answer.ok) {
+    // logged rather than thrown, the same as the title fallback: a stale persisted query is real and
+    // actionable, and it must not take down a season unOGS already answered perfectly well
+    console.error(`Netflix episodes for season ${seasonId} failed (${answer.failure}, whose fact: ${NETFLIX_FAILURE_FACT[answer.failure]}): ${answer.message}`)
+    return listing
+  }
+  if (!answer.episodes.length) {
+    // NOT A FAILURE: Netflix answers 200 with a well formed, EMPTY season. `empty` names which of the
+    // three shapes it was (`NetflixSeasonEmpty`) and the line says whose fact that is, because every
+    // one of them is a fact about ONE COUNTRY. This exit is where the whole slice sat on every page
+    // load until 2026-09-13, printing `no-episodes-listed` about requests that left from Hong Kong
+    // while the viewer was in Tokyo; `src/worker/direct-fetch.ts` is what moved them, and
+    // `not-in-this-catalogue` is what would have said so on day one.
+    console.warn(`Netflix episodes for season ${seasonId} answered no episodes (${answer.empty ?? 'unstated'}, whose fact: ${answer.empty ? NETFLIX_EMPTY_FACT[answer.empty] : 'unstated, which is this file having lost track of a shape'}); unOGS' own ${target.episodes.length} episode(s) stand`)
+    return listing
+  }
+  const episodes = netflixEpisodes(answer.episodes, target)
+  // THE SLICE SAYS WHAT IT PUBLISHED, on one line, which is the whole of 1d. Every other exit above
+  // is a fault with a name; this one is the success, and without it the difference between "Netflix
+  // answered a whole described season" and "the call never happened" is invisible on a page carrying
+  // no synopsis, which is exactly the state that was read as a Netflix failure for a day.
+  console.warn(`Netflix episodes for season ${seasonId} published ${episodes.length} episode(s), ${episodes.filter(episode => episode.synopsis.trim()).length} with a synopsis${answer.truncated ? ' (truncated)' : ''} (whose fact: Netflix's, answered to this browser's own address)`)
+  const replaced: NetflixSeason = { ...target, episodes, truncated: answer.truncated }
+  return { ...listing, seasons: listing.seasons.map(season => season === target ? replaced : season) }
+}
+
+/**
+ * Every season of a Netflix title, with the named season's episodes from Netflix's own endpoint.
+ *
+ * `seasonNumber` is the season being PUBLISHED, not a filter: the whole listing comes back either way,
+ * because the season picker reads every season. Passing nothing asks for the index alone, which is one
+ * request; passing a season adds one more.
+ */
+const fetchEpisodes = async (id: string, ctx: ExtractorServerContext, seasonNumber?: number): Promise<SeasonListing> =>
+  withNetflixEpisodes(await fetchSeasonIndex(id, ctx), seasonNumber, ctx)
 
 const searchApi = (query: string, ctx: ExtractorServerContext) =>
   api<{ results: UnogsSearchResult[] }>(
@@ -536,6 +658,8 @@ const normalizeEpisode = (episode: UnogsEpisode, mediaUri: string, episodeNumber
     titles: [{ language: 'en', title: decode(episode.title), score: SCORE }],
     ...desc(decodedSynopsis, SCORE),
     thumbnails: episode.img ? img(httpsUrl(episode.img), SCORE) : [],
+    // the schema's `runtime` is MINUTES and Netflix publishes seconds: 1422 s is a 24 minute episode
+    runtime: episode.runtimeSec ? Math.round(episode.runtimeSec / 60) : undefined,
     seasonNumber: episode.seasnum,
     episodeNumber
   })
@@ -597,7 +721,7 @@ export const getMedia = async (
   const title = detailRes[0]
   if (!title) return undefined
   if (requireSeason && seasonNumber == null && title.vtype === 'series') return undefined
-  const listing = title.vtype === 'series' ? await fetchEpisodes(id, ctx) : undefined
+  const listing = title.vtype === 'series' ? await fetchEpisodes(id, ctx, seasonNumber) : undefined
   return assembleMedia(title, bgImagesRes, listing, seasonNumber)
 }
 
@@ -758,7 +882,38 @@ const similarSeason = async (input: SimilarMediaInput, ctx: ExtractorServerConte
   if (!listing.seasons.length) return undefined
   const verdict = pickSimilarSeason(input, netflixCandidates(listing.seasons, detail.year))
   if (!verdict) return undefined
-  return assembleMedia(detail, await fetchBgImages(input.showId, ctx), listing, verdict.season.season)
+  // enriched AFTER the pick, never before: the verdict is what names the one season worth a request
+  const picked = await withNetflixEpisodes(listing, verdict.season.season, ctx)
+  return assembleMedia(detail, await fetchBgImages(input.showId, ctx), picked, verdict.season.season)
+}
+
+/**
+ * The one Netflix season that HOLDS the caller's run without being it, or undefined (4.4).
+ *
+ * Netflix is the source this exists for. It folds five Mushoku Tensei runs into three seasons, so its
+ * season 1 of 24 episodes is the only season either of the first two runs could match and
+ * `pickSimilarSeason` refuses it for both, correctly: `theirs (24) > ours (11)` is a fold, and a season
+ * longer than the run is not the run. Both runs then had no Netflix anything at all, which is the gap
+ * this closes. `pickContainingSeason` carries the evidence and the refusals; this file's job is to
+ * offer the same candidates to it and to build the season it names.
+ *
+ * The answer is the CONTAINER SEASON as an ordinary season-scoped RUN, episodes and count included,
+ * exactly as `similarSeason` builds one. What differs is entirely on the caller's side: it claims
+ * `PART_OF` from this and never `SAME_AS`, so the row hangs off the run's cluster rather than joining
+ * it. Nothing here may hint at sameness, which is why it carries no handles, the same as the answer
+ * above.
+ */
+const containingSeason = async (input: SimilarMediaInput, ctx: ExtractorServerContext): Promise<GQLMedia | undefined> => {
+  if (!input?.showId) return undefined
+  const detail = (await fetchDetail(input.showId, ctx))?.[0]
+  if (detail?.vtype !== 'series') return undefined
+  const listing = await fetchEpisodes(input.showId, ctx)
+  if (!listing.seasons.length) return undefined
+  const verdict = pickContainingSeason(input, netflixCandidates(listing.seasons, detail.year))
+  if (!verdict) return undefined
+  console.warn(`similarMedia: nf season ${verdict.season.season} of ${input.showId} holds this run by ${verdict.rule} (${verdict.theirs} episodes over ${verdict.ours})`)
+  const picked = await withNetflixEpisodes(listing, verdict.season.season, ctx)
+  return assembleMedia(detail, await fetchBgImages(input.showId, ctx), picked, verdict.season.season)
 }
 
 /**
@@ -950,6 +1105,13 @@ export const resolvers: Resolvers = {
         yield { similarMedia: await similarSeason(input, ctx) ?? null }
       }
     },
+    // asked ONLY after `similarMedia` answered null (`containingOutcome` in worker/extractor.ts), so
+    // the second walk of the same title is spent only on a run no season of ours is
+    containingMedia: {
+      subscribe: async function* (_, { input }, ctx: ExtractorServerContext) {
+        yield { containingMedia: await containingSeason(input, ctx) ?? null }
+      }
+    },
     media: {
       subscribe: async function* (_, { input: { uri: _uri } }, ctx: ExtractorServerContext) {
         if (!_uri || !(isUri(_uri) || isAggregatedUri(_uri))) return yield { media: null }
@@ -973,7 +1135,7 @@ export const resolvers: Resolvers = {
       // split before asking anyone (see `splitSeasonId`) and the answer is filtered back down to that
       // one season, because a RUN may never list another season's episodes.
       const { showId, season: seasonNumber } = splitSeasonId(parent.id)
-      const { seasons } = await fetchEpisodes(showId, ctx)
+      const { seasons } = await fetchEpisodes(showId, ctx, seasonNumber)
       const filtered = seasonNumber != null ? seasons.filter(season => season.season === seasonNumber) : seasons
       return filtered.flatMap(season =>
         season.episodes.map((ep, i) => normalizeEpisode(ep, parent.uri, i + 1))

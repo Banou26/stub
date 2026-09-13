@@ -15,7 +15,7 @@ import { getMedia, linkNetflix, resolvers, searchNodes } from '../../../../src/s
 
 const UNOGS = 'https://unogs.com/api'
 
-type Season = { season: number, episodes: number }
+type Season = { season: number, episodes: number, numbered?: boolean }
 
 const routes = (id: string, vtype: 'series' | 'movie', seasons: Season[]) => ({
   'https://unogs.com/api/user': { token: { access_token: 'test-token' } },
@@ -40,7 +40,10 @@ const routes = (id: string, vtype: 'series' | 'movie', seasons: Season[]) => ({
     episodes: Array.from({ length: season.episodes }, (_, index) => ({
       epid: `${id}-s${season.season}e${index + 1}`,
       episode: index + 1,
-      title: `S${season.season}E${index + 1}`,
+      // `numbered` is Netflix's own listing for a folded season: it titles every episode `Episode N`,
+      // which `isGenericEpisodeTitle` reads as a position and never as a name, so the season can be
+      // measured about nothing (the cached payload for 81392609, 2026-09-13)
+      title: season.numbered ? `Episode ${index + 1}` : `S${season.season}E${index + 1}`,
       synopsis: '',
       runtime: '',
       img: '',
@@ -323,4 +326,65 @@ test('similarMedia is null for a film title and for an unknown title, and yields
     { showId: '70000099', titles: ['Nothing'], episodeCount: 12 }
   )
   expect(unknown.yields).toEqual([{ similarMedia: null }])
+})
+
+// `containingMedia`: the other half of the fold (4.4), asked only where `similarMedia` answered null.
+// Netflix folds Mushoku Tensei's first two anime runs into its season 1, which holds 24 over their 11
+// and 12 and numbers every one of its episodes, so nothing about it can be measured on titles and the
+// evidence is the year unOGS publishes for the whole title, which is its first season's.
+const askContaining = async (ctx: ExtractorServerContext, input: Record<string, unknown>) => {
+  const subscribe = (resolvers.Subscription as any).containingMedia.subscribe
+  const yields: { containingMedia: GQLMedia | null }[] = []
+  for await (const value of subscribe(undefined, { input }, ctx)) yields.push(value)
+  return { yields, answer: yields[0]?.containingMedia ?? null }
+}
+
+const FOLDED: Season[] = [{ season: 1, episodes: 24, numbered: true }, { season: 2, episodes: 25 }, { season: 3, episodes: 11 }]
+
+test('containingMedia answers the season that HOLDS the run, as a RUN carrying its own count', async () => {
+  const ctx = ctxFor(routes('80987039', 'series', FOLDED))
+  const { answer } = await askContaining(ctx, {
+    showId: '80987039',
+    titles: ['Mushoku Tensei: Jobless Reincarnation'],
+    episodeCount: 11,
+    startDate: '2021-01-11',
+  })
+
+  expect(answer?.uri, 'the season the fold veto refused as the run').toBe('nf:80987039-1')
+  expect(answer?.scope, 'a season, never the bare title, which asserts nothing about where a run is').toBe('RUN')
+  expect(answer?.handles, 'the caller decides what to claim about the answer, and it claims PART_OF').toEqual([])
+  expect(answer?.episodeCount, 'the container\'s own length, which the placement reads').toBe(24)
+  expect(answer?.episodes?.length).toBe(24)
+})
+
+test('containingMedia holds the second cour too, which its own title says is a part', async () => {
+  const ctx = ctxFor(routes('80987039', 'series', FOLDED))
+  const { answer } = await askContaining(ctx, {
+    showId: '80987039',
+    titles: ['Mushoku Tensei: Jobless Reincarnation Part 2'],
+    episodeCount: 12,
+    startDate: '2021-10-04',
+  })
+  expect(answer?.uri, 'both cours of anime season 1 are inside Netflix season 1').toBe('nf:80987039-1')
+})
+
+// The invariant, through the resolvers rather than the picker: one run never gets both answers.
+test('a run whose season this source CAN name is given no container', async () => {
+  const ctx = ctxFor(routes('80987039', 'series', FOLDED))
+  const input = { showId: '80987039', titles: ['Mushoku Tensei: Jobless Reincarnation Season 3'], episodeCount: 14 }
+
+  expect((await askSimilar(ctx, input)).answer?.uri, 'the control: it is season 3').toBe('nf:80987039-3')
+  expect((await askContaining(ctx, input)).answer, 'and season 3 is not additionally inside anything').toBeNull()
+})
+
+test('containingMedia is null for a film and for a run no season can be shown to hold, and yields once', async () => {
+  const film = await askContaining(ctxFor(routes('70000013', 'movie', [])), { showId: '70000013', titles: ['A Film'], episodeCount: 1 })
+  expect(film.yields, 'a film has no seasons to hold anything').toEqual([{ containingMedia: null }])
+
+  // the same show and the same run, dated a year Netflix's first season is not: the count fits the
+  // fold on both seasons and nothing says which, so there is no container either
+  const undated = await askContaining(ctxFor(routes('80987039', 'series', FOLDED)), {
+    showId: '80987039', titles: ['Mushoku Tensei: Jobless Reincarnation'], episodeCount: 11, startDate: '2024-01-11',
+  })
+  expect(undated.yields).toEqual([{ containingMedia: null }])
 })
